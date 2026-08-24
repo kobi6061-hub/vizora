@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  VIZORA design tokens — see DESIGN-NOTES.md before changing these  */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  /* Ground & surfaces (graphite system) */
+  --color-ground: #0b0b0f;
+  --color-surface: #15151c;
+  --color-raised: #1b1b23;
+  --color-overlay: #20202a;
+  --color-seam: #26262f;
+  --color-seam-strong: #34343f;
+
+  /* Ink (warm architectural ivory, never pure white) */
+  --color-ink: #f2f0ea;
+  --color-ink-mid: #c8c6cd;
+  --color-stone: #8f8d96;
+  --color-faint: #605e69;
+
+  /* The one accent — Signal indigo (flat, used sparingly) */
+  --color-signal: #5b5bea;
+  --color-signal-bright: #8a8af4;
+  --color-signal-deep: #4646cf;
+
+  /* Status */
+  --color-success: #3fb57c;
+  --color-amber: #d9a13b;
+  --color-danger: #df4b4e;
+
+  /* Inverted "print" surface */
+  --color-ivory: #f2f0ea;
+
+  /* Type */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif,
+    system-ui, sans-serif;
+  --font-serif: var(--font-instrument), "Times New Roman", Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Elevation — hairline + soft black, never glow */
+  --shadow-panel: inset 0 1px 0 0 rgb(255 255 255 / 0.04),
+    0 24px 48px -16px rgb(0 0 0 / 0.55);
+  --shadow-pop: 0 4px 10px -2px rgb(0 0 0 / 0.4), 0 16px 36px -8px rgb(0 0 0 / 0.6);
+  --shadow-press: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+
+  /* Motion */
+  --ease-studio: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --animate-fade-in: fade-in 240ms var(--ease-studio) both;
+  --animate-fade-up: fade-up 420ms var(--ease-studio) both;
+  --animate-dialog-in: dialog-in 260ms var(--ease-studio) both;
+  --animate-sheet-right: sheet-right 320ms var(--ease-studio) both;
+  --animate-sheet-bottom: sheet-bottom 320ms var(--ease-studio) both;
+  --animate-pop-in: pop-in 180ms var(--ease-studio) both;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-seam-sweep: seam-sweep 4.8s var(--ease-studio) infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sheet-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes sheet-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes sheet-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes seam-sweep {
+  0% { transform: translateX(-6%); opacity: 0; }
+  8% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { transform: translateX(106%); opacity: 0; }
+}
+
+/* Ken Burns scene motion — used by the preview player */
+@keyframes kb-push {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.16); }
+}
+@keyframes kb-pull {
+  from { transform: scale(1.16); }
+  to { transform: scale(1.02); }
+}
+@keyframes kb-pan-left {
+  from { transform: scale(1.14) translateX(3.2%); }
+  to { transform: scale(1.14) translateX(-3.2%); }
+}
+@keyframes kb-pan-right {
+  from { transform: scale(1.14) translateX(-3.2%); }
+  to { transform: scale(1.14) translateX(3.2%); }
+}
+@keyframes kb-rise {
+  from { transform: scale(1.14) translateY(3%); }
+  to { transform: scale(1.14) translateY(-3%); }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-seam);
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01" on, "cv05" on;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-signal) 55%, transparent);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal-bright);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Quiet, studio-grade scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-seam-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-seam-strong);
+    border-radius: 8px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.5rem;
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+@utility text-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+@utility text-serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@utility text-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+@utility hairline-t {
+  border-top: 1px solid var(--color-seam);
+}
