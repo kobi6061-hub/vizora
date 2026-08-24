@@ -125,6 +125,11 @@
   to { transform: scale(1.14) translateY(-3%); }
 }
 
+@keyframes fill-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 @layer base {
   * {
     border-color: var(--color-seam);
