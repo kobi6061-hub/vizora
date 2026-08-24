@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VIZORA
 
-## Getting Started
+**The AI video studio built for real estate.**
+Upload property images. Turn them into cinematic marketing videos. Publish — in about 5 minutes.
 
-First, run the development server:
+Vizora is a standalone SaaS product: a complete public marketing website plus a
+logged-in creation studio. Everything runs today except deliberately
+disconnected external services (AI generation vendors, payments, email,
+analytics, cloud media) — the architecture keeps each behind a single swap
+point.
+
+## Running
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `start` | Production build / serve |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run art` | Regenerate the SVG property-art collection + manifest |
+| `npm run test:e2e` | Playwright end-to-end flows |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Product map
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Marketing site** — `/`, `/product`, `/image-to-video`, `/real-estate-video`,
+  `/templates`, `/examples`, `/pricing`, `/business`
+- **Auth** — `/login`, `/signup`, `/forgot-password`, `/reset-password`,
+  `/verify-email` (mock auth; sessions persist in the browser)
+- **App** — `/app` (dashboard), `/app/onboarding`, `/app/create`,
+  `/app/projects`, `/app/projects/[id]` (Vizora Studio), `/app/templates`,
+  `/app/assets`, `/app/brand`, `/app/settings`
 
-## Learn More
+First run seeds a demo workspace (sample properties in every status) so the
+product is alive before any upload. The **Try a sample property** journey walks
+the full flow: upload review → property details → style → format → automatic
+storyboard → generation → result.
 
-To learn more about Next.js, take a look at the following resources:
+## Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/                    Routes (marketing) / (auth) / app
+  components/
+    ui/                   Primitives (button, dialog, toast, …)
+    marketing/ studio/ app/ player/ cards/ brand/
+  lib/
+    domain/types.ts       Framework-free domain model
+    data/                 Styles, music, pricing, templates, demo seed, art manifest
+    story/                Automatic story engine (captions per style/objective)
+    generation/           VideoGenerationProvider + MockVideoGenerationProvider
+    audio/                In-browser music synth + voiceover preview
+    stores/               Zustand workspace store (localStorage persisted)
+    storage/              localStorage helpers + IndexedDB blob store
+    auth/                 Mock auth provider + session store
+scripts/
+  generate-property-art.mjs   Deterministic SVG archviz renders → public/art
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Provider boundaries (connect-later by design)
 
-## Deploy on Vercel
+| Service | Boundary | Today |
+| --- | --- | --- |
+| Video generation | `lib/generation/provider.ts` → registry in `lib/generation/index.ts` | `MockVideoGenerationProvider` (time-derived phases, survives reload) |
+| File storage | `lib/storage/local.ts` (+ `useAssetUrl`) | localStorage metadata + IndexedDB blobs |
+| Auth | `lib/auth/` | Local mock sessions |
+| Music | `lib/data/music.ts` + `lib/audio/preview-synth.ts` | Original generative previews |
+| Voiceover | `lib/audio/preview-synth.ts` | Browser SpeechSynthesis preview |
+| Payments | `lib/data/pricing.ts` (single source of pricing truth) | UI states only |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Replacing the mock generation engine means implementing
+`VideoGenerationProvider` and changing one line in
+`lib/generation/index.ts` — the studio, generation experience and result
+screens stay untouched.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Imagery
+
+All property imagery is generated locally as graded SVG architectural renders
+(one cinematic collection — dusk, golden hour, night, marine). Regenerate with
+`npm run art`; the manifest (`lib/data/art-manifest.ts`) is the only coupling.
+
+## Design
+
+Tokens, type pairing, signature motion and rationale live in
+[`DESIGN-NOTES.md`](./DESIGN-NOTES.md). Read it before touching UI.

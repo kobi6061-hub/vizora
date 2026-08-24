@@ -55,12 +55,14 @@ export const metadata: Metadata = {
     title: "Vizora — The AI video studio built for real estate",
     description:
       "Turn property images into marketing videos in 5 minutes. Upload, direct, publish.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Vizora — turn property images into marketing videos in 5 minutes" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vizora — Real-estate marketing videos in 5 minutes",
     description:
       "Turn property images into marketing videos in 5 minutes. Upload, direct, publish.",
+    images: ["/og.png"],
   },
 };
 

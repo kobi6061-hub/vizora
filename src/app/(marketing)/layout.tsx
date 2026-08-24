@@ -8,8 +8,16 @@ export default function MarketingLayout({
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
+      <a
+        href="#main"
+        className="fixed start-4 top-4 z-50 -translate-y-20 rounded-lg bg-ivory px-4 py-2 text-sm font-medium text-ground transition-transform focus:translate-y-0"
+      >
+        Skip to content
+      </a>
       <MarketingHeader />
-      <main className="flex-1">{children}</main>
+      <main id="main" className="flex-1">
+        {children}
+      </main>
       <MarketingFooter />
     </div>
   );
