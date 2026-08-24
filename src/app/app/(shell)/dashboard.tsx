@@ -17,6 +17,7 @@ import { TemplateCard } from "@/components/cards/template-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuth } from "@/lib/auth/auth-context";
 import { TEMPLATES } from "@/lib/data/templates";
+import { useMounted } from "@/lib/hooks/use-asset-url";
 import { useWorkspaceStore } from "@/lib/stores/workspace-store";
 import { greetingForHour } from "@/lib/utils";
 
@@ -48,18 +49,15 @@ export function Dashboard() {
   const createSampleProject = useWorkspaceStore((state) => state.createSampleProject);
   const createProject = useWorkspaceStore((state) => state.createProject);
   const router = useRouter();
-  const [greeting, setGreeting] = React.useState("Welcome back");
-
-  React.useEffect(() => {
-    setGreeting(greetingForHour(new Date().getHours()));
-  }, []);
+  const mounted = useMounted();
+  const greeting = mounted ? greetingForHour(new Date().getHours()) : "Welcome back";
 
   const firstName = session?.user.name.split(" ")[0] ?? "";
   const recent = [...projects]
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     .slice(0, 6);
 
-  const useTemplate = (templateId: string) => {
+  const startFromTemplate = (templateId: string) => {
     const project = createProject({ method: "images", templateId });
     router.push(`/app/projects/${project.id}`);
   };
@@ -181,7 +179,7 @@ export function Dashboard() {
               key={template.id}
               template={template}
               action={
-                <Button variant="outline" className="w-full" onClick={() => useTemplate(template.id)}>
+                <Button variant="outline" className="w-full" onClick={() => startFromTemplate(template.id)}>
                   Use template
                 </Button>
               }

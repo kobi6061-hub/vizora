@@ -17,6 +17,7 @@ import type {
   Project,
   Usage,
 } from "@/lib/domain/types";
+import { artById } from "@/lib/data/art-manifest";
 import {
   DEFAULT_BRANDING,
   DEFAULT_MUSIC,
@@ -53,6 +54,8 @@ interface WorkspaceState {
   duplicateProject: (id: string) => Project | null;
   deleteProject: (id: string) => void;
   registerUploadedAsset: (input: { name: string; blobId: string; sizeBytes: number; kind?: Asset["kind"] }) => Asset;
+  /** Ensure workspace assets exist for the given art ids; returns them in order. */
+  ensureArtAssets: (artIds: string[]) => Asset[];
   addSampleAssetsToLibrary: () => void;
   deleteAsset: (id: string) => void;
   updateBrandKit: (patch: Partial<BrandKit>) => void;
@@ -185,6 +188,38 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         };
         set((state) => ({ assets: [asset, ...state.assets] }));
         return asset;
+      },
+
+      ensureArtAssets: (artIds) => {
+        const state = get();
+        const created: Asset[] = [];
+        const additions: Asset[] = [];
+        for (const artId of artIds) {
+          const art = artById(artId);
+          const existing =
+            state.assets.find((asset) => asset.src === art.src) ??
+            additions.find((asset) => asset.src === art.src);
+          if (existing) {
+            created.push(existing);
+            continue;
+          }
+          const asset: Asset = {
+            id: `asset_art_${artId}`,
+            workspaceId: WORKSPACE_ID,
+            kind: "image",
+            name: art.alt.slice(0, 60),
+            src: art.src,
+            source: "sample",
+            tags: ["concept", art.kind],
+            createdAt: new Date().toISOString(),
+          };
+          additions.push(asset);
+          created.push(asset);
+        }
+        if (additions.length > 0) {
+          set((current) => ({ assets: [...additions, ...current.assets] }));
+        }
+        return created;
       },
 
       addSampleAssetsToLibrary: () => {

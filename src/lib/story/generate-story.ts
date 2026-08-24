@@ -256,8 +256,9 @@ const MOTION_CYCLE: SceneMotion[] = ["push", "pan-right", "rise", "pan-left", "p
 function slotForKind(kind: ArtKind | undefined, index: number, total: number): Slot {
   if (index === 0) return "opening";
   switch (kind) {
-    case "exterior":
     case "aerial":
+      return index === 0 ? "opening" : "view";
+    case "exterior":
       return index === 0 ? "opening" : "detail";
     case "interior":
       return "space";

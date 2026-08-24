@@ -32,11 +32,15 @@ const icons: Record<ToastVariant, React.ReactNode> = {
   error: <AlertTriangle className="size-4 text-danger" />,
 };
 
+const noopSubscribe = () => () => {};
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastItem[]>([]);
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
 
   const dismiss = React.useCallback((id: string) => {
     setToasts((current) => current.filter((t) => t.id !== id));
