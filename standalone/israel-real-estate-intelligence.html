@@ -1,0 +1,1731 @@
+<!-- =========================================================================
+     ISRAEL REAL ESTATE INTELLIGENCE · מודיעין נדל״ן ישראל
+     Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
+     Demo dataset only — clearly labeled; the UI reads a clean data model so a
+     production API can replace DEMO_DATA without touching the interface.
+     ========================================================================= -->
+<title>מודיעין נדל״ן ישראל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Assistant:wght@400;500;600;700&display=swap">
+
+<style>
+/* ============================ tokens ============================ */
+:root{
+  --paper:#f9f9f7;          /* page plane (warm white) */
+  --panel:#fcfcfb;          /* card / chart surface     */
+  --panel-2:#f4f3f0;        /* inset surface            */
+  --ink:#0b0b0b;
+  --ink-2:#52514e;
+  --ink-3:#898781;
+  --hairline:#e1e0d9;
+  --baseline:#c3c2b7;
+  --ring:rgba(11,11,11,.10);
+
+  --accent:#2a78d6;         /* market blue              */
+  --accent-deep:#1c5cab;
+  --accent-wash:#eef4fc;
+
+  --up:#006300;             /* delta up (text-safe)     */
+  --down:#d03b3b;           /* delta down               */
+  --up-wash:#e8f3e8;
+  --down-wash:#fbeeee;
+
+  --conf-high:#0ca30c;
+  --conf-med:#b97f00;
+  --conf-low:#c05621;
+
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; /* compare slots */
+
+  --heat-1:#cde2fb; --heat-2:#9ec5f4; --heat-3:#6da7ec; --heat-4:#3987e5;
+  --heat-5:#256abf; --heat-6:#184f95; --heat-7:#0d366b;
+
+  --f-display:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Assistant","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --r-s:6px; --r-m:9px;
+  --shadow-pop:0 6px 24px -8px rgba(11,11,11,.14),0 2px 6px -2px rgba(11,11,11,.08);
+}
+
+/* ============================ base ============================ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--f-body);font-size:14px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.25;text-wrap:balance}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+::selection{background:#cde2fb}
+
+.num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums}
+
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:20px}
+@media(min-width:900px){.wrap{padding-inline:32px}}
+
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--ink-3)}
+
+/* delta pill */
+.delta{display:inline-flex;align-items:center;gap:3px;font-weight:600;font-size:12px;
+  padding:1px 7px;border-radius:99px;white-space:nowrap}
+.delta.up{background:var(--up-wash)} .delta.down{background:var(--down-wash)}
+.delta.flat{background:var(--panel-2)}
+.delta svg{width:9px;height:9px;flex:none}
+
+/* confidence badge — never color alone: dot + text */
+.conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.conf i{width:7px;height:7px;border-radius:99px;flex:none}
+.conf.high i{background:var(--conf-high)} .conf.med i{background:var(--conf-med)} .conf.low i{background:var(--conf-low)}
+.conf.low{color:var(--conf-low)}
+
+.badge-demo{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  color:var(--ink-2);background:var(--panel-2);border:1px solid var(--hairline);
+  border-radius:99px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
+.badge-demo::before{content:"";width:6px;height:6px;border-radius:99px;background:var(--baseline)}
+
+/* ============================ header ============================ */
+header.top{
+  position:sticky;top:0;z-index:60;background:rgba(249,249,247,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);
+}
+.top-in{display:flex;align-items:center;gap:20px;height:52px}
+.brand{display:flex;align-items:baseline;gap:9px;white-space:nowrap}
+.brand b{font-family:var(--f-display);font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+.brand span{font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;direction:ltr}
+nav.main{display:none;gap:2px;margin-inline-start:8px}
+@media(min-width:980px){nav.main{display:flex}}
+nav.main a{font-size:13px;font-weight:500;color:var(--ink-2);text-decoration:none;
+  padding:5px 11px;border-radius:var(--r-s)}
+nav.main a:hover{color:var(--ink);background:var(--panel-2)}
+.top-end{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
+.updated{display:none;font-size:12px;color:var(--ink-3);white-space:nowrap}
+@media(min-width:760px){.updated{display:block}}
+.lang{display:flex;border:1px solid var(--hairline);border-radius:var(--r-s);overflow:hidden;background:var(--panel)}
+.lang button{font-size:11.5px;font-weight:600;padding:4px 9px;color:var(--ink-3)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* ============================ command bar ============================ */
+.command{border-bottom:1px solid var(--hairline);background:var(--panel)}
+.command-in{padding-block:26px 20px;display:flex;flex-direction:column;gap:16px}
+.command h1{font-size:27px;font-weight:700;letter-spacing:-.01em}
+.command .sub{color:var(--ink-2);font-size:14.5px;margin-top:3px}
+.command-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* search */
+.search{position:relative;flex:1 1 320px;max-width:560px}
+.search input{
+  width:100%;height:44px;border:1px solid var(--hairline);border-radius:var(--r-m);
+  background:var(--paper);padding-inline:40px 14px;font-size:14.5px;
+  transition:border-color .15s, box-shadow .15s;
+}
+.search input:hover{border-color:var(--baseline)}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(42,120,214,.14)}
+.search input::placeholder{color:var(--ink-3)}
+.search>svg{position:absolute;inset-inline-start:13px;top:14px;width:16px;height:16px;color:var(--ink-3);pointer-events:none}
+.search-pop{
+  position:absolute;top:calc(100% + 6px);inset-inline:0;z-index:70;
+  background:var(--panel);border:1px solid var(--hairline);border-radius:var(--r-m);
+  box-shadow:var(--shadow-pop);max-height:340px;overflow-y:auto;padding:6px;display:none;
+}
+.search-pop.open{display:block}
+.sp-group{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--ink-3);padding:8px 10px 4px}
+.sp-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  text-align:start;padding:8px 10px;border-radius:var(--r-s);font-size:13.5px}
+.sp-item small{color:var(--ink-3);font-size:12px}
+.sp-item .num{color:var(--ink-2);font-size:12.5px;font-weight:600}
+.sp-item:hover,.sp-item.active{background:var(--accent-wash)}
+.sp-empty{padding:14px 10px;color:var(--ink-3);font-size:13px}
+
+/* sale / rent toggle */
+.mode{display:flex;background:var(--panel-2);border:1px solid var(--hairline);
+  border-radius:var(--r-m);padding:3px;gap:3px}
+.mode button{font-size:13.5px;font-weight:600;padding:8px 22px;border-radius:calc(var(--r-m) - 3px);
+  color:var(--ink-2);transition:background .15s,color .15s}
+.mode button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* breadcrumb */
+.crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px;font-size:12.5px;color:var(--ink-3)}
+.crumbs button{color:var(--ink-2);font-weight:500;padding:2px 7px;border-radius:var(--r-s)}
+.crumbs button:hover{background:var(--panel-2);color:var(--ink)}
+.crumbs button[aria-current="true"]{color:var(--ink);font-weight:700;cursor:default;background:none}
+.crumbs .sep{color:var(--baseline)}
+
+/* ============================ sections ============================ */
+section.blk{padding-block:22px}
+.blk-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.blk-head h2{font-size:16.5px;font-weight:700}
+.blk-head .note{font-size:12px;color:var(--ink-3)}
+.card{background:var(--panel);border:1px solid var(--hairline);border-radius:var(--r-m)}
+
+/* ============================ KPI strip ============================ */
+.kpis{display:grid;gap:9px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:700px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1060px){.kpis{grid-template-columns:repeat(6,1fr)}}
+.kpi{padding:12px 14px 11px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .lbl{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .val{font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
+.kpi .cmp{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.kpi.skel .val{color:transparent;background:linear-gradient(100deg,var(--panel-2) 40%,var(--hairline) 50%,var(--panel-2) 60%);
+  background-size:200% 100%;border-radius:4px;animation:shimmer 1.1s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* ============================ layout grids ============================ */
+.grid-map{display:grid;gap:14px}
+@media(min-width:1000px){.grid-map{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.grid-main{display:grid;gap:14px}
+@media(min-width:1000px){.grid-main{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+
+/* map card */
+.map-card{padding:14px;display:flex;flex-direction:column;gap:10px}
+.map-tools{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;font-weight:600;color:var(--ink-2);border:1px solid var(--hairline);
+  background:var(--panel);border-radius:99px;padding:4px 12px;transition:all .12s}
+.chip:hover{border-color:var(--baseline);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.map-stage{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+@media(min-width:560px){.map-stage{grid-template-columns:auto minmax(0,1fr)}}
+.map-holder{position:relative;display:flex;justify-content:center}
+.map-holder svg{max-height:430px;width:auto;max-width:100%}
+.geo{stroke:var(--panel);stroke-width:.8;cursor:pointer;transition:filter .12s}
+.geo:hover{filter:brightness(.92)}
+.geo.dim{opacity:.35;cursor:default}
+.geo-dot{cursor:pointer;stroke:var(--panel);transition:opacity .12s}
+.geo-dot:hover{opacity:.85}
+.geo-label{font-family:var(--f-body);font-weight:600;fill:var(--ink-2);pointer-events:none;direction:ltr}
+.geo-label.on-dark{fill:#fff}
+.map-tip{position:absolute;z-index:30;pointer-events:none;background:var(--ink);color:var(--paper);
+  border-radius:var(--r-s);padding:7px 11px;font-size:12px;line-height:1.5;box-shadow:var(--shadow-pop);
+  opacity:0;transition:opacity .1s;max-width:220px}
+.map-tip.show{opacity:1}
+.map-tip b{font-size:12.5px}
+.map-scale{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3)}
+.map-scale .bar{flex:0 0 130px;height:8px;border-radius:99px;
+  background:linear-gradient(to left,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
+[dir="ltr"] .map-scale .bar{background:linear-gradient(to right,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
+.map-side{display:flex;flex-direction:column;gap:8px;min-width:0}
+.rank-title{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.rank-list{display:flex;flex-direction:column}
+.rank-row{display:flex;align-items:center;gap:10px;padding:6.5px 8px;border-radius:var(--r-s);
+  font-size:13px;width:100%;text-align:start}
+.rank-row:hover{background:var(--accent-wash)}
+.rank-row .idx{flex:none;width:20px;font-size:11px;font-weight:700;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rank-row .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.rank-row .vl{font-weight:700;font-size:12.5px}
+.rank-row .bar{flex:0 0 54px;height:5px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.rank-row .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+
+/* ============================ profile + chart ============================ */
+.profile{padding:16px;display:flex;flex-direction:column;gap:14px}
+.profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.profile-head h3{font-size:19px;font-weight:700}
+.profile-head .where{font-size:12.5px;color:var(--ink-3);margin-top:1px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
+@media(min-width:520px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat .l{font-size:11px;font-weight:600;color:var(--ink-3)}
+.stat .v{font-family:var(--f-display);font-size:16.5px;font-weight:700;white-space:nowrap}
+.stat .s{font-size:11px;color:var(--ink-3)}
+
+.chart-card{padding:16px;display:flex;flex-direction:column;gap:10px}
+.chart-tools{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.seg{display:flex;background:var(--panel-2);border:1px solid var(--hairline);border-radius:var(--r-s);padding:2px;gap:2px;flex-wrap:wrap}
+.seg button{font-size:11.5px;font-weight:600;color:var(--ink-3);padding:4px 10px;border-radius:4px;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(11,11,11,.09)}
+.chart-wrap{position:relative;direction:ltr}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-tip{position:absolute;z-index:20;pointer-events:none;background:var(--ink);color:var(--paper);
+  border-radius:var(--r-s);padding:8px 12px;font-size:12px;line-height:1.55;box-shadow:var(--shadow-pop);
+  opacity:0;transition:opacity .08s;white-space:nowrap;direction:rtl}
+.chart-tip.show{opacity:1}
+.chart-tip .d{color:#c3c2b7;font-size:11px;direction:ltr;text-align:end}
+.axis-txt{font-family:var(--f-body);font-size:10.5px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.grid-ln{stroke:var(--hairline);stroke-width:1}
+.base-ln{stroke:var(--baseline);stroke-width:1}
+
+/* ============================ sale vs rent ============================ */
+.svr{display:grid;gap:12px}
+@media(min-width:900px){.svr{grid-template-columns:repeat(5,1fr)}}
+@media(min-width:560px) and (max-width:899px){.svr{grid-template-columns:repeat(2,1fr)}}
+.svr .cell{padding:13px 15px}
+.svr .cell .l{font-size:11.5px;font-weight:600;color:var(--ink-3)}
+.svr .cell .v{font-family:var(--f-display);font-size:18px;font-weight:700;margin-top:3px;white-space:nowrap}
+.svr .cell .s{font-size:11px;color:var(--ink-3);margin-top:2px}
+.svr-formula{margin-top:10px;padding:11px 15px;background:var(--accent-wash);border:1px solid #d4e4f8;
+  border-radius:var(--r-m);font-size:13px;color:#173f66;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.svr-formula b{font-weight:700}
+
+/* ============================ filters ============================ */
+.filters-toggle{display:none;width:100%;align-items:center;justify-content:space-between;
+  font-size:13px;font-weight:700;color:var(--ink-2)}
+.filters-toggle .chev{transition:transform .18s}
+.filters.open .filters-toggle .chev{transform:rotate(180deg)}
+.filters-body{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+@media(max-width:719px){
+  .filters-toggle{display:flex}
+  .filters-body{display:none;padding-top:10px}
+  .filters.open .filters-body{display:flex}
+  .search input{font-size:16px}
+}
+.filters{display:flex;flex-direction:column;align-items:stretch}
+.filters .grp{display:flex;align-items:center;gap:6px}
+.filters .grp>span{font-size:11.5px;font-weight:600;color:var(--ink-3)}
+select.ctl{height:30px;border:1px solid var(--hairline);border-radius:var(--r-s);background:var(--panel);
+  font-size:12px;font-weight:600;color:var(--ink-2);padding-inline:8px 4px}
+select.ctl:hover{border-color:var(--baseline)}
+.link-clear{font-size:12px;font-weight:600;color:var(--accent-deep);text-decoration:none}
+.link-clear:hover{text-decoration:underline}
+.filters-note{font-size:11px;color:var(--ink-3)}
+
+/* ============================ table ============================ */
+.tbl-card{overflow:hidden}
+.tbl-scroll{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+.tbl th{font-size:11px;font-weight:700;color:var(--ink-3);text-align:start;
+  padding:9px 12px;border-bottom:1px solid var(--hairline);white-space:nowrap;
+  position:sticky;top:0;background:var(--panel);z-index:2}
+.tbl th button{font:inherit;color:inherit;display:inline-flex;align-items:center;gap:4px}
+.tbl th button:hover{color:var(--ink)}
+.tbl th .arr{font-size:9px;opacity:0;transition:opacity .1s}
+.tbl th[aria-sort] .arr{opacity:1;color:var(--accent-deep)}
+.tbl td{padding:9.5px 12px;border-bottom:1px solid var(--hairline);white-space:nowrap;font-variant-numeric:tabular-nums}
+.tbl tbody tr{cursor:pointer;transition:background .1s}
+.tbl tbody tr:hover{background:var(--accent-wash)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl .nm{font-weight:600;color:var(--ink)}
+.tbl .sub{font-size:11px;color:var(--ink-3);font-weight:400}
+.spark{direction:ltr}
+.tbl-cards{display:none}
+@media(max-width:719px){
+  .tbl-scroll{display:none}
+  .tbl-cards{display:flex;flex-direction:column}
+  .tcard{display:flex;flex-direction:column;gap:7px;padding:13px 15px;border-bottom:1px solid var(--hairline);cursor:pointer}
+  .tcard:hover{background:var(--accent-wash)}
+  .tcard:last-child{border-bottom:none}
+  .tcard .r1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .tcard .r1 b{font-size:14px}
+  .tcard .r2{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;color:var(--ink-2)}
+  .tcard .r2 .num{font-weight:600}
+}
+
+/* ============================ rankings tabs ============================ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{font-size:12.5px;font-weight:600;color:var(--ink-3);padding:9px 13px;white-space:nowrap;
+  border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.rank-grid{display:grid;gap:0 26px;padding:8px 6px}
+@media(min-width:700px){.rank-grid{grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(5,auto)}}
+
+/* ============================ compare ============================ */
+.cmp-pick{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.cmp-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;
+  border:1px solid var(--hairline);background:var(--panel);border-radius:99px;padding:5px 7px 5px 12px}
+.cmp-chip i{width:9px;height:9px;border-radius:3px;flex:none}
+.cmp-chip button{color:var(--ink-3);padding:0 3px;font-size:14px;line-height:1}
+.cmp-chip button:hover{color:var(--down)}
+.cmp-add{position:relative}
+.cmp-add>button{font-size:12.5px;font-weight:600;color:var(--accent-deep);border:1px dashed var(--baseline);
+  border-radius:99px;padding:5px 14px}
+.cmp-add>button:hover{border-color:var(--accent);background:var(--accent-wash)}
+.cmp-add .search-pop{inset-inline:auto 0;min-width:280px}
+.cmp-body{display:flex;flex-direction:column}
+.cmp-metric{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;padding:11px 14px;border-bottom:1px solid var(--hairline);align-items:center}
+.cmp-metric:last-child{border-bottom:none}
+@media(max-width:640px){.cmp-metric{grid-template-columns:1fr}}
+.cmp-metric .l{font-size:12px;font-weight:700;color:var(--ink-2)}
+.cmp-bars{display:flex;flex-direction:column;gap:5px}
+.cmp-bar{display:grid;grid-template-columns:minmax(90px,150px) 1fr auto;gap:10px;align-items:center;font-size:12px}
+.cmp-bar .who{color:var(--ink-2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-bar .tr{height:7px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.cmp-bar .tr i{display:block;height:100%;border-radius:99px;transition:width .45s cubic-bezier(.3,.7,.2,1)}
+.cmp-bar .vl{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cmp-bar.best .who,.cmp-bar.best .vl{color:var(--accent-deep)}
+.cmp-bar.best .vl::after{content:" ★";font-size:10px}
+.cmp-empty{padding:26px;text-align:center;color:var(--ink-3);font-size:13px}
+
+/* ============================ insights / confidence ============================ */
+.grid-insight{display:grid;gap:14px}
+@media(min-width:900px){.grid-insight{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.insights{padding:16px;display:flex;flex-direction:column;gap:2px}
+.insight{display:flex;gap:11px;padding:9px 2px;font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+.insight::before{content:"";flex:none;width:7px;height:7px;border-radius:99px;background:var(--accent);margin-top:7px}
+.insight b{color:var(--ink);font-weight:700}
+.conf-card{padding:16px;display:flex;flex-direction:column;gap:10px}
+.conf-big{display:flex;align-items:center;gap:10px}
+.conf-big .conf{font-size:14px}
+.conf-meter{height:7px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.conf-meter i{display:block;height:100%;border-radius:99px}
+.conf-note{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+
+/* ============================ transactions ============================ */
+.tx-note{font-size:11px;color:var(--ink-3)}
+
+/* ============================ sources ============================ */
+details.src{border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--panel)}
+details.src summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;
+  padding:13px 16px;font-weight:700;font-size:13.5px}
+details.src summary::-webkit-details-marker{display:none}
+details.src summary .chev{margin-inline-start:auto;transition:transform .18s;color:var(--ink-3)}
+details.src[open] summary .chev{transform:rotate(180deg)}
+.src-body{padding:2px 16px 16px;display:grid;gap:16px;font-size:13px;color:var(--ink-2);line-height:1.65}
+@media(min-width:800px){.src-body{grid-template-columns:1fr 1fr}}
+.src-body h4{font-size:12.5px;margin-bottom:5px;color:var(--ink)}
+.src-body ul{padding-inline-start:18px;display:flex;flex-direction:column;gap:3px}
+.src-types{display:flex;flex-direction:column;gap:7px}
+.src-type{display:flex;gap:9px;align-items:baseline}
+.src-type b{flex:none;font-size:12px;background:var(--panel-2);border:1px solid var(--hairline);
+  border-radius:var(--r-s);padding:1px 8px;color:var(--ink)}
+
+/* ============================ footer ============================ */
+footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:20px;background:var(--panel)}
+.foot-in{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:12px;color:var(--ink-3)}
+
+/* mobile sticky mode bar */
+.m-mode{display:none}
+@media(max-width:759px){
+  .m-mode{display:flex;position:sticky;top:52px;z-index:50;background:rgba(249,249,247,.94);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);padding:8px 20px;justify-content:center}
+}
+.kpi-scroll{overflow-x:auto}
+@media(max-width:699px){
+  .kpis{grid-template-columns:repeat(6,minmax(150px,1fr));min-width:940px}
+  .kpi-scroll{margin-inline:-20px;padding-inline:20px;scrollbar-width:none}
+  .kpi-scroll::-webkit-scrollbar{display:none}
+}
+
+.fade-swap{animation:fadeSwap .3s ease both}
+@keyframes fadeSwap{from{opacity:.35}to{opacity:1}}
+</style>
+
+<!-- ============================ MARKUP ============================ -->
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <b data-i="brand">נדל״ן ישראל</b>
+      <span>Property Intelligence</span>
+    </div>
+    <nav class="main" aria-label="ניווט" id="mainNav"></nav>
+    <div class="top-end">
+      <span class="updated" id="updatedTxt"></span>
+      <span class="badge-demo" data-i="demoBadge">נתוני הדגמה</span>
+      <div class="lang" role="group" aria-label="שפה">
+        <button id="langHe" aria-pressed="true">HE</button>
+        <button id="langEn" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="command">
+  <div class="wrap command-in">
+    <div>
+      <h1 data-i="h1">שוק הנדל״ן בישראל</h1>
+      <p class="sub" data-i="h1sub">מחירים, מגמות והשוואות — מכל הארץ ועד לרמת השכונה.</p>
+    </div>
+    <div class="command-row">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg>
+        <input id="searchInput" type="search" autocomplete="off" role="combobox"
+               aria-expanded="false" aria-controls="searchPop" placeholder="חפש עיר, שכונה או רחוב...">
+        <div class="search-pop" id="searchPop" role="listbox"></div>
+      </div>
+      <div class="mode" role="group" aria-label="מצב שוק" id="modeToggle">
+        <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
+        <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
+      </div>
+    </div>
+    <nav class="crumbs" aria-label="מיקום" id="crumbs"></nav>
+  </div>
+</div>
+
+<div class="m-mode">
+  <div class="mode" role="group" aria-label="מצב שוק" id="modeToggleM">
+    <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
+    <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- KPI strip -->
+  <section class="blk" id="overview">
+    <div class="blk-head">
+      <h2 id="kpiTitle"></h2>
+      <span class="note" id="kpiNote"></span>
+    </div>
+    <div class="kpi-scroll"><div class="kpis" id="kpis"></div></div>
+  </section>
+
+  <!-- Map + rankings -->
+  <section class="blk" id="map">
+    <div class="blk-head">
+      <h2 data-i="mapTitle">מפת מחירי הנדל״ן בישראל</h2>
+      <span class="note" data-i="mapNote">לחיצה על אזור מעדכנת את כל הלוח</span>
+    </div>
+    <div class="card map-card">
+      <div class="map-tools" role="group" aria-label="מדד מפה" id="mapMetricBtns"></div>
+      <div class="map-stage">
+        <div class="map-holder">
+          <svg id="mapSvg" role="img" aria-label="מפת ישראל"></svg>
+          <div class="map-tip" id="mapTip"></div>
+        </div>
+        <div class="map-side">
+          <div class="rank-title" id="mapRankTitle"></div>
+          <div class="rank-list" id="mapRankList"></div>
+          <div class="map-scale">
+            <span id="scaleLow"></span><span class="bar" aria-hidden="true"></span><span id="scaleHigh"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile + trend chart -->
+  <section class="blk">
+    <div class="grid-main">
+      <div class="card chart-card">
+        <div class="chart-tools">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
+            <span class="note" id="chartSub" style="font-size:12px;color:var(--ink-3)"></span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="seg" role="group" aria-label="מדד" id="chartMetricBtns"></div>
+            <div class="seg" role="group" aria-label="תקופה" id="periodBtns"></div>
+          </div>
+        </div>
+        <div class="chart-wrap" id="chartWrap">
+          <svg id="chartSvg"></svg>
+          <div class="chart-tip" id="chartTip"></div>
+        </div>
+      </div>
+      <div class="card profile" id="profileCard"></div>
+    </div>
+  </section>
+
+  <!-- Sale vs Rent -->
+  <section class="blk">
+    <div class="blk-head">
+      <h2 data-i="svrTitle">מכירה מול שכירות</h2>
+      <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
+    </div>
+    <div class="svr" id="svrGrid"></div>
+    <div class="svr-formula" id="svrFormula"></div>
+  </section>
+
+  <!-- Neighborhood / area table -->
+  <section class="blk" id="table">
+    <div class="blk-head">
+      <h2 id="tblTitle"></h2>
+      <span class="note" id="tblCount"></span>
+    </div>
+    <div class="card" style="padding:12px 14px;margin-bottom:10px">
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="card tbl-card">
+      <div class="tbl-scroll"><table class="tbl" id="tbl"></table></div>
+      <div class="tbl-cards" id="tblCards"></div>
+    </div>
+  </section>
+
+  <!-- Market rankings -->
+  <section class="blk" id="rankings">
+    <div class="blk-head">
+      <h2 data-i="rankTitle">מה קורה בשוק?</h2>
+      <span class="note" id="rankScope"></span>
+    </div>
+    <div class="card" style="padding:4px 14px 10px">
+      <div class="tabs" role="tablist" id="rankTabs"></div>
+      <div class="rank-grid" id="rankGrid"></div>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="blk" id="compare">
+    <div class="blk-head">
+      <h2 data-i="cmpTitle">השוואת אזורים</h2>
+      <span class="note" data-i="cmpNote">עד ארבעה אזורים · ★ = המוביל במדד</span>
+    </div>
+    <div class="card" style="padding:13px 14px;margin-bottom:10px">
+      <div class="cmp-pick" id="cmpPick"></div>
+    </div>
+    <div class="card cmp-body" id="cmpBody"></div>
+  </section>
+
+  <!-- Insights + confidence -->
+  <section class="blk">
+    <div class="grid-insight">
+      <div>
+        <div class="blk-head"><h2 data-i="insTitle">תובנות מהנתונים</h2>
+          <span class="note" data-i="insNote">מחושב אוטומטית מהנתונים המוצגים</span></div>
+        <div class="card insights" id="insights"></div>
+      </div>
+      <div>
+        <div class="blk-head"><h2 data-i="confTitle">רמת ודאות</h2></div>
+        <div class="card conf-card" id="confCard"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent transactions -->
+  <section class="blk" id="txSection">
+    <div class="blk-head">
+      <h2 data-i="txTitle">עסקאות אחרונות באזור</h2>
+      <span class="tx-note"><span data-i="txNote">שורות להמחשת המבנה בלבד · </span><span class="badge-demo" data-i="demoBadge">נתוני הדגמה</span></span>
+    </div>
+    <div class="card tbl-card">
+      <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="blk">
+    <details class="src">
+      <summary>
+        <span data-i="srcTitle">מקורות ומתודולוגיה</span>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="src-body">
+        <div>
+          <h4 data-i="srcATitle">ארכיטקטורת המקורות בגרסת הייצור</h4>
+          <p data-i="srcAText">המערכת בנויה לשלב מקורות רשמיים ומסחריים, ביניהם:</p>
+          <ul>
+            <li data-i="srcA1">הלשכה המרכזית לסטטיסטיקה (הלמ״ס)</li>
+            <li data-i="srcA2">מידע עסקאות נדל״ן של רשות המסים</li>
+            <li data-i="srcA3">data.gov.il — מאגרי מידע ממשלתיים פתוחים</li>
+            <li data-i="srcA4">פידים מורשים של מודעות ונכסים, ככל שמותר משפטית</li>
+          </ul>
+          <p style="margin-top:8px" data-i="srcADemo">בגרסת הדגמה זו כל הערכים הם נתונים פיקטיביים לצורכי אב-טיפוס ואינם סטטיסטיקה רשמית.</p>
+        </div>
+        <div class="src-types">
+          <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
+          <div class="src-type"><b data-i="srcB1a">עסקאות בפועל</b><span data-i="srcB1b">מחירי עסקאות שנחתמו ודווחו (רשות המסים)</span></div>
+          <div class="src-type"><b data-i="srcB2a">מחירים מבוקשים</b><span data-i="srcB2b">מחירי פרסום במודעות — אינם מחירי סגירה</span></div>
+          <div class="src-type"><b data-i="srcB3a">אומדנים</b><span data-i="srcB3b">חישובים סטטיסטיים כגון תשואה ברוטו משוערת</span></div>
+          <div class="src-type"><b data-i="srcB4a">מדדים רשמיים</b><span data-i="srcB4b">מדדי מחירי דיור של הלמ״ס</span></div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span id="footLeft"></span>
+    <span data-i="footRight">אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   1 · DEMO DATA MODEL
+   The UI only reads through the selectors in §3 — replacing this object
+   with API responses of the same shape requires no UI changes.
+   ===================================================================== */
+
+const UPDATED_AT = "2026-08";
+
+/* location: {id,type,parent,he,en,lat,lng, base:{price,sqm,rent,yoy,y3,rentYoy,tx,listings}} */
+const LOCATIONS = [
+  {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,
+    base:{price:2310000,sqm:26400,rent:5950,yoy:3.1,y3:9.8,rentYoy:4.2,tx:108400,listings:74200}},
+
+  {id:"d-north",type:"district",parent:"il",he:"מחוז הצפון",en:"Northern District",lat:32.95,lng:35.4,
+    base:{price:1410000,sqm:14900,rent:3600,yoy:3.8,y3:11.2,rentYoy:4.0,tx:12300,listings:8900}},
+  {id:"d-haifa",type:"district",parent:"il",he:"מחוז חיפה",en:"Haifa District",lat:32.6,lng:35.0,
+    base:{price:1640000,sqm:18300,rent:4150,yoy:4.6,y3:13.8,rentYoy:5.4,tx:13600,listings:9400}},
+  {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,
+    base:{price:2560000,sqm:27900,rent:6300,yoy:3.4,y3:10.6,rentYoy:4.4,tx:31200,listings:21500}},
+  {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,
+    base:{price:4120000,sqm:46800,rent:8900,yoy:3.9,y3:12.4,rentYoy:5.1,tx:14900,listings:11800}},
+  {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
+    base:{price:2340000,sqm:27300,rent:5700,yoy:2.2,y3:7.9,rentYoy:3.1,tx:11800,listings:8300}},
+  {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
+    base:{price:1380000,sqm:15200,rent:3750,yoy:5.2,y3:14.6,rentYoy:5.8,tx:24600,listings:16100}},
+
+  {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,
+    base:{price:4480000,sqm:52400,rent:9600,yoy:4.1,y3:12.9,rentYoy:5.6,tx:8240,listings:6900}},
+  {id:"ramat-gan",type:"city",parent:"d-ta",he:"רמת גן",en:"Ramat Gan",lat:32.07,lng:34.825,
+    base:{price:2980000,sqm:34200,rent:6900,yoy:3.6,y3:11.1,rentYoy:4.7,tx:3160,listings:2500}},
+  {id:"herzliya",type:"city",parent:"d-ta",he:"הרצליה",en:"Herzliya",lat:32.166,lng:34.84,
+    base:{price:3890000,sqm:38600,rent:8300,yoy:2.9,y3:9.4,rentYoy:3.9,tx:1870,listings:1500}},
+  {id:"jerusalem",type:"city",parent:"d-jm",he:"ירושלים",en:"Jerusalem",lat:31.77,lng:35.21,
+    base:{price:2520000,sqm:28900,rent:5900,yoy:2.4,y3:8.1,rentYoy:3.2,tx:7940,listings:5900}},
+  {id:"haifa",type:"city",parent:"d-haifa",he:"חיפה",en:"Haifa",lat:32.79,lng:34.99,
+    base:{price:1720000,sqm:19400,rent:4300,yoy:4.9,y3:14.6,rentYoy:5.7,tx:5230,listings:3900}},
+  {id:"petah-tikva",type:"city",parent:"d-center",he:"פתח תקווה",en:"Petah Tikva",lat:32.09,lng:34.887,
+    base:{price:2340000,sqm:25800,rent:5850,yoy:3.7,y3:11.8,rentYoy:4.5,tx:4120,listings:3100}},
+  {id:"rishon",type:"city",parent:"d-center",he:"ראשון לציון",en:"Rishon LeZion",lat:31.96,lng:34.8,
+    base:{price:2290000,sqm:26100,rent:5700,yoy:3.2,y3:10.2,rentYoy:4.1,tx:4480,listings:3400}},
+  {id:"netanya",type:"city",parent:"d-center",he:"נתניה",en:"Netanya",lat:32.32,lng:34.855,
+    base:{price:2180000,sqm:24300,rent:5350,yoy:3.9,y3:12.3,rentYoy:4.9,tx:3950,listings:3200}},
+  {id:"kfar-saba",type:"city",parent:"d-center",he:"כפר סבא",en:"Kfar Saba",lat:32.175,lng:34.912,
+    base:{price:2650000,sqm:27700,rent:6200,yoy:2.8,y3:9.1,rentYoy:3.6,tx:1720,listings:1300}},
+  {id:"raanana",type:"city",parent:"d-center",he:"רעננה",en:"Ra'anana",lat:32.19,lng:34.87,
+    base:{price:3120000,sqm:30900,rent:7100,yoy:2.5,y3:8.7,rentYoy:3.3,tx:1340,listings:1050}},
+  {id:"modiin",type:"city",parent:"d-center",he:"מודיעין-מכבים-רעות",en:"Modi'in",lat:31.9,lng:35.01,
+    base:{price:2560000,sqm:24600,rent:6050,yoy:3.0,y3:9.6,rentYoy:3.8,tx:1610,listings:1200}},
+  {id:"ashdod",type:"city",parent:"d-south",he:"אשדוד",en:"Ashdod",lat:31.8,lng:34.65,
+    base:{price:1860000,sqm:19800,rent:4600,yoy:4.4,y3:13.1,rentYoy:5.1,tx:3080,listings:2300}},
+  {id:"beer-sheva",type:"city",parent:"d-south",he:"באר שבע",en:"Be'er Sheva",lat:31.25,lng:34.79,
+    base:{price:1290000,sqm:13900,rent:3650,yoy:5.6,y3:16.2,rentYoy:6.3,tx:4360,listings:3300}},
+
+  /* neighborhoods — dx/dy are map offsets (viewBox px) around the city dot */
+  {id:"old-north",type:"nbhd",parent:"tlv",he:"הצפון הישן",en:"Old North",dx:2,dy:-12,
+    base:{price:5620000,sqm:61300,rent:11400,yoy:3.8,y3:11.9,rentYoy:5.2,tx:412,listings:340}},
+  {id:"florentin",type:"nbhd",parent:"tlv",he:"פלורנטין",en:"Florentin",dx:-4,dy:12,
+    base:{price:3540000,sqm:49800,rent:8700,yoy:5.2,y3:15.8,rentYoy:6.4,tx:268,listings:230}},
+  {id:"neve-tzedek",type:"nbhd",parent:"tlv",he:"נווה צדק",en:"Neve Tzedek",dx:-9,dy:6,
+    base:{price:6940000,sqm:68900,rent:12800,yoy:2.9,y3:9.2,rentYoy:3.8,tx:96,listings:70}},
+  {id:"ramat-aviv",type:"nbhd",parent:"tlv",he:"רמת אביב",en:"Ramat Aviv",dx:5,dy:-22,
+    base:{price:4860000,sqm:47200,rent:9900,yoy:3.1,y3:9.8,rentYoy:4.1,tx:184,listings:150}},
+  {id:"lev-hair",type:"nbhd",parent:"tlv",he:"לב העיר",en:"City Center",dx:6,dy:0,
+    base:{price:4120000,sqm:55600,rent:9300,yoy:4.4,y3:13.4,rentYoy:5.5,tx:351,listings:290}},
+
+  {id:"rehavia",type:"nbhd",parent:"jerusalem",he:"רחביה",en:"Rehavia",dx:-8,dy:-3,
+    base:{price:3780000,sqm:39400,rent:7600,yoy:2.1,y3:7.2,rentYoy:2.9,tx:118,listings:90}},
+  {id:"baka",type:"nbhd",parent:"jerusalem",he:"בקעה",en:"Baka",dx:-2,dy:10,
+    base:{price:3420000,sqm:36800,rent:7100,yoy:2.7,y3:8.6,rentYoy:3.4,tx:142,listings:110}},
+  {id:"katamon",type:"nbhd",parent:"jerusalem",he:"קטמון הישנה",en:"Old Katamon",dx:-11,dy:7,
+    base:{price:2980000,sqm:34100,rent:6600,yoy:3.3,y3:9.9,rentYoy:3.9,tx:156,listings:120}},
+  {id:"jm-center",type:"nbhd",parent:"jerusalem",he:"מרכז העיר",en:"City Center",dx:2,dy:-9,
+    base:{price:2460000,sqm:31900,rent:6100,yoy:1.8,y3:6.4,rentYoy:2.6,tx:203,listings:170}},
+
+  {id:"carmel",type:"nbhd",parent:"haifa",he:"הכרמל",en:"The Carmel",dx:-4,dy:8,
+    base:{price:2240000,sqm:23600,rent:5200,yoy:4.2,y3:12.6,rentYoy:5.0,tx:388,listings:300}},
+  {id:"hadar",type:"nbhd",parent:"haifa",he:"הדר הכרמל",en:"Hadar",dx:4,dy:-2,
+    base:{price:1080000,sqm:14100,rent:3300,yoy:6.1,y3:18.4,rentYoy:6.8,tx:294,listings:250}},
+  {id:"neve-shaanan-h",type:"nbhd",parent:"haifa",he:"נווה שאנן",en:"Neve Sha'anan",dx:10,dy:6,
+    base:{price:1340000,sqm:15800,rent:3700,yoy:5.0,y3:15.1,rentYoy:5.6,tx:246,listings:200}},
+
+  {id:"em-hamoshavot",type:"nbhd",parent:"petah-tikva",he:"אם המושבות",en:"Em HaMoshavot",dx:-3,dy:-10,
+    base:{price:3120000,sqm:30850,rent:7450,yoy:3.7,y3:11.3,rentYoy:4.6,tx:184,listings:150}},
+  {id:"kfar-ganim",type:"nbhd",parent:"petah-tikva",he:"כפר גנים",en:"Kfar Ganim",dx:-8,dy:8,
+    base:{price:2760000,sqm:27900,rent:6500,yoy:3.4,y3:10.4,rentYoy:4.2,tx:221,listings:180}},
+  {id:"pt-center",type:"nbhd",parent:"petah-tikva",he:"מרכז העיר",en:"City Center",dx:6,dy:2,
+    base:{price:1890000,sqm:22400,rent:5100,yoy:4.1,y3:12.7,rentYoy:4.9,tx:317,listings:260}},
+
+  {id:"ir-yamim",type:"nbhd",parent:"netanya",he:"עיר ימים",en:"Ir Yamim",dx:-7,dy:6,
+    base:{price:3960000,sqm:34700,rent:8100,yoy:3.5,y3:10.9,rentYoy:4.4,tx:152,listings:120}},
+  {id:"netanya-center",type:"nbhd",parent:"netanya",he:"מרכז העיר",en:"City Center",dx:4,dy:-4,
+    base:{price:1780000,sqm:21200,rent:4700,yoy:4.3,y3:13.2,rentYoy:5.2,tx:289,listings:240}},
+
+  {id:"rg-center",type:"nbhd",parent:"ramat-gan",he:"מרכז העיר",en:"City Center",dx:3,dy:-6,
+    base:{price:2720000,sqm:33500,rent:6600,yoy:3.9,y3:12.0,rentYoy:4.8,tx:236,listings:190}},
+  {id:"tel-binyamin",type:"nbhd",parent:"ramat-gan",he:"תל בנימין",en:"Tel Binyamin",dx:-4,dy:5,
+    base:{price:3340000,sqm:36900,rent:7300,yoy:3.2,y3:9.7,rentYoy:3.9,tx:34,listings:28}},
+];
+
+const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
+
+const STREETS = {
+  tlv:["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
+  jerusalem:["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
+  haifa:["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
+  "petah-tikva":["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
+  "ramat-gan":["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
+  generic:["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"]
+};
+
+/* -------- deterministic pseudo-random (stable across loads) -------- */
+function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
+
+/* -------- historical monthly series, generated backwards ----------
+   national year-over-year pattern (most recent year first), scaled per
+   location by its own yoy vs. the national figure                      */
+const NATIONAL_CURVE=[3.1,4.0,2.4,-1.8,14.8,8.2,5.4,6.1,7.9,6.8];
+const seriesCache={};
+function seriesFor(id){
+  if(seriesCache[id])return seriesCache[id];
+  const l=LOC[id],r=rng(seedOf(id)),months=121;
+  const scale=Math.min(1.7,Math.max(.55,l.base.yoy/3.1));
+  const pts=[];
+  let price=l.base.price,rent=l.base.rent,sqm=l.base.sqm;
+  const now=new Date(2026,7,1);
+  for(let i=0;i<months;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    pts.push({date:d,price:Math.round(price),sqm:Math.round(sqm),rent:Math.round(rent),
+      yield:+(rent*12/price*100).toFixed(2)});
+    const yr=Math.min(9,Math.floor(i/12));
+    const annual=(yr===0?l.base.yoy:NATIONAL_CURVE[yr]*scale);
+    const annualRent=(yr===0?l.base.rentYoy:NATIONAL_CURVE[yr]*scale*.8);
+    const mo=annual/100/12, moR=annualRent/100/12;
+    const noise=(r()-.5)*.006, noiseR=(r()-.5)*.004;
+    price=price/(1+mo+noise); sqm=sqm/(1+mo+noise); rent=rent/(1+moR+noiseR);
+  }
+  pts.reverse();
+  seriesCache[id]=pts;
+  return pts;
+}
+
+/* -------- demo transactions (sale mode) -------- */
+function txFor(id){
+  const l=LOC[id];
+  const cityId=l.type==="nbhd"?l.parent:(l.type==="city"?l.id:null);
+  const streets=STREETS[cityId]||STREETS.generic;
+  const r=rng(seedOf(id+"tx"));
+  const rows=[];
+  const roomsOpts=[2,3,3,4,4,4,5];
+  for(let i=0;i<8;i++){
+    const days=Math.floor(r()*88)+2;
+    const d=new Date(2026,7,24); d.setDate(d.getDate()-days);
+    const rooms=roomsOpts[Math.floor(r()*roomsOpts.length)];
+    const area=Math.round((rooms*24+18)*(0.9+r()*.25));
+    const floor=Math.floor(r()*9)+1;
+    const psm=Math.round(l.base.sqm*(0.86+r()*.3));
+    rows.push({date:d,street:streets[Math.floor(r()*streets.length)],rooms,area,floor,
+      price:Math.round(psm*area/1000)*1000,psm});
+  }
+  rows.sort((a,b)=>b.date-a.date);
+  return rows;
+}
+
+/* =====================================================================
+   2 · i18n
+   ===================================================================== */
+const I18N={
+he:{
+  brand:"נדל״ן ישראל", demoBadge:"נתוני הדגמה", updated:"עודכן לאחרונה: אוגוסט 2026",
+  h1:"שוק הנדל״ן בישראל", h1sub:"מחירים, מגמות והשוואות — מכל הארץ ועד לרמת השכונה.",
+  searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
+  navOverview:"סקירת שוק",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
+  kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"שוק המכירה · 12 החודשים האחרונים", kpiNoteRent:"שוק השכירות · 12 החודשים האחרונים",
+  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 חודשים", tx:"מספר עסקאות", y3:"שינוי ב-3 שנים",
+  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו משוערת", listings:"היצע להשכרה",
+  vsPrev:"לעומת התקופה הקודמת", est:"אומדן", perMonth:"לחודש", perYear:"לשנה",
+  mapTitle:"מפת מחירי הנדל״ן בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
+  mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
+  rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
+  trendTitle:"מגמת מחירים", chartOf:"מדד",
+  cPrice:"מחיר נכס",cPsm:"מחיר למ״ר",cRent:"שכירות",cYield:"תשואה",
+  p6m:"6 חודשים",p1y:"שנה",p3y:"3 שנים",p5y:"5 שנים",p10y:"10 שנים",
+  svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן",
+  svrBuy:"מחיר רכישה ממוצע",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
+  svrYears:"שנות שכירות", svrFormula:(p,r,y)=>`אם נכס באזור עולה <b class="num">${p}</b> והשכירות הממוצעת היא <b class="num">${r}</b> לחודש — התשואה הברוטו המשוערת היא <b class="num">${y}</b>.`,
+  tblNbhd:"שכונות באזור", tblCities:"ערים באזור", tblDistricts:"מחוזות בישראל",
+  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי 12 ח׳",thTx:"עסקאות",thListings:"מודעות",thTrend:"מגמה",thConf:"ודאות",
+  areas:"אזורים", filtered:"מסונן",
+  fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"מצב",
+  rAll:"הכל",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
+  tApt:"דירה",tGarden:"דירת גן",tPh:"פנטהאוז",tHouse:"בית פרטי",
+  aAll:"הכל",a60:"עד 60 מ״ר",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
+  cAll:"הכל",cNew:"חדש",cUsed:"יד שנייה", clearFilters:"אפס מסננים",
+  filterNote:"המסננים מדגימים התאמת מקדמים על נתוני ההדגמה",
+  rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
+  tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"העלייה המתונה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
+  cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · ★ = המוביל במדד", cmpAdd:"+ הוסף אזור",
+  cmpEmpty:"בחר עד ארבעה אזורים להשוואה", cmpMax:"עד 4 אזורים",
+  insTitle:"תובנות מהנתונים", insNote:"מחושב אוטומטית מהנתונים המוצגים",
+  confTitle:"רמת ודאות",
+  confHigh:"רמת ודאות גבוהה",confMed:"רמת ודאות בינונית",confLow:"רמת ודאות נמוכה",
+  confBasedOn:n=>`מבוסס על <b class="num">${n}</b> עסקאות ב-12 החודשים האחרונים`,
+  confBasedOnLow:n=>`מבוסס על <b class="num">${n}</b> עסקאות בלבד`,
+  confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
+  confMedNote:"מדגם בינוני — ייתכנו סטיות; מומלץ לבחון גם את שכונות הסביבה.",
+  confLowNote:"מדגם קטן מאוד — הנתונים אינדיקטיביים בלבד ואינם מספקים בסיס להחלטה.",
+  txTitle:"עסקאות אחרונות באזור", txNote:"שורות להמחשת המבנה בלבד · ",
+  thDate:"תאריך",thStreet:"רחוב",thRooms:"חדרים",thAreaSqm:"שטח",thFloor:"קומה",thTxPrice:"מחיר",thTxPsm:"מחיר למ״ר",
+  srcTitle:"מקורות ומתודולוגיה",
+  srcATitle:"ארכיטקטורת המקורות בגרסת הייצור",
+  srcAText:"המערכת בנויה לשלב מקורות רשמיים ומסחריים, ביניהם:",
+  srcA1:"הלשכה המרכזית לסטטיסטיקה (הלמ״ס)", srcA2:"מידע עסקאות נדל״ן של רשות המסים",
+  srcA3:"data.gov.il — מאגרי מידע ממשלתיים פתוחים", srcA4:"פידים מורשים של מודעות ונכסים, ככל שמותר משפטית",
+  srcADemo:"בגרסת הדגמה זו כל הערכים הם נתונים פיקטיביים לצורכי אב-טיפוס ואינם סטטיסטיקה רשמית.",
+  srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
+  srcB1a:"עסקאות בפועל",srcB1b:"מחירי עסקאות שנחתמו ודווחו (רשות המסים)",
+  srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
+  srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
+  srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
+  footLeft:"© 2026 נדל״ן ישראל · Property Intelligence · כל הערכים בעמוד הם נתוני הדגמה",
+  footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
+  cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
+  monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
+  inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
+},
+en:{
+  brand:"Israel Real Estate", demoBadge:"Demo data", updated:"Last updated: August 2026",
+  h1:"The Israeli Real-Estate Market", h1sub:"Prices, trends and comparisons — from the whole country down to the neighborhood.",
+  searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
+  navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Neighborhoods",navCompare:"Compare",
+  kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Sales market · trailing 12 months", kpiNoteRent:"Rental market · trailing 12 months",
+  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12-month change", tx:"Transactions", y3:"3-year change",
+  avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Rental supply",
+  vsPrev:"vs. previous period", est:"estimate", perMonth:"per month", perYear:"per year",
+  mapTitle:"Israel real-estate price map", mapNote:"Click a region to update the whole board",
+  mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
+  rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
+  trendTitle:"Price trend", chartOf:"Metric",
+  cPrice:"Property price",cPsm:"Price per m²",cRent:"Rent",cYield:"Yield",
+  p6m:"6M",p1y:"1Y",p3y:"3Y",p5y:"5Y",p10y:"10Y",
+  svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · estimate",
+  svrBuy:"Avg purchase price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
+  svrYears:"years of rent", svrFormula:(p,r,y)=>`If a property here costs <b class="num">${p}</b> and average rent is <b class="num">${r}</b> a month — the estimated gross yield is <b class="num">${y}</b>.`,
+  tblNbhd:"Neighborhoods in this area", tblCities:"Cities in this area", tblDistricts:"Districts of Israel",
+  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"12M change",thTx:"Deals",thListings:"Listings",thTrend:"Trend",thConf:"Confidence",
+  areas:"areas", filtered:"Filtered",
+  fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Condition",
+  rAll:"All",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
+  tApt:"Apartment",tGarden:"Garden apt.",tPh:"Penthouse",tHouse:"House",
+  aAll:"All",a60:"Up to 60 m²",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
+  cAll:"All",cNew:"New",cUsed:"Resale", clearFilters:"Clear filters",
+  filterNote:"Filters apply demo multipliers to the demonstration dataset",
+  rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
+  tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Slowest rising",tYield:"Highest yield",tTx:"Most transactions",
+  cmpTitle:"Compare areas", cmpNote:"Up to four areas · ★ = leader per metric", cmpAdd:"+ Add area",
+  cmpEmpty:"Pick up to four areas to compare", cmpMax:"Up to 4 areas",
+  insTitle:"Data insights", insNote:"Computed automatically from the displayed data",
+  confTitle:"Data confidence",
+  confHigh:"High confidence",confMed:"Medium confidence",confLow:"Low confidence",
+  confBasedOn:n=>`Based on <b class="num">${n}</b> transactions in the last 12 months`,
+  confBasedOnLow:n=>`Based on only <b class="num">${n}</b> transactions`,
+  confHighNote:"A wide sample — the averages reflect this market well.",
+  confMedNote:"A medium sample — expect deviations; check nearby areas too.",
+  confLowNote:"A very small sample — indicative only, not a basis for decisions.",
+  txTitle:"Recent transactions in this area", txNote:"Structural illustration rows · ",
+  thDate:"Date",thStreet:"Street",thRooms:"Rooms",thAreaSqm:"m²",thFloor:"Floor",thTxPrice:"Price",thTxPsm:"Per m²",
+  srcTitle:"Sources & methodology",
+  srcATitle:"Production source architecture",
+  srcAText:"The system is designed to combine official and commercial sources, including:",
+  srcA1:"Israel Central Bureau of Statistics", srcA2:"Israel Tax Authority transaction records",
+  srcA3:"data.gov.il — open government datasets", srcA4:"Licensed listing feeds where legally available",
+  srcADemo:"In this demo build every value is fictional prototype data, not official statistics.",
+  srcBTitle:"Data types — never mixed without labeling",
+  srcB1a:"Closed transactions",srcB1b:"Signed, reported deal prices (Tax Authority)",
+  srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
+  srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
+  srcB4a:"Official indices",srcB4b:"CBS housing price indices",
+  footLeft:"© 2026 Israel Real Estate · Property Intelligence · every value on this page is demo data",
+  footRight:"Prototype · architected for real data-source integration",
+  cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
+  monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  inCity:c=>`in ${c}`, ofParent:p=>`of ${p}`,
+}};
+
+/* =====================================================================
+   3 · STATE + SELECTORS
+   ===================================================================== */
+const state={
+  lang:"he", mode:"sale", locId:"il",
+  mapMetric:"price", chartMetric:"price", period:"3y",
+  filters:{rooms:"all",type:"all",area:"all",cond:"all"},
+  compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
+  sort:{key:"price",dir:-1},
+};
+const T=()=>I18N[state.lang];
+const heName=l=>state.lang==="he"?l.he:l.en;
+
+const childrenOf=id=>LOCATIONS.filter(l=>l.parent===id);
+const cityList=()=>LOCATIONS.filter(l=>l.type==="city");
+const pathOf=id=>{const out=[];let cur=LOC[id];while(cur){out.unshift(cur);cur=cur.parent?LOC[cur.parent]:null}return out};
+
+/* demo filter multipliers — labeled in the UI as demo behavior */
+const M_ROOMS={all:{p:1,s:1,share:1},"12":{p:.62,s:1.12,share:.14},"3":{p:.82,s:1.04,share:.27},"4":{p:1,s:1,share:.36},"5":{p:1.22,s:.97,share:.16},"6":{p:1.55,s:.95,share:.07}};
+const M_TYPE={all:{p:1,s:1,share:1},apt:{p:1,s:1,share:.78},garden:{p:1.18,s:1.06,share:.08},ph:{p:1.65,s:1.34,share:.05},house:{p:1.9,s:1.12,share:.09}};
+const M_AREA={all:1,"60":.68,"6080":.84,"80100":1,"100130":1.2,"130":1.5};
+const M_COND={all:{p:1,share:1},new:{p:1.08,share:.22},used:{p:.985,share:.78}};
+
+function filtersActive(){const f=state.filters;return f.rooms!=="all"||f.type!=="all"||f.area!=="all"||f.cond!=="all"}
+
+/* central metric selector — the only door between data and UI */
+function metricsOf(id){
+  const l=LOC[id],b=l.base,f=state.filters;
+  const mr=M_ROOMS[f.rooms],mt=M_TYPE[f.type],ma=M_AREA[f.area],mc=M_COND[f.cond];
+  const pMul=mr.p*mt.p*ma*mc.p, sMul=mr.s*mt.s*(f.cond==="new"?1.05:1);
+  const share=mr.share*mt.share*mc.share*(f.area==="all"?1:.3);
+  const price=Math.round(b.price*pMul/1000)*1000;
+  const sqm=Math.round(b.sqm*sMul/50)*50;
+  const rent=Math.round(b.rent*pMul*0.92/10)*10 + (f.rooms==="all"&&f.type==="all"&&f.area==="all"&&f.cond==="all"?Math.round(b.rent*0.08/10)*10:0);
+  const area=b.price/b.sqm;
+  const tx=Math.max(3,Math.round(b.tx*share));
+  const listings=Math.max(2,Math.round(b.listings*share));
+  return{
+    price, median:Math.round(price*.93/1000)*1000, sqm,
+    rent, rentMedian:Math.round(rent*.95/10)*10, rentPsm:+(rent/area).toFixed(1),
+    yoy:b.yoy, y3:b.y3, rentYoy:b.rentYoy,
+    tx, listings,
+    grossYield:+(rent*12/price*100).toFixed(2),
+    priceToRent:+(price/(rent*12)).toFixed(1),
+    areaSqm:Math.round(area),
+    confidence:tx>=120?"high":tx>=40?"med":"low",
+  };
+}
+
+const PERIODS={ "6m":7,"1y":13,"3y":37,"5y":61,"10y":121 };
+function seriesSlice(id,metric){
+  const pts=seriesFor(id).slice(-PERIODS[state.period]);
+  return pts.map(p=>({date:p.date,v:p[metric]}));
+}
+
+/* =====================================================================
+   4 · FORMATTERS
+   ===================================================================== */
+const nf=new Intl.NumberFormat("he-IL");
+const fmtInt=n=>nf.format(Math.round(n));
+const fmtNIS=n=>"₪"+fmtInt(n);
+function fmtCompact(n){
+  if(Math.abs(n)>=1e6)return "₪"+(n/1e6).toFixed(n>=1e7?1:2).replace(/\.0+$/,"")+"M";
+  if(Math.abs(n)>=1e3)return "₪"+Math.round(n/1e3)+"K";
+  return "₪"+fmtInt(n);
+}
+const fmtPct=(n,signed=true)=>(signed&&n>0?"+":"")+n.toFixed(1)+"%";
+const deltaCls=n=>n>0.05?"up":n<-0.05?"down":"flat";
+function deltaHTML(n,small){
+  const cls=deltaCls(n);
+  const arrow=cls==="up"?'<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 1l4 5H1z"/></svg>'
+    :cls==="down"?'<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 9L1 4h8z"/></svg>':"";
+  return `<span class="delta ${cls}"${small?' style="font-size:11px"':""}>${arrow}<span class="num">${fmtPct(n)}</span></span>`;
+}
+function fmtMonth(d){const t=T();return t.monthsShort[d.getMonth()]+" "+String(d.getFullYear()).slice(2)}
+const el=(id)=>document.getElementById(id);
+
+/* =====================================================================
+   5 · MAP GEOMETRY
+   ===================================================================== */
+const MAP_W=250,MAP_H=520;
+const proj=(lat,lng)=>[ (lng-34.12)/1.66*MAP_W, (33.38-lat)/3.95*MAP_H ];
+const ISRAEL_PTS=[
+  [33.09,35.10],[33.28,35.57],[33.25,35.65],[32.85,35.68],[32.70,35.62],[32.40,35.57],
+  [31.90,35.53],[31.50,35.47],[31.15,35.40],[30.60,35.20],[29.95,35.05],[29.55,34.97],
+  [29.49,34.90],[29.85,34.68],[30.60,34.50],[30.90,34.38],[31.22,34.27],[31.32,34.36],
+  [31.52,34.51],[31.60,34.56],[31.80,34.63],[32.05,34.74],[32.45,34.86],[32.75,34.96],
+  [32.92,35.03],[33.05,35.09]
+];
+const israelPath=ISRAEL_PTS.map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(","))
+  .join(" ")+" Z";
+/* district bands (lat ranges + optional lng cut), later ones drawn on top */
+const DISTRICT_GEO={
+  "d-south":{lat:[28.9,31.78],lng:[33.9,35.8]},
+  "d-center":{lat:[31.78,32.44],lng:[33.9,35.8]},
+  "d-north":{lat:[32.44,33.4],lng:[33.9,35.8]},
+  "d-jm":{lat:[31.60,31.98],lng:[34.93,35.8]},
+  "d-haifa":{lat:[32.44,32.98],lng:[33.9,35.17]},
+  "d-ta":{lat:[31.99,32.20],lng:[33.9,34.86]},
+};
+const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center":[32.14,34.97],
+  "d-ta":[32.05,34.71],"d-jm":[31.72,35.22],"d-south":[30.7,34.86]};
+
+const HEAT=["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95","#0d366b"];
+function heatColor(t){return HEAT[Math.max(0,Math.min(HEAT.length-1,Math.round(t*(HEAT.length-1))))]}
+function heatText(t){return t>0.42?"#ffffff":"#173f66"}
+
+const MAP_METRICS=[
+  {id:"price",label:()=>T().mAvg,get:m=>m.price,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
+  {id:"sqm",label:()=>T().mPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
+  {id:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
+  {id:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
+  {id:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
+];
+const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
+
+/* =====================================================================
+   6 · RENDERERS
+   ===================================================================== */
+function setStatics(){
+  const t=T();
+  document.documentElement.lang=state.lang;
+  document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
+  document.title=state.lang==="he"?"מודיעין נדל״ן ישראל":"Israel Real Estate Intelligence";
+  document.querySelectorAll("[data-i]").forEach(node=>{
+    const key=node.dataset.i;
+    if(typeof t[key]==="string")node.textContent=t[key];
+  });
+  el("updatedTxt").textContent=t.updated;
+  el("searchInput").placeholder=t.searchPh;
+  el("footLeft").textContent=t.footLeft;
+  el("mainNav").innerHTML=[
+    ["#overview",t.navOverview],["#map",t.navMap],["#rankings",t.navCities],
+    ["#table",t.navNbhd],["#compare",t.navCompare]
+  ].map(([h,l])=>`<a href="${h}">${l}</a>`).join("");
+}
+
+/* ---------- breadcrumb ---------- */
+function renderCrumbs(){
+  const path=pathOf(state.locId);
+  el("crumbs").innerHTML=path.map((l,i)=>{
+    const cur=i===path.length-1;
+    return `<button data-go="${l.id}" ${cur?'aria-current="true"':""}>${heName(l)}</button>`+
+      (cur?"":'<span class="sep">›</span>');
+  }).join("");
+  el("crumbs").querySelectorAll("button[data-go]").forEach(b=>{
+    b.addEventListener("click",()=>selectLocation(b.dataset.go));
+  });
+}
+
+/* ---------- KPI strip ---------- */
+let kpiPrev={};
+function renderKPIs(skeleton){
+  const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
+  el("kpiTitle").textContent=(state.locId==="il"?t.kpiTitleNat:t.kpiTitleFor+heName(l));
+  el("kpiNote").textContent=state.mode==="sale"?t.kpiNoteSale:t.kpiNoteRent;
+  const cards=state.mode==="sale"?[
+    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,d:m.yoy},
+    {k:"median",l:t.medPrice,v:m.median,f:fmtNIS,d:m.yoy-0.3},
+    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v)},
+    {k:"yoy",l:t.yoy,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy)},
+    {k:"tx",l:t.tx,v:m.tx,f:fmtInt,s:"12M"},
+    {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3)},
+  ]:[
+    {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,d:m.rentYoy},
+    {k:"rentMedian",l:t.medRent,v:m.rentMedian,f:fmtNIS,d:m.rentYoy-0.2},
+    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1)},
+    {k:"rentYoy",l:t.yoy,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy)},
+    {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",s:t.est},
+    {k:"listings",l:t.listings,v:m.listings,f:fmtInt},
+  ];
+  el("kpis").innerHTML=cards.map(c=>`
+    <div class="card kpi ${skeleton?"skel":""}">
+      <span class="lbl">${c.l}</span>
+      <span class="val ${c.cls||""}"><span class="num" data-kpi="${c.k}">${c.f(c.v)}</span></span>
+      <span class="cmp">${c.d!==undefined?deltaHTML(c.d,true)+`<span>${t.vsPrev}</span>`:(c.s||"&nbsp;")}</span>
+    </div>`).join("");
+  if(!skeleton&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+    el("kpis").querySelectorAll("[data-kpi]").forEach(node=>{
+      const c=cards.find(x=>x.k===node.dataset.kpi);
+      const from=kpiPrev[c.k];
+      if(typeof from==="number"&&from!==c.v&&isFinite(from)){
+        const t0=performance.now(),dur=380;
+        const step=now=>{
+          const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);
+          node.textContent=c.f(from+(c.v-from)*e);
+          if(p<1)requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+      kpiPrev[c.k]=c.v;
+    });
+  }
+}
+
+/* ---------- map ---------- */
+function mapContext(){
+  const l=LOC[state.locId];
+  if(l.type==="country")return{level:"country",items:childrenOf("il")};
+  if(l.type==="district")return{level:"district",focus:l,items:childrenOf(l.id)};
+  if(l.type==="city")return{level:"city",focus:l,items:childrenOf(l.id)};
+  return{level:"city",focus:LOC[l.parent],items:childrenOf(l.parent),active:l.id};
+}
+function bboxForDistrict(id){
+  const g=DISTRICT_GEO[id];
+  const [x1,y1]=proj(g.lat[1],Math.max(33.9,g.lng[0])),[x2,y2]=proj(g.lat[0],Math.min(35.8,g.lng[1]));
+  return[Math.max(0,x1-8),Math.max(0,y1-8),Math.min(MAP_W,x2+8)-Math.max(0,x1-8),Math.min(MAP_H,y2+8)-Math.max(0,y1-8)];
+}
+function bboxForCity(l){
+  const [x,y]=proj(l.lat,l.lng);
+  return[x-62,y-62,124,124];
+}
+let currentVB=[0,0,MAP_W,MAP_H];
+function animateViewBox(svg,to){
+  const from=currentVB.slice();currentVB=to.slice();
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches){svg.setAttribute("viewBox",to.join(" "));return}
+  const t0=performance.now(),dur=340;
+  const step=now=>{
+    const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);
+    svg.setAttribute("viewBox",from.map((f,i)=>f+(to[i]-f)*e).join(" "));
+    if(p<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function renderMap(){
+  const t=T(),svg=el("mapSvg"),mm=mapMetric(),ctx=mapContext();
+  const vals=ctx.items.map(i=>mm.get(metricsOf(i.id)));
+  const lo=Math.min(...vals),hi=Math.max(...vals);
+  const norm=v=>hi===lo?0.5:(v-lo)/(hi-lo);
+  let inner="";
+  const defs=`<defs><clipPath id="ilClip"><path d="${israelPath}"/></clipPath></defs>`;
+  const silhouette=`<path d="${israelPath}" fill="var(--panel-2)" stroke="var(--baseline)" stroke-width="1"/>`;
+
+  let vb=[0,0,MAP_W,MAP_H], fs=9, dotR=5.6;
+  if(ctx.level==="country"){
+    inner+=`<g clip-path="url(#ilClip)">`;
+    for(const d of ctx.items){
+      const g=DISTRICT_GEO[d.id],tv=norm(mm.get(metricsOf(d.id)));
+      const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
+      inner+=`<rect class="geo" data-loc="${d.id}" x="${x1.toFixed(1)}" y="${y1.toFixed(1)}" width="${(x2-x1).toFixed(1)}" height="${(y2-y1).toFixed(1)}" fill="${heatColor(tv)}"><title>${heName(d)}</title></rect>`;
+    }
+    inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="1.4"/>`;
+    for(const d of ctx.items){
+      const [lx,ly]=proj(...DISTRICT_LABEL[d.id]);
+      const tv=norm(mm.get(metricsOf(d.id)));
+      inner+=`<text class="geo-label ${tv>0.42?"on-dark":""}" x="${lx}" y="${ly}" font-size="8.2" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
+    }
+  }else{
+    vb=ctx.level==="district"?bboxForDistrict(ctx.focus.id):bboxForCity(ctx.focus.type==="city"?ctx.focus:LOC[ctx.focus.parent]);
+    const scale=vb[3]/MAP_H; fs=Math.max(5.5,10.5*scale*3.2); dotR=Math.max(3.2,6*scale*3.4);
+    inner+=silhouette;
+    /* soft tint of the focused district for context */
+    if(ctx.level==="district"){
+      const g=DISTRICT_GEO[ctx.focus.id];const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
+      inner+=`<g clip-path="url(#ilClip)"><rect x="${x1}" y="${y1}" width="${x2-x1}" height="${y2-y1}" fill="var(--accent-wash)"/></g>`;
+    }
+    for(const c of ctx.items){
+      const base=c.type==="nbhd"?LOC[c.parent]:c;
+      let [x,y]=proj(base.lat,base.lng);
+      if(c.type==="nbhd"){x+=(c.dx||0)*(vb[2]/70);y+=(c.dy||0)*(vb[3]/70)}
+      const tv=norm(mm.get(metricsOf(c.id)));
+      const active=ctx.active===c.id;
+      inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${heatColor(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--ink)"':""}><title>${heName(c)}</title></circle>`;
+      const side=(c.dx||1)<0?-1:1;
+      inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
+    }
+  }
+  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner;
+  svg.setAttribute("viewBox",currentVB.join(" "));
+  animateViewBox(svg,vb);
+
+  /* metric buttons */
+  el("mapMetricBtns").innerHTML=MAP_METRICS.map(m=>
+    `<button class="chip" data-mm="${m.id}" aria-pressed="${m.id===state.mapMetric}">${m.label()}</button>`).join("");
+  el("mapMetricBtns").querySelectorAll("[data-mm]").forEach(b=>b.addEventListener("click",()=>{
+    state.mapMetric=b.dataset.mm;renderMap();
+  }));
+
+  /* interactions */
+  const tip=el("mapTip"),holder=svg.parentElement;
+  svg.querySelectorAll("[data-loc]").forEach(node=>{
+    node.addEventListener("click",()=>selectLocation(node.dataset.loc));
+    node.addEventListener("mousemove",e=>{
+      const lm=metricsOf(node.dataset.loc),ll=LOC[node.dataset.loc];
+      tip.innerHTML=`<b>${heName(ll)}</b><br>${mm.label()}: <span class="num">${mm.fmt(mm.get(lm))}</span><br>${T().thYoy}: <span class="num">${fmtPct(lm.yoy)}</span>`;
+      const r=holder.getBoundingClientRect();
+      let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
+      if(x+tip.offsetWidth>r.width-4)x=e.clientX-r.left-tip.offsetWidth-12;
+      tip.style.left=x+"px";tip.style.top=y+"px";tip.classList.add("show");
+    });
+    node.addEventListener("mouseleave",()=>tip.classList.remove("show"));
+  });
+
+  /* ranked list beside the map */
+  const dir=state.mapMetric==="price"||state.mapMetric==="sqm"||state.mapMetric==="rent"||state.mapMetric==="yield"||state.mapMetric==="yoy"?-1:1;
+  const ranked=[...ctx.items].sort((a,b)=>dir*(mm.get(metricsOf(a.id))-mm.get(metricsOf(b.id)))).slice(0,8);
+  const rvals=ranked.map(i=>mm.get(metricsOf(i.id)));
+  const rmax=Math.max(...rvals);
+  el("mapRankTitle").textContent=(state.locId==="il"&&state.mapMetric==="price")?t.rankExp:mm.rank();
+  el("mapRankList").innerHTML=ranked.map((item,i)=>`
+    <button class="rank-row" data-go="${item.id}">
+      <span class="idx">${String(i+1).padStart(2,"0")}</span>
+      <span class="nm">${heName(item)}</span>
+      <span class="bar"><i style="width:${Math.max(6,rvals[i]/rmax*100)}%"></i></span>
+      <span class="vl num">${mm.fmt(rvals[i])}</span>
+    </button>`).join("");
+  el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
+    b.addEventListener("click",()=>selectLocation(b.dataset.go)));
+  el("scaleLow").textContent=mm.fmt(lo);
+  el("scaleHigh").textContent=mm.fmt(hi);
+}
+
+/* ---------- profile card ---------- */
+function renderProfile(){
+  const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
+  const parent=l.parent?LOC[l.parent]:null;
+  const conf={high:t.confHigh,med:t.confMed,low:t.confLow}[m.confidence];
+  el("profileCard").innerHTML=`
+    <div class="profile-head">
+      <div>
+        <h3>${heName(l)}</h3>
+        <div class="where">${parent?heName(parent):""}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:600">${t.filtered}</span>`:""}</div>
+      </div>
+      <span class="conf ${m.confidence}"><i></i>${conf}</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="l">${t.avgPrice}</div><div class="v num">${fmtNIS(m.price)}</div></div>
+      <div class="stat"><div class="l">${t.psm}</div><div class="v num">${fmtNIS(m.sqm)}</div></div>
+      <div class="stat"><div class="l">${t.yoy}</div><div class="v">${deltaHTML(state.mode==="sale"?m.yoy:m.rentYoy)}</div></div>
+      <div class="stat"><div class="l">${t.avgRent}</div><div class="v num">${fmtNIS(m.rent)}</div><div class="s">${t.perMonth}</div></div>
+      <div class="stat"><div class="l">${t.svrYield}</div><div class="v num">${m.grossYield.toFixed(1)}%</div><div class="s">${t.est}</div></div>
+      <div class="stat"><div class="l">${t.tx}</div><div class="v num">${fmtInt(m.tx)}</div><div class="s">12M</div></div>
+    </div>`;
+}
+
+/* ---------- trend chart ---------- */
+const CHART_METRICS=[
+  {id:"price",label:()=>T().cPrice,fmt:fmtCompact,fmtFull:fmtNIS},
+  {id:"sqm",label:()=>T().cPsm,fmt:fmtCompact,fmtFull:fmtNIS},
+  {id:"rent",label:()=>T().cRent,fmt:v=>fmtCompact(v),fmtFull:fmtNIS},
+  {id:"yield",label:()=>T().cYield,fmt:v=>v.toFixed(1)+"%",fmtFull:v=>v.toFixed(2)+"%"},
+];
+function renderChartTools(){
+  const t=T();
+  el("chartMetricBtns").innerHTML=CHART_METRICS.map(m=>
+    `<button data-cm="${m.id}" aria-pressed="${m.id===state.chartMetric}">${m.label()}</button>`).join("");
+  el("periodBtns").innerHTML=Object.keys(PERIODS).map(p=>
+    `<button data-p="${p}" aria-pressed="${p===state.period}">${t["p"+p]}</button>`).join("");
+  el("chartMetricBtns").querySelectorAll("[data-cm]").forEach(b=>b.addEventListener("click",()=>{
+    state.chartMetric=b.dataset.cm;renderChartTools();renderChart();
+  }));
+  el("periodBtns").querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>{
+    state.period=b.dataset.p;renderChartTools();renderChart();
+  }));
+}
+function renderChart(){
+  const t=T(),cm=CHART_METRICS.find(c=>c.id===state.chartMetric);
+  const data=seriesSlice(state.locId,state.chartMetric);
+  const W=720,H=260,padL=56,padR=16,padT=14,padB=26;
+  const xs=i=>padL+(W-padL-padR)*(i/(data.length-1));
+  let lo=Math.min(...data.map(p=>p.v)),hi=Math.max(...data.map(p=>p.v));
+  const span=(hi-lo)||1;lo-=span*.08;hi+=span*.06;
+  const ys=v=>padT+(H-padT-padB)*(1-(v-lo)/(hi-lo));
+  const line=data.map((p,i)=>(i?"L":"M")+xs(i).toFixed(1)+","+ys(p.v).toFixed(1)).join(" ");
+  const area=line+`L${xs(data.length-1).toFixed(1)},${(H-padB).toFixed(1)}L${xs(0).toFixed(1)},${(H-padB).toFixed(1)}Z`;
+  const gridVals=[0,.5,1].map(f=>lo+(hi-lo)*(0.06+f*.86));
+  let gridEls=gridVals.map(v=>`<line class="grid-ln" x1="${padL}" x2="${W-padR}" y1="${ys(v).toFixed(1)}" y2="${ys(v).toFixed(1)}"/>
+    <text class="axis-txt" x="${padL-7}" y="${ys(v)+3.5}" text-anchor="end">${cm.fmt(v)}</text>`).join("");
+  const tickN=Math.min(6,data.length);
+  let ticks="";
+  for(let k=0;k<tickN;k++){
+    const i=Math.round(k*(data.length-1)/(tickN-1));
+    ticks+=`<text class="axis-txt" x="${xs(i)}" y="${H-8}" text-anchor="middle">${fmtMonth(data[i].date)}</text>`;
+  }
+  const last=data[data.length-1];
+  el("chartSvg").setAttribute("viewBox",`0 0 ${W} ${H}`);
+  el("chartSvg").innerHTML=`
+    ${gridEls}
+    <line class="base-ln" x1="${padL}" x2="${W-padR}" y1="${H-padB}" y2="${H-padB}"/>
+    <path d="${area}" fill="var(--accent)" opacity="0.07"/>
+    <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${xs(data.length-1)}" cy="${ys(last.v)}" r="3.6" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.6"/>
+    <text class="axis-txt" style="font-weight:700;fill:var(--accent-deep)" x="${Math.min(xs(data.length-1),W-padR-4)}" y="${Math.max(12,ys(last.v)-9)}" text-anchor="end">${cm.fmt(last.v)}</text>
+    <line id="chartHover" x1="0" x2="0" y1="${padT}" y2="${H-padB}" stroke="var(--baseline)" stroke-dasharray="3 3" opacity="0"/>
+    <circle id="chartHoverDot" r="4" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.8" opacity="0"/>
+    <rect id="chartHit" x="${padL}" y="0" width="${W-padL-padR}" height="${H}" fill="transparent"/>
+    ${ticks}`;
+  el("chartSub").textContent=`${heName(LOC[state.locId])} · ${cm.label()}`;
+  const wrap=el("chartWrap"),tip=el("chartTip");
+  const hit=el("chartHit"),hln=el("chartHover"),hdot=el("chartHoverDot");
+  const full=seriesFor(state.locId).slice(-PERIODS[state.period]);
+  hit.onmousemove=e=>{
+    const r=wrap.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width*W;
+    const i=Math.max(0,Math.min(data.length-1,Math.round((px-padL)/(W-padL-padR)*(data.length-1))));
+    const p=data[i],fp=full[i];
+    hln.setAttribute("x1",xs(i));hln.setAttribute("x2",xs(i));hln.setAttribute("opacity","1");
+    hdot.setAttribute("cx",xs(i));hdot.setAttribute("cy",ys(p.v));hdot.setAttribute("opacity","1");
+    const chg=(p.v/data[0].v-1)*100;
+    tip.innerHTML=`<div class="d">${fmtMonth(p.date)}</div>
+      ${t.cPrice}: <b class="num">${fmtNIS(fp.price)}</b><br>
+      ${t.cPsm}: <b class="num">${fmtNIS(fp.sqm)}</b><br>
+      ${t.cRent}: <b class="num">${fmtNIS(fp.rent)}</b><br>
+      <span class="${deltaCls(chg)}" style="font-weight:700"><span class="num">${fmtPct(chg)}</span></span>`;
+    let tx=xs(i)/W*r.width+12, tw=tip.offsetWidth;
+    if(tx+tw>r.width-6)tx=xs(i)/W*r.width-tw-12;
+    tip.style.left=tx+"px";
+    tip.style.top=Math.max(4,ys(p.v)/H*r.height-tip.offsetHeight-12)+"px";
+    tip.classList.add("show");
+  };
+  hit.onmouseleave=()=>{tip.classList.remove("show");hln.setAttribute("opacity","0");hdot.setAttribute("opacity","0")};
+}
+
+/* ---------- sale vs rent ---------- */
+function renderSVR(){
+  const t=T(),m=metricsOf(state.locId);
+  const cells=[
+    {l:t.svrBuy,v:fmtNIS(m.price)},
+    {l:t.svrRent,v:fmtNIS(m.rent),s:t.perMonth},
+    {l:t.svrAnnual,v:fmtNIS(m.rent*12),s:t.perYear},
+    {l:t.svrYield,v:m.grossYield.toFixed(1)+"%",s:t.est},
+    {l:t.svrRatio,v:m.priceToRent.toFixed(1),s:t.svrYears},
+  ];
+  el("svrGrid").innerHTML=cells.map(c=>`
+    <div class="card cell"><div class="l">${c.l}</div><div class="v num">${c.v}</div>${c.s?`<div class="s">${c.s}</div>`:""}</div>`).join("");
+  el("svrFormula").innerHTML=t.svrFormula(fmtNIS(m.price),fmtNIS(m.rent),m.grossYield.toFixed(1)+"%");
+}
+
+/* ---------- filters ---------- */
+let mobileFiltersOpen=false;
+function renderFilters(){
+  const t=T(),f=state.filters;
+  const seg=(name,key,opts)=>`
+    <div class="grp"><span>${name}</span>
+      <div class="seg" role="group">${opts.map(([v,l])=>
+        `<button data-f="${key}" data-v="${v}" aria-pressed="${f[key]===v}">${l}</button>`).join("")}</div>
+    </div>`;
+  const sel=(name,key,opts)=>`
+    <div class="grp"><span>${name}</span>
+      <select class="ctl" data-fs="${key}" aria-label="${name}">${opts.map(([v,l])=>
+        `<option value="${v}" ${f[key]===v?"selected":""}>${l}</option>`).join("")}</select>
+    </div>`;
+  const activeN=["rooms","type","area","cond"].filter(k=>f[k]!=="all").length;
+  el("filters").classList.toggle("open",mobileFiltersOpen);
+  el("filters").innerHTML=
+    `<button class="filters-toggle" id="fToggle" aria-expanded="${mobileFiltersOpen}">
+       <span>${t.fRooms} · ${t.fType} · ${t.fArea}${activeN?` <span style="color:var(--accent-deep)">(${activeN})</span>`:""}</span>
+       <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+     </button><div class="filters-body">`+
+    seg(t.fRooms,"rooms",[["all",t.rAll],["12",t.r12],["3",t.r3],["4",t.r4],["5",t.r5],["6",t.r6]])+
+    sel(t.fType,"type",[["all",t.rAll],["apt",t.tApt],["garden",t.tGarden],["ph",t.tPh],["house",t.tHouse]])+
+    sel(t.fArea,"area",[["all",t.aAll],["60",t.a60],["6080",t.a6080],["80100",t.a80100],["100130",t.a100130],["130",t.a130]])+
+    seg(t.fCond,"cond",[["all",t.cAll],["new",t.cNew],["used",t.cUsed]])+
+    (filtersActive()?`<a href="#" class="link-clear" id="clearF">${t.clearFilters}</a>`:"")+
+    `<span class="filters-note">· ${t.filterNote}</span></div>`;
+  el("fToggle").addEventListener("click",()=>{mobileFiltersOpen=!mobileFiltersOpen;
+    el("filters").classList.toggle("open",mobileFiltersOpen);
+    el("fToggle").setAttribute("aria-expanded",String(mobileFiltersOpen))});
+  el("filters").querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{
+    state.filters[b.dataset.f]=b.dataset.v;refresh(false);
+  }));
+  el("filters").querySelectorAll("[data-fs]").forEach(s=>s.addEventListener("change",()=>{
+    state.filters[s.dataset.fs]=s.value;refresh(false);
+  }));
+  const c=el("clearF");
+  if(c)c.addEventListener("click",e=>{e.preventDefault();
+    state.filters={rooms:"all",type:"all",area:"all",cond:"all"};refresh(false)});
+}
+
+/* ---------- area table ---------- */
+function tableChildren(){
+  const l=LOC[state.locId];
+  if(l.type==="nbhd")return childrenOf(l.parent);
+  const kids=childrenOf(l.id);
+  return kids.length?kids:childrenOf(l.parent||"il");
+}
+function sparkSVG(id){
+  const pts=seriesFor(id).slice(-25).map(p=>state.mode==="sale"?p.price:p.rent);
+  const lo=Math.min(...pts),hi=Math.max(...pts),span=hi-lo||1;
+  const d=pts.map((v,i)=>(i?"L":"M")+(i/(pts.length-1)*46).toFixed(1)+","+(14-(v-lo)/span*12).toFixed(1)).join("");
+  const up=pts[pts.length-1]>=pts[0];
+  return `<svg class="spark" width="48" height="16" viewBox="0 0 48 16" aria-hidden="true">
+    <path d="${d}" fill="none" stroke="${up?"var(--up)":"var(--down)"}" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+}
+function renderTable(){
+  const t=T(),l=LOC[state.locId];
+  const rows=tableChildren();
+  const rowType=rows[0]?rows[0].type:"nbhd";
+  el("tblTitle").textContent=rowType==="nbhd"?t.tblNbhd:rowType==="city"?t.tblCities:t.tblDistricts;
+  el("tblCount").innerHTML=`${rows.length} ${t.areas}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:700">${t.filtered}</span>`:""}`;
+  const nameTh=rowType==="nbhd"?t.thName:rowType==="city"?t.thNameCity:t.thNameDist;
+  const cols=[
+    {key:"name",label:nameTh,get:r=>heName(r.loc),num:false},
+    {key:"price",label:t.thPrice,get:r=>r.m.price,fmt:v=>fmtNIS(v)},
+    {key:"sqm",label:t.thPsm,get:r=>r.m.sqm,fmt:v=>fmtNIS(v)},
+    {key:"rent",label:t.thRent,get:r=>r.m.rent,fmt:v=>fmtNIS(v)},
+    {key:"yield",label:t.thYield,get:r=>r.m.grossYield,fmt:v=>v.toFixed(1)+"%"},
+    {key:"yoy",label:t.thYoy,get:r=>state.mode==="sale"?r.m.yoy:r.m.rentYoy,fmt:null},
+    {key:"tx",label:state.mode==="sale"?t.thTx:t.thListings,get:r=>state.mode==="sale"?r.m.tx:r.m.listings,fmt:fmtInt},
+    {key:"trend",label:t.thTrend,get:null,num:false},
+  ];
+  const data=rows.map(loc=>({loc,m:metricsOf(loc.id)}));
+  const sc=cols.find(c=>c.key===state.sort.key)||cols[1];
+  data.sort((a,b)=>{
+    if(sc.key==="name")return state.sort.dir*heName(a.loc).localeCompare(heName(b.loc),state.lang);
+    if(!sc.get)return 0;
+    return state.sort.dir*(sc.get(a)-sc.get(b));
+  });
+  el("tbl").innerHTML=`
+    <thead><tr>${cols.map(c=>{
+      const sortable=c.key!=="trend";
+      const active=state.sort.key===c.key;
+      return `<th ${active?`aria-sort="${state.sort.dir===1?"ascending":"descending"}"`:""}>
+        ${sortable?`<button data-sort="${c.key}">${c.label}<span class="arr">${active?(state.sort.dir===1?"▲":"▼"):"▼"}</span></button>`:c.label}</th>`;
+    }).join("")}</tr></thead>
+    <tbody>${data.map(r=>`
+      <tr data-go="${r.loc.id}" tabindex="0">
+        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHigh,med:t.confMed,low:t.confLow}[r.m.confidence].split(" ").pop()}</span></span></td>
+        <td class="num">${fmtNIS(r.m.price)}</td>
+        <td class="num">${fmtNIS(r.m.sqm)}</td>
+        <td class="num">${fmtNIS(r.m.rent)}</td>
+        <td class="num">${r.m.grossYield.toFixed(1)}%</td>
+        <td>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</td>
+        <td class="num">${fmtInt(state.mode==="sale"?r.m.tx:r.m.listings)}</td>
+        <td>${sparkSVG(r.loc.id)}</td>
+      </tr>`).join("")}</tbody>`;
+  el("tbl").querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{
+    const k=b.dataset.sort;
+    if(state.sort.key===k)state.sort.dir*=-1;else{state.sort.key=k;state.sort.dir=k==="name"?1:-1}
+    renderTable();
+  }));
+  el("tbl").querySelectorAll("tr[data-go]").forEach(row=>{
+    row.addEventListener("click",()=>selectLocation(row.dataset.go));
+    row.addEventListener("keydown",e=>{if(e.key==="Enter")selectLocation(row.dataset.go)});
+  });
+  /* mobile cards */
+  el("tblCards").innerHTML=data.map(r=>`
+    <div class="tcard" data-go="${r.loc.id}" role="button" tabindex="0">
+      <div class="r1"><b>${heName(r.loc)}</b>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</div>
+      <div class="r2">
+        <span>${t.thPrice} <span class="num">${fmtNIS(r.m.price)}</span></span>
+        <span>${t.thRent} <span class="num">${fmtNIS(r.m.rent)}</span></span>
+        <span>${t.thYield} <span class="num">${r.m.grossYield.toFixed(1)}%</span></span>
+      </div>
+    </div>`).join("");
+  el("tblCards").querySelectorAll("[data-go]").forEach(cd=>
+    cd.addEventListener("click",()=>selectLocation(cd.dataset.go)));
+}
+
+/* ---------- market rankings ---------- */
+const RANK_TABS=[
+  {id:"exp",label:()=>T().tExpensive,get:m=>m.price,dir:-1,fmt:v=>fmtCompact(v)},
+  {id:"cheap",label:()=>T().tCheap,get:m=>m.price,dir:1,fmt:v=>fmtCompact(v)},
+  {id:"rise",label:()=>T().tRise,get:m=>m.yoy,dir:-1,fmt:v=>fmtPct(v)},
+  {id:"fall",label:()=>T().tFall,get:m=>m.yoy,dir:1,fmt:v=>fmtPct(v)},
+  {id:"yield",label:()=>T().tYield,get:m=>m.grossYield,dir:-1,fmt:v=>v.toFixed(1)+"%"},
+  {id:"tx",label:()=>T().tTx,get:m=>m.tx,dir:-1,fmt:fmtInt},
+];
+let rankTab="exp";
+function renderRankings(){
+  const t=T();
+  const l=LOC[state.locId];
+  const scopeNbhd=(l.type==="city"||l.type==="nbhd")&&childrenOf(l.type==="city"?l.id:l.parent).length>=4;
+  const pool=scopeNbhd?childrenOf(l.type==="city"?l.id:l.parent):cityList();
+  el("rankScope").textContent=scopeNbhd?`${t.scopeNbhd} · ${heName(scopeNbhd?LOC[l.type==="city"?l.id:l.parent]:l)}`:t.scopeCities;
+  el("rankTabs").innerHTML=RANK_TABS.map(rt=>
+    `<button role="tab" data-rt="${rt.id}" aria-pressed="${rt.id===rankTab}">${rt.label()}</button>`).join("");
+  el("rankTabs").querySelectorAll("[data-rt]").forEach(b=>b.addEventListener("click",()=>{
+    rankTab=b.dataset.rt;renderRankings();
+  }));
+  const rt=RANK_TABS.find(x=>x.id===rankTab);
+  const ranked=[...pool].sort((a,b)=>rt.dir*(rt.get(metricsOf(a.id))-rt.get(metricsOf(b.id)))).slice(0,10);
+  const vals=ranked.map(x=>rt.get(metricsOf(x.id)));
+  const vmax=Math.max(...vals.map(Math.abs));
+  el("rankGrid").innerHTML=ranked.map((item,i)=>`
+    <button class="rank-row" data-go="${item.id}">
+      <span class="idx">${String(i+1).padStart(2,"0")}</span>
+      <span class="nm">${heName(item)}${item.type==="nbhd"?` <span style="color:var(--ink-3);font-weight:400;font-size:11.5px">· ${heName(LOC[item.parent])}</span>`:""}</span>
+      <span class="bar"><i style="width:${Math.max(6,Math.abs(vals[i])/vmax*100)}%"></i></span>
+      <span class="vl num">${rt.fmt(vals[i])}</span>
+    </button>`).join("");
+  el("rankGrid").querySelectorAll("[data-go]").forEach(b=>
+    b.addEventListener("click",()=>selectLocation(b.dataset.go)));
+}
+
+/* ---------- comparison ---------- */
+const CMP_COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
+const CMP_METRICS=[
+  {label:()=>T().thPrice,get:m=>m.price,fmt:v=>fmtCompact(v),best:"max"},
+  {label:()=>T().thPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),best:"max"},
+  {label:()=>T().thRent,get:m=>m.rent,fmt:v=>fmtNIS(v),best:"max"},
+  {label:()=>T().thYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",best:"max"},
+  {label:()=>T().thYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),best:"max"},
+  {label:()=>T().y3,get:m=>m.y3,fmt:v=>fmtPct(v),best:"max"},
+  {label:()=>T().thTx,get:m=>m.tx,fmt:fmtInt,best:"max"},
+];
+function cmpLabel(id){const l=LOC[id];const p=l.parent&&LOC[l.parent].type!=="country"?LOC[l.parent]:null;
+  return p&&l.type==="nbhd"?`${heName(p)} — ${heName(l)}`:heName(l)}
+function renderCompare(){
+  const t=T();
+  el("cmpPick").innerHTML=state.compare.map((id,i)=>`
+    <span class="cmp-chip"><i style="background:${CMP_COLORS[i]}"></i>${cmpLabel(id)}
+      <button data-rm="${id}" aria-label="הסר">×</button></span>`).join("")+
+    (state.compare.length<4?`
+      <div class="cmp-add"><button id="cmpAddBtn">${t.cmpAdd}</button>
+        <div class="search-pop" id="cmpPop" role="listbox"></div></div>`
+      :`<span class="filters-note">${t.cmpMax}</span>`);
+  el("cmpPick").querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",()=>{
+    state.compare=state.compare.filter(x=>x!==b.dataset.rm);renderCompare();
+  }));
+  const addBtn=el("cmpAddBtn");
+  if(addBtn){
+    addBtn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const pop=el("cmpPop");
+      const opts=LOCATIONS.filter(l=>(l.type==="city"||l.type==="nbhd")&&!state.compare.includes(l.id));
+      pop.innerHTML=opts.map(o=>`<button class="sp-item" data-add="${o.id}"><span>${cmpLabel(o.id)}</span><span class="num">${fmtCompact(metricsOf(o.id).price)}</span></button>`).join("");
+      pop.classList.toggle("open");
+      pop.querySelectorAll("[data-add]").forEach(b=>b.addEventListener("click",()=>{
+        state.compare.push(b.dataset.add);renderCompare();
+      }));
+    });
+  }
+  if(state.compare.length===0){
+    el("cmpBody").innerHTML=`<div class="cmp-empty">${t.cmpEmpty}</div>`;return;
+  }
+  const items=state.compare.map((id,i)=>({id,color:CMP_COLORS[i],m:metricsOf(id)}));
+  el("cmpBody").innerHTML=CMP_METRICS.map(cm=>{
+    const vals=items.map(it=>cm.get(it.m));
+    const vmax=Math.max(...vals.map(Math.abs))||1;
+    const bestV=Math.max(...vals);
+    return `<div class="cmp-metric">
+      <div class="l">${cm.label()}</div>
+      <div class="cmp-bars">${items.map((it,i)=>`
+        <div class="cmp-bar ${vals[i]===bestV?"best":""}">
+          <span class="who">${cmpLabel(it.id)}</span>
+          <span class="tr"><i style="width:${Math.max(4,Math.abs(vals[i])/vmax*100)}%;background:${it.color}"></i></span>
+          <span class="vl num">${cm.fmt(vals[i])}</span>
+        </div>`).join("")}</div>
+    </div>`;
+  }).join("");
+}
+document.addEventListener("click",e=>{
+  const pop=el("cmpPop");
+  if(pop&&!e.target.closest(".cmp-add"))pop.classList.remove("open");
+});
+
+/* ---------- insights ---------- */
+function renderInsights(){
+  const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
+  const parent=l.parent?LOC[l.parent]:null;
+  const pm=parent?metricsOf(parent.id):null;
+  const he=state.lang==="he";
+  const name=heName(l);
+  const out=[];
+  out.push(he
+    ?`מחיר הדירות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
+    :`Prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
+  if(m.rentYoy>m.yoy+0.15)out.push(he
+    ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
+    :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);
+  else if(m.yoy>m.rentYoy+0.15)out.push(he
+    ?`מחירי המכירה עולים מהר מהשכירות — התשואה הברוטו נשחקת בהדרגה.`
+    :`Sale prices are outpacing rents — gross yield is gradually compressing.`);
+  if(pm){
+    const psmDiff=(m.sqm/pm.sqm-1)*100;
+    if(Math.abs(psmDiff)>=3)out.push(he
+      ?`מחיר למ״ר ב${name} ${psmDiff>0?"גבוה":"נמוך"} ב-<b class="num">${fmtPct(Math.abs(psmDiff),false)}</b> מהממוצע ב${heName(parent)}.`
+      :`Price per m² in ${name} is <b class="num">${fmtPct(Math.abs(psmDiff),false)}</b> ${psmDiff>0?"above":"below"} the ${heName(parent)} average.`);
+    const yDiff=m.grossYield-pm.grossYield;
+    if(Math.abs(yDiff)>=0.15)out.push(he
+      ?`התשואה באזור (<b class="num">${m.grossYield.toFixed(1)}%</b>) ${yDiff>0?"גבוהה":"נמוכה"} מהממוצע ב${heName(parent)} (<b class="num">${pm.grossYield.toFixed(1)}%</b>).`
+      :`Local gross yield (<b class="num">${m.grossYield.toFixed(1)}%</b>) is ${yDiff>0?"above":"below"} the ${heName(parent)} average (<b class="num">${pm.grossYield.toFixed(1)}%</b>).`);
+  }
+  out.push(he
+    ?`יחס מחיר/שכירות עומד על <b class="num">${m.priceToRent.toFixed(1)}</b> שנות שכירות — שווה ערך לתשואה ברוטו של <b class="num">${m.grossYield.toFixed(1)}%</b> (אומדן).`
+    :`The price-to-rent ratio is <b class="num">${m.priceToRent.toFixed(1)}</b> years of rent — equivalent to an estimated <b class="num">${m.grossYield.toFixed(1)}%</b> gross yield.`);
+  if(m.confidence!=="high")out.push(he
+    ?`שימו לב: המדגם באזור זה ${m.confidence==="med"?"בינוני":"קטן"} (<b class="num">${fmtInt(m.tx)}</b> עסקאות) — יש להתייחס לממוצעים בזהירות.`
+    :`Note: the sample here is ${m.confidence==="med"?"medium":"small"} (<b class="num">${fmtInt(m.tx)}</b> deals) — treat the averages with care.`);
+  el("insights").innerHTML=out.map(s=>`<div class="insight"><span>${s}</span></div>`).join("");
+}
+
+/* ---------- confidence ---------- */
+function renderConfidence(){
+  const t=T(),m=metricsOf(state.locId);
+  const label={high:t.confHigh,med:t.confMed,low:t.confLow}[m.confidence];
+  const note={high:t.confHighNote,med:t.confMedNote,low:t.confLowNote}[m.confidence];
+  const pct={high:92,med:55,low:20}[m.confidence];
+  const color={high:"var(--conf-high)",med:"var(--conf-med)",low:"var(--conf-low)"}[m.confidence];
+  const based=m.confidence==="low"?t.confBasedOnLow(fmtInt(m.tx)):t.confBasedOn(fmtInt(m.tx));
+  el("confCard").innerHTML=`
+    <div class="conf-big"><span class="conf ${m.confidence}"><i></i>${label}</span></div>
+    <div class="conf-meter"><i style="width:${pct}%;background:${color}"></i></div>
+    <div class="conf-note">${based}.<br>${note}</div>`;
+}
+
+/* ---------- transactions ---------- */
+function renderTx(){
+  const t=T();
+  const sec=el("txSection");
+  if(state.mode!=="sale"){sec.style.display="none";return}
+  sec.style.display="";
+  const rows=txFor(state.locId);
+  el("txTbl").innerHTML=`
+    <thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th></tr></thead>
+    <tbody>${rows.map(r=>`
+      <tr style="cursor:default">
+        <td class="num">${r.date.getDate()}.${r.date.getMonth()+1}.${String(r.date.getFullYear()).slice(2)}</td>
+        <td>${r.street}</td>
+        <td class="num">${r.rooms}</td>
+        <td class="num">${r.area}</td>
+        <td class="num">${r.floor}</td>
+        <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
+        <td class="num">${fmtNIS(r.psm)}</td>
+      </tr>`).join("")}</tbody>`;
+}
+
+/* ---------- search ---------- */
+function initSearch(){
+  const input=el("searchInput"),pop=el("searchPop");
+  let activeIdx=-1,results=[];
+  const close=()=>{pop.classList.remove("open");input.setAttribute("aria-expanded","false");activeIdx=-1};
+  const render=q=>{
+    const t=T();
+    const ql=q.trim().toLowerCase();
+    const match=l=>!ql||l.he.toLowerCase().includes(ql)||l.en.toLowerCase().includes(ql)||
+      (l.parent&&LOC[l.parent].he.toLowerCase().includes(ql));
+    const cities=LOCATIONS.filter(l=>l.type==="city"&&match(l)).slice(0,7);
+    const nbhds=LOCATIONS.filter(l=>l.type==="nbhd"&&match(l)).slice(0,7);
+    const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
+    results=[...cities,...nbhds,...dists];
+    if(results.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
+    else{
+      let html="";
+      if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
+      if(nbhds.length)html+=`<div class="sp-group">${t.nbhds}</div>`+nbhds.map(c=>item(c)).join("");
+      if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
+      pop.innerHTML=html;
+    }
+    pop.classList.add("open");input.setAttribute("aria-expanded","true");
+    pop.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();selectLocation(b.dataset.go);input.value="";close();
+    }));
+  };
+  const item=l=>{
+    const p=l.parent?LOC[l.parent]:null;
+    return `<button class="sp-item" data-go="${l.id}" role="option">
+      <span>${heName(l)}${p&&p.type!=="country"?` <small>· ${heName(p)}</small>`:""}</span>
+      <span class="num">${fmtCompact(metricsOf(l.id).price)}</span></button>`;
+  };
+  input.addEventListener("input",()=>render(input.value));
+  input.addEventListener("focus",()=>render(input.value));
+  input.addEventListener("keydown",e=>{
+    const items=[...pop.querySelectorAll(".sp-item")];
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      e.preventDefault();
+      activeIdx=e.key==="ArrowDown"?Math.min(items.length-1,activeIdx+1):Math.max(0,activeIdx-1);
+      items.forEach((it,i)=>it.classList.toggle("active",i===activeIdx));
+      items[activeIdx]?.scrollIntoView({block:"nearest"});
+    }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
+      selectLocation(items[activeIdx].dataset.go);input.value="";close();
+    }else if(e.key==="Escape"){close()}
+  });
+  document.addEventListener("click",e=>{if(!e.target.closest(".search"))close()});
+}
+
+/* =====================================================================
+   7 · ORCHESTRATION
+   ===================================================================== */
+function refresh(withSkeleton){
+  renderCrumbs();
+  if(withSkeleton){
+    renderKPIs(true);
+    setTimeout(()=>{renderKPIs(false);postKpi()},280);
+  }else{renderKPIs(false);postKpi()}
+  function postKpi(){
+    renderMap();renderProfile();renderChartTools();renderChart();
+    renderSVR();renderFilters();renderTable();renderRankings();
+    renderCompare();renderInsights();renderConfidence();renderTx();
+    document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
+  }
+}
+function selectLocation(id){
+  if(!LOC[id]||state.locId===id)return;
+  state.locId=id;
+  refresh(true);
+  const y=el("overview").getBoundingClientRect().top+window.scrollY-110;
+  if(window.scrollY>y)window.scrollTo({top:y,behavior:"smooth"});
+}
+function setMode(mode){
+  if(state.mode===mode)return;
+  state.mode=mode;
+  document.querySelectorAll('#modeToggle button,#modeToggleM button').forEach(b=>
+    b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
+  state.sort={key:mode==="sale"?"price":"rent",dir:-1};
+  refresh(true);
+}
+function setLang(lang){
+  if(state.lang===lang)return;
+  state.lang=lang;
+  el("langHe").setAttribute("aria-pressed",String(lang==="he"));
+  el("langEn").setAttribute("aria-pressed",String(lang==="en"));
+  setStatics();refresh(false);
+}
+
+document.querySelectorAll("#modeToggle button,#modeToggleM button").forEach(b=>
+  b.addEventListener("click",()=>setMode(b.dataset.mode)));
+el("langHe").addEventListener("click",()=>setLang("he"));
+el("langEn").addEventListener("click",()=>setLang("en"));
+
+setStatics();
+initSearch();
+refresh(true);
+</script>
