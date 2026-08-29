@@ -209,6 +209,8 @@ section.blk{padding-block:22px}
 .map-scale .bar{flex:0 0 130px;height:8px;border-radius:99px;
   background:linear-gradient(to left,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
 [dir="ltr"] .map-scale .bar{background:linear-gradient(to right,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
+.map-scale .bar.div{background:linear-gradient(to left,#9e3a30,#e8beb4,#f0efec,#aac6e9,#1f5aa8)}
+[dir="ltr"] .map-scale .bar.div{background:linear-gradient(to right,#9e3a30,#e8beb4,#f0efec,#aac6e9,#1f5aa8)}
 .map-side{display:flex;flex-direction:column;gap:8px;min-width:0}
 .rank-title{font-size:12.5px;font-weight:700;color:var(--ink-2)}
 .rank-list{display:flex;flex-direction:column}
@@ -415,7 +417,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
     <nav class="main" aria-label="ניווט" id="mainNav"></nav>
     <div class="top-end">
       <span class="updated" id="updatedTxt"></span>
-      <span class="badge-demo" data-i="demoBadge">נתוני הדגמה</span>
+      <span class="badge-demo" data-i="calBadge">נתונים מקורבים</span>
       <div class="lang" role="group" aria-label="שפה">
         <button id="langHe" aria-pressed="true">HE</button>
         <button id="langEn" aria-pressed="false">EN</button>
@@ -481,7 +483,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
           <div class="rank-title" id="mapRankTitle"></div>
           <div class="rank-list" id="mapRankList"></div>
           <div class="map-scale">
-            <span id="scaleLow"></span><span class="bar" aria-hidden="true"></span><span id="scaleHigh"></span>
+            <span id="scaleLow"></span><span class="bar" id="scaleBar" aria-hidden="true"></span><span id="scaleHigh"></span>
           </div>
         </div>
       </div>
@@ -595,15 +597,16 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
       </summary>
       <div class="src-body">
         <div>
-          <h4 data-i="srcATitle">ארכיטקטורת המקורות בגרסת הייצור</h4>
-          <p data-i="srcAText">המערכת בנויה לשלב מקורות רשמיים ומסחריים, ביניהם:</p>
+          <h4 data-i="srcATitle">בסיס הכיול של גרסה זו</h4>
+          <p data-i="srcAText">ערכי הלוח מקורבים לפרסומים האחרונים של המקורות הרשמיים (נכון לאמצע 2026):</p>
           <ul>
-            <li data-i="srcA1">הלשכה המרכזית לסטטיסטיקה (הלמ״ס)</li>
-            <li data-i="srcA2">מידע עסקאות נדל״ן של רשות המסים</li>
-            <li data-i="srcA3">data.gov.il — מאגרי מידע ממשלתיים פתוחים</li>
-            <li data-i="srcA4">פידים מורשים של מודעות ונכסים, ככל שמותר משפטית</li>
+            <li data-i="srcA1">מחירי דירות — ממוצעי הלמ״ס לפי עיר ומחוז, רבעונים א׳–ב׳ 2026</li>
+            <li data-i="srcA2">שינוי שנתי — מדד מחירי הדירות של הלמ״ס לפי מחוז, מאי–יוני 2026 לעומת שנה קודמת</li>
+            <li data-i="srcA3">שכר דירה — ממוצעי השכירות של הלמ״ס לפי עיר, 2025</li>
+            <li data-i="srcA4">עסקאות והיצע — נתוני רשות המסים וסקירות הכלכלן הראשי, 2025</li>
+            <li data-i="srcA5">שכונות, רעננה ומודיעין — אומדן יחסי המעוגן בנתוני העיר</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">בגרסת הדגמה זו כל הערכים הם נתונים פיקטיביים לצורכי אב-טיפוס ואינם סטטיסטיקה רשמית.</p>
+          <p style="margin-top:8px" data-i="srcADemo">אלו נתונים מקורבים לצורכי הדגמה: הם מכוילים לפרסומים רשמיים אך אינם סטטיסטיקה רשמית, וטבלת העסקאות האחרונות היא המחשת מבנה בלבד.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -636,95 +639,104 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 
 const UPDATED_AT = "2026-08";
 
-/* location: {id,type,parent,he,en,lat,lng, base:{price,sqm,rent,yoy,y3,rentYoy,tx,listings}} */
+/* location: {id,type,parent,he,en,lat,lng, base:{price,sqm,rent,yoy,y3,rentYoy,tx,listings}}
+   Calibrated to official publications (mid-2026 snapshot):
+   · price/sqm — CBS average home prices by city & district, Q1–Q2 2026
+   · yoy — CBS house-price index by district, May–June 2026 vs. a year earlier
+   · y3 — cumulative 2023→2026 move implied by the CBS annual index path
+   · rent/rentYoy — CBS average city rents, 2025
+   · tx/listings — order of magnitude from Tax Authority / Chief Economist 2025 reviews
+   Neighborhood rows (and Ra'anana / Modi'in) are relative estimates anchored
+   to their city's published figures — labeled as estimates in the UI.        */
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,
-    base:{price:2310000,sqm:26400,rent:5950,yoy:3.1,y3:9.8,rentYoy:4.2,tx:108400,listings:74200}},
+    base:{price:2435000,sqm:26500,rent:4950,yoy:-1.2,y3:5.3,rentYoy:4.3,tx:83000,listings:58000}},
 
   {id:"d-north",type:"district",parent:"il",he:"מחוז הצפון",en:"Northern District",lat:32.95,lng:35.4,
-    base:{price:1410000,sqm:14900,rent:3600,yoy:3.8,y3:11.2,rentYoy:4.0,tx:12300,listings:8900}},
+    base:{price:1520000,sqm:15500,rent:3300,yoy:1.6,y3:8.4,rentYoy:3.5,tx:9500,listings:6300}},
   {id:"d-haifa",type:"district",parent:"il",he:"מחוז חיפה",en:"Haifa District",lat:32.6,lng:35.0,
-    base:{price:1640000,sqm:18300,rent:4150,yoy:4.6,y3:13.8,rentYoy:5.4,tx:13600,listings:9400}},
+    base:{price:1780000,sqm:19500,rent:3450,yoy:-1.8,y3:5.8,rentYoy:3.8,tx:10000,listings:7000}},
   {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,
-    base:{price:2560000,sqm:27900,rent:6300,yoy:3.4,y3:10.6,rentYoy:4.4,tx:31200,listings:21500}},
+    base:{price:2480000,sqm:25500,rent:5100,yoy:-4.1,y3:3.4,rentYoy:4.2,tx:24000,listings:16500}},
   {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,
-    base:{price:4120000,sqm:46800,rent:8900,yoy:3.9,y3:12.4,rentYoy:5.1,tx:14900,listings:11800}},
+    base:{price:3350000,sqm:40000,rent:6500,yoy:-1.7,y3:4.2,rentYoy:4.0,tx:11500,listings:9000}},
   {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
-    base:{price:2340000,sqm:27300,rent:5700,yoy:2.2,y3:7.9,rentYoy:3.1,tx:11800,listings:8300}},
+    base:{price:2750000,sqm:29000,rent:4900,yoy:1.8,y3:7.2,rentYoy:3.2,tx:9500,listings:6500}},
   {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
-    base:{price:1380000,sqm:15200,rent:3750,yoy:5.2,y3:14.6,rentYoy:5.8,tx:24600,listings:16100}},
+    base:{price:1610000,sqm:16800,rent:3600,yoy:0.1,y3:6.6,rentYoy:4.0,tx:18500,listings:12500}},
 
   {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,
-    base:{price:4480000,sqm:52400,rent:9600,yoy:4.1,y3:12.9,rentYoy:5.6,tx:8240,listings:6900}},
+    base:{price:4550000,sqm:56900,rent:7201,yoy:-1.7,y3:4.0,rentYoy:4.1,tx:6900,listings:5600}},
   {id:"ramat-gan",type:"city",parent:"d-ta",he:"רמת גן",en:"Ramat Gan",lat:32.07,lng:34.825,
-    base:{price:2980000,sqm:34200,rent:6900,yoy:3.6,y3:11.1,rentYoy:4.7,tx:3160,listings:2500}},
+    base:{price:3070000,sqm:37400,rent:5693,yoy:-1.5,y3:4.6,rentYoy:3.7,tx:2700,listings:2100}},
   {id:"herzliya",type:"city",parent:"d-ta",he:"הרצליה",en:"Herzliya",lat:32.166,lng:34.84,
-    base:{price:3890000,sqm:38600,rent:8300,yoy:2.9,y3:9.4,rentYoy:3.9,tx:1870,listings:1500}},
+    base:{price:3570000,sqm:35700,rent:6427,yoy:-2.0,y3:3.6,rentYoy:3.3,tx:1300,listings:1000}},
   {id:"jerusalem",type:"city",parent:"d-jm",he:"ירושלים",en:"Jerusalem",lat:31.77,lng:35.21,
-    base:{price:2520000,sqm:28900,rent:5900,yoy:2.4,y3:8.1,rentYoy:3.2,tx:7940,listings:5900}},
+    base:{price:3050000,sqm:32100,rent:5164,yoy:1.8,y3:7.4,rentYoy:3.2,tx:6300,listings:4600}},
   {id:"haifa",type:"city",parent:"d-haifa",he:"חיפה",en:"Haifa",lat:32.79,lng:34.99,
-    base:{price:1720000,sqm:19400,rent:4300,yoy:4.9,y3:14.6,rentYoy:5.7,tx:5230,listings:3900}},
+    base:{price:1800000,sqm:21200,rent:3298,yoy:-1.8,y3:5.9,rentYoy:3.8,tx:4900,listings:3600}},
   {id:"petah-tikva",type:"city",parent:"d-center",he:"פתח תקווה",en:"Petah Tikva",lat:32.09,lng:34.887,
-    base:{price:2340000,sqm:25800,rent:5850,yoy:3.7,y3:11.8,rentYoy:4.5,tx:4120,listings:3100}},
+    base:{price:2422000,sqm:26300,rent:4911,yoy:-3.8,y3:3.1,rentYoy:4.0,tx:3700,listings:2800}},
   {id:"rishon",type:"city",parent:"d-center",he:"ראשון לציון",en:"Rishon LeZion",lat:31.96,lng:34.8,
-    base:{price:2290000,sqm:26100,rent:5700,yoy:3.2,y3:10.2,rentYoy:4.1,tx:4480,listings:3400}},
+    base:{price:2387000,sqm:26000,rent:5380,yoy:-4.3,y3:2.8,rentYoy:4.5,tx:3900,listings:2900}},
   {id:"netanya",type:"city",parent:"d-center",he:"נתניה",en:"Netanya",lat:32.32,lng:34.855,
-    base:{price:2180000,sqm:24300,rent:5350,yoy:3.9,y3:12.3,rentYoy:4.9,tx:3950,listings:3200}},
+    base:{price:2434000,sqm:25600,rent:4750,yoy:-3.5,y3:3.7,rentYoy:4.4,tx:3600,listings:2700}},
   {id:"kfar-saba",type:"city",parent:"d-center",he:"כפר סבא",en:"Kfar Saba",lat:32.175,lng:34.912,
-    base:{price:2650000,sqm:27700,rent:6200,yoy:2.8,y3:9.1,rentYoy:3.6,tx:1720,listings:1300}},
+    base:{price:3000000,sqm:27800,rent:5842,yoy:-4.0,y3:3.2,rentYoy:6.0,tx:1500,listings:1100}},
   {id:"raanana",type:"city",parent:"d-center",he:"רעננה",en:"Ra'anana",lat:32.19,lng:34.87,
-    base:{price:3120000,sqm:30900,rent:7100,yoy:2.5,y3:8.7,rentYoy:3.3,tx:1340,listings:1050}},
+    base:{price:3200000,sqm:29100,rent:6100,yoy:-4.4,y3:2.6,rentYoy:4.2,tx:1150,listings:850}},
   {id:"modiin",type:"city",parent:"d-center",he:"מודיעין-מכבים-רעות",en:"Modi'in",lat:31.9,lng:35.01,
-    base:{price:2560000,sqm:24600,rent:6050,yoy:3.0,y3:9.6,rentYoy:3.8,tx:1610,listings:1200}},
+    base:{price:2550000,sqm:24300,rent:5600,yoy:-3.9,y3:3.3,rentYoy:4.1,tx:1400,listings:1000}},
   {id:"ashdod",type:"city",parent:"d-south",he:"אשדוד",en:"Ashdod",lat:31.8,lng:34.65,
-    base:{price:1860000,sqm:19800,rent:4600,yoy:4.4,y3:13.1,rentYoy:5.1,tx:3080,listings:2300}},
+    base:{price:1963000,sqm:20600,rent:4150,yoy:-0.4,y3:5.4,rentYoy:4.6,tx:2800,listings:2000}},
   {id:"beer-sheva",type:"city",parent:"d-south",he:"באר שבע",en:"Be'er Sheva",lat:31.25,lng:34.79,
-    base:{price:1290000,sqm:13900,rent:3650,yoy:5.6,y3:16.2,rentYoy:6.3,tx:4360,listings:3300}},
+    base:{price:1240000,sqm:13800,rent:3034,yoy:0.8,y3:7.8,rentYoy:5.2,tx:4100,listings:3200}},
 
-  /* neighborhoods — dx/dy are map offsets (viewBox px) around the city dot */
+  /* neighborhoods — dx/dy are map offsets (viewBox px) around the city dot.
+     All neighborhood figures are relative estimates anchored to the city. */
   {id:"old-north",type:"nbhd",parent:"tlv",he:"הצפון הישן",en:"Old North",dx:2,dy:-12,
-    base:{price:5620000,sqm:61300,rent:11400,yoy:3.8,y3:11.9,rentYoy:5.2,tx:412,listings:340}},
+    base:{price:5420000,sqm:66000,rent:8900,yoy:-1.5,y3:4.4,rentYoy:4.4,tx:390,listings:320}},
   {id:"florentin",type:"nbhd",parent:"tlv",he:"פלורנטין",en:"Florentin",dx:-4,dy:12,
-    base:{price:3540000,sqm:49800,rent:8700,yoy:5.2,y3:15.8,rentYoy:6.4,tx:268,listings:230}},
+    base:{price:3220000,sqm:52000,rent:7300,yoy:-2.4,y3:3.1,rentYoy:4.8,tx:260,listings:220}},
   {id:"neve-tzedek",type:"nbhd",parent:"tlv",he:"נווה צדק",en:"Neve Tzedek",dx:-9,dy:6,
-    base:{price:6940000,sqm:68900,rent:12800,yoy:2.9,y3:9.2,rentYoy:3.8,tx:96,listings:70}},
+    base:{price:6340000,sqm:72000,rent:10400,yoy:-0.8,y3:5.2,rentYoy:3.6,tx:90,listings:70}},
   {id:"ramat-aviv",type:"nbhd",parent:"tlv",he:"רמת אביב",en:"Ramat Aviv",dx:5,dy:-22,
-    base:{price:4860000,sqm:47200,rent:9900,yoy:3.1,y3:9.8,rentYoy:4.1,tx:184,listings:150}},
+    base:{price:5500000,sqm:55000,rent:8600,yoy:-1.2,y3:4.6,rentYoy:3.9,tx:180,listings:150}},
   {id:"lev-hair",type:"nbhd",parent:"tlv",he:"לב העיר",en:"City Center",dx:6,dy:0,
-    base:{price:4120000,sqm:55600,rent:9300,yoy:4.4,y3:13.4,rentYoy:5.5,tx:351,listings:290}},
+    base:{price:4200000,sqm:60000,rent:7900,yoy:-1.9,y3:3.8,rentYoy:4.5,tx:340,listings:280}},
 
   {id:"rehavia",type:"nbhd",parent:"jerusalem",he:"רחביה",en:"Rehavia",dx:-8,dy:-3,
-    base:{price:3780000,sqm:39400,rent:7600,yoy:2.1,y3:7.2,rentYoy:2.9,tx:118,listings:90}},
+    base:{price:3700000,sqm:42000,rent:6400,yoy:1.4,y3:6.8,rentYoy:3.0,tx:115,listings:90}},
   {id:"baka",type:"nbhd",parent:"jerusalem",he:"בקעה",en:"Baka",dx:-2,dy:10,
-    base:{price:3420000,sqm:36800,rent:7100,yoy:2.7,y3:8.6,rentYoy:3.4,tx:142,listings:110}},
+    base:{price:3420000,sqm:38000,rent:6000,yoy:2.1,y3:7.9,rentYoy:3.5,tx:140,listings:110}},
   {id:"katamon",type:"nbhd",parent:"jerusalem",he:"קטמון הישנה",en:"Old Katamon",dx:-11,dy:7,
-    base:{price:2980000,sqm:34100,rent:6600,yoy:3.3,y3:9.9,rentYoy:3.9,tx:156,listings:120}},
+    base:{price:2950000,sqm:36000,rent:5700,yoy:1.9,y3:7.5,rentYoy:3.3,tx:155,listings:120}},
   {id:"jm-center",type:"nbhd",parent:"jerusalem",he:"מרכז העיר",en:"City Center",dx:2,dy:-9,
-    base:{price:2460000,sqm:31900,rent:6100,yoy:1.8,y3:6.4,rentYoy:2.6,tx:203,listings:170}},
+    base:{price:2140000,sqm:30500,rent:4900,yoy:1.2,y3:6.2,rentYoy:2.9,tx:200,listings:165}},
 
   {id:"carmel",type:"nbhd",parent:"haifa",he:"הכרמל",en:"The Carmel",dx:-4,dy:8,
-    base:{price:2240000,sqm:23600,rent:5200,yoy:4.2,y3:12.6,rentYoy:5.0,tx:388,listings:300}},
+    base:{price:2280000,sqm:24800,rent:4100,yoy:-1.2,y3:6.6,rentYoy:4.0,tx:380,listings:300}},
   {id:"hadar",type:"nbhd",parent:"haifa",he:"הדר הכרמל",en:"Hadar",dx:4,dy:-2,
-    base:{price:1080000,sqm:14100,rent:3300,yoy:6.1,y3:18.4,rentYoy:6.8,tx:294,listings:250}},
+    base:{price:945000,sqm:12600,rent:2600,yoy:-2.6,y3:4.8,rentYoy:3.4,tx:290,listings:245}},
   {id:"neve-shaanan-h",type:"nbhd",parent:"haifa",he:"נווה שאנן",en:"Neve Sha'anan",dx:10,dy:6,
-    base:{price:1340000,sqm:15800,rent:3700,yoy:5.0,y3:15.1,rentYoy:5.6,tx:246,listings:200}},
+    base:{price:1250000,sqm:15600,rent:3000,yoy:-1.9,y3:5.5,rentYoy:3.7,tx:240,listings:200}},
 
   {id:"em-hamoshavot",type:"nbhd",parent:"petah-tikva",he:"אם המושבות",en:"Em HaMoshavot",dx:-3,dy:-10,
-    base:{price:3120000,sqm:30850,rent:7450,yoy:3.7,y3:11.3,rentYoy:4.6,tx:184,listings:150}},
+    base:{price:3110000,sqm:29600,rent:5900,yoy:-3.2,y3:3.8,rentYoy:4.3,tx:180,listings:145}},
   {id:"kfar-ganim",type:"nbhd",parent:"petah-tikva",he:"כפר גנים",en:"Kfar Ganim",dx:-8,dy:8,
-    base:{price:2760000,sqm:27900,rent:6500,yoy:3.4,y3:10.4,rentYoy:4.2,tx:221,listings:180}},
+    base:{price:2820000,sqm:28200,rent:5500,yoy:-3.6,y3:3.4,rentYoy:4.1,tx:215,listings:175}},
   {id:"pt-center",type:"nbhd",parent:"petah-tikva",he:"מרכז העיר",en:"City Center",dx:6,dy:2,
-    base:{price:1890000,sqm:22400,rent:5100,yoy:4.1,y3:12.7,rentYoy:4.9,tx:317,listings:260}},
+    base:{price:1610000,sqm:22400,rent:4200,yoy:-4.5,y3:2.4,rentYoy:3.8,tx:310,listings:255}},
 
   {id:"ir-yamim",type:"nbhd",parent:"netanya",he:"עיר ימים",en:"Ir Yamim",dx:-7,dy:6,
-    base:{price:3960000,sqm:34700,rent:8100,yoy:3.5,y3:10.9,rentYoy:4.4,tx:152,listings:120}},
+    base:{price:3760000,sqm:34200,rent:6300,yoy:-2.8,y3:4.5,rentYoy:4.6,tx:150,listings:120}},
   {id:"netanya-center",type:"nbhd",parent:"netanya",he:"מרכז העיר",en:"City Center",dx:4,dy:-4,
-    base:{price:1780000,sqm:21200,rent:4700,yoy:4.3,y3:13.2,rentYoy:5.2,tx:289,listings:240}},
+    base:{price:1660000,sqm:21300,rent:4100,yoy:-4.1,y3:3.0,rentYoy:4.2,tx:285,listings:235}},
 
   {id:"rg-center",type:"nbhd",parent:"ramat-gan",he:"מרכז העיר",en:"City Center",dx:3,dy:-6,
-    base:{price:2720000,sqm:33500,rent:6600,yoy:3.9,y3:12.0,rentYoy:4.8,tx:236,listings:190}},
+    base:{price:2610000,sqm:36200,rent:5300,yoy:-1.8,y3:4.2,rentYoy:3.6,tx:230,listings:185}},
   {id:"tel-binyamin",type:"nbhd",parent:"ramat-gan",he:"תל בנימין",en:"Tel Binyamin",dx:-4,dy:5,
-    base:{price:3340000,sqm:36900,rent:7300,yoy:3.2,y3:9.7,rentYoy:3.9,tx:34,listings:28}},
+    base:{price:3440000,sqm:40500,rent:6100,yoy:-1.1,y3:5.0,rentYoy:3.4,tx:34,listings:28}},
 ];
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
@@ -743,14 +755,24 @@ function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charC
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
 
 /* -------- historical monthly series, generated backwards ----------
-   national year-over-year pattern (most recent year first), scaled per
-   location by its own yoy vs. the national figure                      */
-const NATIONAL_CURVE=[3.1,4.0,2.4,-1.8,14.8,8.2,5.4,6.1,7.9,6.8];
+   annual steps follow the CBS national house-price index by calendar
+   year (most recent first: 2026 ytd ≈ -1.2%, 2025 -1.0%, 2024 +7.7%,
+   2023 -1.4%, 2022 +17.1%, 2021 +11.6%, ...). years 0–1 are re-anchored
+   per location so the trailing 12-month and 3-year figures match its
+   own published/estimated numbers.                                     */
+const NATIONAL_CURVE=[-1.2,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
 const seriesCache={};
+function localCurve(l){
+  const c=[...NATIONAL_CURVE];
+  c[0]=l.base.yoy;
+  const target=1+l.base.y3/100;               /* cumulative 3-year move */
+  c[1]=(target/((1+c[0]/100)*(1+c[2]/100))-1)*100;
+  return c;
+}
 function seriesFor(id){
   if(seriesCache[id])return seriesCache[id];
   const l=LOC[id],r=rng(seedOf(id)),months=121;
-  const scale=Math.min(1.7,Math.max(.55,l.base.yoy/3.1));
+  const curve=localCurve(l);
   const pts=[];
   let price=l.base.price,rent=l.base.rent,sqm=l.base.sqm;
   const now=new Date(2026,7,1);
@@ -759,10 +781,10 @@ function seriesFor(id){
     pts.push({date:d,price:Math.round(price),sqm:Math.round(sqm),rent:Math.round(rent),
       yield:+(rent*12/price*100).toFixed(2)});
     const yr=Math.min(9,Math.floor(i/12));
-    const annual=(yr===0?l.base.yoy:NATIONAL_CURVE[yr]*scale);
-    const annualRent=(yr===0?l.base.rentYoy:NATIONAL_CURVE[yr]*scale*.8);
+    const annual=curve[yr];
+    const annualRent=yr===0?l.base.rentYoy:Math.min(8,Math.max(1.2,2.6+curve[yr]*.22));
     const mo=annual/100/12, moR=annualRent/100/12;
-    const noise=(r()-.5)*.006, noiseR=(r()-.5)*.004;
+    const noise=(r()-.5)*.005, noiseR=(r()-.5)*.003;
     price=price/(1+mo+noise); sqm=sqm/(1+mo+noise); rent=rent/(1+moR+noiseR);
   }
   pts.reverse();
@@ -797,7 +819,8 @@ function txFor(id){
    ===================================================================== */
 const I18N={
 he:{
-  brand:"נדל״ן ישראל", demoBadge:"נתוני הדגמה", updated:"עודכן לאחרונה: אוגוסט 2026",
+  brand:"נדל״ן ישראל", demoBadge:"נתוני הדגמה", calBadge:"נתונים מקורבים",
+  updated:"מכויל לפרסומי למ״ס ורשות המסים · אמצע 2026",
   h1:"שוק הנדל״ן בישראל", h1sub:"מחירים, מגמות והשוואות — מכל הארץ ועד לרמת השכונה.",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירת שוק",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
@@ -824,10 +847,10 @@ he:{
   cAll:"הכל",cNew:"חדש",cUsed:"יד שנייה", clearFilters:"אפס מסננים",
   filterNote:"המסננים מדגימים התאמת מקדמים על נתוני ההדגמה",
   rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
-  tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"העלייה המתונה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
+  tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
   cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · ★ = המוביל במדד", cmpAdd:"+ הוסף אזור",
   cmpEmpty:"בחר עד ארבעה אזורים להשוואה", cmpMax:"עד 4 אזורים",
-  insTitle:"תובנות מהנתונים", insNote:"מחושב אוטומטית מהנתונים המוצגים",
+  insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
   confTitle:"רמת ודאות",
   confHigh:"רמת ודאות גבוהה",confMed:"רמת ודאות בינונית",confLow:"רמת ודאות נמוכה",
   confBasedOn:n=>`מבוסס על <b class="num">${n}</b> עסקאות ב-12 החודשים האחרונים`,
@@ -838,24 +861,26 @@ he:{
   txTitle:"עסקאות אחרונות באזור", txNote:"שורות להמחשת המבנה בלבד · ",
   thDate:"תאריך",thStreet:"רחוב",thRooms:"חדרים",thAreaSqm:"שטח",thFloor:"קומה",thTxPrice:"מחיר",thTxPsm:"מחיר למ״ר",
   srcTitle:"מקורות ומתודולוגיה",
-  srcATitle:"ארכיטקטורת המקורות בגרסת הייצור",
-  srcAText:"המערכת בנויה לשלב מקורות רשמיים ומסחריים, ביניהם:",
-  srcA1:"הלשכה המרכזית לסטטיסטיקה (הלמ״ס)", srcA2:"מידע עסקאות נדל״ן של רשות המסים",
-  srcA3:"data.gov.il — מאגרי מידע ממשלתיים פתוחים", srcA4:"פידים מורשים של מודעות ונכסים, ככל שמותר משפטית",
-  srcADemo:"בגרסת הדגמה זו כל הערכים הם נתונים פיקטיביים לצורכי אב-טיפוס ואינם סטטיסטיקה רשמית.",
+  srcATitle:"בסיס הכיול של גרסה זו",
+  srcAText:"ערכי הלוח מקורבים לפרסומים האחרונים של המקורות הרשמיים (נכון לאמצע 2026):",
+  srcA1:"מחירי דירות — ממוצעי הלמ״ס לפי עיר ומחוז, רבעונים א׳–ב׳ 2026", srcA2:"שינוי שנתי — מדד מחירי הדירות של הלמ״ס לפי מחוז, מאי–יוני 2026 לעומת שנה קודמת",
+  srcA3:"שכר דירה — ממוצעי השכירות של הלמ״ס לפי עיר, 2025", srcA4:"עסקאות והיצע — נתוני רשות המסים וסקירות הכלכלן הראשי, 2025",
+  srcA5:"שכונות, רעננה ומודיעין — אומדן יחסי המעוגן בנתוני העיר",
+  srcADemo:"אלו נתונים מקורבים לצורכי הדגמה: הם מכוילים לפרסומים רשמיים אך אינם סטטיסטיקה רשמית, וטבלת העסקאות האחרונות היא המחשת מבנה בלבד.",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"עסקאות בפועל",srcB1b:"מחירי עסקאות שנחתמו ודווחו (רשות המסים)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
   srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
   srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
-  footLeft:"© 2026 נדל״ן ישראל · Property Intelligence · כל הערכים בעמוד הם נתוני הדגמה",
+  footLeft:"© 2026 נדל״ן ישראל · Property Intelligence · ערכים מקורבים המכוילים לפרסומי למ״ס ורשות המסים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
   monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
-  brand:"Israel Real Estate", demoBadge:"Demo data", updated:"Last updated: August 2026",
+  brand:"Israel Real Estate", demoBadge:"Demo data", calBadge:"Calibrated estimates",
+  updated:"Calibrated to CBS & Tax Authority figures · mid-2026",
   h1:"The Israeli Real-Estate Market", h1sub:"Prices, trends and comparisons — from the whole country down to the neighborhood.",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Neighborhoods",navCompare:"Compare",
@@ -882,10 +907,10 @@ en:{
   cAll:"All",cNew:"New",cUsed:"Resale", clearFilters:"Clear filters",
   filterNote:"Filters apply demo multipliers to the demonstration dataset",
   rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
-  tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Slowest rising",tYield:"Highest yield",tTx:"Most transactions",
+  tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Most transactions",
   cmpTitle:"Compare areas", cmpNote:"Up to four areas · ★ = leader per metric", cmpAdd:"+ Add area",
   cmpEmpty:"Pick up to four areas to compare", cmpMax:"Up to 4 areas",
-  insTitle:"Data insights", insNote:"Computed automatically from the displayed data",
+  insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
   confTitle:"Data confidence",
   confHigh:"High confidence",confMed:"Medium confidence",confLow:"Low confidence",
   confBasedOn:n=>`Based on <b class="num">${n}</b> transactions in the last 12 months`,
@@ -896,17 +921,18 @@ en:{
   txTitle:"Recent transactions in this area", txNote:"Structural illustration rows · ",
   thDate:"Date",thStreet:"Street",thRooms:"Rooms",thAreaSqm:"m²",thFloor:"Floor",thTxPrice:"Price",thTxPsm:"Per m²",
   srcTitle:"Sources & methodology",
-  srcATitle:"Production source architecture",
-  srcAText:"The system is designed to combine official and commercial sources, including:",
-  srcA1:"Israel Central Bureau of Statistics", srcA2:"Israel Tax Authority transaction records",
-  srcA3:"data.gov.il — open government datasets", srcA4:"Licensed listing feeds where legally available",
-  srcADemo:"In this demo build every value is fictional prototype data, not official statistics.",
+  srcATitle:"What this build is calibrated to",
+  srcAText:"Board values approximate the latest official publications (as of mid-2026):",
+  srcA1:"Home prices — CBS averages by city & district, Q1–Q2 2026", srcA2:"Annual change — CBS district house-price index, May–June 2026 vs. a year earlier",
+  srcA3:"Rents — CBS average city rents, 2025", srcA4:"Transactions & supply — Tax Authority data and Chief Economist reviews, 2025",
+  srcA5:"Neighborhoods, Ra'anana & Modi'in — relative estimates anchored to city figures",
+  srcADemo:"These are calibrated approximations for demonstration: anchored to official publications but not official statistics; the recent-transactions table illustrates structure only.",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed transactions",srcB1b:"Signed, reported deal prices (Tax Authority)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
   srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
   srcB4a:"Official indices",srcB4b:"CBS housing price indices",
-  footLeft:"© 2026 Israel Real Estate · Property Intelligence · every value on this page is demo data",
+  footLeft:"© 2026 Israel Real Estate · Property Intelligence · approximate values calibrated to CBS & Tax Authority publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
   monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
@@ -1019,6 +1045,12 @@ const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center"
 const HEAT=["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95","#0d366b"];
 function heatColor(t){return HEAT[Math.max(0,Math.min(HEAT.length-1,Math.round(t*(HEAT.length-1))))]}
 function heatText(t){return t>0.42?"#ffffff":"#173f66"}
+
+/* diverging ramp for polarity metrics (annual change can be negative):
+   red = falling, neutral paper at zero, blue = rising */
+const HEAT_DIV=["#9e3a30","#c97b6d","#e8beb4","#f0efec","#aac6e9","#5b93d8","#1f5aa8"];
+function divColor(t){return HEAT_DIV[Math.max(0,Math.min(HEAT_DIV.length-1,Math.round(t*(HEAT_DIV.length-1))))]}
+const isDivergingMap=()=>state.mapMetric==="yoy";
 
 const MAP_METRICS=[
   {id:"price",label:()=>T().mAvg,get:m=>m.price,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
@@ -1142,7 +1174,11 @@ function renderMap(){
   const t=T(),svg=el("mapSvg"),mm=mapMetric(),ctx=mapContext();
   const vals=ctx.items.map(i=>mm.get(metricsOf(i.id)));
   const lo=Math.min(...vals),hi=Math.max(...vals);
-  const norm=v=>hi===lo?0.5:(v-lo)/(hi-lo);
+  const div=isDivergingMap();
+  const maxAbs=Math.max(Math.abs(lo),Math.abs(hi))||1;
+  const norm=v=>div?0.5+(v/maxAbs)*0.5:(hi===lo?0.5:(v-lo)/(hi-lo));
+  const colorOf=t=>div?divColor(t):heatColor(t);
+  const onDark=t=>div?(t<0.16||t>0.84):t>0.42;
   let inner="";
   const defs=`<defs><clipPath id="ilClip"><path d="${israelPath}"/></clipPath></defs>`;
   const silhouette=`<path d="${israelPath}" fill="var(--panel-2)" stroke="var(--baseline)" stroke-width="1"/>`;
@@ -1153,13 +1189,13 @@ function renderMap(){
     for(const d of ctx.items){
       const g=DISTRICT_GEO[d.id],tv=norm(mm.get(metricsOf(d.id)));
       const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
-      inner+=`<rect class="geo" data-loc="${d.id}" x="${x1.toFixed(1)}" y="${y1.toFixed(1)}" width="${(x2-x1).toFixed(1)}" height="${(y2-y1).toFixed(1)}" fill="${heatColor(tv)}"><title>${heName(d)}</title></rect>`;
+      inner+=`<rect class="geo" data-loc="${d.id}" x="${x1.toFixed(1)}" y="${y1.toFixed(1)}" width="${(x2-x1).toFixed(1)}" height="${(y2-y1).toFixed(1)}" fill="${colorOf(tv)}"><title>${heName(d)}</title></rect>`;
     }
     inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="1.4"/>`;
     for(const d of ctx.items){
       const [lx,ly]=proj(...DISTRICT_LABEL[d.id]);
       const tv=norm(mm.get(metricsOf(d.id)));
-      inner+=`<text class="geo-label ${tv>0.42?"on-dark":""}" x="${lx}" y="${ly}" font-size="8.2" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
+      inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="8.2" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
   }else{
     vb=ctx.level==="district"?bboxForDistrict(ctx.focus.id):bboxForCity(ctx.focus.type==="city"?ctx.focus:LOC[ctx.focus.parent]);
@@ -1176,7 +1212,7 @@ function renderMap(){
       if(c.type==="nbhd"){x+=(c.dx||0)*(vb[2]/70);y+=(c.dy||0)*(vb[3]/70)}
       const tv=norm(mm.get(metricsOf(c.id)));
       const active=ctx.active===c.id;
-      inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${heatColor(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--ink)"':""}><title>${heName(c)}</title></circle>`;
+      inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${colorOf(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--ink)"':""}><title>${heName(c)}</title></circle>`;
       const side=(c.dx||1)<0?-1:1;
       inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
     }
@@ -1211,19 +1247,20 @@ function renderMap(){
   const dir=state.mapMetric==="price"||state.mapMetric==="sqm"||state.mapMetric==="rent"||state.mapMetric==="yield"||state.mapMetric==="yoy"?-1:1;
   const ranked=[...ctx.items].sort((a,b)=>dir*(mm.get(metricsOf(a.id))-mm.get(metricsOf(b.id)))).slice(0,8);
   const rvals=ranked.map(i=>mm.get(metricsOf(i.id)));
-  const rmax=Math.max(...rvals);
+  const rmax=Math.max(...rvals.map(Math.abs))||1;
   el("mapRankTitle").textContent=(state.locId==="il"&&state.mapMetric==="price")?t.rankExp:mm.rank();
   el("mapRankList").innerHTML=ranked.map((item,i)=>`
     <button class="rank-row" data-go="${item.id}">
       <span class="idx">${String(i+1).padStart(2,"0")}</span>
       <span class="nm">${heName(item)}</span>
-      <span class="bar"><i style="width:${Math.max(6,rvals[i]/rmax*100)}%"></i></span>
+      <span class="bar"><i style="width:${Math.max(6,Math.abs(rvals[i])/rmax*100)}%${rvals[i]<0?";background:var(--down)":""}"></i></span>
       <span class="vl num">${mm.fmt(rvals[i])}</span>
     </button>`).join("");
   el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
-  el("scaleLow").textContent=mm.fmt(lo);
-  el("scaleHigh").textContent=mm.fmt(hi);
+  el("scaleLow").textContent=mm.fmt(div?-maxAbs:lo);
+  el("scaleHigh").textContent=mm.fmt(div?maxAbs:hi);
+  el("scaleBar").classList.toggle("div",div);
 }
 
 /* ---------- profile card ---------- */
@@ -1492,7 +1529,7 @@ function renderRankings(){
     <button class="rank-row" data-go="${item.id}">
       <span class="idx">${String(i+1).padStart(2,"0")}</span>
       <span class="nm">${heName(item)}${item.type==="nbhd"?` <span style="color:var(--ink-3);font-weight:400;font-size:11.5px">· ${heName(LOC[item.parent])}</span>`:""}</span>
-      <span class="bar"><i style="width:${Math.max(6,Math.abs(vals[i])/vmax*100)}%"></i></span>
+      <span class="bar"><i style="width:${Math.max(6,Math.abs(vals[i])/vmax*100)}%${vals[i]<0?";background:var(--down)":""}"></i></span>
       <span class="vl num">${rt.fmt(vals[i])}</span>
     </button>`).join("");
   el("rankGrid").querySelectorAll("[data-go]").forEach(b=>
@@ -1572,6 +1609,9 @@ function renderInsights(){
   out.push(he
     ?`מחיר הדירות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
     :`Prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
+  if(state.locId==="il")out.push(he
+    ?`מלאי שיא של כ-<b class="num">86,090</b> דירות חדשות שלא נמכרו (כ-<b class="num">29</b> חודשי היצע, סוף 2025) ממשיך להכביד על המחירים, בעיקר במרכז.`
+    :`A record ~<b class="num">86,090</b> unsold new homes (≈<b class="num">29</b> months of supply, end-2025) keeps weighing on prices, mainly in the Center.`);
   if(m.rentYoy>m.yoy+0.15)out.push(he
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);
