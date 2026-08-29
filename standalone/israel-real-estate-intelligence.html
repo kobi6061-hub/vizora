@@ -417,7 +417,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
     <nav class="main" aria-label="ניווט" id="mainNav"></nav>
     <div class="top-end">
       <span class="updated" id="updatedTxt"></span>
-      <span class="badge-demo" data-i="calBadge">נתונים מקורבים</span>
+      <span class="badge-demo" data-i="calBadge">דירות חדשות מקבלן בלבד</span>
       <div class="lang" role="group" aria-label="שפה">
         <button id="langHe" aria-pressed="true">HE</button>
         <button id="langEn" aria-pressed="false">EN</button>
@@ -429,8 +429,8 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 <div class="command">
   <div class="wrap command-in">
     <div>
-      <h1 data-i="h1">שוק הנדל״ן בישראל</h1>
-      <p class="sub" data-i="h1sub">מחירים, מגמות והשוואות — מכל הארץ ועד לרמת השכונה.</p>
+      <h1 data-i="h1">שוק הדירות החדשות מקבלן בישראל</h1>
+      <p class="sub" data-i="h1sub">מחירים, מגמות והשוואות של דירות חדשות מקבלן בלבד — ללא דירות יד שנייה.</p>
     </div>
     <div class="command-row">
       <div class="search">
@@ -597,16 +597,16 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
       </summary>
       <div class="src-body">
         <div>
-          <h4 data-i="srcATitle">בסיס הכיול של גרסה זו</h4>
-          <p data-i="srcAText">ערכי הלוח מקורבים לפרסומים האחרונים של המקורות הרשמיים (נכון לאמצע 2026):</p>
+          <h4 data-i="srcATitle">בסיס הכיול — דירות חדשות מקבלן בלבד</h4>
+          <p data-i="srcAText">כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:</p>
           <ul>
-            <li data-i="srcA1">מחירי דירות — ממוצעי הלמ״ס לפי עיר ומחוז, רבעונים א׳–ב׳ 2026</li>
-            <li data-i="srcA2">שינוי שנתי — מדד מחירי הדירות של הלמ״ס לפי מחוז, מאי–יוני 2026 לעומת שנה קודמת</li>
-            <li data-i="srcA3">שכר דירה — ממוצעי השכירות של הלמ״ס לפי עיר, 2025</li>
-            <li data-i="srcA4">עסקאות והיצע — נתוני רשות המסים וסקירות הכלכלן הראשי, 2025</li>
-            <li data-i="srcA5">שכונות, רעננה ומודיעין — אומדן יחסי המעוגן בנתוני העיר</li>
+            <li data-i="srcA1">שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 3.8%- (פברואר–מרץ 2026 מול שנה קודמת)</li>
+            <li data-i="srcA2">מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% — אומדן</li>
+            <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: כ-84,000 ארצית (אפריל 2026); תל אביב 9,549; רעננה 1,580</li>
+            <li data-i="srcA4">מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מהעסקאות, כשליש בסבסוד); תל אביב 1,236</li>
+            <li data-i="srcA5">שינוי אזורי, שכירות לדירה חדשה ושכונות — אומדנים נגזרים</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">אלו נתונים מקורבים לצורכי הדגמה: הם מכוילים לפרסומים רשמיים אך אינם סטטיסטיקה רשמית, וטבלת העסקאות האחרונות היא המחשת מבנה בלבד.</p>
+          <p style="margin-top:8px" data-i="srcADemo">אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -640,103 +640,109 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 const UPDATED_AT = "2026-08";
 
 /* location: {id,type,parent,he,en,lat,lng, base:{price,sqm,rent,yoy,y3,rentYoy,tx,listings}}
-   Calibrated to official publications (mid-2026 snapshot):
-   · price/sqm — CBS average home prices by city & district, Q1–Q2 2026
-   · yoy — CBS house-price index by district, May–June 2026 vs. a year earlier
-   · y3 — cumulative 2023→2026 move implied by the CBS annual index path
-   · rent/rentYoy — CBS average city rents, 2025
-   · tx/listings — order of magnitude from Tax Authority / Chief Economist 2025 reviews
-   Neighborhood rows (and Ra'anana / Modi'in) are relative estimates anchored
-   to their city's published figures — labeled as estimates in the UI.        */
+   NEW HOMES FROM DEVELOPERS ONLY — no second-hand. Mid-2026 snapshot:
+   · price/sqm — CBS general averages (Q1–Q2 2026) × 1.12 new-build premium
+     (published range 10–15%) — labeled estimate
+   · yoy/y3 — general figure − 2.6pp: the published gap between the CBS
+     new-homes index (−3.8% y/y, Feb–Mar 2026) and the general index (−1.2%);
+     the national row therefore equals the published −3.8% exactly
+   · rent — CBS 2025 city averages × 1.08 new-build premium (estimate)
+   · tx — new-home sales: ≈34,000 nationally in 2025 (37.5% of all deals,
+     ~30% subsidized); Tel Aviv 1,236 published; other splits estimated
+   · listings — UNSOLD NEW INVENTORY: ≈84,000 nationally (April 2026),
+     Tel Aviv 9,549, Ra'anana 1,580, TLV district 25,320, Center 20,620
+     published; the rest estimated to sum to the national figure           */
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,
-    base:{price:2435000,sqm:26500,rent:4950,yoy:-1.2,y3:5.3,rentYoy:4.3,tx:83000,listings:58000}},
+    base:{price:2730000,sqm:29700,rent:5350,yoy:-3.8,y3:2.7,rentYoy:4.3,tx:34000,listings:84000}},
 
   {id:"d-north",type:"district",parent:"il",he:"מחוז הצפון",en:"Northern District",lat:32.95,lng:35.4,
-    base:{price:1520000,sqm:15500,rent:3300,yoy:1.6,y3:8.4,rentYoy:3.5,tx:9500,listings:6300}},
+    base:{price:1700000,sqm:17400,rent:3560,yoy:-1.0,y3:5.8,rentYoy:3.5,tx:4600,listings:9500}},
   {id:"d-haifa",type:"district",parent:"il",he:"מחוז חיפה",en:"Haifa District",lat:32.6,lng:35.0,
-    base:{price:1780000,sqm:19500,rent:3450,yoy:-1.8,y3:5.8,rentYoy:3.8,tx:10000,listings:7000}},
+    base:{price:1990000,sqm:21800,rent:3730,yoy:-4.4,y3:3.2,rentYoy:3.8,tx:3800,listings:7000}},
   {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,
-    base:{price:2480000,sqm:25500,rent:5100,yoy:-4.1,y3:3.4,rentYoy:4.2,tx:24000,listings:16500}},
+    base:{price:2780000,sqm:28600,rent:5510,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:8200,listings:20620}},
   {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,
-    base:{price:3350000,sqm:40000,rent:6500,yoy:-1.7,y3:4.2,rentYoy:4.0,tx:11500,listings:9000}},
+    base:{price:3750000,sqm:44800,rent:7020,yoy:-4.3,y3:1.6,rentYoy:4.0,tx:4300,listings:25320}},
   {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
-    base:{price:2750000,sqm:29000,rent:4900,yoy:1.8,y3:7.2,rentYoy:3.2,tx:9500,listings:6500}},
+    base:{price:3080000,sqm:32500,rent:5290,yoy:-0.8,y3:4.6,rentYoy:3.2,tx:4200,listings:8200}},
   {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
-    base:{price:1610000,sqm:16800,rent:3600,yoy:0.1,y3:6.6,rentYoy:4.0,tx:18500,listings:12500}},
+    base:{price:1800000,sqm:18800,rent:3890,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:7400,listings:13400}},
 
   {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,
-    base:{price:4550000,sqm:56900,rent:7201,yoy:-1.7,y3:4.0,rentYoy:4.1,tx:6900,listings:5600}},
+    base:{price:5100000,sqm:63700,rent:7780,yoy:-4.3,y3:1.4,rentYoy:4.1,tx:1236,listings:9549}},
   {id:"ramat-gan",type:"city",parent:"d-ta",he:"רמת גן",en:"Ramat Gan",lat:32.07,lng:34.825,
-    base:{price:3070000,sqm:37400,rent:5693,yoy:-1.5,y3:4.6,rentYoy:3.7,tx:2700,listings:2100}},
+    base:{price:3440000,sqm:41900,rent:6150,yoy:-4.1,y3:2.0,rentYoy:3.7,tx:420,listings:1600}},
   {id:"herzliya",type:"city",parent:"d-ta",he:"הרצליה",en:"Herzliya",lat:32.166,lng:34.84,
-    base:{price:3570000,sqm:35700,rent:6427,yoy:-2.0,y3:3.6,rentYoy:3.3,tx:1300,listings:1000}},
+    base:{price:4000000,sqm:40000,rent:6940,yoy:-4.6,y3:1.0,rentYoy:3.3,tx:190,listings:800}},
   {id:"jerusalem",type:"city",parent:"d-jm",he:"ירושלים",en:"Jerusalem",lat:31.77,lng:35.21,
-    base:{price:3050000,sqm:32100,rent:5164,yoy:1.8,y3:7.4,rentYoy:3.2,tx:6300,listings:4600}},
+    base:{price:3420000,sqm:36000,rent:5580,yoy:-0.8,y3:4.8,rentYoy:3.2,tx:1150,listings:5800}},
   {id:"haifa",type:"city",parent:"d-haifa",he:"חיפה",en:"Haifa",lat:32.79,lng:34.99,
-    base:{price:1800000,sqm:21200,rent:3298,yoy:-1.8,y3:5.9,rentYoy:3.8,tx:4900,listings:3600}},
+    base:{price:2020000,sqm:23700,rent:3560,yoy:-4.4,y3:3.3,rentYoy:3.8,tx:650,listings:2400}},
   {id:"petah-tikva",type:"city",parent:"d-center",he:"פתח תקווה",en:"Petah Tikva",lat:32.09,lng:34.887,
-    base:{price:2422000,sqm:26300,rent:4911,yoy:-3.8,y3:3.1,rentYoy:4.0,tx:3700,listings:2800}},
+    base:{price:2710000,sqm:29500,rent:5300,yoy:-6.4,y3:0.5,rentYoy:4.0,tx:520,listings:1900}},
   {id:"rishon",type:"city",parent:"d-center",he:"ראשון לציון",en:"Rishon LeZion",lat:31.96,lng:34.8,
-    base:{price:2387000,sqm:26000,rent:5380,yoy:-4.3,y3:2.8,rentYoy:4.5,tx:3900,listings:2900}},
+    base:{price:2670000,sqm:29100,rent:5810,yoy:-6.9,y3:0.2,rentYoy:4.5,tx:480,listings:1700}},
   {id:"netanya",type:"city",parent:"d-center",he:"נתניה",en:"Netanya",lat:32.32,lng:34.855,
-    base:{price:2434000,sqm:25600,rent:4750,yoy:-3.5,y3:3.7,rentYoy:4.4,tx:3600,listings:2700}},
+    base:{price:2730000,sqm:28700,rent:5130,yoy:-6.1,y3:1.1,rentYoy:4.4,tx:950,listings:2600}},
   {id:"kfar-saba",type:"city",parent:"d-center",he:"כפר סבא",en:"Kfar Saba",lat:32.175,lng:34.912,
-    base:{price:3000000,sqm:27800,rent:5842,yoy:-4.0,y3:3.2,rentYoy:6.0,tx:1500,listings:1100}},
+    base:{price:3360000,sqm:31100,rent:6310,yoy:-6.6,y3:0.6,rentYoy:6.0,tx:210,listings:900}},
   {id:"raanana",type:"city",parent:"d-center",he:"רעננה",en:"Ra'anana",lat:32.19,lng:34.87,
-    base:{price:3200000,sqm:29100,rent:6100,yoy:-4.4,y3:2.6,rentYoy:4.2,tx:1150,listings:850}},
+    base:{price:3580000,sqm:32600,rent:6590,yoy:-7.0,y3:0.0,rentYoy:4.2,tx:230,listings:1580}},
   {id:"modiin",type:"city",parent:"d-center",he:"מודיעין-מכבים-רעות",en:"Modi'in",lat:31.9,lng:35.01,
-    base:{price:2550000,sqm:24300,rent:5600,yoy:-3.9,y3:3.3,rentYoy:4.1,tx:1400,listings:1000}},
+    base:{price:2860000,sqm:27200,rent:6050,yoy:-6.5,y3:0.7,rentYoy:4.1,tx:310,listings:1100}},
   {id:"ashdod",type:"city",parent:"d-south",he:"אשדוד",en:"Ashdod",lat:31.8,lng:34.65,
-    base:{price:1963000,sqm:20600,rent:4150,yoy:-0.4,y3:5.4,rentYoy:4.6,tx:2800,listings:2000}},
+    base:{price:2200000,sqm:23100,rent:4480,yoy:-3.0,y3:2.8,rentYoy:4.6,tx:520,listings:1900}},
   {id:"beer-sheva",type:"city",parent:"d-south",he:"באר שבע",en:"Be'er Sheva",lat:31.25,lng:34.79,
-    base:{price:1240000,sqm:13800,rent:3034,yoy:0.8,y3:7.8,rentYoy:5.2,tx:4100,listings:3200}},
+    base:{price:1390000,sqm:15500,rent:3280,yoy:-1.8,y3:5.2,rentYoy:5.2,tx:780,listings:2300}},
 
   /* neighborhoods — dx/dy are map offsets (viewBox px) around the city dot.
-     All neighborhood figures are relative estimates anchored to the city. */
+     New-build supply at neighborhood level is thin: every row here is a
+     relative estimate anchored to the city, with realistically small
+     sale counts (the confidence meter reflects that honestly). */
   {id:"old-north",type:"nbhd",parent:"tlv",he:"הצפון הישן",en:"Old North",dx:2,dy:-12,
-    base:{price:5420000,sqm:66000,rent:8900,yoy:-1.5,y3:4.4,rentYoy:4.4,tx:390,listings:320}},
+    base:{price:6070000,sqm:73900,rent:9610,yoy:-4.1,y3:1.8,rentYoy:4.4,tx:45,listings:350}},
   {id:"florentin",type:"nbhd",parent:"tlv",he:"פלורנטין",en:"Florentin",dx:-4,dy:12,
-    base:{price:3220000,sqm:52000,rent:7300,yoy:-2.4,y3:3.1,rentYoy:4.8,tx:260,listings:220}},
+    base:{price:3610000,sqm:58200,rent:7880,yoy:-5.0,y3:0.5,rentYoy:4.8,tx:85,listings:520}},
   {id:"neve-tzedek",type:"nbhd",parent:"tlv",he:"נווה צדק",en:"Neve Tzedek",dx:-9,dy:6,
-    base:{price:6340000,sqm:72000,rent:10400,yoy:-0.8,y3:5.2,rentYoy:3.6,tx:90,listings:70}},
+    base:{price:7100000,sqm:80600,rent:11230,yoy:-3.4,y3:2.6,rentYoy:3.6,tx:12,listings:90}},
   {id:"ramat-aviv",type:"nbhd",parent:"tlv",he:"רמת אביב",en:"Ramat Aviv",dx:5,dy:-22,
-    base:{price:5500000,sqm:55000,rent:8600,yoy:-1.2,y3:4.6,rentYoy:3.9,tx:180,listings:150}},
+    base:{price:6160000,sqm:61600,rent:9290,yoy:-3.8,y3:2.0,rentYoy:3.9,tx:35,listings:420}},
   {id:"lev-hair",type:"nbhd",parent:"tlv",he:"לב העיר",en:"City Center",dx:6,dy:0,
-    base:{price:4200000,sqm:60000,rent:7900,yoy:-1.9,y3:3.8,rentYoy:4.5,tx:340,listings:280}},
+    base:{price:4700000,sqm:67200,rent:8530,yoy:-4.5,y3:1.2,rentYoy:4.5,tx:60,listings:480}},
 
   {id:"rehavia",type:"nbhd",parent:"jerusalem",he:"רחביה",en:"Rehavia",dx:-8,dy:-3,
-    base:{price:3700000,sqm:42000,rent:6400,yoy:1.4,y3:6.8,rentYoy:3.0,tx:115,listings:90}},
+    base:{price:4140000,sqm:47000,rent:6910,yoy:-1.2,y3:4.2,rentYoy:3.0,tx:18,listings:140}},
   {id:"baka",type:"nbhd",parent:"jerusalem",he:"בקעה",en:"Baka",dx:-2,dy:10,
-    base:{price:3420000,sqm:38000,rent:6000,yoy:2.1,y3:7.9,rentYoy:3.5,tx:140,listings:110}},
+    base:{price:3830000,sqm:42600,rent:6480,yoy:-0.5,y3:5.3,rentYoy:3.5,tx:40,listings:330}},
   {id:"katamon",type:"nbhd",parent:"jerusalem",he:"קטמון הישנה",en:"Old Katamon",dx:-11,dy:7,
-    base:{price:2950000,sqm:36000,rent:5700,yoy:1.9,y3:7.5,rentYoy:3.3,tx:155,listings:120}},
+    base:{price:3300000,sqm:40300,rent:6160,yoy:-0.7,y3:4.9,rentYoy:3.3,tx:30,listings:260}},
   {id:"jm-center",type:"nbhd",parent:"jerusalem",he:"מרכז העיר",en:"City Center",dx:2,dy:-9,
-    base:{price:2140000,sqm:30500,rent:4900,yoy:1.2,y3:6.2,rentYoy:2.9,tx:200,listings:165}},
+    base:{price:2400000,sqm:34200,rent:5290,yoy:-1.4,y3:3.6,rentYoy:2.9,tx:65,listings:540}},
 
   {id:"carmel",type:"nbhd",parent:"haifa",he:"הכרמל",en:"The Carmel",dx:-4,dy:8,
-    base:{price:2280000,sqm:24800,rent:4100,yoy:-1.2,y3:6.6,rentYoy:4.0,tx:380,listings:300}},
+    base:{price:2550000,sqm:27800,rent:4430,yoy:-3.8,y3:4.0,rentYoy:4.0,tx:50,listings:380}},
   {id:"hadar",type:"nbhd",parent:"haifa",he:"הדר הכרמל",en:"Hadar",dx:4,dy:-2,
-    base:{price:945000,sqm:12600,rent:2600,yoy:-2.6,y3:4.8,rentYoy:3.4,tx:290,listings:245}},
+    base:{price:1060000,sqm:14100,rent:2810,yoy:-5.2,y3:2.2,rentYoy:3.4,tx:30,listings:240}},
   {id:"neve-shaanan-h",type:"nbhd",parent:"haifa",he:"נווה שאנן",en:"Neve Sha'anan",dx:10,dy:6,
-    base:{price:1250000,sqm:15600,rent:3000,yoy:-1.9,y3:5.5,rentYoy:3.7,tx:240,listings:200}},
+    base:{price:1400000,sqm:17500,rent:3240,yoy:-4.5,y3:2.9,rentYoy:3.7,tx:40,listings:310}},
 
   {id:"em-hamoshavot",type:"nbhd",parent:"petah-tikva",he:"אם המושבות",en:"Em HaMoshavot",dx:-3,dy:-10,
-    base:{price:3110000,sqm:29600,rent:5900,yoy:-3.2,y3:3.8,rentYoy:4.3,tx:180,listings:145}},
+    base:{price:3480000,sqm:33200,rent:6370,yoy:-5.8,y3:1.2,rentYoy:4.3,tx:90,listings:450}},
   {id:"kfar-ganim",type:"nbhd",parent:"petah-tikva",he:"כפר גנים",en:"Kfar Ganim",dx:-8,dy:8,
-    base:{price:2820000,sqm:28200,rent:5500,yoy:-3.6,y3:3.4,rentYoy:4.1,tx:215,listings:175}},
+    base:{price:3160000,sqm:31600,rent:5940,yoy:-6.2,y3:0.8,rentYoy:4.1,tx:75,listings:380}},
   {id:"pt-center",type:"nbhd",parent:"petah-tikva",he:"מרכז העיר",en:"City Center",dx:6,dy:2,
-    base:{price:1610000,sqm:22400,rent:4200,yoy:-4.5,y3:2.4,rentYoy:3.8,tx:310,listings:255}},
+    base:{price:1800000,sqm:25100,rent:4540,yoy:-7.1,y3:-0.2,rentYoy:3.8,tx:110,listings:620}},
 
   {id:"ir-yamim",type:"nbhd",parent:"netanya",he:"עיר ימים",en:"Ir Yamim",dx:-7,dy:6,
-    base:{price:3760000,sqm:34200,rent:6300,yoy:-2.8,y3:4.5,rentYoy:4.6,tx:150,listings:120}},
+    base:{price:4210000,sqm:38300,rent:6800,yoy:-5.4,y3:1.9,rentYoy:4.6,tx:120,listings:700}},
   {id:"netanya-center",type:"nbhd",parent:"netanya",he:"מרכז העיר",en:"City Center",dx:4,dy:-4,
-    base:{price:1660000,sqm:21300,rent:4100,yoy:-4.1,y3:3.0,rentYoy:4.2,tx:285,listings:235}},
+    base:{price:1860000,sqm:23900,rent:4430,yoy:-6.7,y3:0.4,rentYoy:4.2,tx:140,listings:800}},
 
   {id:"rg-center",type:"nbhd",parent:"ramat-gan",he:"מרכז העיר",en:"City Center",dx:3,dy:-6,
-    base:{price:2610000,sqm:36200,rent:5300,yoy:-1.8,y3:4.2,rentYoy:3.6,tx:230,listings:185}},
+    base:{price:2920000,sqm:40500,rent:5720,yoy:-4.4,y3:1.6,rentYoy:3.6,tx:70,listings:430}},
   {id:"tel-binyamin",type:"nbhd",parent:"ramat-gan",he:"תל בנימין",en:"Tel Binyamin",dx:-4,dy:5,
-    base:{price:3440000,sqm:40500,rent:6100,yoy:-1.1,y3:5.0,rentYoy:3.4,tx:34,listings:28}},
+    base:{price:3850000,sqm:45400,rent:6590,yoy:-3.7,y3:2.4,rentYoy:3.4,tx:8,listings:60}},
 ];
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
@@ -755,12 +761,12 @@ function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charC
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
 
 /* -------- historical monthly series, generated backwards ----------
-   annual steps follow the CBS national house-price index by calendar
-   year (most recent first: 2026 ytd ≈ -1.2%, 2025 -1.0%, 2024 +7.7%,
-   2023 -1.4%, 2022 +17.1%, 2021 +11.6%, ...). years 0–1 are re-anchored
-   per location so the trailing 12-month and 3-year figures match its
-   own published/estimated numbers.                                     */
-const NATIONAL_CURVE=[-1.2,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
+   year 0 follows the CBS NEW-HOMES price index (−3.8% y/y, Feb–Mar 2026);
+   earlier years approximate the overall CBS index path (2025 −1.0%,
+   2024 +7.7%, 2023 −1.4%, 2022 +17.1%, 2021 +11.6%, ...) since a long
+   new-homes-only annual history is not published — labeled estimate.
+   Years 0–1 are re-anchored per location to match its yoy/3y figures.  */
+const NATIONAL_CURVE=[-3.8,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
 const seriesCache={};
 function localCurve(l){
   const c=[...NATIONAL_CURVE];
@@ -819,32 +825,32 @@ function txFor(id){
    ===================================================================== */
 const I18N={
 he:{
-  brand:"נדל״ן ישראל", demoBadge:"נתוני הדגמה", calBadge:"נתונים מקורבים",
-  updated:"מכויל לפרסומי למ״ס ורשות המסים · אמצע 2026",
-  h1:"שוק הנדל״ן בישראל", h1sub:"מחירים, מגמות והשוואות — מכל הארץ ועד לרמת השכונה.",
+  brand:"נדל״ן ישראל", demoBadge:"נתוני הדגמה", calBadge:"דירות חדשות מקבלן בלבד",
+  updated:"דירות חדשות · למ״ס והכלכלן הראשי · אמצע 2026",
+  h1:"שוק הדירות החדשות מקבלן בישראל", h1sub:"מחירים, מגמות והשוואות של דירות חדשות מקבלן בלבד — ללא דירות יד שנייה.",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירת שוק",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
-  kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"שוק המכירה · 12 החודשים האחרונים", kpiNoteRent:"שוק השכירות · 12 החודשים האחרונים",
-  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 חודשים", tx:"מספר עסקאות", y3:"שינוי ב-3 שנים",
-  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו משוערת", listings:"היצע להשכרה",
+  kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"מכירות קבלנים · 12 החודשים האחרונים", kpiNoteRent:"השכרת דירות חדשות (אומדן) · 12 החודשים האחרונים",
+  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 חודשים", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
+  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו משוערת", listings:"מלאי חדש שטרם נמכר",
   vsPrev:"לעומת התקופה הקודמת", est:"אומדן", perMonth:"לחודש", perYear:"לשנה",
-  mapTitle:"מפת מחירי הנדל״ן בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
+  mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
   rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
   trendTitle:"מגמת מחירים", chartOf:"מדד",
   cPrice:"מחיר נכס",cPsm:"מחיר למ״ר",cRent:"שכירות",cYield:"תשואה",
   p6m:"6 חודשים",p1y:"שנה",p3y:"3 שנים",p5y:"5 שנים",p10y:"10 שנים",
-  svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן",
+  svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן לדירה חדשה מקבלן",
   svrBuy:"מחיר רכישה ממוצע",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
   svrYears:"שנות שכירות", svrFormula:(p,r,y)=>`אם נכס באזור עולה <b class="num">${p}</b> והשכירות הממוצעת היא <b class="num">${r}</b> לחודש — התשואה הברוטו המשוערת היא <b class="num">${y}</b>.`,
   tblNbhd:"שכונות באזור", tblCities:"ערים באזור", tblDistricts:"מחוזות בישראל",
-  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי 12 ח׳",thTx:"עסקאות",thListings:"מודעות",thTrend:"מגמה",thConf:"ודאות",
+  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי 12 ח׳",thTx:"מכירות",thListings:"מלאי",thTrend:"מגמה",thConf:"ודאות",
   areas:"אזורים", filtered:"מסונן",
-  fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"מצב",
+  fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"שלב בנייה",
   rAll:"הכל",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
   tApt:"דירה",tGarden:"דירת גן",tPh:"פנטהאוז",tHouse:"בית פרטי",
   aAll:"הכל",a60:"עד 60 מ״ר",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
-  cAll:"הכל",cNew:"חדש",cUsed:"יד שנייה", clearFilters:"אפס מסננים",
+  cAll:"הכל",cReady:"מוכנה למגורים",cPaper:"על הנייר", clearFilters:"אפס מסננים",
   filterNote:"המסננים מדגימים התאמת מקדמים על נתוני ההדגמה",
   rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
   tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
@@ -858,53 +864,53 @@ he:{
   confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
   confMedNote:"מדגם בינוני — ייתכנו סטיות; מומלץ לבחון גם את שכונות הסביבה.",
   confLowNote:"מדגם קטן מאוד — הנתונים אינדיקטיביים בלבד ואינם מספקים בסיס להחלטה.",
-  txTitle:"עסקאות אחרונות באזור", txNote:"שורות להמחשת המבנה בלבד · ",
+  txTitle:"מכירות קבלן אחרונות באזור", txNote:"שורות להמחשת המבנה בלבד · ",
   thDate:"תאריך",thStreet:"רחוב",thRooms:"חדרים",thAreaSqm:"שטח",thFloor:"קומה",thTxPrice:"מחיר",thTxPsm:"מחיר למ״ר",
   srcTitle:"מקורות ומתודולוגיה",
-  srcATitle:"בסיס הכיול של גרסה זו",
-  srcAText:"ערכי הלוח מקורבים לפרסומים האחרונים של המקורות הרשמיים (נכון לאמצע 2026):",
-  srcA1:"מחירי דירות — ממוצעי הלמ״ס לפי עיר ומחוז, רבעונים א׳–ב׳ 2026", srcA2:"שינוי שנתי — מדד מחירי הדירות של הלמ״ס לפי מחוז, מאי–יוני 2026 לעומת שנה קודמת",
-  srcA3:"שכר דירה — ממוצעי השכירות של הלמ״ס לפי עיר, 2025", srcA4:"עסקאות והיצע — נתוני רשות המסים וסקירות הכלכלן הראשי, 2025",
-  srcA5:"שכונות, רעננה ומודיעין — אומדן יחסי המעוגן בנתוני העיר",
-  srcADemo:"אלו נתונים מקורבים לצורכי הדגמה: הם מכוילים לפרסומים רשמיים אך אינם סטטיסטיקה רשמית, וטבלת העסקאות האחרונות היא המחשת מבנה בלבד.",
+  srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
+  srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
+  srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 3.8%- (פברואר–מרץ 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
+  srcA3:"מלאי שטרם נמכר — למ״ס: כ-84,000 דירות ארצית (אפריל 2026); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב 1,236",
+  srcA5:"שינוי אזורי (הפרש המדדים 2.6-), שכירות לדירה חדשה (8%+) ונתוני שכונות — אומדנים נגזרים",
+  srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
-  srcB1a:"עסקאות בפועל",srcB1b:"מחירי עסקאות שנחתמו ודווחו (רשות המסים)",
+  srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
   srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
   srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
-  footLeft:"© 2026 נדל״ן ישראל · Property Intelligence · ערכים מקורבים המכוילים לפרסומי למ״ס ורשות המסים (אמצע 2026) · אינו מידע רשמי",
+  footLeft:"© 2026 נדל״ן ישראל · Property Intelligence · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
   monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
-  brand:"Israel Real Estate", demoBadge:"Demo data", calBadge:"Calibrated estimates",
-  updated:"Calibrated to CBS & Tax Authority figures · mid-2026",
-  h1:"The Israeli Real-Estate Market", h1sub:"Prices, trends and comparisons — from the whole country down to the neighborhood.",
+  brand:"Israel Real Estate", demoBadge:"Demo data", calBadge:"New homes from developers only",
+  updated:"New homes · calibrated to CBS & Chief Economist figures · mid-2026",
+  h1:"Israel\u2019s New-Home Market", h1sub:"Prices, trends and comparisons for new homes from developers only — no second-hand.",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Neighborhoods",navCompare:"Compare",
-  kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Sales market · trailing 12 months", kpiNoteRent:"Rental market · trailing 12 months",
-  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12-month change", tx:"Transactions", y3:"3-year change",
-  avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Rental supply",
+  kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Developer sales · trailing 12 months", kpiNoteRent:"New-home rentals (estimate) · trailing 12 months",
+  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12-month change", tx:"Developer sales", y3:"3-year change",
+  avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
   vsPrev:"vs. previous period", est:"estimate", perMonth:"per month", perYear:"per year",
-  mapTitle:"Israel real-estate price map", mapNote:"Click a region to update the whole board",
+  mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
   mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
   rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
   trendTitle:"Price trend", chartOf:"Metric",
   cPrice:"Property price",cPsm:"Price per m²",cRent:"Rent",cYield:"Yield",
   p6m:"6M",p1y:"1Y",p3y:"3Y",p5y:"5Y",p10y:"10Y",
-  svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · estimate",
+  svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · new-home estimate",
   svrBuy:"Avg purchase price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
   svrYears:"years of rent", svrFormula:(p,r,y)=>`If a property here costs <b class="num">${p}</b> and average rent is <b class="num">${r}</b> a month — the estimated gross yield is <b class="num">${y}</b>.`,
   tblNbhd:"Neighborhoods in this area", tblCities:"Cities in this area", tblDistricts:"Districts of Israel",
-  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"12M change",thTx:"Deals",thListings:"Listings",thTrend:"Trend",thConf:"Confidence",
+  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"12M change",thTx:"Sales",thListings:"Inventory",thTrend:"Trend",thConf:"Confidence",
   areas:"areas", filtered:"Filtered",
-  fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Condition",
+  fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Stage",
   rAll:"All",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
   tApt:"Apartment",tGarden:"Garden apt.",tPh:"Penthouse",tHouse:"House",
   aAll:"All",a60:"Up to 60 m²",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
-  cAll:"All",cNew:"New",cUsed:"Resale", clearFilters:"Clear filters",
+  cAll:"All",cReady:"Move-in ready",cPaper:"Pre-construction", clearFilters:"Clear filters",
   filterNote:"Filters apply demo multipliers to the demonstration dataset",
   rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
   tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Most transactions",
@@ -918,21 +924,21 @@ en:{
   confHighNote:"A wide sample — the averages reflect this market well.",
   confMedNote:"A medium sample — expect deviations; check nearby areas too.",
   confLowNote:"A very small sample — indicative only, not a basis for decisions.",
-  txTitle:"Recent transactions in this area", txNote:"Structural illustration rows · ",
+  txTitle:"Recent developer sales in this area", txNote:"Structural illustration rows · ",
   thDate:"Date",thStreet:"Street",thRooms:"Rooms",thAreaSqm:"m²",thFloor:"Floor",thTxPrice:"Price",thTxPsm:"Per m²",
   srcTitle:"Sources & methodology",
-  srcATitle:"What this build is calibrated to",
-  srcAText:"Board values approximate the latest official publications (as of mid-2026):",
-  srcA1:"Home prices — CBS averages by city & district, Q1–Q2 2026", srcA2:"Annual change — CBS district house-price index, May–June 2026 vs. a year earlier",
-  srcA3:"Rents — CBS average city rents, 2025", srcA4:"Transactions & supply — Tax Authority data and Chief Economist reviews, 2025",
-  srcA5:"Neighborhoods, Ra'anana & Modi'in — relative estimates anchored to city figures",
-  srcADemo:"These are calibrated approximations for demonstration: anchored to official publications but not official statistics; the recent-transactions table illustrates structure only.",
+  srcATitle:"Calibration basis — new developer homes only",
+  srcAText:"Every value on this board covers new homes from developers only (no second-hand), approximated from official publications as of mid-2026:",
+  srcA1:"National annual change — CBS new-homes price index: −3.8% (Feb–Mar 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
+  srcA3:"Unsold inventory — CBS: ~84,000 homes nationally (April 2026); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
+  srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
+  srcADemo:"These are calibrated approximations of the new-homes market only, for demonstration — not official statistics; the recent-sales table illustrates structure only.",
   srcBTitle:"Data types — never mixed without labeling",
-  srcB1a:"Closed transactions",srcB1b:"Signed, reported deal prices (Tax Authority)",
+  srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
   srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
   srcB4a:"Official indices",srcB4b:"CBS housing price indices",
-  footLeft:"© 2026 Israel Real Estate · Property Intelligence · approximate values calibrated to CBS & Tax Authority publications (mid-2026) · not official data",
+  footLeft:"© 2026 Israel Real Estate · Property Intelligence · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
   monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
@@ -960,7 +966,9 @@ const pathOf=id=>{const out=[];let cur=LOC[id];while(cur){out.unshift(cur);cur=c
 const M_ROOMS={all:{p:1,s:1,share:1},"12":{p:.62,s:1.12,share:.14},"3":{p:.82,s:1.04,share:.27},"4":{p:1,s:1,share:.36},"5":{p:1.22,s:.97,share:.16},"6":{p:1.55,s:.95,share:.07}};
 const M_TYPE={all:{p:1,s:1,share:1},apt:{p:1,s:1,share:.78},garden:{p:1.18,s:1.06,share:.08},ph:{p:1.65,s:1.34,share:.05},house:{p:1.9,s:1.12,share:.09}};
 const M_AREA={all:1,"60":.68,"6080":.84,"80100":1,"100130":1.2,"130":1.5};
-const M_COND={all:{p:1,share:1},new:{p:1.08,share:.22},used:{p:.985,share:.78}};
+/* construction-stage multipliers (new-homes market): move-in-ready carries a
+   premium, on-paper (pre-sale) a discount — demo multipliers, labeled in the UI */
+const M_COND={all:{p:1,share:1},ready:{p:1.06,share:.35},paper:{p:.93,share:.3}};
 
 function filtersActive(){const f=state.filters;return f.rooms!=="all"||f.type!=="all"||f.area!=="all"||f.cond!=="all"}
 
@@ -968,7 +976,7 @@ function filtersActive(){const f=state.filters;return f.rooms!=="all"||f.type!==
 function metricsOf(id){
   const l=LOC[id],b=l.base,f=state.filters;
   const mr=M_ROOMS[f.rooms],mt=M_TYPE[f.type],ma=M_AREA[f.area],mc=M_COND[f.cond];
-  const pMul=mr.p*mt.p*ma*mc.p, sMul=mr.s*mt.s*(f.cond==="new"?1.05:1);
+  const pMul=mr.p*mt.p*ma*mc.p, sMul=mr.s*mt.s*(f.cond==="ready"?1.02:1);
   const share=mr.share*mt.share*mc.share*(f.area==="all"?1:.3);
   const price=Math.round(b.price*pMul/1000)*1000;
   const sqm=Math.round(b.sqm*sMul/50)*50;
@@ -1403,7 +1411,7 @@ function renderFilters(){
     seg(t.fRooms,"rooms",[["all",t.rAll],["12",t.r12],["3",t.r3],["4",t.r4],["5",t.r5],["6",t.r6]])+
     sel(t.fType,"type",[["all",t.rAll],["apt",t.tApt],["garden",t.tGarden],["ph",t.tPh],["house",t.tHouse]])+
     sel(t.fArea,"area",[["all",t.aAll],["60",t.a60],["6080",t.a6080],["80100",t.a80100],["100130",t.a100130],["130",t.a130]])+
-    seg(t.fCond,"cond",[["all",t.cAll],["new",t.cNew],["used",t.cUsed]])+
+    seg(t.fCond,"cond",[["all",t.cAll],["ready",t.cReady],["paper",t.cPaper]])+
     (filtersActive()?`<a href="#" class="link-clear" id="clearF">${t.clearFilters}</a>`:"")+
     `<span class="filters-note">· ${t.filterNote}</span></div>`;
   el("fToggle").addEventListener("click",()=>{mobileFiltersOpen=!mobileFiltersOpen;
@@ -1607,11 +1615,11 @@ function renderInsights(){
   const name=heName(l);
   const out=[];
   out.push(he
-    ?`מחיר הדירות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
-    :`Prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
+    ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
+    :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
   if(state.locId==="il")out.push(he
-    ?`מלאי שיא של כ-<b class="num">86,090</b> דירות חדשות שלא נמכרו (כ-<b class="num">29</b> חודשי היצע, סוף 2025) ממשיך להכביד על המחירים, בעיקר במרכז.`
-    :`A record ~<b class="num">86,090</b> unsold new homes (≈<b class="num">29</b> months of supply, end-2025) keeps weighing on prices, mainly in the Center.`);
+    ?`מלאי הדירות החדשות שטרם נמכרו: כ-<b class="num">84,000</b> ארצית (אפריל 2026) — כ-<b class="num">30</b> חודשי היצע; במאי נרשמה התאוששות במכירות על רקע חזרת מבצעי המימון.`
+    :`Unsold new-home inventory: ~<b class="num">84,000</b> nationally (April 2026) — ≈<b class="num">30</b> months of supply; May sales rebounded as financing deals returned.`);
   if(m.rentYoy>m.yoy+0.15)out.push(he
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);
