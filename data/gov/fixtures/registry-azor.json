@@ -1,0 +1,16 @@
+{
+  "_note": "Offline fixture of the data.gov.il registry record shape, used by tests and by the sandbox (gov.il egress is unavailable there). The city symbol 565 is Azor's published CBS code; street records mirror the national streets-registry shape. Fields not verifiable offline are omitted rather than invented — the live provider returns them from the real registry.",
+  "sampleData": true,
+  "cities": {
+    "records": [
+      { "_id": 1, "סמל_ישוב": "565", "שם_ישוב": "אזור" }
+    ]
+  },
+  "streets": {
+    "records": [
+      { "_id": 101, "סמל_ישוב": "565", "שם_ישוב": "אזור", "שם_רחוב": "ז'בוטינסקי" },
+      { "_id": 102, "סמל_ישוב": "565", "שם_ישוב": "אזור", "שם_רחוב": "ויצמן" },
+      { "_id": 103, "סמל_ישוב": "565", "שם_ישוב": "אזור", "שם_רחוב": "הרצל" }
+    ]
+  }
+}

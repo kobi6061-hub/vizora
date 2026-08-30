@@ -1,0 +1,60 @@
+{
+  "_note": "Acceptance fixture for ז'בוטינסקי 7, אזור. `raw` rows are KARMAN/nadlan.gov.il-SHAPED records with SAMPLE values (sample:true is stamped into their provenance) — they exercise the full normalization contract for the acceptance address without pretending to be observed data; live values arrive only through an authorized Tax Authority connector. `observedReference` is a REAL government-derived transaction observed in our research (reported to the Tax Authority, published by Calcalist; collected 30.08.2026) expressed in the same raw shape, with the expected PROPX normalization — the comparison target required by the acceptance test.",
+  "acceptanceAddress": { "city": "אזור", "street": "ז'בוטינסקי", "houseNumber": 7 },
+  "raw": [
+    {
+      "_fixtureNote": "sample values, real record shape — new-from-developer deal",
+      "KEYVALUE": "SAMPLE-AZOR-0001",
+      "DEALDATE": "15.05.2026",
+      "DEALAMOUNT": "2,380,000",
+      "DEALNATUREDESCRIPTION": "דירה חדשה מקבלן",
+      "ASSETROOMNUM": "4",
+      "DEALNATURE": "104",
+      "FLOORNO": "3",
+      "BUILDINGFLOORS": "9",
+      "BUILDINGYEAR": "2026",
+      "PROJECTNAME": "מגורים אזור",
+      "FULLADRESS": "ז'בוטינסקי 7, אזור",
+      "GUSH": "6024-88-12"
+    },
+    {
+      "_fixtureNote": "sample values, real record shape — second-hand deal on the same building",
+      "KEYVALUE": "SAMPLE-AZOR-0002",
+      "DEALDATE": "02.02.2026",
+      "DEALAMOUNT": "1,910,000",
+      "DEALNATUREDESCRIPTION": "דירה בבית קומות",
+      "ASSETROOMNUM": "3.5",
+      "DEALNATURE": "86",
+      "FLOORNO": "1",
+      "BUILDINGFLOORS": "9",
+      "BUILDINGYEAR": "1998",
+      "FULLADRESS": "ז'בוטינסקי 7, אזור",
+      "GUSH": "6024-88-4"
+    }
+  ],
+  "observedReference": {
+    "raw": {
+      "DEALDATE": "2026",
+      "DEALAMOUNT": "4,500,000",
+      "DEALNATUREDESCRIPTION": "דירה בבית קומות",
+      "ASSETROOMNUM": "5",
+      "DEALNATURE": "115",
+      "FLOORNO": "1",
+      "BUILDINGFLOORS": "2",
+      "CITY": "ירושלים",
+      "STREET": "החרוב"
+    },
+    "sourceUrl": "https://www.calcalist.co.il/real-estate/article/bkzojwcxgx",
+    "expected": {
+      "price": 4500000,
+      "areaSqm": 115,
+      "rooms": 5,
+      "floor": "1",
+      "floorsInBuilding": 2,
+      "city": "ירושלים",
+      "street": "החרוב",
+      "pricePerSqmEstimated": 39130,
+      "newness": "unknown"
+    }
+  }
+}
