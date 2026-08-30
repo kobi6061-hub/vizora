@@ -116,3 +116,11 @@ Flat geometric masses with realistic proportions — archviz poster art, never c
 - Light-mode marketing site (product is a screening room; dark is the deliberate,
   single look — app surfaces stay dark too, with ivory print-moments for contrast).
 - Full timeline editor (product is an AI creative director, not an NLE).
+
+## Assaf-estate v2 — master design round (30.08.2026)
+- Tokens added: --navy #16345c (chrome, selection, L3), --brass #9a742a (kickers, leader star, est-tags); paper/panel unchanged; data ramps untouched.
+- Surface levels: L1 broadsheet sections on canvas under a 2px ink rule (table, rankings); L2 modules (map, chart) with deepened borders; L3 asset profile with navy top bar + pop shadow.
+- Signature: the Israel map as an architectural survey object — degree grid + ticks, cast shadow (feDropShadow), constant-screen-size labels (fs=14.5·vb/520), elevation on hover (translateY + drop-shadow), navy dashed survey ring on selection, scope chip in the side column.
+- Market tape replaces colored bulletin boxes; retrieved-date cell inset. KPI row: hero metric (span 2, Heebo 800, 37-mo spark) + 5 supporting tiles.
+- Provenance: PROV rows per metric rendered in a profile popover (official/derived/estimate per location flags o:/e:), retrieved 30.08.2026.
+- Rejected: colorful wash cards (kept only in tape semantics), hero gradient (mirror rule), per-zoom fixed font sizes.
