@@ -8,7 +8,7 @@ import path from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const PORT = Number(process.env.PORT || 3200);
-const SITE_PASSWORD = process.env.SITE_PASSWORD || '';
+const SITE_PASSWORD = String(process.env.SITE_PASSWORD || '').trim().replace(/^(["'])(.*)\1$/, '$2').trim();
 const SESSION_SECRET = process.env.SESSION_SECRET || '';
 const COOKIE = 'kobix_session';
 const MAX_AGE_S = 60 * 60 * 12;
@@ -35,7 +35,7 @@ http.createServer(async (req, res) => {
     let body = '';
     for await (const c of req) body += c;
     let password = '';
-    try { password = String(JSON.parse(body || '{}').password || ''); } catch {}
+    try { password = String(JSON.parse(body || '{}').password || '').trim(); } catch {}
     res.setHeader('content-type', 'application/json');
     if (!SITE_PASSWORD || !SESSION_SECRET) { res.statusCode = 503; return res.end('{"ok":false,"error":"config"}'); }
     const a = Buffer.from(password.padEnd(256, '\0').slice(0, 256));

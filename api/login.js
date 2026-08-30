@@ -19,12 +19,17 @@ module.exports = async (req, res) => {
   for await (const chunk of req) body += chunk;
   let password = '';
   try {
-    password = String(JSON.parse(body || '{}').password || '');
+    password = String(JSON.parse(body || '{}').password || '').trim();
   } catch {
     /* malformed body → empty password → 401 */
   }
 
-  const expected = process.env.SITE_PASSWORD || '';
+  // tolerate paste artifacts in the env value: stray whitespace/newlines and
+  // one pair of surrounding quotes ("test1234" pasted into the Vercel field)
+  const expected = String(process.env.SITE_PASSWORD || '')
+    .trim()
+    .replace(/^(["'])(.*)\1$/, '$2')
+    .trim();
   if (!expected || !process.env.SESSION_SECRET) {
     res.setHeader('content-type', 'application/json; charset=utf-8');
     res.setHeader('cache-control', 'no-store');
