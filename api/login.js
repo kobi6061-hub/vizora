@@ -1,7 +1,8 @@
 // POST {password} → verifies against the SITE_PASSWORD environment variable
 // and sets a signed, HttpOnly session cookie. The password never appears in
-// any client-delivered code. With SITE_PASSWORD unset, login always fails
-// (safe default) so a misconfigured deployment stays closed.
+// any client-delivered code. With SITE_PASSWORD or SESSION_SECRET unset, the
+// deployment stays closed and answers 503 {error:"config"} so the login page
+// can say "not configured yet" instead of a misleading "wrong password".
 
 const { timingSafeEqual } = require('node:crypto');
 
@@ -24,6 +25,12 @@ module.exports = async (req, res) => {
   }
 
   const expected = process.env.SITE_PASSWORD || '';
+  if (!expected || !process.env.SESSION_SECRET) {
+    res.setHeader('content-type', 'application/json; charset=utf-8');
+    res.setHeader('cache-control', 'no-store');
+    res.statusCode = 503;
+    return res.end(JSON.stringify({ ok: false, error: 'config' }));
+  }
   const a = Buffer.from(password.padEnd(256, '\0').slice(0, 256));
   const b = Buffer.from(expected.padEnd(256, '\0').slice(0, 256));
   const ok = expected.length > 0 && password.length > 0 && timingSafeEqual(a, b);

@@ -102,11 +102,16 @@ button[disabled]{opacity:.6;cursor:wait}
       body:JSON.stringify({password:pw.value})})
       .then(function(r){
         if(r.ok){location.replace('/');return;}
-        throw 0;
+        throw r.status;
       })
-      .catch(function(){
+      .catch(function(st){
         go.disabled=false; go.textContent='כניסה למערכת';
-        err.classList.add('on'); pw.value=''; pw.focus();
+        if(st===503){
+          err.textContent='המערכת עדיין לא הוגדרה בשרת — יש להגדיר את משתני הסביבה SITE_PASSWORD ו־SESSION_SECRET ב־Vercel (לכל הסביבות) ולבצע Redeploy';
+        }else{
+          err.textContent='סיסמה שגויה — נסו שוב'; pw.value='';
+        }
+        err.classList.add('on'); pw.focus();
         card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
       });
   });

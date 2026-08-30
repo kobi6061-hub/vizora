@@ -9,7 +9,7 @@ import path from 'node:path';
 const ROOT = new URL('..', import.meta.url).pathname;
 const PORT = Number(process.env.PORT || 3200);
 const SITE_PASSWORD = process.env.SITE_PASSWORD || '';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret';
+const SESSION_SECRET = process.env.SESSION_SECRET || '';
 const COOKIE = 'kobix_session';
 const MAX_AGE_S = 60 * 60 * 12;
 
@@ -19,6 +19,7 @@ const hmacHex = (msg) => createHmac('sha256', SESSION_SECRET).update('kobix|' + 
 
 function verify(token) {
   try {
+    if (!SESSION_SECRET) return false; // parity with middleware.js fail-closed
     const [exp, sig] = String(token).split('.');
     if (!exp || !sig || !/^\d+$/.test(exp) || Number(exp) < Date.now()) return false;
     const expect = hmacHex(exp);
@@ -35,10 +36,11 @@ http.createServer(async (req, res) => {
     for await (const c of req) body += c;
     let password = '';
     try { password = String(JSON.parse(body || '{}').password || ''); } catch {}
+    res.setHeader('content-type', 'application/json');
+    if (!SITE_PASSWORD || !SESSION_SECRET) { res.statusCode = 503; return res.end('{"ok":false,"error":"config"}'); }
     const a = Buffer.from(password.padEnd(256, '\0').slice(0, 256));
     const b = Buffer.from(SITE_PASSWORD.padEnd(256, '\0').slice(0, 256));
     const ok = SITE_PASSWORD.length > 0 && password.length > 0 && timingSafeEqual(a, b);
-    res.setHeader('content-type', 'application/json');
     if (!ok) { res.statusCode = 401; return res.end('{"ok":false}'); }
     const exp = String(Date.now() + MAX_AGE_S * 1000);
     res.setHeader('Set-Cookie', `${COOKIE}=${exp}.${hmacHex(exp)}; Path=/; Max-Age=${MAX_AGE_S}; HttpOnly; SameSite=Lax`);

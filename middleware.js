@@ -23,6 +23,8 @@ export default async function middleware(req) {
 
 async function verify(token) {
   try {
+    // no signing secret configured → no cookie can be trusted (fail closed)
+    if (!process.env.SESSION_SECRET) return false;
     const [exp, sig] = String(token).split('.');
     if (!exp || !sig) return false;
     if (!/^\d+$/.test(exp) || Number(exp) < Date.now()) return false;
