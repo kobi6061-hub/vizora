@@ -34,6 +34,31 @@ function arg(name) {
     return;
   }
 
+  // GATE-4 acceptance: live-retrieve ז'בוטינסקי 7, אזור from the authoritative
+  // source and verify against the independently observed comparison records.
+  // PASS requires the live source to return them — nothing is hard-coded.
+  if (arg('verify-azor')) {
+    const { verifyAgainstReference } = require('../lib/gov/verify');
+    const fix = JSON.parse(require('node:fs').readFileSync(
+      path.join(__dirname, '..', 'data', 'gov', 'fixtures', 'azor-jabotinsky7.json'), 'utf8'));
+    const addr = fix.acceptanceAddress;
+    const res = await svc.getTransactions(
+      { city: addr.city, street: addr.street, houseNumber: addr.houseNumber }, { radiusM: 60 });
+    console.log(`retrieved: ${res.transactions.length}` + (res.scope ? ` (scope: ${res.scope.description}, n=${res.scope.sampleSize})` : ''));
+    for (const u of res.unavailable) console.log('  unavailable:', u.provider || '-', '·', u.reason);
+    const report = verifyAgainstReference(res.transactions, fix.observedComparison.records);
+    for (const r of report.results) {
+      console.log(` ref ${r.reference.date} ₪${r.reference.price.toLocaleString()} → ` +
+        (r.best.matched ? `MATCHED (${r.best.txId})` : `no match (best core fields: ${r.best.coreOk}/5)`));
+      for (const [k, c] of Object.entries(r.best.checks || {})) {
+        console.log(`   ${k}: ref=${c.ref} got=${c.got} ${c.notComparable ? '(' + c.notComparable + ')' : c.ok ? '✓' : '✗'}`);
+      }
+    }
+    console.log('VERDICT:', report.verdict, `(${report.matched}/${report.total})`);
+    process.exitCode = report.verdict === 'ALL_MATCHED' ? 0 : 1;
+    return;
+  }
+
   if (arg('trends')) {
     const t = await svc.getMarketTrends(null);
     console.log(`trends: ${t.points.length} points, scope=${t.scope}, series=${t.series && t.series.id}`);

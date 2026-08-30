@@ -1,6 +1,31 @@
 {
   "_note": "Acceptance fixture for ז'בוטינסקי 7, אזור. `raw` rows are KARMAN/nadlan.gov.il-SHAPED records with SAMPLE values (sample:true is stamped into their provenance) — they exercise the full normalization contract for the acceptance address without pretending to be observed data; live values arrive only through an authorized Tax Authority connector. `observedReference` is a REAL government-derived transaction observed in our research (reported to the Tax Authority, published by Calcalist; collected 30.08.2026) expressed in the same raw shape, with the expected PROPX normalization — the comparison target required by the acceptance test.",
   "acceptanceAddress": { "city": "אזור", "street": "ז'בוטינסקי", "houseNumber": 7 },
+  "observedComparison": {
+    "_note": "INDEPENDENTLY OBSERVED government-derived comparison records for the acceptance address, supplied by PROPX research (31.08.2026). Reference side of the live verification ONLY — never injected into product data, never presented as retrieved. The live run must retrieve matching records from the authoritative source on its own.",
+    "records": [
+      { "date": "15/06/2026", "price": 3370000, "areaSqm": 107, "rooms": 5, "floor": 7, "block": "6024", "parcel": "265" },
+      { "date": "27/03/2026", "price": 2900000, "areaSqm": 110, "rooms": 5, "floor": 11, "block": "6024", "parcel": "265" }
+    ]
+  },
+  "govmapFixtures": {
+    "_note": "GovMap-SHAPED responses for offline pipeline tests (contract per the public GovmapClient, github.com/nitzpo/nadlan-mcp, 31.08.2026). The two deal rows mirror the observedComparison records so the offline test can prove the pipeline MATCHES them when the source serves them; their dealType placement is a mechanism fixture, not a verified fact — the live run reveals the true government classification.",
+    "autocomplete": { "resultsCount": 1, "results": [
+      { "text": "ז'בוטינסקי 7, אזור", "id": "ADDR-AZOR-JAB-7", "type": "address", "score": 100, "shape": "POINT(179820 658900)" } ] },
+    "polygons": [
+      { "polygon_id": "POLY-AZ-16", "dealscount": 14, "settlementNameHeb": "אזור", "streetNameHeb": "ז'בוטינסקי", "houseNum": "7", "objectid": 91001 } ],
+    "streetDeals1": { "totalCount": 2, "limit": 40, "offset": 0, "data": [
+      { "objectid": 30001, "dealAmount": 3370000, "dealDate": "2026-06-15", "assetArea": 107, "assetRoomNum": 5,
+        "floorNumber": 7, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((179815 658895,179825 658895,179825 658905,179815 658905,179815 658895)))" },
+      { "objectid": 30002, "dealAmount": 2900000, "dealDate": "2026-03-27", "assetArea": 110, "assetRoomNum": 5,
+        "floorNumber": 11, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((179815 658895,179825 658895,179825 658905,179815 658905,179815 658895)))" } ] },
+    "streetDeals2": { "totalCount": 1, "limit": 40, "offset": 0, "data": [
+      { "objectid": 30003, "dealAmount": 1720000, "dealDate": "2025-11-02", "assetArea": 78, "assetRoomNum": 3,
+        "floorNumber": 2, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "5",
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((179860 658940,179870 658940,179870 658950,179860 658950,179860 658940)))" } ] }
+  },
   "raw": [
     {
       "_fixtureNote": "sample values, real record shape — new-from-developer deal",

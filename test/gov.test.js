@@ -16,6 +16,8 @@ const { MemoryStore, FileStore } = require('../lib/gov/store');
 const { DataGovProvider } = require('../lib/gov/providers/datagov');
 const { CbsProvider } = require('../lib/gov/providers/cbs');
 const { TaxAuthorityProvider } = require('../lib/gov/providers/taxAuthority');
+const { GovMapProvider } = require('../lib/gov/providers/govmap');
+const { verifyAgainstReference } = require('../lib/gov/verify');
 const { GovSourceUnavailableError } = require('../lib/gov/providers/base');
 const { GovDataService } = require('../lib/gov/service');
 
@@ -59,13 +61,18 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     const c = classifyNewness({ yearBuilt: 2026, dealYear: 2026 });
     assert.equal(c.newness, NEWNESS.PROBABLE_NEW);
   });
-  await t('no evidence → unknown; partitions never mix', () => {
-    const c = classifyNewness({ dealNature: 'דירה בבית קומות', yearBuilt: 1998, dealYear: 2026 });
-    assert.equal(c.newness, NEWNESS.UNKNOWN);
+  await t('old building year → second_hand; NO evidence at all → unknown; partitions never mix', () => {
+    const aged = classifyNewness({ dealNature: 'דירה בבית קומות', yearBuilt: 1998, dealYear: 2026 });
+    assert.equal(aged.newness, NEWNESS.SECOND_HAND);
+    const bare = classifyNewness({ dealNature: 'דירה בבית קומות' });
+    assert.equal(bare.newness, NEWNESS.UNKNOWN);
     const parts = partitionByNewness([
-      { newness: NEWNESS.CONFIRMED_NEW }, { newness: NEWNESS.UNKNOWN }, { newness: NEWNESS.PROBABLE_NEW },
+      { newness: NEWNESS.CONFIRMED_NEW }, { newness: NEWNESS.UNKNOWN },
+      { newness: NEWNESS.PROBABLE_NEW }, { newness: NEWNESS.SECOND_HAND },
     ]);
-    assert.deepEqual([parts.confirmed.length, parts.probable.length, parts.unknown.length], [1, 1, 1]);
+    assert.deepEqual(
+      [parts.confirmed.length, parts.probable.length, parts.secondHand.length, parts.unknown.length],
+      [1, 1, 1, 1]);
   });
 
   console.log('deduplication');
@@ -156,7 +163,7 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     const r = await svc.getConfirmedNewTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
     assert.equal(r.transactions.length, 1);
     assert.equal(r.transactions[0].txId, 'SAMPLE-AZOR-0001');
-    assert.equal(r.partitions.unknown.length, 1); // the 1998 building stays out
+    assert.equal(r.partitions.secondHand.length, 1); // the 1998 building is second_hand — and stays out
   });
   await t('snapshots detect change vs no-change over time', async () => {
     const { svc, store } = mkAuthorizedService();
@@ -189,6 +196,102 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     assert.ok(isEstimated(tx.pricePerSqm));
     assert.equal(tx.date, null); // source published year-only → no invented date
     assert.ok(tx.missing.includes('date'));
+  });
+
+  console.log('second-hand class & source classification');
+  await t('government second-hand marker → second_hand, never mixed into new', () => {
+    const c = classifyNewness({ sourceClassification: 'govmap dealType=2 (second hand / יד שנייה)' });
+    assert.equal(c.newness, NEWNESS.SECOND_HAND);
+    const c1 = classifyNewness({ sourceClassification: 'govmap dealType=1 (first hand / יד ראשונה מקבלן)' });
+    assert.equal(c1.newness, NEWNESS.CONFIRMED_NEW);
+    const parts = partitionByNewness([{ newness: NEWNESS.SECOND_HAND }, { newness: NEWNESS.CONFIRMED_NEW }]);
+    assert.equal(parts.secondHand.length, 1);
+    assert.equal(parts.confirmed.length, 1);
+  });
+  await t('building predating the deal by 2+ years → second_hand by evidence', () => {
+    const c = classifyNewness({ yearBuilt: 1998, dealYear: 2026 });
+    assert.equal(c.newness, NEWNESS.SECOND_HAND);
+    assert.ok(c.evidence[0].includes('predates'));
+  });
+
+  console.log('GovMap provider (fixture-backed fetch — live contract shape)');
+  const gm = azor.govmapFixtures;
+  const govmapFetch = async (url, init) => {
+    const u = String(url);
+    if (u.includes('/search-service/autocomplete')) return jsonRes(gm.autocomplete);
+    if (u.match(/\/real-estate\/deals\/[\d.]+,[\d.]+\/\d+$/)) return jsonRes(gm.polygons);
+    if (u.includes('/real-estate/street-deals/POLY-AZ-16')) {
+      return jsonRes(u.includes('dealType=1') ? gm.streetDeals1 : gm.streetDeals2);
+    }
+    throw new Error('unexpected govmap call ' + u + ' ' + JSON.stringify(init || {}));
+  };
+  const mkGovmap = () => new GovMapProvider({ fetchImpl: govmapFetch, store: new MemoryStore() });
+  await t('resolveAddress returns ITM coordinates from autocomplete (no fake WGS84)', async () => {
+    const r = await mkGovmap().resolveAddress('אזור', "ז'בוטינסקי", 7);
+    assert.equal(r.itmX, 179820);
+    assert.equal(r.itmY, 658900);
+    assert.equal(r.crs, 'EPSG:2039 (ITM)');
+  });
+  await t('getTransactions: address → polygons → deals of BOTH government classes', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    assert.equal(rows.length, 3);
+    const first = rows.find((r) => r.txId === 'govmap:30001');
+    assert.equal(first.price, 3370000);
+    assert.equal(first.date, '2026-06-15');
+    assert.equal(first.newness, NEWNESS.CONFIRMED_NEW);           // served under dealType=1
+    assert.ok(first.sourceClassification.includes('dealType=1'));  // raw class stored separately
+    const used = rows.find((r) => r.txId === 'govmap:30003');
+    assert.equal(used.newness, NEWNESS.SECOND_HAND);
+    assert.ok(used.sourceClassification.includes('dealType=2'));
+  });
+  await t('provenance carries the full 7-field contract', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const p = rows[0].provenance;
+    for (const k of ['sourceAuthority', 'sourceDataset', 'sourceRecordId', 'sourceUrl', 'fetchedAt', 'retrievalMethod']) {
+      assert.ok(p[k] !== undefined, 'provenance missing ' + k);
+    }
+    assert.equal(p.retrievalMethod, 'live-api');
+    assert.equal(p.sourceUpdatedAt, null); // GovMap publishes no per-record update time — stays null, not invented
+    assert.ok(p.sourceAuthority.includes('רשות המיסים'));
+  });
+  await t('distance annotations: same building = 0, others in ITM meters', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const same = rows.find((r) => r.txId === 'govmap:30001');
+    assert.equal(same.distanceM, 0);
+    assert.ok(same.distanceBasis.includes('same building'));
+    const other = rows.find((r) => r.txId === 'govmap:30003'); // house 5, ~60m away
+    assert.ok(other.distanceM > 10 && other.distanceM < 200, 'got ' + other.distanceM);
+    assert.ok(other.distanceBasis.includes('ITM'));
+  });
+  await t('WGS84 input to getNearbyTransactions is refused, not silently reprojected', async () => {
+    await assert.rejects(() => mkGovmap().getNearbyTransactions(32.02, 34.8, 250), (e) => {
+      assert.ok(e instanceof GovSourceUnavailableError);
+      assert.ok(e.reason.includes('ITM'));
+      return true;
+    });
+  });
+
+  console.log('GATE-4 verification harness');
+  await t('retrieved records match both independently observed references', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const report = verifyAgainstReference(rows, azor.observedComparison.records);
+    assert.equal(report.verdict, 'ALL_MATCHED');
+    assert.equal(report.matched, 2);
+    const blockCheck = report.results[0].best.checks.block;
+    assert.ok(blockCheck.notComparable); // street-deals serves no cadastre — reported, not faked
+  });
+  await t('a non-matching set yields NO_MATCH, never a forced match', () => {
+    const report = verifyAgainstReference([], azor.observedComparison.records);
+    assert.equal(report.verdict, 'NO_MATCH');
+  });
+  await t('service routes through GovMap when Tax Authority is not authorized; scope has sample size', async () => {
+    const svc = new GovDataService({ providers: [new TaxAuthorityProvider({ endpoint: null }), mkGovmap()] });
+    const r = await svc.getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    assert.equal(r.scope.level, 'building');
+    assert.equal(r.scope.sampleSize, 3);
+    assert.equal(r.partitions.confirmed.length, 2);
+    assert.equal(r.partitions.secondHand.length, 1);
+    assert.ok(r.unavailable.some((u) => u.provider === 'taxes.gov.il/nadlan')); // the canonical source's state stays visible
   });
 
   console.log('CBS provider (fixture-backed fetch)');

@@ -86,9 +86,24 @@ SOURCE changed. Other backends (KV, DB) implement the same four methods.
 
 | Provider | Basis | Status |
 | --- | --- | --- |
-| `taxes.gov.il/nadlan` | KARMAN transaction registry (the record vocabulary of nadlan.gov.il) | **Interface + normalizer complete; transport disabled.** The registry has no officially supported public API, and PROPX will not build on CAPTCHA bypasses or private third-party APIs. Configure `GOV_TAXAUTH_ENDPOINT` (+ optional `GOV_TAXAUTH_TOKEN`) when an authorized mechanism exists — an ITA data-sharing agreement, an official API, or a licensed feed — and the connector activates with zero mapping work. Until then every call fails gracefully with that exact reason. |
+| `taxes.gov.il/nadlan` | KARMAN transaction registry (the record vocabulary of nadlan.gov.il) | **Interface + normalizer complete; transport disabled.** The registry has no officially supported public API (verified again 31.08.2026: no API/open dataset on data.gov.il; the legacy `nadlan.taxes.gov.il` system offers manual Excel export only), and PROPX will not build on CAPTCHA bypasses or private third-party APIs. Configure `GOV_TAXAUTH_ENDPOINT` (+ optional `GOV_TAXAUTH_TOKEN`) when an authorized mechanism exists — an ITA data-sharing agreement, an official API, or a licensed feed — and the connector activates with zero mapping work. Until then every call fails gracefully with that exact reason. |
+| `govmap.gov.il` | **Live transactions provider.** GovMap — the official State mapping portal — publicly serves the Tax Authority's reported-deals layer ("עסקאות נדל"ן") through its API: `POST /api/search-service/autocomplete` (address → ITM point), `GET /api/real-estate/deals/{x},{y}/{r}` (deal-polygon metadata), `GET /api/real-estate/street-deals/{polygonId}?dealType=` (transaction rows; `dealType` 1=first hand / 2=second hand — the government's own classification, stored verbatim in `sourceClassification`), `POST /api/layers-catalog/entitiesByPoint` (cadastre). Contract cross-verified against the open-source GovmapClient (github.com/nitzpo/nadlan-mcp). Coordinates are ITM/EPSG:2039 (`itmX`/`itmY`; WGS84 is never silently reprojected; distances are exact ITM meters). Public but not formally documented as a stable contract → honest UA, bounded fan-out, graceful degradation, kill-switch `GOV_GOVMAP_DISABLED=1`, base overridable via `GOV_GOVMAP_BASE`. |
 | `data.gov.il` | CKAN `datastore_search` over the State cities + streets registries | **Live.** Resource ids overridable via `GOV_DATAGOV_CITIES_RESOURCE` / `GOV_DATAGOV_STREETS_RESOURCE`. House numbers are not in the national registry — they are echoed `houseNumberVerified:false`, never faked. |
 | `cbs.gov.il` | Official CBS index API (mandatory User-Agent; series discovered from the catalog by name, overridable via `GOV_CBS_NEWHOMES_SERIES`) | **Live.** Trends are the national new-homes index; `scope:'national'` is explicit and a requested city is only echoed. |
+
+**Provenance contract (every transaction):** `{sourceAuthority, sourceDataset,
+sourceRecordId, sourceUrl, fetchedAt, sourceUpdatedAt, retrievalMethod}` —
+`retrievalMethod` ∈ `live-api` · `authorized-api` · `manual-curation` ·
+`fixture`. Newness classes: `confirmed_new` · `probable_new` · `second_hand` ·
+`unknown`, with the source's own classification kept verbatim in
+`sourceClassification`, separate from PROPX's derived `newness`.
+
+**Gate-4 acceptance (ז'בוטינסקי 7, אזור):** `node scripts/gov-sync.js
+--verify-azor` retrieves the address LIVE through the provider chain and
+verifies against independently observed reference records
+(`data/gov/fixtures/azor-jabotinsky7.json → observedComparison`) via
+`lib/gov/verify.js` — nothing hard-coded; the run PASSes only if the
+authoritative source itself returns matching records.
 
 ## Surfaces
 
