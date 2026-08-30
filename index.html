@@ -899,6 +899,24 @@ details.ci-more>.in{padding:2px 13px 12px}
   .cmd-status{width:100%;justify-content:space-between}
   .cap-signal{flex:1 1 100%;justify-content:space-between}
 }
+
+/* round-2 refinements */
+.cmp-starters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:13px}
+.cmp-starters button{font-size:12px;font-weight:700;color:var(--accent-deep);background:var(--accent-wash);
+  border:1px solid transparent;border-radius:999px;padding:6px 14px;transition:border-color .15s}
+.cmp-starters button:hover{border-color:var(--accent)}
+.cmp-starters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* rail: the two worlds of the product */
+.rail-div{display:block;height:1px;background:var(--hairline);margin:7px 15px}
+.ri[data-sec="capital"]:not(.on){color:var(--brass)}
+@media(max-width:979px){.rail-div{display:none}}
+/* KPI micro-comparison vs national */
+.kpi .mc{font-weight:700;font-size:10.5px;white-space:nowrap}
+.kpi .mc.up{color:var(--up)}.kpi .mc.down{color:var(--down)}
+/* sale-vs-rent: ruled strip instead of five boxes */
+.svr .card.cell{background:transparent;border:0;box-shadow:none;border-radius:0;
+  border-inline-start:1px solid var(--hairline)}
+.svr .card.cell:first-child{border-inline-start:0}
 </style>
 </head><!-- doc-skeleton -->
 <body><!-- doc-skeleton -->
@@ -934,6 +952,7 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
   <a href="#capital" class="ri" data-sec="capital"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
@@ -1649,6 +1668,7 @@ he:{
   navCap:"הון",
   ciUnitsN:n=>`${n} יח׳`,
   ciScoreT:"ציון השקעה",
+  vsNat:"מול ארצי", cmpSet1:"הערים הגדולות", cmpSet2:"ערי המרכז", cmpSet3:"שכונות מבוקשות",
   cmdKicker:"KobiX RealEstate · מרכז שליטה",
   cmdFresh:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
@@ -1823,6 +1843,7 @@ en:{
   navCap:"Capital",
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
   ciScoreT:"Investment score",
+  vsNat:"vs national", cmpSet1:"Major cities", cmpSet2:"Central cities", cmpSet3:"Prime neighborhoods",
   cmdKicker:"KobiX RealEstate · Command Center",
   cmdFresh:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
@@ -2126,19 +2147,20 @@ function renderCrumbs(){
 let kpiPrev={};
 function renderKPIs(skeleton){
   const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
+  const nat=state.locId==="il"?null:metricsOf("il");
   el("kpiTitle").textContent=(state.locId==="il"?t.kpiTitleNat:t.kpiTitleFor+heName(l));
   el("kpiNote").textContent=state.mode==="sale"?t.kpiNoteSale:t.kpiNoteRent;
   const cards=state.mode==="sale"?[
     {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,d:m.yoy},
-    {k:"median",l:t.medPrice,v:m.median,f:fmtNIS,d:m.yoy-0.3},
-    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v)},
+    {k:"median",l:t.medPrice,v:m.median,f:fmtNIS,d:m.yoy-0.3,n:nat?(m.median/nat.median-1)*100:null},
+    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),n:nat?(m.sqm/nat.sqm-1)*100:null},
     {k:"yoy",l:t.yoy,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy)},
     {k:"tx",l:t.tx,v:m.tx,f:fmtInt,s:"12M"},
     {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3)},
   ]:[
     {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,d:m.rentYoy},
-    {k:"rentMedian",l:t.medRent,v:m.rentMedian,f:fmtNIS,d:m.rentYoy-0.2},
-    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1)},
+    {k:"rentMedian",l:t.medRent,v:m.rentMedian,f:fmtNIS,d:m.rentYoy-0.2,n:nat?(m.rentMedian/nat.rentMedian-1)*100:null},
+    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1),n:nat?(m.rentPsm/nat.rentPsm-1)*100:null},
     {k:"rentYoy",l:t.yoy,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy)},
     {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",s:t.est},
     {k:"listings",l:t.listings,v:m.listings,f:fmtInt},
@@ -2164,7 +2186,7 @@ function renderKPIs(skeleton){
       <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
       <span class="lbl">${c.l}</span>
       <span class="val ${c.cls||""}"><span class="num" data-kpi="${c.k}">${c.f(c.v)}</span></span>
-      <span class="cmp">${c.d!==undefined?deltaHTML(c.d,true)+`<span>${t.vsPrev}</span>`:(c.s||"&nbsp;")}</span>
+      <span class="cmp">${c.d!==undefined?deltaHTML(c.d,true)+`<span>${t.vsPrev}</span>`:(c.s||"")}${c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`:(c.d===undefined&&!c.s?"&nbsp;":"")}</span>
       ${i===0?`<div class="kpi-spark" aria-hidden="true">${sparkSVG(state.locId,150,38,13)}</div>`:""}
     </div>`).join("");
   if(!skeleton&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
@@ -2698,7 +2720,16 @@ function renderCompare(){
     });
   }
   if(state.compare.length===0){
-    el("cmpBody").innerHTML=`<div class="cmp-empty">${t.cmpEmpty}</div>`;return;
+    el("cmpBody").innerHTML=`<div class="cmp-empty">${t.cmpEmpty}
+      <div class="cmp-starters">
+        <button data-cmpset="tlv,jerusalem,haifa,beer-sheva">${t.cmpSet1}</button>
+        <button data-cmpset="petah-tikva,rishon,netanya,ashdod">${t.cmpSet2}</button>
+        <button data-cmpset="old-north,em-hamoshavot,ir-yamim,rg-center">${t.cmpSet3}</button>
+      </div></div>`;
+    el("cmpBody").querySelectorAll("[data-cmpset]").forEach(b=>b.addEventListener("click",()=>{
+      state.compare=b.dataset.cmpset.split(",");renderCompare();
+    }));
+    return;
   }
   const items=state.compare.map((id,i)=>({id,color:CMP_COLORS[i],m:metricsOf(id)}));
   el("cmpBody").innerHTML=CMP_METRICS.map(cm=>{
