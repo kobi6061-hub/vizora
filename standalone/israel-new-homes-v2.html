@@ -911,6 +911,36 @@ details.ci-more>.in{padding:2px 13px 12px}
   border-inline-start:1px solid var(--hairline)}
 .svr .card.cell:first-child{border-inline-start:0}
 
+/* centered command hero (per product mock) */
+.cmd-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;padding-top:8px}
+.cmd-hero .cmd-kicker{margin-bottom:0}
+.cmd-hero-t{display:flex;align-items:center;gap:16px;width:100%;justify-content:center}
+.command h1{font-size:33px;font-weight:800;letter-spacing:-.02em;line-height:1.15;
+  background:linear-gradient(to left,var(--gold) 12%,var(--accent) 88%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-bottom:2px}
+[dir="ltr"] .command h1{background:linear-gradient(to right,var(--gold) 12%,var(--accent) 88%);
+  -webkit-background-clip:text;background-clip:text}
+.hline{flex:1;max-width:190px;height:1px;background:var(--hairline);position:relative}
+.hline::after{content:"";position:absolute;top:-2.5px;width:6px;height:6px;border-radius:50%}
+.hline.a::after{inset-inline-end:0;background:var(--gold)}
+.hline.b::after{inset-inline-start:0;background:var(--accent)}
+.cmd-sub{font-size:14px;color:var(--ink-2)}
+.cmd-sub b{color:var(--ink);font-weight:700}
+.cmd-search-row{display:flex;justify-content:center}
+.cmd-search-row .search{flex:1 1 auto;width:100%;max-width:680px}
+.cmd-search-row .search input{height:48px;border-radius:13px;font-size:15px}
+.cmd-search-row .search>svg{top:16px}
+.cmd-mode-row{display:flex;justify-content:center}
+.cmd-mode-row .mode button{padding:8px 30px}
+.cmd-ops{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
+.command .crumbs{justify-content:center}
+@media(max-width:759px){
+  .command h1{font-size:24px}
+  .hline{max-width:56px}
+  .cmd-ops{justify-content:space-between}
+}
+
 /* ============================ offline access gate ============================ */
 body:not(.unlocked){overflow:hidden}
 body:not(.unlocked)>*:not(#gate){visibility:hidden}
@@ -1007,28 +1037,33 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
 
 <div class="command">
   <div class="wrap command-in">
-    <div class="cmd-top">
-      <div>
-        <span class="cmd-kicker" data-i="cmdKicker">KobiX RealEstate · מרכז שליטה</span>
-        <h1 data-i="h1">שוק הדירות החדשות מקבלן בישראל</h1>
+    <div class="cmd-hero">
+      <span class="cmd-kicker" data-i="cmdKicker">KobiX RealEstate · מרכז שליטה</span>
+      <div class="cmd-hero-t">
+        <span class="hline a" aria-hidden="true"></span>
+        <h1 data-i="h1">שוק הנדל״ן בישראל</h1>
+        <span class="hline b" aria-hidden="true"></span>
       </div>
-      <div class="cmd-status">
-        <button class="cmd-scope home" id="cmdScope" type="button"></button>
-        <span class="cmd-live"><i aria-hidden="true"></i><span id="cmdFresh"></span></span>
-      </div>
+      <p class="cmd-sub" id="cmdSub">כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל</p>
     </div>
-    <div class="command-row">
+    <div class="cmd-search-row">
       <div class="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.4-3.4"/></svg>
         <input id="searchInput" type="search" autocomplete="off" role="combobox"
                aria-expanded="false" aria-controls="searchPop" placeholder="חפש עיר, שכונה או רחוב...">
         <div class="search-pop" id="searchPop" role="listbox"></div>
       </div>
+    </div>
+    <div class="cmd-mode-row">
       <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggle">
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
         <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
       </div>
+    </div>
+    <div class="cmd-ops">
+      <button class="cmd-scope home" id="cmdScope" type="button"></button>
       <button class="cap-signal" id="capSignal" type="button" hidden></button>
+      <span class="cmd-live"><i aria-hidden="true"></i><span id="cmdFresh"></span></span>
     </div>
     <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
     <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
@@ -1621,7 +1656,7 @@ const I18N={
 he:{
   brand:"Kobix.online", demoBadge:"נתוני הדגמה", calBadge:"דירות חדשות מקבלן בלבד",
   updated:"דירות חדשות · למ״ס והכלכלן הראשי · אמצע 2026",
-  h1:"שוק הדירות החדשות מקבלן בישראל", h1sub:"מחירים, מגמות והשוואות של דירות חדשות מקבלן בלבד — ללא דירות יד שנייה.",
+  h1:"שוק הנדל״ן בישראל", h1sub:"כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
   kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"מכירות קבלנים · 12 החודשים האחרונים", kpiNoteRent:"השכרת דירות חדשות (אומדן) · 12 החודשים האחרונים",
@@ -1796,7 +1831,7 @@ he:{
 en:{
   brand:"Kobix.online", demoBadge:"Demo data", calBadge:"New homes from developers only",
   updated:"New homes · CBS & Chief Economist · mid-2026",
-  h1:"Israel\u2019s New-Home Market", h1sub:"Prices, trends and comparisons for new homes from developers only — no second-hand.",
+  h1:"Israel\u2019s Real-Estate Market", h1sub:"Everything that matters in Israel\u2019s <b>new-home</b> market",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Areas",navCompare:"Compare",
   kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Developer sales · trailing 12 months", kpiNoteRent:"New-home rentals (estimate) · trailing 12 months",
@@ -3136,6 +3171,7 @@ function renderCmd(){
   scope.classList.toggle("home",isIL);
   scope.setAttribute("aria-label",isIL?t.cmdScopeIL:t.cmdScopeBack(heName(l)));
   el("cmdFresh").textContent=t.cmdFresh;
+  el("cmdSub").innerHTML=t.h1sub;
   const sig=el("capSignal");
   try{
     const top=ciRank(state.ci.h,state.ci.strat)[0];
