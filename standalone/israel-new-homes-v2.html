@@ -261,6 +261,7 @@ section.blk{scroll-margin-top:72px}
 .mode button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 
 /* breadcrumb */
+.crumbs[hidden]{display:none}
 .crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px;font-size:12.5px;color:var(--ink-3)}
 .crumbs button{color:var(--ink-2);font-weight:500;padding:2px 7px;border-radius:var(--r-s)}
 .crumbs button:hover{background:var(--panel-2);color:var(--ink)}
@@ -384,6 +385,7 @@ section.blk{padding-block:22px}
 .prov-btn{font-size:11.5px;font-weight:700;color:var(--navy);padding:3px 8px;border-radius:var(--r-s)}
 .prov-btn:hover{background:var(--navy-wash)}
 .prov-note{font-size:11px;color:var(--ink-3)}
+.prov-pop[hidden]{display:none!important}
 .prov-pop{display:flex;flex-direction:column;gap:6px;background:var(--panel-2);
   border:1px solid var(--hairline);border-radius:var(--r-s);padding:10px 12px}
 .pr{display:grid;grid-template-columns:96px 1fr auto;gap:8px;font-size:11px;line-height:1.5;align-items:baseline}
@@ -602,6 +604,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 
 /* mobile sticky mode bar */
 .m-mode{display:none}
+.m-mode.dup{display:none!important}
 @media(max-width:759px){
   .m-mode{display:flex;position:sticky;top:52px;z-index:50;background:var(--glass);
     backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);padding:8px 20px;justify-content:center}
@@ -804,6 +807,92 @@ details.ci-more>.in{padding:2px 13px 12px}
   .ci-tl .st{min-width:86px}
 }
 
+/* ============================ platform upgrade ============================ */
+/* command deck — a control surface, not a hero */
+.command-in{padding-block:14px 0;gap:11px}
+.command h1{font-size:18.5px;letter-spacing:-.01em}
+.cmd-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.cmd-kicker{display:block;font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:3px}
+.cmd-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cmd-scope{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);
+  background:var(--panel-2);border:1px solid var(--edge);border-radius:999px;padding:5px 12px;cursor:default;
+  transition:border-color .15s}
+.cmd-scope svg{width:12px;height:12px;color:var(--accent-deep);flex:none}
+.cmd-scope:not(.home){cursor:pointer}
+.cmd-scope:not(.home):hover{border-color:var(--accent)}
+.cmd-scope .x{font-style:normal;font-size:10px;color:var(--ink-3)}
+.cmd-scope:not(.home):hover .x{color:var(--down)}
+.cmd-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+.cmd-live i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:livePulse 2.4s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.cmd-live i{animation:none}}
+@keyframes livePulse{50%{opacity:.35}}
+.cap-signal{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;
+  background:var(--panel);border:1px solid var(--edge);border-inline-start:3px solid var(--gold);
+  border-radius:var(--r-m);padding:7px 13px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.cap-signal:hover{border-color:var(--brass);box-shadow:0 3px 12px -6px rgba(12,13,15,.3)}
+.cap-signal:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.cap-signal .cs-k{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--brass);text-transform:uppercase}
+.cap-signal b{font-weight:800}
+.cap-signal .cs-plate{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--navy);
+  background:var(--navy-wash);border-radius:6px;padding:1px 7px}
+.updated{display:none!important} /* freshness now lives in the command deck */
+/* market tape — tighter financial rhythm */
+.tp{padding:7px 11px}
+.tp-v{font-size:15px}
+.tp.meta{background:transparent}
+.tp.meta .tp-v{font-size:13.5px;color:var(--ink-2)}
+/* KPI tiers: anchor / high / contextual */
+.kpi.ctx{background:transparent;border:1px solid transparent;box-shadow:none;border-radius:0;
+  border-inline-start:2px solid var(--baseline);padding:7px 12px 6px;gap:3px;justify-content:center}
+.kpi.ctx .kico{display:none}
+.kpi.ctx .lbl{padding-inline-end:0}
+.kpi.ctx .val{font-size:16.5px;font-weight:700}
+/* layer system — the four questions of the platform */
+.lyr{display:block;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:3px}
+.lyr.gold{color:var(--brass)}
+.blk-head>div:first-child{min-width:0}
+/* map — open signature stage, no box */
+.map-card{background:transparent;border:0;box-shadow:none;padding:0;border-radius:0}
+.map-stage{gap:16px}
+.map-side{border-top:2px solid var(--ink);padding-top:10px}
+.geo:hover{stroke:var(--gold);stroke-width:1.1}
+.city-node{fill:var(--panel);stroke:var(--ink-2);stroke-width:1;opacity:.9;cursor:pointer;
+  transition:opacity .12s}
+.city-node:hover{fill:var(--accent);stroke:var(--accent-deep);opacity:1}
+.city-node.cap{fill:var(--gold);stroke:var(--brass);animation:capPulse 2.8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.city-node.cap{animation:none}}
+@keyframes capPulse{50%{opacity:.5}}
+.map-tip{background:var(--glass);color:var(--ink);border:1px solid var(--edge);backdrop-filter:blur(6px);
+  padding:9px 12px 8px;min-width:168px;box-shadow:var(--shadow-pop)}
+.mt-h{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:800;font-size:12.5px;
+  padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid var(--hairline)}
+.mt-c{width:7px;height:7px;border-radius:50%;flex:none}
+.mt-c.high{background:var(--conf-high)}.mt-c.med{background:var(--conf-med)}.mt-c.low{background:var(--conf-low)}
+.mt-kv{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--ink-2);line-height:1.7}
+.mt-kv b{color:var(--ink);font-weight:700}
+.mt-kv b.up{color:var(--up)}.mt-kv b.down{color:var(--down)}
+.mt-hint{font-size:10px;color:var(--ink-3);margin-top:5px;padding-top:4px;border-top:1px solid var(--hairline)}
+.sc-t{font-weight:700;color:var(--ink-2)}
+/* location profile — reads like a security header */
+.profile-head h3{font-size:20px;letter-spacing:-.01em}
+.pf-side{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.pf-score{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--ink-2);
+  background:var(--panel-2);border:1px solid var(--edge);border-radius:8px;padding:4px 10px;cursor:pointer;
+  transition:border-color .15s}
+.pf-score b{font-family:var(--f-display);font-size:15px;font-weight:800;color:var(--navy)}
+.pf-score:hover{border-color:var(--brass)}
+.pf-score:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* institutional tables: sticky heads on long scrolls */
+.tbl-scroll{overflow:auto;max-height:640px}
+.tbl thead th{position:sticky;top:0;z-index:3;background:var(--paper)}
+.tbl-card .tbl thead th{box-shadow:0 1px 0 var(--baseline)}
+@media(max-width:759px){
+  .cmd-status{width:100%;justify-content:space-between}
+  .cap-signal{flex:1 1 100%;justify-content:space-between}
+}
+
 /* ============================ offline access gate ============================ */
 body:not(.unlocked){overflow:hidden}
 body:not(.unlocked)>*:not(#gate){visibility:hidden}
@@ -899,9 +988,15 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
 
 <div class="command">
   <div class="wrap command-in">
-    <div>
-      <h1 data-i="h1">שוק הדירות החדשות מקבלן בישראל</h1>
-      <p class="sub" data-i="h1sub">מחירים, מגמות והשוואות של דירות חדשות מקבלן בלבד — ללא דירות יד שנייה.</p>
+    <div class="cmd-top">
+      <div>
+        <span class="cmd-kicker" data-i="cmdKicker">KobiX RealEstate · מרכז שליטה</span>
+        <h1 data-i="h1">שוק הדירות החדשות מקבלן בישראל</h1>
+      </div>
+      <div class="cmd-status">
+        <button class="cmd-scope home" id="cmdScope" type="button"></button>
+        <span class="cmd-live"><i aria-hidden="true"></i><span id="cmdFresh"></span></span>
+      </div>
     </div>
     <div class="command-row">
       <div class="search">
@@ -914,6 +1009,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
         <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
       </div>
+      <button class="cap-signal" id="capSignal" type="button" hidden></button>
     </div>
     <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
     <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
@@ -939,7 +1035,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- KPI strip -->
   <section class="blk" id="overview">
     <div class="blk-head">
-      <h2 id="kpiTitle"></h2>
+      <div><span class="lyr" data-i="lyr1">L1 · שוק</span>
+      <h2 id="kpiTitle"></h2></div>
       <span class="note" id="kpiNote"></span>
     </div>
     <div class="kpi-scroll"><div class="kpis" id="kpis"></div></div>
@@ -948,7 +1045,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Map + rankings -->
   <section class="blk" id="map">
     <div class="blk-head">
-      <h2 data-i="mapTitle">מפת מחירי הנדל״ן בישראל</h2>
+      <div><span class="lyr" data-i="lyr2">L2 · מיקום</span>
+      <h2 data-i="mapTitle">מפת מחירי הנדל״ן בישראל</h2></div>
       <span class="note" data-i="mapNote">לחיצה על אזור מעדכנת את כל הלוח</span>
     </div>
     <div class="card map-card">
@@ -963,6 +1061,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
           <div class="rank-title" id="mapRankTitle"></div>
           <div class="rank-list" id="mapRankList"></div>
           <div class="map-scale">
+            <span class="sc-t" id="scaleTitle"></span>
             <span id="scaleLow"></span><span class="bar" id="scaleBar" aria-hidden="true"></span><span id="scaleHigh"></span>
           </div>
         </div>
@@ -996,7 +1095,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Sale vs Rent -->
   <section class="blk">
     <div class="blk-head">
-      <h2 data-i="svrTitle">מכירה מול שכירות</h2>
+      <div><span class="lyr" data-i="lyr3">L3 · נכס</span>
+      <h2 data-i="svrTitle">מכירה מול שכירות</h2></div>
       <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
     </div>
     <div class="svr" id="svrGrid"></div>
@@ -1006,7 +1106,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Neighborhood / area table -->
   <section class="blk" id="table">
     <div class="blk-head">
-      <h2 id="tblTitle"></h2>
+      <div><span class="lyr" data-i="lyr2b">L2 · מיקום</span>
+      <h2 id="tblTitle"></h2></div>
       <span class="note" id="tblCount"></span>
     </div>
     <div class="card" style="padding:12px 14px;margin-bottom:10px">
@@ -1021,7 +1122,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Market rankings -->
   <section class="blk" id="rankings">
     <div class="blk-head">
-      <h2 data-i="rankTitle">מה קורה בשוק?</h2>
+      <div><span class="lyr" data-i="lyr1b">L1 · שוק</span>
+      <h2 data-i="rankTitle">מה קורה בשוק?</h2></div>
       <span class="note" id="rankScope"></span>
     </div>
     <div class="card" style="padding:4px 14px 10px">
@@ -1033,7 +1135,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Comparison -->
   <section class="blk" id="compare">
     <div class="blk-head">
-      <h2 data-i="cmpTitle">השוואת אזורים</h2>
+      <div><span class="lyr" data-i="lyr2c">L2 · מיקום</span>
+      <h2 data-i="cmpTitle">השוואת אזורים</h2></div>
       <span class="note" data-i="cmpNote">עד ארבעה אזורים · ★ = המוביל במדד</span>
     </div>
     <div class="card" style="padding:13px 14px;margin-bottom:10px">
@@ -1046,12 +1149,12 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <section class="blk" id="insightsSec">
     <div class="grid-insight">
       <div>
-        <div class="blk-head"><h2 data-i="insTitle">תובנות מהנתונים</h2>
+        <div class="blk-head"><div><span class="lyr" data-i="lyr1c">L1 · שוק</span><h2 data-i="insTitle">תובנות מהנתונים</h2></div>
           <span class="note" data-i="insNote">מחושב אוטומטית מהנתונים המוצגים</span></div>
         <div class="card insights" id="insights"></div>
       </div>
       <div>
-        <div class="blk-head"><h2 data-i="ciTeaserT">איפה הכסף עובד הכי טוב?</h2>
+        <div class="blk-head"><div><span class="lyr gold" data-i="lyr4">L4 · הון</span><h2 data-i="ciTeaserT">איפה הכסף עובד הכי טוב?</h2></div>
           <span class="note" data-i="ciTeaserNote">ציון השקעה · מודל</span></div>
         <div class="card ci-teaser" id="ciTeaser"></div>
         <div class="blk-head" style="margin-top:16px"><h2 data-i="confTitle">רמת ודאות</h2></div>
@@ -1065,6 +1168,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     <div class="ci-band">
       <div class="ci-head">
         <div>
+          <span class="lyr gold" data-i="lyr4b">L4 · הון</span>
           <h2 data-i="ciTitle">איפה הכסף עובד הכי טוב?</h2>
           <p class="ci-sub" data-i="ciSub">האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.</p>
         </div>
@@ -1091,7 +1195,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <!-- Recent transactions -->
   <section class="blk" id="txSection">
     <div class="blk-head">
-      <h2 data-i="txTitle">עסקאות אחרונות באזור</h2>
+      <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
+      <h2 data-i="txTitle">עסקאות אחרונות באזור</h2></div>
       <span class="tx-note"><span data-i="txNote">שורות להמחשת המבנה בלבד · </span><span class="badge-demo" data-i="demoBadge">נתוני הדגמה</span></span>
     </div>
     <div class="card tbl-card">
@@ -1586,6 +1691,16 @@ he:{
   monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
   navCap:"הון",
   ciUnitsN:n=>`${n} יח׳`,
+  ciScoreT:"ציון השקעה",
+  cmdKicker:"KobiX RealEstate · מרכז שליטה",
+  cmdFresh:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
+  cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
+  capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`ציון השקעה מוביל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
+  mapHint:"לחיצה לבחירת האזור",
+  lyr1:"L1 · שוק", lyr1b:"L1 · שוק", lyr1c:"L1 · שוק",
+  lyr2:"L2 · מיקום", lyr2b:"L2 · מיקום", lyr2c:"L2 · מיקום",
+  lyr3:"L3 · נכס", lyr3b:"L3 · נכס",
+  lyr4:"L4 · הון", lyr4b:"L4 · הון",
   ciConfNote:"הציון הסופי משוקלל במקדם ודאות הנתונים של האזור — נתונים חלשים מורידים את הדירוג.",
   ciTitle:"איפה הכסף עובד הכי טוב?", ciTeaserT:"איפה הכסף עובד הכי טוב?",
   ciSub:"האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.",
@@ -1750,6 +1865,16 @@ en:{
   monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   navCap:"Capital",
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
+  ciScoreT:"Investment score",
+  cmdKicker:"KobiX RealEstate · Command Center",
+  cmdFresh:"Data: CBS & Chief Economist · retrieved 30.08.2026",
+  cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
+  capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top investment score: ${n}, ${s} of 100 — open capital analysis`,
+  mapHint:"Click to select this area",
+  lyr1:"L1 · Market", lyr1b:"L1 · Market", lyr1c:"L1 · Market",
+  lyr2:"L2 · Location", lyr2b:"L2 · Location", lyr2c:"L2 · Location",
+  lyr3:"L3 · Asset", lyr3b:"L3 · Asset",
+  lyr4:"L4 · Capital", lyr4b:"L4 · Capital",
   ciConfNote:"The final score is scaled by the area's data-confidence factor — weaker data lowers the ranking.",
   ciTitle:"Where does capital work hardest?", ciTeaserT:"Where does capital work hardest?",
   ciSub:"The areas with the strongest mix of running cash flow, value-add potential and price appreciation — from the data on this board.",
@@ -2029,6 +2154,7 @@ function setTheme(mode){
 /* ---------- breadcrumb ---------- */
 function renderCrumbs(){
   const path=pathOf(state.locId);
+  el("crumbs").hidden=path.length<2;   /* the scope chip already names the country */
   el("crumbs").innerHTML=path.map((l,i)=>{
     const cur=i===path.length-1;
     return `<button data-go="${l.id}" ${cur?'aria-current="true"':""}>${heName(l)}</button>`+
@@ -2077,7 +2203,7 @@ function renderKPIs(skeleton){
   const KTONE={price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
     rent:"b",rentMedian:"v",rentPsm:"o",rentYoy:"g",yield:"g",listings:"v"};
   el("kpis").innerHTML=cards.map((c,i)=>`
-    <div class="card kpi ${i===0?"hero":""} ${skeleton?"skel":""}">
+    <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}">
       <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
       <span class="lbl">${c.l}</span>
       <span class="val ${c.cls||""}"><span class="num" data-kpi="${c.k}">${c.f(c.v)}</span></span>
@@ -2189,6 +2315,15 @@ function renderMap(){
       const tv=norm(mm.get(metricsOf(d.id)));
       inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="8.2" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
+    /* city nodes — the geography carries the market; gold = top capital scores */
+    let capIds=[];try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
+      .map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id})}catch(e){}
+    for(const c of cityList()){
+      if(c.lat===undefined)continue;
+      const[cx,cy]=proj(c.lat,c.lng);
+      const cap=capIds.includes(c.id);
+      inner+=`<circle class="city-node${cap?" cap":""}" data-loc="${c.id}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${cap?3:1.9}"><title>${heName(c)}</title></circle>`;
+    }
   }else{
     vb=ctx.level==="district"?bboxForDistrict(ctx.focus.id):bboxForCity(ctx.focus);
     fs=14.5*vb[3]/520; dotR=7.5*vb[3]/520;
@@ -2204,8 +2339,8 @@ function renderMap(){
       x+=go.dx*(vb[2]/70);y+=go.dy*(vb[3]/70);
       const tv=norm(mm.get(metricsOf(c.id)));
       const active=ctx.active===c.id;
-      inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${colorOf(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--navy)"':""}><title>${heName(c)}</title></circle>`;
-      if(active)inner+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*1.35+3.4).toFixed(1)}" fill="none" stroke="var(--navy)" stroke-width=".9" stroke-dasharray="2.6 2.6" opacity=".55"/>`;
+      inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${colorOf(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--gold)"':""}><title>${heName(c)}</title></circle>`;
+      if(active)inner+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*1.35+3.4).toFixed(1)}" fill="none" stroke="var(--gold)" stroke-width=".9" stroke-dasharray="2.6 2.6" opacity=".7"/>`;
       const side=(go.dx||1)<0?-1:1;
       inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
     }
@@ -2227,7 +2362,12 @@ function renderMap(){
     node.addEventListener("click",()=>selectLocation(node.dataset.loc));
     node.addEventListener("mousemove",e=>{
       const lm=metricsOf(node.dataset.loc),ll=LOC[node.dataset.loc];
-      tip.innerHTML=`<b>${heName(ll)}</b><br>${mm.label()}: <span class="num">${mm.fmt(mm.get(lm))}</span><br>${T().thYoy}: <span class="num">${fmtPct(lm.yoy)}</span>`;
+      tip.innerHTML=`<div class="mt-h"><span>${heName(ll)}</span><span class="mt-c ${lm.confidence}" title="${T()["conf"+(lm.confidence==="high"?"High":lm.confidence==="med"?"Med":"Low")]}"></span></div>
+        <div class="mt-kv"><span>${mm.label()}</span><b class="num">${mm.fmt(mm.get(lm))}</b></div>
+        <div class="mt-kv"><span>${T().psm}</span><b class="num">${fmtNIS(lm.sqm)}</b></div>
+        <div class="mt-kv"><span>${T().thYoy}</span><b class="num ${deltaCls(lm.yoy)}">${fmtPct(lm.yoy)}</b></div>
+        <div class="mt-kv"><span>${T().tx} · 12M</span><b class="num">${fmtInt(lm.tx)}</b></div>
+        <div class="mt-hint">${T().mapHint}</div>`;
       const r=holder.getBoundingClientRect();
       let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
       if(x+tip.offsetWidth>r.width-4)x=e.clientX-r.left-tip.offsetWidth-12;
@@ -2253,6 +2393,7 @@ function renderMap(){
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
   el("mapScope").hidden=state.locId==="il";
   el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="ms">${mm.label()}: <span class="num">${mm.fmt(mm.get(metricsOf(state.locId)))}</span></span>`;
+  el("scaleTitle").textContent=mm.label();
   el("scaleLow").textContent=mm.fmt(div?-maxAbs:lo);
   el("scaleHigh").textContent=mm.fmt(div?maxAbs:hi);
   el("scaleBar").classList.toggle("div",div);
@@ -2268,10 +2409,14 @@ function renderProfile(){
   el("profileCard").innerHTML=`
     <div class="profile-head">
       <div>
+        <span class="lyr">${t.lyr3}</span>
         <h3>${heName(l)}</h3>
         <div class="where">${chain||t.kpiTitleNat}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:600">${t.filtered}</span>`:""}</div>
       </div>
-      <span class="conf ${m.confidence}"><i></i>${conf}</span>
+      <div class="pf-side">
+        <span class="conf ${m.confidence}"><i></i>${conf}</span>
+        ${["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
+      </div>
     </div>
     <div class="asset-price">
       <div>
@@ -2279,7 +2424,7 @@ function renderProfile(){
         <div class="ap-v num">${fmtNIS(primV)}</div>
         <div class="ap-d">${deltaHTML(state.mode==="sale"?m.yoy:m.rentYoy,true)}<span>${t.yoy}</span></div>
       </div>
-      <div class="ap-spark" aria-hidden="true">${sparkSVG(l.id,150,42,37)}</div>
+      <div class="ap-spark" aria-hidden="true">${sparkSVG(l.id,150,42,13)}</div>
     </div>
     <div class="stats">
       <div class="stat"><div class="l">${t.psm}</div><div class="v num">${fmtNIS(m.sqm)}</div></div>
@@ -2953,6 +3098,33 @@ const ciLvlTxt=lvl=>({h:T().ciHigh,m:T().ciMed,l:T().ciLow}[lvl]);
 function ciPathOf(l){return chainOf(l).filter(x=>x.type!=="district").map(heName).join(" · ")}
 
 /* =============================== UI =============================== */
+function renderCmd(){
+  const t=T(),l=LOC[state.locId],isIL=state.locId==="il";
+  const scope=el("cmdScope");if(!scope)return;
+  scope.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>${heName(l)}</span>${isIL?"":'<i class="x" aria-hidden="true">✕</i>'}`;
+  scope.classList.toggle("home",isIL);
+  scope.setAttribute("aria-label",isIL?t.cmdScopeIL:t.cmdScopeBack(heName(l)));
+  el("cmdFresh").textContent=t.cmdFresh;
+  const sig=el("capSignal");
+  try{
+    const top=ciRank(state.ci.h,state.ci.strat)[0];
+    sig.hidden=false;
+    sig.innerHTML=`<span class="cs-k">${t.capSignalK}</span><b>${heName(top.ev.f.l)}</b><span class="cs-plate num">${top.ev.score}</span>`;
+    sig.setAttribute("aria-label",t.capSignalA(heName(top.ev.f.l),top.ev.score));
+  }catch(e){sig.hidden=true}
+}
+function initCmd(){
+  el("cmdScope").addEventListener("click",()=>{if(state.locId!=="il")selectLocation("il")});
+  /* the sticky mobile mode bar duplicates the command toggle — show it only after scrolling past */
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{
+      document.querySelector(".m-mode").classList.toggle("dup",es[0].isIntersecting);
+    },{rootMargin:"-60px 0px 0px 0px"});
+    io.observe(el("modeToggle"));
+  }
+  el("capSignal").addEventListener("click",()=>el("capital").scrollIntoView({behavior:"smooth",block:"start"}));
+}
+
 function renderCITeaser(){
   const box=el("ciTeaser");if(!box)return;
   const t=T(),rk=ciRank(state.ci.h,state.ci.strat).slice(0,3);
@@ -3279,7 +3451,7 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();renderChartTools();renderChart();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
+    renderCmd();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -3314,6 +3486,7 @@ el("langEn").addEventListener("click",()=>setLang("en"));
 setStatics();
 initSearch();
 initCapital();
+initCmd();
 refresh(true);
 </script>
 
