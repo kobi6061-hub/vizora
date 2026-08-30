@@ -478,6 +478,18 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
   .tcard .r2{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;color:var(--ink-2)}
   .tcard .r2 .num{font-weight:600}
 }
+.tx-chip{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.02em;
+  border:1px solid var(--hairline);border-radius:99px;padding:2px 8px;color:var(--ink-3);white-space:nowrap}
+.tx-chip.new{color:var(--up);border-color:currentColor}
+.tx-src{font-size:11px;color:var(--ink-3);white-space:nowrap}
+.tx-src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.tx-src a:hover{color:var(--accent-deep)}
+.tx-empty{padding:16px 18px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--hairline)}
+.tx-links{display:flex;flex-wrap:wrap;align-items:center;gap:7px 12px;padding:11px 15px;
+  border-top:1px solid var(--hairline);font-size:12px;color:var(--ink-3)}
+.tx-links a{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:var(--accent-deep);
+  border:1px solid var(--hairline);border-radius:99px;padding:4px 11px;transition:border-color .12s,background .12s}
+.tx-links a:hover{border-color:var(--accent);background:var(--accent-wash)}
 
 /* ============================ rankings tabs ============================ */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
@@ -1382,11 +1394,14 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <section class="blk" id="txSection">
     <div class="blk-head">
       <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
-      <h2 data-i="txTitle">עסקאות אחרונות באזור</h2></div>
-      <span class="tx-note"><span data-i="txNote">שורות להמחשת המבנה בלבד · </span><span class="badge-demo" data-i="demoBadge">נתוני הדגמה</span></span>
+      <h2 data-i="txTitle">עסקאות אחרונות שדווחו באזור</h2></div>
+      <span class="tx-note" id="txProv"></span>
     </div>
     <div class="card tbl-card">
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
+      <div class="tbl-cards" id="txCards"></div>
+      <p class="tx-empty" id="txEmpty" hidden></p>
+      <div class="tx-links" id="txLinks"></div>
     </div>
   </section>
 
@@ -1435,8 +1450,9 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
             <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: 84,280 ארצית (סוף יוני 2026); תל אביב 9,549; רעננה 1,580</li>
             <li data-i="srcA4">מכירות — קצב שנתי: ארצית כ-34,000 (2025); תל אביב ~4,100 בקצב שנתי (למ״ס מחצית א׳ 2026: כ-2,056 מכירות, ~342/חודש)</li>
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
+            <li data-i="srcA6">טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.</p>
+          <p style="margin-top:8px" data-i="srcADemo">אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -1727,22 +1743,49 @@ const LOCATIONS = [
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 
-const mkStreets=(he,en)=>he.map((h,i)=>({he:h,en:en[i]}));
-const STREETS = {
-  tlv:mkStreets(["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
-    ["Dizengoff","Rothschild","Ben Yehuda","Arlozorov","Ibn Gabirol","Sheinkin","HaYarkon","Frishman"]),
-  jerusalem:mkStreets(["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
-    ["Aza","HaPalmach","Bethlehem Rd.","Jaffa","Keren HaYesod","Emek Refaim","Herzog","Radak"]),
-  haifa:mkStreets(["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
-    ["Moriya","HaNassi","Horev","Herzl","Derech HaYam","Abba Hushi","Trumpeldor","Yafe Nof"]),
-  "petah-tikva":mkStreets(["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
-    ["Rothschild","Jabotinsky","HaHistadrut","Haim Ozer","Motta Gur","Kaplan","Baron Hirsch","HaAtzmaut"]),
-  "ramat-gan":mkStreets(["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
-    ["Bialik","Jabotinsky","HaRoe","Krinitzi","Ben Gurion Rd.","Herzl","Arlozorov","HaMaagal"]),
-  generic:mkStreets(["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"],
-    ["Herzl","Weizmann","Ben Gurion","Jabotinsky","Rothschild","HaAtzmaut","HaNassi","Bialik"])
+/* -------- REAL reported transactions (deals reported to the Tax
+   Authority, as published; collected 30.08.2026 via web search) --------
+   Sources per row: Calcalist / ynet / TheMarker reported-deal columns and
+   project-tlv.info/sold. Binding rule: a row is stored ONLY when its source
+   names the city explicitly; unbindable rows were discarded, never guessed.
+   d = the date resolution the source published (month or year). sqm/rooms/
+   fl = "" when the source did not publish them (rendered as em-dash).
+   tag: "new" = new from developer · "used" = second-hand · "" = not stated.
+   u = article URL when the row↔article binding is certain; otherwise the
+   outlet name only (all collection URLs listed in the sources section). */
+const TX_DB={
+ tlv:[
+  {d:"06.2026",he:"פרויקט MUZE — פנטהאוז",en:"MUZE project — penthouse",rooms:"",sqm:0,fl:"",
+   price:23200000,tag:"new",src:"Project TLV",u:"https://project-tlv.info/sold/"},
+  {d:"2026",he:"פרזון, יד אליהו",en:"Perazon St., Yad Eliyahu",rooms:4,sqm:98,fl:"5/6",
+   nHe:"מרפסת 12 מ״ר",nEn:"12 m² balcony",price:3450000,tag:"used",src:"כלכליסט"},
+  {d:"2026",he:"פרזון, יד אליהו",en:"Perazon St., Yad Eliyahu",rooms:4,sqm:92,fl:"1/7",
+   nHe:"מרפסת 12 מ״ר",nEn:"12 m² balcony",price:3500000,tag:"used",src:"כלכליסט"}],
+ jerusalem:[
+  {d:"2026",he:"החרוב, ארנונה",en:"HaCharuv St., Arnona",rooms:5,sqm:115,fl:"1/2",
+   nHe:"מרפסת 12 מ״ר · מחסן 6 מ״ר · מעלית · חניה",nEn:"12 m² balcony · 6 m² storage · elevator · parking",
+   price:4500000,tag:"",src:"כלכליסט",u:"https://www.calcalist.co.il/real-estate/article/bkzojwcxgx"}],
+ "beer-sheva":[
+  {d:"2026",he:"מקור חיים — פנטהאוז",en:"Mekor Chaim St. — penthouse",rooms:5,sqm:205,fl:"",
+   nHe:"מרפסת 50 מ״ר",nEn:"50 m² balcony",price:2140000,tag:"",src:"כלכליסט",
+   u:"https://www.calcalist.co.il/real-estate/article/byseklzcyl"},
+  {d:"2026",he:"גולדמן, רמות — פנטהאוז",en:"Goldman St., Ramot — penthouse",rooms:5,sqm:180,fl:"",
+   nHe:"מרפסת 65 מ״ר",nEn:"65 m² balcony",price:1640000,tag:"",src:"ynet / כלכליסט"},
+  {d:"2026",he:"ספיר — פנטהאוז",en:"Sapir St. — penthouse",rooms:5,sqm:142,fl:"",
+   nHe:"מרפסת 110 מ״ר",nEn:"110 m² balcony",price:2000000,tag:"",src:"ynet / כלכליסט"},
+  {d:"2026",he:"בר ניסן, נווה זאב",en:"Bar Nisan St., Neve Ze'ev",rooms:3,sqm:97,fl:"4/9",
+   nHe:"מרפסת 14 מ״ר · מעלית · חניה · ממ״ד",nEn:"14 m² balcony · elevator · parking · shelter room",
+   price:1150000,tag:"",src:"טור העסקאות"}],
+ rishon:[
+  {d:"03–04.2026",he:"אלי כהן",en:"Eli Cohen St.",rooms:4,sqm:100,fl:"3/4",
+   price:1850000,tag:"",src:"ynet",u:"https://www.ynet.co.il/economy/article/djnyk36iz"},
+  {d:"03–04.2026",he:"אנה פרנק",en:"Anne Frank St.",rooms:4.5,sqm:100,fl:"4/5",
+   nHe:"מרפסת 7 מ״ר · מעלית · חניה · ממ״ד",nEn:"7 m² balcony · elevator · parking · shelter room",
+   price:2905000,tag:"",src:"ynet"}],
+ haifa:[
+  {d:"2026",he:"אחד העם, הדר",en:"Ehad Ha'am St., Hadar",rooms:2,sqm:54,fl:"12/24",
+   price:1030000,tag:"",src:"טור העסקאות"}]
 };
-
 /* -------- deterministic pseudo-random (stable across loads) -------- */
 function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
@@ -1785,26 +1828,16 @@ function seriesFor(id){
   return pts;
 }
 
-/* -------- demo transactions (sale mode) -------- */
-function txFor(id){
-  const l=LOC[id];
-  const cty=cityOf(l);const cityId=cty?cty.id:null;
-  const streets=STREETS[cityId]||STREETS.generic;
-  const r=rng(seedOf(id+"tx"));
+/* -------- reported-transaction lookup: city rows, or roll-up -------- */
+function txRowsFor(id){
+  const l=LOC[id];if(!l)return{rows:[],scope:null,cty:null};
+  const cty=l.type==="city"?l:cityOf(l);
+  if(cty&&TX_DB[cty.id])return{rows:TX_DB[cty.id],scope:l.type==="city"?null:cty,cty};
+  const ids=l.type==="district"?LOCATIONS.filter(x=>x.parent===l.id&&TX_DB[x.id]).map(x=>x.id)
+    :l.type==="country"?Object.keys(TX_DB):[];
   const rows=[];
-  const roomsOpts=[2,3,3,4,4,4,5];
-  for(let i=0;i<8;i++){
-    const days=Math.floor(r()*88)+2;
-    const d=new Date(2026,7,24); d.setDate(d.getDate()-days);
-    const rooms=roomsOpts[Math.floor(r()*roomsOpts.length)];
-    const area=Math.round((rooms*24+18)*(0.9+r()*.25));
-    const floor=Math.floor(r()*9)+1;
-    const psm=Math.round(l.base.sqm*(0.86+r()*.3));
-    rows.push({date:d,street:streets[Math.floor(r()*streets.length)],rooms,area,floor,
-      price:Math.round(psm*area/1000)*1000,psm});
-  }
-  rows.sort((a,b)=>b.date-a.date);
-  return rows;
+  for(const cid of ids)for(const r of TX_DB[cid])rows.push({...r,cityHe:LOC[cid].he,cityEn:LOC[cid].en});
+  return{rows:rows.slice(0,14),scope:null,cty};
 }
 
 /* =====================================================================
@@ -1852,7 +1885,13 @@ he:{
   confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
   confMedNote:"מדגם בינוני — ייתכנו סטיות; מומלץ לבחון גם את שכונות הסביבה.",
   confLowNote:"מדגם קטן מאוד — הנתונים אינדיקטיביים בלבד ואינם מספקים בסיס להחלטה.",
-  txTitle:"מכירות קבלן אחרונות באזור", txNote:"שורות להמחשת המבנה בלבד · ",
+  txTitle:"עסקאות אחרונות שדווחו באזור",
+  txProv:"עסקאות שדווחו לרשות המיסים, כפי שפורסמו בעיתונות הכלכלית · תאריך ופירוט — ברזולוציה שפורסמה · נאסף 30.08.2026",
+  txScopeCity:c=>`רמת עיר — ${c}`, txTagNew:"חדשה מקבלן", txTagUsed:"יד שנייה",
+  thTag:"סיווג", thSrc:"מקור", txRoomsShort:"חד׳", txPsmShort:"מ״ר",
+  txEmpty:"לאזור זה טרם נאספו עסקאות מדווחות פרטניות. מוצגות אך ורק עסקאות שפורסמו בפועל — לעולם לא שורות מדומות. הקישורים מטה מובילים למאגרי העסקאות הרשמיים של האזור.",
+  txLinksLbl:c=>c?`כל העסקאות המדווחות ב${c}:`:"כל העסקאות המדווחות:",
+  txLnkNadlan:"מידע נדל״ן — רשות המיסים", txLnkMadlan:"מדלן — דירות שנמכרו", txLnkGov:"govmap — שכבת עסקאות",
   thDate:"תאריך",thStreet:"רחוב",thRooms:"חדרים",thAreaSqm:"שטח",thFloor:"קומה",thTxPrice:"מחיר",thTxPsm:"מחיר למ״ר",
   srcTitle:"מקורות ומתודולוגיה",
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
@@ -1860,7 +1899,7 @@ he:{
   srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.",
+  srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.", srcA6:"טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -2092,7 +2131,13 @@ en:{
   confHighNote:"A wide sample — the averages reflect this market well.",
   confMedNote:"A medium sample — expect deviations; check nearby areas too.",
   confLowNote:"A very small sample — indicative only, not a basis for decisions.",
-  txTitle:"Recent developer sales in this area", txNote:"Structural illustration rows · ",
+  txTitle:"Latest reported transactions in this area",
+  txProv:"Deals reported to the Tax Authority, as published in the financial press · date & detail at published resolution · collected 30.08.2026",
+  txScopeCity:c=>`city level — ${c}`, txTagNew:"new (developer)", txTagUsed:"second-hand",
+  thTag:"Type", thSrc:"Source", txRoomsShort:"rm", txPsmShort:"m²",
+  txEmpty:"No individually reported deals have been collected for this area yet. Only actually-published transactions are shown — never simulated rows. The links below open the area's official deal registries.",
+  txLinksLbl:c=>c?`All reported deals in ${c}:`:"All reported deals:",
+  txLnkNadlan:"Nadlan.gov.il — Tax Authority", txLnkMadlan:"Madlan — sold prices", txLnkGov:"govmap — deals layer",
   thDate:"Date",thStreet:"Street",thRooms:"Rooms",thAreaSqm:"m²",thFloor:"Floor",thTxPrice:"Price",thTxPsm:"Per m²",
   srcTitle:"Sources & methodology",
   srcATitle:"Calibration basis — new developer homes only",
@@ -2100,7 +2145,7 @@ en:{
   srcA1:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"These are calibrated approximations of the new-homes market only, for demonstration — not official statistics; the recent-sales table illustrates structure only.",
+  srcADemo:"These are calibrated approximations of the new-homes market only, for demonstration — not official statistics; the reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Deals table — Tax Authority reports as published by Calcalist, ynet, TheMarker and Project TLV (collected 30.08.2026)",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -3320,25 +3365,54 @@ function renderConfidence(){
     <div class="conf-note">${based}.<br>${note}</div>`;
 }
 
-/* ---------- transactions ---------- */
+/* ---------- transactions (real reported deals) ---------- */
 function renderTx(){
-  const t=T();
+  const t=T(),he=state.lang==="he";
   const sec=el("txSection");
   if(state.mode!=="sale"){sec.style.display="none";return}
   sec.style.display="";
-  const rows=txFor(state.locId);
-  el("txTbl").innerHTML=`
-    <thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th></tr></thead>
+  const l=LOC[state.locId],{rows,scope,cty}=txRowsFor(state.locId);
+  el("txProv").textContent=t.txProv+(scope?" · "+t.txScopeCity(he?scope.he:scope.en):"");
+  const dash="—";
+  const tagOf=r=>r.tag==="new"?`<span class="tx-chip new">${t.txTagNew}</span>`
+              :r.tag==="used"?`<span class="tx-chip">${t.txTagUsed}</span>`:dash;
+  const srcOf=r=>r.u?`<a href="${r.u}" target="_blank" rel="noopener">${r.src}</a>`:r.src;
+  const addrOf=r=>(he?r.he:r.en)+(r.cityHe?` · <b>${he?r.cityHe:r.cityEn}</b>`:"");
+  const noteOf=r=>he?(r.nHe||""):(r.nEn||"");
+  const psmOf=r=>r.sqm?fmtNIS(Math.round(r.price/r.sqm)):dash;
+  el("txEmpty").hidden=rows.length>0;
+  el("txEmpty").textContent=rows.length?"":t.txEmpty;
+  el("txTbl").innerHTML=!rows.length?"":`
+    <thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>
     <tbody>${rows.map(r=>`
       <tr style="cursor:default">
-        <td class="num">${r.date.getDate()}.${r.date.getMonth()+1}.${String(r.date.getFullYear()).slice(2)}</td>
-        <td>${state.lang==="he"?r.street.he:r.street.en}</td>
-        <td class="num">${r.rooms}</td>
-        <td class="num">${r.area}</td>
-        <td class="num">${r.floor}</td>
+        <td class="num">${r.d}</td>
+        <td><span class="nm">${addrOf(r)}</span>${noteOf(r)?`<div class="sub">${noteOf(r)}</div>`:""}</td>
+        <td class="num">${r.rooms||dash}</td>
+        <td class="num">${r.sqm||dash}</td>
+        <td class="num">${r.fl||dash}</td>
         <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
-        <td class="num">${fmtNIS(r.psm)}</td>
+        <td class="num">${psmOf(r)}</td>
+        <td>${tagOf(r)}</td>
+        <td class="tx-src">${srcOf(r)}</td>
       </tr>`).join("")}</tbody>`;
+  el("txCards").innerHTML=rows.map(r=>`
+    <div class="tcard" style="cursor:default">
+      <div class="r1"><b>${addrOf(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
+      <div class="r2"><span class="num">${r.d}</span>
+        ${r.rooms?`<span><span class="num">${r.rooms}</span> ${t.txRoomsShort}</span>`:""}
+        ${r.sqm?`<span><span class="num">${r.sqm}</span> ${t.txPsmShort}</span>`:""}
+        ${r.fl?`<span>${t.thFloor} <span class="num">${r.fl}</span></span>`:""}
+        ${r.sqm?`<span class="num">${psmOf(r)}/${t.txPsmShort}</span>`:""}</div>
+      <div class="r2">${r.tag?tagOf(r):""}${noteOf(r)?`<span>${noteOf(r)}</span>`:""}<span class="tx-src">${srcOf(r)}</span></div>
+    </div>`).join("");
+  const cn=cty?(he?cty.he:cty.en):"";
+  const madlan=cty?`https://www.madlan.co.il/area-info/${encodeURIComponent(cty.he.replace(/\s+/g,"-"))}-${encodeURIComponent("ישראל")}`:"https://www.madlan.co.il/";
+  const nadlan=cty?`https://www.nadlan.gov.il/?search=${encodeURIComponent(cty.he)}`:"https://www.nadlan.gov.il/";
+  el("txLinks").innerHTML=`<span>${t.txLinksLbl(cn)}</span>
+    <a href="${nadlan}" target="_blank" rel="noopener">${t.txLnkNadlan}</a>
+    <a href="${madlan}" target="_blank" rel="noopener">${t.txLnkMadlan}</a>
+    <a href="https://www.govmap.gov.il/?lay=16" target="_blank" rel="noopener">${t.txLnkGov}</a>`;
 }
 
 
