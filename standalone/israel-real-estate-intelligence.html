@@ -404,9 +404,57 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 
 .fade-swap{animation:fadeSwap .3s ease both}
 @keyframes fadeSwap{from{opacity:.35}to{opacity:1}}
+
+/* ============================ access gate ============================ */
+/* Locked is the default state — no class required, so nothing paints first. */
+body:not(.unlocked){overflow:hidden}
+body:not(.unlocked)>*:not(#gate){visibility:hidden}
+#gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
+  background:var(--paper);padding:24px}
+#gate.hide{display:none}
+.gate-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--hairline);
+  border-radius:var(--r-m);padding:0 0 22px;overflow:hidden;box-shadow:var(--shadow-pop);text-align:center}
+.gate-ribbon{height:4px;background:linear-gradient(to left,var(--accent) 0%,#6da7ec 45%,var(--brass,#9a742a) 100%)}
+.gate-in{padding:26px 26px 0;display:flex;flex-direction:column;gap:6px}
+.gate-mark{font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:-.01em;direction:ltr}
+.gate-sub{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+.gate-form{display:flex;flex-direction:column;gap:9px;padding:20px 26px 0}
+#gatePass{height:44px;border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--paper);
+  padding-inline:14px;font-size:15px;text-align:center;letter-spacing:.14em;
+  transition:border-color .15s,box-shadow .15s}
+#gatePass:hover{border-color:var(--baseline)}
+#gatePass:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(42,120,214,.14)}
+.gate-btn{height:44px;border-radius:var(--r-m);background:var(--ink);color:var(--paper);
+  font-size:14px;font-weight:600;transition:opacity .15s}
+.gate-btn:hover{opacity:.88}
+.gate-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.gate-err{min-height:17px;font-size:12.5px;font-weight:600;color:var(--down);opacity:0;transition:opacity .15s}
+.gate-err.on{opacity:1}
+.gate-card.shake{animation:gateShake .28s ease}
+@keyframes gateShake{
+  0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)} 75%{transform:translateX(-3px)}
+}
+@media(prefers-reduced-motion:reduce){.gate-card.shake{animation:none}}
 </style>
 
 <!-- ============================ MARKUP ============================ -->
+
+<div id="gate" dir="rtl" role="dialog" aria-modal="true" aria-labelledby="gateMark">
+  <div class="gate-card" id="gateCard">
+    <div class="gate-ribbon"></div>
+    <div class="gate-in">
+      <div class="gate-mark" id="gateMark">Assaf-estate</div>
+      <p class="gate-sub">הזינו סיסמה כדי להציג את הלוח</p>
+    </div>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <input id="gatePass" type="password" inputmode="text" autocomplete="off"
+             aria-label="סיסמה" placeholder="••••" autofocus>
+      <button type="submit" class="gate-btn">כניסה</button>
+      <p class="gate-err" id="gateErr" role="alert">סיסמה שגויה</p>
+    </form>
+  </div>
+</div>
 
 <header class="top">
   <div class="wrap top-in">
@@ -1776,4 +1824,31 @@ el("langEn").addEventListener("click",()=>setLang("en"));
 setStatics();
 initSearch();
 refresh(true);
+</script>
+
+<script>
+/* ---------- access gate: locked until the password is entered ---------- */
+(function(){
+  var PASS="BEST";
+  var gate=document.getElementById("gate"),
+      form=document.getElementById("gateForm"),
+      pass=document.getElementById("gatePass"),
+      err=document.getElementById("gateErr"),
+      card=document.getElementById("gateCard");
+  function unlock(){
+    document.body.classList.add("unlocked");
+    gate.classList.add("hide");
+  }
+  function reject(){
+    err.classList.add("on");
+    card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+    pass.value=""; pass.focus();
+  }
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    if(pass.value.trim()===PASS)unlock(); else reject();
+  });
+  pass.addEventListener("input",function(){err.classList.remove("on")});
+  try{pass.focus()}catch(e){}
+})();
 </script>
