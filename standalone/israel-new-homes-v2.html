@@ -1906,24 +1906,25 @@ he:{
   ciNoDeals:"עסקאות חיות מאומתות: 0 — ההקצאה למעלה היא יעד לאיתור ומו״מ, לא רכישה זמינה היום.",
   ciLevMkt:"סביבת מו״מ · שוק",
   ciMktScale:"פוטנציאל היקף · שוק", ciDealScale:"היקף עסקה מאומת", ciUnknown:"לא ידוע",
-  ciEvid:(ms,mom,sh)=>`נתמך ב: ~${ms} חודשי היצע מקומי (ארצי ~26, רמה היסטורית גבוהה) · מומנטום שנתי ${mom} · עסקה פוטנציאלית ≈${sh}% מהמלאי המקומי`,
+  ciEvid:(inv,rate,ms,mom,sh)=>`נתמך ב: מלאי ${inv} יח׳ ÷ ~${rate} מכירות/חודש (חלון: 12 ח׳ מתגלגל) = ~${ms} חודשי היצע (ארצי ~26, רמה היסטורית גבוהה) · מומנטום שנתי ${mom} · תרחיש רכישה ממודל ≈${sh}% ממלאי האזור — מודל · רמת אזור`,
   ciDealLevNA:"מנוף ברמת עסקה: לא ידוע — אין מלאי פרויקט מאומת",
   ciTgt3:(a,b,c)=>`יעדים לפי אסטרטגיה: החזקה ≤ <b class="num">${a}</b> · מכירה ≤ <b class="num">${b}</b> · מרוכז ≤ <b class="num">${c}</b>`,
-  ciRetLine:(r,p)=>`לפי תשואה נדרשת (${r}% שנתי על ההון · מדיניות, במינוף הנוכחי): ≤ <b class="num">${p}</b>`,
+  ciRetLine:(r,p)=>`לפי תשואה נדרשת (${r}% שנתי על ההון · מדיניות): ≤ <b class="num">${p}</b>`,
   ciRetAbove:r=>`יעד התשואה (${r}% שנתי) מושג גם במחיר השוק המלא — במינוף ובתרחיש הבסיס.`,
   ciRetNone:r=>`יעד התשואה (${r}% שנתי) אינו מושג גם בהנחה של 50%- — בתנאי המימון והתרחיש הנוכחיים.`,
   ciPolicyTag:"מדיניות", ciModelTag:"מודל",
   ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
   cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
-  cvObs:"רשמי", cvEst:"אומדן",
-  ciProvLine:(a,b)=>`מקורות: מחירים/עסקאות — למ״ס והכלכלן הראשי, אמצע 2026, רזולוציה: עיר/שכונה (${a}) · מלאי — למ״ס יוני 2026 (${b}) · שכירות — אומדן`,
+  cvObs:"רשמי", cvEst:"אומדן", cvEstD:"אומדן נגזר · רזולוציית עיר",
+  ciProvLine:(a,b)=>`מקורות ותקופות: מדד מחירי דירות חדשות — למ״ס, מאי–יוני 2026 · עסקאות — סיכום שנתי 2025 (${a}) · מלאי לא-מכור — למ״ס, סוף יוני 2026 (${b}) · שכירות — למ״ס: ארצי רבעון 1/2026, ערים 2025, בהתאמת ‎+8% לדירה חדשה — אומדן נגזר, רזולוציה עיר/שכונה · ריבית בנק ישראל — 6.7.2026 · נשלף: 30.08.2026`,
   ciBulkT2:"תרחישי כוח-קנייה מרוכזת · מודל",
   ciBulkModelled:"תרחיש מודל — לא מלאי מאומת: היקפים היפותטיים מול נפח השוק המקומי. יהפוך ל'תרחיש רכישה מאומת' רק כשקיים מלאי פרויקט מאומת.",
   ciTgtUnits:n=>`יעד ~${n} יח׳ · איתור`,
   ciPolT:"מדיניות השקעה (מרכזית)",
   ciPolHold:"תשואת החזקה נדרשת %", ciPolIrr:"תשואה שנתית נדרשת על ההון %", ciPolBulk:"דיסקאונט מרוכז %", ciPolConf:"ודאות מינימלית %",
   ciPolNote:"כללי מדיניות — לא אמת שוק: שינוי כאן מחשב מחדש יעדים, סינון ודירוג עבור משקיע אחר.",
-  ciAsmIrr:(r,c)=>`מדיניות: IRR ${r}% · ודאות מינ׳ ${c}%`,
+  ciAsmIrr:(r,c)=>`מדיניות: IRR מודל ${r}% לפני מס · ודאות מינ׳ ${c}%`,
+  ciIrrDef:l=>`הגדרה: IRR מודל ${l>0?"ממונף":"לא ממונף"} לפני מס — כולל מס רכישה ועלויות, מימון, אי-תפוסה/תפעול/תחזוקה, צמיחת שכירות, עליית ערך (תרחיש בסיס) ועלויות מכירה; לא כולל מס שבח ומס הכנסה.`,
   mOpp:"ציון הזדמנות", rankOpp:"ההזדמנויות המובילות · מודל",
   ciInvT:"תקציר השקעה · מודל", ciBestUse:"שימוש מיטבי",
   ciStratA:"החזקה והשכרה", ciStratB:"קנייה ומכירה", ciStratC:"רכישה מרוכזת",
@@ -2145,7 +2146,7 @@ en:{
   ciNoDeals:"Verified live deals: 0 — the allocation above is a sourcing/negotiation target, not a purchase available today.",
   ciLevMkt:"Negotiation environment · market",
   ciMktScale:"Market scale potential", ciDealScale:"Verified deal scale", ciUnknown:"Unknown",
-  ciEvid:(ms,mom,sh)=>`Supported by: ~${ms} months of local supply (national ~26, historically high) · ${mom} annual momentum · a potential deal ≈${sh}% of local inventory`,
+  ciEvid:(inv,rate,ms,mom,sh)=>`Supported by: ${inv} units inventory ÷ ~${rate} sales/month (window: rolling 12 mo.) = ~${ms} months of supply (national ~26, historically high) · ${mom} annual momentum · a modelled acquisition scenario ≈${sh}% of area inventory — modelled · area level`,
   ciDealLevNA:"Deal-level leverage: unknown — no verified project inventory",
   ciTgt3:(a,b,c)=>`Targets by strategy: hold ≤ <b class="num">${a}</b> · resale ≤ <b class="num">${b}</b> · bulk ≤ <b class="num">${c}</b>`,
   ciRetLine:(r,p)=>`By required return (${r}%/yr on equity · policy, at current leverage): ≤ <b class="num">${p}</b>`,
@@ -2154,15 +2155,16 @@ en:{
   ciPolicyTag:"policy", ciModelTag:"model",
   ciCoverT:"Data coverage", ciCoverMiss:"missing",
   cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
-  cvObs:"official", cvEst:"estimate",
-  ciProvLine:(a,b)=>`Sources: prices/deals — CBS & Chief Economist, mid-2026, resolution: city/neighborhood (${a}) · inventory — CBS June 2026 (${b}) · rent — estimate`,
+  cvObs:"official", cvEst:"estimate", cvEstD:"derived estimate · city resolution",
+  ciProvLine:(a,b)=>`Sources & periods: new-home price index — CBS, May–Jun 2026 · transactions — 2025 annual summary (${a}) · unsold inventory — CBS, end-June 2026 (${b}) · rent — CBS: national Q1/2026, cities 2025, +8% new-build adjustment — derived estimate, city/neighborhood resolution · BoI rate — 6.7.2026 · retrieved 30.08.2026`,
   ciBulkT2:"Bulk purchasing-power scenarios · model",
   ciBulkModelled:"Modelled scenario — not verified inventory: hypothetical sizes against local market volume. Becomes a 'verified bulk scenario' only with verified project inventory.",
   ciTgtUnits:n=>`target ~${n} units · sourcing`,
   ciPolT:"Investment policy (central)",
   ciPolHold:"Required hold yield %", ciPolIrr:"Required annual return on equity %", ciPolBulk:"Bulk discount %", ciPolConf:"Minimum confidence %",
   ciPolNote:"Policy rules — not market truth: changing them recomputes targets, filtering and ranking for a different investor.",
-  ciAsmIrr:(r,c)=>`Policy: IRR ${r}% · min confidence ${c}%`,
+  ciAsmIrr:(r,c)=>`Policy: model IRR ${r}% pre-tax · min confidence ${c}%`,
+  ciIrrDef:l=>`Definition: ${l>0?"levered":"unlevered"} pre-tax model IRR — includes purchase tax & costs, financing, vacancy/opex/upkeep, rent growth, base-case appreciation and sale costs; excludes capital-gains and income tax.`,
   mOpp:"Opportunity score", rankOpp:"Top opportunities · model",
   ciInvT:"Investment summary · model", ciBestUse:"Best use",
   ciStratA:"Hold & rent", ciStratB:"Buy & resell", ciStratC:"Bulk purchase",
@@ -3993,7 +3995,7 @@ function ciCoverage(f){
   const t=T();
   return[
     {k:t.cvTx,ok:true,q:f.offT?t.cvObs:t.cvEst},
-    {k:t.cvRent,ok:true,q:t.cvEst},
+    {k:t.cvRent,ok:true,q:t.cvEstD},
     {k:t.cvInv,ok:true,q:f.offL?t.cvObs:t.cvEst},
     {k:t.cvPlan,ok:false},
     {k:t.cvProj,ok:false},
@@ -4201,12 +4203,13 @@ function ciDetailHTML(id){
         <div><div class="k">${t.ciMktScale}</div><div class="v num">${t.ciScaleUpTo(fmtCompact(inv.capacity),inv.unitsCap)}</div></div>
         <div><div class="k">${t.ciDealScale}</div><div class="v">${deals.length?fmtCompact(deals.reduce((a,d)=>a+d.units*d.askPrice,0)):t.ciUnknown}</div></div>
       </div>
-      <div class="ci-note" style="margin-top:7px">${t.ciEvid(Math.round(f.ms),fmtPct(f.mom),(inv.invShare*100).toFixed(0))} · ${t.ciDealLevNA}</div>
+      <div class="ci-note" style="margin-top:7px">${t.ciEvid(fmtInt(f.listings),(f.tx/12).toFixed(0),Math.round(f.ms),fmtPct(f.mom),(inv.invShare*100).toFixed(0))} · ${t.ciDealLevNA}</div>
       <div class="ci-target">
         ${inv.attractiveNow?t.ciTargetNow(fmtCompact(f.price)):t.ciTargetLine(fmtCompact(inv.target),inv.discTarget.toFixed(0))}
         <div style="margin-top:5px;font-size:11.5px;color:var(--ink-2)">
           ${t.ciTgt3(fmtCompact(inv.tHold),fmtCompact(inv.tResale),fmtCompact(inv.tBulk))}<br>
           ${rt.p?(rt.above?t.ciRetAbove(CI_INV.reqIRR):t.ciRetLine(CI_INV.reqIRR,fmtCompact(rt.p))):t.ciRetNone(CI_INV.reqIRR)}
+          <span style="display:block;font-size:10.5px;color:var(--ink-3);margin-top:2px">${t.ciIrrDef(ci.ltv)}</span>
         </div>
       </div>
       <div class="ci-strat3">
