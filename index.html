@@ -1040,6 +1040,35 @@ details.ci-more>.in{padding:2px 13px 12px}
 @media(max-width:899px){.grid-insight{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:699px){.ci-2col{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:559px){.map-stage{grid-template-columns:minmax(0,1fr)}}
+
+/* investment summary + strategy scores */
+.ci-inv{background:var(--paper);border:1px solid var(--edge);border-inline-start:3px solid var(--navy);
+  border-radius:12px;padding:12px 14px;margin-top:12px}
+.ci-inv-t{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+.ci-inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px 14px;font-size:12.5px}
+.ci-inv-grid .k{color:var(--ink-3);font-size:10.5px}
+.ci-inv-grid .v{font-weight:800;margin-top:1px}
+.ci-inv-grid .v.good{color:var(--up)}
+.ci-target{margin-top:10px;padding-top:9px;border-top:1px dashed var(--baseline);font-size:12.5px;line-height:1.6}
+.ci-target b{font-weight:800}
+.ci-strat3{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.ci-strat3 .s3{flex:1 1 110px;background:var(--panel-2);border:1px solid var(--hairline);border-radius:9px;
+  padding:6px 10px;text-align:center}
+.ci-strat3 .s3.best{border-color:var(--gold);background:var(--wash-brass)}
+[data-theme="dark"] .ci-strat3 .s3.best{background:rgba(212,175,55,.10)}
+.ci-strat3 .k{font-size:10px;color:var(--ink-3);font-weight:700}
+.ci-strat3 .v{font-family:var(--f-display);font-size:16px;font-weight:800}
+.ci-strat3 .best .v{color:var(--brass)}
+.ci-lvl{font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 9px}
+.ci-lvl.l0{color:var(--conf-high);background:var(--up-wash)}
+.ci-lvl.l1{color:var(--ink-2);background:var(--panel-2)}
+.ci-lvl.l2{color:var(--conf-med);background:var(--wash-brass)}
+.ci-lvl.l3{color:var(--conf-low);background:var(--down-wash)}
+[data-theme="dark"] .ci-lvl.l0{background:rgba(74,222,128,.13)}
+[data-theme="dark"] .ci-lvl.l2{background:rgba(226,185,59,.13)}
+[data-theme="dark"] .ci-lvl.l3{background:rgba(240,148,84,.14)}
+.ci-whynot{margin-top:10px;font-size:11.5px;color:var(--ink-2);background:var(--panel-2);
+  border-radius:9px;padding:8px 12px;line-height:1.6}
 </style>
 </head><!-- doc-skeleton -->
 <body><!-- doc-skeleton -->
@@ -1829,6 +1858,21 @@ he:{
   ciUnitsN:n=>`${n} יח׳`,
   ciScoreT:"ציון השקעה",
   vsNat:"מול ארצי", cmpSet1:"הערים הגדולות", cmpSet2:"ערי המרכז", cmpSet3:"שכונות מבוקשות",
+  mOpp:"ציון הזדמנות", rankOpp:"ההזדמנויות המובילות · מודל",
+  ciInvT:"תקציר השקעה · מודל", ciBestUse:"שימוש מיטבי",
+  ciStratA:"החזקה והשכרה", ciStratB:"קנייה ומכירה", ciStratC:"רכישה מרוכזת",
+  ciFairV:"טווח שווי מוערך", ciPressureK:"לחץ שוק", ciLevK:"מנוף מו״מ",
+  ciScaleK:"Scale Fit", ciScaleUpTo:(c,u)=>`עד ~${c} · ${u} יח׳`,
+  ciYieldAtK:"תשואה נטו במחיר היעד",
+  ciP0:"נמוך", ciP1:"מתון", ciP2:"מוגבר", ciP3:"גבוה",
+  ciL0:"נמוך", ciL1:"בינוני", ciL2:"גבוה", ciL3:"גבוה מאוד",
+  ciTargetLine:(p,d)=>`<b>יעד מחיר רכישה:</b> העסקה נהיית מעניינת מתחת ל-<b class="num">${p}</b> — הנחה של כ-<b class="num">${d}%</b> מהמחיר הנוכחי. זהו יעד למשא-ומתן, לא מחיר מוסכם.`,
+  ciTargetNow:p=>`<b>המחיר הנוכחי (<span class="num">${p}</span>) כבר עומד ביעד המודל</b> — ההזדמנות מעניינת גם ללא הנחה נוספת; כל הנחה משפרת את הכרית.`,
+  ciInvNote:"שלושה ציונים לשלוש אסטרטגיות — הזהוב הוא השימוש המיטבי לפי המודל. לחץ שוק ומנוף מנוסחים עובדתית (מלאי, קצב ספיגה, גודל עסקה) — לא טענה על מצב פיננסי של יזם.",
+  ciBulkT:"תרחישי רכישה מרוכזת · במחיר היעד", ciBulkU:"יח׳", ciBulkCap:"הון נדרש", ciBulkShare:"נתח מהמלאי המקומי",
+  ciBulkNote:d=>`הון נדרש מחושב במחיר יעד של ${d}%- מהשווי; הנתח מוגבל ליכולת הספיגה המקומית (עסקאות ומלאי). ריכוז גבוה = מנוף גבוה יותר וגם סיכון יציאה גבוה יותר.`,
+  ciWhyNotLine:(n,p,c)=>`למה מעל ${n}? יתרון ב${p}${c?`; מנגד — ${n} חזק יותר ב${c}`:""}.`,
+  ciAsmTargets:(y,r,b)=>`יעדי מחיר: תשואת החזקה ${y}% נטו · מכירה ${r}%- · מרוכז ${b}%-`,
   aZoom:"זום במפה", aZoomIn:"התקרבות", aZoomOut:"התרחקות", aZoomReset:"איפוס תצוגת המפה",
   lyrSt:"L2.5 · רחוב", stSecT:"פרופיל רחוב", stSecNote:"מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן",
   stGroup:"רחובות", stStreet:"רחוב", stTxShort:"עסק׳", stM:"מ׳", stMonths:"חוד׳ מדגם", stMoShort:"ח׳",
@@ -2030,6 +2074,21 @@ en:{
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
   ciScoreT:"Investment score",
   vsNat:"vs national", cmpSet1:"Major cities", cmpSet2:"Central cities", cmpSet3:"Prime neighborhoods",
+  mOpp:"Opportunity score", rankOpp:"Top opportunities · model",
+  ciInvT:"Investment summary · model", ciBestUse:"Best use",
+  ciStratA:"Hold & rent", ciStratB:"Buy & resell", ciStratC:"Bulk purchase",
+  ciFairV:"Estimated value range", ciPressureK:"Market pressure", ciLevK:"Negotiation leverage",
+  ciScaleK:"Scale fit", ciScaleUpTo:(c,u)=>`up to ~${c} · ${u} units`,
+  ciYieldAtK:"Net yield at target price",
+  ciP0:"Low", ciP1:"Moderate", ciP2:"Elevated", ciP3:"High",
+  ciL0:"Low", ciL1:"Moderate", ciL2:"High", ciL3:"Very high",
+  ciTargetLine:(p,d)=>`<b>Target buy price:</b> the deal becomes attractive below <b class="num">${p}</b> — about <b class="num">${d}%</b> under the current price. A negotiation target, not an agreed price.`,
+  ciTargetNow:p=>`<b>The current price (<span class="num">${p}</span>) already meets the model target</b> — attractive even without a further discount; any discount adds margin.`,
+  ciInvNote:"Three scores for three strategies — gold marks the model's best use. Pressure and leverage are stated factually (inventory, absorption, deal size) — never a claim about a developer's finances.",
+  ciBulkT:"Bulk-purchase scenarios · at target price", ciBulkU:"Units", ciBulkCap:"Capital required", ciBulkShare:"Share of local inventory",
+  ciBulkNote:d=>`Capital assumes a ${d}% discount to value; the share is capped by local absorption (deals and inventory). Higher concentration = more leverage and more exit risk.`,
+  ciWhyNotLine:(n,p,c)=>`Why above ${n}? stronger on ${p}${c?`; in return, ${n} is stronger on ${c}`:""}.`,
+  ciAsmTargets:(y,r,b)=>`Price targets: hold yield ${y}% net · resale −${r}% · bulk −${b}%`,
   aZoom:"Map zoom", aZoomIn:"Zoom in", aZoomOut:"Zoom out", aZoomReset:"Reset map view",
   lyrSt:"L2.5 · Street", stSecT:"Street profile", stSecNote:"Structured street registry · city-anchored model transactions · estimate",
   stGroup:"Streets", stStreet:"St.", stTxShort:"deals", stM:"m", stMonths:"mo. sample", stMoShort:"mo",
@@ -2283,6 +2342,7 @@ const MAP_METRICS=[
   {id:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
   {id:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
   {id:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
+  {id:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp},
 ];
 const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 
@@ -2567,7 +2627,7 @@ function initMapZoom(){
 }
 function renderMap(keepVB){
   const t=T(),svg=el("mapSvg"),mm=mapMetric(),ctx=mapContext();
-  const vals=ctx.items.map(i=>mm.get(metricsOf(i.id)));
+  const vals=ctx.items.map(i=>mm.get(metricsOf(i.id),i.id));
   const lo=Math.min(...vals),hi=Math.max(...vals);
   const div=isDivergingMap();
   const maxAbs=Math.max(Math.abs(lo),Math.abs(hi))||1;
@@ -2607,13 +2667,13 @@ function renderMap(keepVB){
     inner+=`<g clip-path="url(#ilClip)">`;
     const byOrder=[...ctx.items].sort((a,b)=>DIST_ORDER.indexOf(a.id)-DIST_ORDER.indexOf(b.id));
     for(const d of byOrder){
-      const tv=norm(mm.get(metricsOf(d.id)));
+      const tv=norm(mm.get(metricsOf(d.id),d.id));
       inner+=`<path class="geo" data-loc="${d.id}" d="${distPath(d.id)}" fill="${colorOf(tv)}" style="stroke-width:${(0.9*sf).toFixed(2)}"><title>${heName(d)}</title></path>`;
     }
     inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="${(1.4*sf).toFixed(2)}"/>`;
     for(const d of ctx.items){
       const [lx,ly]=proj(...DISTRICT_LABEL[d.id]);
-      const tv=norm(mm.get(metricsOf(d.id)));
+      const tv=norm(mm.get(metricsOf(d.id),d.id));
       const fsd=(d.id==="d-ta"?6.8:8.2)*sf;
       inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="${fsd.toFixed(2)}" style="stroke-width:${(fsd*.32).toFixed(2)}" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
@@ -2646,7 +2706,7 @@ function renderMap(keepVB){
       let [x,y]=proj(go.anchor.lat,go.anchor.lng);
       x+=go.dx*(vb[2]/70);y+=go.dy*(vb[3]/70);
       itemPos[c.id]=[x,y];
-      const tv=norm(mm.get(metricsOf(c.id)));
+      const tv=norm(mm.get(metricsOf(c.id),c.id));
       const active=ctx.active===c.id;
       inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${colorOf(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--gold)"':""}><title>${heName(c)}</title></circle>`;
       if(active)inner+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*1.35+3.4).toFixed(1)}" fill="none" stroke="var(--gold)" stroke-width=".9" stroke-dasharray="2.6 2.6" opacity=".7"/>`;
@@ -2699,7 +2759,7 @@ function renderMap(keepVB){
     node.addEventListener("mousemove",e=>{
       const lm=metricsOf(node.dataset.loc),ll=LOC[node.dataset.loc];
       tip.innerHTML=`<div class="mt-h"><span>${heName(ll)}</span><span class="mt-c ${lm.confidence}" title="${T()["conf"+(lm.confidence==="high"?"High":lm.confidence==="med"?"Med":"Low")]}"></span></div>
-        <div class="mt-kv"><span>${mm.label()}</span><b class="num">${mm.fmt(mm.get(lm))}</b></div>
+        <div class="mt-kv"><span>${mm.label()}</span><b class="num">${mm.fmt(mm.get(lm,node.dataset.loc))}</b></div>
         <div class="mt-kv"><span>${T().psm}</span><b class="num">${fmtNIS(lm.sqm)}</b></div>
         <div class="mt-kv"><span>${T().thYoy}</span><b class="num ${deltaCls(lm.yoy)}">${fmtPct(lm.yoy)}</b></div>
         <div class="mt-kv"><span>${T().tx} · 12M</span><b class="num">${fmtInt(lm.tx)}</b></div>
@@ -2713,9 +2773,9 @@ function renderMap(keepVB){
   });
 
   /* ranked list beside the map */
-  const dir=state.mapMetric==="price"||state.mapMetric==="sqm"||state.mapMetric==="rent"||state.mapMetric==="yield"||state.mapMetric==="yoy"?-1:1;
-  const ranked=[...ctx.items].sort((a,b)=>dir*(mm.get(metricsOf(a.id))-mm.get(metricsOf(b.id)))).slice(0,8);
-  const rvals=ranked.map(i=>mm.get(metricsOf(i.id)));
+  const dir=state.mapMetric==="price"||state.mapMetric==="sqm"||state.mapMetric==="rent"||state.mapMetric==="yield"||state.mapMetric==="yoy"||state.mapMetric==="opp"?-1:1;
+  const ranked=[...ctx.items].sort((a,b)=>dir*(mm.get(metricsOf(a.id),a.id)-mm.get(metricsOf(b.id),b.id))).slice(0,8);
+  const rvals=ranked.map(i=>mm.get(metricsOf(i.id),i.id));
   const rmax=Math.max(...rvals.map(Math.abs))||1;
   el("mapRankTitle").textContent=(state.locId==="il"&&state.mapMetric==="price")?t.rankExp:mm.rank();
   el("mapRankList").innerHTML=ranked.map((item,i)=>`
@@ -2728,7 +2788,7 @@ function renderMap(keepVB){
   el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
   el("mapScope").hidden=state.locId==="il";
-  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="ms">${mm.label()}: <span class="num">${mm.fmt(mm.get(metricsOf(state.locId)))}</span></span>`;
+  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="ms">${mm.label()}: <span class="num">${mm.fmt(mm.get(metricsOf(state.locId),state.locId))}</span></span>`;
   el("scaleTitle").textContent=mm.label();
   el("scaleLow").textContent=mm.fmt(div?-maxAbs:lo);
   el("scaleHigh").textContent=mm.fmt(div?maxAbs:hi);
@@ -3799,6 +3859,79 @@ function ciRisks(ev){
   return out.slice(0,3);
 }
 
+
+/* ---- institutional lenses: fair value, target price, pressure, leverage,
+       strategy scores, scale fit. Derived from the same location data —
+       thresholds are explicit assumptions surfaced in the UI. ---- */
+const CI_INV={holdY:2.6,resaleDisc:10,bulkDisc:12,fairBand:4}; /* 2.6% net ≈ top-decile Israeli new-home yield */
+const ciCapacityUnits=f=>Math.max(1,Math.round(Math.min(f.tx*.25,f.listings*.12)*1.5));
+function ciInvest(id){
+  const ev=ciEval(id,state.ci.h,state.ci.strat),f=ev.f;
+  const rentNet=f.rent*12*CI_NETF;
+  const fairMid=f.price;
+  const fair=[Math.round(fairMid*(1-CI_INV.fairBand/100)/1000)*1000,
+              Math.round(fairMid*(1+CI_INV.fairBand/100)/1000)*1000];
+  const tHold=Math.round(rentNet/(CI_INV.holdY/100)/1000)*1000;
+  const tResale=Math.round(fairMid*(1-CI_INV.resaleDisc/100)/1000)*1000;
+  const tBulk=Math.round(fairMid*(1-CI_INV.bulkDisc/100)/1000)*1000;
+  /* factual market-pressure signal from inventory + momentum */
+  let prs=f.ms<14?0:f.ms<22?1:f.ms<30?2:3;
+  if(f.mom<-3&&prs<3)prs++;
+  /* negotiation leverage: supply pressure + the buyer's share of local inventory */
+  const unitsCap=ciCapacityUnits(f);
+  const capacity=unitsCap*f.price;
+  const dealSize=Math.min(state.ci.cap*state.ci.capCity/100,capacity);
+  const invShare=Math.min(1,dealSize/Math.max(1,f.listings*f.price));
+  const levScore=Math.min(100,Math.round(f.ms/30*45+invShare*130+(f.mom<0?12:0)+(f.ms>26?10:0)));
+  const lev=levScore<25?0:levScore<45?1:levScore<68?2:3;
+  /* discount potential feeds the resale strategy */
+  const discPot=Math.min(100,Math.round(levScore*.55+(f.ms>22?25:f.ms>14?12:0)+(f.mom<-2?15:0)));
+  const scaleScore=Math.min(100,unitsCap*4);
+  const g=x=>Math.round(x*(0.82+0.18*ev.conf.pct/100));
+  const sHold=g(.30*ev.sub.cf+.20*ev.sub.ap+.20*ev.sub.dm+.15*ev.sub.lq+.15*ev.sub.rk);
+  const sResale=g(.30*discPot+.25*ev.sub.lq+.20*ev.sub.ap+.15*ev.sub.dm+.10*ev.sub.rk);
+  const sBulk=g(.35*levScore+.25*scaleScore+.20*ev.sub.cf+.10*ev.sub.lq+.10*ev.sub.rk);
+  const best=sHold>=sResale&&sHold>=sBulk?"A":sResale>=sBulk?"B":"C";
+  const target=best==="A"?Math.min(tHold,fair[1]):best==="B"?tResale:tBulk;
+  const discAt=t=>+((1-t/f.price)*100).toFixed(1);
+  const yieldAt=t=>+(rentNet/t*100).toFixed(2);
+  const attractiveNow=target>=f.price;
+  /* bulk scenarios capped by realistic local capacity */
+  const bulkSizes=[10,25,50].filter(u=>u<=unitsCap*1.6);
+  if(!bulkSizes.length)bulkSizes.push(Math.max(2,unitsCap));
+  const bulk=bulkSizes.map(u=>{const share=u/Math.max(1,f.listings)*100;
+    return{u,cap:u*tBulk,share,lev:share>25?3:share>12?2:1}});
+  return{ev,f,fair,fairMid,tHold,tResale,tBulk,target,best,attractiveNow,
+    discTarget:discAt(target),yieldTarget:yieldAt(target),
+    prs,lev,levScore,unitsCap,capacity,invShare,
+    fit:capacity>=state.ci.cap*.25?2:capacity>=state.ci.cap*.08?1:0,
+    sHold,sResale,sBulk,bulk};
+}
+/* opportunity score for any geography (map lens): tx-weighted roll-up */
+const _oppCache={};
+function ciOppOf(id){
+  const l=LOC[id];if(!l)return 0;
+  if(l.type==="city"||l.type==="nbhd"||l.type==="sub"){
+    if(state.ci.w)return ciEval(id,state.ci.h,state.ci.strat).score;
+    const ck=id+"|"+state.ci.h+"|"+state.ci.strat;
+    if(_oppCache[ck]==null)_oppCache[ck]=ciEval(id,state.ci.h,state.ci.strat).score;
+    return _oppCache[ck];
+  }
+  const kids=childrenOf(id);let w=0,acc=0;
+  for(const k of kids){const v=ciOppOf(k.id),wt=k.base.tx;w+=wt;acc+=v*wt}
+  return w?Math.round(acc/w):0;
+}
+/* rank explanation: why this opportunity sits above the next one */
+function ciWhyNot(rk,i){
+  const t=T();if(i>=rk.length-1)return"";
+  const a=rk[i].ev,b=rk[i+1].ev,names={cf:t.ciFcf,ap:t.ciFap,va:t.ciFva,lq:t.ciFlq,dm:t.ciFdm,rk:t.ciFrk};
+  const diffs=Object.keys(names).map(k=>({k,d:a.sub[k]-b.sub[k]})).sort((x,y)=>y.d-x.d);
+  const pros=diffs.filter(x=>x.d>=8).slice(0,2).map(x=>names[x.k]);
+  const cons=diffs.filter(x=>x.d<=-8).slice(-1).map(x=>names[x.k]);
+  if(!pros.length)return"";
+  return t.ciWhyNotLine(heName(b.f.l),pros.join(" + "),cons[0]||"");
+}
+
 /* ---- formatting helpers ---- */
 const ciM=n=>(n<0?"−":"")+fmtCompact(Math.abs(n));
 const ciPc=(n,d=0)=>(n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d)+"%";
@@ -3917,7 +4050,30 @@ function ciDetailHTML(id){
       ${ciPlate(ev.score,true)}
     </div>
 
-    <div class="ci-2col">
+    ${(()=>{const inv=ciInvest(id);const lvlTx=n=>[t.ciL0,t.ciL1,t.ciL2,t.ciL3][n];
+      const prsTx=n=>[t.ciP0,t.ciP1,t.ciP2,t.ciP3][n];
+      return `<div class="ci-inv">
+      <div class="ci-inv-t">${t.ciInvT}</div>
+      <div class="ci-inv-grid">
+        <div><div class="k">${t.ciBestUse}</div><div class="v">${{A:t.ciStratA,B:t.ciStratB,C:t.ciStratC}[inv.best]}</div></div>
+        <div><div class="k">${t.ciFairV}</div><div class="v num">${fmtCompact(inv.fair[0])}–${fmtCompact(inv.fair[1])}</div></div>
+        <div><div class="k">${t.ciPressureK}</div><div class="v"><span class="ci-lvl l${inv.prs}">${prsTx(inv.prs)}</span></div></div>
+        <div><div class="k">${t.ciLevK}</div><div class="v"><span class="ci-lvl l${inv.lev}">${lvlTx(inv.lev)}</span></div></div>
+        <div><div class="k">${t.ciScaleK}</div><div class="v num">${t.ciScaleUpTo(fmtCompact(inv.capacity),inv.unitsCap)}</div></div>
+        <div><div class="k">${t.ciYieldAtK}</div><div class="v num">${inv.yieldTarget}%</div></div>
+      </div>
+      <div class="ci-target">${inv.attractiveNow
+        ?t.ciTargetNow(fmtCompact(f.price))
+        :t.ciTargetLine(fmtCompact(inv.target),inv.discTarget.toFixed(0))}</div>
+      <div class="ci-strat3">
+        <div class="s3${inv.best==="A"?" best":""}"><div class="k">${t.ciStratA}</div><div class="v num">${inv.sHold}</div></div>
+        <div class="s3${inv.best==="B"?" best":""}"><div class="k">${t.ciStratB}</div><div class="v num">${inv.sResale}</div></div>
+        <div class="s3${inv.best==="C"?" best":""}"><div class="k">${t.ciStratC}</div><div class="v num">${inv.sBulk}</div></div>
+      </div>
+      <div class="ci-note">${t.ciInvNote}</div>
+    </div>`})()}
+
+    <div class="ci-2col" style="margin-top:12px">
       <div><div class="ci-sect-t">${t.ciWhy}</div><ul class="ci-flags">${why.map(w=>`<li>${w}</li>`).join("")}</ul></div>
       <div><div class="ci-sect-t">${t.ciRisk}</div><ul class="ci-flags risk">${risks.map(w=>`<li>${w}</li>`).join("")}</ul></div>
     </div>
@@ -3978,6 +4134,17 @@ function ciDetailHTML(id){
       <div class="ci-note">${t.ciExitNote(H.y)}</div>
     </div></details>
 
+    ${(()=>{const inv=ciInvest(id);const rk=ciRank(ci.h,ci.strat).slice(0,8);
+      const idx=rk.findIndex(r=>r.id===id);const wn=idx>=0?ciWhyNot(rk,idx):"";
+      return `<details class="ci-more"><summary>${t.ciBulkT}</summary><div class="in">
+      <div class="ci-tblw"><table class="ci-tbl">
+        <thead><tr><th>${t.ciBulkU}</th><th class="num">${t.ciBulkCap}</th><th class="num">${t.ciBulkShare}</th><th>${t.ciLevK}</th></tr></thead>
+        <tbody>${inv.bulk.map(b=>`<tr><td class="num">${b.u}</td><td class="num">${fmtCompact(b.cap)}</td>
+          <td class="num">${b.share.toFixed(1)}%</td><td><span class="ci-lvl l${b.lev}">${[t.ciL0,t.ciL1,t.ciL2,t.ciL3][b.lev]}</span></td></tr>`).join("")}</tbody>
+      </table></div>
+      <div class="ci-note">${t.ciBulkNote(CI_INV.bulkDisc)}</div>
+    </div></details>
+    ${wn?`<div class="ci-whynot">${wn}</div>`:""}`})()}
     ${ci.ltv>0?`<details class="ci-more"><summary>${t.ciRefiT}</summary><div class="in">
       <div class="ci-kv">
         <div><div class="k">${t.ciRfVal}</div><div class="v num">${fmtCompact(refi.v5)}</div></div>
@@ -4074,6 +4241,7 @@ function renderCapital(){
     t.ciAsmSell+" <b class='num'>"+(A.sellFees*100).toFixed(0)+"%</b>",
     t.ciAsmFin+" <b class='num'>"+state.ci.rate+"% · "+state.ci.term+" "+t.ciYears+"</b>",
     t.ciAsmApp,
+    t.ciAsmTargets(CI_INV.holdY,CI_INV.resaleDisc,CI_INV.bulkDisc),
   ].map(x=>`<span class="ci-asm">${x}</span>`).join("");
 }
 
