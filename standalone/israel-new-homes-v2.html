@@ -1,3 +1,5 @@
+<script>/* dark is the default theme; apply before first paint (stored "light" wins) */
+try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentElement.dataset.theme="dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <!-- =========================================================================
      KOBIX REALESTATE · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
@@ -1632,8 +1634,8 @@ function setTheme(mode){
   applyThemeIcon();
 }
 (function initTheme(){
-  let m="light";
-  try{m=localStorage.getItem(THEME_KEY)||"light"}catch(e){}
+  let m="dark"; // dark is the system default; an explicit stored "light" wins
+  try{m=localStorage.getItem(THEME_KEY)||"dark"}catch(e){}
   setTheme(m==="dark"?"dark":"light");
 })();
 ["themeBtn","themeBtnRail"].forEach(id=>{

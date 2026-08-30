@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"><!-- doc-skeleton -->
 <meta name="robots" content="noindex,nofollow"><!-- doc-skeleton -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%232563eb'/%3E%3Cpath d='M12 1c-3 3.2-3 18.8 0 22 6.1-.1 11-5 11-11S18.1 1.1 12 1z' fill='%231d4fc4'/%3E%3Cellipse cx='12' cy='12' rx='10' ry='4.2' fill='none' stroke='%23bfdbfe' stroke-width='1.1'/%3E%3C/svg%3E"><!-- doc-skeleton -->
+<script>/* dark is the default theme; apply before first paint (stored "light" wins) */
+try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentElement.dataset.theme="dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <!-- =========================================================================
      KOBIX REALESTATE · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
@@ -1589,8 +1591,8 @@ function setTheme(mode){
   applyThemeIcon();
 }
 (function initTheme(){
-  let m="light";
-  try{m=localStorage.getItem(THEME_KEY)||"light"}catch(e){}
+  let m="dark"; // dark is the system default; an explicit stored "light" wins
+  try{m=localStorage.getItem(THEME_KEY)||"dark"}catch(e){}
   setTheme(m==="dark"?"dark":"light");
 })();
 ["themeBtn","themeBtnRail"].forEach(id=>{
