@@ -620,6 +620,190 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 @keyframes fadeSwap{from{opacity:.35}to{opacity:1}}
 
 
+/* ============================ capital intelligence ============================ */
+#capital,#ciTeaser{
+  --plate:#12294f; --plate-ink:#f2f5fb; --plate-mut:#a9b8d5;
+  --ci-band:#eef1f7; --ci-line:#d4dbe8;
+}
+[data-theme="dark"] #capital,[data-theme="dark"] #ciTeaser{
+  --plate:#0e1a33; --plate-ink:#eef2fa; --plate-mut:#8fa3c6;
+  --ci-band:#0f1a30; --ci-line:#233252;
+}
+.ci-band{background:var(--ci-band);border:1px solid var(--ci-line);border-radius:16px;
+  padding:18px 18px 16px;position:relative;overflow:hidden}
+.ci-band::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;
+  background:linear-gradient(to left,var(--accent-deep),var(--accent) 55%,var(--gold))}
+.ci-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:13px}
+.ci-head h2{font-size:19px}
+.ci-sub{font-size:12.5px;color:var(--ink-2);margin-top:3px;max-width:52ch}
+.ci-chip{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--brass);
+  border:1px solid var(--brass);border-radius:999px;padding:4px 11px;white-space:nowrap;align-self:flex-start}
+/* control deck */
+.ci-deck{display:flex;gap:14px 22px;flex-wrap:wrap;align-items:flex-end;
+  padding:12px 14px;background:var(--panel);border:1px solid var(--edge);border-radius:12px;margin-bottom:14px}
+.ci-ctl{display:flex;flex-direction:column;gap:5px}
+.ci-lbl{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.ci-in{height:30px;border:1px solid var(--baseline);border-radius:8px;background:var(--paper);
+  color:var(--ink);font-size:12.5px;padding-inline:9px;width:104px}
+.ci-in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.ci-in.sm{width:64px}
+/* opportunity list + detail */
+.ci-grid{display:grid;gap:14px}
+@media(min-width:1000px){.ci-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:start}}
+.ci-col-t{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:2px 2px 8px}
+.ci-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;
+  width:100%;text-align:start;background:var(--panel);border:1px solid var(--edge);border-radius:12px;
+  padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.ci-card:hover{border-color:var(--accent)}
+.ci-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ci-card.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.ci-idx{font-family:var(--f-display);font-size:11px;font-weight:800;color:var(--ink-3);align-self:start;padding-top:3px}
+.ci-card-name{display:block;font-weight:800;font-size:13.5px;line-height:1.25}
+.ci-card-path{display:block;font-size:11px;color:var(--ink-3);margin-top:1px}
+.ci-card-kv{display:flex;gap:10px 14px;flex-wrap:wrap;margin-top:7px}
+.ci-card-kv span{font-size:11px;color:var(--ink-3)}
+.ci-card-kv b{font-size:12px;color:var(--ink);font-weight:700;display:block;margin-top:1px}
+/* score plate — the section signature */
+.ci-plate{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--plate);
+  border-radius:10px;padding:7px 11px 8px;min-width:58px}
+.ci-plate .v{font-family:var(--f-display);font-size:21px;font-weight:800;color:var(--plate-ink);line-height:1}
+.ci-plate .k{font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--plate-mut)}
+.ci-plate .m{width:100%;height:2px;border-radius:2px;background:rgba(255,255,255,.16);overflow:hidden}
+.ci-plate .m i{display:block;height:100%;background:var(--gold)}
+.ci-plate.lg{padding:10px 16px 11px;min-width:74px}
+.ci-plate.lg .v{font-size:30px}
+.ci-lowconf .ci-plate{opacity:.62}
+/* detail panel */
+.ci-detail{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:15px 16px}
+.ci-dhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;
+  padding-bottom:12px;border-bottom:1px solid var(--hairline);margin-bottom:12px}
+.ci-dhead h3{font-size:16.5px;font-weight:800}
+.ci-dhead .path{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.ci-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ci-hml{font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 9px;letter-spacing:.03em}
+.ci-hml.h{color:var(--conf-high);background:var(--up-wash)}
+.ci-hml.m{color:var(--conf-med);background:var(--wash-brass)}
+.ci-hml.l{color:var(--conf-low);background:var(--down-wash)}
+[data-theme="dark"] .ci-hml.h{background:rgba(74,222,128,.13)}
+[data-theme="dark"] .ci-hml.m{background:rgba(226,185,59,.13)}
+[data-theme="dark"] .ci-hml.l{background:rgba(240,148,84,.14)}
+.ci-sect{margin-top:14px}
+.ci-sect-t{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+  display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ci-sect-t::after{content:"";flex:1;height:1px;background:var(--hairline)}
+/* factor bars */
+.ci-fb{display:grid;grid-template-columns:minmax(72px,auto) minmax(0,1fr) auto;gap:8px 10px;align-items:center;font-size:12px}
+.ci-fb .fk{color:var(--ink-2)}
+.ci-fb .fv{font-weight:700}
+.ci-track{height:6px;border-radius:4px;background:var(--panel-2);overflow:hidden}
+.ci-track i{display:block;height:100%;border-radius:4px;background:var(--heat-5)}
+/* key-value blocks */
+.ci-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px}
+.ci-kv>div{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:8px 11px}
+.ci-kv .k{font-size:10.5px;color:var(--ink-3)}
+.ci-kv .v{font-size:14px;font-weight:800;margin-top:2px}
+.ci-kv .s{font-size:10.5px;color:var(--ink-3);margin-top:1px}
+.ci-cfline{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--paper);
+  border:1px solid var(--hairline);border-radius:10px;padding:10px 13px;margin-top:8px}
+.ci-cfline .k{font-size:12px;color:var(--ink-2)}
+.ci-cfline .v{font-family:var(--f-display);font-size:20px;font-weight:800}
+.ci-cfline .v.up{color:var(--up)}.ci-cfline .v.down{color:var(--down)}
+.ci-cfline .s{font-size:11px;color:var(--ink-3)}
+/* scenario + exit tables */
+.ci-tblw{overflow-x:auto}
+.ci-tbl{width:100%;border-collapse:collapse;font-size:12.5px;min-width:340px}
+.ci-tbl th{font-size:10.5px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-align:start;
+  padding:5px 8px;border-bottom:1px solid var(--baseline)}
+.ci-tbl td{padding:6px 8px;border-bottom:1px solid var(--hairline)}
+.ci-tbl td.num,.ci-tbl th.num{text-align:end}
+.ci-tbl tr.base td{font-weight:800;background:var(--accent-wash)}
+[data-theme="dark"] .ci-tbl tr.base td{background:rgba(59,130,246,.10)}
+.ci-note{font-size:11px;color:var(--ink-3);margin-top:7px;line-height:1.5}
+.ci-flags{display:flex;flex-direction:column;gap:5px;font-size:12.5px}
+.ci-flags li{list-style:none;display:flex;gap:8px;align-items:baseline}
+.ci-flags li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none;transform:translateY(-2px)}
+.ci-flags.risk li::before{background:var(--conf-low)}
+.ci-2col{display:grid;gap:12px}
+@media(min-width:700px){.ci-2col{grid-template-columns:1fr 1fr}}
+details.ci-more{margin-top:12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper)}
+details.ci-more>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;
+  padding:9px 13px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+details.ci-more>summary::-webkit-details-marker{display:none}
+details.ci-more>summary::after{content:"+";font-weight:800;color:var(--ink-3)}
+details.ci-more[open]>summary::after{content:"−"}
+details.ci-more>.in{padding:2px 13px 12px}
+/* portfolio band */
+.ci-port-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:18px 2px 10px}
+.ci-port-head h3{font-size:16px;font-weight:800}
+.ci-port{display:grid;gap:14px}
+@media(min-width:1000px){.ci-port{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start}}
+.ci-alloc{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:14px 16px}
+.ci-arow{display:grid;grid-template-columns:minmax(90px,auto) minmax(0,1fr) auto auto;gap:8px 12px;
+  align-items:center;font-size:12.5px;padding:5px 0}
+.ci-arow .an{font-weight:700}
+.ci-arow .as{font-size:11px;color:var(--ink-3)}
+.ci-arow .apc{font-weight:800;min-width:44px;text-align:end}
+.ci-arow .am{color:var(--ink-2);min-width:56px;text-align:end}
+.ci-abar{height:10px;border-radius:4px;background:var(--panel-2);overflow:hidden;display:flex;gap:2px}
+.ci-abar i{display:block;height:100%;background:var(--heat-4);border-radius:2px}
+.ci-abar i.rsv{background:var(--baseline)}
+.ci-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.ci-tile{background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:10px 12px}
+.ci-tile .k{font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase}
+.ci-tile .v{font-size:16.5px;font-weight:800;margin-top:3px}
+.ci-tile .s{font-size:10.5px;color:var(--ink-3);margin-top:1px}
+/* phases */
+.ci-ph{display:grid;gap:8px;margin-top:10px}
+.ci-phrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;
+  background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:9px 12px}
+.ci-phrow .n{font-family:var(--f-display);font-size:11px;font-weight:800;color:var(--brass);white-space:nowrap}
+.ci-phrow .t{font-size:12.5px;font-weight:700}
+.ci-phrow .d{font-size:11px;color:var(--ink-3);margin-top:1px}
+.ci-phrow .v{font-weight:800;font-size:13px;white-space:nowrap}
+/* holding timeline */
+.ci-tl{display:flex;gap:0;margin-top:10px;overflow-x:auto;padding-bottom:2px}
+.ci-tl .st{flex:1;min-width:96px;position:relative;padding:14px 8px 2px;text-align:center}
+.ci-tl .st::before{content:"";position:absolute;top:5px;inset-inline:0;height:2px;background:var(--baseline)}
+.ci-tl .st:first-child::before{inset-inline-start:50%}
+.ci-tl .st:last-child::before{inset-inline-end:50%}
+.ci-tl .st::after{content:"";position:absolute;top:1px;inset-inline-start:calc(50% - 5px);width:10px;height:10px;
+  border-radius:50%;background:var(--plate);border:2px solid var(--gold)}
+.ci-tl .y{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--brass)}
+.ci-tl .a{font-size:12px;font-weight:700;margin-top:2px}
+.ci-tl .d{font-size:10.5px;color:var(--ink-3);margin-top:1px}
+/* assumptions + disclaimer */
+.ci-assume{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.ci-asm{font-size:10.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--hairline);
+  border-radius:999px;padding:3px 10px}
+.ci-asm b{font-weight:800}
+.ci-disc{font-size:11px;color:var(--ink-3);border-top:1px solid var(--ci-line);margin-top:12px;padding-top:10px;line-height:1.55}
+/* weights drawer */
+.ci-w{display:grid;grid-template-columns:minmax(64px,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center;font-size:11.5px}
+.ci-w input[type=range]{width:100%;accent-color:var(--accent);height:18px}
+.ci-w .wv{font-weight:700;min-width:34px;text-align:end}
+/* teaser (insights column) */
+.ci-teaser{padding:12px 14px}
+.ci-mini{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;
+  width:100%;text-align:start;padding:9px 4px;border-bottom:1px solid var(--hairline);cursor:pointer;background:none}
+.ci-mini:last-of-type{border-bottom:0}
+.ci-mini:hover .mn{color:var(--accent)}
+.ci-mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.ci-mini .mn{display:block;font-weight:800;font-size:13px}
+.ci-mini .mp{display:block;font-size:11px;color:var(--ink-3);margin-top:1px}
+.ci-mini .mk{display:flex;gap:10px;margin-top:4px;font-size:11px;color:var(--ink-3);flex-wrap:wrap}
+.ci-mini .mk b{color:var(--ink)}
+.ci-cta{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:800;color:var(--accent);background:none;cursor:pointer}
+.ci-cta:hover{text-decoration:underline}
+.ci-cta:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+@media(max-width:759px){
+  .ci-band{padding:14px 12px 12px}
+  .ci-deck{gap:10px 16px}
+  .ci-card{grid-template-columns:auto minmax(0,1fr)}
+  .ci-card .ci-plate{grid-column:2;justify-self:start;flex-direction:row;align-items:center;padding:5px 10px}
+  .ci-card .ci-plate .m{display:none}
+  .ci-tl .st{min-width:86px}
+}
+
 /* ============================ offline access gate ============================ */
 body:not(.unlocked){overflow:hidden}
 body:not(.unlocked)>*:not(#gate){visibility:hidden}
@@ -704,6 +888,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
+  <a href="#capital" class="ri" data-sec="capital"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
@@ -866,9 +1051,40 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
         <div class="card insights" id="insights"></div>
       </div>
       <div>
-        <div class="blk-head"><h2 data-i="confTitle">רמת ודאות</h2></div>
+        <div class="blk-head"><h2 data-i="ciTeaserT">איפה הכסף עובד הכי טוב?</h2>
+          <span class="note" data-i="ciTeaserNote">ציון השקעה · מודל</span></div>
+        <div class="card ci-teaser" id="ciTeaser"></div>
+        <div class="blk-head" style="margin-top:16px"><h2 data-i="confTitle">רמת ודאות</h2></div>
         <div class="card conf-card" id="confCard"></div>
       </div>
+    </div>
+  </section>
+
+  <!-- Capital intelligence -->
+  <section class="blk" id="capital">
+    <div class="ci-band">
+      <div class="ci-head">
+        <div>
+          <h2 data-i="ciTitle">איפה הכסף עובד הכי טוב?</h2>
+          <p class="ci-sub" data-i="ciSub">האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.</p>
+        </div>
+        <span class="ci-chip" data-i="ciChip">ציון השקעה מבוסס נתונים · אינו ייעוץ</span>
+      </div>
+      <div class="ci-deck" id="ciDeck"></div>
+      <div class="ci-grid">
+        <div>
+          <div class="ci-col-t" data-i="ciOppT">הזדמנויות מובילות</div>
+          <div id="ciList"></div>
+        </div>
+        <div id="ciDetail"></div>
+      </div>
+      <div class="ci-port-head">
+        <h3 data-i="ciPortT">ניהול הון · תיק מוצע</h3>
+        <span class="note" data-i="ciPortNote">מודל הקצאה אנליטי והיפותטי — לא המלצה</span>
+      </div>
+      <div class="ci-port" id="ciPort"></div>
+      <div class="ci-assume" id="ciAssume"></div>
+      <div class="ci-disc" data-i="ciDisc">מודל אנליטי המחושב מנתוני השוק שבלוח בלבד. כל הערכים המתייחסים לעתיד הם תרחישים מבוססי הנחות מפורשות — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.</div>
     </div>
   </section>
 
@@ -1368,6 +1584,78 @@ he:{
   gd6a:"עלויות נלוות ומסירה", gd6b:"הוסיפו לתקציב מס רכישה, שכ״ט עו״ד, חיבורי תשתיות וחניה/מחסן; איחור מסירה מעבר לקבוע בחוק מזכה בפיצוי.",
   cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
   monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
+  navCap:"הון",
+  ciUnitsN:n=>`${n} יח׳`,
+  ciConfNote:"הציון הסופי משוקלל במקדם ודאות הנתונים של האזור — נתונים חלשים מורידים את הדירוג.",
+  ciTitle:"איפה הכסף עובד הכי טוב?", ciTeaserT:"איפה הכסף עובד הכי טוב?",
+  ciSub:"האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.",
+  ciChip:"ציון השקעה מבוסס נתונים · אינו ייעוץ", ciTeaserNote:"ציון השקעה · מודל",
+  ciTeaserCTA:"לניתוח השקעה מלא ←", ciOppT:"הזדמנויות מובילות",
+  ciCap:"הון זמין", ciStrat:"אסטרטגיה", ciHorizon:"אופק", ciLev:"מינוף",
+  ciY3:"3 שנים", ciY5:"5 שנים", ciY10:"10 שנים", ciNoLev:"ללא",
+  ciStCash:"תזרים", ciStBal:"מאוזן", ciStVa:"השבחה", ciStGrowth:"צמיחה", ciStCons:"שמרני",
+  ciRate:"ריבית", ciTerm:"תקופה", ciYears:"שנ׳",
+  ciScoreK:"ציון", ciScoreAria:s=>`ציון השקעה ${s} מתוך 100`,
+  ciEntry:"מחיר כניסה", ciNetY:"תשואה נטו", ciVaShort:"השבחה", ciLiqShort:"נזילות",
+  ciConf:"ודאות", ciConfShort:"ודאות", ciHz:y=>`${y} שנ׳ · בסיס`, ciHzFull:y=>`אופק ${y} שנים`,
+  ciHigh:"גבוהה", ciMed:"בינונית", ciLow:"נמוכה",
+  ciWhy:"למה כאן?", ciRisk:"מה הסיכון?", ciScoreWhy:"הרכב הציון",
+  ciFcf:"תזרים", ciFap:"עליית ערך", ciFva:"השבחה", ciFlq:"נזילות", ciFdm:"ביקוש", ciFrk:"איכות נתונים",
+  ciCfT:"תשואה משוערת", ciBuy:"רכישה", ciRentMo:"שכירות חודשית", ciRentYr:"שכירות שנתית",
+  ciGross:"תשואה ברוטו", ciNet:"תשואה נטו משוערת", ciNetS:"אחרי אי-תפוסה, תפעול ותחזוקה",
+  ciLevT:"מינוף ותזרים", ciEquity:"הון עצמי נדרש", ciEquityS:"כולל מס רכישה ועלויות",
+  ciLoan:"הלוואה", ciPmt:"החזר חודשי", ciCoC:"Cash-on-Cash",
+  ciCfMo:"תזרים חודשי", ciCfMoS:"שכירות נטו פחות החזר משכנתא",
+  ciLevNote:"מינוף מגדיל גם תשואה וגם סיכון — עלויות המימון מוצגות במלואן.",
+  ciScenT:y=>`תרחישי ${y} שנים`, ciConsSc:"שמרני", ciBaseSc:"בסיס", ciUpSc:"אופטימי",
+  ciValCh:"עליית ערך", ciCumRent:"שכירות מצטברת נטו", ciSaleV:"שווי נכס משוער",
+  ciTotProp:"תשואה על הנכס", ciTotRoe:"תשואה על ההון",
+  ciScenNote:"תרחישים מהנחות מפורשות (היסטוריה, מומנטום והיצע) — לא תחזית. תשואה על ההון כוללת מימון, שכירות מצטברת ועלויות עסקה.",
+  ciExitT:y=>`מבנה יציאה · שנה ${y} · תרחיש בסיס`,
+  ciExBuy:"שווי רכישה כולל עלויות", ciExRent:"שכירות מצטברת נטו", ciExDebt:"יתרת חוב ביציאה",
+  ciExSale:"מחיר מכירה משוער", ciExCost:"עלויות מכירה", ciExProfit:"רווח לפני מס",
+  ciExitNote:y=>`לוגיקת יציאה בשנה ${y}: מימוש עליית ערך + שכירות מצטברת + הפחתת חוב. לפני מס שבח ומס הכנסה.`,
+  ciRefiT:"מימון מחדש · תרחיש שנה 5",
+  ciRfVal:"שווי משוער", ciRfDebt:"יתרת חוב", ciRfEq:"הון כלוא משוער", ciRfCap:"פוטנציאל מיחזור (60% LTV)",
+  ciRefiNote:"תרחיש מימון היפותטי בלבד — כפוף לשווי בפועל, לריבית ולאישור המלווה.",
+  ciWT:"משקולות הציון (מתקדם)",
+  ciWNote:"שינוי המשקולות עובר למצב מותאם אישית ומחשב מחדש את הדירוג ואת התיק.",
+  ciPortT:"ניהול הון · תיק מוצע", ciPortNote:"מודל הקצאה אנליטי והיפותטי — לא המלצה",
+  ciAllocT:c=>`הקצאה מוצעת · ${c}`, ciUnits:"יח׳", ciResv:"עתודת נזילות והזדמנויות",
+  ciDeployT:"תוכנית פריסת הון",
+  ciPh1:"שלב 1 · 90 יום", ciPh1d:"רכישות באזורים בנזילות גבוהה",
+  ciPh2:"שלב 2 · חוד׳ 4–12", ciPh2d:"פריסה לאזורי השבחה",
+  ciPh3:"שלב 3 · חוד׳ 12–18", ciPh3d:"הון הזדמנותי — מתחת למחיר שוק",
+  ciPhR:"עתודה", ciPhRd:"נזילות ורכישות מתחת לשוק",
+  ciTlT:"ציר אחזקה", ciCities:"ערים",
+  ciTlY0:"שנה 0", ciTlA0:"רכישה", ciTlD0:"פריסה מדורגת",
+  ciTlY1:"שנים 1–3", ciTlA1:"השכרה ושיפור", ciTlD1:"תזרים + השבחה",
+  ciTlY2:"שנה 3", ciTlA2:"נקודת יציאה", ciTlD2:"מימוש מהיר — אופציונלי",
+  ciTlY3:"שנה 5", ciTlA3:"שערוך / מיחזור", ciTlD3:"מכירה או מינוף מחדש",
+  ciTlY4:"שנה 10", ciTlA4:"יציאה ארוכת טווח", ciTlD4:"ערך + חוב מופחת",
+  ciTlPos:"פוזיציות", ciTlScore:"ציון משוקלל", ciTlYield:"תשואה נטו", ciWeighted:"משוקלל לפי הקצאה",
+  ciTlTop:"ריכוז עיר מובילה", ciTlTopS:c=>`תקרה ${c}% לעיר`, ciTlLiq:"חשיפה לנזילות גבוהה",
+  ciHhiLow:"פיזור רחב", ciHhiMed:"ריכוזיות בינונית", ciHhiHigh:"ריכוזיות גבוהה",
+  ciPortCf:"תזרים חודשי לתיק", ciPortCfS:l=>l>0?`במינוף ${l}% על כל הרכישות · מודל`:"ללא מינוף · מודל",
+  ciCapNote:(c,l)=>`מגבלות פיזור: עד ${c}% לעיר ועד ${l}% לשכונה בודדת. אזורים בוודאות נתונים נמוכה אינם מקבלים הקצאה. יכולת הפריסה מוגבלת לפי נפח עסקאות ומלאי זמין בכל אזור.`,
+  ciAsmT:"הנחות המודל",
+  ciAsmVac:"אי-תפוסה", ciAsmOpx:"תפעול ותחזוקה", ciAsmTax:"מס רכישה + עלויות",
+  ciAsmSell:"עלויות מכירה", ciAsmFin:"מימון", ciAsmApp:"עליית ערך: היסטוריה + מומנטום, לפי אופק",
+  ciDisc:"מודל אנליטי המחושב מנתוני השוק שבלוח בלבד. כל הערכים המתייחסים לעתיד הם תרחישים מבוססי הנחות מפורשות — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.",
+  ciWhyGap:(g,c)=>`מחיר למ״ר נמוך ב-${g}% מהממוצע ב${c}`,
+  ciWhySib:g=>`נמוך ב-${g}% מאזורים מקבילים סביבו`,
+  ciWhyYield:y=>`תשואה נטו ${y}% — ברבעון העליון ארצית`,
+  ciWhyTight:m=>`היצע הדוק — כ-${m} חודשי מלאי בלבד`,
+  ciWhyTx:n=>`נפח עסקאות גבוה (${n} בשנה) ומדגם איכותי`,
+  ciWhyRentG:p=>`שכירות עולה ${p}% בשנה — מעל הקצב הארצי`,
+  ciWhyMom:"מומנטום מחירים חיובי ביחס לסביבה",
+  ciRkYield:y=>`תשואה שוטפת נמוכה (${y}%) — רגישות לעלויות מימון`,
+  ciRkSupply:m=>`מלאי גבוה — כ-${m} חודשי היצע`,
+  ciRkSample:"מדגם עסקאות קטן — ודאות נמוכה",
+  ciRkEst:"חלק מהנתונים אומדן עירוני",
+  ciRkPrice:"כרטיס כניסה גבוה — רגישות גבוהה לריבית",
+  ciRkFall:p=>`מחירים בירידה שנתית של ${p}%`,
+  ciRkBase:"חשיפה לשינויי ריבית ולתנאי השוק הכלליים",
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
@@ -1460,6 +1748,78 @@ en:{
   gd6a:"Closing costs & delivery", gd6b:"Budget for purchase tax, legal fees, utility hookups and parking/storage; delivery delays beyond the legal grace entitle you to compensation.",
   cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
   monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  navCap:"Capital",
+  ciUnitsN:n=>n===1?"1 unit":`${n} units`,
+  ciConfNote:"The final score is scaled by the area's data-confidence factor — weaker data lowers the ranking.",
+  ciTitle:"Where does capital work hardest?", ciTeaserT:"Where does capital work hardest?",
+  ciSub:"The areas with the strongest mix of running cash flow, value-add potential and price appreciation — from the data on this board.",
+  ciChip:"Data-based investment score · not advice", ciTeaserNote:"Investment score · model",
+  ciTeaserCTA:"Open the full investment analysis →", ciOppT:"Top opportunities",
+  ciCap:"Capital", ciStrat:"Strategy", ciHorizon:"Horizon", ciLev:"Leverage",
+  ciY3:"3 years", ciY5:"5 years", ciY10:"10 years", ciNoLev:"None",
+  ciStCash:"Cash flow", ciStBal:"Balanced", ciStVa:"Value-add", ciStGrowth:"Growth", ciStCons:"Conservative",
+  ciRate:"Rate", ciTerm:"Term", ciYears:"yrs",
+  ciScoreK:"Score", ciScoreAria:s=>`Investment score ${s} out of 100`,
+  ciEntry:"Entry price", ciNetY:"Net yield", ciVaShort:"Value-add", ciLiqShort:"Liquidity",
+  ciConf:"Confidence", ciConfShort:"Conf.", ciHz:y=>`${y}y base`, ciHzFull:y=>`${y}-year horizon`,
+  ciHigh:"High", ciMed:"Medium", ciLow:"Low",
+  ciWhy:"Why here?", ciRisk:"What's the risk?", ciScoreWhy:"Score breakdown",
+  ciFcf:"Cash flow", ciFap:"Appreciation", ciFva:"Value-add", ciFlq:"Liquidity", ciFdm:"Demand", ciFrk:"Data quality",
+  ciCfT:"Estimated return", ciBuy:"Purchase", ciRentMo:"Monthly rent", ciRentYr:"Annual rent",
+  ciGross:"Gross yield", ciNet:"Estimated net yield", ciNetS:"After vacancy, opex and upkeep",
+  ciLevT:"Leverage & cash flow", ciEquity:"Equity required", ciEquityS:"Incl. purchase tax and costs",
+  ciLoan:"Loan", ciPmt:"Monthly payment", ciCoC:"Cash-on-cash",
+  ciCfMo:"Monthly cash flow", ciCfMoS:"Net rent minus mortgage payment",
+  ciLevNote:"Leverage amplifies both return and risk — financing costs are shown in full.",
+  ciScenT:y=>`${y}-year scenarios`, ciConsSc:"Conservative", ciBaseSc:"Base", ciUpSc:"Upside",
+  ciValCh:"Value change", ciCumRent:"Cumulative net rent", ciSaleV:"Estimated asset value",
+  ciTotProp:"Return on property", ciTotRoe:"Return on equity",
+  ciScenNote:"Scenarios from explicit assumptions (history, momentum, supply) — not a forecast. Return on equity includes financing, cumulative rent and transaction costs.",
+  ciExitT:y=>`Exit structure · year ${y} · base case`,
+  ciExBuy:"Purchase incl. costs", ciExRent:"Cumulative net rent", ciExDebt:"Debt balance at exit",
+  ciExSale:"Estimated sale price", ciExCost:"Sale costs", ciExProfit:"Profit before tax",
+  ciExitNote:y=>`Year-${y} exit logic: realized appreciation + accumulated rent + debt paydown. Before capital-gains and income tax.`,
+  ciRefiT:"Refinance · year-5 scenario",
+  ciRfVal:"Estimated value", ciRfDebt:"Debt remaining", ciRfEq:"Trapped equity (est.)", ciRfCap:"Refinance capacity (60% LTV)",
+  ciRefiNote:"A hypothetical financing scenario only — subject to actual value, rates and lender approval.",
+  ciWT:"Score weights (advanced)",
+  ciWNote:"Changing weights switches to a custom profile and recomputes the ranking and the portfolio.",
+  ciPortT:"Capital management · proposed portfolio", ciPortNote:"An analytical, hypothetical allocation model — not a recommendation",
+  ciAllocT:c=>`Proposed allocation · ${c}`, ciUnits:"units", ciResv:"Liquidity & opportunity reserve",
+  ciDeployT:"Capital deployment plan",
+  ciPh1:"Phase 1 · 90 days", ciPh1d:"Acquisitions in high-liquidity areas",
+  ciPh2:"Phase 2 · months 4–12", ciPh2d:"Deployment into value-add areas",
+  ciPh3:"Phase 3 · months 12–18", ciPh3d:"Opportunity capital — below-market entries",
+  ciPhR:"Reserve", ciPhRd:"Liquidity and below-market purchases",
+  ciTlT:"Holding timeline", ciCities:"cities",
+  ciTlY0:"Year 0", ciTlA0:"Buy", ciTlD0:"Staged deployment",
+  ciTlY1:"Years 1–3", ciTlA1:"Rent & improve", ciTlD1:"Cash flow + value-add",
+  ciTlY2:"Year 3", ciTlA2:"Exit window", ciTlD2:"Fast realization — optional",
+  ciTlY3:"Year 5", ciTlA3:"Revalue / refinance", ciTlD3:"Sell or re-leverage",
+  ciTlY4:"Year 10", ciTlA4:"Long-term exit", ciTlD4:"Value + amortized debt",
+  ciTlPos:"Positions", ciTlScore:"Weighted score", ciTlYield:"Net yield", ciWeighted:"Allocation-weighted",
+  ciTlTop:"Top-city share", ciTlTopS:c=>`${c}% cap per city`, ciTlLiq:"High-liquidity exposure",
+  ciHhiLow:"Well diversified", ciHhiMed:"Moderate concentration", ciHhiHigh:"High concentration",
+  ciPortCf:"Portfolio monthly cash flow", ciPortCfS:l=>l>0?`At ${l}% LTV on all purchases · model`:"Unleveraged · model",
+  ciCapNote:(c,l)=>`Diversification limits: up to ${c}% per city and ${l}% per single neighborhood. Areas with weak data confidence receive no allocation. Deployability is capped by each area's transaction volume and available inventory.`,
+  ciAsmT:"Model assumptions",
+  ciAsmVac:"Vacancy", ciAsmOpx:"Opex & upkeep", ciAsmTax:"Purchase tax + costs",
+  ciAsmSell:"Sale costs", ciAsmFin:"Financing", ciAsmApp:"Appreciation: history + momentum, per horizon",
+  ciDisc:"An analytical model computed only from the market data on this board. All forward-looking values are scenarios built on explicit assumptions — not a forecast, not a promised return, and not investment advice. Leverage amplifies both return and risk.",
+  ciWhyGap:(g,c)=>`Price per m² is ${g}% below the ${c} average`,
+  ciWhySib:g=>`${g}% below comparable nearby areas`,
+  ciWhyYield:y=>`Net yield of ${y}% — top quartile nationally`,
+  ciWhyTight:m=>`Tight supply — about ${m} months of inventory`,
+  ciWhyTx:n=>`Deep market (${n} deals/yr) with a quality sample`,
+  ciWhyRentG:p=>`Rents rising ${p}%/yr — above the national pace`,
+  ciWhyMom:"Positive price momentum vs. its surroundings",
+  ciRkYield:y=>`Low running yield (${y}%) — sensitive to financing costs`,
+  ciRkSupply:m=>`Heavy inventory — about ${m} months of supply`,
+  ciRkSample:"Small transaction sample — low certainty",
+  ciRkEst:"Part of the data is a city-anchored estimate",
+  ciRkPrice:"High ticket size — strong rate sensitivity",
+  ciRkFall:p=>`Prices falling ${p}% annually`,
+  ciRkBase:"Exposure to rate changes and general market conditions",
   inCity:c=>`in ${c}`, ofParent:p=>`of ${p}`,
 }};
 
@@ -1472,6 +1832,7 @@ const state={
   filters:{rooms:"all",type:"all",area:"all",cond:"all"},
   compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
   sort:{key:"price",dir:-1},
+  ci:{h:"5",strat:"bal",ltv:60,rate:4.9,term:25,cap:25e6,sel:null,w:null,capCity:30,capLoc:20},
 };
 const T=()=>I18N[state.lang];
 const heName=l=>state.lang==="he"?l.he:l.en;
@@ -2335,6 +2696,528 @@ function renderTx(){
       </tr>`).join("")}</tbody>`;
 }
 
+/* =====================================================================
+   CAPITAL INTELLIGENCE — investment engine + UI
+   An analytical model computed ONLY from the LOCATIONS data already on
+   this board. Forward numbers are SCENARIOS from the explicit assumptions
+   in CI_ASSUME/CI_H — not predictions, not investment advice.
+   ===================================================================== */
+const CI_ASSUME={vacancy:.035,opex:.10,capex:.03,buyTax:.08,buyFees:.02,sellFees:.02};
+const CI_NETF=1-CI_ASSUME.vacancy-CI_ASSUME.opex-CI_ASSUME.capex;
+/* horizon params: factor tilts + appreciation blend (history vs momentum),
+   annual clamp and the conservative/upside spread around base */
+const CI_H={
+  "3":{y:3, tilt:{cf:1.15,ap:.85,va:1,  lq:1.2,dm:1,  rk:1.05}, hist:.35,mom:.65,clamp:[-2.5,6],  spread:[2.2,2.5]},
+  "5":{y:5, tilt:{cf:1,  ap:1,  va:1.1,lq:1,  dm:1,  rk:1},    hist:.55,mom:.45,clamp:[-1.5,6.5],spread:[1.8,2.2]},
+  "10":{y:10,tilt:{cf:.9, ap:1.2,va:1.05,lq:.9,dm:1.1,rk:.95},  hist:.75,mom:.25,clamp:[0,7],     spread:[1.5,1.8]},
+};
+/* strategy presets = the configurable weight model (cf/ap/va/lq/dm/rk) */
+const CI_STRATS={
+  cash:  {cf:40,ap:15,va:10,lq:15,dm:10,rk:10},
+  bal:   {cf:25,ap:25,va:15,lq:15,dm:10,rk:10},
+  va:    {cf:15,ap:25,va:35,lq:10,dm:5, rk:10},
+  growth:{cf:10,ap:40,va:20,lq:10,dm:10,rk:10},
+  cons:  {cf:20,ap:15,va:5, lq:25,dm:15,rk:20},
+};
+const CI_RESERVE={cash:.08,bal:.10,va:.08,growth:.06,cons:.15};
+const CI_CAPS=[5e6,10e6,25e6,50e6,100e6];
+
+const ciUniverse=()=>LOCATIONS.filter(l=>l.type==="city"||l.type==="nbhd"||l.type==="sub");
+let CI_FCACHE=null;
+function ciPct(sorted,v){let lo=0,hi=sorted.length;while(lo<hi){const mid=(lo+hi)>>1;if(sorted[mid]<=v)lo=mid+1;else hi=mid}return Math.round(lo/sorted.length*100)}
+
+/* raw per-location factors (horizon-independent) */
+function ciFactors(){
+  if(CI_FCACHE)return CI_FCACHE;
+  const U=ciUniverse(),map={};
+  const natCagr=Math.pow(NATIONAL_CURVE.reduce((a,c)=>a*(1+c/100),1),1/10)-1;
+  for(const l of U){
+    const b=l.base;
+    const cagr10=(Math.pow(localCurve(l).reduce((a,c)=>a*(1+c/100),1),1/10)-1)*100;
+    const city=l.type==="city"?LOC[l.parent]:cityOf(l);          /* city rows compare to district */
+    const cityGap=city?(b.sqm/city.base.sqm-1)*100:0;
+    const sibs=LOCATIONS.filter(x=>x.parent===l.parent&&x.id!==l.id);
+    const sibMed=sibs.length?sibs.map(x=>x.base.sqm).sort((a,b2)=>a-b2)[Math.floor(sibs.length/2)]:b.sqm;
+    const sibGap=(b.sqm/sibMed-1)*100;
+    const cityMom=city?city.base.yoy:b.yoy;
+    const ms=b.listings/(b.tx/12);                                /* months of supply */
+    map[l.id]={l,netY:b.rent*12/b.price*100*CI_NETF,gross:b.rent*12/b.price*100,
+      cagr10,natCagr:natCagr*100,mom:b.yoy,cityGap,sibGap,momVsCity:b.yoy-cityMom,
+      ms,rentG:b.rentYoy,tx:b.tx,listings:b.listings,price:b.price,rent:b.rent,
+      offT:/t/.test(l.o||""),offL:/l/.test(l.o||""),est:!!l.e,
+      vaRaw:Math.max(0,-1)*0}; /* filled below */
+  }
+  for(const id in map){const f=map[id];
+    f.vaRaw=Math.max(0,-f.cityGap)+Math.max(0,-f.sibGap)*.6+Math.max(0,Math.min(3,f.momVsCity))*1.5;}
+  const arr=k=>Object.values(map).map(f=>f[k]).sort((a,b)=>a-b);
+  CI_FCACHE={map,sorted:{netY:arr("netY"),vaRaw:arr("vaRaw"),tx:arr("tx"),ms:arr("ms"),rentG:arr("rentG")}};
+  return CI_FCACHE;
+}
+
+/* appreciation scenario (annual %) for a horizon */
+function ciApp(f,hk){
+  const H=CI_H[hk];
+  const hist=f.cagr10*.7+f.natCagr*.3;
+  const momC=Math.max(-4,Math.min(5,f.mom*.6));
+  const scarcity=hk==="10"&&f.ms<14&&f.cityGap<0?.4:0;
+  const base=Math.max(H.clamp[0],Math.min(H.clamp[1],hist*H.hist+momC*H.mom+scarcity));
+  const cum=a=>+((Math.pow(1+a/100,H.y)-1)*100).toFixed(1);
+  return{base,cons:base-H.spread[0],up:base+H.spread[1],
+         cumBase:cum(base),cumCons:cum(base-H.spread[0]),cumUp:cum(base+H.spread[1])};
+}
+
+/* data-quality / inverse-risk score (absolute, 0-100) + risk flags */
+function ciRisk(f){
+  let sc=100;const flags=[];
+  if(f.mom<-3){sc-=18;flags.push("fall")}
+  if(f.ms>30){sc-=14;flags.push("supply")}
+  const thin=f.l.type==="city"?f.tx<80:f.tx<25;
+  if(thin){sc-=12;flags.push("sample")}
+  if(f.est){sc-=10;flags.push("est")}
+  if(f.price>4.5e6){sc-=8;flags.push("price")}
+  if(f.netY<2.2){sc-=8;flags.push("yield")}
+  if(f.offT)sc+=6;if(f.offL)sc+=6;
+  return{score:Math.max(20,Math.min(95,sc)),flags};
+}
+function ciConf(f){
+  const sample=Math.min(24,f.tx/(f.l.type==="city"?40:8));
+  const pct=Math.round(Math.max(25,Math.min(95,38+(f.offT?18:0)+(f.offL?10:0)+sample-(f.est?14:0)+(f.l.type==="city"?6:0))));
+  return{pct,lvl:pct>=70?"h":pct>=50?"m":"l"};
+}
+
+/* full evaluation of one location for horizon+strategy */
+function ciEval(id,hk,strat){
+  const C=ciFactors(),f=C.map[id],H=CI_H[hk];
+  const app=ciApp(f,hk),risk=ciRisk(f),conf=ciConf(f);
+  const sub={
+    cf:Math.min(100,ciPct(C.sorted.netY,f.netY)+(f.rentG>4?4:0)),
+    ap:0,va:ciPct(C.sorted.vaRaw,f.vaRaw),
+    lq:Math.round(ciPct(C.sorted.tx,f.tx)*.55+(100-ciPct(C.sorted.ms,f.ms))*.45),
+    dm:Math.round(ciPct(C.sorted.rentG,f.rentG)*.5+(100-ciPct(C.sorted.ms,f.ms))*.5),
+    rk:risk.score,
+  };
+  /* appreciation percentile: rank cumBase across universe for this horizon */
+  if(!C["app"+hk]){C["app"+hk]=Object.keys(C.map).map(k=>ciApp(C.map[k],hk).cumBase).sort((a,b)=>a-b)}
+  sub.ap=ciPct(C["app"+hk],app.cumBase);
+  const W=state.ci.w||CI_STRATS[strat];
+  let num=0,den=0;
+  for(const k in sub){const w=(W[k]||0)*H.tilt[k];num+=sub[k]*w;den+=w}
+  const score=Math.round(num/Math.max(1,den)*(0.82+0.18*conf.pct/100));
+  const vaLvl=sub.va>=67?"h":sub.va>=40?"m":"l";
+  const lqLvl=sub.lq>=60?"h":sub.lq>=38?"m":"l";
+  return{f,app,risk,conf,sub,score,vaLvl,lqLvl};
+}
+
+function ciRank(hk,strat){
+  const U=ciUniverse();
+  return U.map(l=>({id:l.id,ev:ciEval(l.id,hk,strat)}))
+    .sort((a,b)=>b.ev.score-a.ev.score||b.ev.conf.pct-a.ev.conf.pct);
+}
+
+/* ---- financing (Spitzer) ---- */
+function ciPmt(loan,rate,years){if(loan<=0)return 0;const i=rate/100/12,n=years*12;return loan*i/(1-Math.pow(1+i,-n))}
+function ciDebtAt(loan,rate,years,after){if(loan<=0)return 0;const i=rate/100/12,n=years*12,m=Math.min(after*12,n);
+  return loan*(Math.pow(1+i,n)-Math.pow(1+i,m))/(Math.pow(1+i,n)-1)}
+function ciFin(f){
+  const {ltv,rate,term}=state.ci;
+  const loan=f.price*ltv/100;
+  const equity=f.price-loan+f.price*(CI_ASSUME.buyTax+CI_ASSUME.buyFees);
+  const pmt=ciPmt(loan,rate,term);
+  const rentNetM=f.rent*CI_NETF;
+  const cfM=rentNetM-pmt;
+  return{loan,equity,pmt,rentNetM,cfM,coc:cfM*12/equity*100};
+}
+/* cumulative net rent with rent growth over y years */
+function ciCumRent(f,y){let s=0,r=f.rent*CI_NETF*12;for(let t=0;t<y;t++){s+=r;r*=1+f.rentG/100}return s}
+function ciExit(f,hk,scen){
+  const H=CI_H[hk],fin=ciFin(f);
+  const app=ciApp(f,hk);
+  const cum={cons:app.cumCons,base:app.cumBase,up:app.cumUp}[scen];
+  const sale=f.price*(1+cum/100),saleNet=sale*(1-CI_ASSUME.sellFees);
+  const debtRem=ciDebtAt(fin.loan,state.ci.rate,state.ci.term,H.y);
+  const cumRent=ciCumRent(f,H.y),debtPaid=fin.pmt*12*H.y;
+  const profit=saleNet-debtRem+cumRent-debtPaid-fin.equity;
+  const basis=f.price*(1+CI_ASSUME.buyTax+CI_ASSUME.buyFees);
+  const propProfit=saleNet+cumRent-basis;
+  return{cum,sale,saleNet,debtRem,cumRent,debtPaid,profit,
+    roe:profit/fin.equity*100,propRet:propProfit/basis*100,fin};
+}
+
+/* ---- portfolio allocation ---- */
+function ciPortfolio(hk,strat){
+  const cap=state.ci.cap,reserve=cap*CI_RESERVE[strat];
+  const target=cap-reserve;
+  const ranked=ciRank(hk,strat);
+  /* eligible pool: enough data confidence, affordable, with real deployability */
+  const pool=[];
+  for(const r of ranked){
+    if(r.ev.conf.pct<40)continue;               /* never deploy on weakest data */
+    const f=r.ev.f;
+    if(f.price>target)continue;
+    const unitsCap=Math.max(1,Math.round(Math.min(f.tx*.25,f.listings*.12)*1.5));
+    pool.push({r,f,l:f.l,unitsCap});
+    if(pool.length>=14)break;
+  }
+  const minS=pool.length?Math.min(...pool.map(p=>p.r.ev.score)):0;
+  let wsum=0;for(const p of pool){p.wt=Math.pow(p.r.ev.score-minS+10,1.6);wsum+=p.wt}
+  const cityAmt={},pos=[];let deployed=0;
+  const cityCapFor=(cid,f)=>{
+    let c=cap*state.ci.capCity/100-(cityAmt[cid]||0);
+    if(!cityAmt[cid])c=Math.max(c,f.price);      /* small capital: first unit may exceed the pct cap */
+    return c;
+  };
+  /* pass 1 — score-proportional targets, clamped by diversification + deployability */
+  for(const p of pool){
+    const cid=(p.l.type==="city"?p.l:cityOf(p.l)).id;
+    const capLoc=p.l.type==="city"?Infinity:Math.max(cap*state.ci.capLoc/100,p.f.price);
+    const room=Math.min(target*p.wt/wsum,cityCapFor(cid,p.f),capLoc,p.unitsCap*p.f.price,target-deployed);
+    const units=Math.floor(room/p.f.price);
+    if(units<1)continue;
+    const amount=units*p.f.price;
+    pos.push({id:p.l.id,ev:p.r.ev,units,amount,cid});
+    cityAmt[cid]=(cityAmt[cid]||0)+amount;deployed+=amount;
+  }
+  /* pass 2 — distribute the remainder by rank, inside the same limits */
+  for(const p of pool){
+    if(deployed>=target*.97)break;
+    const cid=(p.l.type==="city"?p.l:cityOf(p.l)).id;
+    const cur=pos.find(x=>x.id===p.l.id);
+    const capLoc=p.l.type==="city"?Infinity:cap*state.ci.capLoc/100-(cur?cur.amount:0);
+    const room=Math.min(cap*state.ci.capCity/100-(cityAmt[cid]||0),capLoc,
+      (p.unitsCap-(cur?cur.units:0))*p.f.price,target-deployed);
+    const units=Math.floor(room/p.f.price);
+    if(units<1)continue;
+    const amount=units*p.f.price;
+    if(cur){cur.units+=units;cur.amount+=amount}
+    else pos.push({id:p.l.id,ev:p.r.ev,units,amount,cid});
+    cityAmt[cid]=(cityAmt[cid]||0)+amount;deployed+=amount;
+  }
+  const cash=cap-deployed;
+  /* diversification */
+  const byCity={};for(const p of pos)byCity[p.cid]=(byCity[p.cid]||0)+p.amount;
+  const shares=Object.values(byCity).map(v=>v/Math.max(1,deployed));
+  const hhi=Math.round(shares.reduce((a,v)=>a+v*v,0)*10000);
+  const top=shares.length?Math.max(...shares)*deployed/Math.max(1,cap)*100:0;
+  const netY=pos.reduce((a,p)=>a+p.ev.f.netY*p.amount,0)/Math.max(1,deployed);
+  const cfM=pos.reduce((a,p)=>a+ciFin(p.ev.f).cfM*p.units,0);
+  const liqShare=pos.filter(p=>p.ev.sub.lq>=60).reduce((a,p)=>a+p.amount,0)/Math.max(1,deployed)*100;
+  const score=pos.reduce((a,p)=>a+p.ev.score*p.amount,0)/Math.max(1,deployed);
+  /* phases: staged tranches (35/40/25) of the deployed book, most liquid first */
+  const byLq=[...pos].sort((a,b)=>b.ev.sub.lq-a.ev.sub.lq);
+  const t1=deployed*.35,t2=deployed*.75;
+  const p1=[],p2=[],p3=[];let acc=0;
+  for(const p of byLq){(acc<t1?p1:acc<t2?p2:p3).push(p);acc+=p.amount}
+  const sum=a=>a.reduce((x,p)=>x+p.amount,0);
+  return{pos,deployed,cash,byCity,hhi,top,netY,cfM,liqShare,score,
+    phases:[{k:"ciPh1",d:"ciPh1d",list:p1,amt:sum(p1)},{k:"ciPh2",d:"ciPh2d",list:p2,amt:sum(p2)},
+            {k:"ciPh3",d:"ciPh3d",list:p3,amt:sum(p3)},{k:"ciPhR",d:"ciPhRd",list:[],amt:cash}]};
+}
+
+/* ---- reasons & risks (only data-supported statements) ---- */
+function ciWhy(ev){
+  const t=T(),f=ev.f,out=[];
+  if(f.cityGap<-6)out.push(t.ciWhyGap(Math.abs(f.cityGap).toFixed(0),heName(f.l.type==="city"?LOC[f.l.parent]:cityOf(f.l))));
+  if(ev.sub.cf>=75)out.push(t.ciWhyYield(f.netY.toFixed(1)));
+  if(f.ms<16)out.push(t.ciWhyTight(Math.round(f.ms)));
+  if(f.rentG>=4.2)out.push(t.ciWhyRentG(f.rentG.toFixed(1)));
+  if(ev.sub.lq>=70&&(f.offT||f.tx>=400))out.push(t.ciWhyTx(fmtInt(f.tx)));
+  if(f.sibGap<-5)out.push(t.ciWhySib(Math.abs(f.sibGap).toFixed(0)));
+  if(f.momVsCity>1.5&&f.mom>0)out.push(t.ciWhyMom);
+  return out.slice(0,3);
+}
+function ciRisks(ev){
+  const t=T(),f=ev.f,out=[];
+  for(const fl of ev.risk.flags){
+    if(fl==="yield")out.push(t.ciRkYield(f.netY.toFixed(1)));
+    if(fl==="supply")out.push(t.ciRkSupply(Math.round(f.ms)));
+    if(fl==="sample")out.push(t.ciRkSample);
+    if(fl==="est")out.push(t.ciRkEst);
+    if(fl==="price")out.push(t.ciRkPrice);
+    if(fl==="fall")out.push(t.ciRkFall(Math.abs(f.mom).toFixed(1)));
+  }
+  if(!out.length)out.push(f.ms>22?t.ciRkSupply(Math.round(f.ms)):t.ciRkBase);
+  return out.slice(0,3);
+}
+
+/* ---- formatting helpers ---- */
+const ciM=n=>(n<0?"−":"")+fmtCompact(Math.abs(n));
+const ciPc=(n,d=0)=>(n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d)+"%";
+function ciPlate(score,lg,dim){
+  const t=T();
+  return `<span class="ci-plate${lg?" lg":""}" role="img" aria-label="${t.ciScoreAria(score)}">
+    <span class="v num">${score}</span><span class="m"><i style="width:${score}%"></i></span>
+    <span class="k">${t.ciScoreK}</span></span>`;
+}
+const ciHml=(lvl,txt)=>`<span class="ci-hml ${lvl}">${txt}</span>`;
+const ciLvlTxt=lvl=>({h:T().ciHigh,m:T().ciMed,l:T().ciLow}[lvl]);
+function ciPathOf(l){return chainOf(l).filter(x=>x.type!=="district").map(heName).join(" · ")}
+
+/* =============================== UI =============================== */
+function renderCITeaser(){
+  const box=el("ciTeaser");if(!box)return;
+  const t=T(),rk=ciRank(state.ci.h,state.ci.strat).slice(0,3);
+  box.innerHTML=rk.map((r,i)=>{
+    const f=r.ev.f;
+    return `<button class="ci-mini" data-cigo="${r.id}">
+      <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
+      <span><span class="mn">${heName(f.l)}</span><span class="mp">${ciPathOf(f.l)||heName(LOC[f.l.parent])}</span>
+        <span class="mk"><span>${t.ciEntry} <b class="num">${fmtCompact(f.price)}</b></span>
+        <span>${t.ciNetY} <b class="num">${f.netY.toFixed(1)}%</b></span>
+        <span>${t.ciHz(CI_H[state.ci.h].y)} <b class="num">${ciPc(r.ev.app.cumBase)}</b></span></span></span>
+      ${ciPlate(r.ev.score)}</button>`;
+  }).join("")+`<button class="ci-cta" data-ciopen="1">${t.ciTeaserCTA}</button>`;
+}
+
+function ciDeckHTML(){
+  const t=T(),ci=state.ci;
+  const seg=(items,attr,cur)=>`<div class="seg" role="group">${items.map(([v,lb])=>
+    `<button data-${attr}="${v}" aria-pressed="${String(v)===String(cur)}">${lb}</button>`).join("")}</div>`;
+  return `
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciCap}</span>
+    ${seg(CI_CAPS.map(c=>[c,fmtCompact(c)]),"cicap",ci.cap)}</div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciStrat}</span>
+    ${seg([["cash",t.ciStCash],["bal",t.ciStBal],["va",t.ciStVa],["growth",t.ciStGrowth],["cons",t.ciStCons]],"cistrat",ci.strat)}</div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciHorizon}</span>
+    ${seg([["3",t.ciY3],["5",t.ciY5],["10",t.ciY10]],"cih",ci.h)}</div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciLev}</span>
+    ${seg([[0,t.ciNoLev],[50,"50%"],[60,"60%"],[70,"70%"]],"ciltv",ci.ltv)}</div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciRate}</span>
+    <input class="ci-in sm num" id="ciRate" type="number" step="0.1" min="1" max="9" value="${ci.rate}" aria-label="${t.ciRate}"></div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciTerm}</span>
+    <input class="ci-in sm num" id="ciTerm" type="number" step="1" min="5" max="30" value="${ci.term}" aria-label="${t.ciTerm}"></div>`;
+}
+
+function ciCardHTML(r,i){
+  const t=T(),ev=r.ev,f=ev.f;
+  return `<button class="ci-card${r.id===state.ci.sel?" on":""}${ev.conf.lvl==="l"?" ci-lowconf":""}" data-cisel="${r.id}" aria-pressed="${r.id===state.ci.sel}">
+    <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
+    <span>
+      <span class="ci-card-name">${heName(f.l)}</span>
+      <span class="ci-card-path">${ciPathOf(f.l)||heName(LOC[f.l.parent])}</span>
+      <span class="ci-card-kv">
+        <span>${t.ciEntry}<b class="num">${fmtCompact(f.price)}</b></span>
+        <span>${t.ciNetY}<b class="num">${f.netY.toFixed(1)}%</b></span>
+        <span>${t.ciHz(CI_H[state.ci.h].y)}<b class="num">${ciPc(ev.app.cumBase)}</b></span>
+        <span>${t.ciVaShort}<b>${ciLvlTxt(ev.vaLvl)}</b></span>
+        <span>${t.ciConfShort}<b class="num">${ev.conf.pct}%</b></span>
+      </span>
+    </span>
+    ${ciPlate(ev.score)}</button>`;
+}
+
+function ciDetailHTML(id){
+  const t=T(),he=state.lang==="he",ci=state.ci,H=CI_H[ci.h];
+  const ev=ciEval(id,ci.h,ci.strat),f=ev.f,fin=ciFin(f);
+  const ex={cons:ciExit(f,ci.h,"cons"),base:ciExit(f,ci.h,"base"),up:ciExit(f,ci.h,"up")};
+  const why=ciWhy(ev),risks=ciRisks(ev);
+  const fb=[["cf",t.ciFcf],["ap",t.ciFap],["va",t.ciFva],["lq",t.ciFlq],["dm",t.ciFdm],["rk",t.ciFrk]];
+  const cfCls=fin.cfM>=0?"up":"down";
+  const refi=(()=>{const a5=ciApp(f,"5");const v5=f.price*(1+a5.cumBase/100);
+    const d5=ciDebtAt(fin.loan,ci.rate,ci.term,5);
+    return{v5,d5,eq:v5-d5,cap:Math.max(0,v5*.6-d5)}})();
+  return `<div class="ci-detail${ev.conf.lvl==="l"?" ci-lowconf":""}">
+    <div class="ci-dhead">
+      <div>
+        <h3>${heName(f.l)}</h3>
+        <div class="path">${ciPathOf(f.l)||heName(LOC[f.l.parent])} · ${t.ciHzFull(H.y)}</div>
+        <div class="ci-badges">
+          ${ciHml(ev.vaLvl,t.ciVaShort+": "+ciLvlTxt(ev.vaLvl))}
+          ${ciHml(ev.lqLvl,t.ciLiqShort+": "+ciLvlTxt(ev.lqLvl))}
+          ${ciHml(ev.conf.lvl,t.ciConf+": "+ev.conf.pct+"%")}
+        </div>
+      </div>
+      ${ciPlate(ev.score,true)}
+    </div>
+
+    <div class="ci-2col">
+      <div><div class="ci-sect-t">${t.ciWhy}</div><ul class="ci-flags">${why.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+      <div><div class="ci-sect-t">${t.ciRisk}</div><ul class="ci-flags risk">${risks.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+    </div>
+
+    <div class="ci-sect"><div class="ci-sect-t">${t.ciScoreWhy}</div>
+      <div class="ci-fb">${fb.map(([k,lb])=>`<span class="fk">${lb}</span>
+        <span class="ci-track"><i style="width:${ev.sub[k]}%"></i></span>
+        <span class="fv num">${ev.sub[k]}</span>`).join("")}</div>
+      <div class="ci-note">${t.ciConfNote}</div>
+    </div>
+
+    <div class="ci-sect"><div class="ci-sect-t">${t.ciCfT}</div>
+      <div class="ci-kv">
+        <div><div class="k">${t.ciBuy}</div><div class="v num">${fmtNIS(f.price)}</div></div>
+        <div><div class="k">${t.ciRentMo}</div><div class="v num">${fmtNIS(f.rent)}</div></div>
+        <div><div class="k">${t.ciRentYr}</div><div class="v num">${fmtNIS(f.rent*12)}</div></div>
+        <div><div class="k">${t.ciGross}</div><div class="v num">${f.gross.toFixed(2)}%</div></div>
+        <div><div class="k">${t.ciNet}</div><div class="v num">${f.netY.toFixed(2)}%</div><div class="s">${t.ciNetS}</div></div>
+      </div>
+    </div>
+
+    <div class="ci-sect"><div class="ci-sect-t">${t.ciLevT}</div>
+      <div class="ci-kv">
+        <div><div class="k">${t.ciEquity}</div><div class="v num">${fmtCompact(fin.equity)}</div><div class="s">${t.ciEquityS}</div></div>
+        <div><div class="k">${t.ciLoan} · ${ci.ltv}%</div><div class="v num">${fmtCompact(fin.loan)}</div></div>
+        <div><div class="k">${t.ciPmt}</div><div class="v num">${fmtNIS(Math.round(fin.pmt))}</div><div class="s">${ci.rate}% · ${ci.term} ${t.ciYears}</div></div>
+        <div><div class="k">${t.ciCoC}</div><div class="v num">${fin.coc.toFixed(1)}%</div></div>
+      </div>
+      <div class="ci-cfline"><span class="k">${t.ciCfMo}</span>
+        <span class="v num ${cfCls}">${ciM(Math.round(fin.cfM))}</span>
+        <span class="s">${t.ciCfMoS}</span></div>
+      <div class="ci-note">${t.ciLevNote}</div>
+    </div>
+
+    <div class="ci-sect"><div class="ci-sect-t">${t.ciScenT(H.y)}</div>
+      <div class="ci-tblw"><table class="ci-tbl">
+        <thead><tr><th></th><th class="num">${t.ciConsSc}</th><th class="num">${t.ciBaseSc}</th><th class="num">${t.ciUpSc}</th></tr></thead>
+        <tbody>
+          <tr><td>${t.ciValCh}</td><td class="num">${ciPc(ex.cons.cum)}</td><td class="num">${ciPc(ex.base.cum)}</td><td class="num">${ciPc(ex.up.cum)}</td></tr>
+          <tr><td>${t.ciCumRent}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td></tr>
+          <tr><td>${t.ciSaleV}</td><td class="num">${fmtCompact(ex.cons.sale)}</td><td class="num">${fmtCompact(ex.base.sale)}</td><td class="num">${fmtCompact(ex.up.sale)}</td></tr>
+          <tr><td>${t.ciTotProp}</td><td class="num">${ciPc(ex.cons.propRet)}</td><td class="num">${ciPc(ex.base.propRet)}</td><td class="num">${ciPc(ex.up.propRet)}</td></tr>
+          <tr class="base"><td>${t.ciTotRoe}</td><td class="num">${ciPc(ex.cons.roe)}</td><td class="num">${ciPc(ex.base.roe)}</td><td class="num">${ciPc(ex.up.roe)}</td></tr>
+        </tbody></table></div>
+      <div class="ci-note">${t.ciScenNote}</div>
+    </div>
+
+    <details class="ci-more"><summary>${t.ciExitT(H.y)}</summary><div class="in">
+      <div class="ci-tblw"><table class="ci-tbl">
+        <tbody>
+          <tr><td>${t.ciExBuy}</td><td class="num">${fmtCompact(f.price*(1+CI_ASSUME.buyTax+CI_ASSUME.buyFees))}</td></tr>
+          <tr><td>${t.ciExRent}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td></tr>
+          <tr><td>${t.ciExDebt}</td><td class="num">${fmtCompact(ex.base.debtRem)}</td></tr>
+          <tr><td>${t.ciExSale}</td><td class="num">${fmtCompact(ex.base.sale)}</td></tr>
+          <tr><td>${t.ciExCost}</td><td class="num">−${fmtCompact(ex.base.sale*CI_ASSUME.sellFees)}</td></tr>
+          <tr class="base"><td>${t.ciExProfit}</td><td class="num">${ciM(ex.base.profit)}</td></tr>
+        </tbody></table></div>
+      <div class="ci-note">${t.ciExitNote(H.y)}</div>
+    </div></details>
+
+    ${ci.ltv>0?`<details class="ci-more"><summary>${t.ciRefiT}</summary><div class="in">
+      <div class="ci-kv">
+        <div><div class="k">${t.ciRfVal}</div><div class="v num">${fmtCompact(refi.v5)}</div></div>
+        <div><div class="k">${t.ciRfDebt}</div><div class="v num">${fmtCompact(refi.d5)}</div></div>
+        <div><div class="k">${t.ciRfEq}</div><div class="v num">${fmtCompact(refi.eq)}</div></div>
+        <div><div class="k">${t.ciRfCap}</div><div class="v num">${fmtCompact(refi.cap)}</div></div>
+      </div>
+      <div class="ci-note">${t.ciRefiNote}</div>
+    </div></details>`:""}
+
+    <details class="ci-more"><summary>${t.ciWT}</summary><div class="in">
+      <div class="ci-w">${fb.map(([k,lb])=>{
+        const W=state.ci.w||CI_STRATS[state.ci.strat];
+        return `<span>${lb}</span><input type="range" min="0" max="50" step="5" value="${W[k]}" data-ciw="${k}" aria-label="${lb}">
+          <span class="wv num">${W[k]}%</span>`}).join("")}</div>
+      <div class="ci-note">${t.ciWNote}</div>
+    </div></details>
+  </div>`;
+}
+
+function ciPortHTML(){
+  const t=T(),ci=state.ci,P=ciPortfolio(ci.h,ci.strat);
+  const rows=[...P.pos].sort((a,b)=>b.amount-a.amount);
+  const maxAmt=Math.max(...rows.map(p=>p.amount),P.cash,1);
+  const tile=(k,v,s)=>`<div class="ci-tile"><div class="k">${k}</div><div class="v num">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const cfCls=P.cfM>=0?"up":"down";
+  return `
+  <div class="ci-alloc">
+    <div class="ci-sect-t" style="margin-bottom:10px">${t.ciAllocT(fmtCompact(ci.cap))}</div>
+    ${rows.map(p=>{const f=p.ev.f;
+      return `<div class="ci-arow">
+        <span><span class="an">${heName(f.l)}</span><span class="as"> · ${t.ciUnitsN(p.units)}</span></span>
+        <span class="ci-abar"><i style="width:${p.amount/maxAmt*100}%"></i></span>
+        <span class="apc num">${(p.amount/ci.cap*100).toFixed(0)}%</span>
+        <span class="am num">${fmtCompact(p.amount)}</span></div>`}).join("")}
+    <div class="ci-arow"><span><span class="an">${t.ciResv}</span></span>
+      <span class="ci-abar"><i class="rsv" style="width:${P.cash/maxAmt*100}%"></i></span>
+      <span class="apc num">${(P.cash/ci.cap*100).toFixed(0)}%</span>
+      <span class="am num">${fmtCompact(P.cash)}</span></div>
+    <div class="ci-sect-t" style="margin:14px 0 4px">${t.ciDeployT}</div>
+    <div class="ci-ph">${P.phases.filter(ph=>ph.amt>0.5||ph.k==="ciPhR").map((ph,i)=>{
+      const names=ph.list.slice(0,3).map(p=>heName(p.ev.f.l)).join(", ");
+      return `<div class="ci-phrow"><span class="n">${t[ph.k]}</span>
+        <span><span class="t">${t[ph.d]}</span>${names?`<span class="d">${names}${ph.list.length>3?" +"+(ph.list.length-3):""}</span>`:""}</span>
+        <span class="v num">${fmtCompact(ph.amt)}</span></div>`}).join("")}</div>
+    <div class="ci-sect-t" style="margin:16px 0 2px">${t.ciTlT}</div>
+    <div class="ci-tl">
+      <div class="st"><div class="y">${t.ciTlY0}</div><div class="a">${t.ciTlA0}</div><div class="d">${t.ciTlD0}</div></div>
+      <div class="st"><div class="y">${t.ciTlY1}</div><div class="a">${t.ciTlA1}</div><div class="d">${t.ciTlD1}</div></div>
+      <div class="st"><div class="y">${t.ciTlY2}</div><div class="a">${t.ciTlA2}</div><div class="d">${t.ciTlD2}</div></div>
+      <div class="st"><div class="y">${t.ciTlY3}</div><div class="a">${t.ciTlA3}</div><div class="d">${t.ciTlD3}</div></div>
+      <div class="st"><div class="y">${t.ciTlY4}</div><div class="a">${t.ciTlA4}</div><div class="d">${t.ciTlD4}</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="ci-tiles">
+      ${tile(t.ciTlPos,P.pos.length,Object.keys(P.byCity).length+" "+t.ciCities)}
+      ${tile(t.ciTlScore,Math.round(P.score)+"/100","")}
+      ${tile(t.ciTlYield,P.netY.toFixed(1)+"%",t.ciWeighted)}
+      ${tile(t.ciTlTop,P.top.toFixed(0)+"%",t.ciTlTopS(ci.capCity))}
+      ${tile("HHI",fmtInt(P.hhi),P.hhi<1500?t.ciHhiLow:P.hhi<2500?t.ciHhiMed:t.ciHhiHigh)}
+      ${tile(t.ciTlLiq,P.liqShare.toFixed(0)+"%","")}
+    </div>
+    <div class="ci-cfline" style="margin-top:10px"><span class="k">${t.ciPortCf}</span>
+      <span class="v num ${cfCls}">${ciM(Math.round(P.cfM))}</span>
+      <span class="s">${t.ciPortCfS(ci.ltv)}</span></div>
+    <div class="ci-note" style="margin-top:9px">${t.ciCapNote(ci.capCity,ci.capLoc)}</div>
+  </div>`;
+}
+
+function renderCapital(){
+  const sec=el("capital");if(!sec)return;
+  const deck=el("ciDeck");
+  deck.innerHTML=ciDeckHTML();
+  const rk=ciRank(state.ci.h,state.ci.strat).slice(0,8);
+  if(!state.ci.sel||!rk.some(r=>r.id===state.ci.sel))state.ci.sel=rk[0].id;
+  el("ciList").innerHTML=rk.map((r,i)=>ciCardHTML(r,i)).join("");
+  el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);
+  el("ciPort").innerHTML=ciPortHTML();
+  const t=T(),A=CI_ASSUME;
+  el("ciAssume").innerHTML=[
+    t.ciAsmVac+" <b class='num'>"+(A.vacancy*100).toFixed(1)+"%</b>",
+    t.ciAsmOpx+" <b class='num'>"+((A.opex+A.capex)*100).toFixed(0)+"%</b>",
+    t.ciAsmTax+" <b class='num'>"+(A.buyTax*100).toFixed(0)+"% + "+(A.buyFees*100).toFixed(0)+"%</b>",
+    t.ciAsmSell+" <b class='num'>"+(A.sellFees*100).toFixed(0)+"%</b>",
+    t.ciAsmFin+" <b class='num'>"+state.ci.rate+"% · "+state.ci.term+" "+t.ciYears+"</b>",
+    t.ciAsmApp,
+  ].map(x=>`<span class="ci-asm">${x}</span>`).join("");
+}
+
+function ciRefresh(){renderCITeaser();renderCapital()}
+function initCapital(){
+  const sec=el("capital");if(!sec)return;
+  const go=()=>{el("capital").scrollIntoView({behavior:"smooth",block:"start"})};
+  document.addEventListener("click",e=>{
+    const open=e.target.closest("[data-ciopen]");if(open){go();return}
+    const mini=e.target.closest("[data-cigo]");
+    if(mini){state.ci.sel=mini.dataset.cigo;ciRefresh();go();return}
+    const card=e.target.closest("[data-cisel]");
+    if(card){state.ci.sel=card.dataset.cisel;
+      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);
+      el("ciList").querySelectorAll(".ci-card").forEach(c=>{
+        const on=c.dataset.cisel===state.ci.sel;c.classList.toggle("on",on);c.setAttribute("aria-pressed",String(on))});
+      if(window.innerWidth<1000)el("ciDetail").scrollIntoView({behavior:"smooth",block:"start"});
+      return}
+    const b=e.target.closest("#ciDeck button");if(!b)return;
+    if(b.dataset.cicap){state.ci.cap=+b.dataset.cicap}
+    else if(b.dataset.cistrat){state.ci.strat=b.dataset.cistrat;state.ci.w=null}
+    else if(b.dataset.cih){state.ci.h=b.dataset.cih}
+    else if(b.dataset.ciltv!==undefined){state.ci.ltv=+b.dataset.ciltv}
+    else return;
+    ciRefresh();
+  });
+  sec.addEventListener("input",e=>{
+    if(e.target.id==="ciRate"){const v=parseFloat(e.target.value);if(v>=1&&v<=9){state.ci.rate=v;
+      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);el("ciPort").innerHTML=ciPortHTML()}return}
+    if(e.target.id==="ciTerm"){const v=parseInt(e.target.value,10);if(v>=5&&v<=30){state.ci.term=v;
+      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);el("ciPort").innerHTML=ciPortHTML()}return}
+    if(e.target.dataset.ciw){
+      const W=Object.assign({},state.ci.w||CI_STRATS[state.ci.strat]);
+      W[e.target.dataset.ciw]=+e.target.value;state.ci.w=W;
+      e.target.closest(".ci-w").querySelectorAll("input").forEach(inp=>{
+        inp.nextElementSibling.textContent=inp.value+"%"});
+      clearTimeout(initCapital._t);initCapital._t=setTimeout(ciRefresh,250);
+    }
+  });
+}
+
 /* ---------- search ---------- */
 function initSearch(){
   const input=el("searchInput"),pop=el("searchPop");
@@ -2396,7 +3279,7 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();renderChartTools();renderChart();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCompare();renderInsights();renderConfidence();renderTx();
+    renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -2430,6 +3313,7 @@ el("langEn").addEventListener("click",()=>setLang("en"));
 
 setStatics();
 initSearch();
+initCapital();
 refresh(true);
 </script>
 
