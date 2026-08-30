@@ -1,89 +1,45 @@
-# VIZORA
+# KobiX RealEstate — Israeli Market Intelligence (private)
 
-**The AI video studio built for real estate.**
-Upload property images. Turn them into cinematic marketing videos. Publish — in about 5 minutes.
+Production-ready Vercel project for the KobiX new-homes intelligence platform.
+Password-protected server-side; internal use only.
 
-Vizora is a standalone SaaS product: a complete public marketing website plus a
-logged-in creation studio. Everything runs today except deliberately
-disconnected external services (AI generation vendors, payments, email,
-analytics, cloud media) — the architecture keeps each behind a single swap
-point.
+## What's in here
 
-## Running
+| File | Role |
+|---|---|
+| `index.html` | The entire application (single file): dashboard, map, drill hierarchy, filters, compare, insights, provenance, HE/EN, light/dark |
+| `login.html` | Access screen (posts to `/api/login`; no password in client code) |
+| `middleware.js` | Vercel Edge Middleware — verifies the signed `kobix_session` cookie on every request, otherwise redirects to `/login.html` |
+| `api/login.js` | Checks `SITE_PASSWORD` (env), sets a 12-hour HMAC-signed HttpOnly cookie |
+| `api/logout.js` | Clears the session |
+| `vercel.json` | `noindex` + security headers, `no-store` on the app |
+| `robots.txt` | Disallow all |
+
+## Deploy (Vercel)
+
+1. vercel.com → **Add New… → Project** → import `kobi6061-hub/vizora`
+2. **Root Directory:** leave EMPTY (the repo root is the project) · Framework preset: **Other** · no build command
+3. **Environment variables** (Project → Settings → Environment Variables):
+   - `SITE_PASSWORD` — the access password you choose
+   - `SESSION_SECRET` — random string, e.g. output of `openssl rand -hex 32`
+4. Deploy. Custom domain: Project → Settings → Domains → add `kobix.online`.
+
+With `SITE_PASSWORD` unset, login always fails (the site stays closed) — set both vars before sharing the URL.
+
+CLI alternative: `npx vercel --prod` from the repo root (after `vercel login`), then
+`npx vercel env add SITE_PASSWORD` / `SESSION_SECRET` and redeploy.
+
+## Local development
 
 ```bash
-npm install
-npm run dev        # http://localhost:3000
+SITE_PASSWORD=<your-password> SESSION_SECRET=dev PORT=3200 \
+  node scripts/kobix-dev-server.mjs
 ```
 
-| Script | Purpose |
-| --- | --- |
-| `npm run dev` | Development server |
-| `npm run build` / `start` | Production build / serve |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run art` | Regenerate the SVG property-art collection + manifest |
-| `npm run test:e2e` | Playwright end-to-end flows |
+## Data
 
-## Product map
-
-- **Marketing site** — `/`, `/product`, `/image-to-video`, `/real-estate-video`,
-  `/templates`, `/examples`, `/pricing`, `/business`
-- **Auth** — `/login`, `/signup`, `/forgot-password`, `/reset-password`,
-  `/verify-email` (mock auth; sessions persist in the browser)
-- **App** — `/app` (dashboard), `/app/onboarding`, `/app/create`,
-  `/app/projects`, `/app/projects/[id]` (Vizora Studio), `/app/templates`,
-  `/app/assets`, `/app/brand`, `/app/settings`
-
-First run seeds a demo workspace (sample properties in every status) so the
-product is alive before any upload. The **Try a sample property** journey walks
-the full flow: upload review → property details → style → format → automatic
-storyboard → generation → result.
-
-## Architecture
-
-```
-src/
-  app/                    Routes (marketing) / (auth) / app
-  components/
-    ui/                   Primitives (button, dialog, toast, …)
-    marketing/ studio/ app/ player/ cards/ brand/
-  lib/
-    domain/types.ts       Framework-free domain model
-    data/                 Styles, music, pricing, templates, demo seed, art manifest
-    story/                Automatic story engine (captions per style/objective)
-    generation/           VideoGenerationProvider + MockVideoGenerationProvider
-    audio/                In-browser music synth + voiceover preview
-    stores/               Zustand workspace store (localStorage persisted)
-    storage/              localStorage helpers + IndexedDB blob store
-    auth/                 Mock auth provider + session store
-scripts/
-  generate-property-art.mjs   Deterministic SVG archviz renders → public/art
-```
-
-### Provider boundaries (connect-later by design)
-
-| Service | Boundary | Today |
-| --- | --- | --- |
-| Video generation | `lib/generation/provider.ts` → registry in `lib/generation/index.ts` | `MockVideoGenerationProvider` (time-derived phases, survives reload) |
-| File storage | `lib/storage/local.ts` (+ `useAssetUrl`) | localStorage metadata + IndexedDB blobs |
-| Auth | `lib/auth/` | Local mock sessions |
-| Music | `lib/data/music.ts` + `lib/audio/preview-synth.ts` | Original generative previews |
-| Voiceover | `lib/audio/preview-synth.ts` | Browser SpeechSynthesis preview |
-| Payments | `lib/data/pricing.ts` (single source of pricing truth) | UI states only |
-
-Replacing the mock generation engine means implementing
-`VideoGenerationProvider` and changing one line in
-`lib/generation/index.ts` — the studio, generation experience and result
-screens stay untouched.
-
-### Imagery
-
-All property imagery is generated locally as graded SVG architectural renders
-(one cinematic collection — dusk, golden hour, night, marine). Regenerate with
-`npm run art`; the manifest (`lib/data/art-manifest.ts`) is the only coupling.
-
-## Design
-
-Tokens, type pairing, signature motion and rationale live in
-[`DESIGN-NOTES.md`](./DESIGN-NOTES.md). Read it before touching UI.
+All figures are calibrated to official Israeli publications (CBS, Tax Authority,
+Chief Economist, Bank of Israel) as of the retrieval date shown in the in-app
+market tape; every metric carries provenance (official / derived / estimate)
+surfaced via the "מקור הנתון" panel. Neighborhood rows are labeled relative
+estimates. The recent-sales table is a labeled structural illustration.

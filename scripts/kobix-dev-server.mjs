@@ -1,12 +1,12 @@
 // Local simulation of the Vercel deployment for QA:
 // reproduces middleware.js + api/login.js + api/logout.js semantics
-// over the static kobix-online/ folder. NOT deployed.
+// over the static repo root. NOT deployed.
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
 
-const ROOT = new URL('../kobix-online', import.meta.url).pathname;
+const ROOT = new URL('..', import.meta.url).pathname;
 const PORT = Number(process.env.PORT || 3200);
 const SITE_PASSWORD = process.env.SITE_PASSWORD || '';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret';

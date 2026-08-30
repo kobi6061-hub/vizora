@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Build the OFFLINE/artifact variant of the KobiX app from the deployed one.
 
-The deployed site (kobix-online/) authenticates server-side; this script
+The deployed site (repo root) authenticates server-side; this script
 produces standalone/israel-new-homes-v2.html for use as a local file or a
 private Claude artifact, where no server exists: it injects a client-side
 password gate (deterrent only — suitable for a private file, stated as such)
@@ -12,7 +12,7 @@ Usage: python3 scripts/build-standalone.py [password]
 import sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / "kobix-online" / "index.html"
+SRC = ROOT / "index.html"
 DST = ROOT / "standalone" / "israel-new-homes-v2.html"
 PASSWORD = sys.argv[1] if len(sys.argv) > 1 else "test4321"
 
