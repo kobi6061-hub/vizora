@@ -1015,6 +1015,22 @@ details.ci-more>.in{padding:2px 13px 12px}
 .map-ring{fill:none;stroke:var(--gold);stroke-dasharray:3 4;opacity:.55}
 .map-stnode{fill:var(--gold);stroke:var(--brass);stroke-width:1.4}
 .map-stcomp{fill:var(--accent);stroke:var(--panel);stroke-width:.8;opacity:.85}
+
+/* map excellence + zoom */
+.map-holder svg{cursor:grab;touch-action:none}
+.map-holder svg.panning{cursor:grabbing}
+.map-grid line{stroke-width:var(--mgw,.55)}
+.geo-label{paint-order:stroke;stroke:var(--panel);stroke-opacity:.9;stroke-linejoin:round}
+.geo-label.on-dark{stroke:rgba(8,16,34,.6)}
+.city-lbl{font-family:var(--f-body);font-weight:700;fill:var(--ink-2);pointer-events:none;
+  paint-order:stroke;stroke:var(--paper);stroke-opacity:.92;stroke-linejoin:round}
+.map-zoom{position:absolute;top:10px;inset-inline-start:10px;display:flex;flex-direction:column;gap:4px;z-index:20}
+.map-zoom button{width:28px;height:28px;border-radius:8px;background:var(--glass);border:1px solid var(--edge);
+  color:var(--ink-2);font-size:15px;font-weight:700;display:grid;place-items:center;cursor:pointer;
+  backdrop-filter:blur(4px);transition:color .12s,border-color .12s}
+.map-zoom button:hover{color:var(--ink);border-color:var(--accent)}
+.map-zoom button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.map-zoom .mz-home{font-size:11.5px}
 </style>
 </head><!-- doc-skeleton -->
 <body><!-- doc-skeleton -->
@@ -1134,6 +1150,11 @@ details.ci-more>.in{padding:2px 13px 12px}
         <div class="map-holder">
           <svg id="mapSvg" role="img" aria-label="מפת ישראל" data-ia="aMap"></svg>
           <div class="map-tip" id="mapTip"></div>
+          <div class="map-zoom" role="group" aria-label="זום" data-ia="aZoom">
+            <button id="mzIn" type="button" aria-label="התקרבות" data-ia="aZoomIn">+</button>
+            <button id="mzOut" type="button" aria-label="התרחקות" data-ia="aZoomOut">−</button>
+            <button id="mzHome" type="button" class="mz-home" aria-label="איפוס תצוגה" data-ia="aZoomReset">⌂</button>
+          </div>
         </div>
         <div class="map-side">
           <div class="map-scope" id="mapScope"></div>
@@ -1782,6 +1803,7 @@ he:{
   ciUnitsN:n=>`${n} יח׳`,
   ciScoreT:"ציון השקעה",
   vsNat:"מול ארצי", cmpSet1:"הערים הגדולות", cmpSet2:"ערי המרכז", cmpSet3:"שכונות מבוקשות",
+  aZoom:"זום במפה", aZoomIn:"התקרבות", aZoomOut:"התרחקות", aZoomReset:"איפוס תצוגת המפה",
   lyrSt:"L2.5 · רחוב", stSecT:"פרופיל רחוב", stSecNote:"מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן",
   stGroup:"רחובות", stStreet:"רחוב", stTxShort:"עסק׳", stM:"מ׳", stMonths:"חוד׳ מדגם", stMoShort:"ח׳",
   stWinA:"חלון זמן", stWinOf:w=>`ב-${w} החודשים האחרונים`, stClose:"סגירת פרופיל הרחוב",
@@ -1982,6 +2004,7 @@ en:{
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
   ciScoreT:"Investment score",
   vsNat:"vs national", cmpSet1:"Major cities", cmpSet2:"Central cities", cmpSet3:"Prime neighborhoods",
+  aZoom:"Map zoom", aZoomIn:"Zoom in", aZoomOut:"Zoom out", aZoomReset:"Reset map view",
   lyrSt:"L2.5 · Street", stSecT:"Street profile", stSecNote:"Structured street registry · city-anchored model transactions · estimate",
   stGroup:"Streets", stStreet:"St.", stTxShort:"deals", stM:"m", stMonths:"mo. sample", stMoShort:"mo",
   stWinA:"Time window", stWinOf:w=>`in the last ${w} months`, stClose:"Close street profile",
@@ -2198,8 +2221,25 @@ const DISTRICT_GEO={
   "d-haifa":{lat:[32.44,32.98],lng:[33.9,35.17]},
   "d-ta":{lat:[31.99,32.20],lng:[33.9,34.86]},
 };
+/* approximate district boundary polygons (lat,lng) — clipped to the coast;
+   painted in a fixed order so overlaps resolve correctly */
+const DISTRICT_POLY={
+ "d-south":[[31.78,34.15],[31.78,34.98],[31.62,35.05],[31.62,35.5],[30.9,35.35],[29.4,35.1],[29.4,34.75],[30.8,34.3]],
+ "d-center":[[32.44,34.2],[32.44,35.12],[31.95,35.08],[31.78,35.0],[31.78,34.2]],
+ "d-jm":[[31.98,34.99],[31.95,35.35],[31.62,35.28],[31.62,35.02],[31.78,34.99]],
+ "d-north":[[33.4,34.8],[33.4,35.95],[32.55,35.9],[32.44,35.55],[32.44,35.05],[32.7,35.16],[32.98,35.1],[32.98,34.8]],
+ "d-haifa":[[32.98,34.5],[32.98,35.12],[32.7,35.18],[32.44,35.1],[32.44,34.5]],
+ "d-ta":[[32.20,34.55],[32.20,34.87],[31.99,34.87],[31.99,34.55]],
+};
+const DIST_ORDER=["d-south","d-center","d-jm","d-north","d-haifa","d-ta"];
+const _distPathCache={};
+function distPath(id){
+  if(_distPathCache[id])return _distPathCache[id];
+  const d=DISTRICT_POLY[id].map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join("")+"Z";
+  _distPathCache[id]=d;return d;
+}
 const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center":[32.14,34.97],
-  "d-ta":[32.05,34.71],"d-jm":[31.72,35.22],"d-south":[30.7,34.86]};
+  "d-ta":[32.065,34.795],"d-jm":[31.72,35.22],"d-south":[30.7,34.86]};
 
 const HEAT=[1,2,3,4,5,6,7].map(i=>`var(--heat-${i})`);
 function heatColor(t){return HEAT[Math.max(0,Math.min(HEAT.length-1,Math.round(t*(HEAT.length-1))))]}
@@ -2402,6 +2442,7 @@ function bboxForCity(l){
   return[x-S/2,y-S/2,S,S];
 }
 let currentVB=[0,0,MAP_W,MAP_H];
+let mapCtxVB=[0,0,MAP_W,MAP_H];
 function animateViewBox(svg,to){
   const from=currentVB.slice();currentVB=to.slice();
   if(matchMedia("(prefers-reduced-motion:reduce)").matches){svg.setAttribute("viewBox",to.join(" "));return}
@@ -2414,7 +2455,91 @@ function animateViewBox(svg,to){
   requestAnimationFrame(step);
 }
 
-function renderMap(){
+let _mapRescaleT=null;
+function mapApplyVB(vb){
+  currentVB=vb;el("mapSvg").setAttribute("viewBox",vb.join(" "));
+  clearTimeout(_mapRescaleT);_mapRescaleT=setTimeout(()=>renderMap(true),170);
+}
+function mapZoomAt(f,cx,cy){
+  const vb=currentVB.slice();
+  const w=vb[2]*f,h=vb[3]*f;
+  const maxW=Math.min(MAP_W*1.2,mapCtxVB[2]*1.4);
+  if(w<14||w>maxW)return;
+  vb[0]=cx-(cx-vb[0])*f;vb[1]=cy-(cy-vb[1])*f;vb[2]=w;vb[3]=h;
+  vb[0]=Math.max(-MAP_W*.35,Math.min(MAP_W*1.15-w*.2,vb[0]));
+  vb[1]=Math.max(-MAP_H*.2,Math.min(MAP_H*1.08-h*.2,vb[1]));
+  mapApplyVB(vb);
+}
+function svgPointOf(clientX,clientY){
+  const r=el("mapSvg").getBoundingClientRect();
+  return[currentVB[0]+(clientX-r.left)/r.width*currentVB[2],
+         currentVB[1]+(clientY-r.top)/r.height*currentVB[3]];
+}
+function initMapZoom(){
+  const svg=el("mapSvg");
+  svg.addEventListener("wheel",e=>{
+    e.preventDefault();
+    const[px,py]=svgPointOf(e.clientX,e.clientY);
+    mapZoomAt(e.deltaY<0?0.8:1.25,px,py);
+  },{passive:false});
+  svg.addEventListener("dblclick",e=>{
+    e.preventDefault();
+    const[px,py]=svgPointOf(e.clientX,e.clientY);
+    mapZoomAt(0.55,px,py);
+  });
+  const ptrs=new Map();let panStart=null,moved=false,pinchD=0,captured=false;
+  svg.addEventListener("pointerdown",e=>{
+    ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+    if(ptrs.size===1){panStart=[e.clientX,e.clientY,...currentVB];moved=false;captured=false}
+    else if(ptrs.size===2){
+      const a=[...ptrs.values()];pinchD=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);
+      /* a pinch is definitely a gesture — safe to capture both pointers */
+      for(const id of ptrs.keys()){try{svg.setPointerCapture(id)}catch(_){}}
+      captured=true;
+    }
+  });
+  svg.addEventListener("pointermove",e=>{
+    if(!ptrs.has(e.pointerId))return;
+    ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+    if(ptrs.size===2){
+      const a=[...ptrs.values()];
+      const d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);
+      if(pinchD>0&&Math.abs(d-pinchD)>2){
+        const[px,py]=svgPointOf((a[0][0]+a[1][0])/2,(a[0][1]+a[1][1])/2);
+        mapZoomAt(pinchD/d,px,py);pinchD=d;moved=true;
+      }
+      return;
+    }
+    if(!panStart)return;
+    const dx=e.clientX-panStart[0],dy=e.clientY-panStart[1];
+    if(Math.abs(dx)+Math.abs(dy)>5)moved=true;
+    if(moved&&!captured){try{svg.setPointerCapture(e.pointerId)}catch(_){}captured=true}
+    if(moved){
+      const r=svg.getBoundingClientRect();
+      const vb=[panStart[2]-dx/r.width*panStart[4],panStart[3]-dy/r.height*panStart[5],panStart[4],panStart[5]];
+      currentVB=vb;svg.setAttribute("viewBox",vb.join(" "));svg.classList.add("panning");
+    }
+  });
+  const up=e=>{
+    if(!ptrs.has(e.pointerId))return;
+    ptrs.delete(e.pointerId);
+    if(ptrs.size<2)pinchD=0;
+    if(ptrs.size===0){
+      if(moved){
+        clearTimeout(_mapRescaleT);_mapRescaleT=setTimeout(()=>renderMap(true),150);
+        svg.dataset.dragged="1";setTimeout(()=>{delete svg.dataset.dragged},0);
+      }
+      panStart=null;svg.classList.remove("panning");
+    }
+  };
+  svg.addEventListener("pointerup",up);svg.addEventListener("pointercancel",up);
+  svg.addEventListener("click",e=>{if(svg.dataset.dragged){e.stopPropagation();e.preventDefault()}},true);
+  const center=()=>[currentVB[0]+currentVB[2]/2,currentVB[1]+currentVB[3]/2];
+  el("mzIn").addEventListener("click",()=>{const[cx,cy]=center();mapZoomAt(0.7,cx,cy)});
+  el("mzOut").addEventListener("click",()=>{const[cx,cy]=center();mapZoomAt(1.45,cx,cy)});
+  el("mzHome").addEventListener("click",()=>renderMap());
+}
+function renderMap(keepVB){
   const t=T(),svg=el("mapSvg"),mm=mapMetric(),ctx=mapContext();
   const vals=ctx.items.map(i=>mm.get(metricsOf(i.id)));
   const lo=Math.min(...vals),hi=Math.max(...vals);
@@ -2423,14 +2548,18 @@ function renderMap(){
   const norm=v=>div?0.5+(v/maxAbs)*0.5:(hi===lo?0.5:(v-lo)/(hi-lo));
   const colorOf=t=>div?divColor(t):heatColor(t);
   const onDark=t=>div?(t<0.16||t>0.84):(isDark()?t<=0.42:t>0.42);
+  let vb=ctx.level==="country"?[0,0,MAP_W,MAP_H]:ctx.level==="district"?bboxForDistrict(ctx.focus.id):bboxForCity(ctx.focus);
+  if(keepVB)vb=currentVB.slice();
+  const sf=Math.max(0.04,vb[2]/MAP_W);
+  let fs=ctx.level==="country"?8.2*sf:14.5*vb[3]/520, dotR=ctx.level==="country"?1.9*sf:7.5*vb[3]/520;
   let inner="";
   const defs=`<defs><clipPath id="ilClip"><path d="${israelPath}"/></clipPath>
     <filter id="mapShadow" x="-25%" y="-25%" width="150%" height="150%">
       <feDropShadow dx="0" dy="3.2" stdDeviation="4" flood-color="#0c0d0f" flood-opacity="0.14"/>
     </filter></defs>`;
-  const zoomed=ctx.level!=="country";
+  const zoomed=ctx.level!=="country"||vb[3]<MAP_H*0.72;
   const laStep=zoomed?0.2:1, loStep=zoomed?0.2:0.5;
-  let gridSvg='<g class="map-grid">';
+  let gridSvg=`<g class="map-grid" style="--mgw:${(0.55*sf).toFixed(2)}">`;
   for(let la=Math.ceil(29.6/laStep)*laStep;la<=33.4;la=+(la+laStep).toFixed(2)){
     const y=proj(la,34.5)[1];
     const major=Math.abs(la/1-Math.round(la/1))<1e-6;
@@ -2446,39 +2575,44 @@ function renderMap(){
   gridSvg+='</g>';
   const silhouette=`<path d="${israelPath}" fill="var(--panel-2)" stroke="var(--baseline)" stroke-width="1" filter="url(#mapShadow)"/>`;
 
-  let vb=[0,0,MAP_W,MAP_H], fs=9, dotR=5.6;
   if(ctx.level==="country"){
     inner+=gridSvg;
     inner+=`<path d="${israelPath}" fill="var(--panel-2)" filter="url(#mapShadow)"/>`;
     inner+=`<g clip-path="url(#ilClip)">`;
-    for(const d of ctx.items){
-      const g=DISTRICT_GEO[d.id],tv=norm(mm.get(metricsOf(d.id)));
-      const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
-      inner+=`<rect class="geo" data-loc="${d.id}" x="${x1.toFixed(1)}" y="${y1.toFixed(1)}" width="${(x2-x1).toFixed(1)}" height="${(y2-y1).toFixed(1)}" fill="${colorOf(tv)}"><title>${heName(d)}</title></rect>`;
+    const byOrder=[...ctx.items].sort((a,b)=>DIST_ORDER.indexOf(a.id)-DIST_ORDER.indexOf(b.id));
+    for(const d of byOrder){
+      const tv=norm(mm.get(metricsOf(d.id)));
+      inner+=`<path class="geo" data-loc="${d.id}" d="${distPath(d.id)}" fill="${colorOf(tv)}" style="stroke-width:${(0.9*sf).toFixed(2)}"><title>${heName(d)}</title></path>`;
     }
-    inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="1.4"/>`;
+    inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="${(1.4*sf).toFixed(2)}"/>`;
     for(const d of ctx.items){
       const [lx,ly]=proj(...DISTRICT_LABEL[d.id]);
       const tv=norm(mm.get(metricsOf(d.id)));
-      inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="8.2" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
+      const fsd=(d.id==="d-ta"?6.8:8.2)*sf;
+      inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="${fsd.toFixed(2)}" style="stroke-width:${(fsd*.32).toFixed(2)}" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
     /* city nodes — the geography carries the market; gold = top capital scores */
     let capIds=[];try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
       .map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id})}catch(e){}
+    /* progressive disclosure: major cities always; the rest as you zoom in */
+    const vbw=vb[2];
     for(const c of cityList()){
       if(c.lat===undefined)continue;
-      const[cx,cy]=proj(c.lat,c.lng);
       const cap=capIds.includes(c.id);
-      inner+=`<circle class="city-node${cap?" cap":""}" data-loc="${c.id}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${cap?3:1.9}"><title>${heName(c)}</title></circle>`;
+      if(!cap&&c.base.tx<250&&vbw>170)continue;
+      const[cx,cy]=proj(c.lat,c.lng);
+      const rr=((cap?3:1.9)*sf).toFixed(2);
+      inner+=`<circle class="city-node${cap?" cap":""}" data-loc="${c.id}" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${rr}" style="stroke-width:${(sf).toFixed(2)}"><title>${heName(c)}</title></circle>`;
+      if(vbw<125&&(cap||c.base.tx>=500||vbw<70)){
+        const fsC=Math.max(1.2,4.6*sf);
+        inner+=`<text class="city-lbl" x="${(cx+2.6*sf).toFixed(1)}" y="${(cy+fsC*.35).toFixed(1)}" font-size="${fsC.toFixed(2)}" style="stroke-width:${(fsC*.3).toFixed(2)}">${heName(c)}</text>`;
+      }
     }
   }else{
-    vb=ctx.level==="district"?bboxForDistrict(ctx.focus.id):bboxForCity(ctx.focus);
-    fs=14.5*vb[3]/520; dotR=7.5*vb[3]/520;
     inner+=gridSvg+silhouette;
     /* soft tint of the focused district for context */
-    if(ctx.level==="district"){
-      const g=DISTRICT_GEO[ctx.focus.id];const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
-      inner+=`<g clip-path="url(#ilClip)"><rect x="${x1}" y="${y1}" width="${x2-x1}" height="${y2-y1}" fill="var(--accent-wash)"/></g>`;
+    if(ctx.level==="district"&&DISTRICT_POLY[ctx.focus.id]){
+      inner+=`<g clip-path="url(#ilClip)"><path d="${distPath(ctx.focus.id)}" fill="var(--accent-wash)"/></g>`;
     }
     const itemPos={};
     for(const c of ctx.items){
@@ -2522,8 +2656,8 @@ function renderMap(){
     }
   }
   svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner;
-  svg.setAttribute("viewBox",currentVB.join(" "));
-  animateViewBox(svg,vb);
+  if(keepVB){currentVB=vb.slice();svg.setAttribute("viewBox",vb.join(" "))}
+  else{mapCtxVB=vb.slice();svg.setAttribute("viewBox",currentVB.join(" "));animateViewBox(svg,vb)}
 
   /* metric buttons */
   el("mapMetricBtns").innerHTML=MAP_METRICS.map(m=>
@@ -4061,6 +4195,7 @@ initSearch();
 initCapital();
 initCmd();
 initStreet();
+initMapZoom();
 refresh(true);
 </script>
 </body><!-- doc-skeleton -->
