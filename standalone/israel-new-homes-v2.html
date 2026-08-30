@@ -941,6 +941,74 @@ details.ci-more>.in{padding:2px 13px 12px}
   .cmd-ops{justify-content:space-between}
 }
 
+/* ============================ street intelligence ============================ */
+#street .st-wrap{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden}
+#street .st-wrap::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;
+  background:linear-gradient(to left,var(--navy),var(--accent) 60%,var(--gold))}
+.st-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;
+  padding-bottom:12px;border-bottom:1px solid var(--hairline);margin-bottom:13px}
+.st-head h3{font-size:21px;font-weight:800;letter-spacing:-.01em}
+.st-head .chain{font-size:12px;color:var(--ink-3);margin-top:2px}
+.st-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.st-chip{font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 10px;letter-spacing:.02em}
+.st-chip.s-strong{color:var(--conf-high);background:var(--up-wash)}
+.st-chip.s-med{color:var(--conf-med);background:var(--wash-brass)}
+.st-chip.s-low{color:var(--conf-low);background:var(--down-wash)}
+.st-chip.s-none{color:var(--ink-3);background:var(--panel-2)}
+.st-chip.win{color:var(--ink-2);background:var(--panel-2)}
+.st-chip.house{color:var(--navy);background:var(--navy-wash)}
+[data-theme="dark"] .st-chip.s-strong{background:rgba(74,222,128,.13)}
+[data-theme="dark"] .st-chip.s-med{background:rgba(226,185,59,.13)}
+[data-theme="dark"] .st-chip.s-low{background:rgba(240,148,84,.14)}
+.st-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.st-x{width:30px;height:30px;border-radius:8px;border:1px solid var(--hairline);color:var(--ink-3);
+  display:grid;place-items:center;font-size:14px;transition:all .15s;cursor:pointer}
+.st-x:hover{color:var(--down);border-color:var(--down)}
+.st-x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.st-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px}
+.st-kpis>div{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:8px 11px}
+.st-kpis .k{font-size:10.5px;color:var(--ink-3)}
+.st-kpis .v{font-size:15.5px;font-weight:800;margin-top:2px}
+.st-kpis .s{font-size:10px;color:var(--ink-3);margin-top:1px}
+.st-grid{display:grid;gap:14px;margin-top:14px}
+@media(min-width:1000px){.st-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start}}
+.st-blend{background:var(--accent-wash);border:1px solid var(--edge);border-inline-start:3px solid var(--gold);
+  border-radius:12px;padding:12px 14px;margin-top:12px}
+[data-theme="dark"] .st-blend{background:rgba(59,130,246,.08)}
+.st-blend .bt{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.st-blend .bv{font-family:var(--f-display);font-size:23px;font-weight:800;margin-top:3px}
+.st-blend .bd{font-size:12px;color:var(--ink-2);margin-top:5px;line-height:1.6}
+.st-comp{margin-top:12px}
+.st-comp .cr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;
+  width:100%;text-align:start;padding:7px 9px;border-radius:8px;font-size:12.5px;cursor:pointer}
+.st-comp .cr:hover{background:var(--accent-wash)}
+.st-comp .cr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.st-comp .cr .nm{font-weight:700}
+.st-comp .cr .d{color:var(--ink-3);font-size:11.5px}
+.st-rel{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:10px 13px;margin-top:12px;font-size:12.5px;line-height:1.65}
+.st-rel b{font-weight:800}
+.st-trend{margin-top:12px}
+.st-trend .tr{display:grid;grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto;gap:8px 10px;align-items:center;font-size:12px;padding:3px 0}
+.st-trend .tk{color:var(--ink-2)}
+.st-trend .tv{font-weight:800}
+.st-note{font-size:11px;color:var(--ink-3);margin-top:8px;line-height:1.55}
+.st-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--ink-3);
+  background:var(--panel-2);border-radius:999px;padding:3px 10px}
+#street .ci-tbl td{white-space:nowrap}
+#street .seg button{font-size:11.5px}
+.st-prov{margin-top:12px}
+.st-topst .tsr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:9px;align-items:center;
+  width:100%;text-align:start;padding:7px 6px;border-bottom:1px solid var(--hairline);font-size:12.5px;cursor:pointer}
+.st-topst .tsr:last-child{border-bottom:0}
+.st-topst .tsr:hover .nm{color:var(--accent)}
+.st-topst .tsr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.st-topst .nm{font-weight:700}
+.st-topst .ct{font-size:11px;color:var(--ink-3)}
+.st-topst .sc{font-family:var(--f-display);font-weight:800;color:var(--navy);background:var(--navy-wash);border-radius:6px;padding:1px 8px}
+.map-ring{fill:none;stroke:var(--gold);stroke-dasharray:3 4;opacity:.55}
+.map-stnode{fill:var(--gold);stroke:var(--brass);stroke-width:1.4}
+.map-stcomp{fill:var(--accent);stroke:var(--panel);stroke-width:.8;opacity:.85}
+
 /* ============================ offline access gate ============================ */
 body:not(.unlocked){overflow:hidden}
 body:not(.unlocked)>*:not(#gate){visibility:hidden}
@@ -1121,6 +1189,16 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Street intelligence (revealed when a street is selected) -->
+  <section class="blk" id="street" hidden>
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrSt">L2.5 · רחוב</span>
+      <h2 data-i="stSecT">פרופיל רחוב</h2></div>
+      <span class="note" data-i="stSecNote">מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן</span>
+    </div>
+    <div class="st-wrap" id="stBody"></div>
   </section>
 
   <!-- Profile + trend chart -->
@@ -1747,6 +1825,31 @@ he:{
   ciUnitsN:n=>`${n} יח׳`,
   ciScoreT:"ציון השקעה",
   vsNat:"מול ארצי", cmpSet1:"הערים הגדולות", cmpSet2:"ערי המרכז", cmpSet3:"שכונות מבוקשות",
+  lyrSt:"L2.5 · רחוב", stSecT:"פרופיל רחוב", stSecNote:"מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן",
+  stGroup:"רחובות", stStreet:"רחוב", stTxShort:"עסק׳", stM:"מ׳", stMonths:"חוד׳ מדגם", stMoShort:"ח׳",
+  stWinA:"חלון זמן", stWinOf:w=>`ב-${w} החודשים האחרונים`, stClose:"סגירת פרופיל הרחוב",
+  stStrong:"מדגם חזק", stMedS:"מדגם בינוני", stLow:"מדגם קטן", stNone:"אין עסקאות ברחוב",
+  stBasedOn:n=>n===1?"עסקה אחת ברחוב":`${n} עסקאות ברחוב`, stConf:"ודאות",
+  stRadius:"רדיוס השוואה", stHouse:h=>`בית ${h} · פרופיל בניין — בהכנה`,
+  stNbApprox:"שיוך שכונתי משוער", stNoRows:"אין עסקאות בחלון הזמן שנבחר",
+  stTxN:"עסקאות ברחוב", stMedP:"מחיר עסקה חציוני", stAvgP:"מחיר עסקה ממוצע", stMedPsm:"מחיר חציוני למ״ר",
+  stChg12:"מגמת 24 חוד׳", stTrendBase:"חציוני למ״ר, מבוסס מדגם", stNoTrend:"מדגם לא מספק למגמה",
+  stRentE:"אומדן שכירות", stRentNote:"נגזר משכונה/עיר · לא מחירי חוזים", stYield:"תשואה משוערת", stLast:"עסקה אחרונה",
+  stObserved:"נצפה ברחוב בלבד", stPerSqm:"למ״ר",
+  stBlendT:"אומדן מקומי משוקלל",
+  stBlendWhy:(a,b,c,r)=>`מבוסס על ${a===1?"עסקה אחת":a+" עסקאות"} ברחוב + ${b} עסקאות השוואה מ-${c} רחובות סמוכים ברדיוס ${r} מ׳ (מודל). משוקלל לפי מרחק, דמיון נכס ועדכניות — נפרד מהמחיר הנצפה ברחוב.`,
+  stNoTx:"לא נמצאו עסקאות ישירות ברחוב בתקופת המדגם. מוצג אומדן סביבתי משוקלל בלבד.",
+  stThin:"מדגם הרחוב קטן — הנתונים הנצפים מוצגים כפי שהם, והאומדן מחוזק בעסקאות השוואה סמוכות.",
+  stTxT:"עסקאות אחרונות ברחוב", stShowComps:n=>`הצג ${n} עסקאות השוואה סמוכות +`, stHideComps:"הסתר עסקאות השוואה −",
+  stCompStreets:"רחובות השוואה", stCompCol:"ציון השוואה", stType:"סוג", stYear:"שנת בנייה", stHouseCol:"בית",
+  stTrendT:"מגמת הרחוב מול הסביבה · 12-24 חוד׳", stRelT:"מיקום המחיר",
+  stRelBelow:(p,n)=>`הרחוב נסחר כ-${p}% מתחת לחציון ${n}.`, stRelAbove:(p,n)=>`הרחוב נסחר בפרמיה של כ-${p}% ביחס ל${n}.`,
+  stHow:"איך חישבנו את הנתון?",
+  stProvBody:(a,b,c,r,w)=>`${a} עסקאות ברחוב עצמו · ${b} עסקאות השוואה מ-${c} רחובות סמוכים · רדיוס: ${r?r+" מ׳":"—"} · חלון: ${w} חודשים · תקופה: 09.2021–08.2026 · ספי מדגם: 10+/5–9/1–4.`,
+  stProvSrc:"מקור: מרשם רחובות מובנה בקובץ (שמות רחובות מוכרים); עסקאות — שכבת מודל דטרמיניסטית מעוגנת למחירי העיר/השכונה שבלוח (למ״ס/הכלכלן הראשי, אמצע 2026). מרחקים ומיקומים — קואורדינטות מודל, תצוגת מפה סכמטית. אומדן — לא רישום עסקאות רשמי.",
+  stBadgeTxt:"שכבת רחוב · נתוני הדגמה מעוגני-עיר · אומדן",
+  stTopT:"רחובות מובילים · מודל 5 שנים", stTopNote:"רק רחובות עם 5+ עסקאות מדגם מדורגים; הציון משוקלל בוודאות הנתונים.",
+
   cmdKicker:"KobiX RealEstate · מרכז שליטה",
   cmdFresh:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
@@ -1922,6 +2025,31 @@ en:{
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
   ciScoreT:"Investment score",
   vsNat:"vs national", cmpSet1:"Major cities", cmpSet2:"Central cities", cmpSet3:"Prime neighborhoods",
+  lyrSt:"L2.5 · Street", stSecT:"Street profile", stSecNote:"Structured street registry · city-anchored model transactions · estimate",
+  stGroup:"Streets", stStreet:"St.", stTxShort:"deals", stM:"m", stMonths:"mo. sample", stMoShort:"mo",
+  stWinA:"Time window", stWinOf:w=>`in the last ${w} months`, stClose:"Close street profile",
+  stStrong:"Strong sample", stMedS:"Medium sample", stLow:"Small sample", stNone:"No street transactions",
+  stBasedOn:n=>n===1?"1 street transaction":`${n} street transactions`, stConf:"Confidence",
+  stRadius:"Comparable radius", stHouse:h=>`No. ${h} · building profile — in preparation`,
+  stNbApprox:"approximate neighborhood", stNoRows:"No transactions in the selected window",
+  stTxN:"Street transactions", stMedP:"Median sale price", stAvgP:"Average sale price", stMedPsm:"Median price/m²",
+  stChg12:"24-mo. trend", stTrendBase:"Median psm, sample-based", stNoTrend:"Sample too thin for a trend",
+  stRentE:"Rent estimate", stRentNote:"Derived from area · not contract rents", stYield:"Estimated yield", stLast:"Latest deal",
+  stObserved:"Observed on this street only", stPerSqm:"/m²",
+  stBlendT:"Weighted local estimate",
+  stBlendWhy:(a,b,c,r)=>`Based on ${a===1?"1 street transaction":a+" street transactions"} + ${b} comparables from ${c} nearby streets within ${r} m (model). Weighted by distance, property similarity and recency — kept separate from the observed street price.`,
+  stNoTx:"No direct transactions were found on this street in the sample period. Only a weighted nearby estimate is shown.",
+  stThin:"The street sample is small — observed figures are shown as-is and the estimate is reinforced with nearby comparables.",
+  stTxT:"Recent transactions on the street", stShowComps:n=>`Show ${n} nearby comparables +`, stHideComps:"Hide comparables −",
+  stCompStreets:"Comparable streets", stCompCol:"Comp score", stType:"Type", stYear:"Built", stHouseCol:"No.",
+  stTrendT:"Street vs. surroundings · 12-24 mo.", stRelT:"Price position",
+  stRelBelow:(p,n)=>`The street trades about ${p}% below the ${n} median.`, stRelAbove:(p,n)=>`The street trades at a ~${p}% premium to ${n}.`,
+  stHow:"How was this computed?",
+  stProvBody:(a,b,c,r,w)=>`${a} transactions on the street itself · ${b} comparables from ${c} nearby streets · radius: ${r?r+" m":"—"} · window: ${w} months · period: 09.2021–08.2026 · sample thresholds: 10+/5–9/1–4.`,
+  stProvSrc:"Source: structured in-file street registry (recognized street names); transactions — a deterministic model layer anchored to the city/neighborhood prices on this board (CBS/Chief Economist, mid-2026). Distances and positions are model coordinates; the map view is schematic. Estimate — not an official deals registry.",
+  stBadgeTxt:"Street layer · city-anchored demo data · estimate",
+  stTopT:"Top streets · 5-year model", stTopNote:"Only streets with 5+ sampled deals are ranked; scores are scaled by data confidence.",
+
   cmdKicker:"KobiX RealEstate · Command Center",
   cmdFresh:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
@@ -2216,6 +2344,11 @@ function renderCrumbs(){
     return `<button data-go="${l.id}" ${cur?'aria-current="true"':""}>${heName(l)}</button>`+
       (cur?"":'<span class="sep">›</span>');
   }).join("");
+  if(state.street){
+    const st=stEnt(state.street.id);
+    el("crumbs").hidden=false;
+    el("crumbs").innerHTML+=`<span class="sep">›</span><button aria-current="true" style="cursor:default">${stTitleTxt(st)}</button>`;
+  }
   el("crumbs").querySelectorAll("button[data-go]").forEach(b=>{
     b.addEventListener("click",()=>selectLocation(b.dataset.go));
   });
@@ -2390,16 +2523,45 @@ function renderMap(){
       const g=DISTRICT_GEO[ctx.focus.id];const [x1,y1]=proj(g.lat[1],g.lng[0]),[x2,y2]=proj(g.lat[0],g.lng[1]);
       inner+=`<g clip-path="url(#ilClip)"><rect x="${x1}" y="${y1}" width="${x2-x1}" height="${y2-y1}" fill="var(--accent-wash)"/></g>`;
     }
+    const itemPos={};
     for(const c of ctx.items){
       const go=geoOff(c);
       let [x,y]=proj(go.anchor.lat,go.anchor.lng);
       x+=go.dx*(vb[2]/70);y+=go.dy*(vb[3]/70);
+      itemPos[c.id]=[x,y];
       const tv=norm(mm.get(metricsOf(c.id)));
       const active=ctx.active===c.id;
       inner+=`<circle class="geo-dot" data-loc="${c.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*(active?1.35:1)).toFixed(1)}" fill="${colorOf(tv)}" stroke-width="${active?2:1.2}" ${active?'stroke="var(--gold)"':""}><title>${heName(c)}</title></circle>`;
       if(active)inner+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(dotR*1.35+3.4).toFixed(1)}" fill="none" stroke="var(--gold)" stroke-width=".9" stroke-dasharray="2.6 2.6" opacity=".7"/>`;
       const side=(go.dx||1)<0?-1:1;
       inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
+    }
+  }
+  /* street overlay: schematic node + comparison-radius rings (labeled schematic) */
+  if(state.street&&ctx.level==="city"){
+    const st=stEnt(state.street.id);
+    const fc=ctx.focus.type==="city"?ctx.focus:cityOf(ctx.focus);
+    if(fc&&fc.id===st.city){
+      const pos=(typeof itemPos!=="undefined"&&st.nbhd&&itemPos[st.nbhd])||(fc.lat!==undefined?proj(fc.lat,fc.lng):null);
+      if(pos){
+        const rr=rng(seedOf(st.id+"mp"));
+        const sx=pos[0]+(rr()-.5)*vb[2]*.07, sy=pos[1]+(rr()-.5)*vb[3]*.07;
+        const P=stProfile(st.id,stWin);
+        const R=stCityR(st.city);
+        let ov="";
+        if(P.radiusUsed){
+          for(const rM of [250,P.radiusUsed].filter((v,i,a)=>v&&a.indexOf(v)===i)){
+            ov+=`<circle class="map-ring" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(rM/R*vb[2]*.3).toFixed(1)}" stroke-width="${(vb[2]/250).toFixed(2)}"/>`;
+          }
+          for(const c of P.compStreets.slice(0,6)){
+            const a2=rng(seedOf(c.st.id+"mp"));
+            const cx=sx+(a2()-.5)*(c.distM/R)*vb[2]*.62, cy=sy+(a2()-.5)*(c.distM/R)*vb[3]*.62;
+            ov+=`<circle class="map-stcomp" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(dotR*.5).toFixed(1)}"><title>${state.lang==="he"?c.st.he:c.st.en}</title></circle>`;
+          }
+        }
+        ov+=`<circle class="map-stnode" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(dotR*.85).toFixed(1)}"><title>${state.lang==="he"?st.he:st.en}</title></circle>`;
+        inner+=ov;
+      }
     }
   }
   svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner;
@@ -2907,6 +3069,373 @@ function renderTx(){
       </tr>`).join("")}</tbody>`;
 }
 
+
+/* =====================================================================
+   STREET INTELLIGENCE — structured street registry + street-level engine
+   Registry: real, recognized street names per covered city (in-file
+   structured registry; official geometry unavailable in this build, so
+   placement and distances are model coordinates — labeled as such).
+   Transactions: the same clearly-labeled, city/nbhd-anchored model layer
+   used by the transactions table; sample sizes, radii and confidence are
+   computed honestly from it and never hidden.
+   ===================================================================== */
+const STREET_DB={
+ tlv:{he:["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן","אלנבי","המלך ג'ורג'","יהודה הלוי","לילינבלום","נחלת בנימין","שדרות חן","ויצמן","ז'בוטינסקי","יגאל אלון","דרך נמיר","פנקס","רוקח","הברזל","משה סנה"],
+   en:["Dizengoff","Rothschild","Ben Yehuda","Arlozorov","Ibn Gabirol","Sheinkin","HaYarkon","Frishman","Allenby","King George","Yehuda HaLevi","Lilienblum","Nahalat Binyamin","Chen Blvd.","Weizmann","Jabotinsky","Yigal Alon","Namir Rd.","Pinkas","Rokach","HaBarzel","Moshe Sneh"],
+   nb:{0:"old-north",1:"lev-hair",2:"old-north",3:"old-north",4:"old-north",5:"lev-hair",6:"old-north",7:"old-north",8:"lev-hair",9:"lev-hair",10:"lev-hair",11:"neve-tzedek",12:"florentin",13:"lev-hair",14:"bavli",15:"old-north",16:"yad-eliyahu",17:"ramat-aviv",18:"bavli",19:"ramat-aviv"}},
+ jerusalem:{he:["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק","בן יהודה","קינג ג'ורג'","אגריפס","דרך חברון","הנביאים","רמב״ן","אוסישקין"],
+   en:["Aza","HaPalmach","Bethlehem Rd.","Jaffa","Keren HaYesod","Emek Refaim","Herzog","Radak","Ben Yehuda","King George","Agripas","Hebron Rd.","HaNevi'im","Ramban","Ussishkin"],
+   nb:{0:"rehavia",1:"katamon",2:"baka",3:"jm-center",4:"rehavia",5:"baka",6:"katamon",7:"rehavia",8:"jm-center",9:"jm-center",10:"jm-center",11:"arnona",12:"jm-center",13:"rehavia",14:"rehavia"}},
+ haifa:{he:["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף","שדרות בן גוריון","הציונות","התשבי","החלוץ","שבתאי לוי"],
+   en:["Moriya","HaNassi","Horev","Herzl","Derech HaYam","Abba Hushi","Trumpeldor","Yafe Nof","Ben Gurion Blvd.","HaTzionut","HaTishbi","HeHalutz","Shabtai Levi"],
+   nb:{0:"carmel",1:"carmel",2:"ahuza",3:"hadar",4:"carmel",5:"ahuza",7:"carmel",9:"hadar",10:"carmel",11:"hadar",12:"hadar"}},
+ "petah-tikva":{he:["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות","הרצל","ביל״ו","שטמפפר","אחד העם","אורלוב","פינסקר","לוחמי הגטו","יטקובסקי","משה סנה","דגל ראובן"],
+   en:["Rothschild","Jabotinsky","HaHistadrut","Haim Ozer","Motta Gur","Kaplan","Baron Hirsch","HaAtzmaut","Herzl","Bilu","Stampfer","Ahad Ha'am","Orlov","Pinsker","Lohamei HaGetto","Yatkovsky","Moshe Sneh","Degel Reuven"],
+   nb:{0:"pt-center",2:"pt-center",3:"pt-center",4:"em-hamoshavot",6:"pt-center",8:"pt-center",9:"pt-center",10:"pt-center",11:"pt-center",12:"pt-center",13:"pt-center",16:"em-hamoshavot",17:"kfar-avraham"}},
+ "ramat-gan":{he:["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
+   en:["Bialik","Jabotinsky","HaRoe","Krinitzi","Ben Gurion Rd.","Herzl","Arlozorov","HaMaagal"],
+   nb:{0:"rg-center",1:"rg-center",2:"tel-binyamin",3:"rg-center",5:"rg-center",7:"rg-center"}},
+ rishon:{he:["רוטשילד","הרצל","ז'בוטינסקי","ויצמן","ביאליק","ירושלים","גולדה מאיר","משה דיין"],
+   en:["Rothschild","Herzl","Jabotinsky","Weizmann","Bialik","Jerusalem","Golda Meir","Moshe Dayan"],nb:{}},
+ netanya:{he:["הרצל","ויצמן","שדרות בנימין","סמילנסקי","דיזנגוף","ז'בוטינסקי","העצמאות","ביאליק"],
+   en:["Herzl","Weizmann","Binyamin Blvd.","Smilansky","Dizengoff","Jabotinsky","HaAtzmaut","Bialik"],
+   nb:{0:"netanya-center",2:"netanya-center",3:"netanya-center"}},
+ "beer-sheva":{he:["שדרות רגר","הרצל","ויצמן","בן גוריון","העצמאות","ביאליק","וינגייט","שדרות ירושלים"],
+   en:["Rager Blvd.","Herzl","Weizmann","Ben Gurion","HaAtzmaut","Bialik","Wingate","Jerusalem Blvd."],nb:{}},
+ _gen:{he:["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","העצמאות","ביאליק","הנשיא","סוקולוב"],
+   en:["Herzl","Weizmann","Ben Gurion","Jabotinsky","HaAtzmaut","Bialik","HaNassi","Sokolov"]}
+};
+const ST_WINS=["6","12","24","36","60"];
+let stWin="24", stSort={key:"date",dir:-1}, stCompsOpen=false;
+
+const stCityR=c=>{const tx=LOC[c].base.tx;return tx>900?3400:tx>500?2800:tx>300?2200:1600} /* model city radius, m */
+const _stCache={ent:{},list:{},tx:{},prof:{}};
+function stList(cityId){
+  if(_stCache.list[cityId])return _stCache.list[cityId];
+  const db=STREET_DB[cityId]||STREET_DB._gen;
+  const out=db.he.map((he,i)=>{
+    const id="st|"+cityId+"|"+i;
+    const nb=(STREET_DB[cityId]&&STREET_DB[cityId].nb&&STREET_DB[cityId].nb[i])||null;
+    const nbOk=nb&&LOC[nb]?nb:null;
+    const r=rng(seedOf(id));
+    const R=stCityR(cityId);
+    /* model coordinates (meters from the city center); nbhd-mapped streets cluster */
+    let mx,my;
+    if(nbOk){const a=(seedOf(nbOk)%628)/100;const d=R*0.55;
+      mx=Math.cos(a)*d+(r()-.5)*900;my=Math.sin(a)*d+(r()-.5)*900;}
+    else{const a=r()*6.28,d=r()*R*.9;mx=Math.cos(a)*d;my=Math.sin(a)*d}
+    const ent={id,city:cityId,idx:i,he,en:(db.en&&db.en[i])||he,nbhd:nbOk,mx,my,
+      f:0.90+r()*0.22};                       /* street price factor vs its anchor */
+    _stCache.ent[id]=ent;return ent;
+  });
+  _stCache.list[cityId]=out;return out;
+}
+function stEnt(id){if(_stCache.ent[id])return _stCache.ent[id];const p=id.split("|");stList(p[1]);return _stCache.ent[id]}
+const stName=st=>state.lang==="he"?st.he:st.en;
+const stTitleTxt=st=>state.lang==="he"?T().stStreet+" "+st.he:st.en+" St.";
+const stAnchor=st=>st.nbhd&&LOC[st.nbhd]?LOC[st.nbhd]:LOC[st.city];
+const stChain=st=>{const parts=[];if(st.nbhd&&LOC[st.nbhd])parts.push(heName(LOC[st.nbhd]));parts.push(heName(LOC[st.city]));return parts.join(" · ")};
+const stDistM=(a,b)=>Math.round(Math.hypot(a.mx-b.mx,a.my-b.my));
+
+/* street transactions — deterministic model rows anchored to the street's
+   nbhd/city price series, spanning 60 months */
+function stTxAll(id){
+  if(_stCache.tx[id])return _stCache.tx[id];
+  const st=stEnt(id),r=rng(seedOf(id+"stx"));
+  const a=stAnchor(st),city=LOC[st.city];
+  const lam=Math.min(26,Math.max(3,city.base.tx/55))*(st.f>1?1.08:0.94);
+  const n=Math.floor(Math.pow(r(),1.35)*lam*2.2);   /* some streets land on 0 */
+  const ser=seriesFor(a.id);
+  const roomsOpts=[3,3,4,4,4,5,5,2,6];
+  const types=["apt","apt","apt","apt","garden","ph"];
+  const rows=[];
+  for(let i=0;i<n;i++){
+    const mo=Math.floor(Math.pow(r(),0.85)*60);
+    const pt=ser[Math.max(0,ser.length-1-mo)];
+    const rooms=roomsOpts[Math.floor(r()*roomsOpts.length)];
+    const area=Math.round((rooms*24+16)*(0.9+r()*.26));
+    const psm=Math.round(pt.sqm*st.f*(0.93+r()*.14));
+    const d=new Date(2026,7,28);d.setMonth(d.getMonth()-mo);d.setDate(1+Math.floor(r()*27));
+    rows.push({mo,date:d,house:2+Math.floor(r()*70)*2-(r()>.5?1:0),rooms,area,
+      floor:1+Math.floor(r()*10),year:2019+Math.floor(r()*8),
+      type:types[Math.floor(r()*types.length)],psm,price:Math.round(psm*area/1000)*1000});
+  }
+  rows.sort((x,y)=>x.mo-y.mo);
+  _stCache.tx[id]=rows;return rows;
+}
+const stTxWin=(id,winM)=>stTxAll(id).filter(t=>t.mo<Number(winM));
+function stMedian(arr){if(!arr.length)return 0;const a=[...arr].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2)}
+const stSampleLvl=n=>n>=10?"strong":n>=5?"med":n>=1?"low":"none";
+
+/* comparable score (0-100): distance, recency, size, rooms, same-nbhd */
+function stCompScore(distM,tx,ref){
+  let sc=100;
+  sc-=Math.min(40,distM/1500*40);
+  sc-=Math.min(20,tx.mo/24*20);
+  if(ref.area)sc-=Math.min(15,Math.abs(tx.area-ref.area)/ref.area*40);
+  if(ref.rooms&&tx.rooms!==ref.rooms)sc-=6;
+  return Math.max(20,Math.round(sc));
+}
+
+/* the street profile: exact sample first, then escalate time, then radius */
+function stProfile(id,win){
+  const ck=id+"|"+win+"|"+state.lang;
+  if(_stCache.prof[ck])return _stCache.prof[ck];
+  const st=stEnt(id),city=LOC[st.city],anchor=stAnchor(st);
+  const am=metricsOf(anchor.id),cm=metricsOf(st.city);
+  const seq=[[0,win],[0,String(Math.min(60,Number(win)*2))],[250,"12"],[250,"24"],[500,"24"],[750,"24"],[1000,"24"],[1500,"24"]];
+  let exact=stTxWin(id,win),winUsed=Number(win),radiusUsed=0;
+  const comps=[],compStreets=new Map();
+  const refArea=stMedian(exact.map(t=>t.area))||95,refRooms=4;
+  const eff=()=>exact.length+comps.reduce((a,c)=>a+c.score/100,0);
+  for(const[rad,w]of seq){
+    if(rad===0){const rows=stTxWin(id,w);if(rows.length>exact.length){exact=rows;winUsed=Number(w)}}
+    else{
+      for(const other of stList(st.city)){
+        if(other.id===id)continue;
+        const d=stDistM(st,other);
+        if(d>rad||(compStreets.has(other.id)))continue;
+        const rows=stTxWin(other.id,w);
+        if(!rows.length)continue;
+        compStreets.set(other.id,{st:other,distM:d,n:rows.length});
+        for(const tx of rows)comps.push({...tx,stId:other.id,stHe:other.he,stEn:other.en,distM:d,
+          score:stCompScore(d,tx,{area:refArea,rooms:refRooms})});
+      }
+      radiusUsed=rad;
+    }
+    if(exact.length>=10||eff()>=12)break;
+  }
+  comps.sort((a,b)=>b.score-a.score);
+  const exPsm=exact.map(t=>t.psm),exPr=exact.map(t=>t.price);
+  const obs={n:exact.length,med:stMedian(exPr),avg:exPr.length?Math.round(exPr.reduce((a,b)=>a+b,0)/exPr.length):0,
+    medPsm:stMedian(exPsm),avgPsm:exPsm.length?Math.round(exPsm.reduce((a,b)=>a+b,0)/exPsm.length):0,
+    last:exact.length?exact[0].date:null};
+  /* blended local estimate — weighted by comparability; exact street weighs double */
+  let blend=null;
+  if(exact.length<10&&comps.length){
+    let wS=0,vS=0;
+    for(const t of exact){wS+=2;vS+=t.psm*2}
+    for(const c of comps){const w=c.score/100;wS+=w;vS+=c.psm*w}
+    const psm=Math.round(vS/wS);
+    blend={psm,price:Math.round(psm*refArea/1000)*1000,area:refArea,
+      nStreets:compStreets.size,nComps:comps.length};
+  }
+  /* 24-month trend where the sample honestly supports it */
+  let trend=null;
+  {const rows=stTxWin(id,"24");
+   const h1=rows.filter(t=>t.mo<12).map(t=>t.psm),h2=rows.filter(t=>t.mo>=12).map(t=>t.psm);
+   if(h1.length>=3&&h2.length>=3){const a=stMedian(h2),b=stMedian(h1);trend=+((b/a-1)*100).toFixed(1)}}
+  const rentEst=Math.round(am.rent*Math.pow(st.f,0.5)/10)*10;
+  const basePsm=obs.n>=5?obs.medPsm:blend?blend.psm:0;
+  const basePrice=obs.n>=5?obs.med:blend?blend.price:0;
+  const yieldEst=basePrice?+(rentEst*12/basePrice*100).toFixed(2):null;
+  const relN=basePsm?+((basePsm/am.sqm-1)*100).toFixed(1):null;
+  const relC=basePsm?+((basePsm/cm.sqm-1)*100).toFixed(1):null;
+  /* confidence 0-100 */
+  let conf=20+Math.min(42,obs.n*4.2)+Math.min(16,comps.length*1.1);
+  conf-=Math.min(16,radiusUsed/1500*16);
+  if(obs.last)conf+=Math.max(0,8-exact[0].mo);
+  conf=Math.max(15,Math.min(94,Math.round(conf-6)));  /* −6: model transaction layer */
+  const out={st,exact,obs,comps,compStreets:[...compStreets.values()].sort((a,b)=>a.distM-b.distM),
+    blend,winUsed,radiusUsed,trend,rentEst,yieldEst,relN,relC,basePsm,basePrice,
+    lvl:stSampleLvl(obs.n),conf,anchor,am,cm};
+  _stCache.prof[ck]=out;return out;
+}
+
+/* street search: prefixes, partials, city+street, house numbers */
+let _stIdx=null;
+function stNorm(q){return String(q).replace(/["'׳״]/g,"").replace(/(^|\s)(רחוב|רח|שדרות|שד|דרך)\s+/g,"$1").replace(/\s+/g," ").trim().toLowerCase()}
+function stIndex(){
+  if(_stIdx)return _stIdx;
+  _stIdx=[];
+  for(const l of cityList()){for(const st of stList(l.id)){
+    _stIdx.push({st,norm:stNorm(st.he),normEn:st.en.toLowerCase(),cityHe:l.he.toLowerCase(),cityEn:l.en.toLowerCase()});
+  }}
+  return _stIdx;
+}
+function stSearch(q){
+  const raw=String(q||"");if(stNorm(raw).length<2)return[];
+  let house=null;const hm=raw.match(/(?:^|\s)(\d{1,3})(?:\s|$)/);if(hm)house=hm[1];
+  let qq=stNorm(raw.replace(/(?:^|\s)\d{1,3}(?=\s|$)/g," "));
+  /* peel a city name out of the query — full name, pre-hyphen part or first
+     word (>=4 chars), matched on word boundaries; the longest hit wins */
+  let cityFilter=null,cityHit="";
+  const padded=" "+qq+" ";
+  for(const c of cityList()){
+    const vars=[c.he,c.he.split("-")[0],c.he.split(" ")[0],c.en,c.en.split("-")[0]];
+    for(const v0 of vars){
+      const v=String(v0).toLowerCase().trim();
+      if(v.length>=4&&padded.includes(" "+v+" ")&&v.length>cityHit.length){cityFilter=c.id;cityHit=v}
+    }
+  }
+  if(cityHit)qq=(" "+qq+" ").replace(" "+cityHit+" "," ").replace(/\s+/g," ").trim();
+  if(qq.length<2)return[];
+  const out=[];
+  for(const e of stIndex()){
+    if(cityFilter&&e.st.city!==cityFilter)continue;
+    let rank=-1;
+    if(qq.length>=2){
+      if(e.norm===qq)rank=0;else if(e.norm.startsWith(qq))rank=1;
+      else if(e.norm.includes(qq))rank=2;else if(e.normEn.includes(qq))rank=3;
+    }
+    if(rank<0)continue;
+    out.push({st:e.st,rank,house,n:stTxWin(e.st.id,"24").length});
+  }
+  out.sort((a,b)=>a.rank-b.rank||b.n-a.n);
+  return out.slice(0,9);
+}
+
+/* top streets for the capital pillar — confidence-gated, never from weak data */
+let _stTop=null;
+function stTopStreets(){
+  if(_stTop)return _stTop;
+  const cities=[...new Set(ciRank("5","bal").map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id}).filter(Boolean))].slice(0,8);
+  const cand=[];
+  for(const cid of cities){for(const st of stList(cid)){
+    const p=stProfile(st.id,"24");
+    if(p.obs.n<5||!p.yieldEst)continue;                 /* rule: no rank from thin data */
+    const gap=p.relN!=null?Math.max(0,-p.relN):0;
+    const score=Math.round((Math.min(100,p.yieldEst/4.2*100)*0.34+Math.min(100,gap*9)*0.26+
+      Math.min(100,p.obs.n*7)*0.22+Math.min(100,Math.max(0,(p.trend??0)+4)*11)*0.18)
+      *(0.75+0.25*p.conf/100));
+    cand.push({st,score,n:p.obs.n,conf:p.conf});
+  }}
+  cand.sort((a,b)=>b.score-a.score);
+  _stTop=cand.slice(0,5);return _stTop;
+}
+
+/* ---------------- street UI ---------------- */
+function selectStreet(id,house){
+  const st=stEnt(id);if(!st)return;
+  state.street={id,house:house||null};
+  stCompsOpen=false;
+  const target=st.nbhd&&LOC[st.nbhd]?st.nbhd:st.city;
+  if(state.locId!==target)selectLocation(target);else refresh(false);
+  el("street").hidden=false;
+  setTimeout(()=>el("street").scrollIntoView({behavior:"smooth",block:"start"}),140);
+}
+function closeStreet(){
+  state.street=null;el("street").hidden=true;renderMap();renderCrumbs();
+}
+function stSortRows(rows){
+  const k=stSort.key,d=stSort.dir;
+  return[...rows].sort((a,b)=>{
+    const va=k==="date"?-a.mo:a[k],vb=k==="date"?-b.mo:b[k];
+    return d*(va>vb?1:va<vb?-1:0);
+  });
+}
+function renderStreet(){
+  const sec=el("street");if(!sec)return;
+  if(!state.street){sec.hidden=true;return}
+  sec.hidden=false;
+  const t=T(),P=stProfile(state.street.id,stWin),st=P.st;
+  const fmtD=d=>d?`${d.getDate()}.${d.getMonth()+1}.${String(d.getFullYear()).slice(2)}`:"—";
+  const lvlTxt={strong:t.stStrong,med:t.stMedS,low:t.stLow,none:t.stNone}[P.lvl];
+  const kv=(k,v,s)=>`<div><div class="k">${k}</div><div class="v num">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const typeTxt={apt:t.tApt,garden:t.tGarden,ph:t.tPh};
+  const winSeg=`<div class="seg" role="group" aria-label="${t.stWinA}">${ST_WINS.map(w=>
+    `<button data-stwin="${w}" aria-pressed="${w===stWin}">${w}${t.stMoShort}</button>`).join("")}</div>`;
+  const th=(k,lb,num)=>`<th${num?' class="num"':""}><button data-stsort="${k}">${lb}${stSort.key===k?(stSort.dir<0?" ↓":" ↑"):""}</button></th>`;
+  const exactRows=stSortRows(P.exact).map(x=>`
+    <tr><td class="num">${fmtD(x.date)}</td><td class="num">${x.house}</td><td class="num">${x.rooms}</td>
+    <td class="num">${x.area}</td><td class="num">${x.floor}</td><td class="num">${x.year}</td>
+    <td class="num" style="font-weight:700">${fmtNIS(x.price)}</td><td class="num">${fmtNIS(x.psm)}</td>
+    <td>${typeTxt[x.type]||t.tApt}</td></tr>`).join("");
+  const compRows=stCompsOpen?stSortRows(P.comps).slice(0,14).map(x=>`
+    <tr style="opacity:.82"><td class="num">${fmtD(x.date)}</td>
+    <td>${state.lang==="he"?x.stHe:x.stEn} <span class="st-chip win num" style="padding:1px 6px">${x.distM}${t.stM}</span></td>
+    <td class="num">${x.rooms}</td><td class="num">${x.area}</td><td class="num">${x.floor}</td><td class="num">${x.year}</td>
+    <td class="num">${fmtNIS(x.price)}</td><td class="num">${fmtNIS(x.psm)}</td>
+    <td class="num">${x.score}</td></tr>`).join(""):"";
+  el("stBody").innerHTML=`
+    <div class="st-head">
+      <div>
+        <h3>${stTitleTxt(st)}</h3>
+        <div class="chain">${stChain(st)}${st.nbhd?"":` · ${t.stNbApprox}`}</div>
+        <div class="st-chips">
+          <span class="st-chip s-${P.lvl}">${lvlTxt} · ${t.stBasedOn(P.obs.n)}</span>
+          <span class="st-chip ${P.conf>=70?"s-strong":P.conf>=50?"s-med":"s-low"}">${t.stConf} ${P.conf}/100</span>
+          <span class="st-chip win num">${P.winUsed} ${t.stMonths}</span>
+          ${P.radiusUsed?`<span class="st-chip win num">${t.stRadius}: ${P.radiusUsed} ${t.stM}</span>`:""}
+          ${state.street.house?`<span class="st-chip house">${t.stHouse(state.street.house)}</span>`:""}
+        </div>
+      </div>
+      <div class="st-actions">${winSeg}
+        <button class="st-x" id="stClose" aria-label="${t.stClose}">✕</button></div>
+    </div>
+
+    ${P.obs.n===0?`<div class="st-rel">${t.stNoTx}</div>`:P.obs.n<5?`<div class="st-rel">${t.stThin}</div>`:""}
+
+    <div class="st-kpis">
+      ${kv(t.stTxN,P.obs.n,t.stWinOf(P.winUsed))}
+      ${kv(t.stMedP,P.obs.med?fmtNIS(P.obs.med):"—",t.stObserved)}
+      ${kv(t.stAvgP,P.obs.avg?fmtNIS(P.obs.avg):"—","")}
+      ${kv(t.stMedPsm,P.obs.medPsm?fmtNIS(P.obs.medPsm):"—","")}
+      ${kv(t.stChg12,P.trend!=null?ciPc(P.trend,1):"—",P.trend!=null?t.stTrendBase:t.stNoTrend)}
+      ${kv(t.stRentE,fmtNIS(P.rentEst),t.stRentNote)}
+      ${kv(t.stYield,P.yieldEst!=null?P.yieldEst.toFixed(2)+"%":"—",t.est)}
+      ${kv(t.stLast,fmtD(P.obs.last),"")}
+    </div>
+
+    ${P.blend?`<div class="st-blend">
+      <div class="bt">${t.stBlendT}</div>
+      <div class="bv num">${fmtNIS(P.blend.price)} <span style="font-size:13px;color:var(--ink-2)">· ${fmtNIS(P.blend.psm)} ${t.stPerSqm}</span></div>
+      <div class="bd">${t.stBlendWhy(P.obs.n,P.blend.nComps,P.blend.nStreets,P.radiusUsed)}</div>
+    </div>`:""}
+
+    <div class="st-grid">
+      <div>
+        <div class="ci-sect-t" style="margin-top:2px">${t.stTxT}</div>
+        <div class="ci-tblw"><table class="ci-tbl">
+          <thead><tr>${th("date",t.thDate)}${th("house",t.stHouseCol,1)}${th("rooms",t.thRooms,1)}${th("area",t.thAreaSqm,1)}${th("floor",t.thFloor,1)}${th("year",t.stYear,1)}${th("price",t.thTxPrice,1)}${th("psm",t.thTxPsm,1)}<th>${stCompsOpen?t.stCompCol:t.stType}</th></tr></thead>
+          <tbody>${exactRows||`<tr><td colspan="9" style="color:var(--ink-3)">${t.stNoRows}</td></tr>`}${compRows}</tbody>
+        </table></div>
+        ${P.comps.length?`<button class="ci-cta" id="stCompsBtn">${stCompsOpen?t.stHideComps:t.stShowComps(P.comps.length)}</button>`:""}
+      </div>
+      <div>
+        ${P.compStreets.length?`<div class="ci-sect-t">${t.stCompStreets}</div>
+        <div class="st-comp">${P.compStreets.slice(0,6).map(c=>`
+          <button class="cr" data-gost="${c.st.id}">
+            <span class="nm">${stName(c.st)}</span>
+            <span class="d num">${c.distM} ${t.stM}</span>
+            <span class="d num">${c.n} ${t.stTxShort}</span>
+          </button>`).join("")}</div>`:""}
+        <div class="ci-sect-t" style="margin-top:12px">${t.stTrendT}</div>
+        <div class="st-trend">
+          ${[[stTitleTxt(st),P.trend],...(P.anchor.id!==st.city?[[heName(P.anchor),P.am.yoy]]:[]),[heName(LOC[st.city]),P.cm.yoy]].map(([k,v])=>`
+            <div class="tr"><span class="tk">${k}</span>
+              <span class="ci-track"><i style="width:${v!=null?Math.min(100,Math.abs(v)*9+6):0}%;${v!=null&&v<0?"background:var(--down)":""}"></i></span>
+              <span class="tv num">${v!=null?ciPc(v,1):"—"}</span></div>`).join("")}
+        </div>
+        ${P.relN!=null?`<div class="st-rel"><b>${t.stRelT}:</b> ${fmtNIS(P.basePsm)} ${t.stPerSqm} ·
+          ${P.relN<0?t.stRelBelow(Math.abs(P.relN).toFixed(1),heName(P.anchor)):t.stRelAbove(P.relN.toFixed(1),heName(P.anchor))}
+          <span style="color:var(--ink-3)">(${heName(LOC[st.city])}: ${ciPc(P.relC,1)})</span></div>`:""}
+        <details class="ci-more st-prov"><summary>${t.stHow}</summary><div class="in">
+          <div class="st-note">${t.stProvBody(P.obs.n,P.comps.length,P.compStreets.length,P.radiusUsed,P.winUsed)}</div>
+          <div class="st-note">${t.stProvSrc}</div>
+        </div></details>
+        <div style="margin-top:10px"><span class="st-badge">${t.stBadgeTxt}</span></div>
+      </div>
+    </div>`;
+  el("stClose").addEventListener("click",closeStreet);
+  el("stBody").querySelectorAll("[data-stwin]").forEach(b=>b.addEventListener("click",()=>{
+    stWin=b.dataset.stwin;_stCache.prof={};renderStreet();renderMap();
+  }));
+  el("stBody").querySelectorAll("[data-stsort]").forEach(b=>b.addEventListener("click",()=>{
+    const k=b.dataset.stsort;
+    if(stSort.key===k)stSort.dir*=-1;else stSort={key:k,dir:k==="date"?-1:-1};
+    renderStreet();
+  }));
+  const cb=el("stCompsBtn");
+  if(cb)cb.addEventListener("click",()=>{stCompsOpen=!stCompsOpen;renderStreet()});
+}
+function initStreet(){
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("[data-gost]");
+    if(b){selectStreet(b.dataset.gost,b.dataset.house||null)}
+  });
+}
+
 /* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
    An analytical model computed ONLY from the LOCATIONS data already on
@@ -3395,6 +3924,15 @@ function ciPortHTML(){
     <div class="ci-cfline" style="margin-top:10px"><span class="k">${t.ciPortCf}</span>
       <span class="v num ${cfCls}">${ciM(Math.round(P.cfM))}</span>
       <span class="s">${t.ciPortCfS(ci.ltv)}</span></div>
+    <div class="ci-sect-t" style="margin-top:14px">${t.stTopT}</div>
+    <div class="st-topst">${stTopStreets().map((r,i)=>`
+      <button class="tsr" data-gost="${r.st.id}">
+        <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
+        <span><span class="nm">${stName(r.st)}</span><span class="ct"> · ${heName(LOC[r.st.city])} · ${r.n} ${t.stTxShort}</span></span>
+        <span class="ct num">${t.stConf} ${r.conf}%</span>
+        <span class="sc num">${r.score}</span>
+      </button>`).join("")}</div>
+    <div class="ci-note">${t.stTopNote}</div>
     <div class="ci-note" style="margin-top:9px">${t.ciCapNote(ci.capCity,ci.capLoc)}</div>
   </div>`;
 }
@@ -3470,11 +4008,16 @@ function initSearch(){
     const cities=LOCATIONS.filter(l=>l.type==="city"&&match(l)).slice(0,7);
     const nbhds=LOCATIONS.filter(l=>(l.type==="nbhd"||l.type==="sub")&&match(l)).slice(0,9);
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
+    const sts=stSearch(q);
     results=[...cities,...nbhds,...dists];
-    if(results.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
+    if(results.length===0&&sts.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
+      if(sts.length)html+=`<div class="sp-group">${t.stGroup}</div>`+sts.map(r=>
+        `<button class="sp-item" data-gost="${r.st.id}"${r.house?` data-house="${r.house}"`:""} role="option">
+          <span>${stName(r.st)} <small>· ${stChain(r.st)}</small></span>
+          <span class="num">${r.n} ${t.stTxShort}</span></button>`).join("");
       if(nbhds.length)html+=`<div class="sp-group">${t.nbhds}</div>`+nbhds.map(c=>item(c)).join("");
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
       pop.innerHTML=html;
@@ -3482,6 +4025,9 @@ function initSearch(){
     pop.classList.add("open");input.setAttribute("aria-expanded","true");
     pop.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();selectLocation(b.dataset.go);input.value="";close();
+    }));
+    pop.querySelectorAll("[data-gost]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();selectStreet(b.dataset.gost,b.dataset.house||null);input.value="";close();
     }));
   };
   const item=l=>{
@@ -3500,7 +4046,10 @@ function initSearch(){
       items.forEach((it,i)=>it.classList.toggle("active",i===activeIdx));
       items[activeIdx]?.scrollIntoView({block:"nearest"});
     }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
-      selectLocation(items[activeIdx].dataset.go);input.value="";close();
+      const it=items[activeIdx];
+      if(it.dataset.gost)selectStreet(it.dataset.gost,it.dataset.house||null);
+      else selectLocation(it.dataset.go);
+      input.value="";close();
     }else if(e.key==="Escape"){close()}
   });
   document.addEventListener("click",e=>{if(!e.target.closest(".search"))close()});
@@ -3518,7 +4067,7 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();renderChartTools();renderChart();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
+    renderCmd();renderStreet();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -3554,6 +4103,7 @@ setStatics();
 initSearch();
 initCapital();
 initCmd();
+initStreet();
 refresh(true);
 </script>
 
