@@ -1395,8 +1395,8 @@ details.ci-more>.in{padding:2px 13px 12px}
             <li data-i="srcA1">שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)</li>
             <li data-i="srcA2">מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% — אומדן</li>
             <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: 84,280 ארצית (סוף יוני 2026); תל אביב 9,549; רעננה 1,580</li>
-            <li data-i="srcA4">מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מהעסקאות, כשליש בסבסוד); תל אביב 1,236</li>
-            <li data-i="srcA5">שינוי אזורי, שכירות לדירה חדשה ושכונות — אומדנים נגזרים</li>
+            <li data-i="srcA4">מכירות — קצב שנתי: ארצית כ-34,000 (2025); תל אביב ~4,100 בקצב שנתי (למ״ס מחצית א׳ 2026: כ-2,056 מכירות, ~342/חודש)</li>
+            <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
           </ul>
           <p style="margin-top:8px" data-i="srcADemo">אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.</p>
         </div>
@@ -1441,10 +1441,19 @@ const UPDATED_AT = "2026-08";
    · yoy/y3 — general trend − 0.5pp (published gap between the CBS new-homes
      index −2.0% y/y and the general index −1.5%, May–Jun 2026); city-verified
      trends where published (Ashkelon, Ramla, Rehovot)
-   · rent — national/districts: CBS Q1-2026 averages × 1.08 (national ₪5,027
-     +3.5% y/y); cities: CBS 2025 averages × 1.08 — estimates
-   · tx — ≈34,000 new-home sales 2025 (37.5% of all deals); Tel Aviv 1,236
-     published; 2025 leaders TLV/Ofakim/Jerusalem/Lod/Netanya
+   · rent — OBSERVED CBS averages (national Q1-2026 ₪5,027 +3.5% y/y;
+     cities 2025) × 1.08 new-build premium. The ×1.08 is a MODEL
+     ASSUMPTION — no observed 2026 new-build rent series exists — so
+     derived rent is never presented as observed; projections use each
+     city's observed rentYoy, not a universal uplift
+   · tx — ANNUAL sales pace (months-of-supply = listings/(tx/12), so tx
+     must be annual). National ≈34,000 new-home sales 2025 (37.5% of all
+     deals). Tel Aviv 4,100 = CBS H1-2026 ≈2,056 sales annualized (~342/mo;
+     Dec-25–Feb-26 842 + Mar–May-26 1,137 per CBS releases). The 1,236
+     stored here before 30.08.2026 was Q2-2026 ALONE — a quarterly figure
+     that produced a false ~93-month supply reading. d-ta district tx =
+     sum of its city rows (~6,700).
+     2025-26 sales leaders TLV/Ofakim/Jerusalem/Lod/Netanya
    · listings — UNSOLD NEW INVENTORY, CBS end-June-2026 84,280 (~26 months of supply): published city
      figures marked o:"l" (TLV 9,549 · Ra'anana 1,580 · Lod 2,720 · Kiryat Gat
      2,190 · Be'er Ya'akov 1,760 · Ramat HaSharon 1,490 · Netivot 1,340 ·
@@ -1464,14 +1473,14 @@ const LOCATIONS = [
   {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,o:"l",
     base:{price:2780000,sqm:28600,rent:5820,yoy:-4.6,y3:2.9,rentYoy:3.5,tx:8200,listings:20620}},
   {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,o:"l",
-    base:{price:3750000,sqm:44800,rent:6850,yoy:-2.2,y3:3.7,rentYoy:3.5,tx:4300,listings:25320}},
+    base:{price:3750000,sqm:44800,rent:6850,yoy:-2.2,y3:3.7,rentYoy:3.5,tx:6700,listings:25320}},
   {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
     base:{price:3080000,sqm:32500,rent:5650,yoy:1.3,y3:6.7,rentYoy:3.5,tx:4200,listings:8200}},
   {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
     base:{price:1800000,sqm:18800,rent:3920,yoy:-0.4,y3:6.1,rentYoy:3.5,tx:7400,listings:13400}},
 
   {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,o:"tl",
-    base:{price:5100000,sqm:63700,rent:7780,yoy:-2.2,y3:3.5,rentYoy:4.1,tx:1236,listings:9549}},
+    base:{price:5100000,sqm:63700,rent:7780,yoy:-2.2,y3:3.5,rentYoy:4.1,tx:4100,listings:9549}},
   {id:"ramat-gan",type:"city",parent:"d-ta",he:"רמת גן",en:"Ramat Gan",lat:32.07,lng:34.825,
     base:{price:3440000,sqm:41900,rent:6150,yoy:-2.0,y3:4.1,rentYoy:3.7,tx:420,listings:1600}},
   {id:"givatayim",type:"city",parent:"d-ta",he:"גבעתיים",en:"Givatayim",lat:32.072,lng:34.81,e:1,
@@ -1811,8 +1820,8 @@ he:{
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
   srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
   srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
-  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב 1,236",
-  srcA5:"שינוי אזורי (הפרש המדדים 2.6-), שכירות לדירה חדשה (8%+) ונתוני שכונות — אומדנים נגזרים",
+  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
+  srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
   srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
@@ -1863,7 +1872,7 @@ he:{
   ciNoDeals:"עסקאות חיות מאומתות: 0 — ההקצאה למעלה היא יעד לאיתור ומו״מ, לא רכישה זמינה היום.",
   ciLevMkt:"סביבת מו״מ · שוק",
   ciMktScale:"פוטנציאל היקף · שוק", ciDealScale:"היקף עסקה מאומת", ciUnknown:"לא ידוע",
-  ciEvid:(inv,rate,ms,mom,sh)=>`נתמך ב: מלאי ${inv} יח׳ ÷ ~${rate} מכירות/חודש (חלון: 12 ח׳ מתגלגל) = ~${ms} חודשי היצע (ארצי ~26, רמה היסטורית גבוהה) · מומנטום שנתי ${mom} · תרחיש רכישה ממודל ≈${sh}% ממלאי האזור — מודל · רמת אזור`,
+  ciEvid:(inv,rate,ms,mom,sh)=>`נתמך ב: מלאי ${inv} יח׳ ÷ ~${rate} מכירות/חודש (חלון: קצב שנתי ÷ 12) = ~${ms} חודשי היצע (ארצי ~26 לפי למ״ס, רמה היסטורית גבוהה) · מומנטום שנתי ${mom} · תרחיש רכישה ממודל ≈${sh}% ממלאי האזור — מודל · רמת אזור`,
   ciDealLevNA:"מנוף ברמת עסקה: לא ידוע — אין מלאי פרויקט מאומת",
   ciTgt3:(a,b,c)=>`יעדים לפי אסטרטגיה: החזקה ≤ <b class="num">${a}</b> · מכירה ≤ <b class="num">${b}</b> · מרוכז ≤ <b class="num">${c}</b>`,
   ciRetLine:(r,p)=>`לפי תשואה נדרשת (${r}% שנתי על ההון · מדיניות): ≤ <b class="num">${p}</b>`,
@@ -1873,7 +1882,7 @@ he:{
   ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
   cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
   cvObs:"רשמי", cvEst:"אומדן", cvEstD:"אומדן נגזר · רזולוציית עיר",
-  ciProvLine:(a,b)=>`מקורות ותקופות: מדד מחירי דירות חדשות — למ״ס, מאי–יוני 2026 · עסקאות — סיכום שנתי 2025 (${a}) · מלאי לא-מכור — למ״ס, סוף יוני 2026 (${b}) · שכירות — למ״ס: ארצי רבעון 1/2026, ערים 2025, בהתאמת ‎+8% לדירה חדשה — אומדן נגזר, רזולוציה עיר/שכונה · ריבית בנק ישראל — 6.7.2026 · נשלף: 30.08.2026`,
+  ciProvLine:(a,b)=>`מקורות ותקופות: מדד מחירי דירות חדשות — למ״ס, מאי–יוני 2026 · עסקאות — קצב שנתי (ארצי 2025; ת״א: למ״ס מחצית א׳ 2026 במונחים שנתיים) (${a}) · מלאי לא-מכור — למ״ס, סוף יוני 2026 (${b}) · שכירות — נצפה: למ״ס ארצי רבעון 1/2026, ערים 2025; פרמיית ‎+8% לדירה חדשה — הנחת מודל, לא שכ״ד נצפה 2026; מגמה לפי שינוי עירוני נצפה · רזולוציה עיר/שכונה · ריבית בנק ישראל — 6.7.2026 · נשלף: 30.08.2026`,
   ciBulkT2:"תרחישי כוח-קנייה מרוכזת · מודל",
   ciBulkModelled:"תרחיש מודל — לא מלאי מאומת: היקפים היפותטיים מול נפח השוק המקומי. יהפוך ל'תרחיש רכישה מאומת' רק כשקיים מלאי פרויקט מאומת.",
   ciTgtUnits:n=>`יעד ~${n} יח׳ · איתור`,
@@ -1986,7 +1995,7 @@ he:{
   ciCapNote:(c,l)=>`מגבלות פיזור: עד ${c}% לעיר ועד ${l}% לשכונה בודדת. אזורים בוודאות נתונים נמוכה אינם מקבלים הקצאה. יכולת הפריסה מוגבלת לפי נפח עסקאות ומלאי זמין בכל אזור.`,
   ciAsmT:"הנחות המודל",
   ciAsmVac:"אי-תפוסה", ciAsmOpx:"תפעול ותחזוקה", ciAsmTax:"מס רכישה + עלויות",
-  ciAsmSell:"עלויות מכירה", ciAsmFin:"מימון", ciAsmApp:"עליית ערך: היסטוריה + מומנטום, לפי אופק",
+  ciAsmSell:"עלויות מכירה", ciAsmFin:"מימון", ciAsmApp:"עליית ערך: היסטוריה + מומנטום, לפי אופק", ciAsmRent:"שכ״ד דירה חדשה: בסיס למ״ס נצפה + פרמיה ‎8%",
   ciDisc:"מודל אנליטי המחושב מנתוני השוק שבלוח בלבד. כל הערכים המתייחסים לעתיד הם תרחישים מבוססי הנחות מפורשות — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.",
   ciWhyGap:(g,c)=>`מחיר למ״ר נמוך ב-${g}% מהממוצע ב${c}`,
   ciWhySib:g=>`נמוך ב-${g}% מאזורים מקבילים סביבו`,
@@ -2103,7 +2112,7 @@ en:{
   ciNoDeals:"Verified live deals: 0 — the allocation above is a sourcing/negotiation target, not a purchase available today.",
   ciLevMkt:"Negotiation environment · market",
   ciMktScale:"Market scale potential", ciDealScale:"Verified deal scale", ciUnknown:"Unknown",
-  ciEvid:(inv,rate,ms,mom,sh)=>`Supported by: ${inv} units inventory ÷ ~${rate} sales/month (window: rolling 12 mo.) = ~${ms} months of supply (national ~26, historically high) · ${mom} annual momentum · a modelled acquisition scenario ≈${sh}% of area inventory — modelled · area level`,
+  ciEvid:(inv,rate,ms,mom,sh)=>`Supported by: ${inv} units inventory ÷ ~${rate} sales/month (window: annual pace ÷ 12) = ~${ms} months of supply (national ~26 per CBS, historically high) · ${mom} annual momentum · a modelled acquisition scenario ≈${sh}% of area inventory — modelled · area level`,
   ciDealLevNA:"Deal-level leverage: unknown — no verified project inventory",
   ciTgt3:(a,b,c)=>`Targets by strategy: hold ≤ <b class="num">${a}</b> · resale ≤ <b class="num">${b}</b> · bulk ≤ <b class="num">${c}</b>`,
   ciRetLine:(r,p)=>`By required return (${r}%/yr on equity · policy, at current leverage): ≤ <b class="num">${p}</b>`,
@@ -2113,7 +2122,7 @@ en:{
   ciCoverT:"Data coverage", ciCoverMiss:"missing",
   cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
   cvObs:"official", cvEst:"estimate", cvEstD:"derived estimate · city resolution",
-  ciProvLine:(a,b)=>`Sources & periods: new-home price index — CBS, May–Jun 2026 · transactions — 2025 annual summary (${a}) · unsold inventory — CBS, end-June 2026 (${b}) · rent — CBS: national Q1/2026, cities 2025, +8% new-build adjustment — derived estimate, city/neighborhood resolution · BoI rate — 6.7.2026 · retrieved 30.08.2026`,
+  ciProvLine:(a,b)=>`Sources & periods: new-home price index — CBS, May–Jun 2026 · transactions — annual pace (national 2025; TLV: CBS H1-2026 annualized) (${a}) · unsold inventory — CBS, end-June 2026 (${b}) · rent — observed: CBS national Q1/2026, cities 2025; +8% new-build premium — MODEL ASSUMPTION, not observed 2026 rent; trend from each city's observed change · city/neighborhood resolution · BoI rate — 6.7.2026 · retrieved 30.08.2026`,
   ciBulkT2:"Bulk purchasing-power scenarios · model",
   ciBulkModelled:"Modelled scenario — not verified inventory: hypothetical sizes against local market volume. Becomes a 'verified bulk scenario' only with verified project inventory.",
   ciTgtUnits:n=>`target ~${n} units · sourcing`,
@@ -2226,7 +2235,7 @@ en:{
   ciCapNote:(c,l)=>`Diversification limits: up to ${c}% per city and ${l}% per single neighborhood. Areas with weak data confidence receive no allocation. Deployability is capped by each area's transaction volume and available inventory.`,
   ciAsmT:"Model assumptions",
   ciAsmVac:"Vacancy", ciAsmOpx:"Opex & upkeep", ciAsmTax:"Purchase tax + costs",
-  ciAsmSell:"Sale costs", ciAsmFin:"Financing", ciAsmApp:"Appreciation: history + momentum, per horizon",
+  ciAsmSell:"Sale costs", ciAsmFin:"Financing", ciAsmApp:"Appreciation: history + momentum, per horizon", ciAsmRent:"New-build rent: observed CBS base + 8% premium",
   ciDisc:"An analytical model computed only from the market data on this board. All forward-looking values are scenarios built on explicit assumptions — not a forecast, not a promised return, and not investment advice. Leverage amplifies both return and risk.",
   ciWhyGap:(g,c)=>`Price per m² is ${g}% below the ${c} average`,
   ciWhySib:g=>`${g}% below comparable nearby areas`,
@@ -4359,6 +4368,7 @@ function renderCapital(){
     t.ciAsmSell+" <b class='num'>"+(A.sellFees*100).toFixed(0)+"%</b>"+tag(t.ciModelTag),
     t.ciAsmFin+" <b class='num'>"+state.ci.rate+"% · "+state.ci.term+" "+t.ciYears+"</b>"+tag(t.ciModelTag),
     t.ciAsmApp+tag(t.ciModelTag),
+    t.ciAsmRent+tag(t.ciModelTag),
     t.ciAsmTargets(CI_INV.holdY,CI_INV.resaleDisc,CI_INV.bulkDisc)+tag(t.ciPolicyTag),
     t.ciAsmIrr(CI_INV.reqIRR,CI_INV.minConf)+tag(t.ciPolicyTag),
   ].map(x=>`<span class="ci-asm">${x}</span>`).join("");
