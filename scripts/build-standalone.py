@@ -17,6 +17,8 @@ DST = ROOT / "standalone" / "israel-new-homes-v2.html"
 PASSWORD = sys.argv[1] if len(sys.argv) > 1 else "test4321"
 
 s = SRC.read_text(encoding="utf-8")
+# the Artifact host supplies doctype/html/head/body — strip the deploy skeleton
+s = "\n".join(ln for ln in s.split("\n") if "<!-- doc-skeleton -->" not in ln)
 
 GATE_CSS = """
 /* ============================ offline access gate ============================ */

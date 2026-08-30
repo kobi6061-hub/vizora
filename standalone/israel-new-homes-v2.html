@@ -1,52 +1,106 @@
 <!-- =========================================================================
-     ISRAEL REAL ESTATE INTELLIGENCE · מודיעין נדל״ן ישראל
+     KOBIX REALESTATE · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
      Demo dataset only — clearly labeled; the UI reads a clean data model so a
      production API can replace DEMO_DATA without touching the interface.
      ========================================================================= -->
-<title>Kobix.online</title>
+<title>KobiX RealEstate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap">
 
 <style>
 /* ============================ tokens ============================ */
 :root{
-  --paper:#f9f9f7;          /* page plane (warm white) */
-  --panel:#fcfcfb;          /* card / chart surface     */
-  --panel-2:#f4f3f0;        /* inset surface            */
-  --ink:#0b0b0b;
-  --ink-2:#52514e;
-  --ink-3:#898781;
-  --hairline:#e1e0d9;
-  --baseline:#c3c2b7;
-  --ring:rgba(11,11,11,.10);
+  color-scheme:light;
+  /* ---- KobiX light: cool institutional canvas ---- */
+  --paper:#f3f5f9;          /* page plane               */
+  --panel:#ffffff;          /* card / chart surface     */
+  --panel-2:#eef1f7;        /* inset surface            */
+  --tint:#f6f8fc;           /* soft hero wash           */
+  --glass:rgba(255,255,255,.92);
+  --ink:#101b30;
+  --ink-2:#43536f;
+  --ink-3:#7a89a4;
+  --hairline:#e3e8f1;
+  --baseline:#c2cddf;
+  --edge:#d4dbe8;           /* deepened module borders  */
+  --grid-ln:#d4dbe8;        /* map surveyor grid        */
+  --ring:rgba(16,27,48,.10);
 
-  --accent:#2a78d6;         /* market blue              */
-  --accent-deep:#1c5cab;
-  --accent-wash:#eef4fc;
+  --accent:#2563eb;         /* market blue              */
+  --accent-deep:#1d4fc4;
+  --accent-wash:#e8effc;
 
-  --up:#006300;             /* delta up (text-safe)     */
-  --down:#d03b3b;           /* delta down               */
-  --up-wash:#e8f3e8;
-  --down-wash:#fbeeee;
+  --up:#0f7c3f;             /* delta up (text-safe)     */
+  --down:#d13438;           /* delta down               */
+  --up-wash:#e6f4ea;
+  --down-wash:#fbeceb;
 
-  --conf-high:#0ca30c;
-  --conf-med:#b97f00;
-  --conf-low:#c05621;
+  --conf-high:#159c48;
+  --conf-med:#b07f0a;
+  --conf-low:#c25419;
 
-  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; /* compare slots */
+  --c1:#2563eb; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; /* compare slots */
 
   --heat-1:#cde2fb; --heat-2:#9ec5f4; --heat-3:#6da7ec; --heat-4:#3987e5;
   --heat-5:#256abf; --heat-6:#184f95; --heat-7:#0d366b;
-  --brass:#9a742a; --navy:#16345c; --navy-wash:#e9eef6;
-  --wash-blue:#ecf3fc; --wash-brass:#f8f1e0;
-  --wash-red:#faedeb; --wash-green:#ecf3ec;
+  --div-1:#9e3a30; --div-2:#c97b6d; --div-3:#e8beb4; --div-4:#efeff2;
+  --div-5:#aac6e9; --div-6:#5b93d8; --div-7:#1f5aa8;
+  --brass:#a4791c; --gold:#c9a227;
+  --navy:#12294f; --navy-wash:#e7edf8;
+  --wash-blue:#e8effc; --wash-brass:#f7efdc;
+  --wash-red:#fbeceb; --wash-green:#e6f4ea;
 
   --f-display:"Heebo","Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-body:"Assistant","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
 
-  --r-s:6px; --r-m:9px;
-  --shadow-pop:0 6px 24px -8px rgba(11,11,11,.14),0 2px 6px -2px rgba(11,11,11,.08);
+  --r-s:7px; --r-m:12px;
+  --shadow-pop:0 10px 28px -10px rgba(16,27,48,.16),0 2px 8px -3px rgba(16,27,48,.08);
+  --shadow-card:0 1px 2px rgba(16,27,48,.05),0 4px 14px -8px rgba(16,27,48,.08);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  /* ---- KobiX dark: deep navy terminal ---- */
+  --paper:#0b1322;
+  --panel:#121d34;
+  --panel-2:#1a2745;
+  --tint:#101b31;
+  --glass:rgba(15,24,45,.92);
+  --ink:#eef2fa;
+  --ink-2:#b3c0d8;
+  --ink-3:#7c8bab;
+  --hairline:#233252;
+  --baseline:#34486e;
+  --edge:#2b3c60;
+  --grid-ln:#26365a;
+  --ring:rgba(255,255,255,.10);
+
+  --accent:#3b82f6;
+  --accent-deep:#7fabf7;
+  --accent-wash:#182b52;
+
+  --up:#4ade80;
+  --down:#f87171;
+  --up-wash:#123420;
+  --down-wash:#3b1b1a;
+
+  --conf-high:#4ade80;
+  --conf-med:#e2b93b;
+  --conf-low:#f09454;
+
+  --c1:#5b96f5; --c2:#f08a5c; --c3:#3fd0a0; --c4:#f2c14e;
+
+  --heat-1:#1d3a66; --heat-2:#255089; --heat-3:#2f6ab4; --heat-4:#4d8ad9;
+  --heat-5:#79aae8; --heat-6:#a8c8f2; --heat-7:#d9e8fb;
+  --div-1:#f0968b; --div-2:#c96a5e; --div-3:#7d4a44; --div-4:#31405f;
+  --div-5:#3e6396; --div-6:#6f9bd8; --div-7:#a9c8f0;
+  --brass:#d4af37; --gold:#d4af37;
+  --navy:#8fb1e8; --navy-wash:#1b2c50;
+  --wash-blue:#17274a; --wash-brass:#2c2410;
+  --wash-red:#3b1b1a; --wash-green:#123420;
+
+  --shadow-pop:0 12px 30px -10px rgba(0,0,0,.55),0 2px 8px -3px rgba(0,0,0,.4);
+  --shadow-card:0 1px 2px rgba(0,0,0,.35),0 6px 18px -10px rgba(0,0,0,.4);
 }
 
 /* ============================ base ============================ */
@@ -65,7 +119,7 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.25;text-w
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
-::selection{background:#cde2fb}
+::selection{background:var(--accent-wash)}
 
 .num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
 .tnum{font-variant-numeric:tabular-nums}
@@ -95,7 +149,7 @@ input,select{font:inherit;color:inherit}
 
 /* ============================ header ============================ */
 header.top{
-  position:sticky;top:0;z-index:60;background:rgba(249,249,247,.92);
+  position:sticky;top:0;z-index:60;background:var(--glass);
   backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);
 }
 .top-in{display:flex;align-items:center;gap:20px;height:52px}
@@ -107,12 +161,54 @@ nav.main{display:none;gap:2px;margin-inline-start:8px}
 nav.main a{font-size:13px;font-weight:500;color:var(--ink-2);text-decoration:none;
   padding:5px 11px;border-radius:var(--r-s)}
 nav.main a:hover{color:var(--ink);background:var(--panel-2)}
-.top-end{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
+.top-end{margin-inline-start:auto;display:flex;align-items:center;gap:10px}
+.lockup{display:flex;align-items:center;gap:9px;direction:ltr;flex:none}
+.globe{width:27px;height:27px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 34% 30%,#6ba6ff 0%,var(--accent) 48%,#123a86 100%);
+  position:relative;box-shadow:0 0 0 2.5px var(--accent-wash)}
+.globe::after{content:"";position:absolute;inset:5px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.45);border-inline-width:0;transform:rotate(-18deg)}
+.wordmark{text-align:left;font-family:var(--f-display);line-height:1.02}
+.wordmark b{font-size:16.5px;font-weight:800;letter-spacing:-.01em;display:block}
+.wordmark span{font-size:7.5px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+.page-ctx{font-size:13px;font-weight:700;color:var(--ink-2);margin-inline-start:18px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media(max-width:979px){.page-ctx{display:none}}
+.tool-btn{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;color:var(--ink-2);
+  border:1px solid var(--hairline);background:var(--panel);transition:border-color .15s,color .15s}
+.tool-btn:hover{border-color:var(--baseline);color:var(--ink)}
+.tool-btn svg{width:16px;height:16px}
+
+/* ---- icon rail (physical right, like the reference) ---- */
+.rail{position:fixed;top:0;bottom:0;right:0;z-index:55;width:72px;
+  display:flex;flex-direction:column;align-items:stretch;gap:2px;
+  padding:60px 7px 12px;background:var(--panel);border-left:1px solid var(--hairline)}
+[dir="ltr"] .rail{border-left:1px solid var(--hairline)}
+.ri{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:10px;
+  color:var(--ink-3);font-size:9.5px;font-weight:700;text-decoration:none;text-align:center;
+  transition:background .15s,color .15s;cursor:pointer}
+.ri svg{width:17px;height:17px}
+.ri:hover{color:var(--ink);background:var(--panel-2)}
+.ri.on{color:#fff;background:var(--accent)}
+[data-theme="dark"] .ri.on{color:#fff}
+.ri.rt{color:var(--ink-3)}
+.rail-sp{flex:1}
+@media(min-width:980px){body{padding-right:72px}}
+@media(max-width:979px){
+  .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:58px;flex-direction:row;
+    padding:5px 8px;gap:2px;overflow-x:auto;scrollbar-width:none;
+    border-left:none;border-top:1px solid var(--hairline)}
+  .rail::-webkit-scrollbar{display:none}
+  .ri{flex:1 0 56px;padding:5px 2px;font-size:9px}
+  .rail-sp{display:none}
+  body{padding-bottom:60px}
+}
+section.blk{scroll-margin-top:72px}
+@media(max-width:759px){section.blk{scroll-margin-top:126px}}
 .updated{display:none;font-size:12px;color:var(--ink-3);white-space:nowrap}
-@media(min-width:760px){.updated{display:block}}
+@media(min-width:1120px){.updated{display:block}}
 @media(max-width:759px){
-  .brand span{display:none}
-  .badge-demo{font-size:10px;padding:2px 8px}
+  .badge-demo{display:none}
   .asset-price{flex-wrap:wrap}
   .ap-v{font-size:27px}
   #periodBtns,#chartMetricBtns{flex-wrap:wrap;justify-content:flex-start}
@@ -176,7 +272,7 @@ section.blk{padding-block:22px}
 .blk-head .note{font-size:12px;color:var(--ink-3)}
 .card{background:var(--panel);border:1px solid var(--hairline);border-radius:var(--r-m);transition:border-color .2s}
 /* L2 — consolidated analytical modules */
-.map-card,.chart-card{border-color:#d8d6cb;box-shadow:0 1px 0 rgba(12,13,15,.035)}
+.map-card,.chart-card{border-color:var(--edge);box-shadow:var(--shadow-card)}
 /* L3 — the focused location asset */
 .profile{border-top:3px solid var(--navy)!important;box-shadow:var(--shadow-pop)}
 /* L1 — table & rankings sit on the canvas under a broadsheet rule */
@@ -187,8 +283,17 @@ section.blk{padding-block:22px}
 .kpis{display:grid;gap:9px;grid-template-columns:repeat(2,1fr)}
 @media(min-width:700px){.kpis{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1060px){.kpis{grid-template-columns:repeat(7,1fr)}.kpi.hero{grid-column:span 2}}
-.kpi{padding:12px 14px 11px;display:flex;flex-direction:column;gap:4px;min-width:0;position:relative}
-.kpi.hero{border-color:#cfcdc2;min-height:104px}
+.kpi{padding:12px 14px 11px;display:flex;flex-direction:column;gap:4px;min-width:0;position:relative;
+  box-shadow:var(--shadow-card)}
+.kico{position:absolute;top:9px;inset-inline-end:9px;width:23px;height:23px;border-radius:7px;
+  display:grid;place-items:center}
+.kico svg{width:14px;height:14px}
+.kico.t-b{background:var(--wash-blue);color:var(--accent-deep)}
+.kico.t-v{background:var(--navy-wash);color:var(--navy)}
+.kico.t-o{background:var(--wash-brass);color:var(--brass)}
+.kico.t-g{background:var(--wash-green);color:var(--up)}
+.kpi .lbl{padding-inline-end:26px}
+.kpi.hero{border-color:var(--edge);min-height:104px}
 .kpi.hero .val{font-size:31px;font-weight:800;letter-spacing:-.016em}
 .kpi.hero .lbl{color:var(--ink-2)}
 .kpi-spark{position:absolute;inset-inline-end:12px;bottom:9px;opacity:.9;pointer-events:none}
@@ -203,7 +308,7 @@ section.blk{padding-block:22px}
 /* ============================ layout grids ============================ */
 .grid-map{display:grid;gap:14px}
 @media(min-width:1000px){.grid-map{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
-.grid-main{display:grid;gap:14px}
+.grid-main{display:grid;gap:14px;align-items:start}
 @media(min-width:1000px){.grid-main{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
 
 /* map card */
@@ -225,15 +330,15 @@ section.blk{padding-block:22px}
 .geo-dot{cursor:pointer;stroke:var(--panel);transform-box:fill-box;transform-origin:center;
   transition:transform .18s,filter .18s,opacity .12s}
 .geo-dot:hover{transform:translateY(-1px);filter:drop-shadow(0 2px 2px rgba(12,13,15,.3))}
-.map-grid line{stroke:#d7d5c9;stroke-width:.55;stroke-dasharray:3 5}
+.map-grid line{stroke:var(--grid-ln);stroke-width:.55;stroke-dasharray:3 5}
 .map-grid text{font-size:5.5px;fill:var(--baseline);direction:ltr;font-family:var(--f-body)}
 .map-scope{display:flex;align-items:baseline;gap:7px;align-self:flex-start;min-width:0;
-  background:rgba(252,252,251,.94);border:1px solid var(--hairline);border-inline-start:3px solid var(--navy);
+  background:var(--glass);border:1px solid var(--hairline);border-inline-start:3px solid var(--navy);
   border-radius:var(--r-s);padding:4px 10px;box-shadow:0 2px 8px -3px rgba(12,13,15,.18);
   max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 .map-scope[hidden]{display:none}
 .map-scope b{font-size:11.5px;font-weight:700}
-.map-scope .num{font-size:10.5px;color:var(--ink-2);font-weight:600}
+.map-scope .ms{font-size:10.5px;color:var(--ink-2);font-weight:600}
 .geo-label{font-family:var(--f-body);font-weight:600;fill:var(--ink-2);pointer-events:none;direction:ltr}
 .geo-label.on-dark{fill:#fff}
 .map-tip{position:absolute;z-index:30;pointer-events:none;background:var(--ink);color:var(--paper);
@@ -245,8 +350,8 @@ section.blk{padding-block:22px}
 .map-scale .bar{flex:0 0 130px;height:8px;border-radius:99px;
   background:linear-gradient(to left,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
 [dir="ltr"] .map-scale .bar{background:linear-gradient(to right,var(--heat-1),var(--heat-3),var(--heat-5),var(--heat-7))}
-.map-scale .bar.div{background:linear-gradient(to left,#9e3a30,#e8beb4,#f0efec,#aac6e9,#1f5aa8)}
-[dir="ltr"] .map-scale .bar.div{background:linear-gradient(to right,#9e3a30,#e8beb4,#f0efec,#aac6e9,#1f5aa8)}
+.map-scale .bar.div{background:linear-gradient(to left,var(--div-1),var(--div-3),var(--div-4),var(--div-5),var(--div-7))}
+[dir="ltr"] .map-scale .bar.div{background:linear-gradient(to right,var(--div-1),var(--div-3),var(--div-4),var(--div-5),var(--div-7))}
 .map-side{display:flex;flex-direction:column;gap:8px;min-width:0}
 .rank-title{font-size:12.5px;font-weight:700;color:var(--ink-2)}
 .rank-list{display:flex;flex-direction:column}
@@ -265,7 +370,7 @@ section.blk{padding-block:22px}
 .profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .profile-head h3{font-size:19px;font-weight:700}
 .profile-head .where{font-size:12.5px;color:var(--ink-3);margin-top:1px}
-.asset-price{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+.asset-price{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;
   padding-bottom:12px;border-bottom:1px solid var(--hairline)}
 .ap-l{font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .est-tag{color:var(--brass);font-weight:700}
@@ -304,7 +409,7 @@ section.blk{padding-block:22px}
   border-radius:var(--r-s);padding:8px 12px;font-size:12px;line-height:1.55;box-shadow:var(--shadow-pop);
   opacity:0;transition:opacity .08s;white-space:nowrap;direction:rtl}
 .chart-tip.show{opacity:1}
-.chart-tip .d{color:#c3c2b7;font-size:11px;direction:ltr;text-align:end}
+.chart-tip .d{color:var(--paper);opacity:.62;font-size:11px;direction:ltr;text-align:end}
 .axis-txt{font-family:var(--f-body);font-size:10.5px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
 .grid-ln{stroke:var(--hairline);stroke-width:1}
 .base-ln{stroke:var(--baseline);stroke-width:1}
@@ -317,8 +422,8 @@ section.blk{padding-block:22px}
 .svr .cell .l{font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .svr .cell .v{font-family:var(--f-display);font-size:18px;font-weight:700;margin-top:3px;white-space:nowrap}
 .svr .cell .s{font-size:11px;color:var(--ink-3);margin-top:2px}
-.svr-formula{margin-top:10px;padding:11px 15px;background:var(--accent-wash);border:1px solid #d4e4f8;
-  border-radius:var(--r-m);font-size:13px;color:#173f66;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.svr-formula{margin-top:10px;padding:11px 15px;background:var(--accent-wash);border:1px solid var(--hairline);
+  border-radius:var(--r-m);font-size:13px;color:var(--navy);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
 .svr-formula b{font-weight:700}
 
 /* ============================ filters ============================ */
@@ -451,7 +556,7 @@ body::before{content:"";display:block;height:4px;
 [dir="ltr"] body::before{background:linear-gradient(to right,var(--navy) 0%,var(--accent) 48%,var(--brass) 100%)}
 
 /* warm hero wash */
-.command{background:linear-gradient(175deg,#f7f3e9 0%,var(--panel) 72%)}
+.command{background:linear-gradient(175deg,var(--tint) 0%,var(--panel) 72%)}
 
 /* colored section kickers — alternate accent / brass */
 .blk-head h2{display:flex;align-items:center;gap:9px}
@@ -463,8 +568,8 @@ main section.blk:nth-of-type(even) .blk-head h2::before{background:var(--brass)}
 .tape{display:flex;align-items:stretch;border-block:1px solid var(--hairline);
   margin-top:4px;overflow-x:auto;scrollbar-width:none;min-width:0;max-width:100%}
 .tape::-webkit-scrollbar{display:none}
-.tp{flex:1 0 auto;min-width:132px;display:flex;flex-direction:column;gap:1px;
-  padding:9px 18px;border-inline-end:1px solid var(--hairline)}
+.tp{flex:1 0 auto;min-width:0;display:flex;flex-direction:column;gap:1px;
+  padding:8px 12px;border-inline-end:1px solid var(--hairline)}
 .tp:last-child{border-inline-end:none}
 .tp-k{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;white-space:nowrap}
 .tp-v{font-family:var(--f-display);font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
@@ -483,11 +588,11 @@ main section.blk:nth-of-type(even) .blk-head h2::before{background:var(--brass)}
 .gd b{font-size:13.5px;display:block;margin-bottom:3px}
 .gd p{font-size:12.5px;line-height:1.6;color:var(--ink-2)}
 .gd-n.c1,.gd-n.c2,.gd-n.c3{background:var(--panel-2)}
-.gd-n.c1{color:var(--navy)} .gd-n.c2{color:#6d5316} .gd-n.c3{color:var(--ink-2)}
+.gd-n.c1{color:var(--accent-deep)} .gd-n.c2{color:var(--brass)} .gd-n.c3{color:var(--ink-2)}
 
 /* brass leader star in comparisons, warm footer rule */
 .cmp-bar.best .vl::after{color:var(--brass)}
-footer.foot{border-top-color:#e6d9ba}
+footer.foot{border-top-color:var(--edge)}
 
 /* ============================ footer ============================ */
 footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:20px;background:var(--panel)}
@@ -496,7 +601,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 /* mobile sticky mode bar */
 .m-mode{display:none}
 @media(max-width:759px){
-  .m-mode{display:flex;position:sticky;top:52px;z-index:50;background:rgba(249,249,247,.94);
+  .m-mode{display:flex;position:sticky;top:52px;z-index:50;background:var(--glass);
     backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);padding:8px 20px;justify-content:center}
 }
 .kpi-scroll{overflow-x:auto}
@@ -512,54 +617,56 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 .fade-swap{animation:fadeSwap .3s ease both}
 @keyframes fadeSwap{from{opacity:.35}to{opacity:1}}
 
-/* ============================ access gate ============================ */
-/* Locked is the default state — no class required, so nothing paints first. */
+
+/* ============================ offline access gate ============================ */
 body:not(.unlocked){overflow:hidden}
 body:not(.unlocked)>*:not(#gate){visibility:hidden}
-#gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
-  background:var(--paper);padding:24px}
+#gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--paper);padding:24px}
 #gate.hide{display:none}
-.gate-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--hairline);
-  border-radius:var(--r-m);padding:0 0 22px;overflow:hidden;box-shadow:var(--shadow-pop);text-align:center}
-.gate-ribbon{height:4px;background:linear-gradient(to left,var(--accent) 0%,#6da7ec 45%,var(--brass,#9a742a) 100%)}
-.gate-in{padding:26px 26px 0;display:flex;flex-direction:column;gap:6px}
-.gate-mark{font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:-.01em;direction:ltr}
-.gate-sub{font-size:12.5px;color:var(--ink-3);line-height:1.5}
-.gate-caveat{margin-top:6px;padding-top:8px;border-top:1px solid var(--hairline);
-  font-size:11px;font-weight:700;letter-spacing:.06em;color:#8a6d2a}
-.gate-form{display:flex;flex-direction:column;gap:9px;padding:20px 26px 0}
-#gatePass{height:44px;border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--paper);
-  padding-inline:14px;font-size:15px;text-align:center;letter-spacing:.14em;
+.gate-card{width:100%;max-width:372px;background:var(--panel);border:1px solid var(--edge);
+  border-radius:16px;padding:0 0 24px;overflow:hidden;box-shadow:var(--shadow-pop);text-align:center}
+.gate-rib{height:3px;background:linear-gradient(to left,var(--accent-deep),var(--accent) 55%,var(--gold))}
+.gate-in{padding:26px 26px 0;display:flex;flex-direction:column;gap:5px}
+.gate-mark{display:flex;align-items:center;justify-content:center;gap:9px;direction:ltr}
+.gate-mark .globe{width:30px;height:30px}
+.gate-word{text-align:left;font-family:var(--f-display);line-height:1.05}
+.gate-word b{font-size:19px;font-weight:800;display:block}
+.gate-word span{font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+.gate-sub{font-size:12.5px;color:var(--ink-3)}
+.gate-caveat{margin-top:9px;padding-top:10px;border-top:1px solid var(--hairline);
+  font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--brass)}
+.gate-form{display:flex;flex-direction:column;gap:9px;padding:18px 26px 0}
+#gatePass{height:45px;border:1px solid var(--baseline);border-radius:10px;background:var(--paper);
+  padding-inline:14px;font-size:15px;text-align:center;letter-spacing:.14em;color:var(--ink);
   transition:border-color .15s,box-shadow .15s}
-#gatePass:hover{border-color:var(--baseline)}
-#gatePass:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(42,120,214,.14)}
-.gate-btn{height:44px;border-radius:var(--r-m);background:var(--ink);color:var(--paper);
-  font-size:14px;font-weight:600;transition:opacity .15s}
-.gate-btn:hover{opacity:.88}
-.gate-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.gate-err{min-height:17px;font-size:12.5px;font-weight:600;color:var(--down);opacity:0;transition:opacity .15s}
+#gatePass:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.gate-btn{height:45px;border-radius:10px;background:var(--accent);color:#fff;
+  font-family:var(--f-display);font-size:14.5px;font-weight:700}
+.gate-btn:hover{filter:brightness(1.06)}
+.gate-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.gate-err{min-height:17px;font-size:12.5px;font-weight:700;color:var(--down);opacity:0;transition:opacity .15s}
 .gate-err.on{opacity:1}
-.gate-card.shake{animation:gateShake .28s ease}
-@keyframes gateShake{
-  0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
-  50%{transform:translateX(5px)} 75%{transform:translateX(-3px)}
-}
+.gate-card.shake{animation:gsh .28s ease}
+@keyframes gsh{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
 @media(prefers-reduced-motion:reduce){.gate-card.shake{animation:none}}
+/* offline build: no server session — hide logout controls */
+#logoutBtn,.rail a[href="/api/logout"]{display:none!important}
 </style>
 
 <!-- ============================ MARKUP ============================ -->
 
-<div id="gate" dir="rtl" role="dialog" aria-modal="true" aria-labelledby="gateMark">
+<div id="gate" dir="rtl" role="dialog" aria-modal="true" aria-labelledby="gateT">
   <div class="gate-card" id="gateCard">
-    <div class="gate-ribbon"></div>
+    <div class="gate-rib"></div>
     <div class="gate-in">
-      <div class="gate-mark" id="gateMark">Kobix.online</div>
+      <div class="gate-mark" aria-hidden="true"><span class="globe"></span>
+        <span class="gate-word"><b>KobiX</b><span>RealEstate V1</span></span></div>
+      <h2 id="gateT" style="font-size:15px;font-weight:700">מודיעין שוק הדירות החדשות</h2>
       <p class="gate-sub">הזינו סיסמה כדי להציג את הלוח</p>
       <p class="gate-caveat">לשימוש פנימי בלבד</p>
     </div>
     <form class="gate-form" id="gateForm" autocomplete="off">
-      <input id="gatePass" type="password" inputmode="text" autocomplete="off"
-             aria-label="סיסמה" placeholder="••••••••" autofocus>
+      <input id="gatePass" type="password" autocomplete="off" aria-label="סיסמה" placeholder="••••••••" autofocus>
       <button type="submit" class="gate-btn">כניסה</button>
       <p class="gate-err" id="gateErr" role="alert">סיסמה שגויה</p>
     </form>
@@ -568,21 +675,40 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
 
 <header class="top">
   <div class="wrap top-in">
-    <div class="brand">
-      <b data-i="brand">Kobix.online</b>
-      <span>Property Intelligence</span>
+    <div class="lockup" aria-label="KobiX RealEstate">
+      <span class="globe" aria-hidden="true"></span>
+      <span class="wordmark"><b>KobiX</b><span>RealEstate V1</span></span>
     </div>
-    <nav class="main" aria-label="ניווט" id="mainNav"></nav>
+    <span class="page-ctx" data-i="pageCtx">סקירת שוק הנדל״ן בישראל | פנימי</span>
     <div class="top-end">
       <span class="updated" id="updatedTxt"></span>
       <span class="badge-demo" data-i="calBadge">דירות חדשות מקבלן בלבד</span>
-      <div class="lang" role="group" aria-label="שפה">
+      <div class="lang" role="group" aria-label="שפה" data-ia="aLang">
         <button id="langHe" aria-pressed="true">HE</button>
         <button id="langEn" aria-pressed="false">EN</button>
       </div>
+      <button class="tool-btn" id="themeBtn" aria-label="מצב תצוגה" data-ia="aTheme"></button>
+      <a class="tool-btn" id="logoutBtn" href="/api/logout" aria-label="יציאה" data-ia="logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      </a>
     </div>
   </div>
 </header>
+
+<nav class="rail" aria-label="ניווט ראשי" data-ia="aNav" id="rail">
+  <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
+  <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
+  <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
+  <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
+  <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
+  <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
+  <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
+  <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
+  <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
+  <div class="rail-sp"></div>
+  <button class="ri rt" id="themeBtnRail" aria-label="מצב תצוגה" data-ia="aTheme"></button>
+  <a class="ri rt" href="/api/logout" aria-label="יציאה" data-ia="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg><span data-i="logout">יציאה</span></a>
+</nav>
 
 <div class="command">
   <div class="wrap command-in">
@@ -597,24 +723,25 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
                aria-expanded="false" aria-controls="searchPop" placeholder="חפש עיר, שכונה או רחוב...">
         <div class="search-pop" id="searchPop" role="listbox"></div>
       </div>
-      <div class="mode" role="group" aria-label="מצב שוק" id="modeToggle">
+      <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggle">
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
         <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
       </div>
     </div>
-    <nav class="crumbs" aria-label="מיקום" id="crumbs"></nav>
-    <div class="tape" aria-label="נתוני שוק ארציים — דירות חדשות">
-      <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn">-3.8%</span><span class="tp-s" data-i="blt1s">למ״ס · פברואר–מרץ 2026</span></div>
-      <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">~84,000</span><span class="tp-s" data-i="blt2s">כ-30 חודשי היצע · אפריל 2026</span></div>
+    <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
+    <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
+      <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
+      <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">84,280</span><span class="tp-s" data-i="blt2s">כ-26 חודשי היצע · יוני 2026</span></div>
       <div class="tp"><span class="tp-k" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num">~34,000</span><span class="tp-s" data-i="blt3s">37.5% מהעסקאות · כשליש בסבסוד</span></div>
       <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">חזרת מבצעי המימון · הכלכלן הראשי</span></div>
-      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני ביותר: אפריל 2026</span></div>
+      <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num">3.5%</span><span class="tp-s" data-i="tapeBoiS">הורדה שלישית ב-2026 · 6.7.2026</span></div>
+      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
     </div>
   </div>
 </div>
 
 <div class="m-mode">
-  <div class="mode" role="group" aria-label="מצב שוק" id="modeToggleM">
+  <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggleM">
     <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
     <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
   </div>
@@ -638,10 +765,10 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
       <span class="note" data-i="mapNote">לחיצה על אזור מעדכנת את כל הלוח</span>
     </div>
     <div class="card map-card">
-      <div class="map-tools" role="group" aria-label="מדד מפה" id="mapMetricBtns"></div>
+      <div class="map-tools" role="group" aria-label="מדד מפה" data-ia="aMetric" id="mapMetricBtns"></div>
       <div class="map-stage">
         <div class="map-holder">
-          <svg id="mapSvg" role="img" aria-label="מפת ישראל"></svg>
+          <svg id="mapSvg" role="img" aria-label="מפת ישראל" data-ia="aMap"></svg>
           <div class="map-tip" id="mapTip"></div>
         </div>
         <div class="map-side">
@@ -657,7 +784,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   </section>
 
   <!-- Profile + trend chart -->
-  <section class="blk">
+  <section class="blk" id="prices">
     <div class="grid-main">
       <div class="card chart-card">
         <div class="chart-tools">
@@ -729,7 +856,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   </section>
 
   <!-- Insights + confidence -->
-  <section class="blk">
+  <section class="blk" id="insightsSec">
     <div class="grid-insight">
       <div>
         <div class="blk-head"><h2 data-i="insTitle">תובנות מהנתונים</h2>
@@ -783,7 +910,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     </div>
   </section>
 
-  <section class="blk">
+  <section class="blk" id="sources">
     <details class="src">
       <summary>
         <span data-i="srcTitle">מקורות ומתודולוגיה</span>
@@ -794,9 +921,9 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
           <h4 data-i="srcATitle">בסיס הכיול — דירות חדשות מקבלן בלבד</h4>
           <p data-i="srcAText">כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:</p>
           <ul>
-            <li data-i="srcA1">שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 3.8%- (פברואר–מרץ 2026 מול שנה קודמת)</li>
+            <li data-i="srcA1">שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)</li>
             <li data-i="srcA2">מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% — אומדן</li>
-            <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: כ-84,000 ארצית (אפריל 2026); תל אביב 9,549; רעננה 1,580</li>
+            <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: 84,280 ארצית (סוף יוני 2026); תל אביב 9,549; רעננה 1,580</li>
             <li data-i="srcA4">מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מהעסקאות, כשליש בסבסוד); תל אביב 1,236</li>
             <li data-i="srcA5">שינוי אזורי, שכירות לדירה חדשה ושכונות — אומדנים נגזרים</li>
           </ul>
@@ -840,14 +967,14 @@ const UPDATED_AT = "2026-08";
    · price/sqm — CBS general city averages (Q4-2025–Q2-2026 publications) × 1.12
      new-build premium (published range 10–15%); psm ≈ price/95m² where no
      published figure — estimates
-   · yoy/y3 — general trend − 2.6pp (published gap between the CBS new-homes
-     index −3.8% y/y and the general index −1.2%); city-verified trends where
-     published (Ashkelon +10.7%, Ramla +8.1%, Rehovot +4.1% general)
-   · rent — CBS 2025 city rents × 1.08 where published, else price × district
-     gross yield — estimates
+   · yoy/y3 — general trend − 0.5pp (published gap between the CBS new-homes
+     index −2.0% y/y and the general index −1.5%, May–Jun 2026); city-verified
+     trends where published (Ashkelon, Ramla, Rehovot)
+   · rent — national/districts: CBS Q1-2026 averages × 1.08 (national ₪5,027
+     +3.5% y/y); cities: CBS 2025 averages × 1.08 — estimates
    · tx — ≈34,000 new-home sales 2025 (37.5% of all deals); Tel Aviv 1,236
      published; 2025 leaders TLV/Ofakim/Jerusalem/Lod/Netanya
-   · listings — UNSOLD NEW INVENTORY, CBS April-2026 ≈84,000: published city
+   · listings — UNSOLD NEW INVENTORY, CBS end-June-2026 84,280 (~26 months of supply): published city
      figures marked o:"l" (TLV 9,549 · Ra'anana 1,580 · Lod 2,720 · Kiryat Gat
      2,190 · Be'er Ya'akov 1,760 · Ramat HaSharon 1,490 · Netivot 1,340 ·
      Kiryat Ono 1,330 · Kiryat Ata 1,220 · Ofakim 1,090 · El'ad 1,070 ·
@@ -857,221 +984,228 @@ const UPDATED_AT = "2026-08";
      municipal naming); every figure is a city-anchored estimate               */
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,o:"tl",
-    base:{price:2730000,sqm:29700,rent:5350,yoy:-3.8,y3:2.7,rentYoy:4.3,tx:34000,listings:84000}},
+    base:{price:2730000,sqm:29700,rent:5430,yoy:-2.0,y3:4.8,rentYoy:3.5,tx:34000,listings:84280}},
 
   {id:"d-north",type:"district",parent:"il",he:"מחוז הצפון",en:"Northern District",lat:32.95,lng:35.4,
-    base:{price:1700000,sqm:17400,rent:3560,yoy:-1.0,y3:5.8,rentYoy:3.5,tx:4600,listings:9500}},
+    base:{price:1700000,sqm:17400,rent:3490,yoy:1.1,y3:7.9,rentYoy:3.5,tx:4600,listings:9500}},
   {id:"d-haifa",type:"district",parent:"il",he:"מחוז חיפה",en:"Haifa District",lat:32.6,lng:35.0,
-    base:{price:1990000,sqm:21800,rent:3730,yoy:-4.4,y3:3.2,rentYoy:3.8,tx:3800,listings:7000}},
+    base:{price:1990000,sqm:21800,rent:3960,yoy:-2.3,y3:5.3,rentYoy:3.5,tx:3800,listings:7000}},
   {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,o:"l",
-    base:{price:2780000,sqm:28600,rent:5510,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:8200,listings:20620}},
+    base:{price:2780000,sqm:28600,rent:5820,yoy:-4.6,y3:2.9,rentYoy:3.5,tx:8200,listings:20620}},
   {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,o:"l",
-    base:{price:3750000,sqm:44800,rent:7020,yoy:-4.3,y3:1.6,rentYoy:4.0,tx:4300,listings:25320}},
+    base:{price:3750000,sqm:44800,rent:6850,yoy:-2.2,y3:3.7,rentYoy:3.5,tx:4300,listings:25320}},
   {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
-    base:{price:3080000,sqm:32500,rent:5290,yoy:-0.8,y3:4.6,rentYoy:3.2,tx:4200,listings:8200}},
+    base:{price:3080000,sqm:32500,rent:5650,yoy:1.3,y3:6.7,rentYoy:3.5,tx:4200,listings:8200}},
   {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
-    base:{price:1800000,sqm:18800,rent:3890,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:7400,listings:13400}},
+    base:{price:1800000,sqm:18800,rent:3920,yoy:-0.4,y3:6.1,rentYoy:3.5,tx:7400,listings:13400}},
 
   {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,o:"tl",
-    base:{price:5100000,sqm:63700,rent:7780,yoy:-4.3,y3:1.4,rentYoy:4.1,tx:1236,listings:9549}},
+    base:{price:5100000,sqm:63700,rent:7780,yoy:-2.2,y3:3.5,rentYoy:4.1,tx:1236,listings:9549}},
   {id:"ramat-gan",type:"city",parent:"d-ta",he:"רמת גן",en:"Ramat Gan",lat:32.07,lng:34.825,
-    base:{price:3440000,sqm:41900,rent:6150,yoy:-4.1,y3:2.0,rentYoy:3.7,tx:420,listings:1600}},
+    base:{price:3440000,sqm:41900,rent:6150,yoy:-2.0,y3:4.1,rentYoy:3.7,tx:420,listings:1600}},
   {id:"givatayim",type:"city",parent:"d-ta",he:"גבעתיים",en:"Givatayim",lat:32.072,lng:34.81,e:1,
-    base:{price:3530000,sqm:37200,rent:6620,yoy:-4.1,y3:2.0,rentYoy:3.7,tx:180,listings:700}},
+    base:{price:3530000,sqm:37200,rent:6620,yoy:-2.0,y3:4.1,rentYoy:3.7,tx:180,listings:700}},
   {id:"bnei-brak",type:"city",parent:"d-ta",he:"בני ברק",en:"Bnei Brak",lat:32.084,lng:34.833,
-    base:{price:2740000,sqm:28800,rent:5140,yoy:-3.6,y3:2.6,rentYoy:3.9,tx:450,listings:1200}},
+    base:{price:2740000,sqm:28800,rent:5140,yoy:-1.5,y3:4.7,rentYoy:3.9,tx:450,listings:1200}},
   {id:"holon",type:"city",parent:"d-ta",he:"חולון",en:"Holon",lat:32.01,lng:34.77,
-    base:{price:2620000,sqm:27600,rent:4910,yoy:-4.4,y3:1.8,rentYoy:3.8,tx:500,listings:1500}},
+    base:{price:2620000,sqm:27600,rent:4910,yoy:-2.3,y3:3.9,rentYoy:3.8,tx:500,listings:1500}},
   {id:"bat-yam",type:"city",parent:"d-ta",he:"בת ים",en:"Bat Yam",lat:32.017,lng:34.745,
-    base:{price:2760000,sqm:29100,rent:5180,yoy:-5.1,y3:1.2,rentYoy:3.8,tx:450,listings:1400}},
+    base:{price:2760000,sqm:29100,rent:5180,yoy:-3.0,y3:3.3,rentYoy:3.8,tx:450,listings:1400}},
   {id:"herzliya",type:"city",parent:"d-ta",he:"הרצליה",en:"Herzliya",lat:32.166,lng:34.84,
-    base:{price:4000000,sqm:40000,rent:6940,yoy:-4.6,y3:1.0,rentYoy:3.3,tx:190,listings:800}},
+    base:{price:4000000,sqm:40000,rent:6940,yoy:-2.5,y3:3.1,rentYoy:3.3,tx:190,listings:800}},
   {id:"or-yehuda",type:"city",parent:"d-ta",he:"אור יהודה",en:"Or Yehuda",lat:32.03,lng:34.85,e:1,
-    base:{price:2690000,sqm:28300,rent:5040,yoy:-4.3,y3:1.6,rentYoy:4.0,tx:200,listings:600}},
+    base:{price:2690000,sqm:28300,rent:5040,yoy:-2.2,y3:3.7,rentYoy:4.0,tx:200,listings:600}},
   {id:"ramat-hasharon",type:"city",parent:"d-ta",he:"רמת השרון",en:"Ramat HaSharon",lat:32.146,lng:34.84,e:1,o:"l",
-    base:{price:4820000,sqm:50700,rent:9040,yoy:-4.3,y3:1.6,rentYoy:4.0,tx:220,listings:1490}},
+    base:{price:4820000,sqm:50700,rent:9040,yoy:-2.2,y3:3.7,rentYoy:4.0,tx:220,listings:1490}},
   {id:"petah-tikva",type:"city",parent:"d-center",he:"פתח תקווה",en:"Petah Tikva",lat:32.09,lng:34.887,
-    base:{price:2710000,sqm:29500,rent:5300,yoy:-6.4,y3:0.5,rentYoy:4.0,tx:520,listings:1600}},
+    base:{price:2710000,sqm:29500,rent:5300,yoy:-4.3,y3:2.6,rentYoy:4.0,tx:520,listings:1600}},
   {id:"rishon",type:"city",parent:"d-center",he:"ראשון לציון",en:"Rishon LeZion",lat:31.96,lng:34.8,
-    base:{price:2670000,sqm:29100,rent:5810,yoy:-6.9,y3:0.2,rentYoy:4.5,tx:480,listings:1450}},
+    base:{price:2670000,sqm:29100,rent:5810,yoy:-4.8,y3:2.3,rentYoy:4.5,tx:480,listings:1450}},
   {id:"netanya",type:"city",parent:"d-center",he:"נתניה",en:"Netanya",lat:32.32,lng:34.855,o:"t",
-    base:{price:2730000,sqm:28700,rent:5130,yoy:-6.1,y3:1.1,rentYoy:4.4,tx:950,listings:2250}},
+    base:{price:2730000,sqm:28700,rent:5130,yoy:-4.0,y3:3.2,rentYoy:4.4,tx:950,listings:2250}},
   {id:"kfar-saba",type:"city",parent:"d-center",he:"כפר סבא",en:"Kfar Saba",lat:32.175,lng:34.912,
-    base:{price:3360000,sqm:31100,rent:6310,yoy:-6.6,y3:0.6,rentYoy:6.0,tx:210,listings:800}},
+    base:{price:3360000,sqm:31100,rent:6310,yoy:-4.5,y3:2.7,rentYoy:6.0,tx:210,listings:800}},
   {id:"raanana",type:"city",parent:"d-center",he:"רעננה",en:"Ra'anana",lat:32.19,lng:34.87,o:"l",
-    base:{price:3580000,sqm:32600,rent:6590,yoy:-7.0,y3:0.0,rentYoy:4.2,tx:230,listings:1580}},
+    base:{price:3580000,sqm:32600,rent:6590,yoy:-4.9,y3:2.1,rentYoy:4.2,tx:230,listings:1580}},
   {id:"modiin",type:"city",parent:"d-center",he:"מודיעין-מכבים-רעות",en:"Modi'in",lat:31.9,lng:35.01,e:1,
-    base:{price:2860000,sqm:27200,rent:6050,yoy:-6.5,y3:0.7,rentYoy:4.1,tx:310,listings:950}},
+    base:{price:2860000,sqm:27200,rent:6050,yoy:-4.4,y3:2.8,rentYoy:4.1,tx:310,listings:950}},
   {id:"rehovot",type:"city",parent:"d-center",he:"רחובות",en:"Rehovot",lat:31.894,lng:34.81,
-    base:{price:2630000,sqm:27700,rent:5220,yoy:1.5,y3:3.4,rentYoy:4.2,tx:450,listings:1150}},
+    base:{price:2630000,sqm:27700,rent:5220,yoy:3.6,y3:5.5,rentYoy:4.2,tx:450,listings:1150}},
   {id:"lod",type:"city",parent:"d-center",he:"לוד",en:"Lod",lat:31.951,lng:34.896,e:1,o:"tl",
-    base:{price:2070000,sqm:21800,rent:4110,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:900,listings:2720}},
+    base:{price:2070000,sqm:21800,rent:4110,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:900,listings:2720}},
   {id:"ramla",type:"city",parent:"d-center",he:"רמלה",en:"Ramla",lat:31.929,lng:34.866,e:1,
-    base:{price:2020000,sqm:21300,rent:4010,yoy:5.5,y3:7.0,rentYoy:4.2,tx:500,listings:1050}},
+    base:{price:2020000,sqm:21300,rent:4010,yoy:7.6,y3:9.1,rentYoy:4.2,tx:500,listings:1050}},
   {id:"kiryat-ono",type:"city",parent:"d-center",he:"קריית אונו",en:"Kiryat Ono",lat:32.063,lng:34.858,e:1,o:"l",
-    base:{price:3700000,sqm:38900,rent:7340,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:250,listings:1330}},
+    base:{price:3700000,sqm:38900,rent:7340,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:250,listings:1330}},
   {id:"hod-hasharon",type:"city",parent:"d-center",he:"הוד השרון",en:"Hod HaSharon",lat:32.15,lng:34.888,e:1,
-    base:{price:3700000,sqm:38900,rent:7340,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:230,listings:800}},
+    base:{price:3700000,sqm:38900,rent:7340,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:230,listings:800}},
   {id:"yavne",type:"city",parent:"d-center",he:"יבנה",en:"Yavne",lat:31.878,lng:34.74,e:1,
-    base:{price:2800000,sqm:29500,rent:5550,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:350,listings:850}},
+    base:{price:2800000,sqm:29500,rent:5550,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:350,listings:850}},
   {id:"rosh-haayin",type:"city",parent:"d-center",he:"ראש העין",en:"Rosh HaAyin",lat:32.096,lng:34.957,e:1,
-    base:{price:2910000,sqm:30600,rent:5770,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:400,listings:950}},
+    base:{price:2910000,sqm:30600,rent:5770,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:400,listings:950}},
   {id:"beer-yaakov",type:"city",parent:"d-center",he:"באר יעקב",en:"Be'er Ya'akov",lat:31.94,lng:34.83,e:1,o:"l",
-    base:{price:2580000,sqm:27200,rent:5120,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:500,listings:1760}},
+    base:{price:2580000,sqm:27200,rent:5120,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:500,listings:1760}},
   {id:"elad",type:"city",parent:"d-center",he:"אלעד",en:"El'ad",lat:32.052,lng:34.951,e:1,o:"l",
-    base:{price:2130000,sqm:22400,rent:4220,yoy:-6.7,y3:0.8,rentYoy:4.2,tx:300,listings:1070}},
+    base:{price:2130000,sqm:22400,rent:4220,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:300,listings:1070}},
   {id:"jerusalem",type:"city",parent:"d-jm",he:"ירושלים",en:"Jerusalem",lat:31.77,lng:35.21,o:"t",
-    base:{price:3420000,sqm:36000,rent:5580,yoy:-0.8,y3:4.8,rentYoy:3.2,tx:1150,listings:5800}},
+    base:{price:3420000,sqm:36000,rent:5580,yoy:1.3,y3:6.9,rentYoy:3.2,tx:1150,listings:5800}},
   {id:"beit-shemesh",type:"city",parent:"d-jm",he:"בית שמש",en:"Beit Shemesh",lat:31.75,lng:34.99,
-    base:{price:2770000,sqm:29200,rent:4760,yoy:-0.6,y3:5.0,rentYoy:3.2,tx:850,listings:2000}},
+    base:{price:2770000,sqm:29200,rent:4760,yoy:1.5,y3:7.1,rentYoy:3.2,tx:850,listings:2000}},
   {id:"haifa",type:"city",parent:"d-haifa",he:"חיפה",en:"Haifa",lat:32.79,lng:34.99,
-    base:{price:2020000,sqm:23700,rent:3560,yoy:-4.4,y3:3.3,rentYoy:3.8,tx:650,listings:2400}},
+    base:{price:2020000,sqm:23700,rent:3560,yoy:-2.3,y3:5.4,rentYoy:3.8,tx:650,listings:2400}},
   {id:"hadera",type:"city",parent:"d-haifa",he:"חדרה",en:"Hadera",lat:32.437,lng:34.92,e:1,
-    base:{price:2180000,sqm:22900,rent:4090,yoy:-4.4,y3:3.2,rentYoy:3.8,tx:550,listings:1600}},
+    base:{price:2180000,sqm:22900,rent:4090,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:550,listings:1600}},
   {id:"kiryat-ata",type:"city",parent:"d-haifa",he:"קריית אתא",en:"Kiryat Ata",lat:32.8,lng:35.11,e:1,o:"l",
-    base:{price:1740000,sqm:18300,rent:3260,yoy:-4.4,y3:3.2,rentYoy:3.8,tx:350,listings:1220}},
+    base:{price:1740000,sqm:18300,rent:3260,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:350,listings:1220}},
   {id:"kiryat-bialik",type:"city",parent:"d-haifa",he:"קריית ביאליק",en:"Kiryat Bialik",lat:32.83,lng:35.09,e:1,o:"l",
-    base:{price:1790000,sqm:18800,rent:3360,yoy:-4.4,y3:3.2,rentYoy:3.8,tx:300,listings:1060}},
+    base:{price:1790000,sqm:18800,rent:3360,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:300,listings:1060}},
   {id:"ashdod",type:"city",parent:"d-south",he:"אשדוד",en:"Ashdod",lat:31.8,lng:34.65,
-    base:{price:2200000,sqm:23100,rent:4480,yoy:-3.0,y3:2.8,rentYoy:4.6,tx:520,listings:1900}},
+    base:{price:2200000,sqm:23100,rent:4480,yoy:-0.9,y3:4.9,rentYoy:4.6,tx:520,listings:1900}},
   {id:"beer-sheva",type:"city",parent:"d-south",he:"באר שבע",en:"Be'er Sheva",lat:31.25,lng:34.79,
-    base:{price:1390000,sqm:15500,rent:3280,yoy:-1.8,y3:5.2,rentYoy:5.2,tx:780,listings:2300}},
+    base:{price:1390000,sqm:15500,rent:3280,yoy:0.3,y3:7.3,rentYoy:5.2,tx:780,listings:2300}},
   {id:"ashkelon",type:"city",parent:"d-south",he:"אשקלון",en:"Ashkelon",lat:31.667,lng:34.573,
-    base:{price:1930000,sqm:20300,rent:4170,yoy:8.1,y3:9.4,rentYoy:4.0,tx:700,listings:1800}},
+    base:{price:1930000,sqm:20300,rent:4170,yoy:10.2,y3:11.5,rentYoy:4.0,tx:700,listings:1800}},
   {id:"kiryat-gat",type:"city",parent:"d-south",he:"קריית גת",en:"Kiryat Gat",lat:31.61,lng:34.77,e:1,o:"l",
-    base:{price:1740000,sqm:18300,rent:3760,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:550,listings:2190}},
+    base:{price:1740000,sqm:18300,rent:3760,yoy:-0.4,y3:6.1,rentYoy:4.0,tx:550,listings:2190}},
   {id:"ofakim",type:"city",parent:"d-south",he:"אופקים",en:"Ofakim",lat:31.314,lng:34.62,e:1,o:"tl",
-    base:{price:1400000,sqm:14700,rent:3020,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:800,listings:1090}},
+    base:{price:1400000,sqm:14700,rent:3020,yoy:-0.4,y3:6.1,rentYoy:4.0,tx:800,listings:1090}},
   {id:"netivot",type:"city",parent:"d-south",he:"נתיבות",en:"Netivot",lat:31.42,lng:34.59,e:1,o:"l",
-    base:{price:1510000,sqm:15900,rent:3260,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:500,listings:1340}},
+    base:{price:1510000,sqm:15900,rent:3260,yoy:-0.4,y3:6.1,rentYoy:4.0,tx:500,listings:1340}},
   {id:"eilat",type:"city",parent:"d-south",he:"אילת",en:"Eilat",lat:29.558,lng:34.95,e:1,
-    base:{price:2130000,sqm:22400,rent:4600,yoy:-2.5,y3:4.0,rentYoy:4.0,tx:250,listings:700}},
+    base:{price:2130000,sqm:22400,rent:4600,yoy:-0.4,y3:6.1,rentYoy:4.0,tx:250,listings:700}},
   {id:"afula",type:"city",parent:"d-north",he:"עפולה",en:"Afula",lat:32.61,lng:35.29,e:1,
-    base:{price:1680000,sqm:17700,rent:3510,yoy:-1.0,y3:5.8,rentYoy:3.5,tx:600,listings:1500}},
+    base:{price:1680000,sqm:17700,rent:3510,yoy:1.1,y3:7.9,rentYoy:3.5,tx:600,listings:1500}},
   {id:"karmiel",type:"city",parent:"d-north",he:"כרמיאל",en:"Karmiel",lat:32.92,lng:35.3,e:1,
-    base:{price:1510000,sqm:15900,rent:3160,yoy:-1.0,y3:5.8,rentYoy:3.5,tx:350,listings:900}},
+    base:{price:1510000,sqm:15900,rent:3160,yoy:1.1,y3:7.9,rentYoy:3.5,tx:350,listings:900}},
   {id:"nof-hagalil",type:"city",parent:"d-north",he:"נוף הגליל",en:"Nof HaGalil",lat:32.71,lng:35.32,e:1,
-    base:{price:1290000,sqm:13600,rent:2700,yoy:-1.0,y3:5.8,rentYoy:3.5,tx:400,listings:1100}},
+    base:{price:1290000,sqm:13600,rent:2700,yoy:1.1,y3:7.9,rentYoy:3.5,tx:400,listings:1100}},
 
   {id:"old-north",type:"nbhd",parent:"tlv",he:"הצפון הישן",en:"Old North",dx:2,dy:-12,e:1,
-    base:{price:6070000,sqm:73900,rent:9610,yoy:-4.1,y3:1.8,rentYoy:4.4,tx:45,listings:350}},
+    base:{price:6070000,sqm:73900,rent:9610,yoy:-2.0,y3:3.9,rentYoy:4.4,tx:45,listings:350}},
   {id:"florentin",type:"nbhd",parent:"tlv",he:"פלורנטין",en:"Florentin",dx:-4,dy:12,e:1,
-    base:{price:3610000,sqm:58200,rent:7880,yoy:-5.0,y3:0.5,rentYoy:4.8,tx:85,listings:520}},
+    base:{price:3610000,sqm:58200,rent:7880,yoy:-2.9,y3:2.6,rentYoy:4.8,tx:85,listings:520}},
   {id:"neve-tzedek",type:"nbhd",parent:"tlv",he:"נווה צדק",en:"Neve Tzedek",dx:-9,dy:6,e:1,
-    base:{price:7100000,sqm:80600,rent:11230,yoy:-3.4,y3:2.6,rentYoy:3.6,tx:12,listings:90}},
+    base:{price:7100000,sqm:80600,rent:11230,yoy:-1.3,y3:4.7,rentYoy:3.6,tx:12,listings:90}},
   {id:"ramat-aviv",type:"nbhd",parent:"tlv",he:"רמת אביב",en:"Ramat Aviv",dx:5,dy:-22,e:1,
-    base:{price:6160000,sqm:61600,rent:9290,yoy:-3.8,y3:2.0,rentYoy:3.9,tx:35,listings:420}},
+    base:{price:6160000,sqm:61600,rent:9290,yoy:-1.7,y3:4.1,rentYoy:3.9,tx:35,listings:420}},
   {id:"bavli",type:"nbhd",parent:"tlv",he:"בבלי",en:"Bavli",dx:4,dy:-8,e:1,
-    base:{price:6630000,sqm:74000,rent:11300,yoy:-3.9,y3:1.9,rentYoy:4.0,tx:25,listings:190}},
+    base:{price:6630000,sqm:74000,rent:11300,yoy:-1.8,y3:4.0,rentYoy:4.0,tx:25,listings:190}},
   {id:"lev-hair",type:"nbhd",parent:"tlv",he:"לב העיר",en:"City Center",dx:6,dy:0,e:1,
-    base:{price:4700000,sqm:67200,rent:8530,yoy:-4.5,y3:1.2,rentYoy:4.5,tx:60,listings:480}},
+    base:{price:4700000,sqm:67200,rent:8530,yoy:-2.4,y3:3.3,rentYoy:4.5,tx:60,listings:480}},
   {id:"yad-eliyahu",type:"nbhd",parent:"tlv",he:"יד אליהו",en:"Yad Eliyahu",dx:7,dy:8,e:1,
-    base:{price:3670000,sqm:47000,rent:6700,yoy:-4.8,y3:0.8,rentYoy:4.6,tx:70,listings:420}},
+    base:{price:3670000,sqm:47000,rent:6700,yoy:-2.7,y3:2.9,rentYoy:4.6,tx:70,listings:420}},
   {id:"rehavia",type:"nbhd",parent:"jerusalem",he:"רחביה",en:"Rehavia",dx:-8,dy:-3,e:1,
-    base:{price:4140000,sqm:47000,rent:6910,yoy:-1.2,y3:4.2,rentYoy:3.0,tx:18,listings:140}},
+    base:{price:4140000,sqm:47000,rent:6910,yoy:0.9,y3:6.3,rentYoy:3.0,tx:18,listings:140}},
   {id:"baka",type:"nbhd",parent:"jerusalem",he:"בקעה",en:"Baka",dx:-2,dy:10,e:1,
-    base:{price:3830000,sqm:42600,rent:6480,yoy:-0.5,y3:5.3,rentYoy:3.5,tx:40,listings:330}},
+    base:{price:3830000,sqm:42600,rent:6480,yoy:1.6,y3:7.4,rentYoy:3.5,tx:40,listings:330}},
   {id:"katamon",type:"nbhd",parent:"jerusalem",he:"קטמון הישנה",en:"Old Katamon",dx:-11,dy:7,e:1,
-    base:{price:3300000,sqm:40300,rent:6160,yoy:-0.7,y3:4.9,rentYoy:3.3,tx:30,listings:260}},
+    base:{price:3300000,sqm:40300,rent:6160,yoy:1.4,y3:7.0,rentYoy:3.3,tx:30,listings:260}},
   {id:"arnona",type:"nbhd",parent:"jerusalem",he:"ארנונה",en:"Arnona",dx:4,dy:12,e:1,
-    base:{price:3590000,sqm:37500,rent:5850,yoy:-0.6,y3:5.0,rentYoy:3.3,tx:55,listings:380}},
+    base:{price:3590000,sqm:37500,rent:5850,yoy:1.5,y3:7.1,rentYoy:3.3,tx:55,listings:380}},
   {id:"kiryat-yovel",type:"nbhd",parent:"jerusalem",he:"קריית יובל",en:"Kiryat Yovel",dx:-12,dy:5,e:1,
-    base:{price:2800000,sqm:30000,rent:4900,yoy:-1.1,y3:4.3,rentYoy:3.1,tx:75,listings:520}},
+    base:{price:2800000,sqm:30000,rent:4900,yoy:1.0,y3:6.4,rentYoy:3.1,tx:75,listings:520}},
   {id:"pisgat-zeev",type:"nbhd",parent:"jerusalem",he:"פסגת זאב",en:"Pisgat Ze'ev",dx:8,dy:-10,e:1,
-    base:{price:2460000,sqm:26300,rent:4300,yoy:-0.4,y3:5.2,rentYoy:3.2,tx:90,listings:610}},
+    base:{price:2460000,sqm:26300,rent:4300,yoy:1.7,y3:7.3,rentYoy:3.2,tx:90,listings:610}},
   {id:"jm-center",type:"nbhd",parent:"jerusalem",he:"מרכז העיר",en:"City Center",dx:2,dy:-9,e:1,
-    base:{price:2400000,sqm:34200,rent:5290,yoy:-1.4,y3:3.6,rentYoy:2.9,tx:65,listings:540}},
+    base:{price:2400000,sqm:34200,rent:5290,yoy:0.7,y3:5.7,rentYoy:2.9,tx:65,listings:540}},
   {id:"carmel",type:"nbhd",parent:"haifa",he:"הכרמל",en:"The Carmel",dx:-4,dy:8,e:1,
-    base:{price:2550000,sqm:27800,rent:4430,yoy:-3.8,y3:4.0,rentYoy:4.0,tx:50,listings:380}},
+    base:{price:2550000,sqm:27800,rent:4430,yoy:-1.7,y3:6.1,rentYoy:4.0,tx:50,listings:380}},
   {id:"ahuza",type:"nbhd",parent:"haifa",he:"אחוזה",en:"Ahuza",dx:-8,dy:3,e:1,
-    base:{price:2590000,sqm:28000,rent:4480,yoy:-4.0,y3:3.6,rentYoy:3.9,tx:45,listings:330}},
+    base:{price:2590000,sqm:28000,rent:4480,yoy:-1.9,y3:5.7,rentYoy:3.9,tx:45,listings:330}},
   {id:"hadar",type:"nbhd",parent:"haifa",he:"הדר הכרמל",en:"Hadar",dx:4,dy:-2,e:1,
-    base:{price:1060000,sqm:14100,rent:2810,yoy:-5.2,y3:2.2,rentYoy:3.4,tx:30,listings:240}},
+    base:{price:1060000,sqm:14100,rent:2810,yoy:-3.1,y3:4.3,rentYoy:3.4,tx:30,listings:240}},
   {id:"bat-galim",type:"nbhd",parent:"haifa",he:"בת גלים",en:"Bat Galim",dx:-2,dy:-8,e:1,
-    base:{price:1860000,sqm:21500,rent:3470,yoy:-4.7,y3:2.8,rentYoy:3.7,tx:30,listings:220}},
+    base:{price:1860000,sqm:21500,rent:3470,yoy:-2.6,y3:4.9,rentYoy:3.7,tx:30,listings:220}},
   {id:"neve-shaanan-h",type:"nbhd",parent:"haifa",he:"נווה שאנן",en:"Neve Sha'anan",dx:10,dy:6,e:1,
-    base:{price:1400000,sqm:17500,rent:3240,yoy:-4.5,y3:2.9,rentYoy:3.7,tx:40,listings:310}},
+    base:{price:1400000,sqm:17500,rent:3240,yoy:-2.4,y3:5.0,rentYoy:3.7,tx:40,listings:310}},
   {id:"em-hamoshavot",type:"nbhd",parent:"petah-tikva",he:"אם המושבות",en:"Em HaMoshavot",dx:-3,dy:-10,e:1,
-    base:{price:3480000,sqm:33200,rent:6370,yoy:-5.8,y3:1.2,rentYoy:4.3,tx:90,listings:450}},
+    base:{price:3480000,sqm:33200,rent:6370,yoy:-3.7,y3:3.3,rentYoy:4.3,tx:90,listings:450}},
   {id:"kfar-ganim",type:"nbhd",parent:"petah-tikva",he:"כפר גנים",en:"Kfar Ganim",dx:-8,dy:8,e:1,
-    base:{price:3160000,sqm:31600,rent:5940,yoy:-6.2,y3:0.8,rentYoy:4.1,tx:215,listings:380}},
+    base:{price:3160000,sqm:31600,rent:5940,yoy:-4.1,y3:2.9,rentYoy:4.1,tx:215,listings:380}},
   {id:"kfar-ganim-a",type:"sub",parent:"kfar-ganim",he:"כפר גנים א׳",en:"Kfar Ganim A",dx:-7,dy:8,e:1,
-    base:{price:2970000,sqm:29700,rent:5590,yoy:-6.0,y3:0.9,rentYoy:4.0,tx:55,listings:120}},
+    base:{price:2970000,sqm:29700,rent:5590,yoy:-3.9,y3:3.0,rentYoy:4.0,tx:55,listings:120}},
   {id:"kfar-ganim-b",type:"sub",parent:"kfar-ganim",he:"כפר גנים ב׳",en:"Kfar Ganim B",dx:8,dy:2,e:1,
-    base:{price:3160000,sqm:31600,rent:5940,yoy:-6.2,y3:0.8,rentYoy:4.1,tx:65,listings:130}},
+    base:{price:3160000,sqm:31600,rent:5940,yoy:-4.1,y3:2.9,rentYoy:4.1,tx:65,listings:130}},
   {id:"kfar-ganim-g",type:"sub",parent:"kfar-ganim",he:"כפר גנים ג׳",en:"Kfar Ganim C",dx:0,dy:-9,e:1,
-    base:{price:3440000,sqm:33900,rent:6350,yoy:-5.6,y3:1.4,rentYoy:4.2,tx:95,listings:130}},
+    base:{price:3440000,sqm:33900,rent:6350,yoy:-3.5,y3:3.5,rentYoy:4.2,tx:95,listings:130}},
 
   {id:"neve-oz",type:"nbhd",parent:"petah-tikva",he:"נווה עוז",en:"Neve Oz",dx:-9,dy:-2,e:1,
-    base:{price:2850000,sqm:30000,rent:5350,yoy:-6.0,y3:1.0,rentYoy:4.0,tx:60,listings:300}},
+    base:{price:2850000,sqm:30000,rent:5350,yoy:-3.9,y3:3.1,rentYoy:4.0,tx:60,listings:300}},
   {id:"kfar-avraham",type:"nbhd",parent:"petah-tikva",he:"כפר אברהם",en:"Kfar Avraham",dx:6,dy:-6,e:1,
-    base:{price:2380000,sqm:26300,rent:4760,yoy:-6.6,y3:0.4,rentYoy:3.9,tx:70,listings:350}},
+    base:{price:2380000,sqm:26300,rent:4760,yoy:-4.5,y3:2.5,rentYoy:3.9,tx:70,listings:350}},
   {id:"pt-center",type:"nbhd",parent:"petah-tikva",he:"מרכז העיר",en:"City Center",dx:6,dy:2,e:1,
-    base:{price:1800000,sqm:25100,rent:4540,yoy:-7.1,y3:-0.2,rentYoy:3.8,tx:110,listings:620}},
+    base:{price:1800000,sqm:25100,rent:4540,yoy:-5.0,y3:1.9,rentYoy:3.8,tx:110,listings:620}},
   {id:"ir-yamim",type:"nbhd",parent:"netanya",he:"עיר ימים",en:"Ir Yamim",dx:-7,dy:6,e:1,
-    base:{price:4210000,sqm:38300,rent:6800,yoy:-5.4,y3:1.9,rentYoy:4.6,tx:120,listings:700}},
+    base:{price:4210000,sqm:38300,rent:6800,yoy:-3.3,y3:4.0,rentYoy:4.6,tx:120,listings:700}},
   {id:"agamim",type:"nbhd",parent:"netanya",he:"אגמים",en:"Agamim",dx:-4,dy:10,e:1,
-    base:{price:3060000,sqm:31500,rent:5650,yoy:-5.7,y3:1.6,rentYoy:4.5,tx:110,listings:520}},
+    base:{price:3060000,sqm:31500,rent:5650,yoy:-3.6,y3:3.7,rentYoy:4.5,tx:110,listings:520}},
   {id:"kiryat-hasharon",type:"nbhd",parent:"netanya",he:"קריית השרון",en:"Kiryat HaSharon",dx:6,dy:4,e:1,
-    base:{price:2780000,sqm:29000,rent:5200,yoy:-6.0,y3:1.3,rentYoy:4.4,tx:120,listings:560}},
+    base:{price:2780000,sqm:29000,rent:5200,yoy:-3.9,y3:3.4,rentYoy:4.4,tx:120,listings:560}},
   {id:"netanya-center",type:"nbhd",parent:"netanya",he:"מרכז העיר",en:"City Center",dx:4,dy:-4,e:1,
-    base:{price:1860000,sqm:23900,rent:4430,yoy:-6.7,y3:0.4,rentYoy:4.2,tx:140,listings:800}},
+    base:{price:1860000,sqm:23900,rent:4430,yoy:-4.6,y3:2.5,rentYoy:4.2,tx:140,listings:800}},
   {id:"rg-center",type:"nbhd",parent:"ramat-gan",he:"מרכז העיר",en:"City Center",dx:3,dy:-6,e:1,
-    base:{price:2920000,sqm:40500,rent:5720,yoy:-4.4,y3:1.6,rentYoy:3.6,tx:70,listings:430}},
+    base:{price:2920000,sqm:40500,rent:5720,yoy:-2.3,y3:3.7,rentYoy:3.6,tx:70,listings:430}},
   {id:"tel-binyamin",type:"nbhd",parent:"ramat-gan",he:"תל בנימין",en:"Tel Binyamin",dx:-4,dy:5,e:1,
-    base:{price:3850000,sqm:45400,rent:6590,yoy:-3.7,y3:2.4,rentYoy:3.4,tx:8,listings:60}},
+    base:{price:3850000,sqm:45400,rent:6590,yoy:-1.6,y3:4.5,rentYoy:3.4,tx:8,listings:60}},
   {id:"nachlat-yehuda",type:"nbhd",parent:"rishon",he:"נחלת יהודה",en:"Nachlat Yehuda",dx:3,dy:-7,e:1,
-    base:{price:2880000,sqm:30100,rent:5700,yoy:-6.5,y3:0.5,rentYoy:4.4,tx:90,listings:420}},
+    base:{price:2880000,sqm:30100,rent:5700,yoy:-4.4,y3:2.6,rentYoy:4.4,tx:90,listings:420}},
   {id:"ramat-eliyahu",type:"nbhd",parent:"rishon",he:"רמת אליהו",en:"Ramat Eliyahu",dx:-5,dy:-3,e:1,
-    base:{price:2190000,sqm:24000,rent:4600,yoy:-7.3,y3:-0.3,rentYoy:4.3,tx:60,listings:380}},
+    base:{price:2190000,sqm:24000,rent:4600,yoy:-5.2,y3:1.8,rentYoy:4.3,tx:60,listings:380}},
   {id:"rishon-west",type:"nbhd",parent:"rishon",he:"מערב ראשון לציון",en:"West Rishon",dx:-10,dy:4,e:1,
-    base:{price:3070000,sqm:31900,rent:6050,yoy:-6.2,y3:0.7,rentYoy:4.5,tx:110,listings:480}},
+    base:{price:3070000,sqm:31900,rent:6050,yoy:-4.1,y3:2.8,rentYoy:4.5,tx:110,listings:480}},
   {id:"ramot-bs",type:"nbhd",parent:"beer-sheva",he:"רמות",en:"Ramot",dx:5,dy:-7,e:1,
-    base:{price:1560000,sqm:16600,rent:3500,yoy:-1.4,y3:5.6,rentYoy:5.1,tx:130,listings:540}},
+    base:{price:1560000,sqm:16600,rent:3500,yoy:0.7,y3:7.7,rentYoy:5.1,tx:130,listings:540}},
   {id:"neve-zeev",type:"nbhd",parent:"beer-sheva",he:"נווה זאב",en:"Neve Ze'ev",dx:-7,dy:5,e:1,
-    base:{price:1320000,sqm:14700,rent:3150,yoy:-2.0,y3:4.8,rentYoy:5.0,tx:110,listings:480}},
+    base:{price:1320000,sqm:14700,rent:3150,yoy:0.1,y3:6.9,rentYoy:5.0,tx:110,listings:480}},
   {id:"rova-17",type:"nbhd",parent:"ashdod",he:"רובע י״ז (המרינה)",en:"Quarter 17 (Marina)",dx:-6,dy:6,e:1,
-    base:{price:2860000,sqm:28700,rent:5300,yoy:-2.4,y3:3.4,rentYoy:4.6,tx:90,listings:420}},
+    base:{price:2860000,sqm:28700,rent:5300,yoy:-0.3,y3:5.5,rentYoy:4.6,tx:90,listings:420}},
   {id:"rova-a",type:"nbhd",parent:"ashdod",he:"רובע א׳",en:"Quarter A",dx:4,dy:-5,e:1,
-    base:{price:2020000,sqm:22000,rent:4180,yoy:-3.3,y3:2.4,rentYoy:4.4,tx:60,listings:300}},
+    base:{price:2020000,sqm:22000,rent:4180,yoy:-1.2,y3:4.5,rentYoy:4.4,tx:60,listings:300}},
   {id:"herzliya-pituach",type:"nbhd",parent:"herzliya",he:"הרצליה פיתוח",en:"Herzliya Pituach",dx:-9,dy:-2,e:1,
-    base:{price:6200000,sqm:55000,rent:10300,yoy:-4.2,y3:1.3,rentYoy:3.2,tx:20,listings:150}},
+    base:{price:6200000,sqm:55000,rent:10300,yoy:-2.1,y3:3.4,rentYoy:3.2,tx:20,listings:150}},
   {id:"herzliya-center",type:"nbhd",parent:"herzliya",he:"מרכז העיר",en:"City Center",dx:5,dy:2,e:1,
-    base:{price:3520000,sqm:36500,rent:6400,yoy:-4.9,y3:0.7,rentYoy:3.3,tx:70,listings:330}},
+    base:{price:3520000,sqm:36500,rent:6400,yoy:-2.8,y3:2.8,rentYoy:3.3,tx:70,listings:330}},
   {id:"buchmann",type:"nbhd",parent:"modiin",he:"בוכמן",en:"Buchmann",dx:-5,dy:4,e:1,
-    base:{price:3150000,sqm:29700,rent:6300,yoy:-6.1,y3:1.0,rentYoy:4.1,tx:70,listings:260}},
+    base:{price:3150000,sqm:29700,rent:6300,yoy:-4.0,y3:3.1,rentYoy:4.1,tx:70,listings:260}},
   {id:"kaiser",type:"nbhd",parent:"modiin",he:"קייזר",en:"Kaiser",dx:4,dy:-4,e:1,
-    base:{price:2800000,sqm:27000,rent:5850,yoy:-6.7,y3:0.4,rentYoy:4.0,tx:60,listings:240}},
+    base:{price:2800000,sqm:27000,rent:5850,yoy:-4.6,y3:2.5,rentYoy:4.0,tx:60,listings:240}},
   {id:"neve-zemer",type:"nbhd",parent:"raanana",he:"נווה זמר",en:"Neve Zemer",dx:3,dy:-6,e:1,
-    base:{price:3790000,sqm:33600,rent:6850,yoy:-6.6,y3:0.3,rentYoy:4.2,tx:120,listings:900}},
+    base:{price:3790000,sqm:33600,rent:6850,yoy:-4.5,y3:2.4,rentYoy:4.2,tx:120,listings:900}},
   {id:"ks-green",type:"nbhd",parent:"kfar-saba",he:"כפר סבא הירוקה",en:"Green Kfar Saba",dx:-4,dy:-5,e:1,
-    base:{price:3760000,sqm:33700,rent:6900,yoy:-6.2,y3:0.9,rentYoy:5.8,tx:90,listings:480}},
+    base:{price:3760000,sqm:33700,rent:6900,yoy:-4.1,y3:3.0,rentYoy:5.8,tx:90,listings:480}},
   {id:"rbs",type:"nbhd",parent:"beit-shemesh",he:"רמת בית שמש",en:"Ramat Beit Shemesh",dx:-3,dy:7,e:1,
-    base:{price:2630000,sqm:27700,rent:4520,yoy:-0.6,y3:4.9,rentYoy:3.2,tx:420,listings:1100}},
+    base:{price:2630000,sqm:27700,rent:4520,yoy:1.5,y3:7.0,rentYoy:3.2,tx:420,listings:1100}},
   {id:"rbs-a",type:"sub",parent:"rbs",he:"רמת בית שמש א׳",en:"RBS Aleph",dx:-8,dy:6,e:1,
-    base:{price:2680000,sqm:28200,rent:4600,yoy:-0.5,y3:5.0,rentYoy:3.2,tx:90,listings:220}},
+    base:{price:2680000,sqm:28200,rent:4600,yoy:1.6,y3:7.1,rentYoy:3.2,tx:90,listings:220}},
   {id:"rbs-b",type:"sub",parent:"rbs",he:"רמת בית שמש ב׳",en:"RBS Bet",dx:8,dy:7,e:1,
-    base:{price:2420000,sqm:25500,rent:4160,yoy:-0.9,y3:4.5,rentYoy:3.1,tx:70,listings:180}},
+    base:{price:2420000,sqm:25500,rent:4160,yoy:1.2,y3:6.6,rentYoy:3.1,tx:70,listings:180}},
   {id:"rbs-g",type:"sub",parent:"rbs",he:"רמת בית שמש ג׳",en:"RBS Gimel",dx:-8,dy:-5,e:1,
-    base:{price:2630000,sqm:27700,rent:4520,yoy:-0.4,y3:5.2,rentYoy:3.3,tx:110,listings:400}},
+    base:{price:2630000,sqm:27700,rent:4520,yoy:1.7,y3:7.3,rentYoy:3.3,tx:110,listings:400}},
   {id:"rbs-d",type:"sub",parent:"rbs",he:"רמת בית שמש ד׳",en:"RBS Dalet",dx:7,dy:-9,e:1,
-    base:{price:2500000,sqm:26300,rent:4300,yoy:-0.7,y3:4.8,rentYoy:3.2,tx:120,listings:300}},
+    base:{price:2500000,sqm:26300,rent:4300,yoy:1.4,y3:6.9,rentYoy:3.2,tx:120,listings:300}},
 
   {id:"kiryat-sharet",type:"nbhd",parent:"holon",he:"קריית שרת",en:"Kiryat Sharet",dx:4,dy:5,e:1,
-    base:{price:2670000,sqm:28200,rent:5010,yoy:-4.2,y3:1.9,rentYoy:3.8,tx:80,listings:380}},
+    base:{price:2670000,sqm:28200,rent:5010,yoy:-2.1,y3:4.0,rentYoy:3.8,tx:80,listings:380}},
   {id:"ramat-hanasi",type:"nbhd",parent:"bat-yam",he:"רמת הנשיא",en:"Ramat HaNasi",dx:-3,dy:4,e:1,
-    base:{price:2980000,sqm:31400,rent:5590,yoy:-4.8,y3:1.5,rentYoy:3.8,tx:90,listings:420}},
+    base:{price:2980000,sqm:31400,rent:5590,yoy:-2.7,y3:3.6,rentYoy:3.8,tx:90,listings:420}},
 ];
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 
+const mkStreets=(he,en)=>he.map((h,i)=>({he:h,en:en[i]}));
 const STREETS = {
-  tlv:["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
-  jerusalem:["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
-  haifa:["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
-  "petah-tikva":["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
-  "ramat-gan":["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
-  generic:["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"]
+  tlv:mkStreets(["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
+    ["Dizengoff","Rothschild","Ben Yehuda","Arlozorov","Ibn Gabirol","Sheinkin","HaYarkon","Frishman"]),
+  jerusalem:mkStreets(["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
+    ["Aza","HaPalmach","Bethlehem Rd.","Jaffa","Keren HaYesod","Emek Refaim","Herzog","Radak"]),
+  haifa:mkStreets(["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
+    ["Moriya","HaNassi","Horev","Herzl","Derech HaYam","Abba Hushi","Trumpeldor","Yafe Nof"]),
+  "petah-tikva":mkStreets(["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
+    ["Rothschild","Jabotinsky","HaHistadrut","Haim Ozer","Motta Gur","Kaplan","Baron Hirsch","HaAtzmaut"]),
+  "ramat-gan":mkStreets(["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
+    ["Bialik","Jabotinsky","HaRoe","Krinitzi","Ben Gurion Rd.","Herzl","Arlozorov","HaMaagal"]),
+  generic:mkStreets(["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"],
+    ["Herzl","Weizmann","Ben Gurion","Jabotinsky","Rothschild","HaAtzmaut","HaNassi","Bialik"])
 };
 
 /* -------- deterministic pseudo-random (stable across loads) -------- */
@@ -1079,12 +1213,12 @@ function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charC
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
 
 /* -------- historical monthly series, generated backwards ----------
-   year 0 follows the CBS NEW-HOMES price index (−3.8% y/y, Feb–Mar 2026);
+   year 0 follows the CBS NEW-HOMES price index (−2.0% y/y, May–Jun 2026);
    earlier years approximate the overall CBS index path (2025 −1.0%,
    2024 +7.7%, 2023 −1.4%, 2022 +17.1%, 2021 +11.6%, ...) since a long
    new-homes-only annual history is not published — labeled estimate.
    Years 0–1 are re-anchored per location to match its yoy/3y figures.  */
-const NATIONAL_CURVE=[-3.8,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
+const NATIONAL_CURVE=[-2.0,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
 const seriesCache={};
 function localCurve(l){
   const c=[...NATIONAL_CURVE];
@@ -1149,8 +1283,8 @@ he:{
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
   kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"מכירות קבלנים · 12 החודשים האחרונים", kpiNoteRent:"השכרת דירות חדשות (אומדן) · 12 החודשים האחרונים",
-  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 חודשים", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
-  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו משוערת", listings:"מלאי חדש שטרם נמכר",
+  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 ח׳", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
+  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
   vsPrev:"לעומת התקופה הקודמת", est:"אומדן", perMonth:"לחודש", perYear:"לשנה",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
@@ -1177,6 +1311,7 @@ he:{
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
   confTitle:"רמת ודאות",
   confHigh:"רמת ודאות גבוהה",confMed:"רמת ודאות בינונית",confLow:"רמת ודאות נמוכה",
+  confHighS:"גבוהה",confMedS:"בינונית",confLowS:"נמוכה",
   confBasedOn:n=>`מבוסס על <b class="num">${n}</b> עסקאות ב-12 החודשים האחרונים`,
   confBasedOnLow:n=>`מבוסס על <b class="num">${n}</b> עסקאות בלבד`,
   confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
@@ -1187,8 +1322,8 @@ he:{
   srcTitle:"מקורות ומתודולוגיה",
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
   srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
-  srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 3.8%- (פברואר–מרץ 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
-  srcA3:"מלאי שטרם נמכר — למ״ס: כ-84,000 דירות ארצית (אפריל 2026); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב 1,236",
+  srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
+  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — כ-34,000 דירות חדשות ב-2025 (37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב 1,236",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-), שכירות לדירה חדשה (8%+) ונתוני שכונות — אומדנים נגזרים",
   srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת המכירות האחרונות היא המחשת מבנה בלבד.",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
@@ -1196,24 +1331,30 @@ he:{
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
   srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
   srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
-  footLeft:"© 2026 Kobix.online · Property Intelligence · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
+  footLeft:"© 2026 KobiX RealEstate · Kobix.online · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
-  tapeRet:"נתונים נשלפו", tapeSrc:"מקור עדכני ביותר: אפריל 2026",
+  navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
+  logout:"יציאה", themeDark:"כהה", themeLight:"בהיר",
+  aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
+  aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
+  pageCtx:"סקירת שוק הנדל״ן בישראל | פנימי",
+  tapeRet:"נתונים נשלפו", tapeSrc:"מקור עדכני: אוג׳ 2026",
+  tapeBoi:"ריבית בנק ישראל", tapeBoiS:"הורדה שלישית ב-2026 · 6.7.2026",
   provBtn:"מקור הנתון", provOfficial:"פרסום רשמי", provEst:"אומדן", provDerived:"נגזר מפרסום",
   prov:{
     rows:[
       {n:"מחיר ממוצע",s:"ממוצעי למ״ס לפי עיר/מחוז (רבעונים א׳–ב׳ 2026) + פרמיית דירה חדשה ~12%",cls:l=>l.e?"אומדן":"נגזר מפרסום"},
-      {n:"שינוי שנתי",s:"מדד מחירי הדירות החדשות של הלמ״ס, פברואר–מרץ 2026; אזורי: מגמה כללית −2.6 נק׳",cls:l=>l.id==="il"?"פרסום רשמי":"נגזר מפרסום"},
-      {n:"שכירות",s:"ממוצעי שכ״ד למ״ס 2025 + ~8% פרמיית דירה חדשה",cls:()=>"אומדן"},
+      {n:"שינוי שנתי",s:"מדד מחירי הדירות החדשות של הלמ״ס, מאי–יוני 2026; אזורי: מגמה כללית −0.5 נק׳",cls:l=>l.id==="il"?"פרסום רשמי":"נגזר מפרסום"},
+      {n:"שכירות",s:"ממוצעי שכ״ד למ״ס — ארצי/מחוזי רבעון א׳ 2026, ערים 2025 — + ~8% פרמיה",cls:()=>"אומדן"},
       {n:"מכירות",s:"רשות המסים / הכלכלן הראשי, סיכום 2025",cls:l=>(l.o||"").includes("t")?"פרסום רשמי":"אומדן"},
-      {n:"מלאי",s:"למ״ס — מלאי דירות חדשות שטרם נמכרו, אפריל 2026",cls:l=>(l.o||"").includes("l")?"פרסום רשמי":"אומדן"},
+      {n:"מלאי",s:"למ״ס — מלאי דירות חדשות שטרם נמכרו, סוף יוני 2026",cls:l=>(l.o||"").includes("l")?"פרסום רשמי":"אומדן"},
     ],
     foot:"נשלף: 30.08.2026 · שכונות ותתי-שכונות: אומדן יחסי המעוגן בנתוני העיר · אינו סטטיסטיקה רשמית",
   },
   bltTitle:"מבזקי שוק · דירות חדשות", bltNote:"נתונים ארציים מהפרסומים הרשמיים · אמצע 2026",
-  blt1k:"מדד הדירות החדשות", blt1s:"שינוי שנתי · למ״ס, פברואר–מרץ 2026",
-  blt2k:"מלאי שטרם נמכר", blt2s:"כ-30 חודשי היצע · אפריל 2026",
+  blt1k:"מדד הדירות החדשות", blt1s:"שינוי שנתי · למ״ס, מאי–יוני 2026",
+  blt2k:"מלאי שטרם נמכר", blt2s:"כ-26 חודשי היצע · יוני 2026",
   blt3k:"מכירות קבלנים 2025", blt3s:"37.5% מהעסקאות · כשליש בסבסוד",
   blt4k:"מגמת מאי 2026", blt4v:"התאוששות ↗", blt4s:"חזרת מבצעי המימון · הכלכלן הראשי",
   gdTitle:"מדריך מהיר לרוכש דירה מקבלן", gdNote:"מידע כללי בלבד — אינו ייעוץ משפטי, מיסויי או פיננסי",
@@ -1232,9 +1373,9 @@ en:{
   updated:"New homes · CBS & Chief Economist · mid-2026",
   h1:"Israel\u2019s New-Home Market", h1sub:"Prices, trends and comparisons for new homes from developers only — no second-hand.",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
-  navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Neighborhoods",navCompare:"Compare",
+  navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Areas",navCompare:"Compare",
   kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Developer sales · trailing 12 months", kpiNoteRent:"New-home rentals (estimate) · trailing 12 months",
-  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12-month change", tx:"Developer sales", y3:"3-year change",
+  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12M change", tx:"Sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
   vsPrev:"vs. previous period", est:"estimate", perMonth:"per month", perYear:"per year",
   mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
@@ -1262,6 +1403,7 @@ en:{
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
   confTitle:"Data confidence",
   confHigh:"High confidence",confMed:"Medium confidence",confLow:"Low confidence",
+  confHighS:"High",confMedS:"Medium",confLowS:"Low",
   confBasedOn:n=>`Based on <b class="num">${n}</b> transactions in the last 12 months`,
   confBasedOnLow:n=>`Based on only <b class="num">${n}</b> transactions`,
   confHighNote:"A wide sample — the averages reflect this market well.",
@@ -1272,8 +1414,8 @@ en:{
   srcTitle:"Sources & methodology",
   srcATitle:"Calibration basis — new developer homes only",
   srcAText:"Every value on this board covers new homes from developers only (no second-hand), approximated from official publications as of mid-2026:",
-  srcA1:"National annual change — CBS new-homes price index: −3.8% (Feb–Mar 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
-  srcA3:"Unsold inventory — CBS: ~84,000 homes nationally (April 2026); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
+  srcA1:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
+  srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
   srcADemo:"These are calibrated approximations of the new-homes market only, for demonstration — not official statistics; the recent-sales table illustrates structure only.",
   srcBTitle:"Data types — never mixed without labeling",
@@ -1281,24 +1423,30 @@ en:{
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
   srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
   srcB4a:"Official indices",srcB4b:"CBS housing price indices",
-  footLeft:"© 2026 Kobix.online · Property Intelligence · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
+  footLeft:"© 2026 KobiX RealEstate · Kobix.online · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
-  tapeRet:"Data retrieved", tapeSrc:"Freshest source: April 2026",
+  navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
+  logout:"Log out", themeDark:"Dark", themeLight:"Light",
+  aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
+  aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
+  pageCtx:"Israeli Market Overview | Internal",
+  tapeRet:"Data retrieved", tapeSrc:"Freshest: Aug 2026",
+  tapeBoi:"Bank of Israel rate", tapeBoiS:"Third cut of 2026 · 6.7.2026",
   provBtn:"Data source", provOfficial:"Official", provEst:"Estimate", provDerived:"Derived",
   prov:{
     rows:[
       {n:"Average price",s:"CBS city/district averages (Q1–Q2 2026) + ~12% new-build premium",cls:l=>l.e?"Estimate":"Derived"},
-      {n:"Annual change",s:"CBS new-homes price index, Feb–Mar 2026; regional: general trend −2.6pp",cls:l=>l.id==="il"?"Official":"Derived"},
-      {n:"Rent",s:"CBS 2025 average city rents + ~8% new-build premium",cls:()=>"Estimate"},
+      {n:"Annual change",s:"CBS new-homes price index, May–Jun 2026; regional: general trend −0.5pp",cls:l=>l.id==="il"?"Official":"Derived"},
+      {n:"Rent",s:"CBS rents — national/district Q1-2026, cities 2025 — + ~8% premium",cls:()=>"Estimate"},
       {n:"Sales",s:"Tax Authority / Chief Economist, 2025 summary",cls:l=>(l.o||"").includes("t")?"Official":"Estimate"},
-      {n:"Inventory",s:"CBS — unsold new-home inventory, April 2026",cls:l=>(l.o||"").includes("l")?"Official":"Estimate"},
+      {n:"Inventory",s:"CBS — unsold new-home inventory, end-June 2026",cls:l=>(l.o||"").includes("l")?"Official":"Estimate"},
     ],
     foot:"Retrieved: 30.08.2026 · Neighborhoods & sub-areas: relative estimates anchored to the city · not official statistics",
   },
   bltTitle:"Market bulletins · new homes", bltNote:"National figures from the official publications · mid-2026",
-  blt1k:"New-homes price index", blt1s:"Annual change · CBS, Feb–Mar 2026",
-  blt2k:"Unsold inventory", blt2s:"≈30 months of supply · April 2026",
+  blt1k:"New-homes price index", blt1s:"Annual change · CBS, May–Jun 2026",
+  blt2k:"Unsold inventory", blt2s:"≈26 months of supply · June 2026",
   blt3k:"Developer sales, 2025", blt3s:"37.5% of all deals · ~a third subsidized",
   blt4k:"May 2026 trend", blt4v:"Recovery ↗", blt4s:"Financing deals returned · Chief Economist",
   gdTitle:"Quick guide to buying from a developer", gdNote:"General information only — not legal, tax or financial advice",
@@ -1424,13 +1572,13 @@ const DISTRICT_GEO={
 const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center":[32.14,34.97],
   "d-ta":[32.05,34.71],"d-jm":[31.72,35.22],"d-south":[30.7,34.86]};
 
-const HEAT=["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95","#0d366b"];
+const HEAT=[1,2,3,4,5,6,7].map(i=>`var(--heat-${i})`);
 function heatColor(t){return HEAT[Math.max(0,Math.min(HEAT.length-1,Math.round(t*(HEAT.length-1))))]}
-function heatText(t){return t>0.42?"#ffffff":"#173f66"}
+const isDark=()=>document.documentElement.dataset.theme==="dark";
 
 /* diverging ramp for polarity metrics (annual change can be negative):
    red = falling, neutral paper at zero, blue = rising */
-const HEAT_DIV=["#9e3a30","#c97b6d","#e8beb4","#f0efec","#aac6e9","#5b93d8","#1f5aa8"];
+const HEAT_DIV=[1,2,3,4,5,6,7].map(i=>`var(--div-${i})`);
 function divColor(t){return HEAT_DIV[Math.max(0,Math.min(HEAT_DIV.length-1,Math.round(t*(HEAT_DIV.length-1))))]}
 const isDivergingMap=()=>state.mapMetric==="yoy";
 
@@ -1450,19 +1598,70 @@ function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
-  document.title="Kobix.online";
+  document.title="KobiX RealEstate";
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
   });
+  document.querySelectorAll("[data-ia]").forEach(node=>{
+    const key=node.dataset.ia;
+    if(typeof t[key]==="string")node.setAttribute("aria-label",t[key]);
+  });
   el("updatedTxt").textContent=t.updated;
   el("searchInput").placeholder=t.searchPh;
   el("footLeft").textContent=t.footLeft;
-  el("mainNav").innerHTML=[
-    ["#overview",t.navOverview],["#map",t.navMap],["#rankings",t.navCities],
-    ["#table",t.navNbhd],["#compare",t.navCompare],["#guide",t.navGuide]
-  ].map(([h,l])=>`<a href="${h}">${l}</a>`).join("");
+  applyThemeIcon();
 }
+
+/* ---------- theme toggle + rail ---------- */
+const THEME_KEY="kobix:theme";
+function currentTheme(){return document.documentElement.dataset.theme==="dark"?"dark":"light"}
+function applyThemeIcon(){
+  const dark=currentTheme()==="dark";
+  const sun='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/></svg>';
+  const moon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.4 14.2A8.5 8.5 0 0 1 9.8 3.6a8.5 8.5 0 1 0 10.6 10.6z"/></svg>';
+  const t=T&&I18N?T():null;
+  const lbl=dark?(t?t.themeLight:"Light"):(t?t.themeDark:"Dark");
+  const btn=el("themeBtn");if(btn)btn.innerHTML=dark?sun:moon;
+  const rb=el("themeBtnRail");if(rb)rb.innerHTML=(dark?sun:moon)+`<span>${lbl}</span>`;
+}
+function setTheme(mode){
+  if(mode==="dark")document.documentElement.dataset.theme="dark";
+  else delete document.documentElement.dataset.theme;
+  try{localStorage.setItem(THEME_KEY,mode)}catch(e){}
+  applyThemeIcon();
+}
+(function initTheme(){
+  let m="light";
+  try{m=localStorage.getItem(THEME_KEY)||"light"}catch(e){}
+  setTheme(m==="dark"?"dark":"light");
+})();
+["themeBtn","themeBtnRail"].forEach(id=>{
+  const b=el(id);if(b)b.addEventListener("click",()=>setTheme(currentTheme()==="dark"?"light":"dark"));
+});
+/* scroll-spy for the rail */
+(function railSpy(){
+  const links=[...document.querySelectorAll(".rail .ri[data-sec]")];
+  if(!links.length)return;
+  const map={};links.forEach(a=>map[a.dataset.sec]=a);
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        links.forEach(a=>a.classList.remove("on"));
+        const a=map[en.target.id];if(a)a.classList.add("on");
+      }
+    });
+  },{rootMargin:"-35% 0px -55% 0px"});
+  links.forEach(a=>{const sec=document.getElementById(a.dataset.sec);if(sec)io.observe(sec)});
+  links.forEach(a=>a.addEventListener("click",()=>{
+    links.forEach(x=>x.classList.remove("on"));a.classList.add("on");
+  }));
+  window.addEventListener("scroll",()=>{
+    if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-6){
+      links.forEach(x=>x.classList.remove("on"));links[links.length-1].classList.add("on");
+    }
+  },{passive:true});
+})();
 
 /* ---------- breadcrumb ---------- */
 function renderCrumbs(){
@@ -1498,12 +1697,29 @@ function renderKPIs(skeleton){
     {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",s:t.est},
     {k:"listings",l:t.listings,v:m.listings,f:fmtInt},
   ];
+  const KICO={
+    price:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
+    median:'<path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/>',
+    sqm:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>',
+    yoy:'<path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/>',
+    tx:'<path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/>',
+    y3:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/>',
+    rent:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+    rentMedian:'<path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/>',
+    rentPsm:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>',
+    rentYoy:'<path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/>',
+    yield:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 15.5l7-7"/><circle cx="9.3" cy="9.3" r="1.2"/><circle cx="14.7" cy="14.7" r="1.2"/>',
+    listings:'<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/>',
+  };
+  const KTONE={price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
+    rent:"b",rentMedian:"v",rentPsm:"o",rentYoy:"g",yield:"g",listings:"v"};
   el("kpis").innerHTML=cards.map((c,i)=>`
     <div class="card kpi ${i===0?"hero":""} ${skeleton?"skel":""}">
+      <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
       <span class="lbl">${c.l}</span>
       <span class="val ${c.cls||""}"><span class="num" data-kpi="${c.k}">${c.f(c.v)}</span></span>
       <span class="cmp">${c.d!==undefined?deltaHTML(c.d,true)+`<span>${t.vsPrev}</span>`:(c.s||"&nbsp;")}</span>
-      ${i===0?`<div class="kpi-spark" aria-hidden="true">${sparkSVG(state.locId,150,38,37)}</div>`:""}
+      ${i===0?`<div class="kpi-spark" aria-hidden="true">${sparkSVG(state.locId,150,38,13)}</div>`:""}
     </div>`).join("");
   if(!skeleton&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
     el("kpis").querySelectorAll("[data-kpi]").forEach(node=>{
@@ -1570,7 +1786,7 @@ function renderMap(){
   const maxAbs=Math.max(Math.abs(lo),Math.abs(hi))||1;
   const norm=v=>div?0.5+(v/maxAbs)*0.5:(hi===lo?0.5:(v-lo)/(hi-lo));
   const colorOf=t=>div?divColor(t):heatColor(t);
-  const onDark=t=>div?(t<0.16||t>0.84):t>0.42;
+  const onDark=t=>div?(t<0.16||t>0.84):(isDark()?t<=0.42:t>0.42);
   let inner="";
   const defs=`<defs><clipPath id="ilClip"><path d="${israelPath}"/></clipPath>
     <filter id="mapShadow" x="-25%" y="-25%" width="150%" height="150%">
@@ -1673,7 +1889,7 @@ function renderMap(){
   el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
   el("mapScope").hidden=state.locId==="il";
-  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="num">${mm.label()}: ${mm.fmt(mm.get(metricsOf(state.locId)))}</span>`;
+  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="ms">${mm.label()}: <span class="num">${mm.fmt(mm.get(metricsOf(state.locId)))}</span></span>`;
   el("scaleLow").textContent=mm.fmt(div?-maxAbs:lo);
   el("scaleHigh").textContent=mm.fmt(div?maxAbs:hi);
   el("scaleBar").classList.toggle("div",div);
@@ -1909,7 +2125,7 @@ function renderTable(){
     }).join("")}</tr></thead>
     <tbody>${data.map(r=>`
       <tr data-go="${r.loc.id}" tabindex="0"${r.loc.id===state.locId?' class="sel"':''}>
-        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHigh,med:t.confMed,low:t.confLow}[r.m.confidence].split(" ").pop()}</span></span></td>
+        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHighS,med:t.confMedS,low:t.confLowS}[r.m.confidence]}</span></span></td>
         <td class="num">${fmtNIS(r.m.price)}</td>
         <td class="num">${fmtNIS(r.m.sqm)}</td>
         <td class="num">${fmtNIS(r.m.rent)}</td>
@@ -1995,7 +2211,7 @@ function renderCompare(){
   const t=T();
   el("cmpPick").innerHTML=state.compare.map((id,i)=>`
     <span class="cmp-chip"><i style="background:${CMP_COLORS[i]}"></i>${cmpLabel(id)}
-      <button data-rm="${id}" aria-label="הסר">×</button></span>`).join("")+
+      <button data-rm="${id}" aria-label="${t.aRemove}">×</button></span>`).join("")+
     (state.compare.length<4?`
       <div class="cmp-add"><button id="cmpAddBtn">${t.cmpAdd}</button>
         <div class="search-pop" id="cmpPop" role="listbox"></div></div>`
@@ -2052,8 +2268,11 @@ function renderInsights(){
     ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
     :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
   if(state.locId==="il")out.push(he
-    ?`מלאי הדירות החדשות שטרם נמכרו: כ-<b class="num">84,000</b> ארצית (אפריל 2026) — כ-<b class="num">30</b> חודשי היצע; במאי נרשמה התאוששות במכירות על רקע חזרת מבצעי המימון.`
-    :`Unsold new-home inventory: ~<b class="num">84,000</b> nationally (April 2026) — ≈<b class="num">30</b> months of supply; May sales rebounded as financing deals returned.`);
+    ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית (סוף יוני 2026) — כ-<b class="num">26</b> חודשי היצע; קצב הירידה השנתי של מדד הדירות החדשות התמתן ל-<b class="num">2.0%-</b>.`
+    :`Unsold new-home inventory: <b class="num">84,280</b> nationally (end-June 2026) — ≈<b class="num">26</b> months of supply; the new-homes index's annual decline eased to <b class="num">-2.0%</b>.`);
+  if(state.locId==="il")out.push(he
+    ?`צד ההיצע ממשיך להתרחב: <b class="num">80,010</b> התחלות בנייה ב-2025 (<b class="num">+14.6%</b>) — השיא מאז 1991; ריבית בנק ישראל ירדה ל-<b class="num">3.5%</b>.`
+    :`Supply keeps expanding: <b class="num">80,010</b> housing starts in 2025 (<b class="num">+14.6%</b>) — the highest since 1991; the Bank of Israel rate is down to <b class="num">3.5%</b>.`);
   if(m.rentYoy>m.yoy+0.15)out.push(he
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);
@@ -2105,7 +2324,7 @@ function renderTx(){
     <tbody>${rows.map(r=>`
       <tr style="cursor:default">
         <td class="num">${r.date.getDate()}.${r.date.getMonth()+1}.${String(r.date.getFullYear()).slice(2)}</td>
-        <td>${r.street}</td>
+        <td>${state.lang==="he"?r.street.he:r.street.en}</td>
         <td class="num">${r.rooms}</td>
         <td class="num">${r.area}</td>
         <td class="num">${r.floor}</td>
@@ -2213,26 +2432,18 @@ refresh(true);
 </script>
 
 <script>
-/* ---------- access gate: locked until the password is entered ---------- */
+/* offline access gate (local/artifact builds only — deterrent, not security) */
 (function(){
-  var PASS="test4321";
-  var gate=document.getElementById("gate"),
-      form=document.getElementById("gateForm"),
-      pass=document.getElementById("gatePass"),
-      err=document.getElementById("gateErr"),
+  var PASS='test4321';
+  var gate=document.getElementById("gate"),form=document.getElementById("gateForm"),
+      pass=document.getElementById("gatePass"),err=document.getElementById("gateErr"),
       card=document.getElementById("gateCard");
-  function unlock(){
-    document.body.classList.add("unlocked");
-    gate.classList.add("hide");
-  }
-  function reject(){
-    err.classList.add("on");
-    card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
-    pass.value=""; pass.focus();
-  }
+  function unlock(){document.body.classList.add("unlocked");gate.classList.add("hide")}
   form.addEventListener("submit",function(e){
     e.preventDefault();
-    if(pass.value.trim()===PASS)unlock(); else reject();
+    if(pass.value.trim()===PASS){unlock();return}
+    err.classList.add("on");card.classList.remove("shake");void card.offsetWidth;
+    card.classList.add("shake");pass.value="";pass.focus();
   });
   pass.addEventListener("input",function(){err.classList.remove("on")});
   try{pass.focus()}catch(e){}

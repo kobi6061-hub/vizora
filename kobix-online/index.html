@@ -1,5 +1,12 @@
+<!doctype html><!-- doc-skeleton -->
+<html lang="he" dir="rtl"><!-- doc-skeleton -->
+<head><!-- doc-skeleton -->
+<meta charset="utf-8"><!-- doc-skeleton -->
+<meta name="viewport" content="width=device-width,initial-scale=1"><!-- doc-skeleton -->
+<meta name="robots" content="noindex,nofollow"><!-- doc-skeleton -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%232563eb'/%3E%3Cpath d='M12 1c-3 3.2-3 18.8 0 22 6.1-.1 11-5 11-11S18.1 1.1 12 1z' fill='%231d4fc4'/%3E%3Cellipse cx='12' cy='12' rx='10' ry='4.2' fill='none' stroke='%23bfdbfe' stroke-width='1.1'/%3E%3C/svg%3E"><!-- doc-skeleton -->
 <!-- =========================================================================
-     ISRAEL REAL ESTATE INTELLIGENCE · מודיעין נדל״ן ישראל
+     KOBIX REALESTATE · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
      Demo dataset only — clearly labeled; the UI reads a clean data model so a
      production API can replace DEMO_DATA without touching the interface.
@@ -119,7 +126,7 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.25;text-w
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
-::selection{background:#cde2fb}
+::selection{background:var(--accent-wash)}
 
 .num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
 .tnum{font-variant-numeric:tabular-nums}
@@ -204,8 +211,9 @@ nav.main a:hover{color:var(--ink);background:var(--panel-2)}
   body{padding-bottom:60px}
 }
 section.blk{scroll-margin-top:72px}
+@media(max-width:759px){section.blk{scroll-margin-top:126px}}
 .updated{display:none;font-size:12px;color:var(--ink-3);white-space:nowrap}
-@media(min-width:760px){.updated{display:block}}
+@media(min-width:1120px){.updated{display:block}}
 @media(max-width:759px){
   .badge-demo{display:none}
   .asset-price{flex-wrap:wrap}
@@ -307,7 +315,7 @@ section.blk{padding-block:22px}
 /* ============================ layout grids ============================ */
 .grid-map{display:grid;gap:14px}
 @media(min-width:1000px){.grid-map{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
-.grid-main{display:grid;gap:14px}
+.grid-main{display:grid;gap:14px;align-items:start}
 @media(min-width:1000px){.grid-main{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
 
 /* map card */
@@ -337,7 +345,7 @@ section.blk{padding-block:22px}
   max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 .map-scope[hidden]{display:none}
 .map-scope b{font-size:11.5px;font-weight:700}
-.map-scope .num{font-size:10.5px;color:var(--ink-2);font-weight:600}
+.map-scope .ms{font-size:10.5px;color:var(--ink-2);font-weight:600}
 .geo-label{font-family:var(--f-body);font-weight:600;fill:var(--ink-2);pointer-events:none;direction:ltr}
 .geo-label.on-dark{fill:#fff}
 .map-tip{position:absolute;z-index:30;pointer-events:none;background:var(--ink);color:var(--paper);
@@ -369,7 +377,7 @@ section.blk{padding-block:22px}
 .profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .profile-head h3{font-size:19px;font-weight:700}
 .profile-head .where{font-size:12.5px;color:var(--ink-3);margin-top:1px}
-.asset-price{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+.asset-price{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;
   padding-bottom:12px;border-bottom:1px solid var(--hairline)}
 .ap-l{font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .est-tag{color:var(--brass);font-weight:700}
@@ -408,7 +416,7 @@ section.blk{padding-block:22px}
   border-radius:var(--r-s);padding:8px 12px;font-size:12px;line-height:1.55;box-shadow:var(--shadow-pop);
   opacity:0;transition:opacity .08s;white-space:nowrap;direction:rtl}
 .chart-tip.show{opacity:1}
-.chart-tip .d{color:#c3c2b7;font-size:11px;direction:ltr;text-align:end}
+.chart-tip .d{color:var(--paper);opacity:.62;font-size:11px;direction:ltr;text-align:end}
 .axis-txt{font-family:var(--f-body);font-size:10.5px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
 .grid-ln{stroke:var(--hairline);stroke-width:1}
 .base-ln{stroke:var(--baseline);stroke-width:1}
@@ -422,7 +430,7 @@ section.blk{padding-block:22px}
 .svr .cell .v{font-family:var(--f-display);font-size:18px;font-weight:700;margin-top:3px;white-space:nowrap}
 .svr .cell .s{font-size:11px;color:var(--ink-3);margin-top:2px}
 .svr-formula{margin-top:10px;padding:11px 15px;background:var(--accent-wash);border:1px solid var(--hairline);
-  border-radius:var(--r-m);font-size:13px;color:#173f66;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+  border-radius:var(--r-m);font-size:13px;color:var(--navy);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
 .svr-formula b{font-weight:700}
 
 /* ============================ filters ============================ */
@@ -567,8 +575,8 @@ main section.blk:nth-of-type(even) .blk-head h2::before{background:var(--brass)}
 .tape{display:flex;align-items:stretch;border-block:1px solid var(--hairline);
   margin-top:4px;overflow-x:auto;scrollbar-width:none;min-width:0;max-width:100%}
 .tape::-webkit-scrollbar{display:none}
-.tp{flex:1 0 auto;min-width:118px;display:flex;flex-direction:column;gap:1px;
-  padding:8px 14px;border-inline-end:1px solid var(--hairline)}
+.tp{flex:1 0 auto;min-width:0;display:flex;flex-direction:column;gap:1px;
+  padding:8px 12px;border-inline-end:1px solid var(--hairline)}
 .tp:last-child{border-inline-end:none}
 .tp-k{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;white-space:nowrap}
 .tp-v{font-family:var(--f-display);font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
@@ -617,6 +625,8 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 @keyframes fadeSwap{from{opacity:.35}to{opacity:1}}
 
 </style>
+</head><!-- doc-skeleton -->
+<body><!-- doc-skeleton -->
 
 <!-- ============================ MARKUP ============================ -->
 
@@ -630,19 +640,19 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
     <div class="top-end">
       <span class="updated" id="updatedTxt"></span>
       <span class="badge-demo" data-i="calBadge">דירות חדשות מקבלן בלבד</span>
-      <div class="lang" role="group" aria-label="שפה">
+      <div class="lang" role="group" aria-label="שפה" data-ia="aLang">
         <button id="langHe" aria-pressed="true">HE</button>
         <button id="langEn" aria-pressed="false">EN</button>
       </div>
-      <button class="tool-btn" id="themeBtn" aria-label="מצב תצוגה"></button>
-      <a class="tool-btn" id="logoutBtn" href="/api/logout" aria-label="יציאה" title="יציאה">
+      <button class="tool-btn" id="themeBtn" aria-label="מצב תצוגה" data-ia="aTheme"></button>
+      <a class="tool-btn" id="logoutBtn" href="/api/logout" aria-label="יציאה" data-ia="logout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
       </a>
     </div>
   </div>
 </header>
 
-<nav class="rail" aria-label="ניווט ראשי" id="rail">
+<nav class="rail" aria-label="ניווט ראשי" data-ia="aNav" id="rail">
   <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
   <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
   <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
@@ -653,8 +663,8 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
   <div class="rail-sp"></div>
-  <button class="ri rt" id="themeBtnRail" aria-label="מצב תצוגה"></button>
-  <a class="ri rt" href="/api/logout" aria-label="יציאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg><span data-i="logout">יציאה</span></a>
+  <button class="ri rt" id="themeBtnRail" aria-label="מצב תצוגה" data-ia="aTheme"></button>
+  <a class="ri rt" href="/api/logout" aria-label="יציאה" data-ia="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg><span data-i="logout">יציאה</span></a>
 </nav>
 
 <div class="command">
@@ -670,25 +680,25 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
                aria-expanded="false" aria-controls="searchPop" placeholder="חפש עיר, שכונה או רחוב...">
         <div class="search-pop" id="searchPop" role="listbox"></div>
       </div>
-      <div class="mode" role="group" aria-label="מצב שוק" id="modeToggle">
+      <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggle">
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
         <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
       </div>
     </div>
-    <nav class="crumbs" aria-label="מיקום" id="crumbs"></nav>
-    <div class="tape" aria-label="נתוני שוק ארציים — דירות חדשות">
+    <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
+    <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
       <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
       <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">84,280</span><span class="tp-s" data-i="blt2s">כ-26 חודשי היצע · יוני 2026</span></div>
       <div class="tp"><span class="tp-k" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num">~34,000</span><span class="tp-s" data-i="blt3s">37.5% מהעסקאות · כשליש בסבסוד</span></div>
       <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">חזרת מבצעי המימון · הכלכלן הראשי</span></div>
       <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num">3.5%</span><span class="tp-s" data-i="tapeBoiS">הורדה שלישית ב-2026 · 6.7.2026</span></div>
-      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני ביותר: אוגוסט 2026</span></div>
+      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
     </div>
   </div>
 </div>
 
 <div class="m-mode">
-  <div class="mode" role="group" aria-label="מצב שוק" id="modeToggleM">
+  <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggleM">
     <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
     <button data-mode="rent" aria-pressed="false" data-i="rent">השכרה</button>
   </div>
@@ -712,10 +722,10 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
       <span class="note" data-i="mapNote">לחיצה על אזור מעדכנת את כל הלוח</span>
     </div>
     <div class="card map-card">
-      <div class="map-tools" role="group" aria-label="מדד מפה" id="mapMetricBtns"></div>
+      <div class="map-tools" role="group" aria-label="מדד מפה" data-ia="aMetric" id="mapMetricBtns"></div>
       <div class="map-stage">
         <div class="map-holder">
-          <svg id="mapSvg" role="img" aria-label="מפת ישראל"></svg>
+          <svg id="mapSvg" role="img" aria-label="מפת ישראל" data-ia="aMap"></svg>
           <div class="map-tip" id="mapTip"></div>
         </div>
         <div class="map-side">
@@ -1139,13 +1149,20 @@ const LOCATIONS = [
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 
+const mkStreets=(he,en)=>he.map((h,i)=>({he:h,en:en[i]}));
 const STREETS = {
-  tlv:["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
-  jerusalem:["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
-  haifa:["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
-  "petah-tikva":["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
-  "ramat-gan":["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
-  generic:["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"]
+  tlv:mkStreets(["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן"],
+    ["Dizengoff","Rothschild","Ben Yehuda","Arlozorov","Ibn Gabirol","Sheinkin","HaYarkon","Frishman"]),
+  jerusalem:mkStreets(["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק"],
+    ["Aza","HaPalmach","Bethlehem Rd.","Jaffa","Keren HaYesod","Emek Refaim","Herzog","Radak"]),
+  haifa:mkStreets(["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף"],
+    ["Moriya","HaNassi","Horev","Herzl","Derech HaYam","Abba Hushi","Trumpeldor","Yafe Nof"]),
+  "petah-tikva":mkStreets(["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות"],
+    ["Rothschild","Jabotinsky","HaHistadrut","Haim Ozer","Motta Gur","Kaplan","Baron Hirsch","HaAtzmaut"]),
+  "ramat-gan":mkStreets(["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
+    ["Bialik","Jabotinsky","HaRoe","Krinitzi","Ben Gurion Rd.","Herzl","Arlozorov","HaMaagal"]),
+  generic:mkStreets(["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","רוטשילד","העצמאות","הנשיא","ביאליק"],
+    ["Herzl","Weizmann","Ben Gurion","Jabotinsky","Rothschild","HaAtzmaut","HaNassi","Bialik"])
 };
 
 /* -------- deterministic pseudo-random (stable across loads) -------- */
@@ -1224,7 +1241,7 @@ he:{
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
   kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"מכירות קבלנים · 12 החודשים האחרונים", kpiNoteRent:"השכרת דירות חדשות (אומדן) · 12 החודשים האחרונים",
   avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 ח׳", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
-  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו משוערת", listings:"מלאי חדש שטרם נמכר",
+  avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
   vsPrev:"לעומת התקופה הקודמת", est:"אומדן", perMonth:"לחודש", perYear:"לשנה",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
@@ -1251,6 +1268,7 @@ he:{
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
   confTitle:"רמת ודאות",
   confHigh:"רמת ודאות גבוהה",confMed:"רמת ודאות בינונית",confLow:"רמת ודאות נמוכה",
+  confHighS:"גבוהה",confMedS:"בינונית",confLowS:"נמוכה",
   confBasedOn:n=>`מבוסס על <b class="num">${n}</b> עסקאות ב-12 החודשים האחרונים`,
   confBasedOnLow:n=>`מבוסס על <b class="num">${n}</b> עסקאות בלבד`,
   confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
@@ -1275,8 +1293,10 @@ he:{
   navGuide:"מדריך",
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
   logout:"יציאה", themeDark:"כהה", themeLight:"בהיר",
+  aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
+  aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
   pageCtx:"סקירת שוק הנדל״ן בישראל | פנימי",
-  tapeRet:"נתונים נשלפו", tapeSrc:"מקור עדכני ביותר: אוגוסט 2026",
+  tapeRet:"נתונים נשלפו", tapeSrc:"מקור עדכני: אוג׳ 2026",
   tapeBoi:"ריבית בנק ישראל", tapeBoiS:"הורדה שלישית ב-2026 · 6.7.2026",
   provBtn:"מקור הנתון", provOfficial:"פרסום רשמי", provEst:"אומדן", provDerived:"נגזר מפרסום",
   prov:{
@@ -1340,6 +1360,7 @@ en:{
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
   confTitle:"Data confidence",
   confHigh:"High confidence",confMed:"Medium confidence",confLow:"Low confidence",
+  confHighS:"High",confMedS:"Medium",confLowS:"Low",
   confBasedOn:n=>`Based on <b class="num">${n}</b> transactions in the last 12 months`,
   confBasedOnLow:n=>`Based on only <b class="num">${n}</b> transactions`,
   confHighNote:"A wide sample — the averages reflect this market well.",
@@ -1364,8 +1385,10 @@ en:{
   navGuide:"Guide",
   navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
   logout:"Log out", themeDark:"Dark", themeLight:"Light",
+  aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
+  aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
   pageCtx:"Israeli Market Overview | Internal",
-  tapeRet:"Data retrieved", tapeSrc:"Freshest source: August 2026",
+  tapeRet:"Data retrieved", tapeSrc:"Freshest: Aug 2026",
   tapeBoi:"Bank of Israel rate", tapeBoiS:"Third cut of 2026 · 6.7.2026",
   provBtn:"Data source", provOfficial:"Official", provEst:"Estimate", provDerived:"Derived",
   prov:{
@@ -1508,7 +1531,6 @@ const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center"
 
 const HEAT=[1,2,3,4,5,6,7].map(i=>`var(--heat-${i})`);
 function heatColor(t){return HEAT[Math.max(0,Math.min(HEAT.length-1,Math.round(t*(HEAT.length-1))))]}
-function heatText(t){return t>0.42?"#ffffff":"#173f66"}
 const isDark=()=>document.documentElement.dataset.theme==="dark";
 
 /* diverging ramp for polarity metrics (annual change can be negative):
@@ -1537,6 +1559,10 @@ function setStatics(){
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
+  });
+  document.querySelectorAll("[data-ia]").forEach(node=>{
+    const key=node.dataset.ia;
+    if(typeof t[key]==="string")node.setAttribute("aria-label",t[key]);
   });
   el("updatedTxt").textContent=t.updated;
   el("searchInput").placeholder=t.searchPh;
@@ -1584,6 +1610,14 @@ function setTheme(mode){
     });
   },{rootMargin:"-35% 0px -55% 0px"});
   links.forEach(a=>{const sec=document.getElementById(a.dataset.sec);if(sec)io.observe(sec)});
+  links.forEach(a=>a.addEventListener("click",()=>{
+    links.forEach(x=>x.classList.remove("on"));a.classList.add("on");
+  }));
+  window.addEventListener("scroll",()=>{
+    if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-6){
+      links.forEach(x=>x.classList.remove("on"));links[links.length-1].classList.add("on");
+    }
+  },{passive:true});
 })();
 
 /* ---------- breadcrumb ---------- */
@@ -1812,7 +1846,7 @@ function renderMap(){
   el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
   el("mapScope").hidden=state.locId==="il";
-  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="num">${mm.label()}: ${mm.fmt(mm.get(metricsOf(state.locId)))}</span>`;
+  el("mapScope").innerHTML=`<b>${heName(LOC[state.locId])}</b><span class="ms">${mm.label()}: <span class="num">${mm.fmt(mm.get(metricsOf(state.locId)))}</span></span>`;
   el("scaleLow").textContent=mm.fmt(div?-maxAbs:lo);
   el("scaleHigh").textContent=mm.fmt(div?maxAbs:hi);
   el("scaleBar").classList.toggle("div",div);
@@ -2048,7 +2082,7 @@ function renderTable(){
     }).join("")}</tr></thead>
     <tbody>${data.map(r=>`
       <tr data-go="${r.loc.id}" tabindex="0"${r.loc.id===state.locId?' class="sel"':''}>
-        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHigh,med:t.confMed,low:t.confLow}[r.m.confidence].split(" ").pop()}</span></span></td>
+        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHighS,med:t.confMedS,low:t.confLowS}[r.m.confidence]}</span></span></td>
         <td class="num">${fmtNIS(r.m.price)}</td>
         <td class="num">${fmtNIS(r.m.sqm)}</td>
         <td class="num">${fmtNIS(r.m.rent)}</td>
@@ -2134,7 +2168,7 @@ function renderCompare(){
   const t=T();
   el("cmpPick").innerHTML=state.compare.map((id,i)=>`
     <span class="cmp-chip"><i style="background:${CMP_COLORS[i]}"></i>${cmpLabel(id)}
-      <button data-rm="${id}" aria-label="הסר">×</button></span>`).join("")+
+      <button data-rm="${id}" aria-label="${t.aRemove}">×</button></span>`).join("")+
     (state.compare.length<4?`
       <div class="cmp-add"><button id="cmpAddBtn">${t.cmpAdd}</button>
         <div class="search-pop" id="cmpPop" role="listbox"></div></div>`
@@ -2247,7 +2281,7 @@ function renderTx(){
     <tbody>${rows.map(r=>`
       <tr style="cursor:default">
         <td class="num">${r.date.getDate()}.${r.date.getMonth()+1}.${String(r.date.getFullYear()).slice(2)}</td>
-        <td>${r.street}</td>
+        <td>${state.lang==="he"?r.street.he:r.street.en}</td>
         <td class="num">${r.rooms}</td>
         <td class="num">${r.area}</td>
         <td class="num">${r.floor}</td>
@@ -2353,5 +2387,5 @@ setStatics();
 initSearch();
 refresh(true);
 </script>
-
-
+</body><!-- doc-skeleton -->
+</html><!-- doc-skeleton -->

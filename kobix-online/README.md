@@ -20,7 +20,7 @@ Password-protected server-side; internal use only.
 1. vercel.com → **Add New… → Project** → import `kobi6061-hub/vizora`
 2. **Root Directory:** `kobix-online` · Framework preset: **Other** · no build command
 3. **Environment variables** (Project → Settings → Environment Variables):
-   - `SITE_PASSWORD` — the access password (e.g. `test4321`)
+   - `SITE_PASSWORD` — the access password you choose
    - `SESSION_SECRET` — random string, e.g. output of `openssl rand -hex 32`
 4. Deploy. Custom domain: Project → Settings → Domains → add `kobix.online`.
 
@@ -32,7 +32,7 @@ CLI alternative: `cd kobix-online && npx vercel --prod` (after `vercel login`), 
 ## Local development
 
 ```bash
-SITE_PASSWORD=test4321 SESSION_SECRET=dev PORT=3200 \
+SITE_PASSWORD=<your-password> SESSION_SECRET=dev PORT=3200 \
   node ../scripts/kobix-dev-server.mjs   # or the copy in the session scratchpad
 ```
 
