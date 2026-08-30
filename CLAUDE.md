@@ -10,5 +10,8 @@
   `gov-sync.js` government-data sync CLI).
 - `lib/gov/` + `api/gov/` + `data/gov/` + `test/gov.test.js` = the government real-estate
   data layer (provider architecture, normalized transaction schema, snapshots; see `lib/gov/README.md`).
+- `lib/geo/` + `api/geo/` + `data/geo/` + `scripts/build-geo-registry.py` + `scripts/geo-audit.js`
+  = the national geography registry (every official locality + street, canonical codes, search API,
+  coverage audit).
 
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).

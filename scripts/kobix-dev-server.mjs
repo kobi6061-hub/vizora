@@ -60,6 +60,13 @@ http.createServer(async (req, res) => {
     }
   }
 
+  // serverless api simulation (same modules Vercel runs)
+  if (p === '/api/geo/search') {
+    const { createRequire } = await import('node:module');
+    const require = createRequire(import.meta.url);
+    return require(path.join(ROOT, 'api', 'geo', 'search.js'))(req, res);
+  }
+
   // static
   const file = p === '/' ? '/index.html' : p;
   try {

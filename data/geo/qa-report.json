@@ -1,0 +1,475 @@
+{
+ "at": "2026-08-30T23:20:02.563Z",
+ "checks": [
+  {
+   "name": "locality count matches build meta",
+   "ok": true,
+   "detail": "1304 vs 1304"
+  },
+  {
+   "name": "street count matches build meta",
+   "ok": true,
+   "detail": "63559 vs 63559"
+  },
+  {
+   "name": "build set-difference proof recorded as PASS",
+   "ok": true,
+   "detail": "{\"officialRegistryCount\":1304,\"indexed\":1304,\"missing\":0,\"missingSample\":[],\"officialCodeRegistryCount\":1271,\"officialCodesNotIndexed\":21,\"officialCodesNotIndexedNote\":\"locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently\",\"officialCodesNotIndexedSample\":[0,38,849,942,1061,1094,1154,1224,1299,1329,1401,1402,1404,1405,1409],\"pendingOfficialCode\":52}"
+  },
+  {
+   "name": "locality \"תל אביב-יפו\" resolves",
+   "ok": true,
+   "detail": "תל אביב - יפו | תל אביב-יפו"
+  },
+  {
+   "name": "  \"תל אביב-יפו\" has searchable streets (2768)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"חזקיהו המלך · תל אביב - יפו\" resolves",
+   "ok": true,
+   "detail": "חזקיהו המלך·תל אביב - יפו"
+  },
+  {
+   "name": "locality \"ירושלים\" resolves",
+   "ok": true,
+   "detail": "ירושלים | ירושלים"
+  },
+  {
+   "name": "  \"ירושלים\" has searchable streets (4381)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אום כולתום · ירושלים\" resolves",
+   "ok": true,
+   "detail": "אום כולתום·ירושלים"
+  },
+  {
+   "name": "locality \"חיפה\" resolves",
+   "ok": true,
+   "detail": "חיפה | חיפה"
+  },
+  {
+   "name": "  \"חיפה\" has searchable streets (1439)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שארית הפליטה · חיפה\" resolves",
+   "ok": true,
+   "detail": "שארית הפליטה·חיפה"
+  },
+  {
+   "name": "locality \"פתח תקווה\" resolves",
+   "ok": true,
+   "detail": "פתח תקווה | פתח תקווה"
+  },
+  {
+   "name": "  \"פתח תקווה\" has searchable streets (1166)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"פתח תקווה · פתח תקווה\" resolves",
+   "ok": true,
+   "detail": "פתח תקווה·פתח תקווה | פתח תקווה·פתח תקווה"
+  },
+  {
+   "name": "locality \"גבעת שמואל\" resolves",
+   "ok": true,
+   "detail": "גבעת שמואל | הר שמואל"
+  },
+  {
+   "name": "  \"גבעת שמואל\" has searchable streets (117)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שכ גיורא · גבעת שמואל\" resolves",
+   "ok": true,
+   "detail": "שכ גיורא·גבעת שמואל"
+  },
+  {
+   "name": "locality \"קריית אונו\" resolves",
+   "ok": true,
+   "detail": "קרית אונו | פסגת אונו"
+  },
+  {
+   "name": "  \"קריית אונו\" has searchable streets (230)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שד סולד הנריטה · קרית אונו\" resolves",
+   "ok": true,
+   "detail": "שד סולד הנריטה·קרית אונו"
+  },
+  {
+   "name": "locality \"רמת גן\" resolves",
+   "ok": true,
+   "detail": "רמת גן | גן הבנים"
+  },
+  {
+   "name": "  \"רמת גן\" has searchable streets (690)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"הדודאים רמת אפעל · רמת גן\" resolves",
+   "ok": true,
+   "detail": "הדודאים רמת אפעל·רמת גן"
+  },
+  {
+   "name": "locality \"בני ברק\" resolves",
+   "ok": true,
+   "detail": "בני ברק | בני ברק"
+  },
+  {
+   "name": "  \"בני ברק\" has searchable streets (443)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אלשיך · בני ברק\" resolves",
+   "ok": true,
+   "detail": "אלשיך·בני ברק"
+  },
+  {
+   "name": "locality \"מודיעין-מכבים-רעות\" resolves",
+   "ok": true,
+   "detail": "מודיעין-מכבים-רעות | מודיעין-מכבים-רעות"
+  },
+  {
+   "name": "  \"מודיעין-מכבים-רעות\" has searchable streets (527)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"דרך המייסדים מ\"ר · מודיעין-מכבים-רעות\" resolves",
+   "ok": true,
+   "detail": "דרך המייסדים מ\"ר·מודיעין-מכבים-רעות"
+  },
+  {
+   "name": "locality \"בית שמש\" resolves",
+   "ok": true,
+   "detail": "בית שמש | שמש יצחק"
+  },
+  {
+   "name": "  \"בית שמש\" has searchable streets (461)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"מעלה יאיר · בית שמש\" resolves",
+   "ok": true,
+   "detail": "מעלה יאיר·בית שמש"
+  },
+  {
+   "name": "locality \"נתניה\" resolves",
+   "ok": true,
+   "detail": "נתניה | נתניה"
+  },
+  {
+   "name": "  \"נתניה\" has searchable streets (1049)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"וינר נחמה · נתניה\" resolves",
+   "ok": true,
+   "detail": "וינר נחמה·נתניה"
+  },
+  {
+   "name": "locality \"אשדוד\" resolves",
+   "ok": true,
+   "detail": "אשדוד | חצור-אשדוד"
+  },
+  {
+   "name": "  \"אשדוד\" has searchable streets (715)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"תפוז · אשדוד\" resolves",
+   "ok": true,
+   "detail": "תפוז·אשדוד"
+  },
+  {
+   "name": "locality \"אשקלון\" resolves",
+   "ok": true,
+   "detail": "אשקלון | אשקלון"
+  },
+  {
+   "name": "  \"אשקלון\" has searchable streets (1106)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"עשרת השבטים · אשקלון\" resolves",
+   "ok": true,
+   "detail": "עשרת השבטים·אשקלון"
+  },
+  {
+   "name": "locality \"באר שבע\" resolves",
+   "ok": true,
+   "detail": "באר שבע | בת שבע"
+  },
+  {
+   "name": "  \"באר שבע\" has searchable streets (1298)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"טרומפלדור · באר שבע\" resolves",
+   "ok": true,
+   "detail": "טרומפלדור·באר שבע"
+  },
+  {
+   "name": "locality \"אילת\" resolves",
+   "ok": true,
+   "detail": "אילת | איילת השחר"
+  },
+  {
+   "name": "  \"אילת\" has searchable streets (790)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"הברדלס · אילת\" resolves",
+   "ok": true,
+   "detail": "הברדלס·אילת"
+  },
+  {
+   "name": "locality \"נצרת\" resolves",
+   "ok": true,
+   "detail": "נצרת | נצרת"
+  },
+  {
+   "name": "  \"נצרת\" has searchable streets (787)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"רח 6014 · נצרת\" resolves",
+   "ok": true,
+   "detail": "רח 6014·נצרת"
+  },
+  {
+   "name": "locality \"אום אל-פחם\" resolves",
+   "ok": true,
+   "detail": "אום אל-פחם | אום אל-פחם"
+  },
+  {
+   "name": "  \"אום אל-פחם\" has searchable streets (475)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אלקלים · אום אל-פחם\" resolves",
+   "ok": true,
+   "detail": "אלקלים·אום אל-פחם"
+  },
+  {
+   "name": "locality \"סח'נין\" resolves",
+   "ok": true,
+   "detail": "סח'נין | סח'נין"
+  },
+  {
+   "name": "  \"סח'נין\" has searchable streets (104)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שכ אל מסרארה · סח'נין\" resolves",
+   "ok": true,
+   "detail": "שכ אל מסרארה·סח'נין"
+  },
+  {
+   "name": "locality \"רהט\" resolves",
+   "ok": true,
+   "detail": "רהט | רהט"
+  },
+  {
+   "name": "  \"רהט\" has searchable streets (348)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אלזוחרוף · רהט\" resolves",
+   "ok": true,
+   "detail": "אלזוחרוף·רהט"
+  },
+  {
+   "name": "locality \"כפר קאסם\" resolves",
+   "ok": true,
+   "detail": "כפר קאסם | כפר קאסם"
+  },
+  {
+   "name": "  \"כפר קאסם\" has searchable streets (184)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אל אנדלוס · כפר קאסם\" resolves",
+   "ok": true,
+   "detail": "אל אנדלוס·כפר קאסם"
+  },
+  {
+   "name": "locality \"אבו גוש\" resolves",
+   "ok": true,
+   "detail": "אבו גוש | אבו גוש"
+  },
+  {
+   "name": "  \"אבו גוש\" has searchable streets (69)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שייח איסמעיל · אבו גוש\" resolves",
+   "ok": true,
+   "detail": "שייח איסמעיל·אבו גוש"
+  },
+  {
+   "name": "locality \"דגניה א\" resolves",
+   "ok": true,
+   "detail": "דגניה א' | דגניה א'"
+  },
+  {
+   "name": "  \"דגניה א\" has searchable streets (1)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "locality \"שדה בוקר\" resolves",
+   "ok": true,
+   "detail": "שדה בוקר | שדה בוקר"
+  },
+  {
+   "name": "  \"שדה בוקר\" has searchable streets (2)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"שדה בוקר · שדה בוקר\" resolves",
+   "ok": true,
+   "detail": "שדה בוקר·שדה בוקר | שדה בוקר·שדה בוקר"
+  },
+  {
+   "name": "locality \"נהלל\" resolves",
+   "ok": true,
+   "detail": "נהלל | נהלל"
+  },
+  {
+   "name": "  \"נהלל\" has searchable streets (18)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"ענווה · נהלל\" resolves",
+   "ok": true,
+   "detail": "ענווה·נהלל"
+  },
+  {
+   "name": "locality \"כפר תבור\" resolves",
+   "ok": true,
+   "detail": "כפר תבור | תבור"
+  },
+  {
+   "name": "  \"כפר תבור\" has searchable streets (137)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"כיכר אופיר מקס · כפר תבור\" resolves",
+   "ok": true,
+   "detail": "כיכר אופיר מקס·כפר תבור"
+  },
+  {
+   "name": "locality \"מטולה\" resolves",
+   "ok": true,
+   "detail": "מטולה | מטולה"
+  },
+  {
+   "name": "  \"מטולה\" has searchable streets (48)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"התאנה · מטולה\" resolves",
+   "ok": true,
+   "detail": "התאנה·מטולה"
+  },
+  {
+   "name": "locality \"ירוחם\" resolves",
+   "ok": true,
+   "detail": "ירוחם | ירוחם"
+  },
+  {
+   "name": "  \"ירוחם\" has searchable streets (184)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"חובבי ציון · ירוחם\" resolves",
+   "ok": true,
+   "detail": "חובבי ציון·ירוחם"
+  },
+  {
+   "name": "locality \"חורפיש\" resolves",
+   "ok": true,
+   "detail": "חורפיש | חורפיש"
+  },
+  {
+   "name": "  \"חורפיש\" has searchable streets (110)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אלבלסם · חורפיש\" resolves",
+   "ok": true,
+   "detail": "אלבלסם·חורפיש"
+  },
+  {
+   "name": "locality \"עספיא\" resolves",
+   "ok": true,
+   "detail": "עספיא | עספיא"
+  },
+  {
+   "name": "  \"עספיא\" has searchable streets (274)",
+   "ok": true,
+   "detail": "no street rows"
+  },
+  {
+   "name": "  street \"אל-קאדי · עספיא\" resolves",
+   "ok": true,
+   "detail": "אל-קאדי·עספיא"
+  },
+  {
+   "name": "random localities resolve with canonical id",
+   "ok": true,
+   "detail": "100/100"
+  },
+  {
+   "name": "random streets resolve city-qualified",
+   "ok": true,
+   "detail": "500/500"
+  },
+  {
+   "name": "\"הרצל\" returns city-qualified rows from multiple cities",
+   "ok": true,
+   "detail": "אור יהודה, אור עקיבא, אזור, אשקלון, באר שבע, בית דגן, בית שאן, בית שמש, בני ברק, בת ים, גבעת שמואל, גדרה, גן יבנה, דימונה"
+  },
+  {
+   "name": "every street row carries a canonical id (never bare name)",
+   "ok": true
+  },
+  {
+   "name": "loc:681 resolves to גבעת שמואל",
+   "ok": true,
+   "detail": "גבעת שמואל"
+  }
+ ],
+ "fail": 0
+}

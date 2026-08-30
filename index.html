@@ -494,7 +494,19 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .tx-src{font-size:11px;color:var(--ink-3);white-space:nowrap}
 .tx-src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .tx-src a:hover{color:var(--accent-deep)}
-.tx-empty{padding:16px 18px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--hairline)}
+.tx-empty{padding:16px 18px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--hairline)}.sp-tag{font-size:10px;font-weight:800;letter-spacing:.04em;color:var(--brass);border:1px solid var(--hairline);
+  border-radius:99px;padding:2px 8px;white-space:nowrap}
+.geo-cov{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.geo-chip{font-size:11px;font-weight:700;border:1px solid var(--hairline);border-radius:99px;padding:3px 10px;color:var(--ink-2)}
+.geo-chip b{color:var(--brass);font-weight:800}
+.gv-note{font-size:12.5px;color:var(--ink-2);margin:10px 0;line-height:1.55}
+.gv-src{font-size:11px;color:var(--ink-3);margin-top:10px}
+.gv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px}
+.gv-m{border:1px solid var(--hairline);border-radius:11px;padding:9px 12px;display:flex;flex-direction:column;gap:3px}
+.gv-m .l{font-size:11px;color:var(--ink-3);font-weight:600}
+.gv-m .v{font-size:16.5px;font-weight:800}
+.gv-m .r{font-size:10px;font-weight:700;color:var(--brass)}
+
 /* ============================ rankings tabs ============================ */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -1212,6 +1224,16 @@ details.ci-more>.in{padding:2px 13px 12px}
   </section>
 
   <!-- Street intelligence (revealed when a street is selected) -->
+  <!-- national geography view — registry areas outside the curated market set -->
+  <section class="blk" id="geoView" hidden>
+    <div class="blk-head">
+      <div><span class="lyr" data-i="geoLyr">מרשם ארצי</span>
+      <h2 id="geoTitle"></h2></div>
+      <button class="chip" id="geoCloseBtn" data-i="geoClose">סגור</button>
+    </div>
+    <div class="card" style="padding:16px 18px" id="geoBody"></div>
+  </section>
+
   <section class="blk" id="street" hidden>
     <div class="blk-head">
       <div><span class="lyr" data-i="lyrSt">L2.5 · רחוב</span>
@@ -1838,6 +1860,16 @@ he:{
   confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
   confMedNote:"מדגם בינוני — ייתכנו סטיות; מומלץ לבחון גם את שכונות הסביבה.",
   confLowNote:"מדגם קטן מאוד — הנתונים אינדיקטיביים בלבד ואינם מספקים בסיס להחלטה.",
+  geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoTagSt:"רחוב", geoTagLoc:"יישוב",
+  geoLyr:"מרשם ארצי", geoClose:"סגור",
+  geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
+  geoPend:"סמל רשמי בהקצאה — יתעדכן ברענון המרשם",
+  geoNoDirect:(lvl,nm)=>`אין תצפיות שוק ישירות ברזולוציה זו — הניתוח מוצג ב${lvl} (${nm}) לפי מדרג ההרחבה הגאוגרפית. שום ערך לא הומצא ברמת המקום עצמו.`,
+  geoResCity:"רזולוציית עיר", geoResDist:"רזולוציית מחוז", geoResNat:"רזולוציה ארצית",
+  geoCovT:"כיסוי נתונים", geoStreetsN:n=>`${fmtInt(n)} רחובות רשומים`,
+  geoDistBasis:"עוגן מיקום: מרכז היישוב לפי המרשם הרשמי", geoTagModel:"אומדן",
+  geoMPrice:"מחיר דירה חדשה", geoMSqm:"₪ למ״ר", geoMRent:"שכ״ד חודשי", geoMYoy:"שינוי שנתי",
+  geoMTx:"עסקאות/שנה", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
   txTitle:"עסקאות אחרונות שדווחו באזור",
   txProv:"עסקאות שדווחו לרשות המיסים, כפי שפורסמו בעיתונות הכלכלית · תאריך ופירוט — ברזולוציה שפורסמה · נאסף 30.08.2026",
   txScopeCity:c=>`רמת עיר — ${c}`, txTagNew:"חדשה מקבלן", txTagUsed:"יד שנייה",
@@ -2082,6 +2114,16 @@ en:{
   confHighNote:"A wide sample — the averages reflect this market well.",
   confMedNote:"A medium sample — expect deviations; check nearby areas too.",
   confLowNote:"A very small sample — indicative only, not a basis for decisions.",
+  geoGroup:"National registry — every locality & street in Israel", geoTagSt:"street", geoTagLoc:"locality",
+  geoLyr:"National registry", geoClose:"Close",
+  geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
+  geoPend:"official code pending — updates on the next registry refresh",
+  geoNoDirect:(lvl,nm)=>`No direct market observations at this resolution — the analysis is shown at ${lvl} (${nm}) per the geographic fallback ladder. Nothing is invented at the location itself.`,
+  geoResCity:"city resolution", geoResDist:"district resolution", geoResNat:"national resolution",
+  geoCovT:"Data coverage", geoStreetsN:n=>`${fmtInt(n)} registered streets`,
+  geoDistBasis:"Location anchor: locality centroid per the official registry", geoTagModel:"estimate",
+  geoMPrice:"New-home price", geoMSqm:"₪ per m²", geoMRent:"Monthly rent", geoMYoy:"Annual change",
+  geoMTx:"Deals/yr", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
   txTitle:"Latest reported transactions in this area",
   txProv:"Deals reported to the Tax Authority, as published in the financial press · date & detail at published resolution · collected 30.08.2026",
   txScopeCity:c=>`city level — ${c}`, txTagNew:"new (developer)", txTagUsed:"second-hand",
@@ -2830,7 +2872,7 @@ function renderMap(keepVB){
       }
     }
   }
-  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner;
+  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+geoPinSVG(sf);
   if(keepVB){currentVB=vb.slice();svg.setAttribute("viewBox",vb.join(" "))}
   else{mapCtxVB=vb.slice();svg.setAttribute("viewBox",currentVB.join(" "));animateViewBox(svg,vb)}
 
@@ -4471,6 +4513,110 @@ function initCapital(){
   });
 }
 
+/* ---------- national geography (canonical registry) ---------- */
+/* client mirror of lib/geo normalization — matching only, display untouched */
+function normGeoQ(s){
+  let t=String(s||"").normalize("NFKC");
+  t=t.replace(/[׳'`’‘]/g,"").replace(/[״"“”]/g,"");
+  t=t.replace(/[־–]/g,"-").replace(/\./g," ");
+  t=t.replace(/\s*-\s*/g,"-").replace(/[()]/g," ");
+  t=t.replace(/יי/g,"י");
+  return t.replace(/\s+/g," ").trim();
+}
+let _covByName=null;
+function coveredIdByName(name){
+  if(!_covByName){_covByName=new Map();
+    for(const l of LOCATIONS)if(l.type==="city")_covByName.set(normGeoQ(l.he),l.id);}
+  return _covByName.get(normGeoQ(name))||null;
+}
+function geoPinSVG(sf){
+  const g=state.geo;
+  if(!g||g.lat==null||g.lng==null)return"";
+  const[x,y]=proj(g.lat,g.lng);
+  return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
+    <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
+}
+let geoLast={q:"",list:[]},geoTimer=null;
+function geoSug(q,sts){
+  const qq=q.trim();
+  if(qq.length<2)return[];
+  if(geoLast.q!==qq){
+    clearTimeout(geoTimer);
+    geoTimer=setTimeout(async()=>{
+      try{
+        const r=await fetch("/api/geo/search?q="+encodeURIComponent(qq));
+        if(!r.ok)return;
+        const d=await r.json();
+        const dup=new Set((sts||[]).map(x=>normGeoQ(x.st.he)+"|"+normGeoQ(LOC[x.st.city]?LOC[x.st.city].he:"")));
+        geoLast={q:qq,list:(d.matches||[]).filter(g=>
+          g.kind==="street"?!dup.has(normGeoQ(g.he)+"|"+normGeoQ(g.city))
+          :!coveredIdByName(g.he)).slice(0,7)};
+        const inp=el("searchInput");
+        if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
+      }catch(e){/* offline/standalone: national layer silently unavailable */}
+    },170);
+    return[];
+  }
+  return geoLast.list;
+}
+let _geoNav=false;
+function openGeoView(g){
+  if(!g)return;
+  const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
+  if(g.kind==="locality"&&covered){selectLocation(covered);return}
+  if(g.kind==="street"&&covered){
+    const hits=stSearch(g.he+" "+LOC[covered].he);
+    const ex=hits.find(h=>h.st.city===covered&&stNorm(h.st.he)===stNorm(g.he));
+    if(ex){selectStreet(ex.st.id);return}
+  }
+  state.geo=g;
+  const d=g.district&&LOC[g.district]?g.district:null;
+  state.geoAnchor=covered||d||"il";
+  _geoNav=true;
+  try{if(state.locId!==state.geoAnchor)selectLocation(state.geoAnchor);else refresh(false)}
+  finally{_geoNav=false}
+  el("geoView").hidden=false;
+  setTimeout(()=>el("geoView").scrollIntoView({behavior:"smooth",block:"start"}),160);
+}
+function closeGeo(){state.geo=null;el("geoView").hidden=true;renderMap(true)}
+function renderGeoView(){
+  const sec=el("geoView");if(!sec)return;
+  const g=state.geo,t=T();
+  if(!g){sec.hidden=true;return}
+  sec.hidden=false;
+  const he=state.lang==="he";
+  const anchor=LOC[state.geoAnchor]?state.geoAnchor:"il";
+  const a=LOC[anchor];
+  const lvl=anchor==="il"?t.geoResNat:a.type==="district"?t.geoResDist:t.geoResCity;
+  const aName=heName(a);
+  const m=metricsOf(anchor);
+  const ms=m.listings&&m.tx?m.listings/(m.tx/12):null;
+  el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${g.city}`:g.he;
+  const res=(k)=>`<span class="r">${lvl}${k?` · ${k}`:""}</span>`;
+  const rows=[
+    [t.geoMPrice,fmtNIS(m.price),""],
+    [t.geoMSqm,fmtNIS(m.sqm),""],
+    [t.geoMRent,fmtNIS(m.rent),t.geoTagModel],
+    [t.geoMYoy,fmtPct(m.yoy),""],
+    [t.geoMTx,fmtInt(m.tx),""],
+    [t.geoMInv,fmtInt(m.listings),""],
+    [t.geoMMs,ms?("~"+Math.round(ms)):"—",""],
+  ];
+  const covScore=anchor==="il"?30:a.type==="district"?45:70;
+  el("geoBody").innerHTML=`
+    <div class="geo-cov">
+      <span class="geo-chip">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}${g.pendingCode?` · <b>${t.geoPend}</b>`:""}</span>
+      ${g.moatza?`<span class="geo-chip">${g.moatza}</span>`:""}
+      ${g.streetsCount?`<span class="geo-chip num">${t.geoStreetsN(g.streetsCount)}</span>`:""}
+      <span class="geo-chip">${t.geoCovT}: <b>${covScore}%</b></span>
+    </div>
+    <p class="gv-note">${t.geoNoDirect(lvl,aName)}</p>
+    <div class="gv-grid">${rows.map(([l,v,tag])=>`
+      <div class="gv-m"><span class="l">${l}</span><span class="v num">${v}</span>${res(tag)}</div>`).join("")}</div>
+    <p class="gv-note" style="margin-bottom:0">${t.geoDistBasis}</p>
+    <p class="gv-src">${t.geoSrc(g.id)}</p>`;
+}
+
 /* ---------- search ---------- */
 function initSearch(){
   const input=el("searchInput"),pop=el("searchPop");
@@ -4485,8 +4631,9 @@ function initSearch(){
     const nbhds=LOCATIONS.filter(l=>(l.type==="nbhd"||l.type==="sub")&&match(l)).slice(0,9);
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
     const sts=stSearch(q);
+    const geos=geoSug(q,sts);
     results=[...cities,...nbhds,...dists];
-    if(results.length===0&&sts.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
+    if(results.length===0&&sts.length===0&&geos.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
@@ -4496,6 +4643,10 @@ function initSearch(){
           <span class="num">${r.n} ${t.stTxShort}</span></button>`).join("");
       if(nbhds.length)html+=`<div class="sp-group">${t.nbhds}</div>`+nbhds.map(c=>item(c)).join("");
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
+      if(geos.length)html+=`<div class="sp-group">${t.geoGroup}</div>`+geos.map((g,i)=>
+        `<button class="sp-item" data-geoi="${i}" role="option">
+          <span>${g.he}${g.kind==="street"?` <small>· ${g.city}</small>`:g.moatza?` <small>· ${g.moatza}</small>`:""}</span>
+          <span class="sp-tag">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}</span></button>`).join("");
       pop.innerHTML=html;
     }
     pop.classList.add("open");input.setAttribute("aria-expanded","true");
@@ -4504,6 +4655,9 @@ function initSearch(){
     }));
     pop.querySelectorAll("[data-gost]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();selectStreet(b.dataset.gost,b.dataset.house||null);input.value="";close();
+    }));
+    pop.querySelectorAll("[data-geoi]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();openGeoView(geoLast.list[+b.dataset.geoi]);input.value="";close();
     }));
   };
   const item=l=>{
@@ -4524,6 +4678,7 @@ function initSearch(){
     }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
       const it=items[activeIdx];
       if(it.dataset.gost)selectStreet(it.dataset.gost,it.dataset.house||null);
+      else if(it.dataset.geoi!==undefined)openGeoView(geoLast.list[+it.dataset.geoi]);
       else selectLocation(it.dataset.go);
       input.value="";close();
     }else if(e.key==="Escape"){close()}
@@ -4543,12 +4698,13 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();renderChartTools();renderChart();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderStreet();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
+    renderCmd();renderStreet();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
 function selectLocation(id){
   if(!LOC[id]||state.locId===id)return;
+  if(!_geoNav&&state.geo){state.geo=null;el("geoView").hidden=true}
   state.locId=id;
   refresh(true);
   const y=el("overview").getBoundingClientRect().top+window.scrollY-110;
@@ -4576,6 +4732,7 @@ el("langHe").addEventListener("click",()=>setLang("he"));
 el("langEn").addEventListener("click",()=>setLang("en"));
 
 setStatics();
+el("geoCloseBtn").addEventListener("click",closeGeo);
 initSearch();
 initCapital();
 initCmd();

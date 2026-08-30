@@ -1,0 +1,50 @@
+{
+ "builtAt": "2026-08-30",
+ "localities": {
+  "officialRegistryCount": 1304,
+  "indexed": 1304,
+  "missing": 0,
+  "missingSample": [],
+  "officialCodeRegistryCount": 1271,
+  "officialCodesNotIndexed": 21,
+  "officialCodesNotIndexedNote": "locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently",
+  "officialCodesNotIndexedSample": [
+   0,
+   38,
+   849,
+   942,
+   1061,
+   1094,
+   1154,
+   1224,
+   1299,
+   1329,
+   1401,
+   1402,
+   1404,
+   1405,
+   1409
+  ],
+  "pendingOfficialCode": 52
+ },
+ "streets": {
+  "officialRegistryCount": 63559,
+  "indexed": 63559,
+  "missing": 0,
+  "missingSample": [],
+  "withOfficialCode": 50600,
+  "pendingOfficialCode": 12959,
+  "pendingNote": "streets present in the current official registry whose symbol is newer than the coded snapshot (dominated by the 2022-2025 Arab-municipality street-naming drive); searchable today under a stable provisional id, healed to the official symbol on the next refresh"
+ },
+ "synonyms": {
+  "imported": 0,
+  "unresolved": 0,
+  "note": "official synonyms dataset pending a reachable snapshot; normalization + curated aliases active"
+ },
+ "statAreas": {
+  "expected": null,
+  "mapped": 0,
+  "note": "CBS statistical areas pending a reachable snapshot; schema slot reserved"
+ },
+ "setDifferencePass": true
+}

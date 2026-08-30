@@ -1,0 +1,38 @@
+{
+ "builtAt": "2026-08-30",
+ "sources": {
+  "streetsCurrent": {
+   "note": "official street registry names (May-2026 mirror of the data.gov.il street registry)",
+   "rows": 63563
+  },
+  "streetsCoded": {
+   "note": "official street symbols (2021 mirror of the same registry, pre symbol-removal)",
+   "rows": 52002
+  },
+  "citiesOfficial": {
+   "note": "official locality registry with semel_yeshuv + napa",
+   "rows": 1271
+  },
+  "citiesGeo": {
+   "note": "locality coordinates",
+   "rows": 1265
+  },
+  "synonyms": {
+   "note": "official street-synonyms dataset — NOT yet ingested (no reachable snapshot); alias layer ships with built-in normalization + curated aliases and ingests the official dataset on next refresh",
+   "rows": 0
+  },
+  "statAreas": {
+   "note": "CBS statistical areas — NOT yet ingested (no reachable snapshot); registry schema reserves the layer",
+   "rows": 0
+  }
+ },
+ "counts": {
+  "localities": 1304,
+  "localitiesWithOfficialCode": 1252,
+  "localitiesPendingCode": 52,
+  "streets": 63559,
+  "streetsWithOfficialCode": 50600,
+  "streetsPendingCode": 12959
+ },
+ "note": "data.gov.il registries via mirror snapshots"
+}
