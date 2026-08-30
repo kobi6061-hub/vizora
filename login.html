@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>KobiX RealEstate — כניסה</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%232563eb'/%3E%3Cpath d='M12 1c-3 3.2-3 18.8 0 22 6.1-.1 11-5 11-11S18.1 1.1 12 1z' fill='%231d4fc4'/%3E%3Cellipse cx='12' cy='12' rx='10' ry='4.2' fill='none' stroke='%23bfdbfe' stroke-width='1.1'/%3E%3C/svg%3E">
+<title>PROPX — כניסה</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='.5' y='.5' width='23' height='23' rx='5.5' fill='%23ffffff' stroke='%23c9ced6' stroke-width='1'/%3E%3Ctext x='12' y='16.2' font-family='Montserrat,Helvetica,Arial,sans-serif' font-size='10.5' letter-spacing='.6' text-anchor='middle' fill='%23111318'%3EPX%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Assistant:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Assistant:wght@400;600;700&family=Montserrat:wght@300&display=swap">
 <style>
 :root{
   --bg:#0b1322; --bg-2:#0e1830; --card:#111d36; --line:#233252; --line-2:#2c3d63;
@@ -32,14 +32,10 @@ body{
 .rib{height:3px;background:linear-gradient(to left,var(--blue-deep),var(--blue) 55%,var(--gold))}
 .in{padding:30px 30px 26px;display:flex;flex-direction:column;gap:0;text-align:center}
 .mark{display:flex;align-items:center;justify-content:center;gap:10px;direction:ltr;margin-bottom:4px}
-.globe{width:34px;height:34px;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%, #6ba6ff 0%, #2563eb 48%, #123a86 100%);
-  position:relative;flex:none;box-shadow:0 0 0 3px rgba(59,130,246,.16)}
-.globe::after{content:"";position:absolute;inset:6px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.42);border-inline-width:0;transform:rotate(-18deg)}
-.wordmark{text-align:left;font-family:Heebo,sans-serif;line-height:1.05}
-.wordmark b{font-size:21px;font-weight:800;letter-spacing:-.01em}
-.wordmark span{display:block;font-size:9.5px;font-weight:600;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase}
+.wordmark{text-align:center;line-height:1.3}
+.wordmark b{display:block;font-family:Montserrat,Heebo,sans-serif;font-size:27px;font-weight:300;
+  letter-spacing:.44em;margin-inline-end:-.44em;color:var(--ink)}
+.wordmark span{display:block;font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--ink-2);margin-top:5px}
 h1{font-family:Heebo,sans-serif;font-size:15.5px;font-weight:700;margin-top:14px}
 .sub{font-size:12.5px;color:var(--ink-2);margin-top:3px}
 .caveat{margin-top:13px;padding-top:12px;border-top:1px solid var(--line);
@@ -74,9 +70,8 @@ button[disabled]{opacity:.6;cursor:wait}
   <main class="card" id="card">
     <div class="rib"></div>
     <div class="in">
-      <div class="mark" aria-hidden="true">
-        <span class="globe"></span>
-        <span class="wordmark"><b>KobiX</b><span>RealEstate V1</span></span>
+      <div class="mark">
+        <span class="wordmark"><b>PROPX</b><span>מידע הוא הנכס הראשון</span></span>
       </div>
       <h1>מודיעין שוק הדירות החדשות בישראל</h1>
       <p class="sub">הזינו סיסמה כדי להיכנס למערכת</p>
@@ -87,7 +82,7 @@ button[disabled]{opacity:.6;cursor:wait}
         <button id="go" type="submit">כניסה למערכת</button>
         <p class="err" id="err" role="alert">סיסמה שגויה — נסו שוב</p>
       </form>
-      <p class="foot">KobiX RealEstate · Israeli Market Intelligence · v3</p>
+      <p class="foot">PROPX · מידע הוא הנכס הראשון · v3</p>
     </div>
   </main>
 <script>

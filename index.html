@@ -4,24 +4,24 @@
 <meta charset="utf-8"><!-- doc-skeleton -->
 <meta name="viewport" content="width=device-width,initial-scale=1"><!-- doc-skeleton -->
 <meta name="robots" content="noindex,nofollow"><!-- doc-skeleton -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%232563eb'/%3E%3Cpath d='M12 1c-3 3.2-3 18.8 0 22 6.1-.1 11-5 11-11S18.1 1.1 12 1z' fill='%231d4fc4'/%3E%3Cellipse cx='12' cy='12' rx='10' ry='4.2' fill='none' stroke='%23bfdbfe' stroke-width='1.1'/%3E%3C/svg%3E"><!-- doc-skeleton -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='.5' y='.5' width='23' height='23' rx='5.5' fill='%23ffffff' stroke='%23c9ced6' stroke-width='1'/%3E%3Ctext x='12' y='16.2' font-family='Montserrat,Helvetica,Arial,sans-serif' font-size='10.5' letter-spacing='.6' text-anchor='middle' fill='%23111318'%3EPX%3C/text%3E%3C/svg%3E"><!-- doc-skeleton -->
 <script>/* dark is the default theme; apply before first paint (stored "light" wins) */
 try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentElement.dataset.theme="dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <!-- =========================================================================
-     KOBIX REALESTATE · מודיעין שוק הדירות החדשות בישראל
+     PROPX · מידע הוא הנכס הראשון · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
      Demo dataset only — clearly labeled; the UI reads a clean data model so a
      production API can replace DEMO_DATA without touching the interface.
      ========================================================================= -->
-<title>KobiX RealEstate</title>
+<title>PROPX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
 <style>
 /* ============================ tokens ============================ */
 :root{
   color-scheme:light;
-  /* ---- KobiX light: cool institutional canvas ---- */
+  /* ---- PROPX light: cool institutional canvas ---- */
   --paper:#f3f5f9;          /* page plane               */
   --panel:#ffffff;          /* card / chart surface     */
   --panel-2:#eef1f7;        /* inset surface            */
@@ -69,7 +69,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
 }
 [data-theme="dark"]{
   color-scheme:dark;
-  /* ---- KobiX dark: deep navy terminal ---- */
+  /* ---- PROPX dark: deep navy terminal ---- */
   --paper:#0b1322;
   --panel:#121d34;
   --panel-2:#1a2745;
@@ -171,15 +171,11 @@ nav.main a{font-size:13px;font-weight:500;color:var(--ink-2);text-decoration:non
   padding:5px 11px;border-radius:var(--r-s)}
 nav.main a:hover{color:var(--ink);background:var(--panel-2)}
 .top-end{margin-inline-start:auto;display:flex;align-items:center;gap:10px}
-.lockup{display:flex;align-items:center;gap:9px;direction:ltr;flex:none}
-.globe{width:27px;height:27px;border-radius:50%;flex:none;
-  background:radial-gradient(circle at 34% 30%,#6ba6ff 0%,var(--accent) 48%,#123a86 100%);
-  position:relative;box-shadow:0 0 0 2.5px var(--accent-wash)}
-.globe::after{content:"";position:absolute;inset:5px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.45);border-inline-width:0;transform:rotate(-18deg)}
-.wordmark{text-align:left;font-family:var(--f-display);line-height:1.02}
-.wordmark b{font-size:16.5px;font-weight:800;letter-spacing:-.01em;display:block}
-.wordmark span{font-size:7.5px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+.lockup{display:flex;align-items:center;direction:ltr;flex:none}
+.wordmark{text-align:center;line-height:1.14}
+.wordmark b{display:block;font-family:Montserrat,var(--f-display),sans-serif;font-size:16px;font-weight:300;
+  letter-spacing:.42em;margin-inline-end:-.42em;color:var(--ink)}
+.wordmark span{display:block;font-size:8.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-3)}
 .page-ctx{font-size:13px;font-weight:700;color:var(--ink-2);margin-inline-start:18px;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;min-width:0}
 @media(max-width:979px){.page-ctx{display:none}}
@@ -1077,9 +1073,8 @@ details.ci-more>.in{padding:2px 13px 12px}
 
 <header class="top">
   <div class="wrap top-in">
-    <div class="lockup" aria-label="KobiX RealEstate">
-      <span class="globe" aria-hidden="true"></span>
-      <span class="wordmark"><b>KobiX</b><span>RealEstate V1</span></span>
+    <div class="lockup" aria-label="PROPX">
+      <span class="wordmark"><b>PROPX</b><span data-i="slogan">מידע הוא הנכס הראשון</span></span>
     </div>
     <span class="page-ctx" data-i="pageCtx">סקירת שוק הנדל״ן בישראל | פנימי</span>
     <div class="top-end">
@@ -1117,7 +1112,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 <div class="command">
   <div class="wrap command-in">
     <div class="cmd-hero">
-      <span class="cmd-kicker" data-i="cmdKicker">KobiX RealEstate · מרכז שליטה</span>
+      <span class="cmd-kicker" data-i="cmdKicker">PROPX · מרכז שליטה</span>
       <div class="cmd-hero-t">
         <span class="hline a" aria-hidden="true"></span>
         <h1 data-i="h1">שוק הנדל״ן בישראל</h1>
@@ -1774,7 +1769,7 @@ function txFor(id){
    ===================================================================== */
 const I18N={
 he:{
-  brand:"Kobix.online", demoBadge:"נתוני הדגמה", calBadge:"דירות חדשות מקבלן בלבד",
+  brand:"PROPX", slogan:"מידע הוא הנכס הראשון", demoBadge:"נתוני הדגמה", calBadge:"דירות חדשות מקבלן בלבד",
   updated:"דירות חדשות · למ״ס והכלכלן הראשי · אמצע 2026",
   h1:"שוק הנדל״ן בישראל", h1sub:"כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
@@ -1828,7 +1823,7 @@ he:{
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
   srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
   srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
-  footLeft:"© 2026 KobiX RealEstate · Kobix.online · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
+  footLeft:"© 2026 PROPX · מידע הוא הנכס הראשון · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
@@ -1932,7 +1927,7 @@ he:{
   stBadgeTxt:"שכבת רחוב · נתוני הדגמה מעוגני-עיר · אומדן",
   stTopT:"רחובות מובילים · מודל 5 שנים", stTopNote:"רק רחובות עם 5+ עסקאות מדגם מדורגים; הציון משוקלל בוודאות הנתונים.",
 
-  cmdKicker:"KobiX RealEstate · מרכז שליטה",
+  cmdKicker:"PROPX · מרכז שליטה",
   cmdFresh:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
   capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`ציון השקעה מוביל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
@@ -2014,7 +2009,7 @@ he:{
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
-  brand:"Kobix.online", demoBadge:"Demo data", calBadge:"New homes from developers only",
+  brand:"PROPX", slogan:"Information is the first asset", demoBadge:"Demo data", calBadge:"New homes from developers only",
   updated:"New homes · CBS & Chief Economist · mid-2026",
   h1:"Israel\u2019s Real-Estate Market", h1sub:"Everything that matters in Israel\u2019s <b>new-home</b> market",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
@@ -2068,7 +2063,7 @@ en:{
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
   srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
   srcB4a:"Official indices",srcB4b:"CBS housing price indices",
-  footLeft:"© 2026 KobiX RealEstate · Kobix.online · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
+  footLeft:"© 2026 PROPX · Information is the first asset · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
   navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
@@ -2172,7 +2167,7 @@ en:{
   stBadgeTxt:"Street layer · city-anchored demo data · estimate",
   stTopT:"Top streets · 5-year model", stTopNote:"Only streets with 5+ sampled deals are ranked; scores are scaled by data confidence.",
 
-  cmdKicker:"KobiX RealEstate · Command Center",
+  cmdKicker:"PROPX · Command Center",
   cmdFresh:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
   capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top investment score: ${n}, ${s} of 100 — open capital analysis`,
@@ -2410,7 +2405,7 @@ function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
-  document.title="KobiX RealEstate";
+  document.title="PROPX";
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];

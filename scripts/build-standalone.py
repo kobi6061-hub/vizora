@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Build the OFFLINE/artifact variant of the KobiX app from the deployed one.
+"""Build the OFFLINE/artifact variant of the PROPX app from the deployed one.
 
 The deployed site (repo root) authenticates server-side; this script
 produces standalone/israel-new-homes-v2.html for use as a local file or a
@@ -30,11 +30,11 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   border-radius:16px;padding:0 0 24px;overflow:hidden;box-shadow:var(--shadow-pop);text-align:center}
 .gate-rib{height:3px;background:linear-gradient(to left,var(--accent-deep),var(--accent) 55%,var(--gold))}
 .gate-in{padding:26px 26px 0;display:flex;flex-direction:column;gap:5px}
-.gate-mark{display:flex;align-items:center;justify-content:center;gap:9px;direction:ltr}
-.gate-mark .globe{width:30px;height:30px}
-.gate-word{text-align:left;font-family:var(--f-display);line-height:1.05}
-.gate-word b{font-size:19px;font-weight:800;display:block}
-.gate-word span{font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+.gate-mark{display:flex;align-items:center;justify-content:center;direction:ltr}
+.gate-word{text-align:center;line-height:1.3}
+.gate-word b{display:block;font-family:Montserrat,var(--f-display),sans-serif;font-size:25px;font-weight:300;
+  letter-spacing:.44em;margin-inline-end:-.44em;color:var(--ink)}
+.gate-word span{display:block;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-2);margin-top:4px}
 .gate-sub{font-size:12.5px;color:var(--ink-3)}
 .gate-caveat{margin-top:9px;padding-top:10px;border-top:1px solid var(--hairline);
   font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--brass)}
@@ -60,8 +60,8 @@ GATE_HTML = """<div id="gate" dir="rtl" role="dialog" aria-modal="true" aria-lab
   <div class="gate-card" id="gateCard">
     <div class="gate-rib"></div>
     <div class="gate-in">
-      <div class="gate-mark" aria-hidden="true"><span class="globe"></span>
-        <span class="gate-word"><b>KobiX</b><span>RealEstate V1</span></span></div>
+      <div class="gate-mark">
+        <span class="gate-word"><b>PROPX</b><span>מידע הוא הנכס הראשון</span></span></div>
       <h2 id="gateT" style="font-size:15px;font-weight:700">מודיעין שוק הדירות החדשות</h2>
       <p class="gate-sub">הזינו סיסמה כדי להציג את הלוח</p>
       <p class="gate-caveat">לשימוש פנימי בלבד</p>

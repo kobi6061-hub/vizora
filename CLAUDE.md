@@ -1,6 +1,6 @@
 # Repository layout
 
-- Repo root = the **KobiX RealEstate** private dashboard, deployed to Vercel as-is
+- Repo root = the **PROPX** private dashboard (formerly KobiX RealEstate), deployed to Vercel as-is
   (static `index.html` + `login.html`, Edge `middleware.js` auth gate, `api/` login/logout,
   `vercel.json`). No build step; framework preset must stay "Other"/none.
 - `vizora-app/` = the earlier VIZORA Next.js product (self-contained; see its own CLAUDE.md).
