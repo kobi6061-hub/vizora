@@ -492,12 +492,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .tx-src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .tx-src a:hover{color:var(--accent-deep)}
 .tx-empty{padding:16px 18px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--hairline)}
-.tx-links{display:flex;flex-wrap:wrap;align-items:center;gap:7px 12px;padding:11px 15px;
-  border-top:1px solid var(--hairline);font-size:12px;color:var(--ink-3)}
-.tx-links a{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:var(--accent-deep);
-  border:1px solid var(--hairline);border-radius:99px;padding:4px 11px;transition:border-color .12s,background .12s}
-.tx-links a:hover{border-color:var(--accent);background:var(--accent-wash)}
-
 /* ============================ rankings tabs ============================ */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -1358,7 +1352,6 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
       <div class="tbl-cards" id="txCards"></div>
       <p class="tx-empty" id="txEmpty" hidden></p>
-      <div class="tx-links" id="txLinks"></div>
     </div>
   </section>
 
@@ -1846,9 +1839,7 @@ he:{
   txProv:"עסקאות שדווחו לרשות המיסים, כפי שפורסמו בעיתונות הכלכלית · תאריך ופירוט — ברזולוציה שפורסמה · נאסף 30.08.2026",
   txScopeCity:c=>`רמת עיר — ${c}`, txTagNew:"חדשה מקבלן", txTagUsed:"יד שנייה",
   thTag:"סיווג", thSrc:"מקור", txRoomsShort:"חד׳", txPsmShort:"מ״ר",
-  txEmpty:"לאזור זה טרם נאספו עסקאות מדווחות פרטניות. מוצגות אך ורק עסקאות שפורסמו בפועל — לעולם לא שורות מדומות. הקישורים מטה מובילים למאגרי העסקאות הרשמיים של האזור.",
-  txLinksLbl:c=>c?`כל העסקאות המדווחות ב${c}:`:"כל העסקאות המדווחות:",
-  txLnkNadlan:"מידע נדל״ן — רשות המיסים", txLnkMadlan:"מדלן — דירות שנמכרו", txLnkGov:"govmap — שכבת עסקאות",
+  txEmpty:"לאזור זה טרם נאספו עסקאות מדווחות פרטניות. מוצגות אך ורק עסקאות שפורסמו בפועל — לעולם לא שורות מדומות.",
   thDate:"תאריך",thStreet:"רחוב",thRooms:"חדרים",thAreaSqm:"שטח",thFloor:"קומה",thTxPrice:"מחיר",thTxPsm:"מחיר למ״ר",
   srcTitle:"מקורות ומתודולוגיה",
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
@@ -2092,9 +2083,7 @@ en:{
   txProv:"Deals reported to the Tax Authority, as published in the financial press · date & detail at published resolution · collected 30.08.2026",
   txScopeCity:c=>`city level — ${c}`, txTagNew:"new (developer)", txTagUsed:"second-hand",
   thTag:"Type", thSrc:"Source", txRoomsShort:"rm", txPsmShort:"m²",
-  txEmpty:"No individually reported deals have been collected for this area yet. Only actually-published transactions are shown — never simulated rows. The links below open the area's official deal registries.",
-  txLinksLbl:c=>c?`All reported deals in ${c}:`:"All reported deals:",
-  txLnkNadlan:"Nadlan.gov.il — Tax Authority", txLnkMadlan:"Madlan — sold prices", txLnkGov:"govmap — deals layer",
+  txEmpty:"No individually reported deals have been collected for this area yet. Only actually-published transactions are shown — never simulated rows.",
   thDate:"Date",thStreet:"Street",thRooms:"Rooms",thAreaSqm:"m²",thFloor:"Floor",thTxPrice:"Price",thTxPsm:"Per m²",
   srcTitle:"Sources & methodology",
   srcATitle:"Calibration basis — new developer homes only",
@@ -3328,7 +3317,7 @@ function renderTx(){
   const sec=el("txSection");
   if(state.mode!=="sale"){sec.style.display="none";return}
   sec.style.display="";
-  const l=LOC[state.locId],{rows,scope,cty}=txRowsFor(state.locId);
+  const {rows,scope}=txRowsFor(state.locId);
   el("txProv").textContent=t.txProv+(scope?" · "+t.txScopeCity(he?scope.he:scope.en):"");
   const dash="—";
   const tagOf=r=>r.tag==="new"?`<span class="tx-chip new">${t.txTagNew}</span>`
@@ -3363,13 +3352,6 @@ function renderTx(){
         ${r.sqm?`<span class="num">${psmOf(r)}/${t.txPsmShort}</span>`:""}</div>
       <div class="r2">${r.tag?tagOf(r):""}${noteOf(r)?`<span>${noteOf(r)}</span>`:""}<span class="tx-src">${srcOf(r)}</span></div>
     </div>`).join("");
-  const cn=cty?(he?cty.he:cty.en):"";
-  const madlan=cty?`https://www.madlan.co.il/area-info/${encodeURIComponent(cty.he.replace(/\s+/g,"-"))}-${encodeURIComponent("ישראל")}`:"https://www.madlan.co.il/";
-  const nadlan=cty?`https://www.nadlan.gov.il/?search=${encodeURIComponent(cty.he)}`:"https://www.nadlan.gov.il/";
-  el("txLinks").innerHTML=`<span>${t.txLinksLbl(cn)}</span>
-    <a href="${nadlan}" target="_blank" rel="noopener">${t.txLnkNadlan}</a>
-    <a href="${madlan}" target="_blank" rel="noopener">${t.txLnkMadlan}</a>
-    <a href="https://www.govmap.gov.il/?lay=16" target="_blank" rel="noopener">${t.txLnkGov}</a>`;
 }
 
 
