@@ -4,7 +4,7 @@
      Demo dataset only — clearly labeled; the UI reads a clean data model so a
      production API can replace DEMO_DATA without touching the interface.
      ========================================================================= -->
-<title>Assaf-estate</title>
+<title>Kobix.online</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Assistant:wght@400;500;600;700&display=swap">
 
@@ -418,6 +418,8 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
 .gate-in{padding:26px 26px 0;display:flex;flex-direction:column;gap:6px}
 .gate-mark{font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:-.01em;direction:ltr}
 .gate-sub{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+.gate-caveat{margin-top:6px;padding-top:8px;border-top:1px solid var(--hairline);
+  font-size:11px;font-weight:700;letter-spacing:.06em;color:#8a6d2a}
 .gate-form{display:flex;flex-direction:column;gap:9px;padding:20px 26px 0}
 #gatePass{height:44px;border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--paper);
   padding-inline:14px;font-size:15px;text-align:center;letter-spacing:.14em;
@@ -444,12 +446,13 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <div class="gate-card" id="gateCard">
     <div class="gate-ribbon"></div>
     <div class="gate-in">
-      <div class="gate-mark" id="gateMark">Assaf-estate</div>
+      <div class="gate-mark" id="gateMark">Kobix.online</div>
       <p class="gate-sub">הזינו סיסמה כדי להציג את הלוח</p>
+      <p class="gate-caveat">לשימוש פנימי בלבד</p>
     </div>
     <form class="gate-form" id="gateForm" autocomplete="off">
       <input id="gatePass" type="password" inputmode="text" autocomplete="off"
-             aria-label="סיסמה" placeholder="••••" autofocus>
+             aria-label="סיסמה" placeholder="••••••••" autofocus>
       <button type="submit" class="gate-btn">כניסה</button>
       <p class="gate-err" id="gateErr" role="alert">סיסמה שגויה</p>
     </form>
@@ -1124,7 +1127,7 @@ function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
-  document.title="Assaf-estate";
+  document.title="Kobix.online";
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
@@ -1829,7 +1832,7 @@ refresh(true);
 <script>
 /* ---------- access gate: locked until the password is entered ---------- */
 (function(){
-  var PASS="BEST";
+  var PASS="test4321";
   var gate=document.getElementById("gate"),
       form=document.getElementById("gateForm"),
       pass=document.getElementById("gatePass"),
