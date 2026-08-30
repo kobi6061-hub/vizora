@@ -10,8 +10,11 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
 <!-- =========================================================================
      PROPX · מידע הוא הנכס הראשון · מודיעין שוק הדירות החדשות בישראל
      Single-file interactive market-intelligence dashboard (Hebrew-first, RTL).
-     Demo dataset only — clearly labeled; the UI reads a clean data model so a
-     production API can replace DEMO_DATA without touching the interface.
+     Data model: national/district/city anchors calibrated to official
+     publications (CBS, Chief Economist, BoI); sub-city resolutions are
+     labeled estimates; the deals table carries individually sourced
+     reported transactions. The UI reads a clean data model so live
+     providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1402,7 +1405,7 @@ details.ci-more>.in{padding:2px 13px 12px}
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
             <li data-i="srcA6">טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.</p>
+          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -1795,7 +1798,7 @@ function txRowsFor(id){
    ===================================================================== */
 const I18N={
 he:{
-  brand:"PROPX", slogan:"מידע הוא הנכס הראשון", demoBadge:"נתוני הדגמה", calBadge:"דירות חדשות מקבלן בלבד",
+  brand:"PROPX", slogan:"מידע הוא הנכס הראשון", calBadge:"דירות חדשות מקבלן בלבד",
   updated:"דירות חדשות · למ״ס והכלכלן הראשי · אמצע 2026",
   h1:"שוק הנדל״ן בישראל", h1sub:"כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
@@ -1821,7 +1824,7 @@ he:{
   tApt:"דירה",tGarden:"דירת גן",tPh:"פנטהאוז",tHouse:"בית פרטי",
   aAll:"הכל",a60:"עד 60 מ״ר",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
   cAll:"הכל",cReady:"מוכנה למגורים",cPaper:"על הנייר", clearFilters:"אפס מסננים",
-  filterNote:"המסננים מדגימים התאמת מקדמים על נתוני ההדגמה",
+  filterNote:"המסננים מתאימים מקדמים על שכבת האומדנים",
   rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
   tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
   cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · ★ = המוביל במדד", cmpAdd:"+ הוסף אזור",
@@ -1847,7 +1850,7 @@ he:{
   srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"אלו אומדנים מקורבים של שוק הדירות החדשות בלבד, לצורכי הדגמה — לא סטטיסטיקה רשמית; טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.", srcA6:"טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)",
+  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.", srcA6:"טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -1954,7 +1957,7 @@ he:{
   stHow:"איך חישבנו את הנתון?",
   stProvBody:(a,b,c,r,w)=>`${a} עסקאות ברחוב עצמו · ${b} עסקאות השוואה מ-${c} רחובות סמוכים · רדיוס: ${r?r+" מ׳":"—"} · חלון: ${w} חודשים · תקופה: 09.2021–08.2026 · ספי מדגם: 10+/5–9/1–4.`,
   stProvSrc:"מקור: מרשם רחובות מובנה בקובץ (שמות רחובות מוכרים); עסקאות — שכבת מודל דטרמיניסטית מעוגנת למחירי העיר/השכונה שבלוח (למ״ס/הכלכלן הראשי, אמצע 2026). מרחקים ומיקומים — קואורדינטות מודל, תצוגת מפה סכמטית. אומדן — לא רישום עסקאות רשמי.",
-  stBadgeTxt:"שכבת רחוב · נתוני הדגמה מעוגני-עיר · אומדן",
+  stBadgeTxt:"שכבת רחוב · אומדן מעוגן-עיר · לא נתון רשמי ברמת רחוב",
   stTopT:"רחובות מובילים · מודל 5 שנים", stTopNote:"רק רחובות עם 5+ עסקאות מדגם מדורגים; הציון משוקלל בוודאות הנתונים.",
 
   cmdKicker:"PROPX · מרכז שליטה",
@@ -2039,7 +2042,7 @@ he:{
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
-  brand:"PROPX", slogan:"Information is the first asset", demoBadge:"Demo data", calBadge:"New homes from developers only",
+  brand:"PROPX", slogan:"Information is the first asset", calBadge:"New homes from developers only",
   updated:"New homes · CBS & Chief Economist · mid-2026",
   h1:"Israel\u2019s Real-Estate Market", h1sub:"Everything that matters in Israel\u2019s <b>new-home</b> market",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
@@ -2065,7 +2068,7 @@ en:{
   tApt:"Apartment",tGarden:"Garden apt.",tPh:"Penthouse",tHouse:"House",
   aAll:"All",a60:"Up to 60 m²",a6080:"60–80",a80100:"80–100",a100130:"100–130",a130:"130+",
   cAll:"All",cReady:"Move-in ready",cPaper:"Pre-construction", clearFilters:"Clear filters",
-  filterNote:"Filters apply demo multipliers to the demonstration dataset",
+  filterNote:"Filters apply multipliers over the estimate layer",
   rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
   tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Most transactions",
   cmpTitle:"Compare areas", cmpNote:"Up to four areas · ★ = leader per metric", cmpAdd:"+ Add area",
@@ -2091,7 +2094,7 @@ en:{
   srcA1:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"These are calibrated approximations of the new-homes market only, for demonstration — not official statistics; the reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Deals table — Tax Authority reports as published by Calcalist, ynet, TheMarker and Project TLV (collected 30.08.2026)",
+  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions and derived series are labeled estimates — not row-level official statistics. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Deals table — Tax Authority reports as published by Calcalist, ynet, TheMarker and Project TLV (collected 30.08.2026)",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -2198,7 +2201,7 @@ en:{
   stHow:"How was this computed?",
   stProvBody:(a,b,c,r,w)=>`${a} transactions on the street itself · ${b} comparables from ${c} nearby streets · radius: ${r?r+" m":"—"} · window: ${w} months · period: 09.2021–08.2026 · sample thresholds: 10+/5–9/1–4.`,
   stProvSrc:"Source: structured in-file street registry (recognized street names); transactions — a deterministic model layer anchored to the city/neighborhood prices on this board (CBS/Chief Economist, mid-2026). Distances and positions are model coordinates; the map view is schematic. Estimate — not an official deals registry.",
-  stBadgeTxt:"Street layer · city-anchored demo data · estimate",
+  stBadgeTxt:"Street layer · city-anchored estimate · not street-level official data",
   stTopT:"Top streets · 5-year model", stTopNote:"Only streets with 5+ sampled deals are ranked; scores are scaled by data confidence.",
 
   cmdKicker:"PROPX · Command Center",
