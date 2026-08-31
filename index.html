@@ -17,6 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
+<meta name="propx-build" content="2026-08-31.p0-official-tx">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -1464,6 +1465,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 <footer class="foot">
   <div class="wrap foot-in">
     <span id="footLeft"></span>
+    <span id="buildStamp" style="font-size:10px;color:var(--ink-3);opacity:.75;margin-inline-start:10px"></span>
     <span data-i="footRight">אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים</span>
   </div>
 </footer>
@@ -2491,11 +2493,14 @@ const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
+const PROPX_BUILD="2026-08-31.p0-official-tx";
+window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
   document.title="PROPX";
+  const bs=el("buildStamp");if(bs)bs.textContent="build "+PROPX_BUILD;
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
