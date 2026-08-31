@@ -321,6 +321,40 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     assert.equal(r.points[1].value, 511.1);
   });
 
+  console.log('HARD BUILD GATE — data purity & count reconciliation');
+  await t('every retrieved row is OFFICIAL_GOVERNMENT (build fails otherwise)', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const impure = rows.filter((r) => r.sourceFamily !== 'OFFICIAL_GOVERNMENT');
+    assert.equal(impure.length, 0, 'impure rows: ' + JSON.stringify(impure.map((r) => r.sourceFamily)));
+  });
+  await t('tab counts reconcile exactly with their datasets', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const res = rows.filter((r) => r.propertyClass === 'residential');
+    const nw = res.filter((r) => r.newness === 'confirmed_new' || r.newness === 'probable_new');
+    const sec = res.filter((r) => r.newness === 'second_hand');
+    const unk = res.filter((r) => r.newness === 'unknown');
+    assert.equal(nw.length + sec.length + unk.length, res.length, 'partitions must cover ALL exactly once');
+    assert.ok(res.length > 0);
+  });
+  await t('rows are sorted strictly by ISO transaction date, newest first', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const dates = rows.map((r) => r.date).filter(Boolean);
+    assert.deepEqual(dates, [...dates].sort((a, b) => b.localeCompare(a)), dates.join(','));
+    assert.ok(dates.every((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)), 'dates must be canonical ISO');
+  });
+  await t('the period window is enforced even when the endpoint ignores it', async () => {
+    const stale = JSON.parse(JSON.stringify(azor.govmapFixtures));
+    stale.streetDeals2.data[0].dealDate = '2019-01-05';        // far outside a 24-month window
+    const gm = new GovMapProvider({ store: new MemoryStore(), fetchImpl: async (url, init) => {
+      const u = String(url);
+      if (u.includes('/search-service/autocomplete')) return jsonRes(stale.autocomplete);
+      if (u.match(/\/real-estate\/deals\/[\d.]+,[\d.]+\/\d+$/)) return jsonRes(stale.polygons);
+      return jsonRes(u.includes('dealType=1') ? stale.streetDeals1 : stale.streetDeals2);
+    } });
+    const rows = await gm.getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 }, { months: 24 });
+    assert.ok(rows.every((r) => !r.date || r.date >= '2024'), rows.map((r) => r.date).join(','));
+  });
+
   console.log('stores');
   await t('FileStore writes timestamped snapshots + latest, change-detected', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'propx-gov-'));

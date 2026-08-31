@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
   };
   const filters = { limit: num('limit') || 100, months: num('months') || 24, radiusM: num('radius') || undefined };
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'private, max-age=300');
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   try {
     const svc = getService();
     const out = g('newOnly') === '1'
@@ -43,7 +43,20 @@ module.exports = async (req, res) => {
     const cls = out.transactions.reduce((a, t) => {
       a[t.propertyClass || 'unknown'] = (a[t.propertyClass || 'unknown'] || 0) + 1; return a;
     }, {});
-    out.meta = { months: filters.months, mode: serviceMode(), byPropertyClass: cls };
+    // PURITY GATE at the wire: only official government rows may leave here.
+    const impure = out.transactions.filter((t) => t.sourceFamily !== 'OFFICIAL_GOVERNMENT');
+    out.transactions = out.transactions.filter((t) => t.sourceFamily === 'OFFICIAL_GOVERNMENT');
+    out.transactions.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const dates = out.transactions.map((t) => t.date).filter(Boolean);
+    out.meta = {
+      months: filters.months, mode: serviceMode(), byPropertyClass: cls,
+      sourceFamily: 'OFFICIAL_GOVERNMENT',
+      sourceAuthority: 'רשות המסים', deliveredVia: 'GovMap',
+      syncedAt: new Date().toISOString(),
+      latestTransactionDate: dates.length ? dates[0] : null,
+      recordsRetrieved: out.transactions.length,
+      impureRowsDropped: impure.length,
+    };
     res.end(JSON.stringify(out));
   } catch (e) {
     res.statusCode = 502;

@@ -1487,9 +1487,9 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
             <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: 84,280 ארצית (סוף יוני 2026); תל אביב 9,549; רעננה 1,580</li>
             <li data-i="srcA4">מכירות — קצב שנתי: ארצית כ-34,000 (2025); תל אביב ~4,100 בקצב שנתי (למ״ס מחצית א׳ 2026: כ-2,056 מכירות, ~342/חודש)</li>
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
-            <li data-i="srcA6">טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)</li>
+            <li data-i="srcA6">עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.</p>
+          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -1780,49 +1780,11 @@ const LOCATIONS = [
 
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 
-/* -------- REAL reported transactions (deals reported to the Tax
-   Authority, as published; collected 30.08.2026 via web search) --------
-   Sources per row: Calcalist / ynet / TheMarker reported-deal columns and
-   project-tlv.info/sold. Binding rule: a row is stored ONLY when its source
-   names the city explicitly; unbindable rows were discarded, never guessed.
-   d = the date resolution the source published (month or year). sqm/rooms/
-   fl = "" when the source did not publish them (rendered as em-dash).
-   tag: "new" = new from developer · "used" = second-hand · "" = not stated.
-   u = article URL when the row↔article binding is certain; otherwise the
-   outlet name only (all collection URLs listed in the sources section). */
-const TX_DB={
- tlv:[
-  {d:"06.2026",he:"פרויקט MUZE — פנטהאוז",en:"MUZE project — penthouse",rooms:"",sqm:0,fl:"",
-   price:23200000,tag:"new",src:"Project TLV",u:"https://project-tlv.info/sold/"},
-  {d:"2026",he:"פרזון, יד אליהו",en:"Perazon St., Yad Eliyahu",rooms:4,sqm:98,fl:"5/6",
-   nHe:"מרפסת 12 מ״ר",nEn:"12 m² balcony",price:3450000,tag:"used",src:"כלכליסט"},
-  {d:"2026",he:"פרזון, יד אליהו",en:"Perazon St., Yad Eliyahu",rooms:4,sqm:92,fl:"1/7",
-   nHe:"מרפסת 12 מ״ר",nEn:"12 m² balcony",price:3500000,tag:"used",src:"כלכליסט"}],
- jerusalem:[
-  {d:"2026",he:"החרוב, ארנונה",en:"HaCharuv St., Arnona",rooms:5,sqm:115,fl:"1/2",
-   nHe:"מרפסת 12 מ״ר · מחסן 6 מ״ר · מעלית · חניה",nEn:"12 m² balcony · 6 m² storage · elevator · parking",
-   price:4500000,tag:"",src:"כלכליסט",u:"https://www.calcalist.co.il/real-estate/article/bkzojwcxgx"}],
- "beer-sheva":[
-  {d:"2026",he:"מקור חיים — פנטהאוז",en:"Mekor Chaim St. — penthouse",rooms:5,sqm:205,fl:"",
-   nHe:"מרפסת 50 מ״ר",nEn:"50 m² balcony",price:2140000,tag:"",src:"כלכליסט",
-   u:"https://www.calcalist.co.il/real-estate/article/byseklzcyl"},
-  {d:"2026",he:"גולדמן, רמות — פנטהאוז",en:"Goldman St., Ramot — penthouse",rooms:5,sqm:180,fl:"",
-   nHe:"מרפסת 65 מ״ר",nEn:"65 m² balcony",price:1640000,tag:"",src:"ynet / כלכליסט"},
-  {d:"2026",he:"ספיר — פנטהאוז",en:"Sapir St. — penthouse",rooms:5,sqm:142,fl:"",
-   nHe:"מרפסת 110 מ״ר",nEn:"110 m² balcony",price:2000000,tag:"",src:"ynet / כלכליסט"},
-  {d:"2026",he:"בר ניסן, נווה זאב",en:"Bar Nisan St., Neve Ze'ev",rooms:3,sqm:97,fl:"4/9",
-   nHe:"מרפסת 14 מ״ר · מעלית · חניה · ממ״ד",nEn:"14 m² balcony · elevator · parking · shelter room",
-   price:1150000,tag:"",src:"טור העסקאות"}],
- rishon:[
-  {d:"03–04.2026",he:"אלי כהן",en:"Eli Cohen St.",rooms:4,sqm:100,fl:"3/4",
-   price:1850000,tag:"",src:"ynet",u:"https://www.ynet.co.il/economy/article/djnyk36iz"},
-  {d:"03–04.2026",he:"אנה פרנק",en:"Anne Frank St.",rooms:4.5,sqm:100,fl:"4/5",
-   nHe:"מרפסת 7 מ״ר · מעלית · חניה · ממ״ד",nEn:"7 m² balcony · elevator · parking · shelter room",
-   price:2905000,tag:"",src:"ynet"}],
- haifa:[
-  {d:"2026",he:"אחד העם, הדר",en:"Ehad Ha'am St., Hadar",rooms:2,sqm:54,fl:"12/24",
-   price:1030000,tag:"",src:"טור העסקאות"}]
-};
+/* Transactions come exclusively from the official government layer at
+   runtime (/api/gov/transactions -> lib/gov). No press/curated/fixture rows
+   exist in this build: a second dataset here once contradicted the counts,
+   so it was removed rather than hidden. */
+
 /* -------- deterministic pseudo-random (stable across loads) -------- */
 function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
@@ -1863,18 +1825,6 @@ function seriesFor(id){
   pts.reverse();
   seriesCache[id]=pts;
   return pts;
-}
-
-/* -------- reported-transaction lookup: city rows, or roll-up -------- */
-function txRowsFor(id){
-  const l=LOC[id];if(!l)return{rows:[],scope:null,cty:null};
-  const cty=l.type==="city"?l:cityOf(l);
-  if(cty&&TX_DB[cty.id])return{rows:TX_DB[cty.id],scope:l.type==="city"?null:cty,cty};
-  const ids=l.type==="district"?LOCATIONS.filter(x=>x.parent===l.id&&TX_DB[x.id]).map(x=>x.id)
-    :l.type==="country"?Object.keys(TX_DB):[];
-  const rows=[];
-  for(const cid of ids)for(const r of TX_DB[cid])rows.push({...r,cityHe:LOC[cid].he,cityEn:LOC[cid].en});
-  return{rows:rows.slice(0,14),scope:null,cty};
 }
 
 /* =====================================================================
@@ -1933,8 +1883,9 @@ he:{
   geoMPrice:"מחיר דירה חדשה", geoMSqm:"₪ למ״ר", geoMRent:"שכ״ד חודשי", geoMYoy:"שינוי שנתי",
   geoMTx:"עסקאות/שנה", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
   txTitle:"עסקאות אחרונות שדווחו באזור",
-  txProv:"נתוני עסקאות שדווחו לרשות המיסים · נתון נצפה, לא מודל",
-  txTabAll:"הכול", txTabNew:"דירות חדשות", txTabSec:"יד שנייה",
+  txOfficialBadge:"מקור רשמי · רשות המסים (דרך GovMap) · נתון נצפה",
+  txLatestInSrc:d=>`עסקה אחרונה במקור: ${d}`, txSynced:d=>`סנכרון אחרון: ${d}`,
+  txTabAll:"הכול", txTabNew:"דירות חדשות", txTabSec:"יד שנייה", txTabUnk:"לא מסווג",
   txP12:"12 חודשים", txP24:"24 חודשים", txP36:"3 שנים", txP60:"5 שנים", txPAll:"כל התקופה",
   txMapToggle:"הצג עסקאות על המפה", txModeFixture:"מצב אימות מקומי — נתוני בדיקה",
   txSumN:"עסקאות", txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
@@ -1943,15 +1894,14 @@ he:{
   txScopeStreet:(d,n)=>`נמצאו <b>${n}</b> עסקאות ברחוב: ${d}`,
   txScopeLoc:(d,n)=>`נמצאו <b>${n}</b> עסקאות ביישוב: ${d}`,
   txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
-  txCuratedOnly:"לא התקבלו עסקאות מהמאגר הממשלתי לתקופה ולאזור שנבחרו — מוצגות עסקאות שדווחו לרשות המיסים כפי שפורסמו בעיתונות הכלכלית.",
   txNonRes:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר/לא מסווג) הוצאו מהטבלה ומהסטטיסטיקה`,
   txOnlyNonRes:n=>`נמצאו ${n} עסקאות מדווחות באזור, אך אף אחת מהן אינה עסקת מגורים (קרקע/מסחר/לא מסווג). נסו להרחיב את טווח התאריכים.`,
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
-  txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג", txGrpCurated:"עסקאות שפורסמו בעיתונות הכלכלית — מקור משני",
+  txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג",
   txLoading:"טוען עסקאות שדווחו…",
-  txErr:"נתוני העסקאות אינם זמינים כרגע — תקלה טכנית בשליפה. אין משמעות של אפס עסקאות באזור.",
+  txErr:"נתוני העסקאות הרשמיים אינם זמינים כרגע. אין משמעות של אפס עסקאות באזור.",
   txNoMatch:"התאמת העסקאות לאזור אינה זמינה כרגע. אין משמעות של אפס עסקאות באזור.",
-  txZero:"לא נמצאו עסקאות מדווחות בתקופה ובאזור שנבחרו. אפשר להרחיב את טווח התאריכים.",
+  txZero:"לא נמצאו עסקאות רשמיות בתקופה ובאזור שנבחרו. אפשר להרחיב את טווח התאריכים.",
   txNoScope:"בחרו יישוב, שכונה או רחוב כדי לראות עסקאות שבוצעו באזור.",
   txScopeCity:c=>`רמת עיר — ${c}`, txTagNew:"חדשה מקבלן", txTagUsed:"יד שנייה",
   thTag:"סיווג", thSrc:"מקור", txRoomsShort:"חד׳", txPsmShort:"מ״ר",
@@ -1963,7 +1913,7 @@ he:{
   srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות שדווחו מציגה עסקאות שפורסמו בפועל, עם מקור לכל שורה.", srcA6:"טבלת העסקאות — דיווחים לרשות המיסים כפי שפורסמו בכלכליסט, ynet, TheMarker ו-Project TLV (נאסף 30.08.2026)",
+  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -2208,8 +2158,9 @@ en:{
   geoMPrice:"New-home price", geoMSqm:"₪ per m²", geoMRent:"Monthly rent", geoMYoy:"Annual change",
   geoMTx:"Deals/yr", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
   txTitle:"Latest reported transactions in this area",
-  txProv:"Transactions reported to the Israel Tax Authority · observed data, not modelled",
-  txTabAll:"All", txTabNew:"New homes", txTabSec:"Second-hand",
+  txOfficialBadge:"Official source · Israel Tax Authority (via GovMap) · observed data",
+  txLatestInSrc:d=>`Latest transaction in source: ${d}`, txSynced:d=>`Last sync: ${d}`,
+  txTabAll:"All", txTabNew:"New homes", txTabSec:"Second-hand", txTabUnk:"Unclassified",
   txP12:"12 months", txP24:"24 months", txP36:"3 years", txP60:"5 years", txPAll:"All available",
   txMapToggle:"Show sold deals on map", txModeFixture:"local verification mode — test data",
   txSumN:"Transactions", txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
@@ -2218,11 +2169,10 @@ en:{
   txScopeStreet:(d,n)=>`Found <b>${n}</b> transactions on the street: ${d}`,
   txScopeLoc:(d,n)=>`Found <b>${n}</b> transactions in the locality: ${d}`,
   txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
-  txCuratedOnly:"No records returned from the government layer for the selected area and period — showing Tax-Authority-reported deals as published in the financial press.",
   txNonRes:n=>`${n} non-residential deals (land/commercial/unclassified) excluded from the table and the statistics`,
   txOnlyNonRes:n=>`${n} reported deals found in this area, none of them residential (land/commercial/unclassified). Try widening the date range.`,
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
-  txTagProb:"new (probable)", txTagUnk:"unclassified", txGrpCurated:"Deals published in the financial press — secondary source",
+  txTagProb:"new (probable)", txTagUnk:"unclassified",
   txLoading:"Loading reported transactions…",
   txErr:"Transaction data temporarily unavailable — retrieval failure. This does not mean zero market activity.",
   txNoMatch:"Transaction matching unavailable. This does not mean zero market activity.",
@@ -2238,7 +2188,7 @@ en:{
   srcA1:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions and derived series are labeled estimates — not row-level official statistics. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Deals table — Tax Authority reports as published by Calcalist, ynet, TheMarker and Project TLV (collected 30.08.2026)",
+  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions and derived series are labeled estimates — not row-level official statistics. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -3461,11 +3411,14 @@ function renderConfidence(){
 }
 
 /* =====================================================================
-   SOLD TRANSACTIONS — one source of truth: the government data layer
-   (/api/gov/transactions → lib/gov providers). The curated published-deal
-   registry (TX_DB) is kept as a clearly-labeled secondary group so nothing
-   already verified is lost. Observed data only; nothing is fabricated.
+   SOLD TRANSACTIONS — ONE source of truth: the official government deal
+   registry (Israel Tax Authority via GovMap), fetched at runtime through
+   /api/gov/transactions. No second dataset exists in this component: a
+   curated press registry once drove the table while the official rows drove
+   the counts, which let a failed fetch show press rows beside "0". Every row
+   here carries sourceFamily OFFICIAL_GOVERNMENT and is dropped otherwise.
    ===================================================================== */
+let txDebug=null;
 const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
   tab:"all",months:24,mapOn:false,key:"",err:null,unavailable:[]};
 
@@ -3493,19 +3446,36 @@ async function txFetch(force){
   if(!q||!q.city){txState.status="scope";txState.rows=[];txState.key="";renderTx();return}
   const key=[q.city,q.street||"",q.house||"",txState.months].join("|");
   if(!force&&key===txState.key&&txState.status!=="idle")return;
-  txState.key=key;txState.status="loading";renderTx();
+  /* a new geography must never show the previous one's rows while loading */
+  txState.key=key;txState.status="loading";
+  txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];
+  renderTx();renderMap(true);
   const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120"});
   if(q.street)p.set("street",q.street);
   if(q.house)p.set("house",String(q.house));
   try{
-    const r=await fetch("/api/gov/transactions?"+p);
+    p.set("_",String(Date.now()));           /* never a stale cached body */
+    const r=await fetch("/api/gov/transactions?"+p,{cache:"no-store"});
     if(!r.ok)throw new Error("HTTP "+r.status);
     const d=await r.json();
     if(txState.key!==key)return;                    /* a newer query won */
-    txState.rows=(d.transactions||[]).filter(t=>t.price);
+    txState.rows=(d.transactions||[])
+      .filter(t=>t.price&&t.sourceFamily==="OFFICIAL_GOVERNMENT")
+      .sort((a,b)=>(b.date||"").localeCompare(a.date||""));   /* newest first, ISO */
     txState.scope=d.scope||null;txState.meta=d.meta||null;
     txState.unavailable=d.unavailable||[];
     txState.status=txState.rows.length?"ok":"empty";txState.err=null;
+    const res=txResidential();
+    txDebug={officialRawRows:(d.transactions||[]).length,residentialRows:res.length,
+      nonResidentialExcluded:txState.rows.length-res.length,
+      newRows:res.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length,
+      secondaryRows:res.filter(x=>x.newness==="second_hand").length,
+      unknownRows:res.filter(x=>x.newness==="unknown").length,
+      rowsAfterPeriodFilter:txState.rows.length,
+      latestTransactionDate:(d.meta||{}).latestTransactionDate,
+      sourceFamily:(d.meta||{}).sourceFamily,scope:d.scope,
+      allOfficial:txState.rows.every(x=>x.sourceFamily==="OFFICIAL_GOVERNMENT")};
+    console.info("[PROPX] official transactions",txDebug);
   }catch(e){
     if(txState.key!==key)return;
     txState.status="error";txState.err=e.message;txState.rows=[];
@@ -3526,16 +3496,9 @@ function txFiltered(){
   const rows=txResidential();
   return txState.tab==="new"?rows.filter(t=>t.newness==="confirmed_new"||t.newness==="probable_new")
     :txState.tab==="second"?rows.filter(t=>t.newness==="second_hand")
+    :txState.tab==="unknown"?rows.filter(t=>t.newness==="unknown")
     :rows;
 }
-/* curated published rows — secondary source, always labeled. Reuses the
-   existing roll-up so district and country views keep working. */
-function txCuratedRows(){
-  const rows=(txRowsFor(state.locId).rows)||[];
-  return txState.tab==="second"?rows.filter(r=>r.tag==="used")
-    :txState.tab==="new"?rows.filter(r=>r.tag==="new"):rows;
-}
-
 function renderTx(){
   const t=T(),he=state.lang==="he";
   const sec=el("txSection");if(!sec)return;
@@ -3543,23 +3506,32 @@ function renderTx(){
   sec.style.display="";
   const dash="—";
   const q=txQueryFor();
-  el("txProv").textContent=t.txProv;
 
   /* toolbar — always available */
   const tabBtn=(k,lbl,n)=>`<button data-txtab="${k}" aria-pressed="${txState.tab===k}">${lbl}${n!=null?` <span class="num">${n}</span>`:""}</button>`;
   const R=txResidential();
   const nNew=R.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length;
   const nSec=R.filter(x=>x.newness==="second_hand").length;
+  const nUnk=R.filter(x=>x.newness==="unknown").length;
   el("txBar").innerHTML=`
-    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}</span>
+    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}</span>
     <select class="tx-sel" id="txMonths">${[[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]]
       .map(([v,l])=>`<option value="${v}"${txState.months===v?" selected":""}>${l}</option>`).join("")}</select>
     <button class="tx-sel" id="txMapBtn" aria-pressed="${txState.mapOn}">${t.txMapToggle}</button>
     <span style="flex:1"></span>
     <span class="tx-src">${txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:""}</span>`;
+  const M=txState.meta;
+  el("txProv").innerHTML=t.txOfficialBadge+
+    (M&&M.latestTransactionDate?` · ${t.txLatestInSrc(M.latestTransactionDate.split("-").reverse().join("."))}`:"")+
+    (M&&M.syncedAt?` · ${t.txSynced(new Date(M.syncedAt).toLocaleString(state.lang==="he"?"he-IL":"en-GB"))}`:"");
 
-  const rows=txFiltered(),curated=txCuratedRows();
-  const hasAny=rows.length||curated.length;
+  const rows=txFiltered();
+  const hasAny=rows.length>0;
+  /* HARD INVARIANT: what the table paints is exactly what the active tab
+     counted. Two datasets can never drift apart again. */
+  const tabCount=txState.tab==="new"?nNew:txState.tab==="second"?nSec
+    :txState.tab==="unknown"?nUnk:R.length;
+  if(rows.length!==tabCount)console.error("PROPX invariant violated: rows",rows.length,"!= tab",tabCount);
 
   /* scope disclosure — never pretend a wider scope is the street itself */
   const sc=txState.scope;
@@ -3568,10 +3540,8 @@ function renderTx(){
     :sc.level==="locality"?t.txScopeLoc(sc.description,sc.sampleSize)
     :t.txScopeRadius(sc.radiusM,sc.sampleSize,q?q.label:"");
   /* rows on screen must never be ambiguous about where they came from */
-  const curatedOnly=!rows.length&&curated.length;
   const nonRes=txNonResidentialN();
-  const noteTxt=(curatedOnly?t.txCuratedOnly:scopeTxt)+
-    (nonRes&&!curatedOnly?" · "+t.txNonRes(nonRes):"");
+  const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonRes(nonRes):"");
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
 
   /* summary — computed only from what is actually shown */
@@ -3620,19 +3590,8 @@ function renderTx(){
     <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
     <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${r.dealType}</div>`:""}</td>
     <td class="tx-src">${t.txSrcGov}</td></tr>`;
-  const curTr=r=>`<tr style="cursor:default">
-    <td class="num">${r.d}</td>
-    <td><span class="nm">${he?r.he:r.en}</span>${(he?r.nHe:r.nEn)?`<div class="sub">${he?r.nHe:r.nEn}</div>`:""}</td>
-    <td class="num">${r.rooms||dash}</td><td class="num">${r.sqm||dash}</td><td class="num">${r.fl||dash}</td>
-    <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
-    <td class="num">${r.sqm?fmtNIS(Math.round(r.price/r.sqm)):dash}</td>
-    <td>${r.tag==="new"?`<span class="tx-chip new">${t.txTagNew}</span>`:r.tag==="used"?`<span class="tx-chip">${t.txTagUsed}</span>`:dash}</td>
-    <td class="tx-src">${r.u?`<a href="${r.u}" target="_blank" rel="noopener">${r.src}</a>`:r.src}</td></tr>`;
   const head=`<thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>`;
-  const grp=lbl=>`<tr><td colspan="9" style="background:var(--paper);font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--ink-3);padding:7px 12px">${lbl}</td></tr>`;
-  el("txTbl").innerHTML=!hasAny?"":head+"<tbody>"+
-    (rows.length?rows.map(liveTr).join(""):"")+
-    (curated.length?grp(t.txGrpCurated)+curated.map(curTr).join(""):"")+"</tbody>";
+  el("txTbl").innerHTML=!hasAny?"":head+"<tbody>"+rows.map(liveTr).join("")+"</tbody>";
 
   const liveCard=r=>`<div class="tcard" style="cursor:default">
     <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
@@ -3642,15 +3601,7 @@ function renderTx(){
       ${r.floor?`<span>${t.thFloor} <span class="num">${r.floor}</span></span>`:""}
       ${txPsm(r)?`<span class="num">${fmtNIS(txPsm(r))}/${t.txPsmShort}</span>`:""}</div>
     <div class="r2">${clsChip(r.newness)}${dist(r)?`<span>${dist(r)}</span>`:""}<span class="tx-src">${t.txSrcGov}</span></div></div>`;
-  const curCard=r=>`<div class="tcard" style="cursor:default">
-    <div class="r1"><b>${he?r.he:r.en}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
-    <div class="r2"><span class="num">${r.d}</span>
-      ${r.rooms?`<span><span class="num">${r.rooms}</span> ${t.txRoomsShort}</span>`:""}
-      ${r.sqm?`<span><span class="num">${r.sqm}</span> ${t.txPsmShort}</span>`:""}
-      ${r.fl?`<span>${t.thFloor} <span class="num">${r.fl}</span></span>`:""}</div>
-    <div class="r2"><span class="tx-src">${r.src}</span></div></div>`;
-  el("txCards").innerHTML=rows.map(liveCard).join("")+
-    (curated.length?`<div class="tcard" style="padding-bottom:0"><div class="r2" style="font-weight:800;color:var(--ink-3)">${t.txGrpCurated}</div></div>`+curated.map(curCard).join(""):"");
+  el("txCards").innerHTML=rows.map(liveCard).join("");
 }
 
 /* sold-transaction markers — one marker per real sale, never an average */
