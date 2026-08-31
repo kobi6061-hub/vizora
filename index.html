@@ -17,7 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-08-31.p0-official-tx">
+<meta name="propx-build" content="2026-08-31.street-names-full-coverage">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -1853,10 +1853,12 @@ he:{
   txScopeStreet:(d,n)=>`נמצאו <b>${n}</b> עסקאות ברחוב: ${d}`,
   txScopeLoc:(d,n)=>`נמצאו <b>${n}</b> עסקאות ביישוב: ${d}`,
   txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
-  txNonRes:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר/לא מסווג) הוצאו מהטבלה ומהסטטיסטיקה`,
   txOnlyNonRes:n=>`נמצאו ${n} עסקאות מדווחות באזור, אך אף אחת מהן אינה עסקת מגורים (קרקע/מסחר/לא מסווג). נסו להרחיב את טווח התאריכים.`,
   txScopeNbhd:(n,c,q)=>`לא נמצאו עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — מוצגות <b>${c}</b> עסקאות מהשכונה <b>${n}</b> לפי סיווג השכונה שברשומות הרשמיות עצמן. אלו אינן עסקאות ברחוב עצמו.`,
   txThinStreet:n=>`הנתונים ברחוב מבוססים על ${n} עסקאות בלבד — מדגם קטן מכדי לגזור ממנו מחיר רחוב. העסקאות מוצגות כתצפיות בודדות; ההשוואה הרחבה יותר מוצגת בנפרד ואינה מעורבבת בהן.`,
+  txNoStreet:"הרחוב לא צוין ברשומה הרשמית", txTabOther:"לא למגורים",
+  txNonResShown:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר) מוצגות בלשונית נפרדת ואינן נכללות בסטטיסטיקת הדירות`,
+  txCoverage:(got,total,pq,pa)=>`נשלפו ${got} מתוך ${total} עסקאות שהמקור מדווח באזור (${pq} מתוך ${pa} מקטעים) — ניתן להרחיב את התקופה לשליפה נוספת`,
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
   txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג",
   txLoading:"טוען עסקאות שדווחו…",
@@ -2130,10 +2132,12 @@ en:{
   txScopeStreet:(d,n)=>`Found <b>${n}</b> transactions on the street: ${d}`,
   txScopeLoc:(d,n)=>`Found <b>${n}</b> transactions in the locality: ${d}`,
   txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
-  txNonRes:n=>`${n} non-residential deals (land/commercial/unclassified) excluded from the table and the statistics`,
   txOnlyNonRes:n=>`${n} reported deals found in this area, none of them residential (land/commercial/unclassified). Try widening the date range.`,
   txScopeNbhd:(n,c,q)=>`No transactions at the requested resolution${q?` (${q})`:""} — showing <b>${c}</b> transactions from the <b>${n}</b> neighborhood, per the neighborhood recorded on the official records themselves. These did not occur on the street itself.`,
   txThinStreet:n=>`Street data is based on ${n} transactions only — too small a sample for a street price. They are shown as individual observations; any wider benchmark is shown separately and never blended in.`,
+  txNoStreet:"street not stated on the official record", txTabOther:"Non-residential",
+  txNonResShown:n=>`${n} non-residential deals (land/commercial) are shown in their own tab and excluded from the apartment statistics`,
+  txCoverage:(got,total,pq,pa)=>`retrieved ${got} of ${total} deals the source reports here (${pq} of ${pa} segments) — widen the period to pull more`,
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
   txTagProb:"new (probable)", txTagUnk:"unclassified",
   txLoading:"Loading reported transactions…",
@@ -2497,7 +2501,7 @@ const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-08-31.p0-official-tx";
+const PROPX_BUILD="2026-08-31.street-names-full-coverage";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -3458,7 +3462,9 @@ function txMedian(a){if(!a.length)return null;const x=[...a].sort((p,q)=>p-q);co
    The count of what was set aside is always disclosed. */
 function txResidential(){return txState.rows.filter(t=>t.propertyClass==="residential")}
 function txNonResidentialN(){return txState.rows.length-txResidential().length}
+function txNonResidential(){return txState.rows.filter(t=>t.propertyClass!=="residential")}
 function txFiltered(){
+  if(txState.tab==="other")return txNonResidential();   /* land/commercial — shown, never in the stats */
   const rows=txResidential();
   return txState.tab==="new"?rows.filter(t=>t.newness==="confirmed_new"||t.newness==="probable_new")
     :txState.tab==="second"?rows.filter(t=>t.newness==="second_hand")
@@ -3479,8 +3485,9 @@ function renderTx(){
   const nNew=R.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length;
   const nSec=R.filter(x=>x.newness==="second_hand").length;
   const nUnk=R.filter(x=>x.newness==="unknown").length;
+  const nOther=txNonResidential().length;
   el("txBar").innerHTML=`
-    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}</span>
+    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}${nOther?tabBtn("other",t.txTabOther,nOther):""}</span>
     <select class="tx-sel" id="txMonths">${[[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]]
       .map(([v,l])=>`<option value="${v}"${txState.months===v?" selected":""}>${l}</option>`).join("")}</select>
     <button class="tx-sel" id="txMapBtn" aria-pressed="${txState.mapOn}">${t.txMapToggle}</button>
@@ -3496,7 +3503,7 @@ function renderTx(){
   /* HARD INVARIANT: what the table paints is exactly what the active tab
      counted. Two datasets can never drift apart again. */
   const tabCount=txState.tab==="new"?nNew:txState.tab==="second"?nSec
-    :txState.tab==="unknown"?nUnk:R.length;
+    :txState.tab==="unknown"?nUnk:txState.tab==="other"?nOther:R.length;
   if(rows.length!==tabCount)console.error("PROPX invariant violated: rows",rows.length,"!= tab",tabCount);
 
   /* scope disclosure — never pretend a wider scope is the street itself */
@@ -3508,16 +3515,21 @@ function renderTx(){
     :t.txScopeRadius(sc.radiusM,sc.sampleSize,q?q.label:"");
   /* rows on screen must never be ambiguous about where they came from */
   const nonRes=txNonResidentialN();
-  const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonRes(nonRes):"");
+  const cov=txState.meta&&txState.meta.sourceCoverage;
+  const covTxt=cov&&cov.dealsCountReported>cov.rowsRetrieved
+    ? " · "+t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable)
+    : "";
+  const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonResShown(nonRes):"")+covTxt;
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
 
   /* summary — computed only from what is actually shown */
-  const prices=rows.map(r=>r.price).filter(Boolean);
-  const psms=rows.map(txPsm).filter(Boolean);
-  const latest=rows.map(r=>r.date).filter(Boolean).sort().pop();
+  const statRows=txState.tab==="other"?[]:rows;   /* land/commercial never priced as homes */
+  const prices=statRows.map(r=>r.price).filter(Boolean);
+  const psms=statRows.map(txPsm).filter(Boolean);
+  const latest=statRows.map(r=>r.date).filter(Boolean).sort().pop();
   el("txSum").hidden=!prices.length;
   if(prices.length)el("txSum").innerHTML=[
-    [t.txSumN,fmtInt(rows.length)],
+    [t.txSumN,fmtInt(statRows.length)],
     [t.txSumMed,fmtNIS(txMedian(prices))],
     [t.txSumMedPsm,psms.length?fmtNIS(txMedian(psms)):dash],
     [t.txSumAvgPsm,psms.length?fmtNIS(Math.round(psms.reduce((a,b)=>a+b,0)/psms.length)):dash],
@@ -3546,13 +3558,19 @@ function renderTx(){
     :n==="probable_new"?`<span class="tx-chip new">${t.txTagProb}</span>`
     :n==="second_hand"?`<span class="tx-chip">${t.txTagUsed}</span>`
     :`<span class="tx-chip">${t.txTagUnk}</span>`;
-  const addr=r=>[r.street,r.houseNumber].filter(Boolean).join(" ")||r.city||dash;
+  /* the street column shows the street. When the official record carries no
+     street, it says so — the city is context, never a stand-in for a street. */
+  const addr=r=>{
+    const a=[r.street,r.houseNumber].filter(Boolean).join(" ");
+    return a||`<span style="color:var(--ink-3)">${t.txNoStreet}</span>`;
+  };
+  const sub=r=>[r.city,r.neighborhood,dist(r)].filter(Boolean).join(" · ");
   const dist=r=>r.distanceM==null?"":r.distanceM===0?t.txSameBld:`${fmtInt(r.distanceM)} ${t.txMetersAway}`;
   const dt=r=>r.date?r.date.split("-").reverse().join("."):dash;
 
   const liveTr=r=>`<tr data-txid="${r.txId||""}" style="cursor:default">
     <td class="num">${dt(r)}</td>
-    <td><span class="nm">${addr(r)}</span>${r.city?`<div class="sub">${r.city}${dist(r)?" · "+dist(r):""}</div>`:""}</td>
+    <td><span class="nm">${addr(r)}</span>${sub(r)?`<div class="sub">${sub(r)}</div>`:""}</td>
     <td class="num">${txVal(r.rooms)||dash}</td>
     <td class="num">${txVal(r.areaSqm)||dash}</td>
     <td class="num">${r.floor||dash}</td>
@@ -3565,6 +3583,7 @@ function renderTx(){
 
   const liveCard=r=>`<div class="tcard" style="cursor:default">
     <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
+    ${sub(r)?`<div class="r2" style="color:var(--ink-3)">${sub(r)}</div>`:""}
     <div class="r2"><span class="num">${dt(r)}</span>
       ${txVal(r.rooms)?`<span><span class="num">${txVal(r.rooms)}</span> ${t.txRoomsShort}</span>`:""}
       ${txVal(r.areaSqm)?`<span><span class="num">${txVal(r.areaSqm)}</span> ${t.txPsmShort}</span>`:""}

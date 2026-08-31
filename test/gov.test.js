@@ -233,7 +233,7 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
   });
   await t('getTransactions: address → polygons → deals of BOTH government classes', async () => {
     const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
-    assert.equal(rows.length, 3);
+    assert.equal(rows.length, 4);   // 2 first-hand + 1 second-hand + 1 land
     const first = rows.find((r) => r.txId === 'govmap:30001');
     assert.equal(first.price, 3370000);
     assert.equal(first.date, '2026-06-15');
@@ -264,9 +264,19 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     const other = rows.find((r) => r.txId === 'govmap:30003'); // house 5, ~100m away
     assert.ok(other.distanceM > 20 && other.distanceM < 300, 'got ' + other.distanceM);
   });
+  await t('a street-less deal row inherits the address of its own building polygon', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    const inherited = rows.find((r) => r.txId === 'govmap:30003');
+    assert.equal(inherited.street, "ז'בוטינסקי");   // came from the polygon, not the row
+    assert.equal(inherited.houseNumber, '5');       // the row's OWN number still wins
+    assert.equal(inherited.neighborhood, 'מרכז');
+    assert.ok(rows.every((r) => r.street), 'every row must carry a street name');
+  });
   await t('property type is classified; land never counts as residential', async () => {
     const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
-    assert.ok(rows.every((r) => r.propertyClass === 'residential'), rows.map((r) => r.propertyClass).join(','));
+    const land = rows.find((r) => r.txId === 'govmap:30004');
+    assert.equal(land.propertyClass, 'land');
+    assert.ok(rows.some((r) => r.propertyClass === 'residential'));
     const { classifyPropertyType } = require('../lib/gov/propertyType');
     assert.equal(classifyPropertyType('קרקע').propertyClass, 'land');
     assert.equal(classifyPropertyType('קרקע').residential, false);
@@ -297,9 +307,9 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     const svc = new GovDataService({ providers: [new TaxAuthorityProvider({ endpoint: null }), mkGovmap()] });
     const r = await svc.getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
     assert.equal(r.scope.level, 'building');
-    assert.equal(r.scope.sampleSize, 3);
+    assert.equal(r.scope.sampleSize, 4);
     assert.equal(r.partitions.confirmed.length, 2);
-    assert.equal(r.partitions.secondHand.length, 1);
+    assert.equal(r.partitions.secondHand.length, 2);  // incl. the land row's class
     assert.ok(r.unavailable.some((u) => u.provider === 'taxes.gov.il/nadlan')); // the canonical source's state stays visible
   });
 

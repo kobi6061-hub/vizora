@@ -56,7 +56,12 @@ module.exports = async (req, res) => {
       latestTransactionDate: dates.length ? dates[0] : null,
       recordsRetrieved: out.transactions.length,
       impureRowsDropped: impure.length,
+      // what the source itself said was available vs what we pulled, so an
+      // under-fetch is visible instead of silently looking like "no data"
+      sourceCoverage: out.diagnostics || null,
+      withStreetName: out.transactions.filter((t) => t.street).length,
     };
+    delete out.diagnostics;
     res.end(JSON.stringify(out));
   } catch (e) {
     res.statusCode = 502;

@@ -1,85 +1,174 @@
 {
-  "_note": "Acceptance fixture for ז'בוטינסקי 7, אזור. `raw` rows are KARMAN/nadlan.gov.il-SHAPED records with SAMPLE values (sample:true is stamped into their provenance) — they exercise the full normalization contract for the acceptance address without pretending to be observed data; live values arrive only through an authorized Tax Authority connector. `observedReference` is a REAL government-derived transaction observed in our research (reported to the Tax Authority, published by Calcalist; collected 30.08.2026) expressed in the same raw shape, with the expected PROPX normalization — the comparison target required by the acceptance test.",
-  "acceptanceAddress": { "city": "אזור", "street": "ז'בוטינסקי", "houseNumber": 7 },
-  "observedComparison": {
-    "_note": "INDEPENDENTLY OBSERVED government-derived comparison records for the acceptance address, supplied by PROPX research (31.08.2026). Reference side of the live verification ONLY — never injected into product data, never presented as retrieved. The live run must retrieve matching records from the authoritative source on its own.",
-    "records": [
-      { "date": "15/06/2026", "price": 3370000, "areaSqm": 107, "rooms": 5, "floor": 7, "block": "6024", "parcel": "265" },
-      { "date": "27/03/2026", "price": 2900000, "areaSqm": 110, "rooms": 5, "floor": 11, "block": "6024", "parcel": "265" }
-    ]
-  },
-  "govmapFixtures": {
-    "_note": "GovMap-SHAPED responses for offline pipeline tests. Geometry is EPSG:3857 Web Mercator, matching what the live production endpoint actually returns (verified 31.08.2026). The two deal rows mirror the observedComparison records so the offline test can prove the pipeline MATCHES them when the source serves them; their dealType placement is a mechanism fixture, not a verified fact — the live run reveals the true government classification.",
-    "autocomplete": { "resultsCount": 1, "results": [
-      { "text": "ז'בוטינסקי 7, אזור", "id": "ADDR-AZOR-JAB-7", "type": "address", "score": 100, "shape": "POINT(3874799 3766263)" } ] },
-    "polygons": [
-      { "polygon_id": "POLY-AZ-16", "dealscount": 14, "settlementNameHeb": "אזור", "streetNameHeb": "ז'בוטינסקי", "houseNum": "7", "objectid": 91001 } ],
-    "streetDeals1": { "totalCount": 2, "limit": 40, "offset": 0, "data": [
-      { "objectid": 30001, "dealAmount": 3370000, "dealDate": "2026-06-15", "assetArea": 107, "assetRoomNum": 5,
-        "floorNumber": 7, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))" },
-      { "objectid": 30002, "dealAmount": 2900000, "dealDate": "2026-03-27", "assetArea": 110, "assetRoomNum": 5,
-        "floorNumber": 11, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))" } ] },
-    "streetDeals2": { "totalCount": 1, "limit": 40, "offset": 0, "data": [
-      { "objectid": 30003, "dealAmount": 1720000, "dealDate": "2025-11-02", "assetArea": 78, "assetRoomNum": 3,
-        "floorNumber": 2, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "5",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874871 3766351,3874881 3766351,3874881 3766361,3874871 3766361,3874871 3766351)))" } ] }
-  },
-  "raw": [
+ "_note": "Acceptance fixture for ז'בוטינסקי 7, אזור. `raw` rows are KARMAN/nadlan.gov.il-SHAPED records with SAMPLE values (sample:true is stamped into their provenance) — they exercise the full normalization contract for the acceptance address without pretending to be observed data; live values arrive only through an authorized Tax Authority connector. `observedReference` is a REAL government-derived transaction observed in our research (reported to the Tax Authority, published by Calcalist; collected 30.08.2026) expressed in the same raw shape, with the expected PROPX normalization — the comparison target required by the acceptance test.",
+ "acceptanceAddress": {
+  "city": "אזור",
+  "street": "ז'בוטינסקי",
+  "houseNumber": 7
+ },
+ "observedComparison": {
+  "_note": "INDEPENDENTLY OBSERVED government-derived comparison records for the acceptance address, supplied by PROPX research (31.08.2026). Reference side of the live verification ONLY — never injected into product data, never presented as retrieved. The live run must retrieve matching records from the authoritative source on its own.",
+  "records": [
+   {
+    "date": "15/06/2026",
+    "price": 3370000,
+    "areaSqm": 107,
+    "rooms": 5,
+    "floor": 7,
+    "block": "6024",
+    "parcel": "265"
+   },
+   {
+    "date": "27/03/2026",
+    "price": 2900000,
+    "areaSqm": 110,
+    "rooms": 5,
+    "floor": 11,
+    "block": "6024",
+    "parcel": "265"
+   }
+  ]
+ },
+ "govmapFixtures": {
+  "_note": "GovMap-SHAPED responses for offline pipeline tests. Geometry is EPSG:3857 Web Mercator, matching what the live production endpoint actually returns (verified 31.08.2026). The two deal rows mirror the observedComparison records so the offline test can prove the pipeline MATCHES them when the source serves them; their dealType placement is a mechanism fixture, not a verified fact — the live run reveals the true government classification.",
+  "autocomplete": {
+   "resultsCount": 1,
+   "results": [
     {
-      "_fixtureNote": "sample values, real record shape — new-from-developer deal",
-      "KEYVALUE": "SAMPLE-AZOR-0001",
-      "DEALDATE": "15.05.2026",
-      "DEALAMOUNT": "2,380,000",
-      "DEALNATUREDESCRIPTION": "דירה חדשה מקבלן",
-      "ASSETROOMNUM": "4",
-      "DEALNATURE": "104",
-      "FLOORNO": "3",
-      "BUILDINGFLOORS": "9",
-      "BUILDINGYEAR": "2026",
-      "PROJECTNAME": "מגורים אזור",
-      "FULLADRESS": "ז'בוטינסקי 7, אזור",
-      "GUSH": "6024-88-12"
-    },
-    {
-      "_fixtureNote": "sample values, real record shape — second-hand deal on the same building",
-      "KEYVALUE": "SAMPLE-AZOR-0002",
-      "DEALDATE": "02.02.2026",
-      "DEALAMOUNT": "1,910,000",
-      "DEALNATUREDESCRIPTION": "דירה בבית קומות",
-      "ASSETROOMNUM": "3.5",
-      "DEALNATURE": "86",
-      "FLOORNO": "1",
-      "BUILDINGFLOORS": "9",
-      "BUILDINGYEAR": "1998",
-      "FULLADRESS": "ז'בוטינסקי 7, אזור",
-      "GUSH": "6024-88-4"
+     "text": "ז'בוטינסקי 7, אזור",
+     "id": "ADDR-AZOR-JAB-7",
+     "type": "address",
+     "score": 100,
+     "shape": "POINT(3874799 3766263)"
     }
+   ]
+  },
+  "polygons": [
+   {
+    "polygon_id": "POLY-AZ-16",
+    "dealscount": 14,
+    "settlementNameHeb": "אזור",
+    "streetNameHeb": "ז'בוטינסקי",
+    "houseNum": "7",
+    "objectid": 91001
+   }
   ],
-  "observedReference": {
-    "raw": {
-      "DEALDATE": "2026",
-      "DEALAMOUNT": "4,500,000",
-      "DEALNATUREDESCRIPTION": "דירה בבית קומות",
-      "ASSETROOMNUM": "5",
-      "DEALNATURE": "115",
-      "FLOORNO": "1",
-      "BUILDINGFLOORS": "2",
-      "CITY": "ירושלים",
-      "STREET": "החרוב"
+  "streetDeals1": {
+   "totalCount": 2,
+   "limit": 40,
+   "offset": 0,
+   "data": [
+    {
+     "objectid": 30001,
+     "dealAmount": 3370000,
+     "dealDate": "2026-06-15",
+     "assetArea": 107,
+     "assetRoomNum": 5,
+     "floorNumber": 7,
+     "settlementNameHeb": "אזור",
+     "streetName": "ז'בוטינסקי",
+     "houseNumber": "7",
+     "propertyTypeDescription": "דירה בבית קומות",
+     "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))"
     },
-    "sourceUrl": "https://www.calcalist.co.il/real-estate/article/bkzojwcxgx",
-    "expected": {
-      "price": 4500000,
-      "areaSqm": 115,
-      "rooms": 5,
-      "floor": "1",
-      "floorsInBuilding": 2,
-      "city": "ירושלים",
-      "street": "החרוב",
-      "pricePerSqmEstimated": 39130,
-      "newness": "unknown"
+    {
+     "objectid": 30002,
+     "dealAmount": 2900000,
+     "dealDate": "2026-03-27",
+     "assetArea": 110,
+     "assetRoomNum": 5,
+     "floorNumber": 11,
+     "settlementNameHeb": "אזור",
+     "streetName": "ז'בוטינסקי",
+     "houseNumber": "7",
+     "propertyTypeDescription": "דירה בבית קומות",
+     "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))"
     }
+   ]
+  },
+  "streetDeals2": {
+   "totalCount": 2,
+   "limit": 40,
+   "offset": 0,
+   "data": [
+    {
+     "objectid": 30003,
+     "dealAmount": 1720000,
+     "dealDate": "2025-11-02",
+     "assetArea": 78,
+     "assetRoomNum": 3,
+     "floorNumber": 2,
+     "settlementNameHeb": "אזור",
+     "houseNumber": "5",
+     "propertyTypeDescription": "דירה בבית קומות",
+     "shape": "MULTIPOLYGON(((3874871 3766351,3874881 3766351,3874881 3766361,3874871 3766361,3874871 3766351)))",
+     "neighborhood": "מרכז"
+    },
+    {
+     "objectid": 30004,
+     "dealAmount": 4200000,
+     "dealDate": "2026-01-20",
+     "assetArea": 320,
+     "settlementNameHeb": "אזור",
+     "propertyTypeDescription": "קרקע",
+     "shape": "MULTIPOLYGON(((3874871 3766351,3874881 3766351,3874881 3766361,3874871 3766361,3874871 3766351)))"
+    }
+   ]
   }
+ },
+ "raw": [
+  {
+   "_fixtureNote": "sample values, real record shape — new-from-developer deal",
+   "KEYVALUE": "SAMPLE-AZOR-0001",
+   "DEALDATE": "15.05.2026",
+   "DEALAMOUNT": "2,380,000",
+   "DEALNATUREDESCRIPTION": "דירה חדשה מקבלן",
+   "ASSETROOMNUM": "4",
+   "DEALNATURE": "104",
+   "FLOORNO": "3",
+   "BUILDINGFLOORS": "9",
+   "BUILDINGYEAR": "2026",
+   "PROJECTNAME": "מגורים אזור",
+   "FULLADRESS": "ז'בוטינסקי 7, אזור",
+   "GUSH": "6024-88-12"
+  },
+  {
+   "_fixtureNote": "sample values, real record shape — second-hand deal on the same building",
+   "KEYVALUE": "SAMPLE-AZOR-0002",
+   "DEALDATE": "02.02.2026",
+   "DEALAMOUNT": "1,910,000",
+   "DEALNATUREDESCRIPTION": "דירה בבית קומות",
+   "ASSETROOMNUM": "3.5",
+   "DEALNATURE": "86",
+   "FLOORNO": "1",
+   "BUILDINGFLOORS": "9",
+   "BUILDINGYEAR": "1998",
+   "FULLADRESS": "ז'בוטינסקי 7, אזור",
+   "GUSH": "6024-88-4"
+  }
+ ],
+ "observedReference": {
+  "raw": {
+   "DEALDATE": "2026",
+   "DEALAMOUNT": "4,500,000",
+   "DEALNATUREDESCRIPTION": "דירה בבית קומות",
+   "ASSETROOMNUM": "5",
+   "DEALNATURE": "115",
+   "FLOORNO": "1",
+   "BUILDINGFLOORS": "2",
+   "CITY": "ירושלים",
+   "STREET": "החרוב"
+  },
+  "sourceUrl": "https://www.calcalist.co.il/real-estate/article/bkzojwcxgx",
+  "expected": {
+   "price": 4500000,
+   "areaSqm": 115,
+   "rooms": 5,
+   "floor": "1",
+   "floorsInBuilding": 2,
+   "city": "ירושלים",
+   "street": "החרוב",
+   "pricePerSqmEstimated": 39130,
+   "newness": "unknown"
+  }
+ }
 }
