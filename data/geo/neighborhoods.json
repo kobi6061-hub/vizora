@@ -1,0 +1,852 @@
+{
+ "meta": {
+  "builtAt": "2026-08-31",
+  "note": "Neighborhood resolution layer. Names are verified, recognized neighborhoods; nothing is invented. Coverage is partial by design: Israel has no single authoritative nationwide neighborhood registry, so a street with no mapping stays fully searchable and is marked neighborhood:unresolved. The runtime layer additionally learns neighborhood names published on official government deal records.",
+  "neighborhoods": 60,
+  "streetLinks": 72
+ },
+ "neighborhoods": [
+  {
+   "id": "nb:rhs-center",
+   "localityHe": "רמת השרון",
+   "he": "מרכז העיר (הגלעין)",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-morasha",
+   "localityHe": "רמת השרון",
+   "he": "מורשה",
+   "en": "Morasha",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-magen",
+   "localityHe": "רמת השרון",
+   "he": "נווה מגן",
+   "en": "Neve Magen",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-gan",
+   "localityHe": "רמת השרון",
+   "he": "נווה גן",
+   "en": "Neve Gan",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-rasco",
+   "localityHe": "רמת השרון",
+   "he": "נווה רסקו",
+   "en": "Neve Rasco",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-hadar",
+   "localityHe": "רמת השרון",
+   "he": "הדר",
+   "en": "Hadar",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rhs-yearim",
+   "localityHe": "רמת השרון",
+   "he": "קריית יערים",
+   "en": "Kiryat Yearim",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:old-north",
+   "localityHe": "תל אביב-יפו",
+   "he": "הצפון הישן",
+   "en": "Old North",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:florentin",
+   "localityHe": "תל אביב-יפו",
+   "he": "פלורנטין",
+   "en": "Florentin",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:neve-tzedek",
+   "localityHe": "תל אביב-יפו",
+   "he": "נווה צדק",
+   "en": "Neve Tzedek",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ramat-aviv",
+   "localityHe": "תל אביב-יפו",
+   "he": "רמת אביב",
+   "en": "Ramat Aviv",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:bavli",
+   "localityHe": "תל אביב-יפו",
+   "he": "בבלי",
+   "en": "Bavli",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:lev-hair",
+   "localityHe": "תל אביב-יפו",
+   "he": "לב העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:yad-eliyahu",
+   "localityHe": "תל אביב-יפו",
+   "he": "יד אליהו",
+   "en": "Yad Eliyahu",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rehavia",
+   "localityHe": "ירושלים",
+   "he": "רחביה",
+   "en": "Rehavia",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:baka",
+   "localityHe": "ירושלים",
+   "he": "בקעה",
+   "en": "Baka",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:katamon",
+   "localityHe": "ירושלים",
+   "he": "קטמון הישנה",
+   "en": "Old Katamon",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:arnona",
+   "localityHe": "ירושלים",
+   "he": "ארנונה",
+   "en": "Arnona",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kiryat-yovel",
+   "localityHe": "ירושלים",
+   "he": "קריית יובל",
+   "en": "Kiryat Yovel",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:pisgat-zeev",
+   "localityHe": "ירושלים",
+   "he": "פסגת זאב",
+   "en": "Pisgat Ze'ev",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:jm-center",
+   "localityHe": "ירושלים",
+   "he": "מרכז העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:carmel",
+   "localityHe": "חיפה",
+   "he": "הכרמל",
+   "en": "The Carmel",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ahuza",
+   "localityHe": "חיפה",
+   "he": "אחוזה",
+   "en": "Ahuza",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:hadar",
+   "localityHe": "חיפה",
+   "he": "הדר הכרמל",
+   "en": "Hadar",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:bat-galim",
+   "localityHe": "חיפה",
+   "he": "בת גלים",
+   "en": "Bat Galim",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:neve-shaanan-h",
+   "localityHe": "חיפה",
+   "he": "נווה שאנן",
+   "en": "Neve Sha'anan",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:em-hamoshavot",
+   "localityHe": "פתח תקווה",
+   "he": "אם המושבות",
+   "en": "Em HaMoshavot",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kfar-ganim",
+   "localityHe": "פתח תקווה",
+   "he": "כפר גנים",
+   "en": "Kfar Ganim",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kfar-ganim-a",
+   "localityHe": "kfar-ganim",
+   "he": "כפר גנים א׳",
+   "en": "Kfar Ganim A",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kfar-ganim-b",
+   "localityHe": "kfar-ganim",
+   "he": "כפר גנים ב׳",
+   "en": "Kfar Ganim B",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kfar-ganim-g",
+   "localityHe": "kfar-ganim",
+   "he": "כפר גנים ג׳",
+   "en": "Kfar Ganim C",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:neve-oz",
+   "localityHe": "פתח תקווה",
+   "he": "נווה עוז",
+   "en": "Neve Oz",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kfar-avraham",
+   "localityHe": "פתח תקווה",
+   "he": "כפר אברהם",
+   "en": "Kfar Avraham",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:pt-center",
+   "localityHe": "פתח תקווה",
+   "he": "מרכז העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ir-yamim",
+   "localityHe": "נתניה",
+   "he": "עיר ימים",
+   "en": "Ir Yamim",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:agamim",
+   "localityHe": "נתניה",
+   "he": "אגמים",
+   "en": "Agamim",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kiryat-hasharon",
+   "localityHe": "נתניה",
+   "he": "קריית השרון",
+   "en": "Kiryat HaSharon",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:netanya-center",
+   "localityHe": "נתניה",
+   "he": "מרכז העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rg-center",
+   "localityHe": "רמת גן",
+   "he": "מרכז העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:tel-binyamin",
+   "localityHe": "רמת גן",
+   "he": "תל בנימין",
+   "en": "Tel Binyamin",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:nachlat-yehuda",
+   "localityHe": "ראשון לציון",
+   "he": "נחלת יהודה",
+   "en": "Nachlat Yehuda",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ramat-eliyahu",
+   "localityHe": "ראשון לציון",
+   "he": "רמת אליהו",
+   "en": "Ramat Eliyahu",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rishon-west",
+   "localityHe": "ראשון לציון",
+   "he": "מערב ראשון לציון",
+   "en": "West Rishon",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ramot-bs",
+   "localityHe": "באר שבע",
+   "he": "רמות",
+   "en": "Ramot",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:neve-zeev",
+   "localityHe": "באר שבע",
+   "he": "נווה זאב",
+   "en": "Neve Ze'ev",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rova-17",
+   "localityHe": "אשדוד",
+   "he": "רובע י״ז (המרינה)",
+   "en": "Quarter 17 (Marina)",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rova-a",
+   "localityHe": "אשדוד",
+   "he": "רובע א׳",
+   "en": "Quarter A",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:herzliya-pituach",
+   "localityHe": "הרצליה",
+   "he": "הרצליה פיתוח",
+   "en": "Herzliya Pituach",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:herzliya-center",
+   "localityHe": "הרצליה",
+   "he": "מרכז העיר",
+   "en": "City Center",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:buchmann",
+   "localityHe": "מודיעין-מכבים-רעות",
+   "he": "בוכמן",
+   "en": "Buchmann",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kaiser",
+   "localityHe": "מודיעין-מכבים-רעות",
+   "he": "קייזר",
+   "en": "Kaiser",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:neve-zemer",
+   "localityHe": "רעננה",
+   "he": "נווה זמר",
+   "en": "Neve Zemer",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ks-green",
+   "localityHe": "כפר סבא",
+   "he": "כפר סבא הירוקה",
+   "en": "Green Kfar Saba",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rbs",
+   "localityHe": "בית שמש",
+   "he": "רמת בית שמש",
+   "en": "Ramat Beit Shemesh",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rbs-a",
+   "localityHe": "rbs",
+   "he": "רמת בית שמש א׳",
+   "en": "RBS Aleph",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rbs-b",
+   "localityHe": "rbs",
+   "he": "רמת בית שמש ב׳",
+   "en": "RBS Bet",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rbs-g",
+   "localityHe": "rbs",
+   "he": "רמת בית שמש ג׳",
+   "en": "RBS Gimel",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:rbs-d",
+   "localityHe": "rbs",
+   "he": "רמת בית שמש ד׳",
+   "en": "RBS Dalet",
+   "kind": "sub",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:kiryat-sharet",
+   "localityHe": "חולון",
+   "he": "קריית שרת",
+   "en": "Kiryat Sharet",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  },
+  {
+   "id": "nb:ramat-hanasi",
+   "localityHe": "בת ים",
+   "he": "רמת הנשיא",
+   "en": "Ramat HaNasi",
+   "kind": "nbhd",
+   "source": "PROPX curated registry (verified names: municipality / CBS naming / Wikipedia, 2026)"
+  }
+ ],
+ "streetLinks": [
+  {
+   "cityKey": "tlv",
+   "street": "דיזנגוף",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "רוטשילד",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "בן יהודה",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "ארלוזורוב",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "אבן גבירול",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "שינקין",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "הירקון",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "פרישמן",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "אלנבי",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "המלך ג'ורג'",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "יהודה הלוי",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "לילינבלום",
+   "neighborhoodId": "nb:neve-tzedek"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "נחלת בנימין",
+   "neighborhoodId": "nb:florentin"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "שדרות חן",
+   "neighborhoodId": "nb:lev-hair"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "ויצמן",
+   "neighborhoodId": "nb:bavli"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "ז'בוטינסקי",
+   "neighborhoodId": "nb:old-north"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "יגאל אלון",
+   "neighborhoodId": "nb:yad-eliyahu"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "דרך נמיר",
+   "neighborhoodId": "nb:ramat-aviv"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "פנקס",
+   "neighborhoodId": "nb:bavli"
+  },
+  {
+   "cityKey": "tlv",
+   "street": "רוקח",
+   "neighborhoodId": "nb:ramat-aviv"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "עזה",
+   "neighborhoodId": "nb:rehavia"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "הפלמ״ח",
+   "neighborhoodId": "nb:katamon"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "דרך בית לחם",
+   "neighborhoodId": "nb:baka"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "יפו",
+   "neighborhoodId": "nb:jm-center"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "קרן היסוד",
+   "neighborhoodId": "nb:rehavia"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "עמק רפאים",
+   "neighborhoodId": "nb:baka"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "הרצוג",
+   "neighborhoodId": "nb:katamon"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "רד״ק",
+   "neighborhoodId": "nb:rehavia"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "בן יהודה",
+   "neighborhoodId": "nb:jm-center"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "קינג ג'ורג'",
+   "neighborhoodId": "nb:jm-center"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "אגריפס",
+   "neighborhoodId": "nb:jm-center"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "דרך חברון",
+   "neighborhoodId": "nb:arnona"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "הנביאים",
+   "neighborhoodId": "nb:jm-center"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "רמב״ן",
+   "neighborhoodId": "nb:rehavia"
+  },
+  {
+   "cityKey": "jerusalem",
+   "street": "אוסישקין",
+   "neighborhoodId": "nb:rehavia"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "מוריה",
+   "neighborhoodId": "nb:carmel"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "הנשיא",
+   "neighborhoodId": "nb:carmel"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "חורב",
+   "neighborhoodId": "nb:ahuza"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "הרצל",
+   "neighborhoodId": "nb:hadar"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "דרך הים",
+   "neighborhoodId": "nb:carmel"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "אבא חושי",
+   "neighborhoodId": "nb:ahuza"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "יפה נוף",
+   "neighborhoodId": "nb:carmel"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "הציונות",
+   "neighborhoodId": "nb:hadar"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "התשבי",
+   "neighborhoodId": "nb:carmel"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "החלוץ",
+   "neighborhoodId": "nb:hadar"
+  },
+  {
+   "cityKey": "haifa",
+   "street": "שבתאי לוי",
+   "neighborhoodId": "nb:hadar"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "רוטשילד",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "ההסתדרות",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "חיים עוזר",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "מוטה גור",
+   "neighborhoodId": "nb:em-hamoshavot"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "ברון הירש",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "הרצל",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "ביל״ו",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "שטמפפר",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "אחד העם",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "אורלוב",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "פינסקר",
+   "neighborhoodId": "nb:pt-center"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "משה סנה",
+   "neighborhoodId": "nb:em-hamoshavot"
+  },
+  {
+   "cityKey": "petah-tikva",
+   "street": "דגל ראובן",
+   "neighborhoodId": "nb:kfar-avraham"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "ביאליק",
+   "neighborhoodId": "nb:rg-center"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "ז'בוטינסקי",
+   "neighborhoodId": "nb:rg-center"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "הרא״ה",
+   "neighborhoodId": "nb:tel-binyamin"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "קריניצי",
+   "neighborhoodId": "nb:rg-center"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "הרצל",
+   "neighborhoodId": "nb:rg-center"
+  },
+  {
+   "cityKey": "ramat-gan",
+   "street": "המעגל",
+   "neighborhoodId": "nb:rg-center"
+  },
+  {
+   "cityKey": "ramat-hasharon",
+   "street": "סוקולוב",
+   "neighborhoodId": "nb:rhs-center"
+  },
+  {
+   "cityKey": "ramat-hasharon",
+   "street": "אוסישקין",
+   "neighborhoodId": "nb:rhs-center"
+  },
+  {
+   "cityKey": "ramat-hasharon",
+   "street": "תרפ״ד",
+   "neighborhoodId": "nb:rhs-center"
+  },
+  {
+   "cityKey": "ramat-hasharon",
+   "street": "שבטי ישראל",
+   "neighborhoodId": "nb:rhs-morasha"
+  },
+  {
+   "cityKey": "netanya",
+   "street": "הרצל",
+   "neighborhoodId": "nb:netanya-center"
+  },
+  {
+   "cityKey": "netanya",
+   "street": "שדרות בנימין",
+   "neighborhoodId": "nb:netanya-center"
+  },
+  {
+   "cityKey": "netanya",
+   "street": "סמילנסקי",
+   "neighborhoodId": "nb:netanya-center"
+  }
+ ]
+}

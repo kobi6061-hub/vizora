@@ -1,5 +1,5 @@
 {
- "at": "2026-08-31T17:50:16.155Z",
+ "at": "2026-08-31T18:41:06.270Z",
  "checks": [
   {
    "name": "locality count matches build meta",
@@ -15,6 +15,50 @@
    "name": "build set-difference proof recorded as PASS",
    "ok": true,
    "detail": "{\"officialRegistryCount\":1304,\"indexed\":1304,\"missing\":0,\"missingSample\":[],\"officialCodeRegistryCount\":1271,\"officialCodesNotIndexed\":21,\"officialCodesNotIndexedNote\":\"locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently\",\"officialCodesNotIndexedSample\":[0,38,849,942,1061,1094,1154,1224,1299,1329,1401,1402,1404,1405,1409],\"pendingOfficialCode\":52}"
+  },
+  {
+   "name": "no orphan streets (every street has a locality)",
+   "ok": true,
+   "detail": "0 orphans"
+  },
+  {
+   "name": "no duplicate canonical street ids",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "no locality without streets",
+   "ok": true
+  },
+  {
+   "name": "alias index built for every street",
+   "ok": true,
+   "detail": "151717 keys for 63559 streets"
+  },
+  {
+   "name": "neighborhood layer loaded (partial coverage is expected & disclosed)",
+   "ok": true,
+   "detail": "{\"neighborhoods\":60,\"localitiesWithNeighborhoods\":19,\"verifiedStreetLinks\":72,\"observedStreetLinks\":0,\"note\":\"Neighborhood resolution layer. Names are verified, recognized neighborhoods; nothing is invented. Coverage is partial by design: Israel has no single authoritative nationwide neighborhood registry, so a street with no mapping stays fully searchable and is marked neighborhood:unresolved. The runtime layer additionally learns neighborhood names published on official government deal records.\"}"
+  },
+  {
+   "name": "alias query \"רח זבוטינסקי תל אביב\" reaches the official street",
+   "ok": true,
+   "detail": "ז'בוטינסקי·תל אביב - יפו"
+  },
+  {
+   "name": "alias query \"שדרות בן גוריון חיפה\" reaches the official street",
+   "ok": true,
+   "detail": "שד בן גוריון·חיפה | רמת בן גוריון·חיפה"
+  },
+  {
+   "name": "alias query \"אבן גבירול תל אביב\" reaches the official street",
+   "ok": true,
+   "detail": "אבן גבירול·תל אביב - יפו"
+  },
+  {
+   "name": "alias query \"דרך חברון ירושלים\" reaches the official street",
+   "ok": true,
+   "detail": "דרך חברון·ירושלים | פסח חברוני·ירושלים | ש עממי חברון·ירושלים"
   },
   {
    "name": "locality \"תל אביב-יפו\" resolves",
@@ -74,7 +118,7 @@
   {
    "name": "  street \"פתח תקווה · פתח תקווה\" resolves",
    "ok": true,
-   "detail": "פתח תקווה·פתח תקווה | פתח תקווה·פתח תקווה"
+   "detail": "פתח תקווה·פתח תקווה"
   },
   {
    "name": "locality \"גבעת שמואל\" resolves",
@@ -154,7 +198,7 @@
   {
    "name": "locality \"בית שמש\" resolves",
    "ok": true,
-   "detail": "בית שמש | שמש יצחק"
+   "detail": "בית שמש | אלמשמש"
   },
   {
    "name": "  \"בית שמש\" has searchable streets (461)",
@@ -164,7 +208,7 @@
   {
    "name": "  street \"מעלה יאיר · בית שמש\" resolves",
    "ok": true,
-   "detail": "מעלה יאיר·בית שמש"
+   "detail": "יאיר·בית שמש | מעלה יאיר·בית שמש"
   },
   {
    "name": "locality \"נתניה\" resolves",
@@ -184,7 +228,7 @@
   {
    "name": "locality \"אשדוד\" resolves",
    "ok": true,
-   "detail": "אשדוד | חצור-אשדוד"
+   "detail": "אשדוד | אשדוד"
   },
   {
    "name": "  \"אשדוד\" has searchable streets (715)",
@@ -289,7 +333,7 @@
   {
    "name": "locality \"רהט\" resolves",
    "ok": true,
-   "detail": "רהט | רהט"
+   "detail": "רהט | דרך הרהט"
   },
   {
    "name": "  \"רהט\" has searchable streets (348)",
@@ -354,7 +398,7 @@
   {
    "name": "  street \"שדה בוקר · שדה בוקר\" resolves",
    "ok": true,
-   "detail": "שדה בוקר·שדה בוקר | שדה בוקר·שדה בוקר"
+   "detail": "שדה בוקר·שדה בוקר"
   },
   {
    "name": "locality \"נהלל\" resolves",
@@ -374,7 +418,7 @@
   {
    "name": "locality \"כפר תבור\" resolves",
    "ok": true,
-   "detail": "כפר תבור | תבור"
+   "detail": "כפר תבור | כפר תבור"
   },
   {
    "name": "  \"כפר תבור\" has searchable streets (137)",
@@ -447,6 +491,11 @@
    "detail": "אל-קאדי·עספיא"
   },
   {
+   "name": "adversarial locality sample resolves",
+   "ok": true,
+   "detail": "20/20 · missing: "
+  },
+  {
    "name": "random localities resolve with canonical id",
    "ok": true,
    "detail": "100/100"
@@ -457,9 +506,19 @@
    "detail": "500/500"
   },
   {
+   "name": "40 random streets resolve with canonical + locality id regardless of transaction data",
+   "ok": true,
+   "detail": "40/40"
+  },
+  {
+   "name": "a street with unresolved neighborhood is still fully searchable",
+   "ok": true,
+   "detail": "unresolved"
+  },
+  {
    "name": "\"הרצל\" returns city-qualified rows from multiple cities",
    "ok": true,
-   "detail": "אור יהודה, אור עקיבא, אזור, אשקלון, באר שבע, בית דגן, בית שאן, בית שמש, בני ברק, בת ים, גבעת שמואל, גדרה, גן יבנה, דימונה"
+   "detail": "אופקים, אור יהודה, אור עקיבא, אזור, אשדוד, אשקלון, באר שבע, בית דגן, בית שאן, בית שמש, בני ברק, בני עי\"ש, בת ים, גבעת שמואל"
   },
   {
    "name": "every street row carries a canonical id (never bare name)",
@@ -471,5 +530,23 @@
    "detail": "גבעת שמואל"
   }
  ],
- "fail": 0
+ "fail": 0,
+ "neighborhoodCoverage": {
+  "neighborhoods": 60,
+  "localitiesWithNeighborhoods": 19,
+  "verifiedStreetLinks": 72,
+  "observedStreetLinks": 0,
+  "note": "Neighborhood resolution layer. Names are verified, recognized neighborhoods; nothing is invented. Coverage is partial by design: Israel has no single authoritative nationwide neighborhood registry, so a street with no mapping stays fully searchable and is marked neighborhood:unresolved. The runtime layer additionally learns neighborhood names published on official government deal records."
+ },
+ "counts": {
+  "localities": 1304,
+  "localitiesWithOfficialCode": 1252,
+  "localitiesPendingOfficialCode": 52,
+  "streets": 63559,
+  "streetsWithOfficialCode": 50600,
+  "streetsPendingOfficialCode": 12959,
+  "orphanStreets": 0,
+  "duplicateCanonicalStreetIds": 0,
+  "aliasSearchKeys": 151717
+ }
 }

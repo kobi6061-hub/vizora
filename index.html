@@ -1855,6 +1855,8 @@ he:{
   txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
   txNonRes:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר/לא מסווג) הוצאו מהטבלה ומהסטטיסטיקה`,
   txOnlyNonRes:n=>`נמצאו ${n} עסקאות מדווחות באזור, אך אף אחת מהן אינה עסקת מגורים (קרקע/מסחר/לא מסווג). נסו להרחיב את טווח התאריכים.`,
+  txScopeNbhd:(n,c,q)=>`לא נמצאו עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — מוצגות <b>${c}</b> עסקאות מהשכונה <b>${n}</b> לפי סיווג השכונה שברשומות הרשמיות עצמן. אלו אינן עסקאות ברחוב עצמו.`,
+  txThinStreet:n=>`הנתונים ברחוב מבוססים על ${n} עסקאות בלבד — מדגם קטן מכדי לגזור ממנו מחיר רחוב. העסקאות מוצגות כתצפיות בודדות; ההשוואה הרחבה יותר מוצגת בנפרד ואינה מעורבבת בהן.`,
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
   txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג",
   txLoading:"טוען עסקאות שדווחו…",
@@ -2130,6 +2132,8 @@ en:{
   txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
   txNonRes:n=>`${n} non-residential deals (land/commercial/unclassified) excluded from the table and the statistics`,
   txOnlyNonRes:n=>`${n} reported deals found in this area, none of them residential (land/commercial/unclassified). Try widening the date range.`,
+  txScopeNbhd:(n,c,q)=>`No transactions at the requested resolution${q?` (${q})`:""} — showing <b>${c}</b> transactions from the <b>${n}</b> neighborhood, per the neighborhood recorded on the official records themselves. These did not occur on the street itself.`,
+  txThinStreet:n=>`Street data is based on ${n} transactions only — too small a sample for a street price. They are shown as individual observations; any wider benchmark is shown separately and never blended in.`,
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
   txTagProb:"new (probable)", txTagUnk:"unclassified",
   txLoading:"Loading reported transactions…",
@@ -3499,6 +3503,7 @@ function renderTx(){
   const sc=txState.scope;
   const scopeTxt=!sc?"":sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
     :sc.level==="street"?t.txScopeStreet(sc.description,sc.sampleSize)
+    :sc.level==="neighborhood"?t.txScopeNbhd(sc.neighborhood&&sc.neighborhood.name,sc.sampleSize,q?q.label:"")
     :sc.level==="locality"?t.txScopeLoc(sc.description,sc.sampleSize)
     :t.txScopeRadius(sc.radiusM,sc.sampleSize,q?q.label:"");
   /* rows on screen must never be ambiguous about where they came from */
@@ -3519,8 +3524,11 @@ function renderTx(){
     [t.txSumLatest,latest?latest.split("-").reverse().join("."):dash],
   ].map(([l,v])=>`<div><span class="l">${l}</span><span class="v num">${v}</span></div>`).join("");
   const thin=prices.length>0&&prices.length<3;
+  const streetLevel=sc&&(sc.level==="street"||sc.level==="building");
   el("txWarn").hidden=!thin;
-  if(thin)el("txWarn").textContent=t.txThin(prices.length);
+  if(thin)el("txWarn").textContent=streetLevel
+    ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
+    : t.txThin(prices.length);
 
   /* states: loading / technical error / matching gap / genuine zero */
   const st=txState.status;
