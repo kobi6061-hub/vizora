@@ -1901,6 +1901,8 @@ he:{
   txScopeLoc:(d,n)=>`נמצאו <b>${n}</b> עסקאות ביישוב: ${d}`,
   txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
   txCuratedOnly:"לא התקבלו עסקאות מהמאגר הממשלתי לתקופה ולאזור שנבחרו — מוצגות עסקאות שדווחו לרשות המיסים כפי שפורסמו בעיתונות הכלכלית.",
+  txNonRes:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר/לא מסווג) הוצאו מהטבלה ומהסטטיסטיקה`,
+  txOnlyNonRes:n=>`נמצאו ${n} עסקאות מדווחות באזור, אך אף אחת מהן אינה עסקת מגורים (קרקע/מסחר/לא מסווג). נסו להרחיב את טווח התאריכים.`,
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
   txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג", txGrpCurated:"עסקאות שפורסמו בעיתונות הכלכלית — מקור משני",
   txLoading:"טוען עסקאות שדווחו…",
@@ -2174,6 +2176,8 @@ en:{
   txScopeLoc:(d,n)=>`Found <b>${n}</b> transactions in the locality: ${d}`,
   txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
   txCuratedOnly:"No records returned from the government layer for the selected area and period — showing Tax-Authority-reported deals as published in the financial press.",
+  txNonRes:n=>`${n} non-residential deals (land/commercial/unclassified) excluded from the table and the statistics`,
+  txOnlyNonRes:n=>`${n} reported deals found in this area, none of them residential (land/commercial/unclassified). Try widening the date range.`,
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
   txTagProb:"new (probable)", txTagUnk:"unclassified", txGrpCurated:"Deals published in the financial press — secondary source",
   txLoading:"Loading reported transactions…",
@@ -3470,8 +3474,13 @@ const txVal=v=>(v&&typeof v==="object"&&"value"in v)?v.value:v;
 const txPsm=t=>{const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
 function txMedian(a){if(!a.length)return null;const x=[...a].sort((p,q)=>p-q);const m=x.length>>1;
   return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)}
+/* PROPX is a residential product: land, commercial and unclassified rows are
+   retrieved and counted, but never mixed into apartment rows or their stats.
+   The count of what was set aside is always disclosed. */
+function txResidential(){return txState.rows.filter(t=>t.propertyClass==="residential")}
+function txNonResidentialN(){return txState.rows.length-txResidential().length}
 function txFiltered(){
-  const rows=txState.rows;
+  const rows=txResidential();
   return txState.tab==="new"?rows.filter(t=>t.newness==="confirmed_new"||t.newness==="probable_new")
     :txState.tab==="second"?rows.filter(t=>t.newness==="second_hand")
     :rows;
@@ -3495,7 +3504,7 @@ function renderTx(){
 
   /* toolbar — always available */
   const tabBtn=(k,lbl,n)=>`<button data-txtab="${k}" aria-pressed="${txState.tab===k}">${lbl}${n!=null?` <span class="num">${n}</span>`:""}</button>`;
-  const R=txState.rows;
+  const R=txResidential();
   const nNew=R.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length;
   const nSec=R.filter(x=>x.newness==="second_hand").length;
   el("txBar").innerHTML=`
@@ -3517,7 +3526,9 @@ function renderTx(){
     :t.txScopeRadius(sc.radiusM,sc.sampleSize,q?q.label:"");
   /* rows on screen must never be ambiguous about where they came from */
   const curatedOnly=!rows.length&&curated.length;
-  const noteTxt=curatedOnly?t.txCuratedOnly:scopeTxt;
+  const nonRes=txNonResidentialN();
+  const noteTxt=(curatedOnly?t.txCuratedOnly:scopeTxt)+
+    (nonRes&&!curatedOnly?" · "+t.txNonRes(nonRes):"");
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
 
   /* summary — computed only from what is actually shown */
@@ -3539,13 +3550,14 @@ function renderTx(){
   /* states: loading / technical error / matching gap / genuine zero */
   const st=txState.status;
   const showState=(st==="loading"&&!hasAny)||(st==="error"&&!hasAny)||
-    (st==="scope"&&!hasAny)||(!hasAny&&st==="empty");
+    (st==="scope"&&!hasAny)||(!hasAny&&st==="empty")||(!hasAny&&st==="ok");
   el("txEmpty").hidden=!showState;
   el("txEmpty").className=st==="error"?"tx-err":st==="loading"?"tx-load":"tx-empty";
   el("txEmpty").textContent=st==="loading"?t.txLoading
     :st==="error"?t.txErr
     :st==="scope"?t.txNoScope
-    :(!hasAny&&st==="empty")?(txState.unavailable.length?t.txNoMatch:t.txZero):"";
+    :(!hasAny&&st==="empty")?(txState.unavailable.length?t.txNoMatch:t.txZero)
+    :(!hasAny&&st==="ok")?t.txOnlyNonRes(txState.rows.length):"";
 
   const clsChip=n=>n==="confirmed_new"?`<span class="tx-chip new">${t.txTagNew}</span>`
     :n==="probable_new"?`<span class="tx-chip new">${t.txTagProb}</span>`
@@ -3563,7 +3575,7 @@ function renderTx(){
     <td class="num">${r.floor||dash}</td>
     <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
     <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
-    <td>${clsChip(r.newness)}</td>
+    <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${r.dealType}</div>`:""}</td>
     <td class="tx-src">${t.txSrcGov}</td></tr>`;
   const curTr=r=>`<tr style="cursor:default">
     <td class="num">${r.d}</td>

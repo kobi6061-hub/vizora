@@ -10,7 +10,6 @@
 'use strict';
 
 const { getService, serviceMode } = require('./_service');
-const { itmToWgs84 } = require('../../lib/geo/itm');
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -34,20 +33,17 @@ module.exports = async (req, res) => {
       ? await svc.getConfirmedNewTransactions(location, filters)
       : await svc.getTransactions(location, filters);
     // raw source echoes stay server-side; the wire carries normalized rows.
-    // ITM -> WGS84 is an exact projection transform (lib/geo/itm), applied so
-    // the client can map records; marked coordSource, never invented.
-    out.transactions = out.transactions.map((t) => {
-      const w = (t.lat == null && t.itmX != null) ? itmToWgs84(t.itmX, t.itmY) : null;
-      return {
-        ...t,
-        lat: w ? +w.lat.toFixed(6) : t.lat,
-        lng: w ? +w.lng.toFixed(6) : t.lng,
-        coordSource: w ? 'itm-transform' : (t.lat != null ? 'source' : null),
-        provenance: (Array.isArray(t.provenance) ? t.provenance : [t.provenance])
-          .map((p) => ({ ...p, raw: undefined })),
-      };
-    });
-    out.meta = { months: filters.months, mode: serviceMode() };
+    // Coordinates were converted from the source CRS in the provider and are
+    // bounds-checked there — a point that fails the check stays null.
+    out.transactions = out.transactions.map((t) => ({
+      ...t,
+      provenance: (Array.isArray(t.provenance) ? t.provenance : [t.provenance])
+        .map((p) => ({ ...p, raw: undefined })),
+    }));
+    const cls = out.transactions.reduce((a, t) => {
+      a[t.propertyClass || 'unknown'] = (a[t.propertyClass || 'unknown'] || 0) + 1; return a;
+    }, {});
+    out.meta = { months: filters.months, mode: serviceMode(), byPropertyClass: cls };
     res.end(JSON.stringify(out));
   } catch (e) {
     res.statusCode = 502;

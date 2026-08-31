@@ -9,22 +9,22 @@
     ]
   },
   "govmapFixtures": {
-    "_note": "GovMap-SHAPED responses for offline pipeline tests (contract per the public GovmapClient, github.com/nitzpo/nadlan-mcp, 31.08.2026). The two deal rows mirror the observedComparison records so the offline test can prove the pipeline MATCHES them when the source serves them; their dealType placement is a mechanism fixture, not a verified fact — the live run reveals the true government classification.",
+    "_note": "GovMap-SHAPED responses for offline pipeline tests. Geometry is EPSG:3857 Web Mercator, matching what the live production endpoint actually returns (verified 31.08.2026). The two deal rows mirror the observedComparison records so the offline test can prove the pipeline MATCHES them when the source serves them; their dealType placement is a mechanism fixture, not a verified fact — the live run reveals the true government classification.",
     "autocomplete": { "resultsCount": 1, "results": [
-      { "text": "ז'בוטינסקי 7, אזור", "id": "ADDR-AZOR-JAB-7", "type": "address", "score": 100, "shape": "POINT(182062 658922)" } ] },
+      { "text": "ז'בוטינסקי 7, אזור", "id": "ADDR-AZOR-JAB-7", "type": "address", "score": 100, "shape": "POINT(3874799 3766263)" } ] },
     "polygons": [
       { "polygon_id": "POLY-AZ-16", "dealscount": 14, "settlementNameHeb": "אזור", "streetNameHeb": "ז'בוטינסקי", "houseNum": "7", "objectid": 91001 } ],
     "streetDeals1": { "totalCount": 2, "limit": 40, "offset": 0, "data": [
       { "objectid": 30001, "dealAmount": 3370000, "dealDate": "2026-06-15", "assetArea": 107, "assetRoomNum": 5,
         "floorNumber": 7, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((182057 658917,182067 658917,182067 658927,182057 658927,182057 658917)))" },
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))" },
       { "objectid": 30002, "dealAmount": 2900000, "dealDate": "2026-03-27", "assetArea": 110, "assetRoomNum": 5,
         "floorNumber": 11, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "7",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((182057 658917,182067 658917,182067 658927,182057 658927,182057 658917)))" } ] },
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874794 3766258,3874804 3766258,3874804 3766268,3874794 3766268,3874794 3766258)))" } ] },
     "streetDeals2": { "totalCount": 1, "limit": 40, "offset": 0, "data": [
       { "objectid": 30003, "dealAmount": 1720000, "dealDate": "2025-11-02", "assetArea": 78, "assetRoomNum": 3,
         "floorNumber": 2, "settlementNameHeb": "אזור", "streetName": "ז'בוטינסקי", "houseNumber": "5",
-        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((182120 658990,182130 658990,182130 659000,182120 659000,182120 658990)))" } ] }
+        "propertyTypeDescription": "דירה בבית קומות", "shape": "MULTIPOLYGON(((3874871 3766351,3874881 3766351,3874881 3766361,3874871 3766361,3874871 3766351)))" } ] }
   },
   "raw": [
     {

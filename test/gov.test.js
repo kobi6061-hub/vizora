@@ -226,11 +226,10 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     throw new Error('unexpected govmap call ' + u + ' ' + JSON.stringify(init || {}));
   };
   const mkGovmap = () => new GovMapProvider({ fetchImpl: govmapFetch, store: new MemoryStore() });
-  await t('resolveAddress returns ITM coordinates from autocomplete (no fake WGS84)', async () => {
+  await t('resolveAddress returns the source-projected point verbatim (EPSG:3857)', async () => {
     const r = await mkGovmap().resolveAddress('אזור', "ז'בוטינסקי", 7);
-    assert.equal(r.itmX, 182062);
-    assert.equal(r.itmY, 658922); // real Azor centroid (registry coords through the exact ITM transform)
-    assert.equal(r.crs, 'EPSG:2039 (ITM)');
+    assert.equal(r.itmX, 3874799);
+    assert.equal(r.itmY, 3766263);
   });
   await t('getTransactions: address → polygons → deals of BOTH government classes', async () => {
     const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
@@ -254,16 +253,26 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     assert.equal(p.sourceUpdatedAt, null); // GovMap publishes no per-record update time — stays null, not invented
     assert.ok(p.sourceAuthority.includes('רשות המיסים'));
   });
-  await t('distance annotations: same building = 0, others in ITM meters', async () => {
+  await t('coordinates land in Israel and distances are true ground metres', async () => {
     const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
     const same = rows.find((r) => r.txId === 'govmap:30001');
+    assert.equal(same.projCrs, 'EPSG:3857');           // stored verbatim, CRS named
+    assert.ok(same.lat > 31.9 && same.lat < 32.1, 'lat ' + same.lat);
+    assert.ok(same.lng > 34.7 && same.lng < 34.9, 'lng ' + same.lng);
     assert.equal(same.distanceM, 0);
     assert.ok(same.distanceBasis.includes('same building'));
-    const other = rows.find((r) => r.txId === 'govmap:30003'); // house 5, ~60m away
-    assert.ok(other.distanceM > 10 && other.distanceM < 200, 'got ' + other.distanceM);
-    assert.ok(other.distanceBasis.includes('ITM'));
+    const other = rows.find((r) => r.txId === 'govmap:30003'); // house 5, ~100m away
+    assert.ok(other.distanceM > 20 && other.distanceM < 300, 'got ' + other.distanceM);
   });
-  await t('WGS84 input to getNearbyTransactions is refused, not silently reprojected', async () => {
+  await t('property type is classified; land never counts as residential', async () => {
+    const rows = await mkGovmap().getTransactions({ city: 'אזור', street: "ז'בוטינסקי", houseNumber: 7 });
+    assert.ok(rows.every((r) => r.propertyClass === 'residential'), rows.map((r) => r.propertyClass).join(','));
+    const { classifyPropertyType } = require('../lib/gov/propertyType');
+    assert.equal(classifyPropertyType('קרקע').propertyClass, 'land');
+    assert.equal(classifyPropertyType('קרקע').residential, false);
+    assert.equal(classifyPropertyType('חנות').propertyClass, 'commercial');
+  });
+  await t('degree input to getNearbyTransactions is refused, not silently reprojected', async () => {
     await assert.rejects(() => mkGovmap().getNearbyTransactions(32.02, 34.8, 250), (e) => {
       assert.ok(e instanceof GovSourceUnavailableError);
       assert.ok(e.reason.includes('ITM'));
