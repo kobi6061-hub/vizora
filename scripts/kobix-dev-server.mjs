@@ -61,10 +61,12 @@ http.createServer(async (req, res) => {
   }
 
   // serverless api simulation (same modules Vercel runs)
-  if (p === '/api/geo/search') {
+  if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/')) {
     const { createRequire } = await import('node:module');
     const require = createRequire(import.meta.url);
-    return require(path.join(ROOT, 'api', 'geo', 'search.js'))(req, res);
+    const mod = path.join(ROOT, p.replace(/^\/api\//, 'api/') + '.js');
+    try { return require(mod)(req, res); }
+    catch (e) { res.statusCode = 404; return res.end(JSON.stringify({ error: 'no-such-endpoint', reason: e.message })); }
   }
 
   // static

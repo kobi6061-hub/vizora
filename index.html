@@ -488,6 +488,21 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
   .tcard .r2{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;color:var(--ink-2)}
   .tcard .r2 .num{font-weight:600}
 }
+.tx-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:11px 15px;border-bottom:1px solid var(--hairline)}
+.tx-tabs{display:inline-flex;gap:2px;background:var(--paper);border:1px solid var(--hairline);border-radius:99px;padding:2px}
+.tx-tabs button{font-size:12px;font-weight:700;padding:5px 12px;border-radius:99px;color:var(--ink-3)}
+.tx-tabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tx-sel{font:inherit;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--paper);
+  border:1px solid var(--hairline);border-radius:99px;padding:5px 10px}
+.tx-sum{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 15px;border-bottom:1px solid var(--hairline);font-size:12px}
+.tx-sum div{display:flex;flex-direction:column;gap:1px}
+.tx-sum .l{font-size:10.5px;color:var(--ink-3);font-weight:600}
+.tx-sum .v{font-size:14.5px;font-weight:800}
+.tx-scope{padding:10px 15px;font-size:12.5px;color:var(--ink-2);border-bottom:1px solid var(--hairline);line-height:1.5}
+.tx-scope b{color:var(--brass)}
+.tx-warn{padding:9px 15px;font-size:12px;font-weight:700;color:var(--brass);border-bottom:1px solid var(--hairline)}
+.tx-load{padding:18px 15px;font-size:13px;color:var(--ink-3)}
+.tx-err{padding:16px 15px;font-size:13px;font-weight:700;color:var(--down)}
 .tx-chip{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.02em;
   border:1px solid var(--hairline);border-radius:99px;padding:2px 8px;color:var(--ink-3);white-space:nowrap}
 .tx-chip.new{color:var(--up);border-color:currentColor}
@@ -1374,6 +1389,10 @@ details.ci-more>.in{padding:2px 13px 12px}
       <span class="tx-note" id="txProv"></span>
     </div>
     <div class="card tbl-card">
+      <div class="tx-bar" id="txBar"></div>
+      <div class="tx-sum" id="txSum" hidden></div>
+      <div class="tx-scope" id="txScope" hidden></div>
+      <div class="tx-warn" id="txWarn" hidden></div>
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
       <div class="tbl-cards" id="txCards"></div>
       <p class="tx-empty" id="txEmpty" hidden></p>
@@ -1871,7 +1890,24 @@ he:{
   geoMPrice:"מחיר דירה חדשה", geoMSqm:"₪ למ״ר", geoMRent:"שכ״ד חודשי", geoMYoy:"שינוי שנתי",
   geoMTx:"עסקאות/שנה", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
   txTitle:"עסקאות אחרונות שדווחו באזור",
-  txProv:"עסקאות שדווחו לרשות המיסים, כפי שפורסמו בעיתונות הכלכלית · תאריך ופירוט — ברזולוציה שפורסמה · נאסף 30.08.2026",
+  txProv:"נתוני עסקאות שדווחו לרשות המיסים · נתון נצפה, לא מודל",
+  txTabAll:"הכול", txTabNew:"דירות חדשות", txTabSec:"יד שנייה",
+  txP12:"12 חודשים", txP24:"24 חודשים", txP36:"3 שנים", txP60:"5 שנים", txPAll:"כל התקופה",
+  txMapToggle:"הצג עסקאות על המפה", txModeFixture:"מצב אימות מקומי — נתוני בדיקה",
+  txSumN:"עסקאות", txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
+  txThin:n=>`רק ${n} עסקאות — מדגם לא מספיק לחציון מהימן; הנתונים מוצגים כתצפיות בודדות`,
+  txScopeBuilding:(d,n)=>`נמצאו <b>${n}</b> עסקאות בכתובת המבוקשת: ${d}`,
+  txScopeStreet:(d,n)=>`נמצאו <b>${n}</b> עסקאות ברחוב: ${d}`,
+  txScopeLoc:(d,n)=>`נמצאו <b>${n}</b> עסקאות ביישוב: ${d}`,
+  txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
+  txCuratedOnly:"לא התקבלו עסקאות מהמאגר הממשלתי לתקופה ולאזור שנבחרו — מוצגות עסקאות שדווחו לרשות המיסים כפי שפורסמו בעיתונות הכלכלית.",
+  txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
+  txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג", txGrpCurated:"עסקאות שפורסמו בעיתונות הכלכלית — מקור משני",
+  txLoading:"טוען עסקאות שדווחו…",
+  txErr:"נתוני העסקאות אינם זמינים כרגע — תקלה טכנית בשליפה. אין משמעות של אפס עסקאות באזור.",
+  txNoMatch:"התאמת העסקאות לאזור אינה זמינה כרגע. אין משמעות של אפס עסקאות באזור.",
+  txZero:"לא נמצאו עסקאות מדווחות בתקופה ובאזור שנבחרו. אפשר להרחיב את טווח התאריכים.",
+  txNoScope:"בחרו יישוב, שכונה או רחוב כדי לראות עסקאות שבוצעו באזור.",
   txScopeCity:c=>`רמת עיר — ${c}`, txTagNew:"חדשה מקבלן", txTagUsed:"יד שנייה",
   thTag:"סיווג", thSrc:"מקור", txRoomsShort:"חד׳", txPsmShort:"מ״ר",
   txEmpty:"לאזור זה טרם נאספו עסקאות מדווחות פרטניות. מוצגות אך ורק עסקאות שפורסמו בפועל — לעולם לא שורות מדומות.",
@@ -1938,6 +1974,8 @@ he:{
   ciRetLine:(r,p)=>`לפי תשואה נדרשת (${r}% שנתי על ההון · מדיניות): ≤ <b class="num">${p}</b>`,
   ciRetAbove:r=>`יעד התשואה (${r}% שנתי) מושג גם במחיר השוק המלא — במינוף ובתרחיש הבסיס.`,
   ciRetNone:r=>`יעד התשואה (${r}% שנתי) אינו מושג גם בהנחה של 50%- — בתנאי המימון והתרחיש הנוכחיים.`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותה שכבת נתונים ממשלתית): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול העוגן המודלי: ${gap}) — נתון נצפה, אינו משנה את הציון`,
+  ciCompThin:"מדגם קטן — לא לגזור מסקנת מחיר",
   ciPolicyTag:"מדיניות", ciModelTag:"מודל",
   ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
   cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
@@ -2125,7 +2163,24 @@ en:{
   geoMPrice:"New-home price", geoMSqm:"₪ per m²", geoMRent:"Monthly rent", geoMYoy:"Annual change",
   geoMTx:"Deals/yr", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
   txTitle:"Latest reported transactions in this area",
-  txProv:"Deals reported to the Tax Authority, as published in the financial press · date & detail at published resolution · collected 30.08.2026",
+  txProv:"Transactions reported to the Israel Tax Authority · observed data, not modelled",
+  txTabAll:"All", txTabNew:"New homes", txTabSec:"Second-hand",
+  txP12:"12 months", txP24:"24 months", txP36:"3 years", txP60:"5 years", txPAll:"All available",
+  txMapToggle:"Show sold deals on map", txModeFixture:"local verification mode — test data",
+  txSumN:"Transactions", txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
+  txThin:n=>`Only ${n} transactions — insufficient sample for a reliable median; shown as individual observations`,
+  txScopeBuilding:(d,n)=>`Found <b>${n}</b> transactions at the requested address: ${d}`,
+  txScopeStreet:(d,n)=>`Found <b>${n}</b> transactions on the street: ${d}`,
+  txScopeLoc:(d,n)=>`Found <b>${n}</b> transactions in the locality: ${d}`,
+  txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
+  txCuratedOnly:"No records returned from the government layer for the selected area and period — showing Tax-Authority-reported deals as published in the financial press.",
+  txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
+  txTagProb:"new (probable)", txTagUnk:"unclassified", txGrpCurated:"Deals published in the financial press — secondary source",
+  txLoading:"Loading reported transactions…",
+  txErr:"Transaction data temporarily unavailable — retrieval failure. This does not mean zero market activity.",
+  txNoMatch:"Transaction matching unavailable. This does not mean zero market activity.",
+  txZero:"No reported transactions found for the selected area and period. Try expanding the date range.",
+  txNoScope:"Select a locality, neighborhood or street to see transactions in the area.",
   txScopeCity:c=>`city level — ${c}`, txTagNew:"new (developer)", txTagUsed:"second-hand",
   thTag:"Type", thSrc:"Source", txRoomsShort:"rm", txPsmShort:"m²",
   txEmpty:"No individually reported deals have been collected for this area yet. Only actually-published transactions are shown — never simulated rows.",
@@ -2192,6 +2247,8 @@ en:{
   ciRetLine:(r,p)=>`By required return (${r}%/yr on equity · policy, at current leverage): ≤ <b class="num">${p}</b>`,
   ciRetAbove:r=>`The ${r}%/yr return target is met even at full market price — at current leverage, base scenario.`,
   ciRetNone:r=>`The ${r}%/yr return target is not met even at a 50% discount under current financing and scenario.`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (same government data layer): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the modelled anchor: ${gap}) — observed data; it does not alter the score`,
+  ciCompThin:"small sample — not a price conclusion",
   ciPolicyTag:"policy", ciModelTag:"model",
   ciCoverT:"Data coverage", ciCoverMiss:"missing",
   cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
@@ -2872,7 +2929,7 @@ function renderMap(keepVB){
       }
     }
   }
-  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+geoPinSVG(sf);
+  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+txMarkersSVG(sf)+geoPinSVG(sf);
   if(keepVB){currentVB=vb.slice();svg.setAttribute("viewBox",vb.join(" "))}
   else{mapCtxVB=vb.slice();svg.setAttribute("viewBox",currentVB.join(" "));animateViewBox(svg,vb)}
 
@@ -3356,47 +3413,215 @@ function renderConfidence(){
     <div class="conf-note">${based}.<br>${note}</div>`;
 }
 
-/* ---------- transactions (real reported deals) ---------- */
+/* =====================================================================
+   SOLD TRANSACTIONS — one source of truth: the government data layer
+   (/api/gov/transactions → lib/gov providers). The curated published-deal
+   registry (TX_DB) is kept as a clearly-labeled secondary group so nothing
+   already verified is lost. Observed data only; nothing is fabricated.
+   ===================================================================== */
+const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
+  tab:"all",months:24,mapOn:false,key:"",err:null,unavailable:[]};
+
+/* which real place the current view is asking about */
+function txQueryFor(){
+  if(state.geo){
+    const g=state.geo;
+    return g.kind==="street"?{city:g.city,street:g.he,label:`${g.he} · ${g.city}`}
+                            :{city:g.he,label:g.he};
+  }
+  if(state.street){
+    const st=stEnt(state.street.id);
+    if(st){const c=LOC[st.city];
+      return{city:c?c.he:null,street:st.he,house:state.street.house||null,
+        label:`${st.he}${c?" · "+c.he:""}`};}
+  }
+  const l=LOC[state.locId];if(!l)return null;
+  const c=l.type==="city"?l:cityOf(l);
+  if(c)return{city:c.he,label:l.type==="city"?c.he:`${l.he} · ${c.he}`};
+  return{city:null,district:l.he,label:l.he};      /* district/country view */
+}
+
+async function txFetch(force){
+  const q=txQueryFor();
+  if(!q||!q.city){txState.status="scope";txState.rows=[];txState.key="";renderTx();return}
+  const key=[q.city,q.street||"",q.house||"",txState.months].join("|");
+  if(!force&&key===txState.key&&txState.status!=="idle")return;
+  txState.key=key;txState.status="loading";renderTx();
+  const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120"});
+  if(q.street)p.set("street",q.street);
+  if(q.house)p.set("house",String(q.house));
+  try{
+    const r=await fetch("/api/gov/transactions?"+p);
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(txState.key!==key)return;                    /* a newer query won */
+    txState.rows=(d.transactions||[]).filter(t=>t.price);
+    txState.scope=d.scope||null;txState.meta=d.meta||null;
+    txState.unavailable=d.unavailable||[];
+    txState.status=txState.rows.length?"ok":"empty";txState.err=null;
+  }catch(e){
+    if(txState.key!==key)return;
+    txState.status="error";txState.err=e.message;txState.rows=[];
+  }
+  renderTx();renderMap(true);
+}
+
+const txVal=v=>(v&&typeof v==="object"&&"value"in v)?v.value:v;
+const txPsm=t=>{const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
+function txMedian(a){if(!a.length)return null;const x=[...a].sort((p,q)=>p-q);const m=x.length>>1;
+  return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)}
+function txFiltered(){
+  const rows=txState.rows;
+  return txState.tab==="new"?rows.filter(t=>t.newness==="confirmed_new"||t.newness==="probable_new")
+    :txState.tab==="second"?rows.filter(t=>t.newness==="second_hand")
+    :rows;
+}
+/* curated published rows — secondary source, always labeled. Reuses the
+   existing roll-up so district and country views keep working. */
+function txCuratedRows(){
+  const rows=(txRowsFor(state.locId).rows)||[];
+  return txState.tab==="second"?rows.filter(r=>r.tag==="used")
+    :txState.tab==="new"?rows.filter(r=>r.tag==="new"):rows;
+}
+
 function renderTx(){
   const t=T(),he=state.lang==="he";
-  const sec=el("txSection");
+  const sec=el("txSection");if(!sec)return;
   if(state.mode!=="sale"){sec.style.display="none";return}
   sec.style.display="";
-  const {rows,scope}=txRowsFor(state.locId);
-  el("txProv").textContent=t.txProv+(scope?" · "+t.txScopeCity(he?scope.he:scope.en):"");
   const dash="—";
-  const tagOf=r=>r.tag==="new"?`<span class="tx-chip new">${t.txTagNew}</span>`
-              :r.tag==="used"?`<span class="tx-chip">${t.txTagUsed}</span>`:dash;
-  const srcOf=r=>r.u?`<a href="${r.u}" target="_blank" rel="noopener">${r.src}</a>`:r.src;
-  const addrOf=r=>(he?r.he:r.en)+(r.cityHe?` · <b>${he?r.cityHe:r.cityEn}</b>`:"");
-  const noteOf=r=>he?(r.nHe||""):(r.nEn||"");
-  const psmOf=r=>r.sqm?fmtNIS(Math.round(r.price/r.sqm)):dash;
-  el("txEmpty").hidden=rows.length>0;
-  el("txEmpty").textContent=rows.length?"":t.txEmpty;
-  el("txTbl").innerHTML=!rows.length?"":`
-    <thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>
-    <tbody>${rows.map(r=>`
-      <tr style="cursor:default">
-        <td class="num">${r.d}</td>
-        <td><span class="nm">${addrOf(r)}</span>${noteOf(r)?`<div class="sub">${noteOf(r)}</div>`:""}</td>
-        <td class="num">${r.rooms||dash}</td>
-        <td class="num">${r.sqm||dash}</td>
-        <td class="num">${r.fl||dash}</td>
-        <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
-        <td class="num">${psmOf(r)}</td>
-        <td>${tagOf(r)}</td>
-        <td class="tx-src">${srcOf(r)}</td>
-      </tr>`).join("")}</tbody>`;
-  el("txCards").innerHTML=rows.map(r=>`
-    <div class="tcard" style="cursor:default">
-      <div class="r1"><b>${addrOf(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
-      <div class="r2"><span class="num">${r.d}</span>
-        ${r.rooms?`<span><span class="num">${r.rooms}</span> ${t.txRoomsShort}</span>`:""}
-        ${r.sqm?`<span><span class="num">${r.sqm}</span> ${t.txPsmShort}</span>`:""}
-        ${r.fl?`<span>${t.thFloor} <span class="num">${r.fl}</span></span>`:""}
-        ${r.sqm?`<span class="num">${psmOf(r)}/${t.txPsmShort}</span>`:""}</div>
-      <div class="r2">${r.tag?tagOf(r):""}${noteOf(r)?`<span>${noteOf(r)}</span>`:""}<span class="tx-src">${srcOf(r)}</span></div>
-    </div>`).join("");
+  const q=txQueryFor();
+  el("txProv").textContent=t.txProv;
+
+  /* toolbar — always available */
+  const tabBtn=(k,lbl,n)=>`<button data-txtab="${k}" aria-pressed="${txState.tab===k}">${lbl}${n!=null?` <span class="num">${n}</span>`:""}</button>`;
+  const R=txState.rows;
+  const nNew=R.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length;
+  const nSec=R.filter(x=>x.newness==="second_hand").length;
+  el("txBar").innerHTML=`
+    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}</span>
+    <select class="tx-sel" id="txMonths">${[[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]]
+      .map(([v,l])=>`<option value="${v}"${txState.months===v?" selected":""}>${l}</option>`).join("")}</select>
+    <button class="tx-sel" id="txMapBtn" aria-pressed="${txState.mapOn}">${t.txMapToggle}</button>
+    <span style="flex:1"></span>
+    <span class="tx-src">${txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:""}</span>`;
+
+  const rows=txFiltered(),curated=txCuratedRows();
+  const hasAny=rows.length||curated.length;
+
+  /* scope disclosure — never pretend a wider scope is the street itself */
+  const sc=txState.scope;
+  const scopeTxt=!sc?"":sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
+    :sc.level==="street"?t.txScopeStreet(sc.description,sc.sampleSize)
+    :sc.level==="locality"?t.txScopeLoc(sc.description,sc.sampleSize)
+    :t.txScopeRadius(sc.radiusM,sc.sampleSize,q?q.label:"");
+  /* rows on screen must never be ambiguous about where they came from */
+  const curatedOnly=!rows.length&&curated.length;
+  const noteTxt=curatedOnly?t.txCuratedOnly:scopeTxt;
+  el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
+
+  /* summary — computed only from what is actually shown */
+  const prices=rows.map(r=>r.price).filter(Boolean);
+  const psms=rows.map(txPsm).filter(Boolean);
+  const latest=rows.map(r=>r.date).filter(Boolean).sort().pop();
+  el("txSum").hidden=!prices.length;
+  if(prices.length)el("txSum").innerHTML=[
+    [t.txSumN,fmtInt(rows.length)],
+    [t.txSumMed,fmtNIS(txMedian(prices))],
+    [t.txSumMedPsm,psms.length?fmtNIS(txMedian(psms)):dash],
+    [t.txSumAvgPsm,psms.length?fmtNIS(Math.round(psms.reduce((a,b)=>a+b,0)/psms.length)):dash],
+    [t.txSumLatest,latest?latest.split("-").reverse().join("."):dash],
+  ].map(([l,v])=>`<div><span class="l">${l}</span><span class="v num">${v}</span></div>`).join("");
+  const thin=prices.length>0&&prices.length<3;
+  el("txWarn").hidden=!thin;
+  if(thin)el("txWarn").textContent=t.txThin(prices.length);
+
+  /* states: loading / technical error / matching gap / genuine zero */
+  const st=txState.status;
+  const showState=(st==="loading"&&!hasAny)||(st==="error"&&!hasAny)||
+    (st==="scope"&&!hasAny)||(!hasAny&&st==="empty");
+  el("txEmpty").hidden=!showState;
+  el("txEmpty").className=st==="error"?"tx-err":st==="loading"?"tx-load":"tx-empty";
+  el("txEmpty").textContent=st==="loading"?t.txLoading
+    :st==="error"?t.txErr
+    :st==="scope"?t.txNoScope
+    :(!hasAny&&st==="empty")?(txState.unavailable.length?t.txNoMatch:t.txZero):"";
+
+  const clsChip=n=>n==="confirmed_new"?`<span class="tx-chip new">${t.txTagNew}</span>`
+    :n==="probable_new"?`<span class="tx-chip new">${t.txTagProb}</span>`
+    :n==="second_hand"?`<span class="tx-chip">${t.txTagUsed}</span>`
+    :`<span class="tx-chip">${t.txTagUnk}</span>`;
+  const addr=r=>[r.street,r.houseNumber].filter(Boolean).join(" ")||r.city||dash;
+  const dist=r=>r.distanceM==null?"":r.distanceM===0?t.txSameBld:`${fmtInt(r.distanceM)} ${t.txMetersAway}`;
+  const dt=r=>r.date?r.date.split("-").reverse().join("."):dash;
+
+  const liveTr=r=>`<tr data-txid="${r.txId||""}" style="cursor:default">
+    <td class="num">${dt(r)}</td>
+    <td><span class="nm">${addr(r)}</span>${r.city?`<div class="sub">${r.city}${dist(r)?" · "+dist(r):""}</div>`:""}</td>
+    <td class="num">${txVal(r.rooms)||dash}</td>
+    <td class="num">${txVal(r.areaSqm)||dash}</td>
+    <td class="num">${r.floor||dash}</td>
+    <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
+    <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
+    <td>${clsChip(r.newness)}</td>
+    <td class="tx-src">${t.txSrcGov}</td></tr>`;
+  const curTr=r=>`<tr style="cursor:default">
+    <td class="num">${r.d}</td>
+    <td><span class="nm">${he?r.he:r.en}</span>${(he?r.nHe:r.nEn)?`<div class="sub">${he?r.nHe:r.nEn}</div>`:""}</td>
+    <td class="num">${r.rooms||dash}</td><td class="num">${r.sqm||dash}</td><td class="num">${r.fl||dash}</td>
+    <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
+    <td class="num">${r.sqm?fmtNIS(Math.round(r.price/r.sqm)):dash}</td>
+    <td>${r.tag==="new"?`<span class="tx-chip new">${t.txTagNew}</span>`:r.tag==="used"?`<span class="tx-chip">${t.txTagUsed}</span>`:dash}</td>
+    <td class="tx-src">${r.u?`<a href="${r.u}" target="_blank" rel="noopener">${r.src}</a>`:r.src}</td></tr>`;
+  const head=`<thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>`;
+  const grp=lbl=>`<tr><td colspan="9" style="background:var(--paper);font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--ink-3);padding:7px 12px">${lbl}</td></tr>`;
+  el("txTbl").innerHTML=!hasAny?"":head+"<tbody>"+
+    (rows.length?rows.map(liveTr).join(""):"")+
+    (curated.length?grp(t.txGrpCurated)+curated.map(curTr).join(""):"")+"</tbody>";
+
+  const liveCard=r=>`<div class="tcard" style="cursor:default">
+    <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
+    <div class="r2"><span class="num">${dt(r)}</span>
+      ${txVal(r.rooms)?`<span><span class="num">${txVal(r.rooms)}</span> ${t.txRoomsShort}</span>`:""}
+      ${txVal(r.areaSqm)?`<span><span class="num">${txVal(r.areaSqm)}</span> ${t.txPsmShort}</span>`:""}
+      ${r.floor?`<span>${t.thFloor} <span class="num">${r.floor}</span></span>`:""}
+      ${txPsm(r)?`<span class="num">${fmtNIS(txPsm(r))}/${t.txPsmShort}</span>`:""}</div>
+    <div class="r2">${clsChip(r.newness)}${dist(r)?`<span>${dist(r)}</span>`:""}<span class="tx-src">${t.txSrcGov}</span></div></div>`;
+  const curCard=r=>`<div class="tcard" style="cursor:default">
+    <div class="r1"><b>${he?r.he:r.en}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
+    <div class="r2"><span class="num">${r.d}</span>
+      ${r.rooms?`<span><span class="num">${r.rooms}</span> ${t.txRoomsShort}</span>`:""}
+      ${r.sqm?`<span><span class="num">${r.sqm}</span> ${t.txPsmShort}</span>`:""}
+      ${r.fl?`<span>${t.thFloor} <span class="num">${r.fl}</span></span>`:""}</div>
+    <div class="r2"><span class="tx-src">${r.src}</span></div></div>`;
+  el("txCards").innerHTML=rows.map(liveCard).join("")+
+    (curated.length?`<div class="tcard" style="padding-bottom:0"><div class="r2" style="font-weight:800;color:var(--ink-3)">${t.txGrpCurated}</div></div>`+curated.map(curCard).join(""):"");
+}
+
+/* sold-transaction markers — one marker per real sale, never an average */
+function txMarkersSVG(sf){
+  if(!txState.mapOn)return"";
+  const rows=txFiltered().filter(r=>r.lat!=null&&r.lng!=null);
+  if(!rows.length)return"";
+  return`<g class="tx-pins">`+rows.map(r=>{
+    const[x,y]=proj(r.lat,r.lng);
+    const isNew=r.newness==="confirmed_new"||r.newness==="probable_new";
+    return`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(1.9*sf).toFixed(1)}"
+      fill="${isNew?"var(--up)":"var(--accent)"}" stroke="#fff" stroke-width="${(.6*sf).toFixed(1)}"
+      opacity=".92"><title>${fmtNIS(r.price)} · ${txVal(r.rooms)||"?"} ${T().txRoomsShort} · ${txVal(r.areaSqm)||"?"} ${T().txPsmShort}${txPsm(r)?" · "+fmtNIS(txPsm(r))+"/"+T().txPsmShort:""} · ${r.date?r.date.split("-").reverse().join("."):""}</title></circle>`;
+  }).join("")+`</g>`;
+}
+
+function initTx(){
+  const sec=el("txSection");if(!sec)return;
+  sec.addEventListener("click",e=>{
+    const tb=e.target.closest("[data-txtab]");
+    if(tb){txState.tab=tb.dataset.txtab;renderTx();renderMap(true);return}
+    if(e.target.id==="txMapBtn"){txState.mapOn=!txState.mapOn;renderTx();renderMap(true);return}
+  });
+  sec.addEventListener("change",e=>{
+    if(e.target.id==="txMonths"){txState.months=+e.target.value;txFetch(true)}
+  });
 }
 
 
@@ -4226,6 +4451,25 @@ function ciCardHTML(r,i){
     ${ciPlate(ev.score)}</button>`;
 }
 
+/* ONE TRANSACTION SOURCE OF TRUTH: the investment view reads the very same
+   government-layer rows the deals section renders (txState) — as OBSERVED
+   comparables shown beside the modelled anchor. The locked scoring formulas
+   are not altered by it; the observation is disclosed, never blended in. */
+function ciComparables(f){
+  if(!txState.rows.length)return null;
+  const q=txQueryFor();
+  const city=f.l.type==="city"?f.l:cityOf(f.l);
+  if(!q||!city||normGeoQ(q.city||"")!==normGeoQ(city.he))return null;  /* same area only */
+  const pick=r=>({psm:txPsm(r),n:r.newness});
+  const all=txState.rows.map(pick).filter(x=>x.psm);
+  const nw=all.filter(x=>x.n==="confirmed_new"||x.n==="probable_new");
+  if(!all.length)return null;
+  const med=a=>{const x=a.map(v=>v.psm).sort((p,q2)=>p-q2);const m=x.length>>1;
+    return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)};
+  return{nAll:all.length,nNew:nw.length,medAll:med(all),medNew:nw.length?med(nw):null,
+    scope:txState.scope,thin:all.length<3};
+}
+
 function ciDetailHTML(id){
   const t=T(),he=state.lang==="he",ci=state.ci,H=CI_H[ci.h];
   const ev=ciEval(id,ci.h,ci.strat),f=ev.f,fin=ciFin(f);
@@ -4265,6 +4509,11 @@ function ciDetailHTML(id){
         <div><div class="k">${t.ciMktScale}</div><div class="v num">${t.ciScaleUpTo(fmtCompact(inv.capacity),inv.unitsCap)}</div></div>
         <div><div class="k">${t.ciDealScale}</div><div class="v">${deals.length?fmtCompact(deals.reduce((a,d)=>a+d.units*d.askPrice,0)):t.ciUnknown}</div></div>
       </div>
+      ${(()=>{const cp=ciComparables(f);if(!cp)return"";
+        const gap=cp.medNew?((cp.medNew/f.l.base.sqm-1)*100):null;
+        return `<div class="ci-note" style="margin-top:7px;color:var(--ink-2)">${
+          t.ciComp(fmtInt(cp.nAll),fmtNIS(cp.medAll),cp.medNew?fmtNIS(cp.medNew):"—",fmtInt(cp.nNew),
+            cp.scope?cp.scope.description:"",gap!=null?fmtPct(gap):"—")}${cp.thin?" · "+t.ciCompThin:""}</div>`})()}
       <div class="ci-note" style="margin-top:7px">${t.ciEvid(fmtInt(f.listings),(f.tx/12).toFixed(0),Math.round(f.ms),fmtPct(f.mom),(inv.invShare*100).toFixed(0))} · ${t.ciDealLevNA}</div>
       <div class="ci-target">
         ${inv.attractiveNow?t.ciTargetNow(fmtCompact(f.price)):t.ciTargetLine(fmtCompact(inv.target),inv.discTarget.toFixed(0))}
@@ -4698,7 +4947,7 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();renderChartTools();renderChart();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderStreet();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();
+    renderCmd();renderStreet();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();txFetch(false);
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -4733,6 +4982,7 @@ el("langEn").addEventListener("click",()=>setLang("en"));
 
 setStatics();
 el("geoCloseBtn").addEventListener("click",closeGeo);
+initTx();
 initSearch();
 initCapital();
 initCmd();

@@ -9,7 +9,8 @@
 
 'use strict';
 
-const { getService } = require('./_service');
+const { getService, serviceMode } = require('./_service');
+const { itmToWgs84 } = require('../../lib/geo/itm');
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -24,19 +25,29 @@ module.exports = async (req, res) => {
     city: g('city'), street: g('street'), houseNumber: num('house'),
     lat: num('lat'), lng: num('lng'), block: g('block'), parcel: g('parcel'),
   };
+  const filters = { limit: num('limit') || 100, months: num('months') || 24, radiusM: num('radius') || undefined };
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'private, max-age=300');
   try {
     const svc = getService();
     const out = g('newOnly') === '1'
-      ? await svc.getConfirmedNewTransactions(location, { limit: num('limit') || 100 })
-      : await svc.getTransactions(location, { limit: num('limit') || 100 });
-    // raw source echoes stay server-side; the wire carries normalized rows
-    out.transactions = out.transactions.map((t) => ({
-      ...t,
-      provenance: (Array.isArray(t.provenance) ? t.provenance : [t.provenance])
-        .map((p) => ({ ...p, raw: undefined })),
-    }));
+      ? await svc.getConfirmedNewTransactions(location, filters)
+      : await svc.getTransactions(location, filters);
+    // raw source echoes stay server-side; the wire carries normalized rows.
+    // ITM -> WGS84 is an exact projection transform (lib/geo/itm), applied so
+    // the client can map records; marked coordSource, never invented.
+    out.transactions = out.transactions.map((t) => {
+      const w = (t.lat == null && t.itmX != null) ? itmToWgs84(t.itmX, t.itmY) : null;
+      return {
+        ...t,
+        lat: w ? +w.lat.toFixed(6) : t.lat,
+        lng: w ? +w.lng.toFixed(6) : t.lng,
+        coordSource: w ? 'itm-transform' : (t.lat != null ? 'source' : null),
+        provenance: (Array.isArray(t.provenance) ? t.provenance : [t.provenance])
+          .map((p) => ({ ...p, raw: undefined })),
+      };
+    });
+    out.meta = { months: filters.months, mode: serviceMode() };
     res.end(JSON.stringify(out));
   } catch (e) {
     res.statusCode = 502;

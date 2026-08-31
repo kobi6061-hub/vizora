@@ -228,8 +228,8 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
   const mkGovmap = () => new GovMapProvider({ fetchImpl: govmapFetch, store: new MemoryStore() });
   await t('resolveAddress returns ITM coordinates from autocomplete (no fake WGS84)', async () => {
     const r = await mkGovmap().resolveAddress('אזור', "ז'בוטינסקי", 7);
-    assert.equal(r.itmX, 179820);
-    assert.equal(r.itmY, 658900);
+    assert.equal(r.itmX, 182062);
+    assert.equal(r.itmY, 658922); // real Azor centroid (registry coords through the exact ITM transform)
     assert.equal(r.crs, 'EPSG:2039 (ITM)');
   });
   await t('getTransactions: address → polygons → deals of BOTH government classes', async () => {
