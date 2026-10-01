@@ -39,7 +39,9 @@ function readPrev() {
 }
 
 const fmtPct = (x) => (x > 0 ? '+' : '') + x.toFixed(1) + '%';
-const per = (p) => `${p.year}-${String(p.month).padStart(2, '0')}`;
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// a CBS dwelling-price point is a two-month window dated by its first month
+const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.year}` : `Dec ${p.year}–Jan ${p.year + 1}`);
 
 (async () => {
   const now = new Date();

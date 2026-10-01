@@ -17,8 +17,8 @@ GitHub Actions (daily 03:17 UTC, .github/workflows/market-sync.yml)
 | Indicator | Source | Shown in |
 |---|---|---|
 | `boiRate` | Bank of Israel public API (`currentInterest`, `nextInterestDate`) | tape tile, national insight |
-| `newHomesIndex` | CBS new-homes price index — y/y, period (two-month window) | tape tile, national annual change (KPI), insights, provenance panel |
-| `dwellingsIndex` | CBS dwelling-price index (all dwellings) | stored for history; not displayed yet |
+| `newHomesIndex` | CBS new-homes price index (series 70000) — y/y over a two-month window, dated by its first month | tape tile, national annual change (KPI), insights, provenance panel |
+| `dwellingsIndex` | CBS dwelling-price index, all dwellings (series 40010) | stored for history; not displayed yet |
 
 ## Rules the code enforces
 

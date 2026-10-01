@@ -127,7 +127,7 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
     assert.deepEqual(r.period, { year: 2026, month: 7 });
     assert.equal(r.yoy, -1.4);
     assert.equal(r.mom, 0.4);
-    assert.equal(r.periodKind, 'bimonthly');
+    assert.equal(r.periodKind, 'bimonthly-first-month');
     assert.ok(r.source.url.startsWith('https://api.cbs.gov.il/'));
   });
   await t('y/y is computed from same-base levels only when CBS omits it', async () => {

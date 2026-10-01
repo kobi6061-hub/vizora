@@ -1492,14 +1492,15 @@ const MKT=(()=>{
     try{return d.toLocaleDateString("en-GB",{timeZone:"Asia/Jerusalem"}).replace(/\//g,".")}
     catch(e){return d.toISOString().slice(0,10).split("-").reverse().join(".")}};
   const dDay=x=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(x||"");return m?`${m[3]}.${m[2]}.${m[1]}`:null};
-  // CBS dwelling-price indices cover two-month windows dated by the 2nd month
-  const pair=(p,M)=>p.month>1?`${M[p.month-2]}–${M[p.month-1]} ${p.year}`:`${M[11]} ${p.year-1}–${M[0]} ${p.year}`;
+  // CBS dwelling-price indices cover two-month windows dated by their FIRST
+  // month (API 2026-05 = the published May–June 2026 figure)
+  const pair=(p,M)=>p.month<12?`${M[p.month-1]}–${M[p.month]} ${p.year}`:`${M[11]} ${p.year}–${M[0]} ${p.year+1}`;
   const b=I.boiRate;
   const boi=b&&num(b.value)&&b.value>=0&&b.value<=20&&b.checkedAt&&ilDay(b.checkedAt)
     ?{value:b.value,stale:!!b.stale,valTxt:+b.value.toFixed(2)+"%",next:dDay(b.nextDecision),checkedAt:b.checkedAt,checkedDay:ilDay(b.checkedAt)}:null;
   const n=I.newHomesIndex,p=n&&n.period;
-  // only a period at least as recent as the published May–Jun 2026 figure may replace it
-  const nh=n&&num(n.yoy)&&Math.abs(n.yoy)<=40&&p&&num(p.year)&&p.month>=1&&p.month<=12&&p.year*12+p.month>=2026*12+6&&n.checkedAt&&ilDay(n.checkedAt)
+  // only a window at least as recent as the published May–Jun 2026 figure (API 2026-05) may replace it
+  const nh=n&&num(n.yoy)&&Math.abs(n.yoy)<=40&&p&&num(p.year)&&p.month>=1&&p.month<=12&&p.year*12+p.month>=2026*12+5&&n.checkedAt&&ilDay(n.checkedAt)
     ?(()=>{const a=Math.abs(n.yoy).toFixed(1),pHe=pair(p,HE_M),pEn=pair(p,EN_M);return{
       yoy:n.yoy,stale:!!n.stale,checkedAt:n.checkedAt,periodHe:pHe,periodEn:pEn,
       yoyTxt:(n.yoy>0?"+":n.yoy<0?"-":"")+a+"%",
