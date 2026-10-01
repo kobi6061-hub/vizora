@@ -12,9 +12,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'catalogue | profile (whole table) | gis (zipped shapefile) | audit (source completeness) | audit-more (its follow-ups)'
+        description: 'catalogue | profile (whole table) | gis (zipped shapefile) | audit (source completeness) | audit-more (its follow-ups) | locality (official registry rows of one CBS code: resource = code, city = names, comma-separated)'
         type: choice
-        options: [catalogue, profile, gis, audit, audit-more]
+        options: [catalogue, profile, gis, audit, audit-more, locality]
         default: catalogue
       resource:
         description: 'data.gov.il resource id (profile / gis / one resource in depth)'
@@ -51,6 +51,7 @@ jobs:
         run: |
           case "$MODE" in
             audit-more) node scripts/housing-discover.js --audit-more ;;
+            locality) node scripts/housing-discover.js --locality "$RESOURCE" --names "$CITY" ;;
             audit)   PROPX_SNAPSHOT_HASH="$(node -e "process.stdout.write(require('./data/housing/meta.json').snapshotHash||'')")" node scripts/housing-discover.js --audit ;;
             profile) node scripts/housing-discover.js --profile --resource "$RESOURCE" ${CITY:+--city "$CITY"} ;;
             gis)     node scripts/housing-discover.js --gis --resource "$RESOURCE" ;;

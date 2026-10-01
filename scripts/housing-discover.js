@@ -12,6 +12,7 @@
 //   node scripts/housing-discover.js --resource <id> one CKAN resource in depth
 //   node scripts/housing-discover.js --audit         source completeness of the lottery table
 //   node scripts/housing-discover.js --audit-more    the audit's follow-ups (Land Authority, change log, stats page)
+//   node scripts/housing-discover.js --locality 1061 --names 'נוף הגליל,נצרת עילית'   official registry rows of one locality
 //
 // Nothing is written anywhere.
 
@@ -264,8 +265,36 @@ async function auditMore() {
   }
 }
 
+// --locality <code> [--names a,b] · identity evidence for the geography registry: the rows of
+// every official data.gov.il registry that carries a locality-code column (locality list, street
+// registry …) for one CBS code and for its names (current and former). Read-only.
+async function locality(code, names) {
+  const cands = new Map();
+  for (const q of ['רשימת ישובים', 'ישובים', 'יישובים', 'רחובות', 'סמל ישוב']) {
+    try {
+      const r = await ck('package_search', { q, rows: 20 });
+      for (const p of r.results) for (const x of p.resources || []) if (x.datastore_active && !cands.has(x.id))
+        cands.set(x.id, { pkg: p.name, title: p.title, org: p.organization && p.organization.title, name: x.name, lm: x.last_modified });
+    } catch (e) { out({ kind: 'localitySearch', q, error: e.message }); }
+  }
+  const row = (x) => Object.fromEntries(Object.entries(x).filter(([k]) => k !== '_id' && k !== 'rank').map(([k, v]) => [k, trim(v, 60)]));
+  for (const [id, c] of [...cands].slice(0, 40)) {
+    let ds;
+    try { ds = await ck('datastore_search', { resource_id: id, limit: 0 }); } catch { continue; }
+    const codeF = ds.fields.map((f) => f.id).find((f) => /סמל.?ישוב|semel.?yeshuv|semel.?yishuv|city.?code|city.?symbol/i.test(f));
+    if (!codeF) continue;
+    const hit = {};
+    for (const [k, params] of [['byCode', { filters: { [codeF]: Number(code) } }], ['byCodeText', { filters: { [codeF]: String(code) } }], ...names.map((n) => ['q:' + n, { q: n }])]) {
+      try { const r = await ck('datastore_search', { resource_id: id, limit: 3, ...params }); hit[k] = { total: r.total, rows: r.records.map(row) }; }
+      catch (e) { hit[k] = { error: trim(e.message, 140) }; }
+    }
+    out({ kind: 'locality', resource: id, ...c, total: ds.total, codeField: codeF, fields: ds.fields.map((f) => f.id).slice(0, 25), hit });
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--locality')) return locality(argVal('locality'), (argVal('names') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (process.argv.includes('--audit-more')) return auditMore();
   if (process.argv.includes('--audit')) return audit();
   if (process.argv.includes('--profile')) return profile(one);
