@@ -6,7 +6,7 @@
 # counts, sample rows, whole-table profiles and GIS layers. Read-only:
 # nothing is written or committed.
 
-name: Government housing — source discovery
+name: Government housing — source discovery (read-only)
 
 on:
   workflow_dispatch:

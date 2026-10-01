@@ -1,0 +1,119 @@
+# PROPX · daily sync of official government data.
+#
+#   housing       scripts/housing-sync.js — every row of the Ministry of
+#                 Construction and Housing lottery resource on data.gov.il
+#                 (מחיר למשתכן / מחיר מטרה): normalized, upserted on the official
+#                 LotteryId (never deleted), status history, raw snapshot when
+#                 the content changed → data/housing/
+#   transactions  scripts/tx-sync.js — the Tax Authority deals layer (GovMap)
+#                 for the watched areas (data/transactions/watch.json),
+#                 re-checking the last 120 days of transaction dates (rolling
+#                 backfill) and upserting into the ledger (first_seen_at kept,
+#                 nothing deleted) → data/transactions/
+#
+# Both also write to the PROPX Supabase project when the repository secrets
+# SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY exist (server-side only; never in
+# the repository or the page). The commit redeploys the site on Vercel. A
+# source that fails keeps its last stored data and turns the run red.
+
+name: Daily official data sync
+
+on:
+  schedule:
+    - cron: '41 2 * * *'   # every day 02:41 UTC = 05:41 Israel (summer) / 04:41 (winter)
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Which sources to sync'
+        type: choice
+        options: [all, housing, transactions]
+        default: all
+      dry_run:
+        description: 'Fetch and report only — write and commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+      ONLY: ${{ inputs.only || 'all' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline test suites (must pass before any data is written)
+        run: |
+          node test/gov.test.js
+          node test/ledger.test.js
+          node test/housing.test.js
+          node test/integrity.test.js
+          node test/calculator.test.js
+          node test/capital.test.js
+
+      - name: Government housing — data.gov.il lotteries
+        id: housing
+        if: env.ONLY != 'transactions'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/housing-sync.js --dry-run
+          else
+            node scripts/housing-sync.js --summary-file "$RUNNER_TEMP/summary.txt"
+          fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Transactions — refresh + 120-day rolling backfill
+        id: tx
+        if: env.ONLY != 'housing'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/tx-sync.js --dry-run
+          else
+            node scripts/tx-sync.js --summary-file "$RUNNER_TEMP/summary.txt"
+          fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Commit
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for d in data/housing data/transactions; do [ -e "$d" ] && git add "$d"; done
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          { echo "Official data sync $(date -u +%F)"; echo; cat "$RUNNER_TEMP/summary.txt" 2>/dev/null; } > "$RUNNER_TEMP/msg.txt"
+          git commit -q -F "$RUNNER_TEMP/msg.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if a source failed
+        if: (steps.housing.outputs.code != '' && steps.housing.outputs.code != '0') || (steps.tx.outputs.code != '' && steps.tx.outputs.code != '0')
+        run: |
+          echo "housing=${{ steps.housing.outputs.code }} transactions=${{ steps.tx.outputs.code }} — see the steps above for which source failed and why." >&2
+          exit 1

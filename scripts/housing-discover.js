@@ -5,7 +5,7 @@
 // resources, update times, field names/types, row counts and a few sample
 // rows — so the ingestion contract is written from evidence, not from page
 // wording. Runs where gov.il is reachable (the GitHub Actions runner via
-// .github/workflows/housing-sync.yml, mode "discover"); the Claude sandbox
+// .github/workflows/housing-discover.yml); the Claude sandbox
 // cannot reach gov.il.
 //
 //   node scripts/housing-discover.js                 everything below

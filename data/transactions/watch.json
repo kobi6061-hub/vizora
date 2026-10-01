@@ -1,0 +1,8 @@
+{
+ "note": "Areas the scheduled refresh re-checks (scripts/tx-sync.js). A city-only target is the official source's locality-centre sample (radius around the centre point the source resolves), not the whole city.",
+ "targets": [
+  { "id": "beer-sheva-centre", "label": "באר שבע · מרכז היישוב", "city": "באר שבע" },
+  { "id": "tel-aviv-centre", "label": "תל אביב-יפו · מרכז היישוב", "city": "תל אביב-יפו" },
+  { "id": "jerusalem-centre", "label": "ירושלים · מרכז היישוב", "city": "ירושלים" }
+ ]
+}

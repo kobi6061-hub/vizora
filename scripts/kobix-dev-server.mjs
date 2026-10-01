@@ -61,7 +61,7 @@ http.createServer(async (req, res) => {
   }
 
   // serverless api simulation (same modules Vercel runs)
-  if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/')) {
+  if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/') || p === '/api/housing') {
     const { createRequire } = await import('node:module');
     const require = createRequire(import.meta.url);
     const mod = path.join(ROOT, p.replace(/^\/api\//, 'api/') + '.js');

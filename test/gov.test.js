@@ -84,11 +84,31 @@ const jsonRes = (obj) => ({ ok: true, status: 200, json: async () => obj });
     assert.equal(out[0].rooms, 3); // merged fill
     assert.equal(out[0].provenance.length, 2);
   });
-  await t('no id → address/date/price fingerprint dedupes', () => {
-    const mk = () => makeTransaction({ city: 'אזור', street: 'ז\'בוטינסקי', houseNumber: 7, date: '2026-05-15', price: 2380000, areaSqm: 104 },
-      { source: 's', retrievedAt: 'now' });
-    assert.equal(addressFingerprint(mk()), addressFingerprint(mk()));
-    assert.equal(dedupe([mk(), mk()]).length, 1);
+  await t('no id → fingerprint + occurrence: one response\'s identical rows stay separate deals, an overlapping response merges', () => {
+    const mk = (url) => makeTransaction({ city: 'אזור', street: 'ז\'בוטינסקי', houseNumber: 7, date: '2026-05-15', price: 2380000, areaSqm: 104 },
+      { source: 's', sourceUrl: url, retrievedAt: 'now' });
+    assert.equal(addressFingerprint(mk('u1')), addressFingerprint(mk('u1')));
+    // two identical id-less rows in ONE response: two legitimate deals
+    const one = dedupe([mk('u1'), mk('u1')]);
+    assert.equal(one.length, 2);
+    assert.deepEqual(one.map((x) => x.recordKey.split('#')[1]), ['1', '2']);
+    // the same response seen again (overlapping query / later re-check): still two, not four
+    const again = dedupe([mk('u1'), mk('u1'), mk('u2'), mk('u2')]);
+    assert.equal(again.length, 2);
+    assert.equal(again[0].provenance.length, 2, 'the overlapping copy merges into the first');
+  });
+  await t('two DIFFERENT official ids are never merged, however alike the rows', () => {
+    const mk = (id) => makeTransaction({ txId: id, city: 'באר שבע', street: 'רגר', houseNumber: 10, date: '2026-06-01', price: 1400000, areaSqm: 95 },
+      { source: 'govmap', sourceUrl: 'u', retrievedAt: 'now' });
+    const out = dedupe([mk('govmap:1'), mk('govmap:2'), mk('govmap:1')]);
+    assert.deepEqual(out.map((x) => x.recordKey), ['id:govmap:1', 'id:govmap:2']);
+  });
+  await t('an id-less row folds into an official row only when the match is unambiguous', () => {
+    const base = { city: 'אזור', street: 'הרצל', houseNumber: 1, date: '2026-04-01', price: 2000000, areaSqm: 90 };
+    const ided = (id) => makeTransaction({ ...base, txId: id }, { source: 'a', sourceUrl: 'ua', retrievedAt: 'now' });
+    const bare = () => makeTransaction({ ...base }, { source: 'b', sourceUrl: 'ub', retrievedAt: 'now' });
+    assert.equal(dedupe([ided('X1'), bare()]).length, 1, 'one official + one bare → same deal');
+    assert.equal(dedupe([ided('X1'), ided('X2'), bare()]).length, 3, 'ambiguous → nothing folded');
   });
 
   console.log('data.gov.il provider (fixture-backed fetch)');

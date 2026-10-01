@@ -33,4 +33,21 @@
   feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand
   (see `lib/market/README.md`).
 
+- `lib/housing/` + `api/housing.js` + `data/housing/` + `scripts/housing-sync.js` + `test/housing.test.js`
+  = government (subsidized) housing: the official מחיר למשתכן / מחיר מטרה lottery records (data.gov.il,
+  Ministry of Construction and Housing) — normalized, upserted on the official LotteryId, never deleted,
+  status history, raw snapshots; served paginated by `GET /api/housing?view=…` (see `lib/housing/README.md`).
+  `scripts/housing-discover.js` + `.github/workflows/housing-discover.yml` = read-only source discovery.
+- `lib/gov/ledger.js` + `scripts/tx-sync.js` + `data/transactions/` + `test/ledger.test.js` = the
+  transaction ledger: daily refresh + 120-day rolling backfill, upsert on the record key (official id, or
+  fingerprint + occurrence), `first_seen_at` kept, nothing deleted (see `lib/gov/README.md`).
+- `.github/workflows/data-sync.yml` = the daily housing + transaction sync; `data/housing/` and
+  `data/transactions/` are written by it, not by hand.
+- `supabase/migrations/` = the PROPX Supabase schema: `market` (public market truth: sources, sync runs,
+  raw snapshots, geo links, transactions, housing lotteries + status history) and `user_state` (future
+  per-user state, kept apart). Only the dedicated PROPX project; the sync writes there when
+  `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set as server-side secrets.
+
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).
+`SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` live only in GitHub Actions / server env — never in the repo
+or the page.

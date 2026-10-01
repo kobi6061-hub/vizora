@@ -68,11 +68,48 @@ wins, and the result's `scope` object always states which rung produced the
 numbers (`level`, `radiusM`, `description`). An all-rungs miss returns an
 **explained** empty result (`unavailable[]`), never a silent one.
 
-## Deduplication (`fingerprint.js`)
+## Transaction identity & deduplication (`fingerprint.js`)
 
-Government id (`txId`) first; otherwise a
-city|street|house|date|price|area SHA-1 fingerprint. Duplicates merge —
-null fields fill, every provenance entry is kept.
+Every row gets a stable `recordKey`:
+
+- **`id:<official id>`** when the source publishes a transaction id (GovMap's
+  deal `objectid`, the registry's id). Two rows with different official ids are
+  **never** merged, however alike they look.
+- **`fp:<sha1>#<k>`** otherwise: the SHA-1 of city|street|house|date|price|area,
+  plus `k` = the occurrence number of that fingerprint **inside one source
+  response** (`batchOf` = source | request URL | retrieval). Two identical
+  id-less rows in one response are two deals (e.g. two identical apartments
+  sold the same day) and stay two; the same response fetched again yields the
+  same keys, so re-checks are idempotent.
+
+`dedupe()` merges rows that share a `recordKey` (null fields fill, every
+provenance entry is kept), then folds a bare row into an id'd row across
+sources only when the match is unambiguous (exactly one id'd and one bare row
+for that fingerprint). Legitimate duplicates are never collapsed.
+
+## Transaction ledger & rolling backfill (`ledger.js`, `scripts/tx-sync.js`)
+
+Deals reach the official source weeks after their transaction date, so recent
+periods are never treated as closed. The scheduled refresh
+(`.github/workflows/data-sync.yml`, daily) asks the source for the freshest
+deals **and re-checks the last `TX_BACKFILL_DAYS` (default 120) days of
+transaction dates** for every watched area (`data/transactions/watch.json`),
+then upserts into the ledger:
+
+- key `(source_id, record_key)`; a new key is inserted with `first_seen_at`
+  = the fetch that first saw it; an unchanged row only moves `last_seen_at`;
+  a changed row is updated (facts hash `content_hash`) and keeps its
+  `first_seen_at`;
+- nothing is ever deleted because a later response omitted it;
+- undated rows are rejected (a ledger row needs `transaction_date`).
+
+Backends: `FileLedgerStore` (`data/transactions/ledger/`, committed by the
+workflow), `SupabaseLedgerStore` (`market.transactions` in the PROPX Supabase
+project when `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set server-side),
+`MemoryLedgerStore` (tests, dry runs). `first_seen_at − transaction_date`
+measured over time is how PROPX will calibrate its data-maturity window; no
+reporting delay is claimed until it is measured. Each run is logged in
+`data/transactions/sync-runs.jsonl`.
 
 ## Caching & historical snapshots (`store.js`)
 
