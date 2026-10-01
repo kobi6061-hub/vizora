@@ -12,6 +12,7 @@
 //   node scripts/housing-discover.js --resource <id> one CKAN resource in depth
 //   node scripts/housing-discover.js --audit         source completeness of the lottery table
 //   node scripts/housing-discover.js --audit-more    the audit's follow-ups (Land Authority, change log, stats page)
+//   node scripts/housing-discover.js --search 'עסקאות נדלן|רשות המסים'   catalogue search for any terms
 //   node scripts/housing-discover.js --locality 1061 --names 'נוף הגליל,נצרת עילית'   official registry rows of one locality
 //
 // Nothing is written anywhere.
@@ -292,8 +293,21 @@ async function locality(code, names) {
   }
 }
 
+// --search "q1|q2|…" · catalogue search for arbitrary terms: every matching dataset with its
+// publisher and resources (format, datastore, dates) — to find official open data. Read-only.
+async function search(terms) {
+  for (const q of terms) {
+    try {
+      const r = await ck('package_search', { q, rows: 20 });
+      out({ kind: 'search', q, count: r.count, hits: r.results.map((p) => ({ name: p.name, title: trim(p.title, 90), org: p.organization && p.organization.title,
+        modified: p.metadata_modified, resources: (p.resources || []).map((x) => ({ id: x.id, name: trim(x.name, 70), format: x.format, ds: x.datastore_active, lm: x.last_modified })) })) });
+    } catch (e) { out({ kind: 'search', q, error: e.message }); }
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--search')) return search((argVal('search') || '').split('|').map((x) => x.trim()).filter(Boolean));
   if (process.argv.includes('--locality')) return locality(argVal('locality'), (argVal('names') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (process.argv.includes('--audit-more')) return auditMore();
   if (process.argv.includes('--audit')) return audit();
