@@ -5,10 +5,12 @@
 // KV-backed store plugged into createDefaultService).
 //
 // GOV_DEV_FIXTURE=1 (local dev server ONLY — never set in production env)
-// swaps the GovMap transport for a fixture-backed fetch serving the Azor
-// acceptance data, so the full UI pipeline can be exercised visually in an
-// environment whose egress to gov.il is blocked. Responses then carry
-// meta.mode='dev-fixture' and the UI labels them as verification data.
+// swaps the transports for a fixture-backed fetch: GovMap serves the Azor
+// acceptance data, and the register's republication (over.org.il) serves
+// SAMPLE rows for באר שבע (data/gov/fixtures/over-deals-sample.json), so the
+// full UI pipeline can be exercised visually in an environment whose egress
+// is blocked. Responses then carry meta.mode='dev-fixture' and the UI labels
+// them as verification data.
 
 'use strict';
 
@@ -33,8 +35,33 @@ function fixtureFetch() {
     if (u.includes('/real-estate/street-deals/')) {
       return jsonRes(u.includes('dealType=1') ? fix.streetDeals1 : fix.streetDeals2);
     }
+    const over = overFixture(u);
+    if (over) return jsonRes(over);
     return { ok: false, status: 404, json: async () => ({}) };
   };
+}
+
+/* the register's republication, answered from SAMPLE rows in its own shapes */
+let OVER = null;
+function overFixture(u) {
+  if (!/over\.org\.il\/api\/deals\//.test(u)) return null;
+  if (!OVER) {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    OVER = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'gov', 'fixtures', 'over-deals-sample.json'), 'utf8'));
+  }
+  const url = new URL(u);
+  if (url.pathname.endsWith('/settlements')) return OVER.settlements;
+  if (url.pathname.endsWith('/stats')) return OVER.stats;
+  if (!url.pathname.endsWith('/search')) return null;
+  const q = (k) => url.searchParams.get(k);
+  const street = q('street'), house = q('house');
+  const rows = OVER.deals.filter((d) => (!q('settlement') || d.settlement === q('settlement'))
+    && (!q('date_from') || d.date >= q('date_from'))
+    && (!street || d.addresses.some((a) => a.includes(street) && (!house || a.endsWith(' ' + house)))));
+  const limit = Number(q('limit')) || 50, offset = Number(q('offset')) || 0;
+  return { data: rows.slice(offset, offset + limit), total: rows.length, total_capped: false, limit, offset, sort: 'date_desc',
+    address: street ? { status: rows.length ? 'ok' : 'not_found', addresses: 2, linked: rows.length ? 2 : 0, parcels: [] } : null };
 }
 
 function serviceMode() {

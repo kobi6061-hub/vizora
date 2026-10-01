@@ -1,0 +1,21 @@
+{
+  "_note": "SAMPLE values in the over.org.il /api/deals/* shapes (settlements, stats, search) — local verification only (GOV_DEV_FIXTURE=1, scripts/kobix-dev-server.mjs). These are NOT real deals: block numbers 0000x, round amounts. The page labels every answer of the dev fixture as test data.",
+  "settlements": {
+    "data": [
+      { "settlement": "באר שבע", "settlement_code": "9000", "deals": 6, "last_deal": "2026-07-27", "resolved_code": 9000 }
+    ],
+    "count": 1
+  },
+  "stats": {
+    "deals": 6, "first_deal": "2023-03-01", "last_deal": "2026-07-27", "scraped_at": "2026-09-19 11:07:39+00",
+    "source_url": "https://nadlan.taxes.gov.il/svinfonadlan2010/startpage.aspx"
+  },
+  "deals": [
+    { "date": "2026-07-27", "date_src": "27/07/2026", "amount": 1500000, "declared_amount": 1500000, "nature": "דירה בבית קומות", "area_sqm": 100, "rooms": 4, "year_built": 1990, "portion": "1.000", "portion_fraction": 1, "sub_parcel": "001", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00001", "helka": "1", "addresses": ["שד רגר יצחק 1", "שד רגר יצחק 3"], "addresses_total": 2 },
+    { "date": "2026-07-20", "date_src": "20/07/2026", "amount": 800000, "declared_amount": 800000, "nature": "דירה בבית קומות", "area_sqm": 80, "rooms": 3, "year_built": 1985, "portion": "0.500", "portion_fraction": 0.5, "sub_parcel": "002", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00001", "helka": "1", "addresses": ["שד רגר יצחק 1", "שד רגר יצחק 3"], "addresses_total": 2 },
+    { "date": "2026-06-15", "date_src": "15/06/2026", "amount": 2000000, "declared_amount": 2000000, "nature": "דירה בבית קומות", "area_sqm": 110, "rooms": 5, "year_built": 2026, "portion": "1.000", "portion_fraction": 1, "sub_parcel": "010", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00002", "helka": "7", "addresses": ["גרץ 9"], "addresses_total": 1 },
+    { "date": "2026-05-02", "date_src": "02/05/2026", "amount": 1200000, "declared_amount": 1200000, "nature": "דירה בבית קומות", "area_sqm": 90, "rooms": 4, "year_built": 2000, "portion": "1.000", "portion_fraction": 1, "sub_parcel": "004", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00003", "helka": "2", "addresses": [], "addresses_total": 0 },
+    { "date": "2026-04-10", "date_src": "10/04/2026", "amount": 60000, "declared_amount": 60000, "nature": "מחסנים", "area_sqm": 8, "rooms": 0, "year_built": 2000, "portion": "1.000", "portion_fraction": 1, "sub_parcel": "030", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00003", "helka": "2", "addresses": [], "addresses_total": 0 },
+    { "date": "2023-03-01", "date_src": "01/03/2023", "amount": 1000000, "declared_amount": 1000000, "nature": "דירה בבית קומות", "area_sqm": 85, "rooms": 3, "year_built": 1975, "portion": "1.000", "portion_fraction": 1, "sub_parcel": "005", "settlement": "באר שבע", "settlement_code": "9000", "gush": "00001", "helka": "1", "addresses": ["שד רגר יצחק 1", "שד רגר יצחק 3"], "addresses_total": 2 }
+  ]
+}

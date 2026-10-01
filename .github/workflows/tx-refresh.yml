@@ -94,11 +94,13 @@ jobs:
               out.push(`sample from ${rt} · ${safe(j.at)}`);
               for (const c of j.cities || []) {
                 const k = c.counts || {};
-                out.push(`${safe(c.city)}: ${safe(c.status)} in ${safe(c.ms)} ms${c.scope ? " · scope " + safe(c.scope.level) + " " + safe(c.scope.description) + " n=" + safe(c.scope.sampleSize) : ""}` +
+                out.push(`${safe(c.city)}: ${safe(c.status)} in ${safe(c.ms)} ms${c.deliveredVia ? " · via " + safe(c.deliveredVia) : ""}${c.scope ? " · scope " + safe(c.scope.level) + " " + safe(c.scope.description) + " n=" + safe(c.scope.sampleSize) : ""}` +
                   (c.counts ? ` · official ${safe(k.official)} (residential ${safe(k.residential)}: new ${safe(k.newBuild)} · second-hand ${safe(k.secondHand)} · unknown ${safe(k.unknown)}) · latest ${safe(c.latestTransactionDate)}` : "") + (c.error ? " · " + safe(c.error) : ""));
                 for (const u of c.unavailable || []) out.push(`  unavailable: ${safe(u)}`);
-                if (c.coverage) out.push(`  coverage: polygons ${safe(c.coverage.polygonsQueried)}/${safe(c.coverage.polygonsAvailable)} · requests ${safe(c.coverage.requestsRun)}/${safe(c.coverage.requestsPlanned)} · rows ${safe(c.coverage.rowsRetrieved)} of ${safe(c.coverage.dealsCountReported)} reported`);
-                for (const r of c.rows || []) out.push(`  ${safe(r.date)} · ${safe([r.street, r.houseNumber].filter(Boolean).join(" ") || "(no street in the record)")} · ${safe(r.rooms)} rooms · ${safe(r.areaSqm)} m² · floor ${safe(r.floor)} · ₪${safe(Number(r.price).toLocaleString("en-US"))} · ${safe(r.newness)}${r.dealType ? " · " + safe(r.dealType) : ""}`);
+                const cv = c.coverage;
+                if (cv && cv.kind === "register-search") out.push(`  register: ${safe(cv.rowsRetrieved)} rows of ${safe(cv.totalReported)}${cv.totalCapped ? "+" : ""} reported since ${safe(cv.dateFrom)} · names ${safe((cv.settlements || []).join(" / "))} (${safe(cv.matchedBy)}) · copy taken ${safe(cv.snapshotAt)} · newest in register ${safe(cv.latestInRegister)}`);
+                else if (cv) out.push(`  coverage: polygons ${safe(cv.polygonsQueried)}/${safe(cv.polygonsAvailable)} · requests ${safe(cv.requestsRun)}/${safe(cv.requestsPlanned)} · rows ${safe(cv.rowsRetrieved)} of ${safe(cv.dealsCountReported)} reported`);
+                for (const r of c.rows || []) out.push(`  ${safe(r.date)} · ${safe([r.street, r.houseNumber].filter(Boolean).join(" ") || "(no address)")}${r.block ? " · gush " + safe(r.block) + "/" + safe(r.parcel) + "/" + safe(r.subParcel) : ""} · ${safe(r.rooms)} rooms · ${safe(r.areaSqm)} m² · floor ${safe(r.floor)} · ₪${safe(Number(r.price).toLocaleString("en-US"))}${r.partialSale ? " (share)" : ""} · ${safe(r.newness)}${r.dealType ? " · " + safe(r.dealType) : ""}`);
               }
             }
             if (j.mode === "run") {
@@ -111,7 +113,7 @@ jobs:
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, "### tx-refresh (" + safe(j.mode || "?") + ") — HTTP " + code + "\n\n```\n" + text + "\n```\n");
             const warn = (t, m) => console.log(`::warning title=${t}::${m}`);
             if (j.mode === "probe" && !j.reachable) warn("Source not reachable from the PROPX runtime", safe(j.status) + " — no continuous refresh is possible from there");
-            if (j.mode === "sample" && !(j.cities || []).some((c) => c.status === "ok")) warn("No official deals from the PROPX runtime", "see the summary for each city and why");
+            if (j.mode === "sample" && !(j.cities || []).some((c) => c.status === "ok")) warn("No deals from the PROPX runtime", "see the summary for each city and why");
             if (j.mode === "run" && (j.runs || []).some((r) => r.windowCheck !== "complete")) warn("Window not completely re-checked", "see the summary; such runs are recorded as partial / not checked");
             if (j.error === "store-not-configured" || j.error === "store-misconfigured") console.log("::notice title=No store::mode=run needs a valid SUPABASE_URL (https://<project>.supabase.co) and SUPABASE_SERVICE_ROLE_KEY in the Vercel environment.");
           ' "$code"

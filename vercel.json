@@ -69,6 +69,9 @@
   ],
   "framework": null,
   "functions": {
+    "api/gov/transactions.js": {
+      "includeFiles": "data/geo/localities.json"
+    },
     "api/housing.js": {
       "includeFiles": "data/housing/*.json*"
     },

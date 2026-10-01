@@ -512,6 +512,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .tx-sum .l{font-size:10.5px;color:var(--ink-3);font-weight:600}
 .tx-sum .v{font-size:14.5px;font-weight:800}
 .tx-scope{padding:10px 15px;font-size:12.5px;color:var(--ink-2);border-bottom:1px solid var(--hairline);line-height:1.5}
+.tx-more{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--hairline)}.tx-more-err{font-size:12px;color:var(--down)}
 .tx-scope b{color:var(--brass)}
 .tx-warn{padding:9px 15px;font-size:12px;font-weight:700;color:var(--brass);border-bottom:1px solid var(--hairline)}
 .tx-load{padding:18px 15px;font-size:13px;color:var(--ink-3)}
@@ -1497,6 +1498,7 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="tx-fresh" id="txFresh"></div>
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
       <div class="tbl-cards" id="txCards"></div>
+      <div class="tx-more" id="txMoreBox" hidden></div>
       <p class="tx-empty" id="txEmpty" hidden></p>
     </div>
   </section>
@@ -1576,9 +1578,9 @@ details.ci-more>.in{padding:2px 13px 12px}
             <li data-i="srcA3">מלאי שטרם נמכר — למ״ס: 84,280 ארצית (סוף יוני 2026); תל אביב 9,549; רעננה 1,580</li>
             <li data-i="srcA4">מכירות — קצב שנתי: ארצית כ-34,000 (2025); תל אביב ~4,100 בקצב שנתי (למ״ס מחצית א׳ 2026: כ-2,056 מכירות, ~342/חודש)</li>
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
-            <li data-i="srcA6">עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו</li>
+            <li data-i="srcA6">עסקאות — רשומות מאגר העסקאות של רשות המסים: דרך GovMap כשהוא עונה; כרגע דרך הפרסום העצמאי של גרסאות לעם (over.org.il) — עותק מתוארך של המאגר, לא ערוץ ממשלתי (תאריך העותק מוצג בסקשן העסקאות); נשלף לפי האזור והתקופה שנבחרו</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
+          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מציגה רק רשומות שפורסמו במאגר העסקאות של רשות המסים — דרך GovMap, או דרך הפרסום העצמאי של גרסאות לעם כפי שמצוין בסקשן עצמו.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -2031,6 +2033,20 @@ he:{
   txNonResShown:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר) מוצגות בלשונית נפרדת ואינן נכללות בסטטיסטיקת הדירות`,
   txCoverage:(got,total,pq,pa,more)=>`כיסוי: נשלפו ${got} מתוך ${total} עסקאות שהמקור מדווח ב-${pa} הבניינים שבתחום (נבדקו ${pq} מתוך ${pa})${more?" — ניתן להרחיב את התקופה לשליפה נוספת":""}`,
   txCoverageNA:"כיסוי: המקור לא דיווח היקף לשליפה זו",
+  txRepubBadge:"רשומות רשות המסים · באמצעות גרסאות לעם (over.org.il) — פרסום עצמאי, לא ערוץ ממשלתי",
+  txSrcPending:"מקור: רשות המסים", txNoAnswer:"מקור: רשות המסים · לא התקבלו נתונים מהמקור",
+  txAttempted:d=>`ניסיון אחרון: ${d}`, txSnapshot:d=>`עותק המאגר מ-${d}`, txSrcRepub:"רשות המיסים · גרסאות לעם",
+  txRegBuilding:(d,n)=>`עסקאות בחלקה של ${d}: <b>${n}</b> — הכתובת מקושרת לחלקה דרך הצלבת הכתובות של גרסאות לעם; המאגר עצמו אינו כולל כתובת`,
+  txRegStreet:(d,n,lk)=>`עסקאות בחלקות המקושרות לרחוב ${d}: <b>${n}</b>${lk?` (${lk.linked} מתוך ${lk.addresses} כתובות ברחוב מקושרות לחלקה)`:""} — הקישור לפי הצלבת הכתובות של גרסאות לעם; עסקאות בחלקות ללא כתובת מקושרת אינן נכללות`,
+  txRegLoc:(d,n)=>`עסקאות שדווחו ב${d} בתקופה: <b>${n}</b>`,
+  txRegFellBack:q=>`לא נמצאו עסקאות ב${q} בתקופה (או שהכתובת אינה מקושרת לחלקה) — מוצגות עסקאות היישוב`,
+  txCovReg:(got,total,capped)=>`מוצגות ${got} העסקאות האחרונות מתוך ${total}${capped?"+":""} שדווחו בתקופה`,
+  txMore:"הצג עוד עסקאות", txMoreLoading:"טוען עסקאות נוספות…", txMoreErr:"טעינת עסקאות נוספות נכשלה — אפשר לנסות שוב",
+  txRegNote:d=>`עותק המאגר נלקח ב-${d}: עסקאות שדווחו לרשות המסים אחריו אינן כלולות, והחודשים שלפניו חלקיים (דיווחים מגיעים בעיכוב). סכום העסקה הוא הסכום שדווח לרשות המסים, ושורה אחת יכולה להיות דירה או בניין שלם — לכן הסטטיסטיקה היא חציון.`,
+  txPartial:p=>`חלק נמכר: ${p} — אין מחיר למ״ר`, txNoLinkedAddr:"אין כתובת מקושרת לחלקה", txMoreAddr:n=>`+${n} כתובות בחלקה`,
+  txParcel:(g,h,sp)=>`גוש ${g} חלקה ${h}${sp?` תת-חלקה ${sp}`:""}`,
+  txNoAnswerEmpty:"מקור העסקאות לא ענה ל-PROPX כרגע, ולכן לא ניתן להציג עסקאות. אין משמעות של אפס עסקאות באזור.",
+  txAvgNA:"ממוצע אינו מוצג: שורה אחת יכולה להיות בניין שלם",
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
   txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג",
   txLoading:"טוען עסקאות שדווחו…",
@@ -2048,7 +2064,7 @@ he:{
   srcA1:MKT.nh?`שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: ${MKT.nh.yoy<0?"ירידה של ":MKT.nh.yoy>0?"עלייה של ":"ללא שינוי"}${MKT.nh.yoy?Math.abs(MKT.nh.yoy).toFixed(1)+"%":""} (${MKT.nh.periodHe} מול שנה קודמת · סנכרון יומי); שינוי אזורי — נגזר, מאי–יוני 2026`:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
+  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מציגה רק רשומות שפורסמו במאגר העסקאות של רשות המסים — דרך GovMap, או דרך הפרסום העצמאי של גרסאות לעם כפי שמצוין בסקשן עצמו.", srcA6:"עסקאות — רשומות מאגר העסקאות של רשות המסים: דרך GovMap כשהוא עונה; כרגע דרך הפרסום העצמאי של גרסאות לעם (over.org.il) — עותק מתוארך של המאגר, לא ערוץ ממשלתי (תאריך העותק מוצג בסקשן העסקאות); נשלף לפי האזור והתקופה שנבחרו",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -2292,7 +2308,7 @@ he:{
   ciNotElig:(s,n,m)=>`לא כשיר להקצאה · בסיס נתונים <span class="num">${s}/${n}</span> — המדיניות דורשת לפחות <span class="num">${m}/${n}</span>`,
   ciNotFit:e=>`לא כשיר להקצאה · הון עצמי ליחידה <span class="num">${e}</span> גבוה מההון לפריסה`,
   ciIrrDef:l=>`הגדרה: IRR ${l>0?"ממונף":"ללא מינוף"} אמיתי לפני מס, ממנוע מחשבון העסקה — תזרימים שנתיים: הון עצמי (כולל מס רכישה ועלויות) בשנה 0; שכירות נטו אחרי אי-תפוסה, תפעול ותחזוקה, עם הנחת צמיחת השכירות (ברירת מחדל: השינוי השנתי האחרון של האזור), פחות החזרי משכנתא; ובשנת האופק — מכירה לפי מחיר הלוח ועליית הערך שהנחתם, פחות עלויות מכירה ויתרת חוב. לא כולל מס שבח ומס הכנסה.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותה שכבת נתונים ממשלתית): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול מחיר הלוח: ${gap}) — נתון נצפה, אינו משנה את הציון`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותן רשומות שבסקשן העסקאות): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול מחיר הלוח: ${gap}) — נתון נצפה, אינו משנה את הציון`,
   ciCompThin:"מדגם קטן — לא לגזור מסקנת מחיר",
   ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
   cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
@@ -2431,6 +2447,20 @@ en:{
   txNonResShown:n=>`${n} non-residential deals (land/commercial) are shown in their own tab and excluded from the apartment statistics`,
   txCoverage:(got,total,pq,pa,more)=>`coverage: retrieved ${got} of ${total} deals the source reports across the ${pa} buildings in range (${pq} of ${pa} checked)${more?" — widen the period to pull more":""}`,
   txCoverageNA:"coverage: not reported by the source for this pull",
+  txRepubBadge:"Israel Tax Authority records · via גרסאות לעם (over.org.il) — an independent republication, not a government channel",
+  txSrcPending:"Source: Israel Tax Authority", txNoAnswer:"Source: Israel Tax Authority · no data received from the source",
+  txAttempted:d=>`last attempt: ${d}`, txSnapshot:d=>`register copy of ${d}`, txSrcRepub:"Tax Authority · over.org.il",
+  txRegBuilding:(d,n)=>`Deals on the parcel of ${d}: <b>${n}</b> — the address is linked to the parcel by over.org.il's address crosswalk; the register itself carries no address`,
+  txRegStreet:(d,n,lk)=>`Deals on parcels linked to ${d}: <b>${n}</b>${lk?` (${lk.linked} of ${lk.addresses} addresses on the street are linked to a parcel)`:""} — linked by over.org.il's address crosswalk; deals on parcels with no linked address are not included`,
+  txRegLoc:(d,n)=>`Deals reported in ${d} in the period: <b>${n}</b>`,
+  txRegFellBack:q=>`No deals found at ${q} in the period (or the address is not linked to a parcel) — showing the locality's deals`,
+  txCovReg:(got,total,capped)=>`showing the latest ${got} of ${total}${capped?"+":""} deals reported in the period`,
+  txMore:"Show more deals", txMoreLoading:"Loading more deals…", txMoreErr:"Loading more deals failed — try again",
+  txRegNote:d=>`The register copy was taken on ${d}: deals reported to the Tax Authority after it are not included, and the months before it are partial (reports arrive with a delay). The amount is the sum reported to the Tax Authority, and one row can be a flat or a whole building — so statistics are medians.`,
+  txPartial:p=>`share sold: ${p} — no price per m²`, txNoLinkedAddr:"no address linked to the parcel", txMoreAddr:n=>`+${n} addresses on the parcel`,
+  txParcel:(g,h,sp)=>`block ${g} parcel ${h}${sp?` sub-parcel ${sp}`:""}`,
+  txNoAnswerEmpty:"The deals source did not answer PROPX just now, so no deals can be shown. This does not mean zero market activity.",
+  txAvgNA:"no average shown: one row can be a whole building",
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
   txTagProb:"new (probable)", txTagUnk:"unclassified",
   txLoading:"Loading reported transactions…",
@@ -2448,7 +2478,7 @@ en:{
   srcA1:MKT.nh?`National annual change — CBS new-homes price index: ${MKT.nh.yoyTxt.replace("-","−")} (${MKT.nh.periodEn} vs. a year earlier · daily sync); regional change — derived, May–Jun 2026`:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026)",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · missing) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
+  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · missing) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — Israel Tax Authority deal-register records: via GovMap when it answers; currently via the independent republication by גרסאות לעם (over.org.il) — a dated copy of the register, not a government channel (the copy date is shown in the deals section); retrieved for the selected area and period",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -2699,7 +2729,7 @@ en:{
   ciNotElig:(s,n,m)=>`Not eligible for allocation · data basis <span class="num">${s}/${n}</span> — policy requires at least <span class="num">${m}/${n}</span>`,
   ciNotFit:e=>`Not eligible for allocation · equity per unit <span class="num">${e}</span> exceeds the deployable equity`,
   ciIrrDef:l=>`Definition: a true ${l>0?"levered":"unlevered"} pre-tax IRR from the deal calculator's engine — yearly cash flows: equity (incl. purchase tax and costs) in year 0; net rent after vacancy, opex and upkeep, growing at the rent-growth assumption (default: the area's last 1-year change), less mortgage payments; and in the horizon year a sale at the board price grown at your appreciation assumption, less sale costs and the remaining debt. Excludes capital-gains and income tax.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (same government data layer): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the board price: ${gap}) — observed data; it does not alter the score`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (the same records as the deals section): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the board price: ${gap}) — observed data; it does not alter the score`,
   ciCompThin:"small sample — not a price conclusion",
   ciCoverT:"Data coverage", ciCoverMiss:"missing",
   cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
@@ -3743,9 +3773,10 @@ function renderConfidence(){
 }
 
 /* =====================================================================
-   SOLD TRANSACTIONS — ONE source of truth: the official government deal
-   registry (Israel Tax Authority via GovMap), fetched at runtime through
-   /api/gov/transactions. No second dataset exists in this component: a
+   SOLD TRANSACTIONS — ONE source of truth: the Israel Tax Authority's deal
+   register, fetched at runtime through /api/gov/transactions — via GovMap
+   when it answers, otherwise via the register's independent republication by
+   over.org.il (labelled as such, never as an official channel). No second dataset exists in this component: a
    curated press registry once drove the table while the official rows drove
    the counts, which let a failed fetch show press rows beside "0". Every row
    here carries sourceFamily OFFICIAL_GOVERNMENT and is dropped otherwise.
@@ -3783,6 +3814,7 @@ async function txFetch(force){
   /* a new geography must never show the previous one's rows while loading */
   txState.key=key;txState.status="loading";
   txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];
+  txState.more=false;txState.nextOffset=0;txState.moreBusy=false;txState.moreErr=null;
   renderTx();renderMap(true);
   const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120"});
   if(q.street)p.set("street",q.street);
@@ -3798,6 +3830,9 @@ async function txFetch(force){
       .sort((a,b)=>(b.date||"").localeCompare(a.date||""));   /* newest first, ISO */
     txState.scope=d.scope||null;txState.meta=d.meta||null;
     txState.unavailable=d.unavailable||[];
+    const cv=d.meta&&d.meta.sourceCoverage;          /* the register pages: where the next page starts */
+    txState.more=!!(cv&&cv.kind==="register-search"&&cv.more);
+    txState.nextOffset=cv&&cv.kind==="register-search"?(cv.offset||0)+(cv.limit||0):0;
     txState.status=txState.rows.length?"ok":"empty";txState.err=null;
     const res=txResidential();
     txDebug={officialRawRows:(d.transactions||[]).length,residentialRows:res.length,
@@ -3817,8 +3852,36 @@ async function txFetch(force){
   renderTx();renderMap(true);
 }
 
+const txRowKey=t=>[t.date,t.price,t.block,t.parcel,t.subParcel,t.dealType,txVal(t.areaSqm)].join("|");
+async function txMore(){
+  const q=txQueryFor();
+  if(!q||!q.city||!txState.scope||txState.moreBusy||!txState.more&&!txState.moreErr)return;
+  const key=txState.key;
+  txState.moreBusy=true;txState.moreErr=null;renderTx();
+  const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120",
+    offset:String(txState.nextOffset),level:txState.scope.level,_:String(Date.now())});
+  if(q.street)p.set("street",q.street);
+  if(q.house)p.set("house",String(q.house));
+  try{
+    const r=await fetch("/api/gov/transactions?"+p,{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(txState.key!==key)return;                    /* the geography or period changed meanwhile */
+    const seen=new Set(txState.rows.map(txRowKey));
+    const add=(d.transactions||[]).filter(t=>t.price&&t.sourceFamily==="OFFICIAL_GOVERNMENT"&&!seen.has(txRowKey(t)));
+    txState.rows=txState.rows.concat(add).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+    const cv=d.meta&&d.meta.sourceCoverage;
+    txState.more=!!(cv&&cv.kind==="register-search"&&cv.more&&(d.transactions||[]).length);
+    if(cv&&cv.kind==="register-search")txState.nextOffset=(cv.offset||0)+(cv.limit||0);
+  }catch(e){
+    if(txState.key!==key)return;
+    txState.moreErr=e.message;
+  }finally{
+    if(txState.key===key){txState.moreBusy=false;renderTx();renderMap(true)}
+  }
+}
 const txVal=v=>(v&&typeof v==="object"&&"value"in v)?v.value:v;
-const txPsm=t=>{const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
+const txPsm=t=>{if(t.partialSale)return null;const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
 function txMedian(a){if(!a.length)return null;const x=[...a].sort((p,q)=>p-q);const m=x.length>>1;
   return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)}
 /* PROPX is a residential product: land, commercial and unclassified rows are
@@ -3858,11 +3921,21 @@ function renderTx(){
     <span style="flex:1"></span>
     <span class="tx-src">${txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:""}</span>`;
   const M=txState.meta;
+  const fx=!!(M&&M.mode==="dev-fixture");
+  const viaRepub=!!(M&&M.deliveredVia==="over.org.il");          /* the register's independent republication */
+  const noAnswer=!!(M&&M.sourceAnswered===false);                  /* no source answered: an attempt, not a sync */
+  const dmy=v=>String(v).slice(0,10).split("-").reverse().join(".");
+  const when=v=>new Date(v).toLocaleString(state.lang==="he"?"he-IL":"en-GB");
   /* "official · observed" is claimed only for the live official source — never
-     for the local verification fixture */
-  el("txProv").innerHTML=(txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:t.txOfficialBadge)+
-    (M&&M.latestTransactionDate?` · ${t.txLatestInSrc(M.latestTransactionDate.split("-").reverse().join("."))}`:"")+
-    (M&&M.syncedAt?` · ${t.txSynced(new Date(M.syncedAt).toLocaleString(state.lang==="he"?"he-IL":"en-GB"))}`:"");
+     for the local verification fixture, never for the register's independent
+     republication, and never when no source answered */
+  const badge=!M?t.txSrcPending:viaRepub&&!fx?t.txRepubBadge:noAnswer&&!fx?t.txNoAnswer
+    :(txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:t.txOfficialBadge);
+  el("txProv").innerHTML=badge+
+    (viaRepub&&M.snapshotAt?` · ${t.txSnapshot(dmy(M.snapshotAt))}`:"")+
+    (M&&M.latestTransactionDate?` · ${t.txLatestInSrc(dmy(M.latestTransactionDate))}`:"")+
+    (M&&M.syncedAt&&!viaRepub?` · ${t.txSynced(when(M.syncedAt))}`:"")+
+    (noAnswer&&M.attemptedAt?` · ${t.txAttempted(when(M.attemptedAt))}`:"");
 
   const rows=txFiltered();
   const hasAny=rows.length>0;
@@ -3874,7 +3947,13 @@ function renderTx(){
 
   /* scope disclosure — never pretend a wider scope is the street itself */
   const sc=txState.scope;
-  const scopeTxt=!sc?"":sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
+  const covR=txState.meta&&txState.meta.sourceCoverage;
+  const reg=!!(covR&&covR.kind==="register-search");               /* rows from the register search (over.org.il) */
+  const regTot=reg?fmtInt(covR.totalReported)+(covR.totalCapped?"+":""):"";
+  const scopeTxt=!sc?"":reg?(sc.level==="building"?t.txRegBuilding(calcEsc(sc.description),regTot)
+      :sc.level==="street"?t.txRegStreet(calcEsc(sc.description),regTot,covR.addressLink&&covR.addressLink.addresses?covR.addressLink:null)
+      :t.txRegLoc(calcEsc(sc.description),regTot)+(q&&q.street&&sc.level==="locality"?" · "+t.txRegFellBack(calcEsc(q.label)):""))
+    :sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
     :sc.level==="street"?t.txScopeStreet(sc.description,sc.sampleSize)
     :sc.level==="neighborhood"?t.txScopeNbhd(sc.neighborhood&&sc.neighborhood.name,sc.sampleSize,q?q.label:"")
     :sc.level==="locality"?t.txScopeLoc(sc.description,sc.sampleSize)
@@ -3884,22 +3963,24 @@ function renderTx(){
   const cov=txState.meta&&txState.meta.sourceCoverage;
   /* coverage is always stated next to the scope — never only when it looks incomplete */
   const covTxt=cov
-    ? " · "+t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable,cov.rowsRetrieved<cov.dealsCountReported)
+    ? " · "+(reg?t.txCovReg(fmtInt(txState.rows.length),fmtInt(cov.totalReported),cov.totalCapped):t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable,cov.rowsRetrieved<cov.dealsCountReported))
     : sc?" · "+t.txCoverageNA:"";
   const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonResShown(nonRes):"")+covTxt;
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
 
   /* summary — computed only from what is actually shown */
   const statRows=txState.tab==="other"?[]:rows;   /* land/commercial never priced as homes */
-  const prices=statRows.map(r=>r.price).filter(Boolean);
-  const psms=statRows.map(txPsm).filter(Boolean);
+  const priced=statRows.filter(r=>!r.partialSale); /* a share of a property is never priced as a whole home */
+  const prices=priced.map(r=>r.price).filter(Boolean);
+  const psms=priced.map(txPsm).filter(Boolean);
   const latest=statRows.map(r=>r.date).filter(Boolean).sort().pop();
   el("txSum").hidden=!prices.length;
   if(prices.length)el("txSum").innerHTML=[
     [t.txSumN,fmtInt(statRows.length)],
     [t.txSumMed,fmtNIS(txMedian(prices))],
     [t.txSumMedPsm,psms.length?fmtNIS(txMedian(psms)):dash],
-    [t.txSumAvgPsm,psms.length?fmtNIS(Math.round(psms.reduce((a,b)=>a+b,0)/psms.length)):dash],
+    /* one register row can be a whole building: over those rows only medians are shown */
+    [t.txSumAvgPsm,viaRepub?`<span title="${calcEsc(t.txAvgNA)}">${dash}</span>`:psms.length?fmtNIS(Math.round(psms.reduce((a,b)=>a+b,0)/psms.length)):dash],
     [t.txSumLatest,latest?latest.split("-").reverse().join("."):dash],
   ].map(([l,v])=>`<div><span class="l">${l}</span><span class="v num">${v}</span></div>`).join("");
   const thin=prices.length>0&&prices.length<3;
@@ -3907,7 +3988,8 @@ function renderTx(){
   el("txWarn").hidden=!thin;
   const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
   const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
-  el("txFresh").innerHTML=`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
+  el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
+    :`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
   if(thin)el("txWarn").textContent=streetLevel
     ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
     : t.txThin(prices.length);
@@ -3921,7 +4003,10 @@ function renderTx(){
   el("txEmpty").textContent=st==="loading"?t.txLoading
     :st==="error"?t.txErr
     :st==="scope"?t.txNoScope
-    :(!hasAny&&st==="empty")?(txState.unavailable.length?t.txNoMatch:t.txZero)
+    :(!hasAny&&st==="empty")?(M&&M.sourceAnswered===false
+        ?(txState.unavailable.some(u=>/no settlement/.test(u.reason||""))?t.txNoMatch:t.txNoAnswerEmpty)
+        :M&&M.sourceAnswered===true?t.txZero
+        :(txState.unavailable.length?t.txNoMatch:t.txZero))
     :(!hasAny&&st==="ok")?t.txOnlyNonRes(txState.rows.length):"";
 
   const clsChip=n=>n==="confirmed_new"?`<span class="tx-chip new">${t.txTagNew}</span>`
@@ -3932,9 +4017,15 @@ function renderTx(){
      street, it says so — the city is context, never a stand-in for a street. */
   const addr=r=>{
     const a=[r.street,r.houseNumber].filter(Boolean).join(" ");
-    return a||`<span style="color:var(--ink-3)">${t.txNoStreet}</span>`;
+    if(!a)return `<span style="color:var(--ink-3)">${r.deliveredVia==="over.org.il"?t.txNoLinkedAddr:t.txNoStreet}</span>`;
+    /* a register address is the parcel's link (crosswalk) — its other addresses stay one hover away */
+    const more=r.addressBasis==="parcel-crosswalk"&&r.addressesTotal>1
+      ?` <span class="sub" title="${calcEsc((r.addressCandidates||[]).join(" · "))}">${t.txMoreAddr(r.addressesTotal-1)}</span>`:"";
+    return calcEsc(a)+more;
   };
-  const sub=r=>[r.city,r.neighborhood,dist(r)].filter(Boolean).join(" · ");
+  const sub=r=>calcEsc([r.city,r.neighborhood,dist(r),r.block?t.txParcel(r.block,r.parcel,r.subParcel):""].filter(Boolean).join(" · "));
+  const srcOf=r=>r.deliveredVia==="over.org.il"?t.txSrcRepub:t.txSrcGov;
+  const part=r=>r.partialSale&&r.portion?`<div class="sub">${t.txPartial(calcEsc(r.portion.text))}</div>`:"";
   const dist=r=>r.distanceM==null?"":r.distanceM===0?t.txSameBld:`${fmtInt(r.distanceM)} ${t.txMetersAway}`;
   const dt=r=>r.date?r.date.split("-").reverse().join("."):dash;
 
@@ -3943,24 +4034,32 @@ function renderTx(){
     <td><span class="nm">${addr(r)}</span>${sub(r)?`<div class="sub">${sub(r)}</div>`:""}</td>
     <td class="num">${txVal(r.rooms)||dash}</td>
     <td class="num">${txVal(r.areaSqm)||dash}</td>
-    <td class="num">${r.floor||dash}</td>
-    <td class="num" style="font-weight:700">${fmtNIS(r.price)}</td>
+    <td class="num">${r.floor?calcEsc(r.floor):dash}</td>
+    <td class="num" style="font-weight:700">${fmtNIS(r.price)}${part(r)}</td>
     <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
-    <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${r.dealType}</div>`:""}</td>
-    <td class="tx-src">${t.txSrcGov}</td></tr>`;
+    <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${calcEsc(r.dealType)}</div>`:""}</td>
+    <td class="tx-src">${srcOf(r)}</td></tr>`;
   const head=`<thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>`;
   el("txTbl").innerHTML=!hasAny?"":head+"<tbody>"+rows.map(liveTr).join("")+"</tbody>";
 
   const liveCard=r=>`<div class="tcard" style="cursor:default">
-    <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>
+    <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>${part(r)}
     ${sub(r)?`<div class="r2" style="color:var(--ink-3)">${sub(r)}</div>`:""}
     <div class="r2"><span class="num">${dt(r)}</span>
       ${txVal(r.rooms)?`<span><span class="num">${txVal(r.rooms)}</span> ${t.txRoomsShort}</span>`:""}
       ${txVal(r.areaSqm)?`<span><span class="num">${txVal(r.areaSqm)}</span> ${t.txPsmShort}</span>`:""}
-      ${r.floor?`<span>${t.thFloor} <span class="num">${r.floor}</span></span>`:""}
+      ${r.floor?`<span>${t.thFloor} <span class="num">${calcEsc(r.floor)}</span></span>`:""}
       ${txPsm(r)?`<span class="num">${fmtNIS(txPsm(r))}/${t.txPsmShort}</span>`:""}</div>
-    <div class="r2">${clsChip(r.newness)}${dist(r)?`<span>${dist(r)}</span>`:""}<span class="tx-src">${t.txSrcGov}</span></div></div>`;
+    <div class="r2">${clsChip(r.newness)}${dist(r)?`<span>${dist(r)}</span>`:""}<span class="tx-src">${srcOf(r)}</span></div></div>`;
   el("txCards").innerHTML=rows.map(liveCard).join("");
+
+  /* the register is paged: every deal of the scope and period is reachable, a page at a time */
+  const mb=el("txMoreBox");
+  if(mb){
+    mb.hidden=!(reg&&hasAny&&(txState.more||txState.moreErr));
+    mb.innerHTML=mb.hidden?"":`<button class="tx-sel" id="txMoreBtn"${txState.moreBusy?" disabled":""}>${txState.moreBusy?t.txMoreLoading:t.txMore}</button>`+
+      (txState.moreErr?`<span class="tx-more-err">${t.txMoreErr}</span>`:"");
+  }
 }
 
 /* sold-transaction markers — one marker per real sale, never an average */
@@ -3983,6 +4082,7 @@ function initTx(){
     const tb=e.target.closest("[data-txtab]");
     if(tb){txState.tab=tb.dataset.txtab;renderTx();renderMap(true);return}
     if(e.target.id==="txMapBtn"){txState.mapOn=!txState.mapOn;renderTx();renderMap(true);return}
+    if(e.target.id==="txMoreBtn"){txMore();return}
   });
   sec.addEventListener("change",e=>{
     if(e.target.id==="txMonths"){txState.months=+e.target.value;txFetch(true)}
@@ -4674,7 +4774,8 @@ function ciComparables(f){
   const med=a=>{const x=a.map(v=>v.psm).sort((p,q2)=>p-q2);const m=x.length>>1;
     return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)};
   return{nAll:all.length,nNew:nw.length,medAll:med(all),medNew:nw.length?med(nw):null,
-    scope:txState.scope,thin:all.length<3};
+    scope:txState.scope,thin:all.length<3,
+    viaRepub:!!(txState.meta&&txState.meta.deliveredVia==="over.org.il")};
 }
 
 function ciDetailInHTML(id){
@@ -4719,7 +4820,7 @@ function ciDetailInHTML(id){
         <div><div class="k">${t.ciMktScale} ${M}</div><div class="v">${t.ciScaleUpTo(`<span class="num">${fmtCompact(inv.capacity)}</span>`,inv.unitsCap)}</div></div>
         <div><div class="k">${t.ciDealScale}${deals.length?"":" "+vcTag("na")}</div><div class="v">${deals.length?fmtCompact(deals.reduce((a,d)=>a+d.units*d.askPrice,0)):t.ciUnknown}</div></div>
       </div>
-      ${cp?`<div class="ci-note" style="margin-top:7px;color:var(--ink-2)">${t.txOfficialBadge} — ${
+      ${cp?`<div class="ci-note" style="margin-top:7px;color:var(--ink-2)">${cp.viaRepub?t.txRepubBadge:t.txOfficialBadge} — ${
         t.ciComp(fmtInt(cp.nAll),fmtNIS(cp.medAll),cp.medNew?fmtNIS(cp.medNew):"—",fmtInt(cp.nNew),
           cp.scope?calcEsc(cp.scope.description||""):"",cp.medNew?fmtPct((cp.medNew/f.l.base.sqm-1)*100):"—")}${cp.thin?" · "+t.ciCompThin:""}</div>`:""}
       <div class="ci-note" style="margin-top:7px">${t.ciEvid(fmtInt(f.listings),vcTag(c.listings),(f.tx/12).toFixed(0),vcTag(c.tx),Math.round(f.ms),M,fmtPct(f.mom),vcTag(c.yoy),(inv.invShare*100).toFixed(1))} · ${t.ciDealLevNA}</div>

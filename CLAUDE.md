@@ -39,6 +39,12 @@
   status history, raw snapshots; served paginated by `GET /api/housing?view=…` and shown in the page's
   `#housing` section (see `lib/housing/README.md`). Missing factual values render "—" (class MISSING / חסר).
   `scripts/housing-discover.js` + `.github/workflows/housing-discover.yml` = read-only source discovery.
+- `lib/gov/providers/overDeals.js` + `test/republished.test.js` = the deals source in use since 02.10.2026 (owner's
+  decision): the Tax Authority register as republished by גרסאות לעם (over.org.il) — not a government channel, labelled so
+  on the page (never "official source"); a copy dated by `scraped_at`; address only via the parcel crosswalk; partial sales
+  never priced; `GET /api/gov/transactions` pages it (`offset` + `level`) and says who delivered (`meta.deliveredVia`) and
+  claims a sync only when a source answered (`meta.sourceAnswered`). GovMap (403 to the server) and the Tax Authority
+  connector stay first in line.
 - `lib/gov/ledger.js` + `scripts/tx-sync.js` + `data/transactions/` + `test/ledger.test.js` = the
   transaction ledger: daily refresh + 120-day rolling backfill, upsert on the record key (official id, or
   fingerprint + occurrence), `first_seen_at` kept, nothing deleted (see `lib/gov/README.md`).

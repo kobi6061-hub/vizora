@@ -426,7 +426,7 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
       assert.equal(sm.status, 200, sm.raw); assert.equal(sm.json.cities.length, 4);
       const c0 = sm.json.cities[0];
       assert.deepEqual([c0.city, c0.status, c0.counts.official, c0.counts.residential, c0.latestTransactionDate], ['באר שבע', 'ok', 2, 2, d]);
-      assert.deepEqual(Object.keys(c0.rows[0]), ['date', 'city', 'street', 'houseNumber', 'rooms', 'areaSqm', 'floor', 'price', 'newness', 'dealType']);
+      assert.deepEqual(Object.keys(c0.rows[0]), ['date', 'city', 'street', 'houseNumber', 'block', 'parcel', 'subParcel', 'rooms', 'areaSqm', 'floor', 'price', 'newness', 'dealType', 'partialSale']);
       assert.equal(c0.rows[0].price, 2100000); assert.ok(c0.unavailable.some((u) => /taxes\.gov\.il/.test(u)), 'the Tax Authority connector state is reported');
       assert.equal((await call(makeHandler({ env: {}, fetchImpl: gm }), { mode: 'sample', auth: 'Bearer ' + jwt(), url: 'x' })).status, 200);
       const bad = await call(makeHandler({ env: {}, fetchImpl: gm }), { mode: 'sample&cities=' + encodeURIComponent('<script>'), auth: 'Bearer ' + jwt() });
