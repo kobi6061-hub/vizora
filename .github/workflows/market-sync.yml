@@ -42,6 +42,7 @@ jobs:
         run: |
           node test/gov.test.js
           node test/market.test.js
+          node test/integrity.test.js
 
       - name: Fetch official indicators
         id: sync

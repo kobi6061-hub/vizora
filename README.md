@@ -44,6 +44,17 @@ market tape; every metric carries provenance (official / derived / estimate)
 surfaced via the "מקור הנתון" panel. Neighborhood rows are labeled relative
 estimates. The recent-sales table shows official government transactions only.
 
+### Data integrity
+
+Every figure on screen carries a class read from row metadata — רשמי (official),
+נגזר (derived), מודל (modelled) or לא זמין (unavailable) — plus the period it
+describes. Nothing generated is presented as observed: there are no synthetic
+street transactions, no generated price history, no invented medians and no
+sample-size "confidence". The capital model (scores, opportunity layer,
+portfolio) stays off (`CI_ENABLED=false`) while its appreciation input is an
+approximate curve rather than official history. `node test/integrity.test.js`
+enforces this; it runs with the other offline suites in the daily workflow.
+
 ### Daily official-indicator sync
 
 The Bank of Israel rate and the CBS new-homes price index are re-checked every

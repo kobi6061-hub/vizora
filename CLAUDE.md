@@ -13,6 +13,9 @@
 - `lib/geo/` + `api/geo/` + `data/geo/` + `scripts/build-geo-registry.py` + `scripts/geo-audit.js`
   = the national geography registry (every official locality + street, canonical codes, search API,
   coverage audit).
+- `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
+  synthetic street layer, generated history, invented medians or sample-size confidence; capital model
+  stays off via `CI_ENABLED=false` while it reads the approximate `NATIONAL_CURVE`).
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index)
   feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand

@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-10-01.daily-official-indicators">
+<meta name="propx-build" content="2026-10-01.p0-data-integrity">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -143,10 +143,6 @@ input,select{font:inherit;color:inherit}
 .delta svg{width:9px;height:9px;flex:none}
 
 /* confidence badge — never color alone: dot + text */
-.conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2);white-space:nowrap}
-.conf i{width:7px;height:7px;border-radius:99px;flex:none}
-.conf.high i{background:var(--conf-high)} .conf.med i{background:var(--conf-med)} .conf.low i{background:var(--conf-low)}
-.conf.low{color:var(--conf-low)}
 
 .badge-demo{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
   color:var(--ink-2);background:var(--panel-2);border:1px solid var(--hairline);
@@ -213,7 +209,6 @@ section.blk{scroll-margin-top:72px}
   .badge-demo{display:none}
   .asset-price{flex-wrap:wrap}
   .ap-v{font-size:27px}
-  #periodBtns,#chartMetricBtns{flex-wrap:wrap;justify-content:flex-start}
   .grid-main>*{min-width:0}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -299,8 +294,6 @@ section.blk{padding-block:22px}
 .kpi.hero{border-color:var(--edge);min-height:104px}
 .kpi.hero .val{font-size:31px;font-weight:800;letter-spacing:-.016em}
 .kpi.hero .lbl{color:var(--ink-2)}
-.kpi-spark{position:absolute;inset-inline-end:12px;bottom:9px;opacity:.9;pointer-events:none}
-.kpi.hero .cmp{max-width:calc(100% - 168px)}
 .kpi .lbl{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .val{font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
 .kpi .cmp{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -376,23 +369,20 @@ section.blk{padding-block:22px}
 .asset-price{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;
   padding-bottom:12px;border-bottom:1px solid var(--hairline)}
 .ap-l{font-size:11.5px;font-weight:600;color:var(--ink-3)}
-.est-tag{color:var(--brass);font-weight:700}
 .ap-v{font-family:var(--f-display);font-size:34px;font-weight:800;letter-spacing:-.018em;line-height:1.1}
 .ap-d{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-3);margin-top:2px}
-.ap-spark{opacity:.9}
 .prov-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
   border-top:1px solid var(--hairline);padding-top:10px}
 .prov-btn{font-size:11.5px;font-weight:700;color:var(--navy);padding:3px 8px;border-radius:var(--r-s)}
 .prov-btn:hover{background:var(--navy-wash)}
 .prov-note{font-size:11px;color:var(--ink-3)}
 .prov-pop[hidden]{display:none!important}
+.cap-signal[hidden],.ri[hidden],#capital[hidden],#ciTeaserBlk[hidden]{display:none!important}
 .prov-pop{display:flex;flex-direction:column;gap:6px;background:var(--panel-2);
   border:1px solid var(--hairline);border-radius:var(--r-s);padding:10px 12px}
 .pr{display:grid;grid-template-columns:96px 1fr auto;gap:8px;font-size:11px;line-height:1.5;align-items:baseline}
 .pr b{color:var(--ink);font-size:11px}
 .pr span{color:var(--ink-2)}
-.pr-c{font-weight:700;color:var(--brass);white-space:nowrap}
-.pr-c.of{color:var(--up)}
 .pr-foot{font-size:10.5px;color:var(--ink-3);border-top:1px solid var(--hairline);padding-top:6px}
 @media(max-width:560px){.pr{grid-template-columns:1fr;gap:1px}}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
@@ -407,15 +397,6 @@ section.blk{padding-block:22px}
 .seg{display:flex;background:var(--panel-2);border:1px solid var(--hairline);border-radius:var(--r-s);padding:2px;gap:2px;flex-wrap:wrap}
 .seg button{font-size:11.5px;font-weight:600;color:var(--ink-3);padding:4px 10px;border-radius:4px;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(11,11,11,.09)}
-.chart-wrap{position:relative;direction:ltr}
-.chart-wrap svg{display:block;width:100%;height:auto}
-.chart-tip{position:absolute;z-index:20;pointer-events:none;background:var(--ink);color:var(--paper);
-  border-radius:var(--r-s);padding:8px 12px;font-size:12px;line-height:1.55;box-shadow:var(--shadow-pop);
-  opacity:0;transition:opacity .08s;white-space:nowrap;direction:rtl}
-.chart-tip.show{opacity:1}
-.chart-tip .d{color:var(--paper);opacity:.62;font-size:11px;direction:ltr;text-align:end}
-.axis-txt{font-family:var(--f-body);font-size:10.5px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
-.grid-ln{stroke:var(--hairline);stroke-width:1}
 .base-ln{stroke:var(--baseline);stroke-width:1}
 
 /* ============================ sale vs rent ============================ */
@@ -469,7 +450,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl .nm{font-weight:600;color:var(--ink)}
 .tbl .sub{font-size:11px;color:var(--ink-3);font-weight:400}
-.spark{direction:ltr}
 .tbl-cards{display:none}
 @media(max-width:719px){
   .tbl-scroll{display:none}
@@ -561,11 +541,18 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .insight::before{content:"";flex:none;width:7px;height:7px;border-radius:99px;background:var(--accent);margin-top:7px}
 .insight b{color:var(--ink);font-weight:700}
 .conf-card{padding:16px;display:flex;flex-direction:column;gap:10px}
-.conf-big{display:flex;align-items:center;gap:10px}
-.conf-big .conf{font-size:14px}
-.conf-meter{height:7px;border-radius:99px;background:var(--panel-2);overflow:hidden}
-.conf-meter i{display:block;height:100%;border-radius:99px}
 .conf-note{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+/* value classes — RAW / DERIVED / MODELLED / UNAVAILABLE, read from row metadata */
+.vc{display:inline-flex;align-items:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;
+  padding:0 6px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;flex:none;vertical-align:middle}
+.vc.raw{color:var(--conf-high)} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
+.kpi.na .val{color:var(--ink-3);font-size:16px;font-weight:700}
+.na-card .na-why{font-size:14px;font-weight:600;color:var(--ink-2);line-height:1.6}
+.na-card .na-next{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+.tbl-foot{font-size:11.5px;color:var(--ink-3);line-height:1.6;padding:9px 14px 11px;margin:0}
+#rankFoot{padding-inline:0}
+.bs-row{display:flex;gap:8px;align-items:baseline;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.bs-p{color:var(--ink-3);font-size:11.5px}
 
 /* ============================ transactions ============================ */
 .tx-note{font-size:11px;color:var(--ink-3)}
@@ -646,8 +633,6 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 @media(max-width:699px){
   .kpis{grid-template-columns:232px repeat(5,minmax(150px,1fr));min-width:1010px}
   .kpi.hero .val{font-size:25px}
-  .kpi.hero .cmp{max-width:calc(100% - 118px)}
-  .kpi.hero .kpi-spark svg{width:104px;height:30px}
   .kpi-scroll{margin-inline:-20px;padding-inline:20px;scrollbar-width:none}
   .kpi-scroll::-webkit-scrollbar{display:none}
 }
@@ -901,8 +886,6 @@ details.ci-more>.in{padding:2px 13px 12px}
   padding:9px 12px 8px;min-width:168px;box-shadow:var(--shadow-pop)}
 .mt-h{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:800;font-size:12.5px;
   padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid var(--hairline)}
-.mt-c{width:7px;height:7px;border-radius:50%;flex:none}
-.mt-c.high{background:var(--conf-high)}.mt-c.med{background:var(--conf-med)}.mt-c.low{background:var(--conf-low)}
 .mt-kv{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--ink-2);line-height:1.7}
 .mt-kv b{color:var(--ink);font-weight:700}
 .mt-kv b.up{color:var(--up)}.mt-kv b.down{color:var(--down)}
@@ -974,74 +957,6 @@ details.ci-more>.in{padding:2px 13px 12px}
   .cmd-ops{justify-content:space-between}
 }
 
-/* ============================ street intelligence ============================ */
-#street .st-wrap{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden}
-#street .st-wrap::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;
-  background:linear-gradient(to left,var(--navy),var(--accent) 60%,var(--gold))}
-.st-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;
-  padding-bottom:12px;border-bottom:1px solid var(--hairline);margin-bottom:13px}
-.st-head h3{font-size:21px;font-weight:800;letter-spacing:-.01em}
-.st-head .chain{font-size:12px;color:var(--ink-3);margin-top:2px}
-.st-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.st-chip{font-size:10.5px;font-weight:800;border-radius:999px;padding:3px 10px;letter-spacing:.02em}
-.st-chip.s-strong{color:var(--conf-high);background:var(--up-wash)}
-.st-chip.s-med{color:var(--conf-med);background:var(--wash-brass)}
-.st-chip.s-low{color:var(--conf-low);background:var(--down-wash)}
-.st-chip.s-none{color:var(--ink-3);background:var(--panel-2)}
-.st-chip.win{color:var(--ink-2);background:var(--panel-2)}
-.st-chip.house{color:var(--navy);background:var(--navy-wash)}
-[data-theme="dark"] .st-chip.s-strong{background:rgba(74,222,128,.13)}
-[data-theme="dark"] .st-chip.s-med{background:rgba(226,185,59,.13)}
-[data-theme="dark"] .st-chip.s-low{background:rgba(240,148,84,.14)}
-.st-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.st-x{width:30px;height:30px;border-radius:8px;border:1px solid var(--hairline);color:var(--ink-3);
-  display:grid;place-items:center;font-size:14px;transition:all .15s;cursor:pointer}
-.st-x:hover{color:var(--down);border-color:var(--down)}
-.st-x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.st-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px}
-.st-kpis>div{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:8px 11px}
-.st-kpis .k{font-size:10.5px;color:var(--ink-3)}
-.st-kpis .v{font-size:15.5px;font-weight:800;margin-top:2px}
-.st-kpis .s{font-size:10px;color:var(--ink-3);margin-top:1px}
-.st-grid{display:grid;gap:14px;margin-top:14px}
-@media(min-width:1000px){.st-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start}}
-.st-blend{background:var(--accent-wash);border:1px solid var(--edge);border-inline-start:3px solid var(--gold);
-  border-radius:12px;padding:12px 14px;margin-top:12px}
-[data-theme="dark"] .st-blend{background:rgba(59,130,246,.08)}
-.st-blend .bt{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
-.st-blend .bv{font-family:var(--f-display);font-size:23px;font-weight:800;margin-top:3px}
-.st-blend .bd{font-size:12px;color:var(--ink-2);margin-top:5px;line-height:1.6}
-.st-comp{margin-top:12px}
-.st-comp .cr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;
-  width:100%;text-align:start;padding:7px 9px;border-radius:8px;font-size:12.5px;cursor:pointer}
-.st-comp .cr:hover{background:var(--accent-wash)}
-.st-comp .cr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.st-comp .cr .nm{font-weight:700}
-.st-comp .cr .d{color:var(--ink-3);font-size:11.5px}
-.st-rel{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:10px 13px;margin-top:12px;font-size:12.5px;line-height:1.65}
-.st-rel b{font-weight:800}
-.st-trend{margin-top:12px}
-.st-trend .tr{display:grid;grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto;gap:8px 10px;align-items:center;font-size:12px;padding:3px 0}
-.st-trend .tk{color:var(--ink-2)}
-.st-trend .tv{font-weight:800}
-.st-note{font-size:11px;color:var(--ink-3);margin-top:8px;line-height:1.55}
-.st-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--ink-3);
-  background:var(--panel-2);border-radius:999px;padding:3px 10px}
-#street .ci-tbl td{white-space:nowrap}
-#street .seg button{font-size:11.5px}
-.st-prov{margin-top:12px}
-.st-topst .tsr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:9px;align-items:center;
-  width:100%;text-align:start;padding:7px 6px;border-bottom:1px solid var(--hairline);font-size:12.5px;cursor:pointer}
-.st-topst .tsr:last-child{border-bottom:0}
-.st-topst .tsr:hover .nm{color:var(--accent)}
-.st-topst .tsr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.st-topst .nm{font-weight:700}
-.st-topst .ct{font-size:11px;color:var(--ink-3)}
-.st-topst .sc{font-family:var(--f-display);font-weight:800;color:var(--navy);background:var(--navy-wash);border-radius:6px;padding:1px 8px}
-.map-ring{fill:none;stroke:var(--gold);stroke-dasharray:3 4;opacity:.55}
-.map-stnode{fill:var(--gold);stroke:var(--brass);stroke-width:1.4}
-.map-stcomp{fill:var(--accent);stroke:var(--panel);stroke-width:.8;opacity:.85}
-
 /* map excellence + zoom */
 .map-holder svg{cursor:grab;touch-action:none}
 .map-holder svg.panning{cursor:grabbing}
@@ -1061,7 +976,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 /* mobile: single-column grids must never inherit inner content width
    (a min-width table inside an auto grid track widens the whole column) */
 @media(max-width:999px){
-  .st-grid,.ci-grid,.ci-port,.grid-main,.grid-map,.map-stage{grid-template-columns:minmax(0,1fr)}
+  .ci-grid,.ci-port,.grid-main,.grid-map,.map-stage{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:899px){.grid-insight{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:699px){.ci-2col{grid-template-columns:minmax(0,1fr)}}
@@ -1180,7 +1095,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
   <span class="rail-div" aria-hidden="true"></span>
-  <a href="#capital" class="ri" data-sec="capital"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
+  <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
@@ -1222,9 +1137,9 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
     <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
       <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn" id="tpNhV" data-i="blt1v">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
-      <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">84,280</span><span class="tp-s" data-i="blt2s">כ-26 חודשי היצע · יוני 2026</span></div>
-      <div class="tp"><span class="tp-k" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num">~34,000</span><span class="tp-s" data-i="blt3s">37.5% מהעסקאות · כשליש בסבסוד</span></div>
-      <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">חזרת מבצעי המימון · הכלכלן הראשי</span></div>
+      <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">84,280</span><span class="tp-s" data-i="blt2s">סטטי · למ״ס, סוף יוני 2026 · כ-26 חודשי היצע</span></div>
+      <div class="tp"><span class="tp-k" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num">~34,000</span><span class="tp-s" data-i="blt3s">סטטי · סיכום 2025 · 37.5% מהעסקאות</span></div>
+      <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">סטטי · הכלכלן הראשי · חזרת מבצעי המימון</span></div>
       <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num" data-i="tapeBoiV">3.25%</span><span class="tp-s" data-i="tapeBoiS">הורדה ל-3.25% · 1.9.2026</span></div>
       <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num" data-i="tapeRetV">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
     </div>
@@ -1282,7 +1197,6 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     </div>
   </section>
 
-  <!-- Street intelligence (revealed when a street is selected) -->
   <!-- national geography view — registry areas outside the curated market set -->
   <section class="blk" id="geoView" hidden>
     <div class="blk-head">
@@ -1293,33 +1207,16 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     <div class="card" style="padding:16px 18px" id="geoBody"></div>
   </section>
 
-  <section class="blk" id="street" hidden>
-    <div class="blk-head">
-      <div><span class="lyr" data-i="lyrSt">L2.5 · רחוב</span>
-      <h2 data-i="stSecT">פרופיל רחוב</h2></div>
-      <span class="note" data-i="stSecNote">מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן</span>
-    </div>
-    <div class="st-wrap" id="stBody"></div>
-  </section>
-
-  <!-- Profile + trend chart -->
+  <!-- Profile + price history (history is UNAVAILABLE until official series are stored) -->
   <section class="blk" id="prices">
     <div class="grid-main">
-      <div class="card chart-card">
+      <div class="card chart-card na-card" id="trendNA">
         <div class="chart-tools">
-          <div style="display:flex;flex-direction:column;gap:2px">
-            <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
-            <span class="note" id="chartSub" style="font-size:12px;color:var(--ink-3)"></span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <div class="seg" role="group" aria-label="מדד" id="chartMetricBtns"></div>
-            <div class="seg" role="group" aria-label="תקופה" id="periodBtns"></div>
-          </div>
+          <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
+          <span class="vc na" data-i="vcNA">לא זמין</span>
         </div>
-        <div class="chart-wrap" id="chartWrap">
-          <svg id="chartSvg"></svg>
-          <div class="chart-tip" id="chartTip"></div>
-        </div>
+        <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
+        <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
       </div>
       <div class="card profile" id="profileCard"></div>
     </div>
@@ -1349,6 +1246,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     <div class="card tbl-card">
       <div class="tbl-scroll"><table class="tbl" id="tbl"></table></div>
       <div class="tbl-cards" id="tblCards"></div>
+      <p class="tbl-foot" id="tblFoot"></p>
     </div>
   </section>
 
@@ -1362,6 +1260,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
     <div class="card" style="padding:4px 14px 10px">
       <div class="tabs" role="tablist" id="rankTabs"></div>
       <div class="rank-grid" id="rankGrid"></div>
+      <p class="tbl-foot" id="rankFoot"></p>
     </div>
   </section>
 
@@ -1387,17 +1286,20 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
         <div class="card insights" id="insights"></div>
       </div>
       <div>
+        <div id="ciTeaserBlk" hidden>
         <div class="blk-head"><div><span class="lyr gold" data-i="lyr4">L4 · הון</span><h2 data-i="ciTeaserT">איפה הכסף עובד הכי טוב?</h2></div>
           <span class="note" data-i="ciTeaserNote">ציון השקעה · מודל</span></div>
         <div class="card ci-teaser" id="ciTeaser"></div>
-        <div class="blk-head" style="margin-top:16px"><h2 data-i="confTitle">רמת ודאות</h2></div>
+        </div>
+        <div class="blk-head"><div><span class="lyr" data-i="lyr1c">L1 · שוק</span><h2 data-i="confTitle">בסיס הנתונים</h2></div>
+          <span class="note" data-i="basisNote">רשמי · נגזר · מודל · לא זמין</span></div>
         <div class="card conf-card" id="confCard"></div>
       </div>
     </div>
   </section>
 
   <!-- Capital intelligence -->
-  <section class="blk" id="capital">
+  <section class="blk" id="capital" hidden>
     <div class="ci-band">
       <div class="ci-head">
         <div>
@@ -1490,7 +1392,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
             <li data-i="srcA6">עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
+          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · לא זמין) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -1515,7 +1417,7 @@ body:not(.unlocked)>*:not(#gate){visibility:hidden}
 
 <script>
 /* generated by scripts/market-sync.js — do not edit by hand */
-window.PROPX_MARKET={"schema":1,"syncedAt":null,"ok":false,"indicators":{},"failures":[]};
+window.PROPX_MARKET={"schema":1,"syncedAt":"2026-10-01T08:03:01.787Z","ok":true,"indicators":{"boiRate":{"value":3.25,"unit":"%","nextDecision":"2026-10-21","publishedAt":"2026-09-01","source":{"authority":"בנק ישראל","authorityEn":"Bank of Israel","dataset":"PublicApi/GetInterest","url":"https://www.boi.org.il/PublicApi/GetInterest"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false},"newHomesIndex":{"yoy":-0.8,"mom":0.5,"level":541.2,"base":"2017 אוקטובר","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"70000","name":"מדד מחירי דירות חדשות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי דירות חדשות","url":"https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false},"dwellingsIndex":{"yoy":-1.2,"mom":0.2,"level":594.8,"base":"1993 ממוצע","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"40010","name":"מחירי דירות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מחירי דירות","url":"https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false}},"failures":[]};
 </script>
 <script>
 "use strict";
@@ -1832,46 +1734,19 @@ const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
    exist in this build: a second dataset here once contradicted the counts,
    so it was removed rather than hidden. */
 
-/* -------- deterministic pseudo-random (stable across loads) -------- */
-function seedOf(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
-function rng(seed){let a=seed>>>0;return()=>{a|=0;a=(a+0x6d2b79f5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
-
-/* -------- historical monthly series, generated backwards ----------
-   year 0 follows the CBS NEW-HOMES price index (−2.0% y/y, May–Jun 2026);
-   earlier years approximate the overall CBS index path (2025 −1.0%,
-   2024 +7.7%, 2023 −1.4%, 2022 +17.1%, 2021 +11.6%, ...) since a long
-   new-homes-only annual history is not published — labeled estimate.
-   Years 0–1 are re-anchored per location to match its yoy/3y figures.  */
+/* -------- DORMANT: approximate appreciation curve ------------------------
+   A hand-typed ten-year national path (not an observed series) that only the
+   hidden capital model reads (CI_ENABLED=false, §CAPITAL INTELLIGENCE). No
+   display, score, ranking or recommendation path reads it while that switch
+   is off, and test/integrity.test.js fails if the switch is turned on while
+   this curve still exists. It goes when official index history replaces it. */
 const NATIONAL_CURVE=[-2.0,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
-const seriesCache={};
 function localCurve(l){
   const c=[...NATIONAL_CURVE];
   c[0]=l.base.yoy;
   const target=1+l.base.y3/100;               /* cumulative 3-year move */
   c[1]=(target/((1+c[0]/100)*(1+c[2]/100))-1)*100;
   return c;
-}
-function seriesFor(id){
-  if(seriesCache[id])return seriesCache[id];
-  const l=LOC[id],r=rng(seedOf(id)),months=121;
-  const curve=localCurve(l);
-  const pts=[];
-  let price=l.base.price,rent=l.base.rent,sqm=l.base.sqm;
-  const now=new Date(2026,7,1);
-  for(let i=0;i<months;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    pts.push({date:d,price:Math.round(price),sqm:Math.round(sqm),rent:Math.round(rent),
-      yield:+(rent*12/price*100).toFixed(2)});
-    const yr=Math.min(9,Math.floor(i/12));
-    const annual=curve[yr];
-    const annualRent=yr===0?l.base.rentYoy:Math.min(8,Math.max(1.2,2.6+curve[yr]*.22));
-    const mo=annual/100/12, moR=annualRent/100/12;
-    const noise=(r()-.5)*.005, noiseR=(r()-.5)*.003;
-    price=price/(1+mo+noise); sqm=sqm/(1+mo+noise); rent=rent/(1+moR+noiseR);
-  }
-  pts.reverse();
-  seriesCache[id]=pts;
-  return pts;
 }
 
 /* =====================================================================
@@ -1884,21 +1759,29 @@ he:{
   h1:"שוק הנדל״ן בישראל", h1sub:"כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
-  kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"מכירות קבלנים · 12 החודשים האחרונים", kpiNoteRent:"השכרת דירות חדשות (אומדן) · 12 החודשים האחרונים",
-  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", yoy:"שינוי ב-12 ח׳", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
+  kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"דירות חדשות מקבלן · תמונת מצב אמצע 2026 · בכל כרטיס: סיווג ותקופה", kpiNoteRent:"שכ״ד: ממוצעי למ״ס (ארצי רבעון א׳ 2026, ערים 2025) + פרמיית דירה חדשה 8% — מודל",
+  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
   avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
-  vsPrev:"לעומת התקופה הקודמת", est:"אומדן", perMonth:"לחודש", perYear:"לשנה",
+  est:"אומדן", perMonth:"לחודש", perYear:"לשנה", yoyLbl:"שינוי שנתי",
+  vcName:{raw:"רשמי",der:"נגזר",mod:"מודל",na:"לא זמין"},
+  vcTip:{raw:"ערך כפי שפורסם במקור רשמי",der:"חושב מנתון רשמי בנוסחה מוצהרת",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג"},
+  perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
+  perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
+  perTx2025:"קצב שנתי · 2025", perTxH1:"מחצית א׳ 2026 בקצב שנתי", perTxEst:"קצב שנתי משוער",
+  perInv:"למ״ס · סוף יוני 2026", perInvEst:"מעוגן לסך הארצי",
+  naShort:"לא זמין", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
+  provNote:"כל ערך מסווג: רשמי · נגזר · מודל · לא זמין",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
   rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
-  trendTitle:"מגמת מחירים", chartOf:"מדד",
-  cPrice:"מחיר נכס",cPsm:"מחיר למ״ר",cRent:"שכירות",cYield:"תשואה",
-  p6m:"6 חודשים",p1y:"שנה",p3y:"3 שנים",p5y:"5 שנים",p10y:"10 שנים",
+  trendTitle:"מגמת מחירים", vcNA:"לא זמין",
+  trendNAWhy:"היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.",
+  trendNANext:"השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.",
   svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן לדירה חדשה מקבלן",
   svrBuy:"מחיר רכישה ממוצע",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
   svrYears:"שנות שכירות", svrFormula:(p,r,y)=>`אם נכס באזור עולה <b class="num">${p}</b> והשכירות הממוצעת היא <b class="num">${r}</b> לחודש — התשואה הברוטו המשוערת היא <b class="num">${y}</b>.`,
   tblNbhd:"שכונות באזור", tblCities:"ערים באזור", tblDistricts:"מחוזות בישראל",
-  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי 12 ח׳",thTx:"מכירות",thListings:"מלאי",thTrend:"מגמה",thConf:"ודאות",
+  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי שנתי",thTx:"מכירות/שנה",thListings:"מלאי",
   areas:"אזורים", filtered:"מסונן",
   fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"שלב בנייה",
   rAll:"הכל",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -1907,28 +1790,26 @@ he:{
   cAll:"הכל",cReady:"מוכנה למגורים",cPaper:"על הנייר", clearFilters:"אפס מסננים",
   filterNote:"המסננים מתאימים מקדמים על שכבת האומדנים",
   rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
-  tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"הכי הרבה עסקאות",
+  tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"קצב המכירות הגבוה ביותר",
   cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · ★ = המוביל במדד", cmpAdd:"+ הוסף אזור",
   cmpEmpty:"בחר עד ארבעה אזורים להשוואה", cmpMax:"עד 4 אזורים",
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
-  confTitle:"רמת ודאות",
-  confHigh:"רמת ודאות גבוהה",confMed:"רמת ודאות בינונית",confLow:"רמת ודאות נמוכה",
-  confHighS:"גבוהה",confMedS:"בינונית",confLowS:"נמוכה",
-  confBasedOn:n=>`מבוסס על <b class="num">${n}</b> עסקאות ב-12 החודשים האחרונים`,
-  confBasedOnLow:n=>`מבוסס על <b class="num">${n}</b> עסקאות בלבד`,
-  confHighNote:"מדגם רחב — הממוצעים משקפים היטב את השוק המקומי.",
-  confMedNote:"מדגם בינוני — ייתכנו סטיות; מומלץ לבחון גם את שכונות הסביבה.",
-  confLowNote:"מדגם קטן מאוד — הנתונים אינדיקטיביים בלבד ואינם מספקים בסיס להחלטה.",
-  geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoTagSt:"רחוב", geoTagLoc:"יישוב",
+  confTitle:"בסיס הנתונים", basisNote:"רשמי · נגזר · מודל · לא זמין",
+  basisNA:"חציון מחיר ושכ״ד · היסטוריית מחירים מקומית · ציוני השקעה ודירוגי הון (מוסתרים עד שתיאסף היסטוריית מחירים רשמית)",
+  basisTx:"עסקאות: נשלפות בזמן אמת ממאגר רשות המסים (טבלת העסקאות), עם היקף המדגם והכיסוי של כל שליפה.",
+  txPace:"קצב מכירות שנתי",
+  tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות/שנה — רשמי רק היכן שפורסם, אחרת אומדן; שינוי שנתי — נגזר, מאי–יוני 2026.",
+  rankFoot:"הדירוג מחושב מערכי הלוח — נגזרים מפרסומים רשמיים או אומדני מודל, לפי שורה (הסיווג מופיע בטבלת האזורים).",
+  geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
   geoLyr:"מרשם ארצי", geoClose:"סגור",
   geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
   geoPend:"סמל רשמי בהקצאה — יתעדכן ברענון המרשם",
   geoNoDirect:(lvl,nm)=>`אין תצפיות שוק ישירות ברזולוציה זו — הניתוח מוצג ב${lvl} (${nm}) לפי מדרג ההרחבה הגאוגרפית. שום ערך לא הומצא ברמת המקום עצמו.`,
   geoResCity:"רזולוציית עיר", geoResDist:"רזולוציית מחוז", geoResNat:"רזולוציה ארצית",
-  geoCovT:"כיסוי נתונים", geoStreetsN:n=>`${fmtInt(n)} רחובות רשומים`,
-  geoDistBasis:"עוגן מיקום: מרכז היישוב לפי המרשם הרשמי", geoTagModel:"אומדן",
+  geoStreetsN:n=>`${fmtInt(n)} רחובות רשומים`,
+  geoDistBasis:"עוגן מיקום: מרכז היישוב לפי המרשם הרשמי",
   geoMPrice:"מחיר דירה חדשה", geoMSqm:"₪ למ״ר", geoMRent:"שכ״ד חודשי", geoMYoy:"שינוי שנתי",
-  geoMTx:"עסקאות/שנה", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
+  geoMTx:"קצב מכירות שנתי", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
   txTitle:"עסקאות אחרונות שדווחו באזור",
   txOfficialBadge:"מקור רשמי · רשות המסים (דרך GovMap) · נתון נצפה",
   txLatestInSrc:d=>`עסקה אחרונה במקור: ${d}`, txSynced:d=>`סנכרון אחרון: ${d}`,
@@ -1937,16 +1818,17 @@ he:{
   txMapToggle:"הצג עסקאות על המפה", txModeFixture:"מצב אימות מקומי — נתוני בדיקה",
   txSumN:"עסקאות", txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
   txThin:n=>`רק ${n} עסקאות — מדגם לא מספיק לחציון מהימן; הנתונים מוצגים כתצפיות בודדות`,
-  txScopeBuilding:(d,n)=>`נמצאו <b>${n}</b> עסקאות בכתובת המבוקשת: ${d}`,
-  txScopeStreet:(d,n)=>`נמצאו <b>${n}</b> עסקאות ברחוב: ${d}`,
-  txScopeLoc:(d,n)=>`נמצאו <b>${n}</b> עסקאות ביישוב: ${d}`,
+  txScopeBuilding:(d,n)=>`מדגם סביב הכתובת: <b>${n}</b> עסקאות מבניינים ברדיוס 60 מ׳ מ-${d}; עסקאות באותו מבנה מסומנות`,
+  txScopeStreet:(d,n)=>`מדגם סביב הרחוב: <b>${n}</b> עסקאות מבניינים ברדיוס 120 מ׳ מנקודת הייחוס של ${d} — עשוי לכלול רחובות סמוכים; הרחוב של כל עסקה מופיע בשורה`,
+  txScopeLoc:(d,n)=>`מדגם מרכז היישוב: <b>${n}</b> עסקאות מעד 40 בניינים ברדיוס 400 מ׳ ממרכז ${d} — אינו מייצג את כל עסקאות ${d}`,
   txScopeRadius:(r,n,q)=>`לא נמצאו מספיק עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — הניתוח הורחב לרדיוס <b>${r} מ׳</b> ונמצאו <b>${n}</b> עסקאות. אלו אינן עסקאות ברחוב עצמו.`,
   txOnlyNonRes:n=>`נמצאו ${n} עסקאות מדווחות באזור, אך אף אחת מהן אינה עסקת מגורים (קרקע/מסחר/לא מסווג). נסו להרחיב את טווח התאריכים.`,
   txScopeNbhd:(n,c,q)=>`לא נמצאו עסקאות ברזולוציה המבוקשת${q?` (${q})`:""} — מוצגות <b>${c}</b> עסקאות מהשכונה <b>${n}</b> לפי סיווג השכונה שברשומות הרשמיות עצמן. אלו אינן עסקאות ברחוב עצמו.`,
   txThinStreet:n=>`הנתונים ברחוב מבוססים על ${n} עסקאות בלבד — מדגם קטן מכדי לגזור ממנו מחיר רחוב. העסקאות מוצגות כתצפיות בודדות; ההשוואה הרחבה יותר מוצגת בנפרד ואינה מעורבבת בהן.`,
   txNoStreet:"הרחוב לא צוין ברשומה הרשמית", txTabOther:"לא למגורים",
   txNonResShown:n=>`${n} עסקאות שאינן למגורים (קרקע/מסחר) מוצגות בלשונית נפרדת ואינן נכללות בסטטיסטיקת הדירות`,
-  txCoverage:(got,total,pq,pa)=>`נשלפו ${got} מתוך ${total} עסקאות שהמקור מדווח באזור (${pq} מתוך ${pa} מקטעים) — ניתן להרחיב את התקופה לשליפה נוספת`,
+  txCoverage:(got,total,pq,pa,more)=>`כיסוי: נשלפו ${got} מתוך ${total} עסקאות שהמקור מדווח ב-${pa} הבניינים שבתחום (נבדקו ${pq} מתוך ${pa})${more?" — ניתן להרחיב את התקופה לשליפה נוספת":""}`,
+  txCoverageNA:"כיסוי: המקור לא דיווח היקף לשליפה זו",
   txSameBld:"אותו מבנה", txMetersAway:"מ׳ מהיעד", txSrcGov:"רשות המיסים",
   txTagProb:"חדשה (סביר)", txTagUnk:"לא מסווג",
   txLoading:"טוען עסקאות שדווחו…",
@@ -1961,10 +1843,10 @@ he:{
   srcTitle:"מקורות ומתודולוגיה",
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
   srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
-  srcA1:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
+  srcA1:MKT.nh?`שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: ${MKT.nh.yoy<0?"ירידה של ":MKT.nh.yoy>0?"עלייה של ":"ללא שינוי"}${MKT.nh.yoy?Math.abs(MKT.nh.yoy).toFixed(1)+"%":""} (${MKT.nh.periodHe} מול שנה קודמת · סנכרון יומי); שינוי אזורי — נגזר, מאי–יוני 2026`:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר וסדרות נגזרות הם אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
+  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · לא זמין) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -1978,24 +1860,24 @@ he:{
   aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
   aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
   pageCtx:"סקירת שוק הנדל״ן בישראל | פנימי",
-  tapeRet:MKT.checked?"עודכן מול המקורות":"נתונים נשלפו", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"סנכרון יומי · בנק ישראל · למ״ס":"מקור עדכני: אוג׳ 2026",
-  tapeBoi:"ריבית בנק ישראל", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`נבדק לאחרונה ${MKT.boi.checkedDay}`:MKT.boi.next?`החלטה הבאה: ${MKT.boi.next}`:`בנק ישראל · ${MKT.boi.checkedDay}`):"הורדה ל-3.25% · 1.9.2026",
-  provBtn:"מקור הנתון", provOfficial:"פרסום רשמי", provEst:"אומדן", provDerived:"נגזר מפרסום",
+  tapeRet:MKT.checked?"מדדים רשמיים נבדקו":"נתונים נשלפו", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"ריבית בנק ישראל ומדד הדירות החדשות · שאר המבזקים סטטיים":"מקור עדכני: אוג׳ 2026",
+  tapeBoi:"ריבית בנק ישראל", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`נבדק לאחרונה ${MKT.boi.checkedDay}`:MKT.boi.next?`החלטה הבאה: ${MKT.boi.next}`:`בנק ישראל · ${MKT.boi.checkedDay}`):"סטטי · הורדה ל-3.25% · 1.9.2026",
+  provBtn:"מקור הנתון",
   prov:{
     rows:[
-      {n:"מחיר ממוצע",s:"ממוצעי למ״ס לפי עיר/מחוז (רבעונים א׳–ב׳ 2026) + פרמיית דירה חדשה ~12%",cls:l=>l.e?"אומדן":"נגזר מפרסום"},
-      {n:"שינוי שנתי",s:MKT.nh?`ארצי: מדד מחירי הדירות החדשות של הלמ״ס, ${MKT.nh.periodHe} (סנכרון יומי); אזורי: מגמה כללית −0.5 נק׳ (מאי–יוני 2026)`:"מדד מחירי הדירות החדשות של הלמ״ס, מאי–יוני 2026; אזורי: מגמה כללית −0.5 נק׳",cls:l=>l.id==="il"?"פרסום רשמי":"נגזר מפרסום"},
-      {n:"שכירות",s:"ממוצעי שכ״ד למ״ס — ארצי/מחוזי רבעון א׳ 2026, ערים 2025 — + ~8% פרמיה",cls:()=>"אומדן"},
-      {n:"מכירות",s:"רשות המסים / הכלכלן הראשי, סיכום 2025",cls:l=>(l.o||"").includes("t")?"פרסום רשמי":"אומדן"},
-      {n:"מלאי",s:"למ״ס — מלאי דירות חדשות שטרם נמכרו, סוף יוני 2026",cls:l=>(l.o||"").includes("l")?"פרסום רשמי":"אומדן"},
+      {n:"מחיר ממוצע",s:"ממוצעי למ״ס לפי עיר/מחוז (רבעונים א׳–ב׳ 2026) + פרמיית דירה חדשה ~12%",f:"price"},
+      {n:"שינוי שנתי",s:MKT.nh?`ארצי: מדד מחירי הדירות החדשות של הלמ״ס, ${MKT.nh.periodHe} (סנכרון יומי); אזורי: מגמה כללית −0.5 נק׳ (מאי–יוני 2026)`:"מדד מחירי הדירות החדשות של הלמ״ס, מאי–יוני 2026; אזורי: מגמה כללית −0.5 נק׳",f:"yoy"},
+      {n:"שכירות",s:"ממוצעי שכ״ד למ״ס — ארצי/מחוזי רבעון א׳ 2026, ערים 2025 — + ~8% פרמיה",f:"rent"},
+      {n:"מכירות",s:"רשות המסים / הכלכלן הראשי, סיכום 2025",f:"tx"},
+      {n:"מלאי",s:"למ״ס — מלאי דירות חדשות שטרם נמכרו, סוף יוני 2026",f:"listings"},
     ],
     foot:"נשלף: 30.08.2026 · שכונות ותתי-שכונות: אומדן יחסי המעוגן בנתוני העיר · אינו סטטיסטיקה רשמית",
   },
   bltTitle:"מבזקי שוק · דירות חדשות", bltNote:"נתונים ארציים מהפרסומים הרשמיים · אמצע 2026",
-  blt1k:"מדד הדירות החדשות", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`שינוי שנתי · למ״ס, ${MKT.nh.periodHe}`:"שינוי שנתי · למ״ס, מאי–יוני 2026",
-  blt2k:"מלאי שטרם נמכר", blt2s:"כ-26 חודשי היצע · יוני 2026",
-  blt3k:"מכירות קבלנים 2025", blt3s:"37.5% מהעסקאות · כשליש בסבסוד",
-  blt4k:"מגמת מאי 2026", blt4v:"התאוששות ↗", blt4s:"חזרת מבצעי המימון · הכלכלן הראשי",
+  blt1k:"מדד הדירות החדשות", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`שינוי שנתי · למ״ס, ${MKT.nh.periodHe}`:"סטטי · שינוי שנתי · למ״ס, מאי–יוני 2026",
+  blt2k:"מלאי שטרם נמכר", blt2s:"סטטי · למ״ס, סוף יוני 2026 · כ-26 חודשי היצע",
+  blt3k:"מכירות קבלנים 2025", blt3s:"סטטי · סיכום 2025 · 37.5% מהעסקאות",
+  blt4k:"מגמת מאי 2026", blt4v:"התאוששות ↗", blt4s:"סטטי · הכלכלן הראשי · חזרת מבצעי המימון",
   gdTitle:"מדריך מהיר לרוכש דירה מקבלן", gdNote:"מידע כללי בלבד — אינו ייעוץ משפטי, מיסויי או פיננסי",
   gd1a:"בדיקת הפרויקט והליווי", gd1b:"ודאו היתר בנייה בתוקף ושהפרויקט בליווי בנקאי סגור, ושלמו אך ורק בשוברים לחשבון הליווי.",
   gd2a:"ערבות חוק מכר", gd2b:"כל תשלום מעבר ל-7% מהמחיר חייב בבטוחה — ערבות בנקאית או פוליסת ביטוח — לפי חוק המכר (דירות).",
@@ -2004,7 +1886,6 @@ he:{
   gd5a:"מפרט טכני ותוספות", gd5b:"קראו את המפרט המחייב שבנספח לחוזה: מה כלול במחיר, מה נחשב שדרוג בתשלום, ואילו זיכויים מגיעים על ויתורים.",
   gd6a:"עלויות נלוות ומסירה", gd6b:"הוסיפו לתקציב מס רכישה, שכ״ט עו״ד, חיבורי תשתיות וחניה/מחסן; איחור מסירה מעבר לקבוע בחוק מזכה בפיצוי.",
   cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
-  monthsShort:["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצמ"],
   navCap:"הון",
   ciUnitsN:n=>`${n} יח׳`,
   ciScoreT:"ציון השקעה",
@@ -2051,33 +1932,9 @@ he:{
   ciWhyNotLine:(n,p,c)=>`למה מעל ${n}? יתרון ב${p}${c?`; מנגד — ${n} חזק יותר ב${c}`:""}.`,
   ciAsmTargets:(y,r,b)=>`יעדי מחיר: תשואת החזקה ${y}% נטו · מכירה ${r}%- · מרוכז ${b}%-`,
   aZoom:"זום במפה", aZoomIn:"התקרבות", aZoomOut:"התרחקות", aZoomReset:"איפוס תצוגת המפה",
-  lyrSt:"L2.5 · רחוב", stSecT:"פרופיל רחוב", stSecNote:"מרשם רחובות מובנה · שכבת עסקאות מודל מעוגנת-עיר · אומדן",
-  stGroup:"רחובות", stStreet:"רחוב", stTxShort:"עסק׳", stM:"מ׳", stMonths:"חוד׳ מדגם", stMoShort:"ח׳",
-  stWinA:"חלון זמן", stWinOf:w=>`ב-${w} החודשים האחרונים`, stClose:"סגירת פרופיל הרחוב",
-  stStrong:"מדגם חזק", stMedS:"מדגם בינוני", stLow:"מדגם קטן", stNone:"אין עסקאות ברחוב",
-  stBasedOn:n=>n===1?"עסקה אחת ברחוב":`${n} עסקאות ברחוב`, stConf:"ודאות",
-  stRadius:"רדיוס השוואה", stHouse:h=>`בית ${h} · פרופיל בניין — בהכנה`,
-  stNbApprox:"שיוך שכונתי משוער", stNoRows:"אין עסקאות בחלון הזמן שנבחר",
-  stTxN:"עסקאות ברחוב", stMedP:"מחיר עסקה חציוני", stAvgP:"מחיר עסקה ממוצע", stMedPsm:"מחיר חציוני למ״ר",
-  stChg12:"מגמת 24 חוד׳", stTrendBase:"חציוני למ״ר, מבוסס מדגם", stNoTrend:"מדגם לא מספק למגמה",
-  stRentE:"אומדן שכירות", stRentNote:"נגזר משכונה/עיר · לא מחירי חוזים", stYield:"תשואה משוערת", stLast:"עסקה אחרונה",
-  stObserved:"נצפה ברחוב בלבד", stPerSqm:"למ״ר",
-  stBlendT:"אומדן מקומי משוקלל",
-  stBlendWhy:(a,b,c,r)=>`מבוסס על ${a===1?"עסקה אחת":a+" עסקאות"} ברחוב + ${b} עסקאות השוואה מ-${c} רחובות סמוכים ברדיוס ${r} מ׳ (מודל). משוקלל לפי מרחק, דמיון נכס ועדכניות — נפרד מהמחיר הנצפה ברחוב.`,
-  stNoTx:"לא נמצאו עסקאות ישירות ברחוב בתקופת המדגם. מוצג אומדן סביבתי משוקלל בלבד.",
-  stThin:"מדגם הרחוב קטן — הנתונים הנצפים מוצגים כפי שהם, והאומדן מחוזק בעסקאות השוואה סמוכות.",
-  stTxT:"עסקאות אחרונות ברחוב", stShowComps:n=>`הצג ${n} עסקאות השוואה סמוכות +`, stHideComps:"הסתר עסקאות השוואה −",
-  stCompStreets:"רחובות השוואה", stCompCol:"ציון השוואה", stType:"סוג", stYear:"שנת בנייה", stHouseCol:"בית",
-  stTrendT:"מגמת הרחוב מול הסביבה · 12-24 חוד׳", stRelT:"מיקום המחיר",
-  stRelBelow:(p,n)=>`הרחוב נסחר כ-${p}% מתחת לחציון ${n}.`, stRelAbove:(p,n)=>`הרחוב נסחר בפרמיה של כ-${p}% ביחס ל${n}.`,
-  stHow:"איך חישבנו את הנתון?",
-  stProvBody:(a,b,c,r,w)=>`${a} עסקאות ברחוב עצמו · ${b} עסקאות השוואה מ-${c} רחובות סמוכים · רדיוס: ${r?r+" מ׳":"—"} · חלון: ${w} חודשים · תקופה: 09.2021–08.2026 · ספי מדגם: 10+/5–9/1–4.`,
-  stProvSrc:"מקור: מרשם רחובות מובנה בקובץ (שמות רחובות מוכרים); עסקאות — שכבת מודל דטרמיניסטית מעוגנת למחירי העיר/השכונה שבלוח (למ״ס/הכלכלן הראשי, אמצע 2026). מרחקים ומיקומים — קואורדינטות מודל, תצוגת מפה סכמטית. אומדן — לא רישום עסקאות רשמי.",
-  stBadgeTxt:"שכבת רחוב · אומדן מעוגן-עיר · לא נתון רשמי ברמת רחוב",
-  stTopT:"רחובות מובילים · מודל 5 שנים", stTopNote:"רק רחובות עם 5+ עסקאות מדגם מדורגים; הציון משוקלל בוודאות הנתונים.",
 
   cmdKicker:"PROPX · מרכז שליטה",
-  cmdFresh:MKT.checked?`מדדים רשמיים עודכנו ${MKT.checkedDay} · למ״ס · בנק ישראל`:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
+  cmdFresh:MKT.checked?`מדדים רשמיים נבדקו ${MKT.checkedDay} · למ״ס · בנק ישראל`:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
   capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`ציון השקעה מוביל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
   mapHint:"לחיצה לבחירת האזור",
@@ -2163,21 +2020,29 @@ en:{
   h1:"Israel\u2019s Real-Estate Market", h1sub:"Everything that matters in Israel\u2019s <b>new-home</b> market",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Areas",navCompare:"Compare",
-  kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"Developer sales · trailing 12 months", kpiNoteRent:"New-home rentals (estimate) · trailing 12 months",
-  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", yoy:"12M change", tx:"Sales", y3:"3-year change",
+  kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"New homes from developers · mid-2026 snapshot · class and period on every card", kpiNoteRent:"Rent: CBS averages (national Q1 2026, cities 2025) + 8% new-build premium — modelled",
+  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"Sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
-  vsPrev:"vs. previous period", est:"estimate", perMonth:"per month", perYear:"per year",
+  est:"estimate", perMonth:"per month", perYear:"per year", yoyLbl:"Annual change",
+  vcName:{raw:"Official",der:"Derived",mod:"Modelled",na:"Unavailable"},
+  vcTip:{raw:"As published by an official source",der:"Computed from an official figure by a stated formula",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown"},
+  perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
+  perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
+  perTx2025:"annual pace · 2025", perTxH1:"H1 2026, annualized", perTxEst:"estimated annual pace",
+  perInv:"CBS · end-June 2026", perInvEst:"anchored to the national total",
+  naShort:"Unavailable", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
+  provNote:"Every value is classed: official · derived · modelled · unavailable",
   mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
   mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
   rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
-  trendTitle:"Price trend", chartOf:"Metric",
-  cPrice:"Property price",cPsm:"Price per m²",cRent:"Rent",cYield:"Yield",
-  p6m:"6M",p1y:"1Y",p3y:"3Y",p5y:"5Y",p10y:"10Y",
+  trendTitle:"Price trend", vcNA:"Unavailable",
+  trendNAWhy:"Official local price history has not been collected yet, so no trend chart is shown here.",
+  trendNANext:"The latest annual change is on the overview cards, with its source and period. A chart will return only from official series actually collected.",
   svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · new-home estimate",
   svrBuy:"Avg purchase price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
   svrYears:"years of rent", svrFormula:(p,r,y)=>`If a property here costs <b class="num">${p}</b> and average rent is <b class="num">${r}</b> a month — the estimated gross yield is <b class="num">${y}</b>.`,
   tblNbhd:"Neighborhoods in this area", tblCities:"Cities in this area", tblDistricts:"Districts of Israel",
-  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"12M change",thTx:"Sales",thListings:"Inventory",thTrend:"Trend",thConf:"Confidence",
+  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"Annual change",thTx:"Sales/yr",thListings:"Inventory",
   areas:"areas", filtered:"Filtered",
   fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Stage",
   rAll:"All",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -2186,28 +2051,26 @@ en:{
   cAll:"All",cReady:"Move-in ready",cPaper:"Pre-construction", clearFilters:"Clear filters",
   filterNote:"Filters apply multipliers over the estimate layer",
   rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
-  tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Most transactions",
+  tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Highest sales pace",
   cmpTitle:"Compare areas", cmpNote:"Up to four areas · ★ = leader per metric", cmpAdd:"+ Add area",
   cmpEmpty:"Pick up to four areas to compare", cmpMax:"Up to 4 areas",
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
-  confTitle:"Data confidence",
-  confHigh:"High confidence",confMed:"Medium confidence",confLow:"Low confidence",
-  confHighS:"High",confMedS:"Medium",confLowS:"Low",
-  confBasedOn:n=>`Based on <b class="num">${n}</b> transactions in the last 12 months`,
-  confBasedOnLow:n=>`Based on only <b class="num">${n}</b> transactions`,
-  confHighNote:"A wide sample — the averages reflect this market well.",
-  confMedNote:"A medium sample — expect deviations; check nearby areas too.",
-  confLowNote:"A very small sample — indicative only, not a basis for decisions.",
-  geoGroup:"National registry — every locality & street in Israel", geoTagSt:"street", geoTagLoc:"locality",
+  confTitle:"Data basis", basisNote:"official · derived · modelled · unavailable",
+  basisNA:"Median price and rent · local price history · investment scores and capital rankings (hidden until official price history is collected)",
+  basisTx:"Transactions: pulled live from the Tax Authority registry (transactions table), with each pull's sample scope and coverage.",
+  txPace:"Annual sales pace",
+  tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; sales/yr is official only where published, otherwise estimated; annual change is derived, May–Jun 2026.",
+  rankFoot:"Rankings use the board's values — derived from official publications or model estimates, by row (classes are shown in the areas table).",
+  geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
   geoLyr:"National registry", geoClose:"Close",
   geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
   geoPend:"official code pending — updates on the next registry refresh",
   geoNoDirect:(lvl,nm)=>`No direct market observations at this resolution — the analysis is shown at ${lvl} (${nm}) per the geographic fallback ladder. Nothing is invented at the location itself.`,
   geoResCity:"city resolution", geoResDist:"district resolution", geoResNat:"national resolution",
-  geoCovT:"Data coverage", geoStreetsN:n=>`${fmtInt(n)} registered streets`,
-  geoDistBasis:"Location anchor: locality centroid per the official registry", geoTagModel:"estimate",
+  geoStreetsN:n=>`${fmtInt(n)} registered streets`,
+  geoDistBasis:"Location anchor: locality centroid per the official registry",
   geoMPrice:"New-home price", geoMSqm:"₪ per m²", geoMRent:"Monthly rent", geoMYoy:"Annual change",
-  geoMTx:"Deals/yr", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
+  geoMTx:"Annual sales pace", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
   txTitle:"Latest reported transactions in this area",
   txOfficialBadge:"Official source · Israel Tax Authority (via GovMap) · observed data",
   txLatestInSrc:d=>`Latest transaction in source: ${d}`, txSynced:d=>`Last sync: ${d}`,
@@ -2216,16 +2079,17 @@ en:{
   txMapToggle:"Show sold deals on map", txModeFixture:"local verification mode — test data",
   txSumN:"Transactions", txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
   txThin:n=>`Only ${n} transactions — insufficient sample for a reliable median; shown as individual observations`,
-  txScopeBuilding:(d,n)=>`Found <b>${n}</b> transactions at the requested address: ${d}`,
-  txScopeStreet:(d,n)=>`Found <b>${n}</b> transactions on the street: ${d}`,
-  txScopeLoc:(d,n)=>`Found <b>${n}</b> transactions in the locality: ${d}`,
+  txScopeBuilding:(d,n)=>`Address-area sample: <b>${n}</b> deals from buildings within 60 m of ${d}; same-building deals are marked`,
+  txScopeStreet:(d,n)=>`Street-area sample: <b>${n}</b> deals from buildings within 120 m of the ${d} reference point — may include adjacent streets; each row shows its own street`,
+  txScopeLoc:(d,n)=>`Locality-centre sample: <b>${n}</b> deals from up to 40 buildings within 400 m of the ${d} centre — not all deals in ${d}`,
   txScopeRadius:(r,n,q)=>`Not enough transactions at the requested resolution${q?` (${q})`:""} — analysis expanded to a <b>${r}m</b> radius and found <b>${n}</b>. These did not occur on the selected street itself.`,
   txOnlyNonRes:n=>`${n} reported deals found in this area, none of them residential (land/commercial/unclassified). Try widening the date range.`,
   txScopeNbhd:(n,c,q)=>`No transactions at the requested resolution${q?` (${q})`:""} — showing <b>${c}</b> transactions from the <b>${n}</b> neighborhood, per the neighborhood recorded on the official records themselves. These did not occur on the street itself.`,
   txThinStreet:n=>`Street data is based on ${n} transactions only — too small a sample for a street price. They are shown as individual observations; any wider benchmark is shown separately and never blended in.`,
   txNoStreet:"street not stated on the official record", txTabOther:"Non-residential",
   txNonResShown:n=>`${n} non-residential deals (land/commercial) are shown in their own tab and excluded from the apartment statistics`,
-  txCoverage:(got,total,pq,pa)=>`retrieved ${got} of ${total} deals the source reports here (${pq} of ${pa} segments) — widen the period to pull more`,
+  txCoverage:(got,total,pq,pa,more)=>`coverage: retrieved ${got} of ${total} deals the source reports across the ${pa} buildings in range (${pq} of ${pa} checked)${more?" — widen the period to pull more":""}`,
+  txCoverageNA:"coverage: not reported by the source for this pull",
   txSameBld:"same building", txMetersAway:"m away", txSrcGov:"Tax Authority",
   txTagProb:"new (probable)", txTagUnk:"unclassified",
   txLoading:"Loading reported transactions…",
@@ -2240,10 +2104,10 @@ en:{
   srcTitle:"Sources & methodology",
   srcATitle:"Calibration basis — new developer homes only",
   srcAText:"Every value on this board covers new homes from developers only (no second-hand), approximated from official publications as of mid-2026:",
-  srcA1:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
+  srcA1:MKT.nh?`National annual change — CBS new-homes price index: ${MKT.nh.yoyTxt.replace("-","−")} (${MKT.nh.periodEn} vs. a year earlier · daily sync); regional change — derived, May–Jun 2026`:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions and derived series are labeled estimates — not row-level official statistics. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
+  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · unavailable) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -2257,24 +2121,24 @@ en:{
   aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
   aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
   pageCtx:"Israeli Market Overview | Internal",
-  tapeRet:MKT.checked?"Checked against sources":"Data retrieved", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"Daily sync · Bank of Israel · CBS":"Freshest: Aug 2026",
-  tapeBoi:"Bank of Israel rate", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`Last checked ${MKT.boi.checkedDay}`:MKT.boi.next?`Next decision: ${MKT.boi.next}`:`Bank of Israel · ${MKT.boi.checkedDay}`):"Cut to 3.25% · 1.9.2026",
-  provBtn:"Data source", provOfficial:"Official", provEst:"Estimate", provDerived:"Derived",
+  tapeRet:MKT.checked?"Official indicators checked":"Data retrieved", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"BoI rate and new-homes index · other tiles are static":"Freshest: Aug 2026",
+  tapeBoi:"Bank of Israel rate", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`Last checked ${MKT.boi.checkedDay}`:MKT.boi.next?`Next decision: ${MKT.boi.next}`:`Bank of Israel · ${MKT.boi.checkedDay}`):"Static · cut to 3.25% · 1.9.2026",
+  provBtn:"Data source",
   prov:{
     rows:[
-      {n:"Average price",s:"CBS city/district averages (Q1–Q2 2026) + ~12% new-build premium",cls:l=>l.e?"Estimate":"Derived"},
-      {n:"Annual change",s:MKT.nh?`National: CBS new-homes price index, ${MKT.nh.periodEn} (daily sync); regional: general trend −0.5pp (May–Jun 2026)`:"CBS new-homes price index, May–Jun 2026; regional: general trend −0.5pp",cls:l=>l.id==="il"?"Official":"Derived"},
-      {n:"Rent",s:"CBS rents — national/district Q1-2026, cities 2025 — + ~8% premium",cls:()=>"Estimate"},
-      {n:"Sales",s:"Tax Authority / Chief Economist, 2025 summary",cls:l=>(l.o||"").includes("t")?"Official":"Estimate"},
-      {n:"Inventory",s:"CBS — unsold new-home inventory, end-June 2026",cls:l=>(l.o||"").includes("l")?"Official":"Estimate"},
+      {n:"Average price",s:"CBS city/district averages (Q1–Q2 2026) + ~12% new-build premium",f:"price"},
+      {n:"Annual change",s:MKT.nh?`National: CBS new-homes price index, ${MKT.nh.periodEn} (daily sync); regional: general trend −0.5pp (May–Jun 2026)`:"CBS new-homes price index, May–Jun 2026; regional: general trend −0.5pp",f:"yoy"},
+      {n:"Rent",s:"CBS rents — national/district Q1-2026, cities 2025 — + ~8% premium",f:"rent"},
+      {n:"Sales",s:"Tax Authority / Chief Economist, 2025 summary",f:"tx"},
+      {n:"Inventory",s:"CBS — unsold new-home inventory, end-June 2026",f:"listings"},
     ],
     foot:"Retrieved: 30.08.2026 · Neighborhoods & sub-areas: relative estimates anchored to the city · not official statistics",
   },
   bltTitle:"Market bulletins · new homes", bltNote:"National figures from the official publications · mid-2026",
-  blt1k:"New-homes price index", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`Annual change · CBS, ${MKT.nh.periodEn}`:"Annual change · CBS, May–Jun 2026",
-  blt2k:"Unsold inventory", blt2s:"≈26 months of supply · June 2026",
-  blt3k:"Developer sales, 2025", blt3s:"37.5% of all deals · ~a third subsidized",
-  blt4k:"May 2026 trend", blt4v:"Recovery ↗", blt4s:"Financing deals returned · Chief Economist",
+  blt1k:"New-homes price index", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`Annual change · CBS, ${MKT.nh.periodEn}`:"Static · annual change · CBS, May–Jun 2026",
+  blt2k:"Unsold inventory", blt2s:"Static · CBS, end-June 2026 · ≈26 months of supply",
+  blt3k:"Developer sales, 2025", blt3s:"Static · 2025 summary · 37.5% of all deals",
+  blt4k:"May 2026 trend", blt4v:"Recovery ↗", blt4s:"Static · Chief Economist · financing deals returned",
   gdTitle:"Quick guide to buying from a developer", gdNote:"General information only — not legal, tax or financial advice",
   gd1a:"Check the project & its financing", gd1b:"Confirm a valid building permit and closed bank financing, and pay only with vouchers into the escrow account.",
   gd2a:"Sale-Law guarantee", gd2b:"Any payment beyond 7% of the price must be secured — a bank guarantee or insurance policy — under the Sale (Apartments) Law.",
@@ -2283,7 +2147,6 @@ en:{
   gd5a:"Technical spec & upgrades", gd5b:"Read the binding spec annexed to the contract: what the price includes, what counts as a paid upgrade, and which credits you get for waived items.",
   gd6a:"Closing costs & delivery", gd6b:"Budget for purchase tax, legal fees, utility hookups and parking/storage; delivery delays beyond the legal grace entitle you to compensation.",
   cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
-  monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   navCap:"Capital",
   ciUnitsN:n=>n===1?"1 unit":`${n} units`,
   ciScoreT:"Investment score",
@@ -2330,33 +2193,9 @@ en:{
   ciWhyNotLine:(n,p,c)=>`Why above ${n}? stronger on ${p}${c?`; in return, ${n} is stronger on ${c}`:""}.`,
   ciAsmTargets:(y,r,b)=>`Price targets: hold yield ${y}% net · resale −${r}% · bulk −${b}%`,
   aZoom:"Map zoom", aZoomIn:"Zoom in", aZoomOut:"Zoom out", aZoomReset:"Reset map view",
-  lyrSt:"L2.5 · Street", stSecT:"Street profile", stSecNote:"Structured street registry · city-anchored model transactions · estimate",
-  stGroup:"Streets", stStreet:"St.", stTxShort:"deals", stM:"m", stMonths:"mo. sample", stMoShort:"mo",
-  stWinA:"Time window", stWinOf:w=>`in the last ${w} months`, stClose:"Close street profile",
-  stStrong:"Strong sample", stMedS:"Medium sample", stLow:"Small sample", stNone:"No street transactions",
-  stBasedOn:n=>n===1?"1 street transaction":`${n} street transactions`, stConf:"Confidence",
-  stRadius:"Comparable radius", stHouse:h=>`No. ${h} · building profile — in preparation`,
-  stNbApprox:"approximate neighborhood", stNoRows:"No transactions in the selected window",
-  stTxN:"Street transactions", stMedP:"Median sale price", stAvgP:"Average sale price", stMedPsm:"Median price/m²",
-  stChg12:"24-mo. trend", stTrendBase:"Median psm, sample-based", stNoTrend:"Sample too thin for a trend",
-  stRentE:"Rent estimate", stRentNote:"Derived from area · not contract rents", stYield:"Estimated yield", stLast:"Latest deal",
-  stObserved:"Observed on this street only", stPerSqm:"/m²",
-  stBlendT:"Weighted local estimate",
-  stBlendWhy:(a,b,c,r)=>`Based on ${a===1?"1 street transaction":a+" street transactions"} + ${b} comparables from ${c} nearby streets within ${r} m (model). Weighted by distance, property similarity and recency — kept separate from the observed street price.`,
-  stNoTx:"No direct transactions were found on this street in the sample period. Only a weighted nearby estimate is shown.",
-  stThin:"The street sample is small — observed figures are shown as-is and the estimate is reinforced with nearby comparables.",
-  stTxT:"Recent transactions on the street", stShowComps:n=>`Show ${n} nearby comparables +`, stHideComps:"Hide comparables −",
-  stCompStreets:"Comparable streets", stCompCol:"Comp score", stType:"Type", stYear:"Built", stHouseCol:"No.",
-  stTrendT:"Street vs. surroundings · 12-24 mo.", stRelT:"Price position",
-  stRelBelow:(p,n)=>`The street trades about ${p}% below the ${n} median.`, stRelAbove:(p,n)=>`The street trades at a ~${p}% premium to ${n}.`,
-  stHow:"How was this computed?",
-  stProvBody:(a,b,c,r,w)=>`${a} transactions on the street itself · ${b} comparables from ${c} nearby streets · radius: ${r?r+" m":"—"} · window: ${w} months · period: 09.2021–08.2026 · sample thresholds: 10+/5–9/1–4.`,
-  stProvSrc:"Source: structured in-file street registry (recognized street names); transactions — a deterministic model layer anchored to the city/neighborhood prices on this board (CBS/Chief Economist, mid-2026). Distances and positions are model coordinates; the map view is schematic. Estimate — not an official deals registry.",
-  stBadgeTxt:"Street layer · city-anchored estimate · not street-level official data",
-  stTopT:"Top streets · 5-year model", stTopNote:"Only streets with 5+ sampled deals are ranked; scores are scaled by data confidence.",
 
   cmdKicker:"PROPX · Command Center",
-  cmdFresh:MKT.checked?`Official indicators updated ${MKT.checkedDay} · CBS · Bank of Israel`:"Data: CBS & Chief Economist · retrieved 30.08.2026",
+  cmdFresh:MKT.checked?`Official indicators checked ${MKT.checkedDay} · CBS · Bank of Israel`:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
   capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top investment score: ${n}, ${s} of 100 — open capital analysis`,
   mapHint:"Click to select this area",
@@ -2440,9 +2279,15 @@ en:{
 /* =====================================================================
    3 · STATE + SELECTORS
    ===================================================================== */
+/* Capital Intelligence (scores, "opportunity" map layer, rankings, portfolio,
+   projections) reads an appreciation input built from NATIONAL_CURVE — an
+   approximate path, not observed local history. Until official index history
+   replaces it, the whole model stays off screen: no score, ranking or
+   recommendation derived from it may be shown. Gate: test/integrity.test.js. */
+const CI_ENABLED=false;
 const state={
   lang:"he", mode:"sale", locId:"il",
-  mapMetric:"price", chartMetric:"price", period:"3y",
+  mapMetric:"price",
   filters:{rooms:"all",type:"all",area:"all",cond:"all"},
   compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
   sort:{key:"price",dir:-1},
@@ -2484,22 +2329,52 @@ function metricsOf(id){
   const tx=Math.max(3,Math.round(b.tx*share));
   const listings=Math.max(2,Math.round(b.listings*share));
   return{
-    price, median:Math.round(price*.93/1000)*1000, sqm,
-    rent, rentMedian:Math.round(rent*.95/10)*10, rentPsm:+(rent/area).toFixed(1),
+    price, sqm,
+    rent, rentPsm:+(rent/area).toFixed(1),
     yoy:b.yoy, y3:b.y3, rentYoy:b.rentYoy,
     tx, listings,
     grossYield:+(rent*12/price*100).toFixed(2),
     priceToRent:+(price/(rent*12)).toFixed(1),
     areaSqm:Math.round(area),
-    confidence:tx>=120?"high":tx>=40?"med":"low",
   };
 }
 
-const PERIODS={ "6m":7,"1y":13,"3y":37,"5y":61,"10y":121 };
-function seriesSlice(id,metric){
-  const pts=seriesFor(id).slice(-PERIODS[state.period]);
-  return pts.map(p=>({date:p.date,v:p[metric]}));
+/* ---------- value classes ----------
+   Every figure on screen is RAW (as published by an official source),
+   DERIVED (computed from published figures by a stated formula), MODELLED
+   (an estimate — never an observation) or UNAVAILABLE (nothing supports it,
+   so nothing is shown). Classes come only from row metadata — the o/e flags
+   documented on LOCATIONS and the live MKT snapshot — never from a value. */
+const TX_H1_2026={tlv:1};   /* sales pace published for H1-2026, annualized (see LOCATIONS) */
+function vcOf(l,field){
+  const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=filtersActive(),o=l.o||"";
+  switch(field){
+    case "price":case "sqm":return filt||est?"mod":"der";
+    case "yoy":return l.id==="il"?"raw":est?"mod":"der";   /* national = the CBS new-homes index */
+    case "y3":case "rentYoy":return est?"mod":"der";
+    case "tx":return !filt&&o.includes("t")?"raw":"mod";
+    case "listings":return !filt&&o.includes("l")?"raw":"mod";
+    case "ms":return !filt&&o.includes("t")&&o.includes("l")?"der":"mod";
+    case "rent":case "rentPsm":case "yield":case "ptr":return "mod";   /* ×1.08 new-build premium = model */
+  }
+  return "na";
 }
+/* the period a figure describes — a dated snapshot is never "the last 12 months" */
+function vcPer(l,field){
+  const t=T(),o=l.o||"";
+  switch(field){
+    case "yoy":return l.id==="il"&&MKT.nh?(state.lang==="he"?MKT.nh.periodHe:MKT.nh.periodEn):t.perYoy;
+    case "y3":return t.perY3;
+    case "price":case "sqm":return t.perPrice;
+    case "rent":case "rentPsm":case "yield":case "ptr":return t.perRent;
+    case "rentYoy":return l.type==="country"||l.type==="district"?t.perRentQ1:t.perRentCity;
+    case "tx":return TX_H1_2026[l.id]?t.perTxH1:o.includes("t")?t.perTx2025:t.perTxEst;
+    case "listings":return o.includes("l")?t.perInv:t.perInvEst;
+  }
+  return "";
+}
+const vcTag=cls=>`<span class="vc ${cls}" title="${T().vcTip[cls]}">${T().vcName[cls]}</span>`;
+
 
 /* =====================================================================
    4 · FORMATTERS
@@ -2520,7 +2395,6 @@ function deltaHTML(n,small){
     :cls==="down"?'<svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 9L1 4h8z"/></svg>':"";
   return `<span class="delta ${cls}"${small?' style="font-size:11px"':""}>${arrow}<span class="num">${fmtPct(n)}</span></span>`;
 }
-function fmtMonth(d){const t=T();return t.monthsShort[d.getMonth()]+" "+String(d.getFullYear()).slice(2)}
 const el=(id)=>document.getElementById(id);
 
 /* =====================================================================
@@ -2582,14 +2456,14 @@ const MAP_METRICS=[
   {id:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
   {id:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
   {id:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
-  {id:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp},
+  ...(CI_ENABLED?[{id:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp}]:[]),
 ];
 const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-10-01.daily-official-indicators";
+const PROPX_BUILD="2026-10-01.p0-data-integrity";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -2671,10 +2545,9 @@ function renderCrumbs(){
     return `<button data-go="${l.id}" ${cur?'aria-current="true"':""}>${heName(l)}</button>`+
       (cur?"":'<span class="sep">›</span>');
   }).join("");
-  if(state.street){
-    const st=stEnt(state.street.id);
+  if(state.geo){   /* an official registry street/locality opened from search */
     el("crumbs").hidden=false;
-    el("crumbs").innerHTML+=`<span class="sep">›</span><button aria-current="true" style="cursor:default">${stTitleTxt(st)}</button>`;
+    el("crumbs").innerHTML+=`<span class="sep">›</span><button aria-current="true" style="cursor:default">${state.geo.he}</button>`;
   }
   el("crumbs").querySelectorAll("button[data-go]").forEach(b=>{
     b.addEventListener("click",()=>selectLocation(b.dataset.go));
@@ -2688,20 +2561,23 @@ function renderKPIs(skeleton){
   const nat=state.locId==="il"?null:metricsOf("il");
   el("kpiTitle").textContent=(state.locId==="il"?t.kpiTitleNat:t.kpiTitleFor+heName(l));
   el("kpiNote").textContent=state.mode==="sale"?t.kpiNoteSale:t.kpiNoteRent;
+  /* every card carries its value class and the period it describes; a median
+     needs official deals with real coverage, so until then it is UNAVAILABLE */
+  const dl=f=>`${t.yoyLbl} · ${vcPer(l,f)} · ${t.vcName[vcOf(l,f)]}`;
   const cards=state.mode==="sale"?[
-    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,d:m.yoy},
-    {k:"median",l:t.medPrice,v:m.median,f:fmtNIS,d:m.yoy-0.3,n:nat?(m.median/nat.median-1)*100:null},
-    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),n:nat?(m.sqm/nat.sqm-1)*100:null},
-    {k:"yoy",l:t.yoy,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy)},
-    {k:"tx",l:t.tx,v:m.tx,f:fmtInt,s:"12M"},
-    {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3)},
+    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy")},
+    {k:"median",l:t.medPrice,na:t.naMedianWhy},
+    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null},
+    {k:"yoy",l:t.yoyLbl,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy")},
+    {k:"tx",l:t.tx,v:m.tx,f:fmtInt,vc:vcOf(l,"tx"),s:vcPer(l,"tx")},
+    {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3")},
   ]:[
-    {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,d:m.rentYoy},
-    {k:"rentMedian",l:t.medRent,v:m.rentMedian,f:fmtNIS,d:m.rentYoy-0.2,n:nat?(m.rentMedian/nat.rentMedian-1)*100:null},
-    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1),n:nat?(m.rentPsm/nat.rentPsm-1)*100:null},
-    {k:"rentYoy",l:t.yoy,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy)},
-    {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",s:t.est},
-    {k:"listings",l:t.listings,v:m.listings,f:fmtInt},
+    {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,vc:vcOf(l,"rent"),d:m.rentYoy,dl:dl("rentYoy")},
+    {k:"rentMedian",l:t.medRent,na:t.naMedianWhy},
+    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1),vc:vcOf(l,"rentPsm"),s:vcPer(l,"rentPsm"),n:nat?(m.rentPsm/nat.rentPsm-1)*100:null},
+    {k:"rentYoy",l:t.yoyLbl,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy),vc:vcOf(l,"rentYoy"),s:vcPer(l,"rentYoy")},
+    {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",vc:vcOf(l,"yield"),s:t.yieldFormula},
+    {k:"listings",l:t.listings,v:m.listings,f:fmtInt,vc:vcOf(l,"listings"),s:vcPer(l,"listings")},
   ];
   const KICO={
     price:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
@@ -2719,13 +2595,16 @@ function renderKPIs(skeleton){
   };
   const KTONE={price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
     rent:"b",rentMedian:"v",rentPsm:"o",rentYoy:"g",yield:"g",listings:"v"};
+  const cmpOf=c=>c.na?`<span>${c.na}</span>`
+    :vcTag(c.vc)+(c.d!==undefined?deltaHTML(c.d,true)+`<span>${c.dl}</span>`
+      :c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`
+      :`<span>${c.s||""}</span>`);
   el("kpis").innerHTML=cards.map((c,i)=>`
-    <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}">
+    <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}${c.na?" na":""}">
       <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
       <span class="lbl">${c.l}</span>
-      <span class="val ${c.cls||""}"><span class="num" data-kpi="${c.k}">${c.f(c.v)}</span></span>
-      <span class="cmp">${c.d!==undefined?deltaHTML(c.d,true)+`<span>${t.vsPrev}</span>`:(c.s||"")}${c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`:(c.d===undefined&&!c.s?"&nbsp;":"")}</span>
-      ${i===0?`<div class="kpi-spark" aria-hidden="true">${sparkSVG(state.locId,150,38,13)}</div>`:""}
+      <span class="val ${c.cls||""}">${c.na?`<span class="na-v">${t.naShort}</span>`:`<span class="num" data-kpi="${c.k}">${c.f(c.v)}</span>`}</span>
+      <span class="cmp">${cmpOf(c)}</span>
     </div>`).join("");
   if(!skeleton&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
     el("kpis").querySelectorAll("[data-kpi]").forEach(node=>{
@@ -2922,7 +2801,7 @@ function renderMap(keepVB){
       inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="${fsd.toFixed(2)}" style="stroke-width:${(fsd*.32).toFixed(2)}" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
     /* city nodes — the geography carries the market; gold = top capital scores */
-    let capIds=[];try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
+    let capIds=[];if(CI_ENABLED)try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
       .map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id})}catch(e){}
     /* progressive disclosure: major cities always; the rest as you zoom in */
     const vbw=vb[2];
@@ -2958,33 +2837,6 @@ function renderMap(keepVB){
       inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
     }
   }
-  /* street overlay: schematic node + comparison-radius rings (labeled schematic) */
-  if(state.street&&ctx.level==="city"){
-    const st=stEnt(state.street.id);
-    const fc=ctx.focus.type==="city"?ctx.focus:cityOf(ctx.focus);
-    if(fc&&fc.id===st.city){
-      const pos=(typeof itemPos!=="undefined"&&st.nbhd&&itemPos[st.nbhd])||(fc.lat!==undefined?proj(fc.lat,fc.lng):null);
-      if(pos){
-        const rr=rng(seedOf(st.id+"mp"));
-        const sx=pos[0]+(rr()-.5)*vb[2]*.07, sy=pos[1]+(rr()-.5)*vb[3]*.07;
-        const P=stProfile(st.id,stWin);
-        const R=stCityR(st.city);
-        let ov="";
-        if(P.radiusUsed){
-          for(const rM of [250,P.radiusUsed].filter((v,i,a)=>v&&a.indexOf(v)===i)){
-            ov+=`<circle class="map-ring" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(rM/R*vb[2]*.3).toFixed(1)}" stroke-width="${(vb[2]/250).toFixed(2)}"/>`;
-          }
-          for(const c of P.compStreets.slice(0,6)){
-            const a2=rng(seedOf(c.st.id+"mp"));
-            const cx=sx+(a2()-.5)*(c.distM/R)*vb[2]*.62, cy=sy+(a2()-.5)*(c.distM/R)*vb[3]*.62;
-            ov+=`<circle class="map-stcomp" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(dotR*.5).toFixed(1)}"><title>${state.lang==="he"?c.st.he:c.st.en}</title></circle>`;
-          }
-        }
-        ov+=`<circle class="map-stnode" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(dotR*.85).toFixed(1)}"><title>${state.lang==="he"?st.he:st.en}</title></circle>`;
-        inner+=ov;
-      }
-    }
-  }
   svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+txMarkersSVG(sf)+geoPinSVG(sf);
   if(keepVB){currentVB=vb.slice();svg.setAttribute("viewBox",vb.join(" "))}
   else{mapCtxVB=vb.slice();svg.setAttribute("viewBox",currentVB.join(" "));animateViewBox(svg,vb)}
@@ -3002,11 +2854,12 @@ function renderMap(keepVB){
     node.addEventListener("click",()=>selectLocation(node.dataset.loc));
     node.addEventListener("mousemove",e=>{
       const lm=metricsOf(node.dataset.loc),ll=LOC[node.dataset.loc];
-      tip.innerHTML=`<div class="mt-h"><span>${heName(ll)}</span><span class="mt-c ${lm.confidence}" title="${T()["conf"+(lm.confidence==="high"?"High":lm.confidence==="med"?"Med":"Low")]}"></span></div>
+      const mf={sqm:"sqm",yoy:"yoy",rent:"rent",yield:"yield"}[mm.id]||"price";
+      tip.innerHTML=`<div class="mt-h"><span>${heName(ll)}</span>${vcTag(vcOf(ll,mf))}</div>
         <div class="mt-kv"><span>${mm.label()}</span><b class="num">${mm.fmt(mm.get(lm,node.dataset.loc))}</b></div>
         <div class="mt-kv"><span>${T().psm}</span><b class="num">${fmtNIS(lm.sqm)}</b></div>
-        <div class="mt-kv"><span>${T().thYoy}</span><b class="num ${deltaCls(lm.yoy)}">${fmtPct(lm.yoy)}</b></div>
-        <div class="mt-kv"><span>${T().tx} · 12M</span><b class="num">${fmtInt(lm.tx)}</b></div>
+        <div class="mt-kv"><span>${T().yoyLbl}</span><b class="num ${deltaCls(lm.yoy)}">${fmtPct(lm.yoy)}</b></div>
+        <div class="mt-kv"><span>${T().txPace} · ${T().vcName[vcOf(ll,"tx")]}</span><b class="num">${fmtInt(lm.tx)}</b></div>
         <div class="mt-hint">${T().mapHint}</div>`;
       const r=holder.getBoundingClientRect();
       let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
@@ -3043,9 +2896,10 @@ function renderMap(keepVB){
 function renderProfile(){
   const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
   const chain=chainOf(l).map(heName).reverse().join(" · ");
-  const conf={high:t.confHigh,med:t.confMed,low:t.confLow}[m.confidence];
-  const est=l.e||l.type==="nbhd"||l.type==="sub";
-  const primV=state.mode==="sale"?m.price:m.rent;
+  const sale=state.mode==="sale";
+  const primV=sale?m.price:m.rent;
+  const yf=sale?"yoy":"rentYoy";
+  const stat=(lb,v,f,s)=>`<div class="stat"><div class="l">${lb}</div><div class="v num">${v}</div><div class="s">${vcTag(vcOf(l,f))}${s?` ${s}`:""}</div></div>`;
   el("profileCard").innerHTML=`
     <div class="profile-head">
       <div>
@@ -3054,131 +2908,48 @@ function renderProfile(){
         <div class="where">${chain||t.kpiTitleNat}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:600">${t.filtered}</span>`:""}</div>
       </div>
       <div class="pf-side">
-        <span class="conf ${m.confidence}"><i></i>${conf}</span>
-        ${["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
+        ${CI_ENABLED&&["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
       </div>
     </div>
     <div class="asset-price">
       <div>
-        <div class="ap-l">${state.mode==="sale"?t.avgPrice:t.avgRent}${est?` · <span class="est-tag">${t.est}</span>`:""}</div>
+        <div class="ap-l">${sale?t.avgPrice:t.avgRent} ${vcTag(vcOf(l,sale?"price":"rent"))}</div>
         <div class="ap-v num">${fmtNIS(primV)}</div>
-        <div class="ap-d">${deltaHTML(state.mode==="sale"?m.yoy:m.rentYoy,true)}<span>${t.yoy}</span></div>
+        <div class="ap-d">${deltaHTML(sale?m.yoy:m.rentYoy,true)}<span>${t.yoyLbl} · ${vcPer(l,yf)} · ${t.vcName[vcOf(l,yf)]}</span></div>
       </div>
-      <div class="ap-spark" aria-hidden="true">${sparkSVG(l.id,150,42,13)}</div>
     </div>
     <div class="stats">
-      <div class="stat"><div class="l">${t.psm}</div><div class="v num">${fmtNIS(m.sqm)}</div></div>
-      <div class="stat"><div class="l">${state.mode==="sale"?t.avgRent:t.avgPrice}</div><div class="v num">${fmtNIS(state.mode==="sale"?m.rent:m.price)}</div><div class="s">${state.mode==="sale"?t.perMonth:""}</div></div>
-      <div class="stat"><div class="l">${t.svrYield}</div><div class="v num">${m.grossYield.toFixed(1)}%</div><div class="s">${t.est}</div></div>
-      <div class="stat"><div class="l">${t.tx}</div><div class="v num">${fmtInt(m.tx)}</div><div class="s">12M</div></div>
-      <div class="stat"><div class="l">${t.listings}</div><div class="v num">${fmtInt(m.listings)}</div><div class="s">${(l.o||"").includes("l")?t.provOfficial:t.est}</div></div>
-      <div class="stat"><div class="l">${t.y3}</div><div class="v">${deltaHTML(m.y3,true)}</div></div>
+      ${stat(t.psm,fmtNIS(m.sqm),"sqm")}
+      ${stat(sale?t.avgRent:t.avgPrice,fmtNIS(sale?m.rent:m.price),sale?"rent":"price",sale?t.perMonth:"")}
+      ${stat(t.svrYield,m.grossYield.toFixed(1)+"%","yield")}
+      ${stat(t.tx,fmtInt(m.tx),"tx",vcPer(l,"tx"))}
+      ${stat(t.listings,fmtInt(m.listings),"listings",vcPer(l,"listings"))}
+      <div class="stat"><div class="l">${t.y3}</div><div class="v">${deltaHTML(m.y3,true)}</div><div class="s">${vcTag(vcOf(l,"y3"))} ${vcPer(l,"y3")}</div></div>
     </div>
     <div class="prov-row">
       <button class="prov-btn" id="provBtn" aria-expanded="false">ⓘ ${t.provBtn}</button>
-      <span class="prov-note">${t.confBasedOn(fmtInt(m.tx))}</span>
+      <span class="prov-note">${t.provNote}</span>
     </div>
     <div class="prov-pop" id="provPop" hidden>
-      ${t.prov.rows.map(r=>{
-        const cls=r.cls(l);
-        return `<div class="pr"><b>${r.n}</b><span>${r.s}</span><span class="pr-c ${cls===t.provOfficial?"of":""}">${cls}</span></div>`;
-      }).join("")}
+      ${t.prov.rows.map(r=>`<div class="pr"><b>${r.n}</b><span>${r.s}</span>${vcTag(r.f?vcOf(l,r.f):"na")}</div>`).join("")}
       <div class="pr-foot">${t.prov.foot}</div>
     </div>`;
   const pb=el("provBtn"),pp=el("provPop");
   pb.addEventListener("click",()=>{pp.hidden=!pp.hidden;pb.setAttribute("aria-expanded",String(!pp.hidden))});
 }
 
-/* ---------- trend chart ---------- */
-const CHART_METRICS=[
-  {id:"price",label:()=>T().cPrice,fmt:fmtCompact,fmtFull:fmtNIS},
-  {id:"sqm",label:()=>T().cPsm,fmt:fmtCompact,fmtFull:fmtNIS},
-  {id:"rent",label:()=>T().cRent,fmt:v=>fmtCompact(v),fmtFull:fmtNIS},
-  {id:"yield",label:()=>T().cYield,fmt:v=>v.toFixed(1)+"%",fmtFull:v=>v.toFixed(2)+"%"},
-];
-function renderChartTools(){
-  const t=T();
-  el("chartMetricBtns").innerHTML=CHART_METRICS.map(m=>
-    `<button data-cm="${m.id}" aria-pressed="${m.id===state.chartMetric}">${m.label()}</button>`).join("");
-  el("periodBtns").innerHTML=Object.keys(PERIODS).map(p=>
-    `<button data-p="${p}" aria-pressed="${p===state.period}">${t["p"+p]}</button>`).join("");
-  el("chartMetricBtns").querySelectorAll("[data-cm]").forEach(b=>b.addEventListener("click",()=>{
-    state.chartMetric=b.dataset.cm;renderChartTools();renderChart();
-  }));
-  el("periodBtns").querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>{
-    state.period=b.dataset.p;renderChartTools();renderChart();
-  }));
-}
-function renderChart(){
-  const t=T(),cm=CHART_METRICS.find(c=>c.id===state.chartMetric);
-  const data=seriesSlice(state.locId,state.chartMetric);
-  const W=720,H=260,padL=56,padR=16,padT=14,padB=26;
-  const xs=i=>padL+(W-padL-padR)*(i/(data.length-1));
-  let lo=Math.min(...data.map(p=>p.v)),hi=Math.max(...data.map(p=>p.v));
-  const span=(hi-lo)||1;lo-=span*.08;hi+=span*.06;
-  const ys=v=>padT+(H-padT-padB)*(1-(v-lo)/(hi-lo));
-  const line=data.map((p,i)=>(i?"L":"M")+xs(i).toFixed(1)+","+ys(p.v).toFixed(1)).join(" ");
-  const area=line+`L${xs(data.length-1).toFixed(1)},${(H-padB).toFixed(1)}L${xs(0).toFixed(1)},${(H-padB).toFixed(1)}Z`;
-  const gridVals=[0,.5,1].map(f=>lo+(hi-lo)*(0.06+f*.86));
-  let gridEls=gridVals.map(v=>`<line class="grid-ln" x1="${padL}" x2="${W-padR}" y1="${ys(v).toFixed(1)}" y2="${ys(v).toFixed(1)}"/>
-    <text class="axis-txt" x="${padL-7}" y="${ys(v)+3.5}" text-anchor="end">${cm.fmt(v)}</text>`).join("");
-  const tickN=Math.min(6,data.length);
-  let ticks="";
-  for(let k=0;k<tickN;k++){
-    const i=Math.round(k*(data.length-1)/(tickN-1));
-    ticks+=`<text class="axis-txt" x="${xs(i)}" y="${H-8}" text-anchor="middle">${fmtMonth(data[i].date)}</text>`;
-  }
-  const last=data[data.length-1];
-  el("chartSvg").setAttribute("viewBox",`0 0 ${W} ${H}`);
-  el("chartSvg").innerHTML=`
-    ${gridEls}
-    <line class="base-ln" x1="${padL}" x2="${W-padR}" y1="${H-padB}" y2="${H-padB}"/>
-    <path d="${area}" fill="var(--accent)" opacity="0.07"/>
-    <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${xs(data.length-1)}" cy="${ys(last.v)}" r="3.6" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.6"/>
-    <text class="axis-txt" style="font-weight:700;fill:var(--accent-deep)" x="${Math.min(xs(data.length-1),W-padR-4)}" y="${Math.max(12,ys(last.v)-9)}" text-anchor="end">${cm.fmt(last.v)}</text>
-    <line id="chartHover" x1="0" x2="0" y1="${padT}" y2="${H-padB}" stroke="var(--baseline)" stroke-dasharray="3 3" opacity="0"/>
-    <circle id="chartHoverDot" r="4" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.8" opacity="0"/>
-    <rect id="chartHit" x="${padL}" y="0" width="${W-padL-padR}" height="${H}" fill="transparent"/>
-    ${ticks}`;
-  el("chartSub").textContent=`${heName(LOC[state.locId])} · ${cm.label()}`;
-  const wrap=el("chartWrap"),tip=el("chartTip");
-  const hit=el("chartHit"),hln=el("chartHover"),hdot=el("chartHoverDot");
-  const full=seriesFor(state.locId).slice(-PERIODS[state.period]);
-  hit.onmousemove=e=>{
-    const r=wrap.getBoundingClientRect();
-    const px=(e.clientX-r.left)/r.width*W;
-    const i=Math.max(0,Math.min(data.length-1,Math.round((px-padL)/(W-padL-padR)*(data.length-1))));
-    const p=data[i],fp=full[i];
-    hln.setAttribute("x1",xs(i));hln.setAttribute("x2",xs(i));hln.setAttribute("opacity","1");
-    hdot.setAttribute("cx",xs(i));hdot.setAttribute("cy",ys(p.v));hdot.setAttribute("opacity","1");
-    const chg=(p.v/data[0].v-1)*100;
-    tip.innerHTML=`<div class="d">${fmtMonth(p.date)}</div>
-      ${t.cPrice}: <b class="num">${fmtNIS(fp.price)}</b><br>
-      ${t.cPsm}: <b class="num">${fmtNIS(fp.sqm)}</b><br>
-      ${t.cRent}: <b class="num">${fmtNIS(fp.rent)}</b><br>
-      <span class="${deltaCls(chg)}" style="font-weight:700"><span class="num">${fmtPct(chg)}</span></span>`;
-    let tx=xs(i)/W*r.width+12, tw=tip.offsetWidth;
-    if(tx+tw>r.width-6)tx=xs(i)/W*r.width-tw-12;
-    tip.style.left=tx+"px";
-    tip.style.top=Math.max(4,ys(p.v)/H*r.height-tip.offsetHeight-12)+"px";
-    tip.classList.add("show");
-  };
-  hit.onmouseleave=()=>{tip.classList.remove("show");hln.setAttribute("opacity","0");hdot.setAttribute("opacity","0")};
-}
-
 /* ---------- sale vs rent ---------- */
 function renderSVR(){
-  const t=T(),m=metricsOf(state.locId);
+  const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
   const cells=[
-    {l:t.svrBuy,v:fmtNIS(m.price)},
-    {l:t.svrRent,v:fmtNIS(m.rent),s:t.perMonth},
-    {l:t.svrAnnual,v:fmtNIS(m.rent*12),s:t.perYear},
-    {l:t.svrYield,v:m.grossYield.toFixed(1)+"%",s:t.est},
-    {l:t.svrRatio,v:m.priceToRent.toFixed(1),s:t.svrYears},
+    {l:t.svrBuy,v:fmtNIS(m.price),f:"price"},
+    {l:t.svrRent,v:fmtNIS(m.rent),s:t.perMonth,f:"rent"},
+    {l:t.svrAnnual,v:fmtNIS(m.rent*12),s:t.perYear,f:"rent"},
+    {l:t.svrYield,v:m.grossYield.toFixed(1)+"%",f:"yield"},
+    {l:t.svrRatio,v:m.priceToRent.toFixed(1),s:t.svrYears,f:"ptr"},
   ];
   el("svrGrid").innerHTML=cells.map(c=>`
-    <div class="card cell"><div class="l">${c.l}</div><div class="v num">${c.v}</div>${c.s?`<div class="s">${c.s}</div>`:""}</div>`).join("");
+    <div class="card cell"><div class="l">${c.l}</div><div class="v num">${c.v}</div><div class="s">${vcTag(vcOf(l,c.f))}${c.s?` ${c.s}`:""}</div></div>`).join("");
   el("svrFormula").innerHTML=t.svrFormula(fmtNIS(m.price),fmtNIS(m.rent),m.grossYield.toFixed(1)+"%");
 }
 
@@ -3230,16 +3001,6 @@ function tableChildren(){
   if(kids.length)return kids;
   return l.parent?childrenOf(l.parent):childrenOf("il");
 }
-function sparkSVG(id,w=48,h=16,n=25){
-  const pts=seriesFor(id).slice(-n).map(p=>state.mode==="sale"?p.price:p.rent);
-  const lo=Math.min(...pts),hi=Math.max(...pts),span=hi-lo||1;
-  const iw=w-2,ih=h-4;
-  const d=pts.map((v,i)=>(i?"L":"M")+(1+i/(pts.length-1)*iw).toFixed(1)+","+((h-2)-(v-lo)/span*ih).toFixed(1)).join("");
-  const up=pts[pts.length-1]>=pts[0];
-  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
-    <path d="${d}" fill="none" stroke="${up?"var(--up)":"var(--down)"}" stroke-width="1.6" stroke-linecap="round"/>
-    <circle cx="${(1+iw).toFixed(1)}" cy="${((h-2)-(pts[pts.length-1]-lo)/span*ih).toFixed(1)}" r="2" fill="${up?"var(--up)":"var(--down)"}"/></svg>`;
-}
 function renderTable(){
   const t=T(),l=LOC[state.locId];
   const rows=tableChildren();
@@ -3255,7 +3016,6 @@ function renderTable(){
     {key:"yield",label:t.thYield,get:r=>r.m.grossYield,fmt:v=>v.toFixed(1)+"%"},
     {key:"yoy",label:t.thYoy,get:r=>state.mode==="sale"?r.m.yoy:r.m.rentYoy,fmt:null},
     {key:"tx",label:state.mode==="sale"?t.thTx:t.thListings,get:r=>state.mode==="sale"?r.m.tx:r.m.listings,fmt:fmtInt},
-    {key:"trend",label:t.thTrend,get:null,num:false},
   ];
   const data=rows.map(loc=>({loc,m:metricsOf(loc.id)}));
   const sc=cols.find(c=>c.key===state.sort.key)||cols[1];
@@ -3266,21 +3026,20 @@ function renderTable(){
   });
   el("tbl").innerHTML=`
     <thead><tr>${cols.map(c=>{
-      const sortable=c.key!=="trend";
+      const sortable=true;
       const active=state.sort.key===c.key;
       return `<th ${active?`aria-sort="${state.sort.dir===1?"ascending":"descending"}"`:""}>
         ${sortable?`<button data-sort="${c.key}">${c.label}<span class="arr">${active?(state.sort.dir===1?"▲":"▼"):"▼"}</span></button>`:c.label}</th>`;
     }).join("")}</tr></thead>
     <tbody>${data.map(r=>`
       <tr data-go="${r.loc.id}" tabindex="0"${r.loc.id===state.locId?' class="sel"':''}>
-        <td class="nm">${heName(r.loc)}<span class="sub"> · <span class="conf ${r.m.confidence}" style="font-size:10.5px"><i></i>${{high:t.confHighS,med:t.confMedS,low:t.confLowS}[r.m.confidence]}</span></span></td>
+        <td class="nm">${heName(r.loc)} ${vcTag(vcOf(r.loc,state.mode==="sale"?"price":"rent"))}</td>
         <td class="num">${fmtNIS(r.m.price)}</td>
         <td class="num">${fmtNIS(r.m.sqm)}</td>
         <td class="num">${fmtNIS(r.m.rent)}</td>
         <td class="num">${r.m.grossYield.toFixed(1)}%</td>
         <td>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</td>
         <td class="num">${fmtInt(state.mode==="sale"?r.m.tx:r.m.listings)}</td>
-        <td>${sparkSVG(r.loc.id)}</td>
       </tr>`).join("")}</tbody>`;
   el("tbl").querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{
     const k=b.dataset.sort;
@@ -3294,7 +3053,7 @@ function renderTable(){
   /* mobile cards */
   el("tblCards").innerHTML=data.map(r=>`
     <div class="tcard" data-go="${r.loc.id}" role="button" tabindex="0">
-      <div class="r1"><b>${heName(r.loc)}</b>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</div>
+      <div class="r1"><b>${heName(r.loc)} ${vcTag(vcOf(r.loc,state.mode==="sale"?"price":"rent"))}</b>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</div>
       <div class="r2">
         <span>${t.thPrice} <span class="num">${fmtNIS(r.m.price)}</span></span>
         <span>${t.thRent} <span class="num">${fmtNIS(r.m.rent)}</span></span>
@@ -3303,6 +3062,7 @@ function renderTable(){
     </div>`).join("");
   el("tblCards").querySelectorAll("[data-go]").forEach(cd=>
     cd.addEventListener("click",()=>selectLocation(cd.dataset.go)));
+  el("tblFoot").textContent=t.tblFoot;
 }
 
 /* ---------- market rankings ---------- */
@@ -3340,6 +3100,7 @@ function renderRankings(){
     </button>`).join("");
   el("rankGrid").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
+  el("rankFoot").textContent=t.rankFoot;
 }
 
 /* ---------- comparison ---------- */
@@ -3373,7 +3134,7 @@ function renderCompare(){
       e.stopPropagation();
       const pop=el("cmpPop");
       const opts=LOCATIONS.filter(l=>(l.type==="city"||l.type==="nbhd"||l.type==="sub")&&!state.compare.includes(l.id));
-      pop.innerHTML=opts.map(o=>`<button class="sp-item" data-add="${o.id}"><span>${cmpLabel(o.id)}</span><span class="num">${fmtCompact(metricsOf(o.id).price)}</span></button>`).join("");
+      pop.innerHTML=opts.map(o=>`<button class="sp-item" data-add="${o.id}"><span>${cmpLabel(o.id)}</span></button>`).join("");
       pop.classList.toggle("open");
       pop.querySelectorAll("[data-add]").forEach(b=>b.addEventListener("click",()=>{
         state.compare.push(b.dataset.add);renderCompare();
@@ -3421,9 +3182,11 @@ function renderInsights(){
   const he=state.lang==="he";
   const name=heName(l);
   const out=[];
+  /* every figure quoted here carries its class and period */
+  const cp=f=>`${t.vcName[vcOf(l,f)]} · ${vcPer(l,f)}`;
   out.push(he
-    ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
-    :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
+    ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> בשנה (${cp("yoy")}), ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים (${cp("y3")}).`
+    :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> year on year (${cp("yoy")}) and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years (${cp("y3")}).`);
   if(state.locId==="il")out.push(he
     ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית (סוף יוני 2026) — כ-<b class="num">26</b> חודשי היצע; ${MKT.nh?MKT.nh.sentHe:`קצב הירידה השנתי של מדד הדירות החדשות התמתן ל-<b class="num">2.0%-</b>.`}`
     :`Unsold new-home inventory: <b class="num">84,280</b> nationally (end-June 2026) — ≈<b class="num">26</b> months of supply; ${MKT.nh?MKT.nh.sentEn:`the new-homes index's annual decline eased to <b class="num">-2.0%</b>.`}`);
@@ -3431,8 +3194,8 @@ function renderInsights(){
     ?`צד ההיצע ממשיך להתרחב: <b class="num">80,010</b> התחלות בנייה ב-2025 (<b class="num">+14.6%</b>) — השיא מאז 1991; ${MKT.boi?`ריבית בנק ישראל עומדת על <b class="num">${MKT.boi.valTxt}</b>.`:`ריבית בנק ישראל ירדה ל-<b class="num">3.25%</b> (1.9.2026).`}`
     :`Supply keeps expanding: <b class="num">80,010</b> housing starts in 2025 (<b class="num">+14.6%</b>) — the highest since 1991; ${MKT.boi?`the Bank of Israel rate stands at <b class="num">${MKT.boi.valTxt}</b>.`:`the Bank of Israel rate was cut to <b class="num">3.25%</b> (1.9.2026).`}`);
   if(m.rentYoy>m.yoy+0.15)out.push(he
-    ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
-    :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);
+    ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, לעומת <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — לחץ כלפי מעלה על התשואה.`
+    :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, vs <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — upward pressure on yields.`);
   else if(m.yoy>m.rentYoy+0.15)out.push(he
     ?`מחירי המכירה עולים מהר מהשכירות — התשואה הברוטו נשחקת בהדרגה.`
     :`Sale prices are outpacing rents — gross yield is gradually compressing.`);
@@ -3443,30 +3206,30 @@ function renderInsights(){
       :`Price per m² in ${name} is <b class="num">${fmtPct(Math.abs(psmDiff),false)}</b> ${psmDiff>0?"above":"below"} the ${heName(parent)} average.`);
     const yDiff=m.grossYield-pm.grossYield;
     if(Math.abs(yDiff)>=0.15)out.push(he
-      ?`התשואה באזור (<b class="num">${m.grossYield.toFixed(1)}%</b>) ${yDiff>0?"גבוהה":"נמוכה"} מהממוצע ב${heName(parent)} (<b class="num">${pm.grossYield.toFixed(1)}%</b>).`
-      :`Local gross yield (<b class="num">${m.grossYield.toFixed(1)}%</b>) is ${yDiff>0?"above":"below"} the ${heName(parent)} average (<b class="num">${pm.grossYield.toFixed(1)}%</b>).`);
+      ?`התשואה באזור (<b class="num">${m.grossYield.toFixed(1)}%</b>) ${yDiff>0?"גבוהה":"נמוכה"} מהממוצע ב${heName(parent)} (<b class="num">${pm.grossYield.toFixed(1)}%</b>) — ${t.vcName.mod}.`
+      :`Local gross yield (<b class="num">${m.grossYield.toFixed(1)}%</b>) is ${yDiff>0?"above":"below"} the ${heName(parent)} average (<b class="num">${pm.grossYield.toFixed(1)}%</b>) — ${t.vcName.mod.toLowerCase()}.`);
   }
   out.push(he
     ?`יחס מחיר/שכירות עומד על <b class="num">${m.priceToRent.toFixed(1)}</b> שנות שכירות — שווה ערך לתשואה ברוטו של <b class="num">${m.grossYield.toFixed(1)}%</b> (אומדן).`
     :`The price-to-rent ratio is <b class="num">${m.priceToRent.toFixed(1)}</b> years of rent — equivalent to an estimated <b class="num">${m.grossYield.toFixed(1)}%</b> gross yield.`);
-  if(m.confidence!=="high")out.push(he
-    ?`שימו לב: המדגם באזור זה ${m.confidence==="med"?"בינוני":"קטן"} (<b class="num">${fmtInt(m.tx)}</b> עסקאות) — יש להתייחס לממוצעים בזהירות.`
-    :`Note: the sample here is ${m.confidence==="med"?"medium":"small"} (<b class="num">${fmtInt(m.tx)}</b> deals) — treat the averages with care.`);
   el("insights").innerHTML=out.map(s=>`<div class="insight"><span>${s}</span></div>`).join("");
 }
 
-/* ---------- confidence ---------- */
+/* ---------- data basis ----------
+   What each figure on the board is for the place in view: its class and the
+   period it describes. No sample size is claimed — the board's averages are
+   published or modelled figures, not a count of transactions. */
 function renderConfidence(){
-  const t=T(),m=metricsOf(state.locId);
-  const label={high:t.confHigh,med:t.confMed,low:t.confLow}[m.confidence];
-  const note={high:t.confHighNote,med:t.confMedNote,low:t.confLowNote}[m.confidence];
-  const pct={high:92,med:55,low:20}[m.confidence];
-  const color={high:"var(--conf-high)",med:"var(--conf-med)",low:"var(--conf-low)"}[m.confidence];
-  const based=m.confidence==="low"?t.confBasedOnLow(fmtInt(m.tx)):t.confBasedOn(fmtInt(m.tx));
-  el("confCard").innerHTML=`
-    <div class="conf-big"><span class="conf ${m.confidence}"><i></i>${label}</span></div>
-    <div class="conf-meter"><i style="width:${pct}%;background:${color}"></i></div>
-    <div class="conf-note">${based}.<br>${note}</div>`;
+  const t=T(),l=LOC[state.locId];
+  const F=state.mode==="sale"
+    ?[["price",t.avgPrice],["sqm",t.psm],["yoy",t.yoyLbl],["y3",t.y3],["tx",t.tx],["listings",t.listings]]
+    :[["rent",t.avgRent],["rentPsm",t.rpsm],["rentYoy",t.yoyLbl],["yield",t.grossYield],["listings",t.listings]];
+  const by={raw:[],der:[],mod:[]};
+  for(const[f,lb]of F)by[vcOf(l,f)].push(`${lb} <span class="bs-p">(${vcPer(l,f)})</span>`);
+  const row=(c,items)=>items.length?`<div class="bs-row">${vcTag(c)}<span>${items.join(" · ")}</span></div>`:"";
+  el("confCard").innerHTML=row("raw",by.raw)+row("der",by.der)+row("mod",by.mod)+
+    `<div class="bs-row">${vcTag("na")}<span>${t.basisNA}</span></div>`+
+    `<div class="conf-note">${t.basisTx}</div>`;
 }
 
 /* =====================================================================
@@ -3487,12 +3250,6 @@ function txQueryFor(){
     const g=state.geo;
     return g.kind==="street"?{city:g.city,street:g.he,label:`${g.he} · ${g.city}`}
                             :{city:g.he,label:g.he};
-  }
-  if(state.street){
-    const st=stEnt(state.street.id);
-    if(st){const c=LOC[st.city];
-      return{city:c?c.he:null,street:st.he,house:state.street.house||null,
-        label:`${st.he}${c?" · "+c.he:""}`};}
   }
   const l=LOC[state.locId];if(!l)return null;
   const c=l.type==="city"?l:cityOf(l);
@@ -3605,9 +3362,10 @@ function renderTx(){
   /* rows on screen must never be ambiguous about where they came from */
   const nonRes=txNonResidentialN();
   const cov=txState.meta&&txState.meta.sourceCoverage;
-  const covTxt=cov&&cov.dealsCountReported>cov.rowsRetrieved
-    ? " · "+t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable)
-    : "";
+  /* coverage is always stated next to the scope — never only when it looks incomplete */
+  const covTxt=cov
+    ? " · "+t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable,cov.rowsRetrieved<cov.dealsCountReported)
+    : sc?" · "+t.txCoverageNA:"";
   const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonResShown(nonRes):"")+covTxt;
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
 
@@ -3710,376 +3468,9 @@ function initTx(){
 
 
 /* =====================================================================
-   STREET INTELLIGENCE — structured street registry + street-level engine
-   Registry: real, recognized street names per covered city (in-file
-   structured registry; official geometry unavailable in this build, so
-   placement and distances are model coordinates — labeled as such).
-   Transactions: the same clearly-labeled, city/nbhd-anchored model layer
-   used by the transactions table; sample sizes, radii and confidence are
-   computed honestly from it and never hidden.
-   ===================================================================== */
-const STREET_DB={
- tlv:{he:["דיזנגוף","רוטשילד","בן יהודה","ארלוזורוב","אבן גבירול","שינקין","הירקון","פרישמן","אלנבי","המלך ג'ורג'","יהודה הלוי","לילינבלום","נחלת בנימין","שדרות חן","ויצמן","ז'בוטינסקי","יגאל אלון","דרך נמיר","פנקס","רוקח","הברזל","משה סנה"],
-   en:["Dizengoff","Rothschild","Ben Yehuda","Arlozorov","Ibn Gabirol","Sheinkin","HaYarkon","Frishman","Allenby","King George","Yehuda HaLevi","Lilienblum","Nahalat Binyamin","Chen Blvd.","Weizmann","Jabotinsky","Yigal Alon","Namir Rd.","Pinkas","Rokach","HaBarzel","Moshe Sneh"],
-   nb:{0:"old-north",1:"lev-hair",2:"old-north",3:"old-north",4:"old-north",5:"lev-hair",6:"old-north",7:"old-north",8:"lev-hair",9:"lev-hair",10:"lev-hair",11:"neve-tzedek",12:"florentin",13:"lev-hair",14:"bavli",15:"old-north",16:"yad-eliyahu",17:"ramat-aviv",18:"bavli",19:"ramat-aviv"}},
- jerusalem:{he:["עזה","הפלמ״ח","דרך בית לחם","יפו","קרן היסוד","עמק רפאים","הרצוג","רד״ק","בן יהודה","קינג ג'ורג'","אגריפס","דרך חברון","הנביאים","רמב״ן","אוסישקין"],
-   en:["Aza","HaPalmach","Bethlehem Rd.","Jaffa","Keren HaYesod","Emek Refaim","Herzog","Radak","Ben Yehuda","King George","Agripas","Hebron Rd.","HaNevi'im","Ramban","Ussishkin"],
-   nb:{0:"rehavia",1:"katamon",2:"baka",3:"jm-center",4:"rehavia",5:"baka",6:"katamon",7:"rehavia",8:"jm-center",9:"jm-center",10:"jm-center",11:"arnona",12:"jm-center",13:"rehavia",14:"rehavia"}},
- haifa:{he:["מוריה","הנשיא","חורב","הרצל","דרך הים","אבא חושי","טרומפלדור","יפה נוף","שדרות בן גוריון","הציונות","התשבי","החלוץ","שבתאי לוי"],
-   en:["Moriya","HaNassi","Horev","Herzl","Derech HaYam","Abba Hushi","Trumpeldor","Yafe Nof","Ben Gurion Blvd.","HaTzionut","HaTishbi","HeHalutz","Shabtai Levi"],
-   nb:{0:"carmel",1:"carmel",2:"ahuza",3:"hadar",4:"carmel",5:"ahuza",7:"carmel",9:"hadar",10:"carmel",11:"hadar",12:"hadar"}},
- "petah-tikva":{he:["רוטשילד","ז'בוטינסקי","ההסתדרות","חיים עוזר","מוטה גור","קפלן","ברון הירש","העצמאות","הרצל","ביל״ו","שטמפפר","אחד העם","אורלוב","פינסקר","לוחמי הגטו","יטקובסקי","משה סנה","דגל ראובן"],
-   en:["Rothschild","Jabotinsky","HaHistadrut","Haim Ozer","Motta Gur","Kaplan","Baron Hirsch","HaAtzmaut","Herzl","Bilu","Stampfer","Ahad Ha'am","Orlov","Pinsker","Lohamei HaGetto","Yatkovsky","Moshe Sneh","Degel Reuven"],
-   nb:{0:"pt-center",2:"pt-center",3:"pt-center",4:"em-hamoshavot",6:"pt-center",8:"pt-center",9:"pt-center",10:"pt-center",11:"pt-center",12:"pt-center",13:"pt-center",16:"em-hamoshavot",17:"kfar-avraham"}},
- "ramat-gan":{he:["ביאליק","ז'בוטינסקי","הרא״ה","קריניצי","דרך בן גוריון","הרצל","ארלוזורוב","המעגל"],
-   en:["Bialik","Jabotinsky","HaRoe","Krinitzi","Ben Gurion Rd.","Herzl","Arlozorov","HaMaagal"],
-   nb:{0:"rg-center",1:"rg-center",2:"tel-binyamin",3:"rg-center",5:"rg-center",7:"rg-center"}},
- "ramat-hasharon":{he:["סוקולוב","אוסישקין","רמז","פרץ","תרפ״ד","הסייפן","קוממיות","בית גוברין","טרומפלדור","שבטי ישראל","הזית"],
-   en:["Sokolov","Ussishkin","Remez","Peretz","Tarpad","HaSayfan","Komemiyut","Beit Guvrin","Trumpeldor","Shivtei Israel","HaZayit"],
-   nb:{0:"rhs-center",1:"rhs-center",4:"rhs-center",9:"rhs-morasha"}},
- rishon:{he:["רוטשילד","הרצל","ז'בוטינסקי","ויצמן","ביאליק","ירושלים","גולדה מאיר","משה דיין"],
-   en:["Rothschild","Herzl","Jabotinsky","Weizmann","Bialik","Jerusalem","Golda Meir","Moshe Dayan"],nb:{}},
- netanya:{he:["הרצל","ויצמן","שדרות בנימין","סמילנסקי","דיזנגוף","ז'בוטינסקי","העצמאות","ביאליק"],
-   en:["Herzl","Weizmann","Binyamin Blvd.","Smilansky","Dizengoff","Jabotinsky","HaAtzmaut","Bialik"],
-   nb:{0:"netanya-center",2:"netanya-center",3:"netanya-center"}},
- "beer-sheva":{he:["שדרות רגר","הרצל","ויצמן","בן גוריון","העצמאות","ביאליק","וינגייט","שדרות ירושלים"],
-   en:["Rager Blvd.","Herzl","Weizmann","Ben Gurion","HaAtzmaut","Bialik","Wingate","Jerusalem Blvd."],nb:{}},
- _gen:{he:["הרצל","ויצמן","בן גוריון","ז'בוטינסקי","העצמאות","ביאליק","הנשיא","סוקולוב"],
-   en:["Herzl","Weizmann","Ben Gurion","Jabotinsky","HaAtzmaut","Bialik","HaNassi","Sokolov"]}
-};
-const ST_WINS=["6","12","24","36","60"];
-let stWin="24", stSort={key:"date",dir:-1}, stCompsOpen=false;
-
-const stCityR=c=>{const tx=LOC[c].base.tx;return tx>900?3400:tx>500?2800:tx>300?2200:1600} /* model city radius, m */
-const _stCache={ent:{},list:{},tx:{},prof:{}};
-function stList(cityId){
-  if(_stCache.list[cityId])return _stCache.list[cityId];
-  const db=STREET_DB[cityId]||STREET_DB._gen;
-  const out=db.he.map((he,i)=>{
-    const id="st|"+cityId+"|"+i;
-    const nb=(STREET_DB[cityId]&&STREET_DB[cityId].nb&&STREET_DB[cityId].nb[i])||null;
-    const nbOk=nb&&LOC[nb]?nb:null;
-    const r=rng(seedOf(id));
-    const R=stCityR(cityId);
-    /* model coordinates (meters from the city center); nbhd-mapped streets cluster */
-    let mx,my;
-    if(nbOk){const a=(seedOf(nbOk)%628)/100;const d=R*0.55;
-      mx=Math.cos(a)*d+(r()-.5)*900;my=Math.sin(a)*d+(r()-.5)*900;}
-    else{const a=r()*6.28,d=r()*R*.9;mx=Math.cos(a)*d;my=Math.sin(a)*d}
-    const ent={id,city:cityId,idx:i,he,en:(db.en&&db.en[i])||he,nbhd:nbOk,mx,my,
-      f:0.90+r()*0.22};                       /* street price factor vs its anchor */
-    _stCache.ent[id]=ent;return ent;
-  });
-  _stCache.list[cityId]=out;return out;
-}
-function stEnt(id){if(_stCache.ent[id])return _stCache.ent[id];const p=id.split("|");stList(p[1]);return _stCache.ent[id]}
-const stName=st=>state.lang==="he"?st.he:st.en;
-const stTitleTxt=st=>state.lang==="he"?T().stStreet+" "+st.he:st.en+" St.";
-const stAnchor=st=>st.nbhd&&LOC[st.nbhd]?LOC[st.nbhd]:LOC[st.city];
-const stChain=st=>{const parts=[];if(st.nbhd&&LOC[st.nbhd])parts.push(heName(LOC[st.nbhd]));parts.push(heName(LOC[st.city]));return parts.join(" · ")};
-const stDistM=(a,b)=>Math.round(Math.hypot(a.mx-b.mx,a.my-b.my));
-
-/* street transactions — deterministic model rows anchored to the street's
-   nbhd/city price series, spanning 60 months */
-function stTxAll(id){
-  if(_stCache.tx[id])return _stCache.tx[id];
-  const st=stEnt(id),r=rng(seedOf(id+"stx"));
-  const a=stAnchor(st),city=LOC[st.city];
-  const lam=Math.min(26,Math.max(3,city.base.tx/55))*(st.f>1?1.08:0.94);
-  const n=Math.floor(Math.pow(r(),1.35)*lam*2.2);   /* some streets land on 0 */
-  const ser=seriesFor(a.id);
-  const roomsOpts=[3,3,4,4,4,5,5,2,6];
-  const types=["apt","apt","apt","apt","garden","ph"];
-  const rows=[];
-  for(let i=0;i<n;i++){
-    const mo=Math.floor(Math.pow(r(),0.85)*60);
-    const pt=ser[Math.max(0,ser.length-1-mo)];
-    const rooms=roomsOpts[Math.floor(r()*roomsOpts.length)];
-    const area=Math.round((rooms*24+16)*(0.9+r()*.26));
-    const psm=Math.round(pt.sqm*st.f*(0.93+r()*.14));
-    const d=new Date(2026,7,28);d.setMonth(d.getMonth()-mo);d.setDate(1+Math.floor(r()*27));
-    rows.push({mo,date:d,house:2+Math.floor(r()*70)*2-(r()>.5?1:0),rooms,area,
-      floor:1+Math.floor(r()*10),year:2019+Math.floor(r()*8),
-      type:types[Math.floor(r()*types.length)],psm,price:Math.round(psm*area/1000)*1000});
-  }
-  rows.sort((x,y)=>x.mo-y.mo);
-  _stCache.tx[id]=rows;return rows;
-}
-const stTxWin=(id,winM)=>stTxAll(id).filter(t=>t.mo<Number(winM));
-function stMedian(arr){if(!arr.length)return 0;const a=[...arr].sort((x,y)=>x-y);const m=a.length>>1;return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2)}
-const stSampleLvl=n=>n>=10?"strong":n>=5?"med":n>=1?"low":"none";
-
-/* comparable score (0-100): distance, recency, size, rooms, same-nbhd */
-function stCompScore(distM,tx,ref){
-  let sc=100;
-  sc-=Math.min(40,distM/1500*40);
-  sc-=Math.min(20,tx.mo/24*20);
-  if(ref.area)sc-=Math.min(15,Math.abs(tx.area-ref.area)/ref.area*40);
-  if(ref.rooms&&tx.rooms!==ref.rooms)sc-=6;
-  return Math.max(20,Math.round(sc));
-}
-
-/* the street profile: exact sample first, then escalate time, then radius */
-function stProfile(id,win){
-  const ck=id+"|"+win+"|"+state.lang;
-  if(_stCache.prof[ck])return _stCache.prof[ck];
-  const st=stEnt(id),city=LOC[st.city],anchor=stAnchor(st);
-  const am=metricsOf(anchor.id),cm=metricsOf(st.city);
-  const seq=[[0,win],[0,String(Math.min(60,Number(win)*2))],[250,"12"],[250,"24"],[500,"24"],[750,"24"],[1000,"24"],[1500,"24"]];
-  let exact=stTxWin(id,win),winUsed=Number(win),radiusUsed=0;
-  const comps=[],compStreets=new Map();
-  const refArea=stMedian(exact.map(t=>t.area))||95,refRooms=4;
-  const eff=()=>exact.length+comps.reduce((a,c)=>a+c.score/100,0);
-  for(const[rad,w]of seq){
-    if(rad===0){const rows=stTxWin(id,w);if(rows.length>exact.length){exact=rows;winUsed=Number(w)}}
-    else{
-      for(const other of stList(st.city)){
-        if(other.id===id)continue;
-        const d=stDistM(st,other);
-        if(d>rad||(compStreets.has(other.id)))continue;
-        const rows=stTxWin(other.id,w);
-        if(!rows.length)continue;
-        compStreets.set(other.id,{st:other,distM:d,n:rows.length});
-        for(const tx of rows)comps.push({...tx,stId:other.id,stHe:other.he,stEn:other.en,distM:d,
-          score:stCompScore(d,tx,{area:refArea,rooms:refRooms})});
-      }
-      radiusUsed=rad;
-    }
-    if(exact.length>=10||eff()>=12)break;
-  }
-  comps.sort((a,b)=>b.score-a.score);
-  const exPsm=exact.map(t=>t.psm),exPr=exact.map(t=>t.price);
-  const obs={n:exact.length,med:stMedian(exPr),avg:exPr.length?Math.round(exPr.reduce((a,b)=>a+b,0)/exPr.length):0,
-    medPsm:stMedian(exPsm),avgPsm:exPsm.length?Math.round(exPsm.reduce((a,b)=>a+b,0)/exPsm.length):0,
-    last:exact.length?exact[0].date:null};
-  /* blended local estimate — weighted by comparability; exact street weighs double */
-  let blend=null;
-  if(exact.length<10&&comps.length){
-    let wS=0,vS=0;
-    for(const t of exact){wS+=2;vS+=t.psm*2}
-    for(const c of comps){const w=c.score/100;wS+=w;vS+=c.psm*w}
-    const psm=Math.round(vS/wS);
-    blend={psm,price:Math.round(psm*refArea/1000)*1000,area:refArea,
-      nStreets:compStreets.size,nComps:comps.length};
-  }
-  /* 24-month trend where the sample honestly supports it */
-  let trend=null;
-  {const rows=stTxWin(id,"24");
-   const h1=rows.filter(t=>t.mo<12).map(t=>t.psm),h2=rows.filter(t=>t.mo>=12).map(t=>t.psm);
-   if(h1.length>=3&&h2.length>=3){const a=stMedian(h2),b=stMedian(h1);trend=+((b/a-1)*100).toFixed(1)}}
-  const rentEst=Math.round(am.rent*Math.pow(st.f,0.5)/10)*10;
-  const basePsm=obs.n>=5?obs.medPsm:blend?blend.psm:0;
-  const basePrice=obs.n>=5?obs.med:blend?blend.price:0;
-  const yieldEst=basePrice?+(rentEst*12/basePrice*100).toFixed(2):null;
-  const relN=basePsm?+((basePsm/am.sqm-1)*100).toFixed(1):null;
-  const relC=basePsm?+((basePsm/cm.sqm-1)*100).toFixed(1):null;
-  /* confidence 0-100 */
-  let conf=20+Math.min(42,obs.n*4.2)+Math.min(16,comps.length*1.1);
-  conf-=Math.min(16,radiusUsed/1500*16);
-  if(obs.last)conf+=Math.max(0,8-exact[0].mo);
-  conf=Math.max(15,Math.min(94,Math.round(conf-6)));  /* −6: model transaction layer */
-  const out={st,exact,obs,comps,compStreets:[...compStreets.values()].sort((a,b)=>a.distM-b.distM),
-    blend,winUsed,radiusUsed,trend,rentEst,yieldEst,relN,relC,basePsm,basePrice,
-    lvl:stSampleLvl(obs.n),conf,anchor,am,cm};
-  _stCache.prof[ck]=out;return out;
-}
-
-/* street search: prefixes, partials, city+street, house numbers */
-let _stIdx=null;
-function stNorm(q){return String(q).replace(/["'׳״]/g,"").replace(/(^|\s)(רחוב|רח|שדרות|שד|דרך)\s+/g,"$1").replace(/\s+/g," ").trim().toLowerCase()}
-function stIndex(){
-  if(_stIdx)return _stIdx;
-  _stIdx=[];
-  for(const l of cityList()){for(const st of stList(l.id)){
-    _stIdx.push({st,norm:stNorm(st.he),normEn:st.en.toLowerCase(),cityHe:l.he.toLowerCase(),cityEn:l.en.toLowerCase()});
-  }}
-  return _stIdx;
-}
-function stSearch(q){
-  const raw=String(q||"");if(stNorm(raw).length<2)return[];
-  let house=null;const hm=raw.match(/(?:^|\s)(\d{1,3})(?:\s|$)/);if(hm)house=hm[1];
-  let qq=stNorm(raw.replace(/(?:^|\s)\d{1,3}(?=\s|$)/g," "));
-  /* peel a city name out of the query — full name, pre-hyphen part or first
-     word (>=4 chars), matched on word boundaries; the longest hit wins */
-  let cityFilter=null,cityHit="";
-  const padded=" "+qq+" ";
-  for(const c of cityList()){
-    const vars=[c.he,c.he.split("-")[0],c.he.split(" ")[0],c.en,c.en.split("-")[0]];
-    for(const v0 of vars){
-      const v=String(v0).toLowerCase().trim();
-      if(v.length>=4&&padded.includes(" "+v+" ")&&v.length>cityHit.length){cityFilter=c.id;cityHit=v}
-    }
-  }
-  if(cityHit)qq=(" "+qq+" ").replace(" "+cityHit+" "," ").replace(/\s+/g," ").trim();
-  if(qq.length<2)return[];
-  const out=[];
-  for(const e of stIndex()){
-    if(cityFilter&&e.st.city!==cityFilter)continue;
-    let rank=-1;
-    if(qq.length>=2){
-      if(e.norm===qq)rank=0;else if(e.norm.startsWith(qq))rank=1;
-      else if(e.norm.includes(qq))rank=2;else if(e.normEn.includes(qq))rank=3;
-    }
-    if(rank<0)continue;
-    out.push({st:e.st,rank,house,n:stTxWin(e.st.id,"24").length});
-  }
-  out.sort((a,b)=>a.rank-b.rank||b.n-a.n);
-  return out.slice(0,9);
-}
-
-/* top streets for the capital pillar — confidence-gated, never from weak data */
-let _stTop=null;
-function stTopStreets(){
-  if(_stTop)return _stTop;
-  const cities=[...new Set(ciRank("5","bal").map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id}).filter(Boolean))].slice(0,8);
-  const cand=[];
-  for(const cid of cities){for(const st of stList(cid)){
-    const p=stProfile(st.id,"24");
-    if(p.obs.n<5||!p.yieldEst)continue;                 /* rule: no rank from thin data */
-    const gap=p.relN!=null?Math.max(0,-p.relN):0;
-    const score=Math.round((Math.min(100,p.yieldEst/4.2*100)*0.34+Math.min(100,gap*9)*0.26+
-      Math.min(100,p.obs.n*7)*0.22+Math.min(100,Math.max(0,(p.trend??0)+4)*11)*0.18)
-      *(0.75+0.25*p.conf/100));
-    cand.push({st,score,n:p.obs.n,conf:p.conf});
-  }}
-  cand.sort((a,b)=>b.score-a.score);
-  _stTop=cand.slice(0,5);return _stTop;
-}
-
-/* ---------------- street UI ---------------- */
-function selectStreet(id,house){
-  const st=stEnt(id);if(!st)return;
-  state.street={id,house:house||null};
-  stCompsOpen=false;
-  const target=st.nbhd&&LOC[st.nbhd]?st.nbhd:st.city;
-  if(state.locId!==target)selectLocation(target);else refresh(false);
-  el("street").hidden=false;
-  setTimeout(()=>el("street").scrollIntoView({behavior:"smooth",block:"start"}),140);
-}
-function closeStreet(){
-  state.street=null;el("street").hidden=true;renderMap();renderCrumbs();
-}
-function stSortRows(rows){
-  const k=stSort.key,d=stSort.dir;
-  return[...rows].sort((a,b)=>{
-    const va=k==="date"?-a.mo:a[k],vb=k==="date"?-b.mo:b[k];
-    return d*(va>vb?1:va<vb?-1:0);
-  });
-}
-function renderStreet(){
-  const sec=el("street");if(!sec)return;
-  if(!state.street){sec.hidden=true;return}
-  sec.hidden=false;
-  const t=T(),P=stProfile(state.street.id,stWin),st=P.st;
-  const fmtD=d=>d?`${d.getDate()}.${d.getMonth()+1}.${String(d.getFullYear()).slice(2)}`:"—";
-  const lvlTxt={strong:t.stStrong,med:t.stMedS,low:t.stLow,none:t.stNone}[P.lvl];
-  const kv=(k,v,s)=>`<div><div class="k">${k}</div><div class="v num">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
-  const typeTxt={apt:t.tApt,garden:t.tGarden,ph:t.tPh};
-  const winSeg=`<div class="seg" role="group" aria-label="${t.stWinA}">${ST_WINS.map(w=>
-    `<button data-stwin="${w}" aria-pressed="${w===stWin}">${w}${t.stMoShort}</button>`).join("")}</div>`;
-  const th=(k,lb,num)=>`<th${num?' class="num"':""}><button data-stsort="${k}">${lb}${stSort.key===k?(stSort.dir<0?" ↓":" ↑"):""}</button></th>`;
-  const exactRows=stSortRows(P.exact).map(x=>`
-    <tr><td class="num">${fmtD(x.date)}</td><td class="num">${x.house}</td><td class="num">${x.rooms}</td>
-    <td class="num">${x.area}</td><td class="num">${x.floor}</td><td class="num">${x.year}</td>
-    <td class="num" style="font-weight:700">${fmtNIS(x.price)}</td><td class="num">${fmtNIS(x.psm)}</td>
-    <td>${typeTxt[x.type]||t.tApt}</td></tr>`).join("");
-  const compRows=stCompsOpen?stSortRows(P.comps).slice(0,14).map(x=>`
-    <tr style="opacity:.82"><td class="num">${fmtD(x.date)}</td>
-    <td>${state.lang==="he"?x.stHe:x.stEn} <span class="st-chip win num" style="padding:1px 6px">${x.distM}${t.stM}</span></td>
-    <td class="num">${x.rooms}</td><td class="num">${x.area}</td><td class="num">${x.floor}</td><td class="num">${x.year}</td>
-    <td class="num">${fmtNIS(x.price)}</td><td class="num">${fmtNIS(x.psm)}</td>
-    <td class="num">${x.score}</td></tr>`).join(""):"";
-  el("stBody").innerHTML=`
-    <div class="st-head">
-      <div>
-        <h3>${stTitleTxt(st)}</h3>
-        <div class="chain">${stChain(st)}${st.nbhd?"":` · ${t.stNbApprox}`}</div>
-        <div class="st-chips">
-          <span class="st-chip s-${P.lvl}">${lvlTxt} · ${t.stBasedOn(P.obs.n)}</span>
-          <span class="st-chip ${P.conf>=70?"s-strong":P.conf>=50?"s-med":"s-low"}">${t.stConf} ${P.conf}/100</span>
-          <span class="st-chip win num">${P.winUsed} ${t.stMonths}</span>
-          ${P.radiusUsed?`<span class="st-chip win num">${t.stRadius}: ${P.radiusUsed} ${t.stM}</span>`:""}
-          ${state.street.house?`<span class="st-chip house">${t.stHouse(state.street.house)}</span>`:""}
-        </div>
-      </div>
-      <div class="st-actions">${winSeg}
-        <button class="st-x" id="stClose" aria-label="${t.stClose}">✕</button></div>
-    </div>
-
-    ${P.obs.n===0?`<div class="st-rel">${t.stNoTx}</div>`:P.obs.n<5?`<div class="st-rel">${t.stThin}</div>`:""}
-
-    <div class="st-kpis">
-      ${kv(t.stTxN,P.obs.n,t.stWinOf(P.winUsed))}
-      ${kv(t.stMedP,P.obs.med?fmtNIS(P.obs.med):"—",t.stObserved)}
-      ${kv(t.stAvgP,P.obs.avg?fmtNIS(P.obs.avg):"—","")}
-      ${kv(t.stMedPsm,P.obs.medPsm?fmtNIS(P.obs.medPsm):"—","")}
-      ${kv(t.stChg12,P.trend!=null?ciPc(P.trend,1):"—",P.trend!=null?t.stTrendBase:t.stNoTrend)}
-      ${kv(t.stRentE,fmtNIS(P.rentEst),t.stRentNote)}
-      ${kv(t.stYield,P.yieldEst!=null?P.yieldEst.toFixed(2)+"%":"—",t.est)}
-      ${kv(t.stLast,fmtD(P.obs.last),"")}
-    </div>
-
-    ${P.blend?`<div class="st-blend">
-      <div class="bt">${t.stBlendT}</div>
-      <div class="bv num">${fmtNIS(P.blend.price)} <span style="font-size:13px;color:var(--ink-2)">· ${fmtNIS(P.blend.psm)} ${t.stPerSqm}</span></div>
-      <div class="bd">${t.stBlendWhy(P.obs.n,P.blend.nComps,P.blend.nStreets,P.radiusUsed)}</div>
-    </div>`:""}
-
-    <div class="st-grid">
-      <div>
-        <div class="ci-sect-t" style="margin-top:2px">${t.stTxT}</div>
-        <div class="ci-tblw"><table class="ci-tbl">
-          <thead><tr>${th("date",t.thDate)}${th("house",t.stHouseCol,1)}${th("rooms",t.thRooms,1)}${th("area",t.thAreaSqm,1)}${th("floor",t.thFloor,1)}${th("year",t.stYear,1)}${th("price",t.thTxPrice,1)}${th("psm",t.thTxPsm,1)}<th>${stCompsOpen?t.stCompCol:t.stType}</th></tr></thead>
-          <tbody>${exactRows||`<tr><td colspan="9" style="color:var(--ink-3)">${t.stNoRows}</td></tr>`}${compRows}</tbody>
-        </table></div>
-        ${P.comps.length?`<button class="ci-cta" id="stCompsBtn">${stCompsOpen?t.stHideComps:t.stShowComps(P.comps.length)}</button>`:""}
-      </div>
-      <div>
-        ${P.compStreets.length?`<div class="ci-sect-t">${t.stCompStreets}</div>
-        <div class="st-comp">${P.compStreets.slice(0,6).map(c=>`
-          <button class="cr" data-gost="${c.st.id}">
-            <span class="nm">${stName(c.st)}</span>
-            <span class="d num">${c.distM} ${t.stM}</span>
-            <span class="d num">${c.n} ${t.stTxShort}</span>
-          </button>`).join("")}</div>`:""}
-        <div class="ci-sect-t" style="margin-top:12px">${t.stTrendT}</div>
-        <div class="st-trend">
-          ${[[stTitleTxt(st),P.trend],...(P.anchor.id!==st.city?[[heName(P.anchor),P.am.yoy]]:[]),[heName(LOC[st.city]),P.cm.yoy]].map(([k,v])=>`
-            <div class="tr"><span class="tk">${k}</span>
-              <span class="ci-track"><i style="width:${v!=null?Math.min(100,Math.abs(v)*9+6):0}%;${v!=null&&v<0?"background:var(--down)":""}"></i></span>
-              <span class="tv num">${v!=null?ciPc(v,1):"—"}</span></div>`).join("")}
-        </div>
-        ${P.relN!=null?`<div class="st-rel"><b>${t.stRelT}:</b> ${fmtNIS(P.basePsm)} ${t.stPerSqm} ·
-          ${P.relN<0?t.stRelBelow(Math.abs(P.relN).toFixed(1),heName(P.anchor)):t.stRelAbove(P.relN.toFixed(1),heName(P.anchor))}
-          <span style="color:var(--ink-3)">(${heName(LOC[st.city])}: ${ciPc(P.relC,1)})</span></div>`:""}
-        <details class="ci-more st-prov"><summary>${t.stHow}</summary><div class="in">
-          <div class="st-note">${t.stProvBody(P.obs.n,P.comps.length,P.compStreets.length,P.radiusUsed,P.winUsed)}</div>
-          <div class="st-note">${t.stProvSrc}</div>
-        </div></details>
-        <div style="margin-top:10px"><span class="st-badge">${t.stBadgeTxt}</span></div>
-      </div>
-    </div>`;
-  el("stClose").addEventListener("click",closeStreet);
-  el("stBody").querySelectorAll("[data-stwin]").forEach(b=>b.addEventListener("click",()=>{
-    stWin=b.dataset.stwin;_stCache.prof={};renderStreet();renderMap();
-  }));
-  el("stBody").querySelectorAll("[data-stsort]").forEach(b=>b.addEventListener("click",()=>{
-    const k=b.dataset.stsort;
-    if(stSort.key===k)stSort.dir*=-1;else stSort={key:k,dir:k==="date"?-1:-1};
-    renderStreet();
-  }));
-  const cb=el("stCompsBtn");
-  if(cb)cb.addEventListener("click",()=>{stCompsOpen=!stCompsOpen;renderStreet()});
-}
-function initStreet(){
-  document.addEventListener("click",e=>{
-    const b=e.target.closest("[data-gost]");
-    if(b){selectStreet(b.dataset.gost,b.dataset.house||null)}
-  });
-}
-
-/* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
+   DORMANT while CI_ENABLED=false (§3): its appreciation input is the
+   approximate NATIONAL_CURVE, so nothing below is rendered or called.
    An analytical model computed ONLY from the LOCATIONS data already on
    this board. Forward numbers are SCENARIOS from the explicit assumptions
    in CI_ASSUME/CI_H — not predictions, not investment advice.
@@ -4464,6 +3855,7 @@ function renderCmd(){
   el("cmdFresh").textContent=t.cmdFresh;
   el("cmdSub").innerHTML=t.h1sub;
   const sig=el("capSignal");
+  if(!CI_ENABLED){sig.hidden=true;return}
   try{
     const top=ciRank(state.ci.h,state.ci.strat)[0];
     sig.hidden=false;
@@ -4765,15 +4157,6 @@ function ciPortHTML(){
     <div class="ci-cfline" style="margin-top:10px"><span class="k">${t.ciPortCf}</span>
       <span class="v num ${cfCls}">${ciM(Math.round(P.cfM))}</span>
       <span class="s">${t.ciPortCfS(ci.ltv)}</span></div>
-    <div class="ci-sect-t" style="margin-top:14px">${t.stTopT}</div>
-    <div class="st-topst">${stTopStreets().map((r,i)=>`
-      <button class="tsr" data-gost="${r.st.id}">
-        <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
-        <span><span class="nm">${stName(r.st)}</span><span class="ct"> · ${heName(LOC[r.st.city])} · ${r.n} ${t.stTxShort}</span></span>
-        <span class="ct num">${t.stConf} ${r.conf}%</span>
-        <span class="sc num">${r.score}</span>
-      </button>`).join("")}</div>
-    <div class="ci-note">${t.stTopNote}</div>
     <div class="ci-note" style="margin-top:8px">${t.ciNoProj}<br>${t.ciNoDeals}</div>
     <div class="ci-note" style="margin-top:9px">${t.ciCapNote(ci.capCity,ci.capLoc)}</div>
   </div>`;
@@ -4869,24 +4252,24 @@ function geoPinSVG(sf){
   return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
 }
-let geoLast={q:"",list:[]},geoTimer=null;
-function geoSug(q,sts){
+let geoLast={q:"",list:[]},geoTimer=null,geoBusy="";
+function geoSug(q){
   const qq=q.trim();
   if(qq.length<2)return[];
   if(geoLast.q!==qq){
-    clearTimeout(geoTimer);
+    clearTimeout(geoTimer);geoBusy=qq;
     geoTimer=setTimeout(async()=>{
+      let list=[];
       try{
         const r=await fetch("/api/geo/search?q="+encodeURIComponent(qq));
-        if(!r.ok)return;
-        const d=await r.json();
-        const dup=new Set((sts||[]).map(x=>normGeoQ(x.st.he)+"|"+normGeoQ(LOC[x.st.city]?LOC[x.st.city].he:"")));
-        geoLast={q:qq,list:(d.matches||[]).filter(g=>
-          g.kind==="street"?!dup.has(normGeoQ(g.he)+"|"+normGeoQ(g.city))
-          :!coveredIdByName(g.he)).slice(0,7)};
-        const inp=el("searchInput");
-        if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
-      }catch(e){/* offline/standalone: national layer silently unavailable */}
+        if(r.ok){const d=await r.json();
+          /* official registry streets are never filtered or replaced; a registry
+             locality the board already lists as a city appears once, as that city */
+          list=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he)).slice(0,7);}
+      }catch(e){/* offline/standalone: the national layer is unavailable */}
+      geoLast={q:qq,list};if(geoBusy===qq)geoBusy="";
+      const inp=el("searchInput");
+      if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },170);
     return[];
   }
@@ -4897,11 +4280,6 @@ function openGeoView(g){
   if(!g)return;
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
-  if(g.kind==="street"&&covered){
-    const hits=stSearch(g.he+" "+LOC[covered].he);
-    const ex=hits.find(h=>h.st.city===covered&&stNorm(h.st.he)===stNorm(g.he));
-    if(ex){selectStreet(ex.st.id);return}
-  }
   state.geo=g;
   const d=g.district&&LOC[g.district]?g.district:null;
   state.geoAnchor=covered||d||"il";
@@ -4927,25 +4305,23 @@ function renderGeoView(){
   el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${g.city}`:g.he;
   const res=(k)=>`<span class="r">${lvl}${k?` · ${k}`:""}</span>`;
   const rows=[
-    [t.geoMPrice,fmtNIS(m.price),""],
-    [t.geoMSqm,fmtNIS(m.sqm),""],
-    [t.geoMRent,fmtNIS(m.rent),t.geoTagModel],
-    [t.geoMYoy,fmtPct(m.yoy),""],
-    [t.geoMTx,fmtInt(m.tx),""],
-    [t.geoMInv,fmtInt(m.listings),""],
-    [t.geoMMs,ms?("~"+Math.round(ms)):"—",""],
+    [t.geoMPrice,fmtNIS(m.price),"price"],
+    [t.geoMSqm,fmtNIS(m.sqm),"sqm"],
+    [t.geoMRent,fmtNIS(m.rent),"rent"],
+    [t.geoMYoy,fmtPct(m.yoy),"yoy"],
+    [t.geoMTx,fmtInt(m.tx),"tx"],
+    [t.geoMInv,fmtInt(m.listings),"listings"],
+    [t.geoMMs,ms?("~"+Math.round(ms)):"—","ms"],
   ];
-  const covScore=anchor==="il"?30:a.type==="district"?45:70;
   el("geoBody").innerHTML=`
     <div class="geo-cov">
       <span class="geo-chip">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}${g.pendingCode?` · <b>${t.geoPend}</b>`:""}</span>
       ${g.moatza?`<span class="geo-chip">${g.moatza}</span>`:""}
       ${g.streetsCount?`<span class="geo-chip num">${t.geoStreetsN(g.streetsCount)}</span>`:""}
-      <span class="geo-chip">${t.geoCovT}: <b>${covScore}%</b></span>
     </div>
     <p class="gv-note">${t.geoNoDirect(lvl,aName)}</p>
-    <div class="gv-grid">${rows.map(([l,v,tag])=>`
-      <div class="gv-m"><span class="l">${l}</span><span class="v num">${v}</span>${res(tag)}</div>`).join("")}</div>
+    <div class="gv-grid">${rows.map(([lb,v,f])=>`
+      <div class="gv-m"><span class="l">${lb} ${vcTag(vcOf(a,f))}</span><span class="v num">${v}</span>${res(vcPer(a,f))}</div>`).join("")}</div>
     <p class="gv-note" style="margin-bottom:0">${t.geoDistBasis}</p>
     <p class="gv-src">${t.geoSrc(g.id)}</p>`;
 }
@@ -4963,17 +4339,12 @@ function initSearch(){
     const cities=LOCATIONS.filter(l=>l.type==="city"&&match(l)).slice(0,7);
     const nbhds=LOCATIONS.filter(l=>(l.type==="nbhd"||l.type==="sub")&&match(l)).slice(0,9);
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
-    const sts=stSearch(q);
-    const geos=geoSug(q,sts);
+    const geos=geoSug(q);
     results=[...cities,...nbhds,...dists];
-    if(results.length===0&&sts.length===0&&geos.length===0){pop.innerHTML=`<div class="sp-empty">${t.searchEmpty}</div>`}
+    if(results.length===0&&geos.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
-      if(sts.length)html+=`<div class="sp-group">${t.stGroup}</div>`+sts.map(r=>
-        `<button class="sp-item" data-gost="${r.st.id}"${r.house?` data-house="${r.house}"`:""} role="option">
-          <span>${stName(r.st)} <small>· ${stChain(r.st)}</small></span>
-          <span class="num">${r.n} ${t.stTxShort}</span></button>`).join("");
       if(nbhds.length)html+=`<div class="sp-group">${t.nbhds}</div>`+nbhds.map(c=>item(c)).join("");
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
       if(geos.length)html+=`<div class="sp-group">${t.geoGroup}</div>`+geos.map((g,i)=>
@@ -4986,9 +4357,6 @@ function initSearch(){
     pop.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();selectLocation(b.dataset.go);input.value="";close();
     }));
-    pop.querySelectorAll("[data-gost]").forEach(b=>b.addEventListener("mousedown",e=>{
-      e.preventDefault();selectStreet(b.dataset.gost,b.dataset.house||null);input.value="";close();
-    }));
     pop.querySelectorAll("[data-geoi]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();openGeoView(geoLast.list[+b.dataset.geoi]);input.value="";close();
     }));
@@ -4996,8 +4364,7 @@ function initSearch(){
   const item=l=>{
     const path=chainOf(l).filter(x=>l.type==="city"||x.type!=="district").map(heName).reverse().join(" · ");
     return `<button class="sp-item" data-go="${l.id}" role="option">
-      <span>${heName(l)}${path?` <small>· ${path}</small>`:""}</span>
-      <span class="num">${fmtCompact(metricsOf(l.id).price)}</span></button>`;
+      <span>${heName(l)}${path?` <small>· ${path}</small>`:""}</span></button>`;
   };
   input.addEventListener("input",()=>render(input.value));
   input.addEventListener("focus",()=>render(input.value));
@@ -5010,8 +4377,7 @@ function initSearch(){
       items[activeIdx]?.scrollIntoView({block:"nearest"});
     }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
       const it=items[activeIdx];
-      if(it.dataset.gost)selectStreet(it.dataset.gost,it.dataset.house||null);
-      else if(it.dataset.geoi!==undefined)openGeoView(geoLast.list[+it.dataset.geoi]);
+      if(it.dataset.geoi!==undefined)openGeoView(geoLast.list[+it.dataset.geoi]);
       else selectLocation(it.dataset.go);
       input.value="";close();
     }else if(e.key==="Escape"){close()}
@@ -5029,9 +4395,9 @@ function refresh(withSkeleton){
     setTimeout(()=>{renderKPIs(false);postKpi()},280);
   }else{renderKPIs(false);postKpi()}
   function postKpi(){
-    renderMap();renderProfile();renderChartTools();renderChart();
+    renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderStreet();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCITeaser();renderCapital();renderTx();txFetch(false);
+    renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();if(CI_ENABLED){renderCITeaser();renderCapital()}renderTx();txFetch(false);
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -5068,9 +4434,8 @@ setStatics();
 el("geoCloseBtn").addEventListener("click",closeGeo);
 initTx();
 initSearch();
-initCapital();
+if(CI_ENABLED){initCapital();["capital","ciTeaserBlk","railCap"].forEach(id=>{el(id).hidden=false})}
 initCmd();
-initStreet();
 initMapZoom();
 refresh(true);
 </script>
