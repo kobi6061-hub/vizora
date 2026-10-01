@@ -14,6 +14,7 @@
 //   node scripts/housing-discover.js --audit-more    the audit's follow-ups (Land Authority, change log, stats page)
 //   node scripts/housing-discover.js --search 'עסקאות נדלן|רשות המסים'   catalogue search for any terms
 //   node scripts/housing-discover.js --locality 1061 --names 'נוף הגליל,נצרת עילית'   official registry rows of one locality
+//   node scripts/housing-discover.js --deals-republished 'באר שבע'   the open republication of the deals register (over.org.il)
 //
 // Nothing is written anywhere.
 
@@ -305,8 +306,43 @@ async function search(terms) {
   }
 }
 
+// --deals-republished [city] · the open republication of the Tax Authority's deals register by
+// גרסאות לעם (over.org.il): its documentation, licence and project pages (text near the relevant
+// words), the deals API's answer for one city, and any machine-readable spec. Read-only, a dozen
+// sequential requests — to decide on evidence whether and how PROPX may use it.
+async function dealsRepublished(city = 'באר שבע') {
+  const BASE = 'https://www.over.org.il';
+  const plain = (s) => String(s).replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+  const near = (txt, re, w = 220, max = 12) => { const hits = []; let m; const g = new RegExp(re.source, 'gi');
+    while ((m = g.exec(txt)) && hits.length < max) { hits.push(txt.slice(Math.max(0, m.index - w), m.index + w)); g.lastIndex = m.index + w; } return hits; };
+  for (const p of ['/api', '/projects/deals', '/about']) {
+    try {
+      const r = await get(BASE + p, 'text/html');
+      const txt = plain(r.text);
+      out({ kind: 'republishedPage', url: BASE + p, status: r.status, type: r.type, chars: txt.length,
+        links: [...new Set((r.text.match(/["'(](\/api\/[^"' )<>]{1,120})/g) || []).map((x) => x.slice(1)))].slice(0, 80),
+        deals: near(txt, /deals|עסקא|עסקת/), licence: near(txt, /רישיון|רשיון|licen[cs]e|creative commons|CC[ -]BY|תנאי שימוש|terms/, 260, 8),
+        freshness: near(txt, /עודכן|עדכון|updated|נכון ל|1998|2026|מיליון/, 200, 8) });
+    } catch (e) { out({ kind: 'republishedPage', url: BASE + p, error: e.message }); }
+  }
+  const q = encodeURIComponent(city);
+  for (const p of ['/api/deals', '/api/deals/search', `/api/deals/search?city=${q}&limit=3`, `/api/deals/search?settlement=${q}&limit=3`,
+    `/api/deals/search?q=${q}&limit=3`, '/api/openapi.json', '/api/deals/openapi.json', '/openapi.json', '/api/docs']) {
+    try {
+      const r = await get(BASE + p);
+      let j = null; try { j = JSON.parse(r.text); } catch { /* not JSON */ }
+      const first = j && (Array.isArray(j) ? j[0] : (j.results || j.data || j.deals || j.items || [])[0]);
+      out({ kind: 'republishedApi', url: BASE + p, status: r.status, type: r.type,
+        keys: j && !Array.isArray(j) ? Object.keys(j).slice(0, 40) : null, total: j && (j.total ?? j.count ?? j.totalCount ?? null),
+        first: first ? trim(first, 900) : null, excerpt: j ? trim(j, 700) : trim(plain(r.text), 400) });
+    } catch (e) { out({ kind: 'republishedApi', url: BASE + p, error: e.message }); }
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--deals-republished')) return dealsRepublished(argVal('deals-republished') || undefined);
   if (process.argv.includes('--search')) return search((argVal('search') || '').split('|').map((x) => x.trim()).filter(Boolean));
   if (process.argv.includes('--locality')) return locality(argVal('locality'), (argVal('names') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (process.argv.includes('--audit-more')) return auditMore();
