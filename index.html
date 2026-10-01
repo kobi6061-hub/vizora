@@ -5483,11 +5483,14 @@ function renderHoDrawer(){
 
 function initHousing(){
   const sec=el("housing");if(!sec)return;
+  /* the drawer lives at the page level: inside the animated section it would share the
+     section's stacking context and slide under the sticky header */
+  const drawer=el("hoDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const setF=(k,v)=>{const f=hoState.f;f[k]=v||null;
     if(k==="city"){f.neighborhood=null;f.project=null}
     if(k==="neighborhood")f.project=null;
     hoState.page=1;hoState.geoAll=false;hoLoad()};
-  sec.addEventListener("click",e=>{
+  const onClick=e=>{
     const b=e.target.closest("[data-hoper],[data-hoset],[data-horeset],[data-hom],[data-hob],[data-hocrumb],[data-hogo],[data-hogeoall],[data-hosort],[data-hopage],[data-hoclose],[data-hoid]");
     if(!b)return;
     const d=b.dataset,f=hoState.f;
@@ -5505,7 +5508,9 @@ function initHousing(){
       hoState.page=1;hoLoad("rows");return}
     if(d.hopage){hoState.page=Math.max(1,+d.hopage);hoLoad("rows");el("hoTblHead").scrollIntoView({block:"nearest"});return}
     if(d.hoid){hoOpen(d.hoid,b.closest("#hoPanel")?hoState.returnFocus:b);return}
-  });
+  };
+  sec.addEventListener("click",onClick);
+  if(drawer)drawer.addEventListener("click",onClick);
   sec.addEventListener("change",e=>{
     const x=e.target,d=x.dataset;
     if(d.hof){setF(d.hof,x.value);return}

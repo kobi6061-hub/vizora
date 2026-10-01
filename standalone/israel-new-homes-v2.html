@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="7b6b3c15b6ce26c7d752dc7812ad111cb3e8828c095bbd6735c6584cd452e060">
+<meta name="propx-source-sha256" content="27f8460823ed6b4ed15e47383e2b80e8ec71999664620ae86342d0c1c1f51639">
 <meta name="propx-build" content="2026-10-01.gov-housing">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -5481,11 +5481,14 @@ function renderHoDrawer(){
 
 function initHousing(){
   const sec=el("housing");if(!sec)return;
+  /* the drawer lives at the page level: inside the animated section it would share the
+     section's stacking context and slide under the sticky header */
+  const drawer=el("hoDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const setF=(k,v)=>{const f=hoState.f;f[k]=v||null;
     if(k==="city"){f.neighborhood=null;f.project=null}
     if(k==="neighborhood")f.project=null;
     hoState.page=1;hoState.geoAll=false;hoLoad()};
-  sec.addEventListener("click",e=>{
+  const onClick=e=>{
     const b=e.target.closest("[data-hoper],[data-hoset],[data-horeset],[data-hom],[data-hob],[data-hocrumb],[data-hogo],[data-hogeoall],[data-hosort],[data-hopage],[data-hoclose],[data-hoid]");
     if(!b)return;
     const d=b.dataset,f=hoState.f;
@@ -5503,7 +5506,9 @@ function initHousing(){
       hoState.page=1;hoLoad("rows");return}
     if(d.hopage){hoState.page=Math.max(1,+d.hopage);hoLoad("rows");el("hoTblHead").scrollIntoView({block:"nearest"});return}
     if(d.hoid){hoOpen(d.hoid,b.closest("#hoPanel")?hoState.returnFocus:b);return}
-  });
+  };
+  sec.addEventListener("click",onClick);
+  if(drawer)drawer.addEventListener("click",onClick);
   sec.addEventListener("change",e=>{
     const x=e.target,d=x.dataset;
     if(d.hof){setF(d.hof,x.value);return}
