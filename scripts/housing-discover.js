@@ -10,6 +10,8 @@
 //
 //   node scripts/housing-discover.js                 everything below
 //   node scripts/housing-discover.js --resource <id> one CKAN resource in depth
+//   node scripts/housing-discover.js --audit         source completeness of the lottery table
+//   node scripts/housing-discover.js --audit-more    the audit's follow-ups (Land Authority, change log, stats page)
 //
 // Nothing is written anywhere.
 
@@ -227,8 +229,44 @@ async function audit() {
   }
 }
 
+// --audit-more · the follow-ups of --audit: the Land Authority's own datasets, the dataset's
+// change log (when the portal exposes it), every key CKAN keeps on the resource, a
+// resource-level name search, and the weekly-statistics page the dataset itself links to.
+async function auditMore() {
+  const res = await ck('resource_show', { id: CORE });
+  out({ kind: 'auditResourceKeys', keys: Object.fromEntries(Object.entries(res).map(([k, v]) => [k, trim(v, 160)])) });
+  for (const [action, params] of [['package_activity_list', { id: res.package_id, limit: 100 }], ['resource_view_list', { id: CORE }]]) {
+    try {
+      const r = await ck(action, params);
+      out({ kind: 'auditActivity', action, n: Array.isArray(r) ? r.length : null,
+        items: (Array.isArray(r) ? r : []).slice(0, 100).map((a) => ({ t: a.timestamp, type: a.activity_type || a.view_type,
+          res: a.data && a.data.package && (a.data.package.resources || []).filter((x) => x.id === CORE).map((x) => ({ lm: x.last_modified, size: x.size }))[0] })) });
+    } catch (e) { out({ kind: 'auditActivity', action, error: e.message }); }
+  }
+  try {
+    const r = await ck('package_search', { fq: 'organization:the_israel_lands_administration', rows: 200 });
+    out({ kind: 'auditOrgRmi', count: r.count, packages: r.results.map((p) => ({ name: p.name, title: p.title, modified: p.metadata_modified,
+      resources: (p.resources || []).map((x) => ({ id: x.id, name: trim(x.name, 90), ds: x.datastore_active, lm: x.last_modified })) })) });
+  } catch (e) { out({ kind: 'auditOrgRmi', error: e.message }); }
+  for (const query of ['name:הגרל', 'name:זוכים', 'name:דירה בהנחה', 'name:מחיר למשתכן', 'name:משתכן', 'description:הגרלות']) {
+    try {
+      const r = await ck('resource_search', { query, limit: 50 });
+      out({ kind: 'auditResourceSearch', query, count: r.count, hits: (r.results || []).map((x) => ({ id: x.id, name: trim(x.name, 90), pkg: x.package_id, ds: x.datastore_active, lm: x.last_modified })) });
+    } catch (e) { out({ kind: 'auditResourceSearch', query, error: e.message }); }
+  }
+  for (const u of ['https://www.gov.il/he/Departments/publications/reports/mishtaken_statistics', 'https://www.gov.il/en/Departments/publications/reports/mishtaken_statistics']) {
+    try {
+      const r = await get(u, 'text/html');
+      const links = [...r.text.matchAll(/href="([^"]+\.(?:xlsx?|csv|pdf|zip))"/gi)].map((m) => m[1]);
+      out({ kind: 'auditStatsPage', url: u, status: r.status, type: r.type, bytes: r.text.length, title: (/<title>([^<]*)<\/title>/i.exec(r.text) || [])[1] || null,
+        files: links.slice(0, 40), nFiles: links.length, dates: [...new Set((r.text.match(/\b\d{1,2}[./]\d{1,2}[./](?:20)?2[4-6]\b/g) || []))].slice(0, 40) });
+    } catch (e) { out({ kind: 'auditStatsPage', url: u, error: e.message }); }
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--audit-more')) return auditMore();
   if (process.argv.includes('--audit')) return audit();
   if (process.argv.includes('--profile')) return profile(one);
   if (process.argv.includes('--gis')) return gis(one);
