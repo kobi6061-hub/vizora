@@ -307,28 +307,44 @@ async function search(terms) {
 }
 
 // --deals-republished [city] · the open republication of the Tax Authority's deals register by
-// גרסאות לעם (over.org.il): its documentation, licence and project pages (text near the relevant
-// words), the deals API's answer for one city, and any machine-readable spec. Read-only, a dozen
+// גרסאות לעם (over.org.il): its machine-readable spec (terms, deals paths and parameters), the
+// answer's own caveats and notes, and the newest deals of a few cities. Read-only, about a dozen
 // sequential requests — to decide on evidence whether and how PROPX may use it.
 async function dealsRepublished(city = 'באר שבע') {
   const BASE = 'https://www.over.org.il';
-  const plain = (s) => String(s).replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
-  const near = (txt, re, w = 220, max = 12) => { const hits = []; let m; const g = new RegExp(re.source, 'gi');
-    while ((m = g.exec(txt)) && hits.length < max) { hits.push(txt.slice(Math.max(0, m.index - w), m.index + w)); g.lastIndex = m.index + w; } return hits; };
-  for (const p of ['/api', '/projects/deals', '/about']) {
-    try {
-      const r = await get(BASE + p, 'text/html');
-      const txt = plain(r.text);
-      out({ kind: 'republishedPage', url: BASE + p, status: r.status, type: r.type, chars: txt.length,
-        links: [...new Set((r.text.match(/["'(](\/api\/[^"' )<>]{1,120})/g) || []).map((x) => x.slice(1)))].slice(0, 80),
-        deals: near(txt, /deals|עסקא|עסקת/), licence: near(txt, /רישיון|רשיון|licen[cs]e|creative commons|CC[ -]BY|תנאי שימוש|terms/, 260, 8),
-        freshness: near(txt, /עודכן|עדכון|updated|נכון ל|1998|2026|מיליון/, 200, 8) });
-    } catch (e) { out({ kind: 'republishedPage', url: BASE + p, error: e.message }); }
+  const plain = (s) => String(s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  // the machine-readable spec: its own terms, and every deals / nadlan path with its parameters
+  let sortValues = [];
+  try {
+    const spec = JSON.parse((await get(BASE + '/openapi.json')).text);
+    out({ kind: 'republishedSpec', info: trim(spec.info, 1200), servers: spec.servers || null });
+    for (const [path, ops] of Object.entries(spec.paths || {})) {
+      if (!/deal|nadlan|licen|terms/i.test(path)) continue;
+      for (const [method, op] of Object.entries(ops)) {
+        const params = (op.parameters || []).map((x) => ({ name: x.name, in: x.in, req: !!x.required,
+          type: x.schema && (x.schema.type || (x.schema.anyOf || []).map((a) => a.type).join('|')), enum: x.schema && x.schema.enum,
+          def: x.schema && x.schema.default, desc: trim(x.description || (x.schema && x.schema.description) || '', 160) }));
+        const sp = params.find((x) => x.name === 'sort');
+        if (sp && Array.isArray(sp.enum)) sortValues = sp.enum;
+        out({ kind: 'republishedPath', method: method.toUpperCase(), path, summary: op.summary, desc: trim(op.description || '', 900), params });
+      }
+    }
+  } catch (e) { out({ kind: 'republishedSpec', error: e.message }); }
+  // the answer's own caveats and notes, and the newest deals of a few cities under each documented sort
+  for (const c of [city, 'תל אביב-יפו', 'ירושלים', 'חיפה']) {
+    for (const s of (sortValues.length ? sortValues : ['-date', 'date_desc']).slice(0, 4)) {
+      try {
+        const r = await get(`${BASE}/api/deals/search?settlement=${encodeURIComponent(c)}&limit=5&sort=${encodeURIComponent(s)}`);
+        const j = JSON.parse(r.text);
+        out({ kind: 'republishedCity', city: c, sort: s, status: r.status, echoedSort: j.sort, total: j.total, capped: j.total_capped, count: j.count,
+          rows: (j.data || []).map((d) => [d.date, d.amount, d.nature, d.rooms, d.area_sqm, d.portion, (d.addresses || []).slice(0, 2).join(' / ')].join(' · ')),
+          ...(c === city && s === (sortValues[0] || '-date') ? { caveats: trim(j.caveats, 1500), notes: trim(j.notes, 1500), address: trim(j.address, 300),
+            processed: trim(j.processed, 300), rowUrl: trim(j.row_url, 200), keys0: j.data && j.data[0] ? Object.keys(j.data[0]) : null } : {}) });
+      } catch (e) { out({ kind: 'republishedCity', city: c, sort: s, error: e.message }); }
+    }
   }
   const q = encodeURIComponent(city);
-  for (const p of ['/api/deals', '/api/deals/search', `/api/deals/search?city=${q}&limit=3`, `/api/deals/search?settlement=${q}&limit=3`,
-    `/api/deals/search?q=${q}&limit=3`, '/api/openapi.json', '/api/deals/openapi.json', '/openapi.json', '/api/docs']) {
+  for (const p of ['/api/deals/search', `/api/deals/search?settlement=${q}&limit=3`]) {
     try {
       const r = await get(BASE + p);
       let j = null; try { j = JSON.parse(r.text); } catch { /* not JSON */ }
