@@ -88,32 +88,81 @@ provenance entry is kept), then folds a bare row into an id'd row across
 sources only when the match is unambiguous (exactly one id'd and one bare row
 for that fingerprint). Legitimate duplicates are never collapsed.
 
-## Transaction ledger & rolling backfill (`ledger.js`, `scripts/tx-sync.js`)
+## Transaction ledger & rolling backfill (`ledger.js`, `tx-refresh.js`)
 
 Deals reach the official source weeks after their transaction date, so recent
-periods are never treated as closed. The scheduled refresh
-(`.github/workflows/data-sync.yml`, daily) asks the source for the freshest
-deals **and re-checks the last `TX_BACKFILL_DAYS` (default 120) days of
+periods are never treated as closed. A refresh asks the source for the
+freshest deals **and re-checks the last `TX_BACKFILL_DAYS` (default 120) days of
 transaction dates** for every watched area (`data/transactions/watch.json`),
 then upserts into the ledger:
 
-- key `(source_id, record_key)`; a new key is inserted with `first_seen_at`
-  = the fetch that first saw it; an unchanged row only moves `last_seen_at`;
-  a changed row is updated (facts hash `content_hash`), keeps its
-  `first_seen_at`, and its earlier facts go to `revisions` (newest first);
-- each run records `windowCheck`: `partial` when the sweep was capped
-  (polygon limit), cut by its time budget, hit a page limit or lost a request
-  — the window is then not claimed as re-checked;
+- key `(source_id, record_key)` — the official `objectid` wins over any
+  fingerprint; a new key is inserted with `first_seen_at` = the fetch that first
+  saw it, plus the area and run that saw it (`first_seen_target`,
+  `first_seen_run`); an unchanged row only moves `last_seen_at`; a changed row
+  is updated (facts hash `content_hash`), keeps its first sighting, and its
+  earlier facts go to `revisions` (newest first, last 20);
 - nothing is ever deleted because a later response omitted it;
 - undated rows are rejected (a ledger row needs `transaction_date`).
 
-Backends: `FileLedgerStore` (`data/transactions/ledger/`, committed by the
-workflow), `SupabaseLedgerStore` (`market.transactions` in the PROPX Supabase
-project when `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set server-side),
-`MemoryLedgerStore` (tests, dry runs). `first_seen_at − transaction_date`
-measured over time is how PROPX will calibrate its data-maturity window; no
-reporting delay is claimed until it is measured. Each run is logged in
-`data/transactions/sync-runs.jsonl`.
+Identity is tested through the real GovMap normaliser (`test/ledger.test.js`,
+A–E): the same objectid in a later response is updated in place (A); different
+objectids with identical fields are two deals (B); identical id-less rows of one
+response are two deals (C); re-fetching adds nothing (D); revised official
+fields keep the earlier version as a revision (E).
+
+**Coverage of the window** (`tx-refresh.js`, shared by both runtimes): each
+area's run records `windowCheck` with its `gaps` —
+`complete` only when the sweep proves it (every polygon planned and answered,
+every request run, no page cut at its limit, no failed request); `partial` when
+capped (`polygon-cap`), cut by the time budget (`time-budget`), short of
+answers, page-limited or with failed requests; `unknown` without diagnostics or
+polygons; `not-checked` when the area was refused (HTTP 401/403), timed out,
+failed or skipped at the job deadline — and also when its lookups answered but
+none of its deals requests did (all refused → `refused`). A page counts as cut
+when it reaches the request limit or holds fewer rows than the `totalCount` the
+source reports. In `market.sync_runs` an area that was not completely
+re-checked is never `ok` (`partial` / `refused` / `failed`, or `running` while
+it is in progress). Error texts are redacted (`lib/store-config.js`: the
+store's address, its host, the keys and the token are removed before any cut)
+before they reach a run record, a log or an answer.
+
+**Where it runs.** The daily GitHub job (`scripts/tx-sync.js` in
+`data-sync.yml`) is refused by the source (HTTP 403 → status `refused`, exit 3,
+a warning — never worked around). The same refresh can run inside PROPX's own
+Vercel runtime: `POST /api/jobs/tx-refresh` (`api/jobs/tx-refresh.js`) — the
+one exact path the browser session gate lets through (decided on the parsed
+pathname in `middleware.js`) — authenticated by a bearer token
+(`PROPX_JOB_TOKEN`, server-side env; fail-closed: unset → 503, wrong → 401).
+`mode=probe` sends the raw address-lookup request and reports whether that
+runtime is accepted; `mode=run` refreshes into the Supabase ledger and records
+each area `running` before it starts and with its result after. Every official
+request has its own timeout and no area starts after 20 s, keeping the job
+inside its 60 s limit; it refuses without a valid store
+(`store-not-configured` / `store-misconfigured`).
+`.github/workflows/tx-refresh.yml` calls it daily (and on demand) once the
+secrets `PROPX_BASE_URL` + `PROPX_JOB_TOKEN` are set — it fetches nothing
+itself, and it shares the `data-sync` concurrency group, so the two ledger
+writers never overlap. The database keeps the earliest first sighting anyway:
+a trigger (migration `20261001120400`) never moves `first_seen_at` later and
+ignores a write observed before what is stored. Whether the source accepts the
+Vercel runtime is unknown until the probe has run; no continuous refresh is
+claimed before.
+
+Backends: `SupabaseLedgerStore` (`market.transactions` in the PROPX Supabase
+project when `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set server-side —
+the store of record), `FileLedgerStore` (`data/transactions/ledger/`, the GitHub
+job's fallback when the project is not configured), `MemoryLedgerStore` (tests,
+dry runs). Runs are logged in `data/transactions/sync-runs.jsonl` (GitHub job)
+and `market.sync_runs` (both runtimes, when the store is configured).
+
+**Reporting lag — foundation only.** `reportingLag(rows, runs)` and the view
+`market.transaction_reporting_lag` treat a deal's lag as observable only when,
+before PROPX first saw it, a *complete* check of the same area covered its
+transaction date; the lag is then at most `first_seen_at − transaction_date`
+(uncertain by the time since the latest such check). Deals of the first backfill are censored. Counts per
+bucket only — no average or median is computed or published until enough deals
+are observed and the method is reviewed; the page claims no reporting delay.
 
 ## Caching & historical snapshots (`store.js`)
 

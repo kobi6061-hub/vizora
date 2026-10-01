@@ -41,6 +41,14 @@ OUT = ROOT / "data" / "geo"
 NAPA_DISTRICT = {"1": "d-jm", "2": "d-north", "3": "d-haifa", "4": "d-center",
                  "5": "d-ta", "6": "d-south", "7": "js-area"}
 
+# Official locality renames — the CBS code stays, the name changes. Evidence: the Population and
+# Immigration Authority's locality registry on data.gov.il (dataset citiesandsettelments) lists code
+# 1061 as "נצרת עילית" / NAZERAT ILLIT in its monthly snapshots up to 02.07.2019 and as "נוף הגליל" /
+# NOF HAGALIL from 02.09.2019 on (current registry, resource 5c78e9fa…, napa 25 נצרת). A former name
+# is an alias of the same locality: inputs that still carry it join through it, and it is never
+# emitted as a second locality.
+OFFICIAL_RENAMES = {"נוף הגליל": {"code": 1061, "en": "NOF HAGALIL", "former": ["נצרת עילית"]}}
+
 GERESH = "׳‘’'`"
 GERSHAYIM = "״“”\""
 
@@ -70,7 +78,9 @@ def main():
     ap.add_argument("--cities-geo", required=True)
     ap.add_argument("--cities-official", required=True)
     ap.add_argument("--source-note", default="data.gov.il registries via mirror snapshots")
+    ap.add_argument("--out", default=str(OUT), help="output directory (default data/geo)")
     a = ap.parse_args()
+    out_dir = pathlib.Path(a.out)
 
     cur = json.load(open(a.streets_current, encoding="utf-8"))["streets"]
     coded = json.load(open(a.streets_coded, encoding="utf-8"))["streets"]
@@ -86,27 +96,44 @@ def main():
         coded_city_by_name.setdefault(norm(r["city_name"]), int(r["city_symbol"]))
     geo_by_name = {norm(r["name"]): r for r in geo}
 
-    current_city_names = sorted({r["city_name"].strip() for r in cur})
+    # official renames: a row under a former name is the same locality under its current name
+    renamed_from = {norm(k): [norm(f) for f in v["former"]] for k, v in OFFICIAL_RENAMES.items()}
+    current_of = {f: k for k, v in OFFICIAL_RENAMES.items() for f in (norm(x) for x in v["former"])}
+    def city_of(name):
+        name = name.strip()
+        return current_of.get(norm(name), name)
+
+    current_city_names = sorted({city_of(r["city_name"]) for r in cur})
     localities, pending_loc = [], []
     code_of_city = {}
     for name in current_city_names:
         n = norm(name)
-        o = off_by_name.get(n)
-        code = int(o["semel_yeshuv"]) if o else coded_city_by_name.get(n)
-        g = geo_by_name.get(n) or geo_by_name.get(n.replace("(שבט)", "").strip())
+        keys = [n] + renamed_from.get(n, [])
+        o = next((off_by_name[k] for k in keys if k in off_by_name), None)
+        code = int(o["semel_yeshuv"]) if o else next((coded_city_by_name[k] for k in keys if k in coded_city_by_name), None)
+        rn = next((v for k, v in OFFICIAL_RENAMES.items() if norm(k) == n), None)
+        if rn and code and code != rn["code"]:
+            raise SystemExit(f"rename table says {name} = {rn['code']}, the inputs say {code}")
+        code = code or (rn["code"] if rn else None)
+        g = next((geo_by_name[k] for k in keys if k in geo_by_name), None) or geo_by_name.get(n.replace("(שבט)", "").strip())
         napa = str(o.get("semel_napa", "")).strip() if o else ""
         district = NAPA_DISTRICT.get(napa[:1]) if napa else None
         loc_id = f"loc:{code}" if code else f"locp:{slug8(name)}"
         if not code:
             pending_loc.append(name)
         code_of_city[n] = code
-        localities.append({
+        # a renamed locality's English name comes only from rows under its CURRENT name
+        g_en, o_en = (g, o) if not rn else (geo_by_name.get(n), off_by_name.get(n))
+        loc = {
             "id": loc_id, "code": code, "he": name,
-            "en": (g or {}).get("english_name") or (o or {}).get("english_name") or None,
+            "en": (g_en or {}).get("english_name") or (o_en or {}).get("english_name") or (rn or {}).get("en") or None,
             "lat": (g or {}).get("latt"), "lng": (g or {}).get("long"),
             "napa": napa or None, "district": district,
             "moatza": (o or {}).get("shem_moaatza") or None,
-        })
+        }
+        if rn:
+            loc["aliases"] = list(rn["former"])
+        localities.append(loc)
 
     # ---------------- streets ----------------
     code_by_pair = {}
@@ -115,10 +142,12 @@ def main():
 
     streets, pending_st, seen = [], 0, set()
     for r in cur:
-        cn, sn = r["city_name"].strip(), r["street_name"].strip()
+        cn, sn = city_of(r["city_name"]), r["street_name"].strip()
         ncity, nstreet = norm(cn), norm(sn)
         ccode = code_of_city.get(ncity)
         scode = code_by_pair.get((ncity, nstreet))
+        for former in renamed_from.get(ncity, []):   # symbols published under the former name
+            scode = scode or code_by_pair.get((former, nstreet))
         # a street row that just repeats the locality name is the registry's
         # "locality as its own street" row — keep it (small localities)
         sid = (f"st:{ccode}:{scode}" if (ccode and scode)
@@ -130,7 +159,7 @@ def main():
             pending_st += 1
         streets.append([ccode, scode, sn, cn] if (ccode and scode) else [ccode, None, sn, cn])
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     meta = {
         "builtAt": date.today().isoformat(),
         "sources": {
@@ -152,19 +181,19 @@ def main():
         "note": a.source_note,
     }
     json.dump({"meta": meta, "localities": localities},
-              open(OUT / "localities.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+              open(out_dir / "localities.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     json.dump({"meta": {"builtAt": meta["builtAt"], "columns": ["cityCode", "streetCode", "street", "city"]},
                "streets": streets},
-              open(OUT / "streets-index.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    json.dump(meta, open(OUT / "registry-meta.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+              open(out_dir / "streets-index.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    json.dump(meta, open(out_dir / "registry-meta.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
     # ---------------- COVERAGE PROOF: source MINUS index must be empty ----------------
     idx_loc_names = {norm(l["he"]) for l in localities}
     idx_loc_codes = {l["code"] for l in localities if l["code"]}
     idx_street_keys = {(norm(s[3]), norm(s[2])) for s in streets}
-    miss_loc_names = sorted({norm(r["city_name"]) for r in cur} - idx_loc_names)
+    miss_loc_names = sorted({norm(city_of(r["city_name"])) for r in cur} - idx_loc_names)
     miss_off_codes = sorted({int(r["semel_yeshuv"]) for r in off_rows} - idx_loc_codes)
-    miss_streets = [(c, s) for (c, s) in {(norm(r["city_name"]), norm(r["street_name"])) for r in cur}
+    miss_streets = [(c, s) for (c, s) in {(norm(city_of(r["city_name"])), norm(r["street_name"])) for r in cur}
                     if (c, s) not in idx_street_keys]
     report = {
         "builtAt": meta["builtAt"],
@@ -180,7 +209,7 @@ def main():
             "pendingOfficialCode": len(pending_loc),
         },
         "streets": {
-            "officialRegistryCount": len({(norm(r['city_name']), norm(r['street_name'])) for r in cur}),
+            "officialRegistryCount": len({(norm(city_of(r['city_name'])), norm(r['street_name'])) for r in cur}),
             "indexed": len(streets),
             "missing": len(miss_streets),
             "missingSample": miss_streets[:10],
@@ -192,7 +221,7 @@ def main():
         "statAreas": {"expected": None, "mapped": 0, "note": "CBS statistical areas pending a reachable snapshot; schema slot reserved"},
         "setDifferencePass": len(miss_loc_names) == 0 and len(miss_streets) == 0,
     }
-    json.dump(report, open(OUT / "coverage-report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump(report, open(out_dir / "coverage-report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(json.dumps(meta["counts"], ensure_ascii=False, indent=1))
     print("SET-DIFFERENCE:", "PASS (source minus index = empty set)" if report["setDifferencePass"]
           else "FAIL loc=%d st=%d" % (len(miss_loc_names), len(miss_streets)))

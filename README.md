@@ -97,7 +97,7 @@ The section `#housing` (מחיר למשתכן · מחיר מטרה · דירה �
 official lottery records of the Ministry of Construction and Housing
 (data.gov.il, resource `7c8255d0…`): filters (locality, neighborhood, program,
 developer, process stage, permit status, lottery type, free text), periods (last
-6 / 12 / 24 months, all history, custom range), DERIVED KPIs over the OFFICIAL
+6 / 12 / 24 months, all source records, custom range), DERIVED KPIs over the OFFICIAL
 rows, activity over time, a country → locality → neighborhood → project
 drill-down, a paginated table and a per-lottery drawer with the project's
 lotteries, the observed change history and full provenance.
@@ -107,14 +107,20 @@ separately and never relabelled; a winner is not a buyer. The source publishes
 no signed sales, available inventory, construction start/completion or
 coordinates — those show "—" (nothing is inferred, nothing is placed on the
 map), and the subsidized share of unsold inventory is "—" because no official
-join exists. A period the source does not cover (its newest lottery is dated
-27.01.2025) shows "—", never 0.
+join exists.
+
+The section keeps four dates apart: when the source last re-published its file
+(16.08.2026 — an automated weekly upload), the newest lottery that file contains
+(27.01.2025), when PROPX last checked it, and how much of the selected period
+the source covers. A period after the newest lottery shows "—", never 0. The
+source does not say whether it lists every lottery of its range, so its widest
+period is "all source records", not "all history". A 2026 source-completeness
+audit found no successor or parallel official dataset with later lotteries
+(`lib/housing/README.md`).
 
 The page reads `GET /api/housing?view=…` (session-gated, one summary and one
-page of rows at a time); the records live in `data/housing/`, written by the
-daily `.github/workflows/data-sync.yml` (and in the PROPX Supabase project once
-its server-side secrets are set). Details: `lib/housing/README.md`;
-tests: `node test/housing.test.js`.
+page of rows at a time), served from the store of record (below). Details:
+`lib/housing/README.md`; tests: `node test/housing.test.js`.
 
 ### Transaction freshness
 
@@ -127,9 +133,30 @@ scheduled refresh re-checks the same 120-day window and upserts into the
 transaction ledger (`lib/gov/ledger.js`, `scripts/tx-sync.js`): first_seen_at is
 kept, earlier versions are kept as revisions, nothing is deleted, legitimate
 identical deals stay separate, and each run records whether the window was
-re-checked completely (`lib/gov/README.md`). The transaction source currently refuses the GitHub
-runner (HTTP 403); the run records that and stores nothing — it is never worked
-around.
+re-checked completely (`lib/gov/README.md`). The transaction source currently
+refuses the GitHub runner (HTTP 403); the run records that and stores nothing.
+It is never worked around. The same refresh can run inside PROPX's own Vercel
+runtime (`api/jobs/tx-refresh.js`, token-protected, called by
+`.github/workflows/tx-refresh.yml`) once its token and the Supabase project are
+configured. A probe shows whether the source accepts that runtime. Until then
+no continuous refresh is claimed.
+
+### Where the data lives (source of truth)
+
+Git snapshots are not the long-term primary database. The store of record is
+the dedicated PROPX Supabase project (`supabase/README.md`); the git snapshot
+bundled with each deployment is the fallback and the audit trail.
+
+| Data | Store of record | Fallback / trail | What the app reads first | Recovery |
+| --- | --- | --- | --- | --- |
+| Government housing lotteries (+ status history, raw payloads, sync runs) | Supabase `market.housing_*`, `raw_snapshots`, `sync_runs` | `data/housing/` (written by the same sync, bundled with the deployment) | `api/housing.js`: Supabase, when the store is whole and not behind the bundled snapshot; otherwise the bundled files. `freshness.store` / `storeReason` name the store that answered | every sync writes both. A store with a different record count, or whose last run was of other content, is rewritten whole on the next sync. A store that is behind is never served |
+| Transactions (ledger, first sightings, revisions, run coverage) | Supabase `market.transactions`, `sync_runs` | `data/transactions/ledger/` (GitHub job without Supabase) · `data/transactions/sync-runs.jsonl` | the deals section asks the official source live, server-side. The ledger feeds the reporting-lag foundation and is not shown on the page | idempotent upserts; nothing deleted; `first_seen_at` never rewritten |
+| Official market indicators | `data/market/` (git, daily) | — | the page loads it | the next daily run |
+| Geography registry | `data/geo/` (git, built by `scripts/build-geo-registry.py`) | — | `api/geo/search.js` | rebuild from the official registries |
+| User state | Supabase `user_state` (reserved, unused) | — | — | — |
+
+Until the Supabase project is configured, every row of this table runs on its
+fallback. The answers say so (`freshness.store: "git"`).
 
 Missing factual values everywhere in the app read "—"; the class of such a
 value is MISSING (חסר).

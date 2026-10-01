@@ -3,14 +3,22 @@
 // valid signed session cookie; otherwise it is redirected to /login.html.
 // The password itself never reaches the client: it lives in the SITE_PASSWORD
 // environment variable and is checked only in /api/login.
+//
+//
+// One machine-only path passes without a cookie: exactly /api/jobs/tx-refresh
+// (compared on the parsed, normalized pathname — no prefix, no encoded
+// segments), because that function authenticates the caller itself with a
+// bearer token from server-side env and fails closed (api/jobs/tx-refresh.js).
 
 const COOKIE = 'kobix_session';
+const MACHINE_PATHS = new Set(['/api/jobs/tx-refresh']);
 
 export const config = {
   matcher: ['/((?!api/login|login\\.html|robots\\.txt|favicon\\.ico).*)'],
 };
 
 export default async function middleware(req) {
+  if (MACHINE_PATHS.has(new URL(req.url).pathname)) return; // its own token gate, fail-closed
   const cookies = req.headers.get('cookie') || '';
   const raw = cookies
     .split(/;\s*/)

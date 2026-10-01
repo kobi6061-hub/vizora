@@ -1,0 +1,84 @@
+# PROPX · transaction refresh in PROPX's own server runtime.
+#
+# The official transaction source (the Tax Authority deals layer on GovMap)
+# refuses the GitHub runner (HTTP 403, recorded by data-sync.yml). This
+# workflow does not fetch anything itself: it asks the PROPX deployment to run
+# the refresh server-side (api/jobs/tx-refresh.js), where the rows go straight
+# into the PROPX Supabase ledger. Nothing is proxied and nothing is worked
+# around — if the source refuses that runtime too, the answer says so.
+#
+# Configuration (none of it in the repository; both are secrets, so neither
+# appears in this public repository's logs):
+#   repository secret    PROPX_BASE_URL   the production URL, e.g. https://<project>.vercel.app
+#   repository secret    PROPX_JOB_TOKEN  a random string (≥ 32 chars), the SAME value as the
+#                                         Vercel env var PROPX_JOB_TOKEN
+#   Vercel env (server)  SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY — needed by mode=run only
+# Unconfigured, the workflow says so and stops without failing.
+#
+#   mode=probe  one official request from the Vercel runtime: is the source reachable there?
+#   mode=run    the 120-day rolling re-check of every watched area into Supabase
+
+name: Transactions — server-side refresh
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # daily, after data-sync.yml (02:41 UTC)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'probe (is the source reachable from the PROPX runtime?) | run (refresh into Supabase)'
+        type: choice
+        options: [probe, run]
+        default: probe
+
+permissions:
+  contents: read
+
+# one writer at a time with data-sync.yml (both write the transaction ledger)
+concurrency:
+  group: data-sync
+  cancel-in-progress: false
+
+jobs:
+  call:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask the PROPX runtime to refresh
+        env:
+          BASE: ${{ secrets.PROPX_BASE_URL }}
+          TOKEN: ${{ secrets.PROPX_JOB_TOKEN }}
+          MODE: ${{ inputs.mode || 'run' }}
+        run: |
+          if [ -z "$BASE" ] || [ -z "$TOKEN" ]; then
+            echo "::notice title=Server-side refresh not configured::Set the repository secrets PROPX_BASE_URL and PROPX_JOB_TOKEN (the same value as the Vercel env var). Nothing was called."
+            exit 0
+          fi
+          code=$(curl -sS -o "$RUNNER_TEMP/out.json" -w '%{http_code}' -X POST --max-time 100 \
+            -H "Authorization: Bearer $TOKEN" "${BASE%/}/api/jobs/tx-refresh?mode=$MODE") || code=000
+          echo "HTTP $code"
+          node -e '
+            const fs = require("fs"); let j = {};
+            try { j = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/out.json", "utf8")); } catch {}
+            // server strings never become workflow commands or markdown: one line, no "::", no backticks
+            const safe = (v) => String(v == null ? "" : v).replace(/[\r\n]+/g, " ").replace(/::/g, ": :").replace(/`/g, "'").slice(0, 300);
+            const code = String(process.argv[1]).replace(/[^0-9]/g, "").slice(0, 3), out = [];
+            if (j.mode === "probe") out.push(`probe from ${safe(j.runtime && j.runtime.platform)} ${safe(j.runtime && j.runtime.region)}: ${j.reachable ? "the source answered" : "not reachable (" + safe(j.status) + "): " + safe(j.error)}`);
+            if (j.mode === "run") {
+              out.push(safe(j.summary), `run log recorded in Supabase: ${j.recorded ? "yes" : "NO — " + safe(j.recordError)}`);
+              for (const r of j.runs || []) out.push(`${safe(r.target)}: ${safe(r.status)} · window ${safe(r.windowCheck)}${r.gaps && r.gaps.length ? " (" + safe(r.gaps.join(", ")) + ")" : ""}${r.error ? " · " + safe(r.error) : ""}`);
+            }
+            if (j.error) out.push(`error: ${safe(j.error)}`);
+            const text = out.join("\n") || "(no answer)";
+            console.log(text);
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, "### tx-refresh (" + (j.mode || "?") + ") — HTTP " + code + "\n\n```\n" + text + "\n```\n");
+            const warn = (t, m) => console.log(`::warning title=${t}::${m}`);
+            if (j.mode === "probe" && !j.reachable) warn("Source not reachable from the PROPX runtime", safe(j.status) + " — no continuous refresh is possible from there");
+            if (j.mode === "run" && (j.runs || []).some((r) => r.windowCheck !== "complete")) warn("Window not completely re-checked", "see the summary; such runs are recorded as partial / not checked");
+            if (j.error === "store-not-configured" || j.error === "store-misconfigured") console.log("::notice title=No store::mode=run needs a valid SUPABASE_URL (https://<project>.supabase.co) and SUPABASE_SERVICE_ROLE_KEY in the Vercel environment.");
+          ' "$code"
+          case "$code" in
+            200) exit 0 ;;
+            503) exit 0 ;;   # job or store not configured on the deployment — said above, not a failure of this run
+            *)   exit 1 ;;
+          esac

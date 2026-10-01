@@ -35,6 +35,7 @@ const zlib = require('node:zlib');
 const { SOURCE, fetchLotteries } = require('../lib/housing/source');
 const { normalizeAll, hashRows, recordTypeOf, NORMALIZER_VERSION } = require('../lib/housing/normalize');
 const { mergeRecords, FileHousingStore, SupabaseHousingStore, readRawSnapshot, verifyOfficialSnapshot } = require('../lib/housing/store');
+const { storeConfig, redact } = require('../lib/store-config');
 
 const PROD_DIR = path.join(__dirname, '..', 'data', 'housing');
 const DIR = process.env.HOUSING_DATA_DIR || PROD_DIR;
@@ -152,6 +153,7 @@ function coverage(records) {
       inLatestSource: all.filter((r) => r.inLatestSource !== false).length,
       notInLatestSource: all.filter((r) => r.inLatestSource === false).length,
       coverage: coverage(all),
+      historyEvents: store.readHistory().length + history.length,   // every status-history event once this run is written
       lastRun: run.id,
     };
     summary = `Housing: ${got.rows.length} official rows · source updated ${String(got.sourceUpdatedAt || '—').slice(0, 10)} · `
@@ -163,13 +165,15 @@ function coverage(records) {
       run.rawSnapshot = rawName;
       run.finishedAt = new Date().toISOString();
       store.write({ records: merged, history, meta, run });
-      const { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: key } = process.env;
-      if (url && key) {
+      const cfg = storeConfig(process.env);
+      if (cfg.ok) {
         try {
-          await new SupabaseHousingStore({ url, key }).write({ records: merged, all, history, run, source: SOURCE,
-            raw: { hash, rows: got.rows, fetchedAt } });
+          await new SupabaseHousingStore({ url: cfg.url, key: cfg.key }).write({ records: merged, all, history, allHistory: store.readHistory(),
+            run, source: SOURCE, meta, raw: { hash, rows: got.rows, fetchedAt } });
           summary += ' · Supabase ✓';
-        } catch (e) { code = 2; summary += ' · Supabase write failed'; console.error('supabase:', e.message); }
+        } catch (e) { code = 2; summary += ' · Supabase write failed'; console.error('supabase:', redact(e.message)); }
+      } else if (cfg.reason === 'store-misconfigured') {
+        code = 2; summary += ' · Supabase misconfigured'; console.error('supabase: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are set but malformed (https://<project>.supabase.co expected)');
       }
     }
     console.log(JSON.stringify({ run: { ...run, rejectedSample: undefined }, meta: { ...meta, source: SOURCE.id } }, null, 1));

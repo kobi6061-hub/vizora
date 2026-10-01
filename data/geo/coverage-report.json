@@ -6,14 +6,13 @@
   "missing": 0,
   "missingSample": [],
   "officialCodeRegistryCount": 1271,
-  "officialCodesNotIndexed": 21,
+  "officialCodesNotIndexed": 20,
   "officialCodesNotIndexedNote": "locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently",
   "officialCodesNotIndexedSample": [
    0,
    38,
    849,
    942,
-   1061,
    1094,
    1154,
    1224,
@@ -25,7 +24,7 @@
    1405,
    1409
   ],
-  "pendingOfficialCode": 52
+  "pendingOfficialCode": 51
  },
  "streets": {
   "officialRegistryCount": 63559,
@@ -46,5 +45,17 @@
   "mapped": 0,
   "note": "CBS statistical areas pending a reachable snapshot; schema slot reserved"
  },
- "setDifferencePass": true
+ "setDifferencePass": true,
+ "corrections": [
+  {
+   "code": 1061,
+   "he": "נוף הגליל",
+   "formerly": [
+    "נצרת עילית"
+   ],
+   "applied": "2026-10-01",
+   "evidence": "Population and Immigration Authority locality registry on data.gov.il (citiesandsettelments): code 1061 = נצרת עילית / NAZERAT ILLIT in the monthly snapshots up to 02.07.2019, = נוף הגליל / NOF HAGALIL (napa 25 נצרת) from 02.09.2019 and in the current registry (resource 5c78e9fa-c2e2-4771-93ff-7f400a12f7ba, modified 27.09.2026)",
+   "note": "official rename: one locality, the former name an alias; its 196 streets carry the locality code, street symbols stay pending until the next registry refresh (the builder now joins the former name)"
+  }
+ ]
 }

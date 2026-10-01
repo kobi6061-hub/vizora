@@ -71,6 +71,10 @@
   "functions": {
     "api/housing.js": {
       "includeFiles": "data/housing/*.json*"
+    },
+    "api/jobs/tx-refresh.js": {
+      "maxDuration": 60,
+      "includeFiles": "data/transactions/watch.json"
     }
   }
 }

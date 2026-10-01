@@ -171,6 +171,15 @@ check('"הרצל" returns city-qualified rows from multiple cities', herzlCities
 const canonical = herzl.matches.filter((m) => m.kind === 'street').every((m) => m.id.startsWith('st'));
 check('every street row carries a canonical id (never bare name)', canonical);
 
+console.log('official renames (one locality, former name an alias)');
+const nof = searchGeo('נוף הגליל', 6).matches.filter((m) => m.kind === 'locality');
+const formerly = searchGeo('נצרת עילית', 6).matches.filter((m) => m.kind === 'locality');
+check('נוף הגליל resolves to its official code loc:1061', nof.length > 0 && nof[0].id === 'loc:1061' && nof[0].en === 'NOF HAGALIL', nof[0] && nof[0].id);
+check('its former name נצרת עילית resolves to the same locality', formerly.length > 0 && formerly[0].id === 'loc:1061', formerly[0] && formerly[0].id);
+check('no second locality for the former name or the code', G.localities.filter((l) => l.code === 1061).length === 1
+  && !G.localities.some((l) => normHe(l.he) === normHe('נצרת עילית')));
+check('loc:1061 round-trips with its streets', (resolveGeoId('loc:1061') || {}).streetsCount > 0);
+
 console.log('canonical id round-trip');
 const rt = resolveGeoId('loc:681'); // גבעת שמואל official code
 check('loc:681 resolves to גבעת שמואל', !!rt && normHe(rt.he) === normHe('גבעת שמואל'), rt && rt.he);

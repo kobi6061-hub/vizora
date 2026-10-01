@@ -48,7 +48,15 @@
   raw snapshots, geo links, transactions, housing lotteries + status history) and `user_state` (future
   per-user state, kept apart). Only the dedicated PROPX project; the sync writes there when
   `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set as server-side secrets.
+- `lib/gov/tx-refresh.js` + `api/jobs/tx-refresh.js` + `.github/workflows/tx-refresh.yml` = the transaction
+  refresh core shared by the GitHub job (`scripts/tx-sync.js`) and PROPX's own Vercel runtime (token-protected,
+  fail-closed `POST /api/jobs/tx-refresh?mode=probe|run`; `middleware.js` lets exactly that path — and no other
+  `/api/jobs/…` — past the session gate). A window is `complete` only when the sweep proves it;
+  refused/timeout/cap/partial never are. `lib/store-config.js` validates the store env and redacts it from any text.
+- `supabase/` = migrations + `supabase/README.md` (activation steps for the dedicated PROPX project, secret names
+  and where they go); `scripts/supabase-verify.js` + `.github/workflows/supabase-verify.yml` verify it. Store of
+  record: Supabase once configured; `data/housing/` is the bundled fallback (`freshness.store` says which served).
 
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).
-`SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` live only in GitHub Actions / server env — never in the repo
-or the page.
+`SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` / `PROPX_JOB_TOKEN` live only in GitHub Actions / server env — never
+in the repo or the page.

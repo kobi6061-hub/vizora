@@ -62,6 +62,7 @@ jobs:
           node test/integrity.test.js
           node test/calculator.test.js
           node test/capital.test.js
+          node scripts/api-contract.js
 
       - name: Government housing — data.gov.il lotteries
         id: housing
@@ -117,7 +118,7 @@ jobs:
       # worked around, and the run warns instead of failing every day.
       - name: Warn when a source refused access
         if: steps.tx.outputs.code == '3'
-        run: echo "::warning title=Transactions not refreshed::The transaction source refused access from this runner (HTTP 401/403). The ledger keeps its stored rows; see data/transactions/sync-runs.jsonl."
+        run: echo "::warning title=Transactions not refreshed::The transaction source refused access from this runner (HTTP 401/403). The ledger keeps its stored rows; see data/transactions/sync-runs.jsonl. The same refresh can run in the PROPX runtime (tx-refresh.yml) once it is configured."
 
       - name: Fail the run if a source failed
         if: (steps.housing.outputs.code != '' && steps.housing.outputs.code != '0') || (steps.tx.outputs.code != '' && steps.tx.outputs.code != '0' && steps.tx.outputs.code != '3')

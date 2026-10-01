@@ -16,6 +16,12 @@
 //   node scripts/tx-sync.js                 refresh every target, write
 //   node scripts/tx-sync.js --dry-run       fetch and report, write nothing
 //
+// Every area's run records whether its re-check window was really covered
+// (windowCheck complete / partial / unknown / not-checked, with the gaps —
+// lib/gov/tx-refresh.js); a capped, cut, refused or timed-out sweep is never
+// recorded as complete. The same core runs server-side in
+// api/jobs/tx-refresh.js.
+//
 // Exit: 0 all targets OK · 2 partial · 1 nothing usable · 3 the source
 // refused this environment (HTTP 401/403 on every target): recorded as
 // "refused", nothing written to the ledger, never worked around.
@@ -26,61 +32,40 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { GovMapProvider } = require('../lib/gov/providers/govmap');
 const { MemoryStore } = require('../lib/gov/store');
-const { TxLedger, FileLedgerStore, SupabaseLedgerStore, MemoryLedgerStore, backfillWindow } = require('../lib/gov/ledger');
+const { TxLedger, FileLedgerStore, SupabaseLedgerStore, MemoryLedgerStore } = require('../lib/gov/ledger');
+const { refreshTargets, summarize, exitCodeOf, recordRunsSupabase } = require('../lib/gov/tx-refresh');
+const { storeConfig, redact } = require('../lib/store-config');
 
 const ROOT = path.join(__dirname, '..', 'data', 'transactions');
 const has = (f) => process.argv.includes('--' + f);
-const SOURCE_ID = 'govmap:tax-authority-deals';
+const STORE = storeConfig(process.env);     // a malformed value stops the run — it is never echoed
 
 function ledgerStore() {
   if (has('dry-run')) return new MemoryLedgerStore();
-  const { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: key } = process.env;
-  return url && key ? new SupabaseLedgerStore({ url, key }) : new FileLedgerStore(path.join(ROOT, 'ledger'));
+  return STORE.ok ? new SupabaseLedgerStore({ url: STORE.url, key: STORE.key }) : new FileLedgerStore(path.join(ROOT, 'ledger'));
 }
 
 (async () => {
-  const now = new Date();
-  const win = backfillWindow(now);
-  const targets = JSON.parse(fs.readFileSync(path.join(ROOT, 'watch.json'), 'utf8')).targets;
-  const provider = new GovMapProvider({ store: new MemoryStore() });
-  const ledger = new TxLedger(ledgerStore());
-  const runs = [];
-  for (const tg of targets) {
-    const started = new Date().toISOString();
-    try {
-      // months spans the re-check window plus the current month
-      const rows = await provider.getTransactions({ city: tg.city, street: tg.street || null, houseNumber: tg.house ?? null },
-        { months: Math.ceil(win.days / 30) + 1, radiusM: tg.radiusM, limit: tg.limit });
-      const fetchedAt = new Date().toISOString();
-      const st = await ledger.upsert(SOURCE_ID, rows, { fetchedAt });
-      const dates = rows.map((r) => r.date).filter(Boolean).sort();
-      /* was the window really re-checked? not if the sweep was capped, cut by its time budget, hit a page limit or lost requests */
-      const d = rows.diagnostics || null;
-      const complete = d ? d.polygonsQueried >= d.polygonsPlanned && d.polygonsPlanned >= d.polygonsAvailable
-        && d.requestsRun >= d.requestsPlanned && !d.polyErrors && !d.pageLimitHits : null;
-      runs.push({ target: tg.id, status: 'ok', startedAt: started, finishedAt: new Date().toISOString(),
-        window: { from: win.from, to: win.to }, windowCheck: complete === true ? 'complete' : complete === false ? 'partial' : 'unknown',
-        fetched: rows.length, ...st, newestTransactionDate: dates[dates.length - 1] || null, coverage: d });
-    } catch (e) {
-      const refused = /\bHTTP 40[13]\b/.test(e.message);
-      runs.push({ target: tg.id, status: refused ? 'refused' : 'failed', startedAt: started, finishedAt: new Date().toISOString(),
-        window: { from: win.from, to: win.to }, error: e.message });
-    }
+  if (STORE.reason === 'store-misconfigured' && !has('dry-run')) {
+    throw new Error('SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are set but malformed (https://<project>.supabase.co expected) — nothing was written');
   }
-  for (const r of runs) console.log(JSON.stringify(r));
+  const now = new Date();
+  const runKey = 'tx-' + now.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const targets = JSON.parse(fs.readFileSync(path.join(ROOT, 'watch.json'), 'utf8')).targets;
+  const result = await refreshTargets({ provider: new GovMapProvider({ store: new MemoryStore() }), ledger: new TxLedger(ledgerStore()),
+    targets, now, runKey });
+  for (const r of result.runs) console.log(JSON.stringify(r));
   if (!has('dry-run')) {
     fs.mkdirSync(ROOT, { recursive: true });
-    fs.appendFileSync(path.join(ROOT, 'sync-runs.jsonl'), runs.map((r) => JSON.stringify({ source: SOURCE_ID, ...r })).join('\n') + '\n');
+    fs.appendFileSync(path.join(ROOT, 'sync-runs.jsonl'), result.runs.map((r) => JSON.stringify(r)).join('\n') + '\n');
+    if (STORE.ok) {
+      try { await recordRunsSupabase({ url: STORE.url, key: STORE.key }, result.runs); }
+      catch (e) { console.error('run log not written to Supabase:', redact(e.message)); process.exitCode = 1; }
+    }
   }
-  const ok = runs.filter((r) => r.status === 'ok').length;
-  const sum = (k) => runs.reduce((a, r) => a + (r[k] || 0), 0);
-  const refused = runs.filter((r) => r.status === 'refused').length;
-  const partial = runs.filter((r) => r.windowCheck === 'partial').length;
-  const summary = `Transactions ${now.toISOString().slice(0, 10)} — ${ok}/${runs.length} targets · window ${win.from}…${win.to} · +${sum('inserted')} new · ${sum('updated')} changed · ${sum('unchanged')} unchanged`
-    + (partial ? ` · window only partly re-checked on ${partial} (polygon cap / time budget / page limit)` : '')
-    + (refused ? ` · source refused access on ${refused}` : '');
+  const summary = summarize(result, now);
   console.log(summary);
   const sf = process.argv.indexOf('--summary-file');
   if (sf > -1) fs.appendFileSync(process.argv[sf + 1], summary + '\n');
-  process.exitCode = ok === runs.length ? 0 : ok ? 2 : refused === runs.length ? 3 : 1;
-})().catch((e) => { console.error('tx-sync failed:', e.message); process.exitCode = 1; });
+  process.exitCode = process.exitCode || exitCodeOf(result.runs);
+})().catch((e) => { console.error('tx-sync failed:', redact(e.message)); process.exitCode = 1; });

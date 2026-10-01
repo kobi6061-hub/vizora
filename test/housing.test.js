@@ -251,6 +251,22 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     const s24 = S('period=24m');
     assert.equal(s24.coverage.state, 'partial'); assert.equal(s24.coverage.coveredTo, '2025-01-27');
   });
+  await t('freshness keeps the source update, the latest lottery in the source and the PROPX check apart', () => {
+    const A = S('period=all'), Fr = A.freshness;
+    assert.equal(Fr.sourceUpdatedAt.slice(0, 10), '2026-08-16');
+    assert.equal(Fr.latestEventDate, '2025-01-27', 'the event horizon comes from the content, never from the update time');
+    assert.ok(Fr.checkedAt && Fr.checkedAt.slice(0, 10) !== Fr.latestEventDate);
+    assert.equal(A.coverage.state, 'within'); assert.equal(A.coverage.coveredTo, '2025-01-27');
+    /* nothing is claimed past the newest lottery: no KPI, no maturity, no table total, no filter count */
+    for (const q of ['period=6m', 'period=12m', 'period=custom&from=2025-01-28&to=2026-09-30']) {
+      const s = S(q);
+      assert.equal(s.coverage.state, 'none', q); assert.equal(s.kpis, null, q); assert.equal(s.maturity, null, q);
+      assert.ok(Object.values(s.facets).flat().every((o) => o.n == null), q + ': a filter count past the horizon');
+      assert.equal(Q.records(F(q), { dataDir: DIR }).total, null, q);
+    }
+    assert.equal(S('period=custom&from=2025-01-01&to=2025-03-31').coverage.state, 'partial');
+    assert.equal(S('period=custom&from=2024-01-01&to=2024-12-31').coverage.state, 'within');
+  });
   await t('aggregates respect the date filters', () => {
     const k24 = S('period=24m').kpis, kAll = S('period=all').kpis;
     assert.deepEqual([k24.lotteries, k24.firstLotteries, k24.continuationLotteries], [3, 2, 1]);      // Dec 2024, Jan 2025 ×2
@@ -434,8 +450,11 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
   await t('Supabase is seeded with every record when it holds fewer than PROPX (secrets added later, or a failed write)', async () => {
     const recs = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' }).records;
     const run = (count) => { const calls = [];
-      const fetchImpl = async (url, o = {}) => { calls.push({ url: url.replace('https://example.supabase.co/rest/v1/', ''), method: o.method || 'GET', body: o.body, prefer: o.headers && o.headers.Prefer });
-        return { ok: true, text: async () => '', headers: { get: (h) => (h === 'content-range' ? `0-0/${count}` : null) } }; };
+      const fetchImpl = async (url, o = {}) => { const u = url.replace('https://example.supabase.co/rest/v1/', '');
+        calls.push({ url: u, method: o.method || 'GET', body: o.body, prefer: o.headers && o.headers.Prefer });
+        const ids = recs.slice(0, count).map((r) => ({ id: r.id }));
+        return { ok: true, text: async () => '', json: async () => (u.startsWith('housing_lotteries?select=id') ? ids : []),
+          headers: { get: (h) => (h === 'content-range' ? `0-0/${count}` : null) } }; };
       return { calls, store: new SupabaseHousingStore({ url: 'https://example.supabase.co', key: 'k', fetchImpl }) }; };
     const empty = run(0);
     await empty.store.write({ records: null, all: recs, run: { id: 'r2', status: 'ok' }, source: SOURCE, raw: { hash: 'h', rows: nation(), fetchedAt: 'T1' } });
@@ -448,6 +467,105 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     assert.ok(!full.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries')), 'an up-to-date project was rewritten');
     assert.ok(full.calls.some((c) => c.method === 'PATCH'), 'last_seen_at not moved');
   });
+
+  console.log('store of record — Supabase first, the bundled snapshot as fallback');
+  {
+    const ENV = { SUPABASE_URL: 'https://store-test.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'k' };
+    const files = Q.load(DIR);
+    const fmeta = files.meta, frecs = files.records;
+    /* a PostgREST double holding `recs` with the run meta `meta` */
+    const rest = ({ meta = fmeta, recs = frecs, history = [], fail = null, slow = false, cap = 1000 } = {}) => {
+      const calls = [];
+      const fetchImpl = async (url, o = {}) => {
+        const u = String(url).replace(ENV.SUPABASE_URL + '/rest/v1/', ''); calls.push(u);
+        if (slow) await new Promise((res, rej) => o.signal.addEventListener('abort', () => rej(Object.assign(new Error('aborted'), { name: 'AbortError' }))));
+        if (fail) return { ok: false, status: fail, json: async () => ({}), text: async () => 'no' };
+        const [a, b0] = String((o.headers && o.headers.Range) || '0-999').split('-').map(Number), b = Math.min(b0, a + cap - 1);   // a project row cap
+        const all = u.startsWith('housing_lotteries') ? recs.map((record) => ({ record })) : u.startsWith('housing_status_history') ? history : null;
+        const body = u.startsWith('sync_runs') ? (meta ? [{ finished_at: meta.checkedAt, snapshot_hash: meta.snapshotHash, details: { meta } }] : [])
+          : all ? all.slice(a, b + 1) : [];
+        const range = all ? `${a}-${a + body.length - 1}/${all.length}` : null;
+        return { ok: true, status: 200, json: async () => body, headers: { get: (h) => (h === 'content-range' ? range : null) } };
+      };
+      return { calls, fetchImpl };
+    };
+    let clock = Date.parse('2026-10-01T12:00:00Z');
+    const prime = (opt) => Q.prime({ env: ENV, dataDir: DIR, now: (clock += 10 * 60e3), ...opt });
+    const sum = () => Q.summary(F('period=all'), { dataDir: DIR });
+    await t('not configured: the bundled snapshot answers and says so', async () => {
+      await Q.prime({ env: {}, dataDir: DIR });
+      const S = sum(); assert.equal(S.freshness.store, 'git'); assert.equal(S.freshness.storeReason, 'store-not-configured');
+    });
+    await t('a whole store snapshot is read first and gives the same answers', async () => {
+      const base = sum();
+      const r = rest({ meta: { ...fmeta, historyEvents: 1 },
+        history: [{ record_id: 'lottery:990001', field: 'LotteryStatusValue', from_value: 'א', to_value: 'ב', observed_at: '2026-09-01T00:00:00Z', run_key: 'h1' }] });
+      await prime({ fetchImpl: r.fetchImpl });
+      const S = sum();
+      assert.equal(S.freshness.store, 'supabase'); assert.equal(S.freshness.storeReason, null);
+      assert.deepEqual(S.kpis, base.kpis); assert.deepEqual(S.coverage, base.coverage);
+      assert.equal(Q.records(F('period=all'), { dataDir: DIR }).total, frecs.filter((x) => x.recordType === 'lottery').length);
+      assert.equal(Q.record('lottery:990001', { dataDir: DIR }).history[0].to, 'ב', 'the history comes from the store');
+      assert.ok(r.calls.some((c) => /^housing_lotteries\?select=record/.test(c)) && r.calls.every((c) => !/apikey|service/.test(c)));
+    });
+    await t('a project row cap below the page size is still read whole; concurrent requests share one read', async () => {
+      const r = rest({ cap: 2 });
+      await prime({ fetchImpl: r.fetchImpl });
+      assert.equal(sum().freshness.store, 'supabase', sum().freshness.storeReason);
+      assert.equal(r.calls.filter((c) => c.startsWith('housing_lotteries')).length, 3, '6 records in pages of 2');
+      const r2 = rest(); clock += 10 * 60e3;
+      await Promise.all([1, 2, 3].map(() => Q.prime({ env: ENV, dataDir: DIR, now: clock, fetchImpl: r2.fetchImpl })));
+      assert.equal(r2.calls.filter((c) => c.startsWith('sync_runs')).length, 1, 'concurrent requests each read the store');
+    });
+    await t('a store that is incomplete, behind, failing or slow is never served — the bundled snapshot is, with the reason', async () => {
+      await prime({ fetchImpl: rest({ recs: frecs.slice(1) }).fetchImpl });
+      assert.match(sum().freshness.storeReason, /store-unavailable: store holds 5 records, its last run 6/);
+      await prime({ fetchImpl: rest({ meta: { ...fmeta, checkedAt: '2026-01-01T00:00:00Z' } }).fetchImpl });
+      assert.equal(sum().freshness.store, 'git'); assert.match(sum().freshness.storeReason, /^store-behind/);
+      await prime({ fetchImpl: rest({ meta: null }).fetchImpl });
+      assert.match(sum().freshness.storeReason, /no completed housing sync run/);
+      await prime({ fetchImpl: rest({ meta: { ...fmeta, historyEvents: 1 }, history: [] }).fetchImpl });
+      assert.match(sum().freshness.storeReason, /store holds 0 history events, its last run 1/, 'a store missing its history was served');
+      await prime({ fetchImpl: rest({ fail: 500 }).fetchImpl });
+      assert.match(sum().freshness.storeReason, /store-unavailable: store 500/);
+      await prime({ fetchImpl: rest({ slow: true }).fetchImpl, timeoutMs: 30 });
+      assert.match(sum().freshness.storeReason, /did not answer within 30 ms/);
+      assert.equal(sum().freshness.store, 'git'); assert.ok(sum().kpis.lotteries > 0, 'the fallback still answers');
+    });
+    await t('a store whose last run was of other content is rewritten whole (recovery), a current one only touched', async () => {
+      const recs = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' }).records;
+      const mk = (lastHash, { ids = recs.map((r) => r.id), histCount = 0 } = {}) => { const calls = [];
+        const fetchImpl = async (url, o = {}) => { const u = url.replace('https://example.supabase.co/rest/v1/', '');
+          calls.push({ url: u, method: o.method || 'GET', body: o.body, prefer: o.headers && o.headers.Prefer });
+          const body = u.startsWith('housing_lotteries?select=id') ? ids.map((id) => ({ id })) : u.startsWith('sync_runs?select=snapshot_hash') ? [{ snapshot_hash: lastHash }] : [];
+          const total = u.startsWith('housing_status_history') ? histCount : u.startsWith('housing_lotteries') ? ids.length : 0;
+          return { ok: true, text: async () => '', json: async () => body, headers: { get: (h) => (h === 'content-range' ? `0-0/${total}` : null) } }; };
+        return { calls, store: new SupabaseHousingStore({ url: 'https://example.supabase.co', key: 'k', fetchImpl }) }; };
+      const stale = mk('older-hash');
+      await stale.store.write({ records: null, all: recs, run: { id: 'r4', status: 'ok', snapshotHash: 'current-hash' }, source: SOURCE, meta: { checkedAt: 'T2' } });
+      assert.ok(stale.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries')), 'a stale store with the right count was not repaired');
+      const runRow = JSON.parse(stale.calls.find((c) => c.method === 'POST' && c.url.startsWith('sync_runs')).body)[0];
+      assert.deepEqual(runRow.details.meta, { checkedAt: 'T2' }, 'the run carries the meta the read side needs');
+      const current = mk('current-hash');
+      await current.store.write({ records: null, all: recs, run: { id: 'r5', status: 'ok', snapshotHash: 'current-hash' }, source: SOURCE, meta: { checkedAt: 'T3' } });
+      assert.ok(!current.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries')), 'a current store was rewritten');
+      /* extra official rows in the store (ids, not counts): no rewrite on every run */
+      const extra = mk('current-hash', { ids: [...recs.map((r) => r.id), 'lottery:999999'] });
+      await extra.store.write({ records: null, all: recs, run: { id: 'r6', status: 'ok', snapshotHash: 'current-hash' }, source: SOURCE, meta: {} });
+      assert.ok(!extra.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries')), 'a store with extra rows is rewritten every run');
+      /* the store lost status history (a failed write): every event is posted again, each stored once */
+      const ev = [{ id: recs[0].id, field: 'LotteryStatusValue', from: 'א', to: 'ב', observedAt: 'T1', syncRunId: 'r1' }, { id: recs[1].id, field: 'Winners', from: 1, to: 2, observedAt: 'T1', syncRunId: 'r1' }];
+      const lost = mk('current-hash', { histCount: 1 });
+      await lost.store.write({ records: null, all: recs, history: [], allHistory: ev, run: { id: 'r7', status: 'ok', snapshotHash: 'current-hash' }, source: SOURCE, meta: {} });
+      const hp = lost.calls.find((c) => c.method === 'POST' && c.url.startsWith('housing_status_history'));
+      assert.ok(hp && JSON.parse(hp.body).length === 2, 'the missing history was not re-posted');
+      assert.match(hp.url, /on_conflict=record_id,field,observed_at,run_key$/); assert.match(hp.prefer, /ignore-duplicates/);
+      const whole = mk('current-hash', { histCount: 2 });
+      await whole.store.write({ records: null, all: recs, history: [], allHistory: ev, run: { id: 'r8', status: 'ok', snapshotHash: 'current-hash' }, source: SOURCE, meta: {} });
+      assert.ok(!whole.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_status_history')), 'a whole history was re-posted');
+    });
+    await Q.prime({ env: {}, dataDir: DIR });
+  }
 
   console.log('production boundary');
   await t('no government-housing fixture leaks into Production (data, page, standalone, server code)', () => {
@@ -481,6 +599,25 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     assert.equal(meta.records, recs.length);
   });
 
+  console.log('geography — lottery localities join the canonical registry');
+  await t('every lottery locality code is one official locality in the registry (נוף הגליל 1061 included)', () => {
+    const { loadGeo, searchGeo } = require('../lib/geo/registry');
+    const G = loadGeo();
+    const R = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'housing', 'lotteries.json'), 'utf8')).filter((r) => r.recordType === 'lottery');
+    const codes = [...new Set(R.map((r) => r.localityCode))];
+    assert.deepEqual(codes.filter((c) => !G.byCode.has(c)), [], 'lottery locality codes missing from the registry');
+    const nof = G.byCode.get(1061);
+    assert.equal(nof.he, 'נוף הגליל'); assert.equal(nof.en, 'NOF HAGALIL'); assert.equal(nof.district, 'd-north'); assert.deepEqual(nof.aliases, ['נצרת עילית']);
+    assert.ok(R.filter((r) => r.localityCode === 1061).every((r) => r.city === nof.he), 'the source and the registry name code 1061 differently');
+    assert.equal(G.localities.filter((l) => l.code === 1061 || l.n === 'נצרת עילית').length, 1, 'a second Nazareth Illit / Nof HaGalil entity');
+    for (const q of ['נוף הגליל', 'נצרת עילית']) assert.equal(searchGeo(q, 3).matches.find((m) => m.kind === 'locality').id, 'loc:1061', q);
+    /* the housing filter by code and by the official name select the same rows */
+    const n1061 = R.filter((r) => r.localityCode === 1061).length;
+    const byCode = Q.records(Q.parseFilters(new URLSearchParams('period=all&city=1061'), NOW).filters);
+    const byName = Q.records(Q.parseFilters(new URLSearchParams('period=all&city=' + encodeURIComponent('נוף הגליל')), NOW).filters);
+    assert.ok(n1061 > 0); assert.equal(byCode.total, n1061); assert.equal(byName.total, n1061);
+  });
+
   console.log('page — the government housing section (run with the page\'s own strings)');
   const INDEX = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const matched = (anchor) => {
@@ -496,7 +633,7 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     const nf=new Intl.NumberFormat("en-US");const fmtInt=n=>nf.format(Math.round(n));const fmtNIS=n=>"₪"+fmtInt(n);
     const vcTag=c=>'<span class="vc '+c+'">'+T().vcName[c]+'</span>';
     function coveredIdByName(){return null}
-    ` + HO_SRC + ';({hoN,hoDash,hoKpisHTML,hoChartHTML,hoGeoHTML,hoTableHTML,I18N,state,hoState})',
+    ` + HO_SRC + ';({hoN,hoDash,hoKpisHTML,hoChartHTML,hoGeoHTML,hoTableHTML,hoCovHTML,I18N,state,hoState})',
   { state: { lang: 'he', locId: null }, LOC: {}, MKT: { nh: null, boi: null }, location: { protocol: 'https:', host: 'x' }, Intl });
   const stripTags = (h) => h.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
   await t('the section exists, is in the rail, and carries the specified titles', () => {
@@ -537,6 +674,30 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
       assert.ok(html.includes(new Intl.NumberFormat('en-US').format(K.winners)) && html.includes(new Intl.NumberFormat('en-US').format(K.unitsFirst)));
       assert.equal(K.signedSales, null); assert.equal(K.availableInventory, null);
     }
+  });
+  await t('the coverage band shows four separate facts and never reads the source update as currency', () => {
+    const fr = { synced: true, sourceUpdatedAt: '2026-08-16T15:30:41Z', latestEventDate: '2025-01-27', checkedAt: '2026-10-01T02:45:00Z' };
+    const sq = (h) => stripTags(h).replace(/\s+/g, '');
+    const band = (state, period, f = fr) => sq(UI.hoCovHTML({ freshness: f, filters: { period },
+      coverage: { state, coveredFrom: '2016-02-29', coveredTo: '2025-01-27' }, kpis: state === 'none' ? null : { lotteries: 3 } }));
+    for (const L of ['he', 'en']) {
+      UI.state.lang = L; const s = UI.I18N[L];
+      const all = band('within', 'all');
+      for (const [label, val] of [[s.hoF.upd, '16.08.2026'], [s.hoF.latest, '27.01.2025'], [s.hoF.chk, '01.10.2026'], [s.hoF.per, '29.02.2016–27.01.2025']])
+        assert.ok(all.includes(sq(label + val)), `${L}: ${label}`);
+      const stale = sq(s.hoCovStale('16.08.2026', '27.01.2025'));
+      assert.ok(all.includes(stale), L + ': an update after the newest lottery is not said out loud');
+      assert.ok(!band('within', 'all', { ...fr, sourceUpdatedAt: '2025-01-27T09:00:00Z' }).includes(sq(s.hoCovStale('27.01.2025', '27.01.2025'))), 'stale note without a later update');
+      assert.ok(band('none', '6m').includes(sq(s.hoF.per + s.hoFPer.none)) && band('none', '6m').includes(sq(s.hoCovNone('27.01.2025'))));
+      assert.ok(band('partial', '24m').includes(sq(s.hoF.per + s.hoFPer.partial('27.01.2025'))));
+      assert.ok(band('within', 'custom').includes(sq(s.hoF.per + s.hoFPer.within)));
+    }
+    UI.state.lang = 'he';
+    assert.equal(UI.I18N.he.hoPer.all, 'כל הרשומות במקור'); assert.equal(UI.I18N.en.hoPer.all, 'All source records');
+    const words = (L) => [L.hoF, L.hoFPer, L.hoCovAll, L.hoCovStale, L.hoCovWithin, L.hoCovNone, L.hoCovPartial, L.hoPer, L.hoProv]
+      .map((v) => typeof v === 'function' ? String(v) : JSON.stringify(v, (k, x) => typeof x === 'function' ? String(x) : x)).join(' ');
+    assert.ok(!/עדכני|נכון ל|מעודכן עד|כל ההיסטוריה|כל התקופה|(^|[^א-ת])מלא([^א-ת]|$)/.test(words(UI.I18N.he)), 'he wording implies currency or completeness');
+    assert.ok(!/current (through|to|as of)|up to date|complete|all history|\bfull\b/i.test(words(UI.I18N.en)), 'en wording implies currency or completeness');
   });
   await t('official text from the source is escaped before it enters the page', () => {
     const evil = '<img src=x onerror=alert(1)>';

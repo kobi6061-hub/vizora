@@ -28,6 +28,41 @@ Verified with `scripts/housing-discover.js` on a GitHub runner (gov.il is not
 reachable from every environment): 2,352 rows, lottery dates 2016-02-29 →
 2025-01-27, source modified 2026-08-16.
 
+### Source completeness (audit of 01.10.2026, `--audit` / `--audit-more`)
+
+- **Authoritative:** yes. It is the Ministry's own lottery-tracking resource and
+  the only lottery-level publication on data.gov.il. All 12 datasets of the
+  Ministry and the 3 of the Israel Land Authority were checked, plus a catalogue
+  search (16 queries) and a resource-name search (6 queries). No successor or
+  parallel dataset carries later lotteries.
+- **Why "updated 16.08.2026" but no lottery after 27.01.2025:** the resource is
+  re-uploaded by automation (`how_update: Automat`, `Frequency: Week`). Its
+  last upload was 16.08.2026; none of the Ministry's datasets changed after
+  17.08.2026. The datastore holds every record of the uploaded file
+  (`datastore_contains_all_records_of_source_file: true`), and that content
+  has no lottery after **27.01.2025** (newest signup end 21.01.2025). PROPX's
+  content hash equals the live content. The portal does not expose the change
+  log (`package_activity_list` 404), so whether earlier uploads carried the
+  same content cannot be shown. The source does not say why lotteries stop
+  in January 2025.
+- **Not reachable without a bypass, so not used:** the Ministry's weekly-
+  statistics page (linked from the dataset) answers the runner with a
+  Cloudflare challenge (HTTP 403). The lottery registration site
+  (dira.moch.gov.il) is behind bot protection and loads its data through a
+  non-public API. The original CSV download answers HTTP 403. None is worked
+  around.
+- **Programmes and rounds:** מחיר למשתכן (2,339 lotteries 2016–2025, plus the
+  one grants row); מחיר מטרה (12 lotteries, 2016–2018); first lotteries (1,355)
+  and continuation rounds (997, 2017–2024 — none in 2025). Marketing bodies:
+  משב"ש (1,455) and רמ"י (897). The 58 lotteries of 2025 are all first lotteries
+  of משב"ש in January. "דירה בהנחה" is the programme's umbrella name in the
+  dataset title; the rows carry no other track.
+- **True coverage:** lottery dates **29.02.2016 → 27.01.2025** (2,350 dated
+  lotteries, 1 undated). LotteryId runs 101 → 2,564 with 112 numbers absent;
+  the source does not say whether they were cancelled or never published.
+  Completeness is therefore not proven, and the widest period is "all source
+  records" (כל הרשומות במקור), not "all history".
+
 Other sources checked and **not** joined (see the GH-1 report): the program's
 GIS layer (download refused, 403 → no coordinates, no map markers); the
 "sales without lottery" resource (empty); construction-progress data (stale,
@@ -103,9 +138,18 @@ fetchedAt, snapshotHash, retrievalMethod, classification: OFFICIAL}.
   not older than the current content (unless `--force`); fixtures go to a
   separate `HOUSING_DATA_DIR`. Snapshots store `{contentHash, fetchedAt,
   sourceUpdatedAt, endpoint, rows}`.
-- Supabase: when the project holds fewer records than PROPX (secrets added
-  after the first sync, or a failed write), the next run writes all of them and
-  the raw snapshot; raw snapshots keep their first fetch time.
+- Supabase — the store of record once configured (`supabase/README.md`): every
+  run also writes the project. The run's meta (source update, PROPX check,
+  coverage) travels in `sync_runs.details.meta`. When the project holds a
+  different number of records than PROPX, or its last run was of other
+  content (secrets added later, a failed write), the next run rewrites all
+  records and the raw snapshot. Raw snapshots keep their first fetch time.
+- Reads (`query.js`, `remote.js`): `api/housing.js` primes the store snapshot
+  (at most every 5 minutes; a failure is retried after 1 minute; 6 s timeout).
+  It is served only whole — the latest ok run's meta and exactly that many
+  records — and not behind the bundled snapshot (an older `checkedAt`).
+  Otherwise the bundled `data/housing/` answers. Every answer names its store
+  (`freshness.store`: `supabase` | `git`, with `storeReason`).
 - `NORMALIZER_VERSION`: a mapping change re-derives the records from the same
   content without writing history events.
 
@@ -123,9 +167,17 @@ User-specific state lives in the separate `user_state` schema.
 official name), `neighborhood`, `project`, `developer`, `program`, `status`,
 `permit`, `lotteryStatus`, `type`, `q`.
 
+- Four dates, never merged (`freshness` + `coverage`): `sourceUpdatedAt` (the
+  source's last re-publication), `latestEventDate` (the newest lottery in that
+  content), `checkedAt` (PROPX's last check), and the selected period's
+  coverage — `within` the source's range, `partial` or `none` (`within` says
+  where the period lies, never that the source is complete for it). The page
+  shows them as four labelled facts and says out loud when the source's update
+  is later than its newest lottery.
 - A period the source does not cover (after its newest lottery date) is
-  `null` → "—", never 0. Inside the covered range a month with no lottery is
-  a real 0. A partly covered period says so.
+  `null` → "—", never 0 — KPIs, maturity, table total and filter counts alike.
+  Inside the covered range a month with no lottery is a real 0. A partly
+  covered period says so.
 - KPIs are DERIVED counts/sums over official rows; the median official price
   per m² and applicants-per-unit carry their basis (first lotteries with a
   value).

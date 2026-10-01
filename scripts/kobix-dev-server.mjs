@@ -52,7 +52,7 @@ http.createServer(async (req, res) => {
   }
 
   // middleware gate (same exclusions as middleware.js matcher)
-  const open = p === '/login.html' || p === '/robots.txt' || p === '/favicon.ico';
+  const open = p === '/login.html' || p === '/robots.txt' || p === '/favicon.ico' || p === '/api/jobs/tx-refresh';
   if (!open) {
     const raw = (req.headers.cookie || '').split(/;\s*/).find((c) => c.startsWith(COOKIE + '='));
     if (!(raw && verify(raw.slice(COOKIE.length + 1)))) {
@@ -61,7 +61,7 @@ http.createServer(async (req, res) => {
   }
 
   // serverless api simulation (same modules Vercel runs)
-  if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/') || p === '/api/housing') {
+  if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/') || p.startsWith('/api/jobs/') || p === '/api/housing') {
     const { createRequire } = await import('node:module');
     const require = createRequire(import.meta.url);
     const mod = path.join(ROOT, p.replace(/^\/api\//, 'api/') + '.js');

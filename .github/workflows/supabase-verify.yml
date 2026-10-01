@@ -1,0 +1,73 @@
+# PROPX · verify the dedicated PROPX Supabase project (run by hand once its
+# migrations are applied and its secrets are set; supabase/README.md has the
+# steps). It syncs the official housing records into the project, verifies
+# schema, access, counts and the stored snapshot, syncs again and verifies that
+# the unchanged content added nothing (idempotency). Nothing is committed — so
+# it runs only while the live source equals the committed snapshot: it never
+# writes content (records, history events, first sightings) the repository
+# does not have. Shares the data-sync concurrency group, so it never
+# interleaves with the daily sync.
+#
+# Repository secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (and optionally
+# SUPABASE_ANON_KEY, to prove the anon key is refused).
+
+name: Supabase — verify the PROPX project
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-sync
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Secrets present?
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error title=Not configured::Add the repository secrets SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY of the dedicated PROPX Supabase project."
+            exit 1
+          fi
+
+      - name: The live source equals the committed snapshot?
+        run: |
+          node -e '
+            const { fetchLotteries } = require("./lib/housing/source");
+            const { hashRows } = require("./lib/housing/normalize");
+            const committed = require("./data/housing/meta.json").snapshotHash;
+            fetchLotteries().then((got) => {
+              const live = hashRows(got.rows);
+              if (live !== committed) {
+                console.log("::error title=The source changed::The official source changed since the last committed sync (" + live.slice(0, 12) + " ≠ " + String(committed).slice(0, 12) + "). Let data-sync.yml commit it first, then run this verification.");
+                process.exit(1);
+              }
+              console.log("live content = committed snapshot " + live.slice(0, 12));
+            }).catch((e) => { console.error("source check failed: " + e.message); process.exit(1); });'
+
+      - name: Sync 1 — official housing records into the project (seeds an empty one)
+        run: code=0; node scripts/housing-sync.js > "$RUNNER_TEMP/sync1.log" || code=$?; tail -c 800 "$RUNNER_TEMP/sync1.log"; exit $code
+
+      - name: Verify schema, access, counts, stored snapshot
+        run: node scripts/supabase-verify.js --snapshot "$RUNNER_TEMP/after1.json"
+
+      - name: Sync 2 — the same content again
+        run: code=0; node scripts/housing-sync.js > "$RUNNER_TEMP/sync2.log" || code=$?; tail -c 800 "$RUNNER_TEMP/sync2.log"; exit $code
+
+      - name: Verify idempotency (nothing added, one more run)
+        run: node scripts/supabase-verify.js --same-as "$RUNNER_TEMP/after1.json"

@@ -17,7 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-10-01.gov-housing">
+<meta name="propx-build" content="2026-10-01.gh-1.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -618,6 +618,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .ho-reset{font-size:12px;font-weight:700;color:var(--accent-deep);padding:4px 6px}
 .ho-loc{font-size:12px;font-weight:700;color:var(--ink-2);border:1px dashed var(--baseline);border-radius:99px;padding:4px 10px}
 .ho-cov{padding:9px 15px;font-size:12.5px;color:var(--ink-2);line-height:1.55;border-bottom:1px solid var(--hairline);background:var(--panel-2)}
+.ho-facts{display:flex;flex-wrap:wrap;gap:3px 18px;margin-bottom:5px}
+.ho-fact{font-size:11.5px;color:var(--ink-3)}
+.ho-fact b{font-weight:800;color:var(--ink);margin-inline-start:3px}
+.ho-covs{margin:0}
 .ho-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 15px 8px}
 @media(min-width:1000px){.ho-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .ho-k{border:1px solid var(--hairline);border-radius:10px;padding:9px 11px;min-width:0}
@@ -661,7 +665,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .ho-tblhead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between;padding:10px 15px;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
 .ho-tblhead h3{font-size:13px;font-weight:800}
 .ho-tbl td,.ho-tbl th{padding-inline:8px}
-.ho-tbl td.w{white-space:normal;min-width:96px;max-width:190px;line-height:1.35}
+.ho-tbl td.w{white-space:normal;min-width:96px;max-width:190px;line-height:1.35;overflow-wrap:anywhere}
+.ho-tbl td.p{min-width:72px;max-width:120px}
+.ho-tbl th{white-space:normal;vertical-align:bottom}
+.ho-tbl th button{text-align:start}
 .ho-tbl tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .ho-chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--hairline);border-radius:99px;padding:0 7px;color:var(--ink-2);white-space:nowrap}
 .ho-chip.cont{border-style:dashed;color:var(--ink-3)}
@@ -2053,8 +2060,12 @@ he:{
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
   navHousing:"דיור", lyrHo:"L1 · שוק · דיור ממשלתי", hoTitle:"דיור מסובסד", hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה",
   hoSrcName:"משרד הבינוי והשיכון · data.gov.il",
-  hoProv:(src,upd,chk)=>`מקור: ${src} · עודכן במקור ${upd} · נבדק ב-PROPX ${chk}`,
-  hoPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים",all:"כל התקופה",custom:"טווח מותאם"},
+  hoProv:src=>`מקור: ${src}`,
+  hoPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים",all:"כל הרשומות במקור",custom:"טווח מותאם"}, hoPerL:"תקופה",
+  hoF:{upd:"עדכון המקור",latest:"ההגרלה האחרונה במקור",chk:"נבדק ב-PROPX",per:"כיסוי התקופה"},
+  hoFPer:{within:"בטווח המקור",partial:d=>`חלקי — עד ${d}`,none:"אין",all:(a,b)=>`${a}–${b}`},
+  hoCovAll:(a,b)=>`כיסוי נתוני ההגרלות במקור הרשמי: ${a} עד ${b}. המקור אינו מציין אם הוא כולל כל הגרלה בטווח זה.`,
+  hoCovStale:(u,b)=>`עדכון המקור מ-${u} אינו כולל הגרלות אחרי ${b}.`,
   hoFrom:"מ-", hoTo:"עד", hoCity:"יישוב", hoAllCities:"כל הארץ", hoNbhd:"שכונה", hoAllNbhd:"כל השכונות",
   hoProgram:"תוכנית", hoAllPrograms:"כל התוכניות", hoDev:"יזם", hoAllDevs:"כל היזמים",
   hoStatus:"שלב בתהליך", hoAllStatus:"כל השלבים", hoPermit:"היתר בנייה", hoAllPermits:"כל סטטוסי ההיתר",
@@ -2066,7 +2077,7 @@ he:{
   hoNotSynced:"טרם בוצע סנכרון מהמקור הרשמי.",
   hoCovNone:d=>`המקור הרשמי אינו כולל הגרלות אחרי ${d}. לתקופה שנבחרה אין בו נתונים, ולכן מוצג "—", לא אפס.`,
   hoCovPartial:d=>`כיסוי חלקי: נתוני המקור מסתיימים ב-${d}; מה שאחרי התאריך אינו נכלל.`,
-  hoCovFull:(a,b)=>`המקור מכסה הגרלות מ-${a} עד ${b}.`,
+  hoCovWithin:(a,b)=>`התקופה שנבחרה נמצאת בטווח המקור (${a} עד ${b}).`,
   hoNoneHere:"המקור הרשמי אינו מפרט הגרלות לסינון זה בתקופה המכוסה.",
   hoMissingTip:"הנתון אינו קיים כרגע במקור הרשמי המחובר",
   hoKLot:"הגרלות", hoKLotS:(f,c)=>`${f} ראשונות · ${c} המשך`, hoKProj:"פרויקטים", hoKCities:"יישובים",
@@ -2450,8 +2461,12 @@ en:{
   navHousing:"Housing", lyrHo:"L1 · Market · Government housing", hoTitle:"Government Housing / Subsidized Housing Intelligence",
   hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה — Mechir LaMishtaken · Mechir Matara · Dira BeHanacha",
   hoSrcName:"Ministry of Construction and Housing · data.gov.il",
-  hoProv:(src,upd,chk)=>`Source: ${src} · source updated ${upd} · checked by PROPX ${chk}`,
-  hoPer:{"6m":"6 months","12m":"12 months","24m":"24 months",all:"All history",custom:"Custom range"},
+  hoProv:src=>`Source: ${src}`,
+  hoPer:{"6m":"6 months","12m":"12 months","24m":"24 months",all:"All source records",custom:"Custom range"}, hoPerL:"Period",
+  hoF:{upd:"Source updated",latest:"Latest lottery in source",chk:"Checked by PROPX",per:"Period coverage"},
+  hoFPer:{within:"Within the source's range",partial:d=>`Partial — to ${d}`,none:"None",all:(a,b)=>`${a}–${b}`},
+  hoCovAll:(a,b)=>`Lottery coverage in the official source: ${a} to ${b}. The source does not state whether it lists every lottery in that range.`,
+  hoCovStale:(u,b)=>`The source's update of ${u} contains no lottery after ${b}.`,
   hoFrom:"From", hoTo:"To", hoCity:"Locality", hoAllCities:"All Israel", hoNbhd:"Neighborhood", hoAllNbhd:"All neighborhoods",
   hoProgram:"Program", hoAllPrograms:"All programs", hoDev:"Developer", hoAllDevs:"All developers",
   hoStatus:"Process stage", hoAllStatus:"All stages", hoPermit:"Building permit", hoAllPermits:"All permit statuses",
@@ -2463,7 +2478,7 @@ en:{
   hoNotSynced:"No sync from the official source has run yet.",
   hoCovNone:d=>`The official source lists no lottery after ${d}. It has no data for the selected period, so "—" is shown, not zero.`,
   hoCovPartial:d=>`Partial coverage: the source's data ends on ${d}; nothing after that date is included.`,
-  hoCovFull:(a,b)=>`The source covers lotteries from ${a} to ${b}.`,
+  hoCovWithin:(a,b)=>`The selected period lies within the source's range (${a} to ${b}).`,
   hoNoneHere:"The official source lists no lottery for this filter in the covered period.",
   hoMissingTip:"Data not currently present in the connected official source.",
   hoKLot:"Lotteries", hoKLotS:(f,c)=>`${f} first · ${c} continuation`, hoKProj:"Projects", hoKCities:"Localities",
@@ -5273,7 +5288,7 @@ function hoBarHTML(){
   const custom=f.period==="custom"?`<span class="ho-dates"><label>${t.hoFrom} <input type="date" data-hod="from" value="${hoE(f.from||"")}"${f.from&&f.to&&f.from>f.to?' aria-invalid="true"':""}></label>
     <label>${t.hoTo} <input type="date" data-hod="to" value="${hoE(f.to||"")}"></label></span>`:"";
   const dirty=HO_FILTERS.some(k=>k!=="period"&&f[k])||f.period!=="all";
-  return `<span class="ho-per" role="group" aria-label="${hoE(t.hoPer.all)}">${per}</span>${custom}
+  return `<span class="ho-per" role="group" aria-label="${hoE(t.hoPerL)}">${per}</span>${custom}
     ${sel("city",t.hoAllCities,cityList,t.hoCity)}
     ${f.city?sel("neighborhood",t.hoAllNbhd,nbList,t.hoNbhd):""}
     ${sel("program",t.hoAllPrograms,progList,t.hoProgram)}
@@ -5348,7 +5363,7 @@ function hoTableHTML(R){
     <td class="num">${hoDate(r.lotteryDate)}</td>
     <td class="w"><span class="nm">${hoE(r.projectName)||hoDash()}</span><div class="sub num">#${r.projectId} · ${t.hoDLot(r.lotteryId)}</div>${r.inLatestSource===false?`<span class="ho-chip cont">${t.hoDelisted}</span>`:""}</td>
     <td class="w">${hoCityName(r.city)}<div class="sub">${r.neighborhood?hoE(r.neighborhood):hoDash()}</div></td>
-    <td>${hoProgName(r.program,r.programHe)}</td>
+    <td class="w p">${hoProgName(r.program,r.programHe)}</td>
     <td class="w">${r.developer?hoE(r.developer):hoDash()}</td>
     <td>${hoTypeChip(r.lotteryType)}</td>
     <td class="num">${hoN(r.unitsInLottery)}</td>
@@ -5368,6 +5383,29 @@ function hoCardsHTML(R){
     <div class="r2"><span>${t.hoC.permit}: ${hoTx(r.permitStatusHe)}</span><span>${t.hoC.status}: ${hoTx(r.projectStatusHe)}</span></div></div>`).join("");
 }
 
+/* Coverage band. Four different dates, never merged: when the source last re-published its file,
+   the newest lottery that file contains, PROPX's last check, and how much of the selected period
+   the source covers. An update date after the newest lottery is said out loud, so it is never
+   read as currency. */
+function hoCovHTML(S){
+  const t=T(),fr=S.freshness||{},C=S.coverage||{};
+  const all=(S.filters&&S.filters.period)==="all",latest=fr.latestEventDate||C.coveredTo||null;
+  const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
+  const per=all?t.hoFPer.all(hoDate(C.coveredFrom),hoDate(C.coveredTo)):C.state==="none"?t.hoFPer.none
+    :C.state==="partial"?t.hoFPer.partial(hoDate(C.coveredTo)):t.hoFPer.within;
+  const stale=latest&&fr.sourceUpdatedAt&&String(fr.sourceUpdatedAt).slice(0,10)>latest?" "+t.hoCovStale(hoDate(fr.sourceUpdatedAt),hoDate(latest)):"";
+  const say=all?t.hoCovAll(hoDate(C.coveredFrom),hoDate(C.coveredTo))+stale
+    :C.state==="none"?t.hoCovNone(hoDate(C.coveredTo)):C.state==="partial"?t.hoCovPartial(hoDate(C.coveredTo))
+    :t.hoCovWithin(hoDate(C.coveredFrom),hoDate(C.coveredTo))+(S.kpis&&S.kpis.lotteries===0?" "+t.hoNoneHere:"");
+  const notes=[];
+  /* source names are Hebrew: isolated, so an English sentence keeps its order around them */
+  if(S.excluded&&S.excluded.length)notes.push(t.hoExcluded(S.excluded.map(x=>`<bdi>${hoE(x.projectName)} · ${hoE(x.city)}</bdi>`).join("; ")));
+  if(S.undated)notes.push(t.hoUndated(fmtInt(S.undated)));
+  if(S.delisted)notes.push(t.hoDelistedN(fmtInt(S.delisted)));
+  return `<div class="ho-facts">${fact(t.hoF.upd,hoDate(fr.sourceUpdatedAt))}${fact(t.hoF.latest,hoDate(latest))}${fact(t.hoF.chk,hoDate(fr.checkedAt))}${fact(t.hoF.per,per)}</div>
+    <p class="ho-covs">${say}${notes.length?" "+notes.join(" "):""}</p>`;
+}
+
 function renderHousing(){
   const sec=el("housing");if(!sec)return;
   const t=T(),S=hoState.sum,R=hoState.rec,st=hoState.status;
@@ -5379,7 +5417,7 @@ function renderHousing(){
   bar.innerHTML=hoBarHTML();
   if(key){const n=bar.querySelector(key);if(n){if(typed!=null)n.value=typed;n.focus();if(ss!=null)try{n.setSelectionRange(ss,se)}catch(e){}}}
   const fr=S&&S.freshness;
-  el("hoProv").innerHTML=fr&&fr.synced?`${vcTag("raw")}${t.hoProv(hoE(t.hoSrcName),hoDate(fr.sourceUpdatedAt),hoDate(fr.checkedAt))}`:"";
+  el("hoProv").innerHTML=fr&&fr.synced?`${vcTag("raw")}${t.hoProv(hoE(t.hoSrcName))}`:"";
   /* states: not started / loading / error / not synced */
   const msg=st==="error"?(hoOffline()?t.hoOffline:t.hoErr):st==="range"?t.hoPickRange:(!S&&st==="loading")?t.hoLoading:(S&&fr&&!fr.synced)?t.hoNotSynced:"";
   const show=!!S&&!(fr&&!fr.synced)&&st!=="error";
@@ -5388,14 +5426,8 @@ function renderHousing(){
   if(!show){cov.hidden=!msg;cov.className="ho-msg";cov.textContent=msg;el("hoFoot").textContent="";sec.setAttribute("aria-busy",String(st==="loading"));return}
   sec.setAttribute("aria-busy",String(st==="loading"));
   cov.className="ho-cov";
-  const C=S.coverage||{};
   cov.hidden=false;
-  const notes=[];
-  if(S.excluded&&S.excluded.length)notes.push(t.hoExcluded(S.excluded.map(x=>`${hoE(x.projectName)} · ${hoE(x.city)}`).join("; ")));
-  if(S.undated)notes.push(t.hoUndated(fmtInt(S.undated)));
-  if(S.delisted)notes.push(t.hoDelistedN(fmtInt(S.delisted)));
-  cov.innerHTML=(C.state==="none"?t.hoCovNone(hoDate(C.coveredTo)):C.state==="partial"?t.hoCovPartial(hoDate(C.coveredTo))
-    :t.hoCovFull(hoDate(C.coveredFrom),hoDate(C.coveredTo))+(S.kpis&&S.kpis.lotteries===0?" "+t.hoNoneHere:""))+(notes.length?" "+notes.join(" "):"");
+  cov.innerHTML=hoCovHTML(S);
   /* maturity of the selected period: still updating · partly covered · historical — never "complete" */
   const M=S.maturity,days=(M&&M.days)||(fr&&fr.maturityDays)||90;
   const mat=!M?"":M.updating?`<span class="ho-mat upd" title="${hoE(t.hoMatTip(days))}">${t.hoMatUpd}</span> <span>${t.hoMatUpdS(fmtInt(M.updating),days)}</span>`

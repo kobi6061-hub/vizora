@@ -1,5 +1,5 @@
 {
- "at": "2026-09-24T13:22:10.982Z",
+ "at": "2026-10-01T18:55:39.056Z",
  "checks": [
   {
    "name": "locality count matches build meta",
@@ -14,7 +14,7 @@
   {
    "name": "build set-difference proof recorded as PASS",
    "ok": true,
-   "detail": "{\"officialRegistryCount\":1304,\"indexed\":1304,\"missing\":0,\"missingSample\":[],\"officialCodeRegistryCount\":1271,\"officialCodesNotIndexed\":21,\"officialCodesNotIndexedNote\":\"locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently\",\"officialCodesNotIndexedSample\":[0,38,849,942,1061,1094,1154,1224,1299,1329,1401,1402,1404,1405,1409],\"pendingOfficialCode\":52}"
+   "detail": "{\"officialRegistryCount\":1304,\"indexed\":1304,\"missing\":0,\"missingSample\":[],\"officialCodeRegistryCount\":1271,\"officialCodesNotIndexed\":20,\"officialCodesNotIndexedNote\":\"locality codes present in the official code registry but absent from the current street-registry snapshot (dissolved/merged or unpopulated localities); listed, not dropped silently\",\"officialCodesNotIndexedSample\":[0,38,849,942,1094,1154,1224,1299,1329,1401,1402,1404,1405,1409],\"pendingOfficialCode\":51}"
   },
   {
    "name": "no orphan streets (every street has a locality)",
@@ -288,7 +288,7 @@
   {
    "name": "locality \"נצרת\" resolves",
    "ok": true,
-   "detail": "נצרת | נצרת"
+   "detail": "נצרת | נוף הגליל"
   },
   {
    "name": "  \"נצרת\" has searchable streets (787)",
@@ -525,6 +525,24 @@
    "ok": true
   },
   {
+   "name": "נוף הגליל resolves to its official code loc:1061",
+   "ok": true,
+   "detail": "loc:1061"
+  },
+  {
+   "name": "its former name נצרת עילית resolves to the same locality",
+   "ok": true,
+   "detail": "loc:1061"
+  },
+  {
+   "name": "no second locality for the former name or the code",
+   "ok": true
+  },
+  {
+   "name": "loc:1061 round-trips with its streets",
+   "ok": true
+  },
+  {
    "name": "loc:681 resolves to גבעת שמואל",
    "ok": true,
    "detail": "גבעת שמואל"
@@ -540,8 +558,8 @@
  },
  "counts": {
   "localities": 1304,
-  "localitiesWithOfficialCode": 1252,
-  "localitiesPendingOfficialCode": 52,
+  "localitiesWithOfficialCode": 1253,
+  "localitiesPendingOfficialCode": 51,
   "streets": 63559,
   "streetsWithOfficialCode": 50600,
   "streetsPendingOfficialCode": 12959,

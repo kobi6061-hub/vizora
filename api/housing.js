@@ -13,6 +13,11 @@
 // Filters: period=6m|12m|24m|all|custom (&from&to=YYYY-MM-DD), city (CBS code or
 // official name), neighborhood, project (ProjectId or name), developer,
 // program, status, permit, lotteryStatus, type=first|continuation, q.
+//
+// Store of record: the PROPX Supabase project when the server-side env holds
+// SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY; the snapshot bundled with the
+// deployment otherwise, or when the store is unreachable, incomplete or behind
+// (lib/housing/query.js). Every answer names it in freshness.store.
 
 'use strict';
 
@@ -32,6 +37,7 @@ module.exports = async (req, res) => {
   const g = (k) => url.searchParams.get(k);
   const view = g('view') || 'summary';
   try {
+    await Q.prime();
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'record') {
       const out = g('id') ? Q.record(g('id')) : null;
