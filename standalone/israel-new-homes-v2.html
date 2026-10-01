@@ -10,7 +10,8 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-10-01.p0-hardening">
+<meta name="propx-source-sha256" content="c66322b953f8473373402da96c8c404b09637b8a6038beda5e474a57f8c9581b">
+<meta name="propx-build" content="2026-10-01.capital-restore">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -876,6 +877,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 .cmd-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--ink-3);white-space:nowrap}
 .cmd-live i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:livePulse 2.4s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){.cmd-live i{animation:none}}
+@media(max-width:559px){.cmd-live{white-space:normal}}   /* the EN freshness line wraps on phones */
 @keyframes livePulse{50%{opacity:.35}}
 .cap-signal{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;
   background:var(--panel);border:1px solid var(--edge);border-inline-start:3px solid var(--gold);
@@ -1042,6 +1044,42 @@ details.ci-more>.in{padding:2px 13px 12px}
 [data-theme="dark"] .ci-lvl.l3{background:rgba(240,148,84,.14)}
 .ci-whynot{margin-top:10px;font-size:11.5px;color:var(--ink-2);background:var(--panel-2);
   border-radius:9px;padding:8px 12px;line-height:1.6}
+/* restored capital module — model-ranking label, assumption inputs, equity accounting */
+.ci-rank-note{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;font-size:11px;color:var(--ink-3);line-height:1.5;margin:-2px 2px 9px}
+.ci-rankb{flex:none;font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--brass);
+  border:1px solid var(--brass);border-radius:999px;padding:2px 8px;background:var(--panel)}
+.ci-app3{display:flex;gap:8px;flex-wrap:wrap}
+.ci-app3 label{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--ink-3);font-weight:700}
+.ci-ref{flex:1 1 100%;font-size:11px;color:var(--ink-3);line-height:1.5}
+.ci-card-kv .vc{margin-inline-start:4px;vertical-align:1px}
+.ci-card-kv b.down{color:var(--down)}
+.ci-card-ne{display:block;margin-top:6px;font-size:10.5px;font-weight:600;color:var(--ink-3);line-height:1.4}
+.ci-alink{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:start;
+  text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:3px}
+.ci-alink:hover{color:var(--brass)}.ci-alink:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:2px}
+.ci-app3 .ci-in{font-weight:400}
+.ci-irr3 > .k{flex:1 1 100%}
+.ci-phrow .d{display:block}
+.ci-flags li .vc,.ci-kv .k .vc,.ci-inv-grid .k .vc,.ci-tbl td .vc,.ci-cfline .k .vc,.ci-sect-t .vc,.ci-target .vc,.ci-asm .vc{margin-inline-start:3px;vertical-align:1px}
+.ci-acct .v{font-size:13.5px}
+.ci-irr3{align-items:center}
+.ci-irr1{display:inline-flex;align-items:baseline;gap:5px;font-size:12px}
+.ci-irr1 b{font-family:var(--f-display);font-size:17px;font-weight:800}
+.ci-irr1 b.down{color:var(--down)}
+.ci-irr-s{flex:1 1 100%}
+.ci-asm-t{flex:1 1 100%;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.ci-polg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 14px;margin-top:6px}
+.ci-pf{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--ink-2)}
+.ci-in[aria-invalid="true"]{border-color:var(--down);box-shadow:0 0 0 3px var(--down-wash)}
+.ci-lab{color:var(--accent);font-weight:700}
+.ci-lab:hover{text-decoration:underline}
+#ciPolEd{margin-top:12px}
+#ciPolEd details.ci-more{margin-top:0}
+@media(max-width:759px){.ci-chip{white-space:normal;max-width:100%}}
+@media(max-width:560px){
+  .ci-polg{grid-template-columns:1fr}
+  .ci-app3 .ci-in.sm{width:58px}
+}
 
 /* offline build: no server session — hide logout controls */
 #logoutBtn,.rail a[href="/api/logout"]{display:none!important}
@@ -1078,8 +1116,8 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
   <span class="rail-div" aria-hidden="true"></span>
-  <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">מחשבון</span></a>
   <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
+  <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
@@ -1282,44 +1320,48 @@ details.ci-more>.in{padding:2px 13px 12px}
     </div>
   </section>
 
-  <!-- Investor calculator — the investor's own scenario; independent of the
-       (hidden) capital model below -->
-  <section class="blk" id="calc">
-    <div class="blk-head">
-      <div><span class="lyr gold" data-i="calcLyr">L4 · משקיע</span>
-      <h2 data-i="calcTitle">מחשבון משקיע</h2></div>
-      <span class="note" data-i="calcNote">התרחיש שלכם · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין</span>
-    </div>
-    <div class="calc" id="calcBody"></div>
-  </section>
-
-  <!-- Capital intelligence -->
+  <!-- Capital intelligence — "where should I deploy my capital?": a model over
+       the classified PROPX data and the investor's own, visible assumptions.
+       Its MODEL RANKINGS stay inside this section (CI_EXTERNAL=false). -->
   <section class="blk" id="capital" hidden>
     <div class="ci-band">
       <div class="ci-head">
         <div>
           <span class="lyr gold" data-i="lyr4b">L4 · הון</span>
           <h2 data-i="ciTitle">איפה הכסף עובד הכי טוב?</h2>
-          <p class="ci-sub" data-i="ciSub">האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.</p>
+          <p class="ci-sub" data-i="ciSub">האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ומגמת מחיר — מודל על נתוני PROPX ועל ההנחות שתבחרו.</p>
         </div>
-        <span class="ci-chip" data-i="ciChip">ציון השקעה מבוסס נתונים · אינו ייעוץ</span>
+        <span class="ci-chip" data-i="ciChip">מודל השקעה · הנחות גלויות · אינו ייעוץ</span>
       </div>
       <div class="ci-deck" id="ciDeck"></div>
       <div class="ci-grid">
         <div>
-          <div class="ci-col-t" data-i="ciOppT">הזדמנויות מובילות</div>
+          <div class="ci-col-t" data-i="ciOppT">שווקים מובילים לאיתור · רמת אזור</div>
+          <div class="ci-rank-note" id="ciRankNote"></div>
           <div id="ciList"></div>
         </div>
         <div id="ciDetail"></div>
       </div>
       <div class="ci-port-head">
-        <h3 data-i="ciPortT">ניהול הון · תיק מוצע</h3>
-        <span class="note" data-i="ciPortNote">מודל הקצאה אנליטי והיפותטי — לא המלצה</span>
+        <h3 data-i="ciPortT">ניהול הון · הקצאת יעד לאיתור</h3>
+        <span class="note" data-i="ciPortNote">יעדי איתור ומשא-ומתן ברמת אזור · מודל — לא עסקאות זמינות ולא המלצה</span>
       </div>
       <div class="ci-port" id="ciPort"></div>
+      <div id="ciPolEd"></div>
       <div class="ci-assume" id="ciAssume"></div>
-      <div class="ci-disc" data-i="ciDisc">מודל אנליטי המחושב מנתוני השוק שבלוח בלבד. כל הערכים המתייחסים לעתיד הם תרחישים מבוססי הנחות מפורשות — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.</div>
+      <div class="ci-disc" data-i="ciDisc">מודל אנליטי על נתוני PROPX — כל קלט מסווג (רשמי · סטטי · נגזר · מודל) — ועל ההנחות שלכם. עליית הערך היא הנחה שלכם, לא תחזית של PROPX; כל ערך עתידי הוא תרחיש — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.</div>
     </div>
+  </section>
+
+  <!-- Deal calculator (Deal Lab) — "does this specific deal work?": the
+       investor's own single-deal scenario; independent of the capital model -->
+  <section class="blk" id="calc">
+    <div class="blk-head">
+      <div><span class="lyr gold" data-i="calcLyr">L4 · מעבדת עסקה</span>
+      <h2 data-i="calcTitle">מחשבון עסקה</h2></div>
+      <span class="note" data-i="calcNote">האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין</span>
+    </div>
+    <div class="calc" id="calcBody"></div>
   </section>
 
   <!-- Recent transactions -->
@@ -1732,21 +1774,6 @@ const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
    exist in this build: a second dataset here once contradicted the counts,
    so it was removed rather than hidden. */
 
-/* -------- DORMANT: approximate appreciation curve ------------------------
-   A hand-typed ten-year national path (not an observed series) that only the
-   hidden capital model reads (CI_ENABLED=false, §CAPITAL INTELLIGENCE). No
-   display, score, ranking or recommendation path reads it while that switch
-   is off, and test/integrity.test.js fails if the switch is turned on while
-   this curve still exists. It goes when official index history replaces it. */
-const NATIONAL_CURVE=[-2.0,-1.0,7.7,-1.4,17.1,11.6,4.0,3.4,-2.3,2.1];
-function localCurve(l){
-  const c=[...NATIONAL_CURVE];
-  c[0]=l.base.yoy;
-  const target=1+l.base.y3/100;               /* cumulative 3-year move */
-  c[1]=(target/((1+c[0]/100)*(1+c[2]/100))-1)*100;
-  return c;
-}
-
 /* =====================================================================
    2 · i18n
    ===================================================================== */
@@ -1793,8 +1820,8 @@ he:{
   cmpEmpty:"בחר עד ארבעה אזורים להשוואה", cmpMax:"עד 4 אזורים",
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
   confTitle:"בסיס הנתונים",
-  navCalc:"מחשבון", calcLyr:"L4 · משקיע", calcTitle:"מחשבון משקיע",
-  calcNote:"התרחיש שלכם · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין",
+  navCalc:"עסקה", calcLyr:"L4 · מעבדת עסקה", calcTitle:"מחשבון עסקה",
+  calcNote:"האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין",
   calcG:{buy:"רכישה",fin:"מימון",ops:"הכנסה והוצאות",exit:"החזקה ומכירה"},
   calcIn:{price:"מחיר הנכס",equity:"הון עצמי",tax:"מס רכישה",fees:"עלויות רכישה נוספות (עו״ד, תיווך)",
     rate:"ריבית משכנתא שנתית",term:"תקופת המשכנתא",rent:"שכר דירה חודשי",vac:"אי-תפוסה",opex:"תחזוקה, ניהול ושיפוצים",
@@ -1916,131 +1943,167 @@ he:{
   gd6a:"עלויות נלוות ומסירה", gd6b:"הוסיפו לתקציב מס רכישה, שכ״ט עו״ד, חיבורי תשתיות וחניה/מחסן; איחור מסירה מעבר לקבוע בחוק מזכה בפיצוי.",
   cities:"ערים",nbhds:"שכונות",districts:"מחוזות",searchEmpty:"לא נמצאו תוצאות. נסה שם עיר או שכונה.",
   navCap:"הון",
-  ciUnitsN:n=>`${n} יח׳`,
-  ciScoreT:"ציון השקעה",
   vsNat:"מול ארצי", cmpSet1:"הערים הגדולות", cmpSet2:"ערי המרכז", cmpSet3:"שכונות מבוקשות",
-  ciLvlArea:"רמת אזור", ciProjN:"פרויקטים מאומתים", ciNoProjS:"פרויקט מאומת: אין",
-  ciNoProj:"פרויקטים מאומתים במערכת: 0 · שכבת קליטה מוכנה (מחירוני יזם, מלאי, CRM, מודיעין שטח).",
-  ciNoDeals:"עסקאות חיות מאומתות: 0 — ההקצאה למעלה היא יעד לאיתור ומו״מ, לא רכישה זמינה היום.",
-  ciLevMkt:"סביבת מו״מ · שוק",
-  ciMktScale:"פוטנציאל היקף · שוק", ciDealScale:"היקף עסקה מאומת", ciUnknown:"לא ידוע",
-  ciEvid:(inv,rate,ms,mom,sh)=>`נתמך ב: מלאי ${inv} יח׳ ÷ ~${rate} מכירות/חודש (חלון: קצב שנתי ÷ 12) = ~${ms} חודשי היצע (ארצי ~26 לפי למ״ס, רמה היסטורית גבוהה) · מומנטום שנתי ${mom} · תרחיש רכישה ממודל ≈${sh}% ממלאי האזור — מודל · רמת אזור`,
-  ciDealLevNA:"מנוף ברמת עסקה: לא ידוע — אין מלאי פרויקט מאומת",
-  ciTgt3:(a,b,c)=>`יעדים לפי אסטרטגיה: החזקה ≤ <b class="num">${a}</b> · מכירה ≤ <b class="num">${b}</b> · מרוכז ≤ <b class="num">${c}</b>`,
-  ciRetLine:(r,p)=>`לפי תשואה נדרשת (${r}% שנתי על ההון · מדיניות): ≤ <b class="num">${p}</b>`,
-  ciRetAbove:r=>`יעד התשואה (${r}% שנתי) מושג גם במחיר השוק המלא — במינוף ובתרחיש הבסיס.`,
-  ciRetNone:r=>`יעד התשואה (${r}% שנתי) אינו מושג גם בהנחה של 50%- — בתנאי המימון והתרחיש הנוכחיים.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותה שכבת נתונים ממשלתית): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול העוגן המודלי: ${gap}) — נתון נצפה, אינו משנה את הציון`,
-  ciCompThin:"מדגם קטן — לא לגזור מסקנת מחיר",
-  ciPolicyTag:"מדיניות", ciModelTag:"מודל",
-  ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
-  cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
-  cvObs:"רשמי", cvEst:"אומדן", cvEstD:"אומדן נגזר · רזולוציית עיר",
-  ciProvLine:(a,b)=>`מקורות ותקופות: מדד מחירי דירות חדשות — למ״ס, מאי–יוני 2026 · עסקאות — קצב שנתי (ארצי 2025; ת״א: למ״ס מחצית א׳ 2026 במונחים שנתיים) (${a}) · מלאי לא-מכור — למ״ס, סוף יוני 2026 (${b}) · שכירות — נצפה: למ״ס ארצי רבעון 1/2026, ערים 2025; פרמיית ‎+8% לדירה חדשה — הנחת מודל, לא שכ״ד נצפה 2026; מגמה לפי שינוי עירוני נצפה · רזולוציה עיר/שכונה · ריבית בנק ישראל — 6.7.2026 · נשלף: 30.08.2026`,
-  ciBulkT2:"תרחישי כוח-קנייה מרוכזת · מודל",
-  ciBulkModelled:"תרחיש מודל — לא מלאי מאומת: היקפים היפותטיים מול נפח השוק המקומי. יהפוך ל'תרחיש רכישה מאומת' רק כשקיים מלאי פרויקט מאומת.",
-  ciTgtUnits:n=>`יעד ~${n} יח׳ · איתור`,
-  ciPolT:"מדיניות השקעה (מרכזית)",
-  ciPolHold:"תשואת החזקה נדרשת %", ciPolIrr:"תשואה שנתית נדרשת על ההון %", ciPolBulk:"דיסקאונט מרוכז %", ciPolConf:"ודאות מינימלית %",
-  ciPolNote:"כללי מדיניות — לא אמת שוק: שינוי כאן מחשב מחדש יעדים, סינון ודירוג עבור משקיע אחר.",
-  ciAsmIrr:(r,c)=>`מדיניות: IRR מודל ${r}% לפני מס · ודאות מינ׳ ${c}%`,
-  ciIrrDef:l=>`הגדרה: IRR מודל ${l>0?"ממונף":"לא ממונף"} לפני מס — כולל מס רכישה ועלויות, מימון, אי-תפוסה/תפעול/תחזוקה, צמיחת שכירות, עליית ערך (תרחיש בסיס) ועלויות מכירה; לא כולל מס שבח ומס הכנסה.`,
   mOpp:"ציון הזדמנות", rankOpp:"ההזדמנויות המובילות · מודל",
-  ciInvT:"תקציר השקעה · מודל", ciBestUse:"שימוש מיטבי",
-  ciStratA:"החזקה והשכרה", ciStratB:"קנייה ומכירה", ciStratC:"רכישה מרוכזת",
-  ciFairV:"טווח שווי מוערך", ciPressureK:"לחץ שוק", ciLevK:"מנוף מו״מ",
-  ciScaleK:"Scale Fit", ciScaleUpTo:(c,u)=>`עד ~${c} · ${u} יח׳`,
-  ciYieldAtK:"תשואה נטו במחיר היעד",
-  ciP0:"נמוך", ciP1:"מתון", ciP2:"מוגבר", ciP3:"גבוה",
-  ciL0:"נמוך", ciL1:"בינוני", ciL2:"גבוה", ciL3:"גבוה מאוד",
-  ciTargetLine:(p,d)=>`<b>יעד מחיר רכישה:</b> העסקה נהיית מעניינת מתחת ל-<b class="num">${p}</b> — הנחה של כ-<b class="num">${d}%</b> מהמחיר הנוכחי. זהו יעד למשא-ומתן, לא מחיר מוסכם.`,
-  ciTargetNow:p=>`<b>המחיר הנוכחי (<span class="num">${p}</span>) כבר עומד ביעד המודל</b> — ההזדמנות מעניינת גם ללא הנחה נוספת; כל הנחה משפרת את הכרית.`,
-  ciInvNote:"שלושה ציונים לשלוש אסטרטגיות — הזהוב הוא השימוש המיטבי לפי המודל. לחץ שוק ומנוף מנוסחים עובדתית (מלאי, קצב ספיגה, גודל עסקה) — לא טענה על מצב פיננסי של יזם.",
-  ciBulkT:"תרחישי רכישה מרוכזת · במחיר היעד", ciBulkU:"יח׳", ciBulkCap:"הון נדרש", ciBulkShare:"נתח מהמלאי המקומי",
-  ciBulkNote:d=>`הון נדרש מחושב במחיר יעד של ${d}%- מהשווי; הנתח מוגבל ליכולת הספיגה המקומית (עסקאות ומלאי). ריכוז גבוה = מנוף גבוה יותר וגם סיכון יציאה גבוה יותר.`,
-  ciWhyNotLine:(n,p,c)=>`למה מעל ${n}? יתרון ב${p}${c?`; מנגד — ${n} חזק יותר ב${c}`:""}.`,
-  ciAsmTargets:(y,r,b)=>`יעדי מחיר: תשואת החזקה ${y}% נטו · מכירה ${r}%- · מרוכז ${b}%-`,
   aZoom:"זום במפה", aZoomIn:"התקרבות", aZoomOut:"התרחקות", aZoomReset:"איפוס תצוגת המפה",
 
   cmdKicker:"PROPX · מרכז שליטה",
   cmdFresh:MKT.checked?`מדדים רשמיים נבדקו ${MKT.checkedDay} · למ״ס · בנק ישראל`:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
-  capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`ציון השקעה מוביל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
+  capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`מוביל בדירוג המודל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
   mapHint:"לחיצה לבחירת האזור",
   lyr1:"L1 · שוק", lyr1b:"L1 · שוק", lyr1c:"L1 · שוק",
   lyr2:"L2 · מיקום", lyr2b:"L2 · מיקום", lyr2c:"L2 · מיקום",
   lyr3:"L3 · נכס", lyr3b:"L3 · נכס",
   lyr4:"L4 · הון", lyr4b:"L4 · הון",
-  ciConfNote:"הציון הסופי משוקלל במקדם ודאות הנתונים של האזור — נתונים חלשים מורידים את הדירוג.",
   ciTitle:"איפה הכסף עובד הכי טוב?", ciTeaserT:"איפה הכסף עובד הכי טוב?",
-  ciSub:"האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ועליית ערך — לפי הנתונים שבלוח.",
-  ciChip:"ציון השקעה מבוסס נתונים · אינו ייעוץ", ciTeaserNote:"ציון השקעה · מודל",
+  ciSub:"האזורים עם השילוב החזק ביותר בין תזרים שוטף, פוטנציאל השבחה ומגמת מחיר — מודל על נתוני PROPX ועל ההנחות שתבחרו.",
+  ciChip:"מודל השקעה · הנחות גלויות · אינו ייעוץ", ciTeaserNote:"דירוג מודל",
   ciTeaserCTA:"לניתוח השקעה מלא ←", ciOppT:"שווקים מובילים לאיתור · רמת אזור",
-  ciCap:"הון זמין", ciStrat:"אסטרטגיה", ciHorizon:"אופק", ciLev:"מינוף",
+  ciRankBadge:"דירוג מודל",
+  ciRankNote:(s,y,c)=>`מדורג לפי האסטרטגיה (${s}), האופק (${y} שנים) והמשקולות${c?" המותאמות":""} שבחרתם, מנתוני PROPX הזמינים — כל קלט מסווג (נגזר · סטטי · מודל). תוצר מודל, לא המלצה.`,
+  ciCap:"הון עצמי זמין", ciStrat:"אסטרטגיה", ciHorizon:"אופק", ciLev:"מינוף",
   ciY3:"3 שנים", ciY5:"5 שנים", ciY10:"10 שנים", ciNoLev:"ללא",
   ciStCash:"תזרים", ciStBal:"מאוזן", ciStVa:"השבחה", ciStGrowth:"צמיחה", ciStCons:"שמרני",
   ciRate:"ריבית", ciTerm:"תקופה", ciYears:"שנ׳",
-  ciScoreK:"ציון", ciScoreAria:s=>`ציון השקעה ${s} מתוך 100`,
+  ciAppK:"עליית ערך שנתית", ciAppBase:"בסיס %", ciAppDn:"מרווח שמרני", ciAppUp:"מרווח אופטימי",
+  ciAppRates:(c,b,u)=>`הנחת עליית ערך: שמרני <span class="num">${c}%</span> · בסיס <span class="num">${b}%</span> · אופטימי <span class="num">${u}%</span> לשנה — זהה לכל האזורים`,
+  ciScoreT:"ציון מודל", ciScoreK:"ציון מודל", ciScoreAria:s=>`ציון מודל ${s} מתוך 100`,
   ciEntry:"מחיר כניסה", ciNetY:"תשואה נטו", ciVaShort:"השבחה", ciLiqShort:"נזילות",
-  ciConf:"ודאות", ciConfShort:"ודאות", ciHz:y=>`${y} שנ׳ · בסיס`, ciHzFull:y=>`אופק ${y} שנים`,
+  ciBasisK:"בסיס נתונים", ciBasisShort:"בסיס נתונים",
+  ciBasisLvl:{h:"רוב הקלטים מצוטטים",m:"חלקי",l:"ברובו מודל"},
+  ciBasisTip:(s,n)=>`${s} מתוך ${n} קלטים מצוטטים (רשמי/סטטי/נגזר); השאר מודל`,
+  ciBasisNote:"הציון משוקלל בבסיס הנתונים: × (0.82 + 0.18 × חלק הקלטים המצוטטים) — אזור שכל נתוניו מודל מדורג נמוך יותר. זהו סיווג מקור, לא מדד סטטיסטי.",
+  ciHz:y=>`<bdi>IRR</bdi> · ${y} שנ׳ · בסיס`, ciHzFull:y=>`אופק ${y} שנים`,
   ciHigh:"גבוהה", ciMed:"בינונית", ciLow:"נמוכה",
-  ciWhy:"למה כאן?", ciRisk:"מה הסיכון?", ciScoreWhy:"הרכב הציון",
-  ciFcf:"תזרים", ciFap:"עליית ערך", ciFva:"השבחה", ciFlq:"נזילות", ciFdm:"ביקוש", ciFrk:"איכות נתונים",
+  ciWhy:"למה כאן?", ciRisk:"מה הסיכון?", ciScoreWhy:"הרכב הציון · מודל",
+  ciFcf:"תזרים", ciFap:"מגמת מחיר", ciFva:"השבחה", ciFlq:"נזילות", ciFdm:"ביקוש", ciFrk:"פרופיל סיכון",
+  ciTrendNote:"מגמת מחיר = שילוב השינוי השנתי והשינוי ל-3 שנים (בחישוב שנתי) כפי שהם בלוח — נתון עבר, לא תחזית; האופק קובע את המשקל. פרופיל סיכון: גבוה = פחות דגלי סיכון.",
   ciCfT:"תשואה משוערת", ciBuy:"רכישה", ciRentMo:"שכירות חודשית", ciRentYr:"שכירות שנתית",
-  ciGross:"תשואה ברוטו", ciNet:"תשואה נטו משוערת", ciNetS:"אחרי אי-תפוסה, תפעול ותחזוקה",
+  ciGross:"תשואה ברוטו", ciNet:"תשואה נטו משוערת", ciNetS:"אחרי אי-תפוסה, תפעול ותחזוקה · על מחיר הרכישה",
   ciLevT:"מינוף ותזרים", ciEquity:"הון עצמי נדרש", ciEquityS:"כולל מס רכישה ועלויות",
   ciLoan:"הלוואה", ciPmt:"החזר חודשי", ciCoC:"Cash-on-Cash",
   ciCfMo:"תזרים חודשי", ciCfMoS:"שכירות נטו פחות החזר משכנתא",
   ciLevNote:"מינוף מגדיל גם תשואה וגם סיכון — עלויות המימון מוצגות במלואן.",
-  ciScenT:y=>`תרחישי ${y} שנים`, ciConsSc:"שמרני", ciBaseSc:"בסיס", ciUpSc:"אופטימי",
-  ciValCh:"עליית ערך", ciCumRent:"שכירות מצטברת נטו", ciSaleV:"שווי נכס משוער",
-  ciTotProp:"תשואה על הנכס", ciTotRoe:"תשואה על ההון",
-  ciScenNote:"תרחישים מהנחות מפורשות (היסטוריה, מומנטום והיצע) — לא תחזית. תשואה על ההון כוללת מימון, שכירות מצטברת ועלויות עסקה.",
+  ciScenT:y=>`תרחישי ${y} שנים · לפי הנחות עליית הערך שלכם`, ciConsSc:"שמרני", ciBaseSc:"בסיס", ciUpSc:"אופטימי",
+  ciAppRow:"עליית ערך שנתית", ciValCh:"שינוי ערך מצטבר", ciCumRent:"שכירות נטו מצטברת", ciSaleV:"שווי נכס משוער",
+  ciTotProp:"תשואה מצטברת על הנכס (ללא מינוף)", ciTotRoe:"תשואה מצטברת על ההון", ciIrrRow:"IRR שנתי (לפני מס)",
+  ciScenNote:"תרחישים מההנחות המפורשות שלכם — לא תחזית. התשואות המצטברות כוללות שכירות נטו, מימון ועלויות עסקה; ה-IRR מחושב במנוע מחשבון העסקה על תזרימים שנתיים.",
   ciExitT:y=>`מבנה יציאה · שנה ${y} · תרחיש בסיס`,
-  ciExBuy:"שווי רכישה כולל עלויות", ciExRent:"שכירות מצטברת נטו", ciExDebt:"יתרת חוב ביציאה",
-  ciExSale:"מחיר מכירה משוער", ciExCost:"עלויות מכירה", ciExProfit:"רווח לפני מס",
-  ciExitNote:y=>`לוגיקת יציאה בשנה ${y}: מימוש עליית ערך + שכירות מצטברת + הפחתת חוב. לפני מס שבח ומס הכנסה.`,
-  ciRefiT:"מימון מחדש · תרחיש שנה 5",
-  ciRfVal:"שווי משוער", ciRfDebt:"יתרת חוב", ciRfEq:"הון כלוא משוער", ciRfCap:"פוטנציאל מיחזור (60% LTV)",
+  ciExBuy:"שווי רכישה כולל מס ועלויות", ciExEq:"הון עצמי שהושקע", ciExRent:"שכירות נטו מצטברת", ciExDs:"החזרי משכנתא ששולמו",
+  ciExSale:"מחיר מכירה משוער", ciExCost:"עלויות מכירה", ciExDebt:"יתרת חוב שנפרעת ביציאה", ciExProfit:"רווח לפני מס", ciExIrr:"IRR שנתי",
+  ciExitNote:y=>`לוגיקת יציאה בשנה ${y}: מכירה לפי מחיר הלוח ועליית הערך שהנחתם, פחות עלויות מכירה ויתרת חוב; ועוד שכירות נטו מצטברת פחות החזרי משכנתא; פחות ההון העצמי. לפני מס שבח ומס הכנסה.`,
+  ciRefiT:"מימון מחדש · שנה 5 · תרחיש בסיס",
+  ciRfVal:"שווי משוער", ciRfDebt:"יתרת חוב", ciRfEq:"הון כלוא משוער", ciRfCap:l=>`פוטנציאל מיחזור (${l}% LTV)`,
   ciRefiNote:"תרחיש מימון היפותטי בלבד — כפוף לשווי בפועל, לריבית ולאישור המלווה.",
   ciWT:"משקולות הציון (מתקדם)",
   ciWNote:"שינוי המשקולות עובר למצב מותאם אישית ומחשב מחדש את הדירוג ואת התיק.",
   ciPortT:"ניהול הון · הקצאת יעד לאיתור", ciPortNote:"יעדי איתור ומשא-ומתן ברמת אזור · מודל — לא עסקאות זמינות ולא המלצה",
-  ciAllocT:c=>`הקצאה מוצעת · ${c}`, ciUnits:"יח׳", ciResv:"עתודת נזילות והזדמנויות",
+  ciAllocT:(c,l)=>`הקצאה מוצעת · הון עצמי ${c} · ${l>0?`מינוף ${l}%`:"ללא מינוף"}`,
+  ciTgtUnits:(n,v)=>`יעד ~${n} יח׳ · שווי ${v} · איתור`,
+  ciResv:"עתודת נזילות והזדמנויות · מדיניות", ciUnused:"הון לפריסה שלא הוקצה",
+  ciPortEmpty:"אף אזור לא עומד בכללי המדיניות הנוכחיים (בסיס נתונים מינימלי, גודל יחידה, מאגר) — אין הקצאה.",
+  ciPortEmptyCaps:"יש אזורים כשירים, אך מגבלות הפיזור והקיבולת אינן מותירות מקום ליחידה שלמה אחת — אין הקצאה.",
   ciDeployT:"תוכנית פריסת הון",
   ciPh1:"שלב 1 · 90 יום", ciPh1d:"רכישות באזורים בנזילות גבוהה",
   ciPh2:"שלב 2 · חוד׳ 4–12", ciPh2d:"פריסה לאזורי השבחה",
   ciPh3:"שלב 3 · חוד׳ 12–18", ciPh3d:"הון הזדמנותי — מתחת למחיר שוק",
-  ciPhR:"עתודה", ciPhRd:"נזילות ורכישות מתחת לשוק",
-  ciTlT:"ציר אחזקה", ciCities:"ערים",
+  ciPhR:"עתודה", ciPhRd:"נזילות ורכישות מתחת לשוק", ciPhU:"לא הוקצה", ciPhUd:"הון לפריסה שמגבלות המדיניות לא אפשרו למקם",
+  ciTlT:"ציר אחזקה · המחשה", ciCities:"ערים",
   ciTlY0:"שנה 0", ciTlA0:"רכישה", ciTlD0:"פריסה מדורגת",
   ciTlY1:"שנים 1–3", ciTlA1:"השכרה ושיפור", ciTlD1:"תזרים + השבחה",
   ciTlY2:"שנה 3", ciTlA2:"נקודת יציאה", ciTlD2:"מימוש מהיר — אופציונלי",
   ciTlY3:"שנה 5", ciTlA3:"שערוך / מיחזור", ciTlD3:"מכירה או מינוף מחדש",
   ciTlY4:"שנה 10", ciTlA4:"יציאה ארוכת טווח", ciTlD4:"ערך + חוב מופחת",
-  ciTlPos:"פוזיציות", ciTlScore:"ציון משוקלל", ciTlYield:"תשואה נטו", ciWeighted:"משוקלל לפי הקצאה",
-  ciTlTop:"ריכוז עיר מובילה", ciTlTopS:c=>`תקרה ${c}% לעיר`, ciTlLiq:"חשיפה לנזילות גבוהה",
+  ciTlPos:"פוזיציות", ciTlScore:"ציון מודל משוקלל", ciTlYield:"תשואה נטו", ciWeighted:"משוקלל לפי שווי נכס",
+  ciTlTop:"ריכוז עיר מובילה", ciTlTopS:c=>`תקרה ${c}% מההון לעיר`, ciTlLiq:"חשיפה לנזילות גבוהה",
   ciHhiLow:"פיזור רחב", ciHhiMed:"ריכוזיות בינונית", ciHhiHigh:"ריכוזיות גבוהה",
+  ciAcctT:"חשבון הון · הון עצמי מול שווי נכסים",
+  ciAcct:{cap:"הון עצמי זמין",resv:"עתודה (מדיניות)",dep:"הון עצמי לפריסה",used:"הון עצמי בשימוש",usedS:"כולל מס רכישה ועלויות",
+    unused:"הון לפריסה שלא הוקצה",value:"שווי נכסים שנרכשו",debt:"חוב (מינוף)",costs:"מס רכישה ועלויות רכישה"},
+  ciUnitsAll:n=>`${n} יח׳`,
   ciPortCf:"תזרים חודשי לתיק", ciPortCfS:l=>l>0?`במינוף ${l}% על כל הרכישות · מודל`:"ללא מינוף · מודל",
-  ciCapNote:(c,l)=>`מגבלות פיזור: עד ${c}% לעיר ועד ${l}% לשכונה בודדת. אזורים בוודאות נתונים נמוכה אינם מקבלים הקצאה. יכולת הפריסה מוגבלת לפי נפח עסקאות ומלאי זמין בכל אזור.`,
-  ciAsmT:"הנחות המודל",
-  ciAsmVac:"אי-תפוסה", ciAsmOpx:"תפעול ותחזוקה", ciAsmTax:"מס רכישה + עלויות",
-  ciAsmSell:"עלויות מכירה", ciAsmFin:"מימון", ciAsmApp:"עליית ערך: היסטוריה + מומנטום, לפי אופק", ciAsmRent:"שכ״ד דירה חדשה: בסיס למ״ס נצפה + פרמיה ‎8%",
-  ciDisc:"מודל אנליטי המחושב מנתוני השוק שבלוח בלבד. כל הערכים המתייחסים לעתיד הם תרחישים מבוססי הנחות מפורשות — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.",
-  ciWhyGap:(g,c)=>`מחיר למ״ר נמוך ב-${g}% מהממוצע ב${c}`,
+  ciPortIrrT:y=>`IRR תיק · ${y} שנים · לפני מס`,
+  ciPortIrrS:"על ההון העצמי שהושקע (ללא העתודה) · IRR של סכום התזרימים השנתיים של כל הפוזיציות · מנוע מחשבון העסקה",
+  ciPortProfit:"רווח לפני מס (בסיס):",
+  ciCapNote:(c,l,b,p,m,x,v)=>`מגבלות פיזור: עד ${c}% מההון העצמי לעיר ועד ${l}% לשכונה בודדת · עד ${p} אזורים במאגר · רק אזורים עם ${b}+ קלטים מצוטטים (מתוך 8) מקבלים הקצאה. ההקצאה ביחידות שלמות לפי ההון העצמי ליחידה (מחיר × (1 − מינוף) + מס ועלויות), ויכולת הפריסה בכל אזור עד ${m} × הנמוך מבין ${x}% מהמכירות השנתיות ו-${v}% מהמלאי.`,
+  ciAsmT:"הנחות · ברירות מחדל הניתנות לשינוי",
+  ciAsmApp:(c,b,u)=>`עליית ערך: שמרני <b class="num">${c}%</b> · בסיס <b class="num">${b}%</b> · אופטימי <b class="num">${u}%</b> לשנה`,
+  ciAsmVac:"אי-תפוסה", ciAsmOpx:"תפעול ותחזוקה", ciAsmTax:(a,b)=>`מס רכישה ${a} · עלויות רכישה ${b}`,
+  ciAsmSell:"עלויות מכירה", ciAsmFin:(r,y,l)=>`מימון: ריבית ${r} · ${y} שנ׳ · מינוף ${l}`,
+  ciAsmRent:"שכ״ד דירה חדשה: בסיס למ״ס נצפה × 1.08",
+  ciAsmRentGBoard:"צמיחת שכירות: השינוי השנתי האחרון של כל אזור (מהלוח), לכל האופק — ניתן לשינוי",
+  ciAsmRentG:a=>`צמיחת שכירות: ${a} לשנה בכל האזורים`, ciRentGPh:"שינוי שנתי של האזור",
+  ciAsmTrend:"מגמת מחיר: שינוי 1 ו-3 שנים מהלוח, משקל לפי אופק",
+  ciAsmScore:"ציון: 6 גורמים × משקולות × בסיס נתונים",
+  ciAsmTargets:(y,r,b,f)=>`יעדי מחיר: תשואת החזקה ${y}% נטו · מכירה ${r}%- · מרוכז ${b}%- · רצועת מחיר ±${f}%`,
+  ciAsmIrr:r=>`IRR נדרש: ${r}% לשנה, לפני מס`,
+  ciAsmBasis:b=>`בסיס נתונים מינימלי להקצאה: ${b}/8`,
+  ciAsmPort:(r,c,l,p)=>`עתודה ${r}% · תקרה ${c}% לעיר · ${l}% לשכונה · מאגר ${p} אזורים`,
+  ciAsmCapR:(a,b,m)=>`קיבולת לאזור: עד ${m} × הנמוך מבין ${a}% מהמכירות השנתיות ו-${b}% מהמלאי`,
+  ciAsmFixed:f=>`קבועי הקצאה (קבועים): משקל אזור <span class="num">(score − min + ${f.tiltFloor})^${f.tilt}</span> · עצירה ב-${f.deployStop}% מההון לפריסה · גדלי רכישה מרוכזת ${f.bulkSizes.join("/")} יחידות (עד ${f.bulkCapMul}× הקיבולת) · נזילות גבוהה = ציון נזילות ${f.liqHigh}+ · HHI מתחת ל-<span class="num">${fmtInt(f.hhi[0])}</span> נמוך, מתחת ל-<span class="num">${fmtInt(f.hhi[1])}</span> בינוני`,
+  ciAsmPh:(a,b)=>`שלבי פריסה לפי נזילות (פוזיציות שלמות, הנזילות תחילה): שלב 1 עד ${a}% מההון המושקע · שלב 2 עד ${b}% · היתר בשלב 3`,
+  ciAsmRefi:l=>`מימון מחדש: ${l}% LTV`,
+  ciDisc:"מודל אנליטי על נתוני PROPX — כל קלט מסווג (רשמי · סטטי · נגזר · מודל) — ועל ההנחות שלכם. עליית הערך היא הנחה שלכם, לא תחזית של PROPX; כל ערך עתידי הוא תרחיש — לא תחזית, לא הבטחת תשואה ולא ייעוץ השקעות. מינוף מגדיל גם תשואה וגם סיכון.",
+  ciWhyGap:(g,c)=>`מחיר למ״ר בלוח נמוך ב-${g}% מהממוצע ב${c}`,
   ciWhySib:g=>`נמוך ב-${g}% מאזורים מקבילים סביבו`,
-  ciWhyYield:y=>`תשואה נטו ${y}% — ברבעון העליון ארצית`,
-  ciWhyTight:m=>`היצע הדוק — כ-${m} חודשי מלאי בלבד`,
-  ciWhyTx:n=>`נפח עסקאות גבוה (${n} בשנה) ומדגם איכותי`,
+  ciWhyYield:y=>`תשואה נטו משוערת ${y}% — ברבעון העליון בין אזורי הלוח`,
+  ciWhyTight:m=>`היצע הדוק — כ-${m} חודשי מלאי`,
+  ciWhyTx:n=>`קצב מכירות גבוה (~${n} בשנה)`,
   ciWhyRentG:p=>`שכירות עולה ${p}% בשנה — מעל הקצב הארצי`,
   ciWhyMom:"מומנטום מחירים חיובי ביחס לסביבה",
   ciRkYield:y=>`תשואה שוטפת נמוכה (${y}%) — רגישות לעלויות מימון`,
   ciRkSupply:m=>`מלאי גבוה — כ-${m} חודשי היצע`,
-  ciRkSample:"מדגם עסקאות קטן — ודאות נמוכה",
-  ciRkEst:"חלק מהנתונים אומדן עירוני",
+  ciRkThin:"קצב מכירות נמוך — שוק דליל",
+  ciRkModel:(s,n)=>s?`רק ${s} מתוך ${n} הקלטים מצוטטים — השאר אומדן מודל`:"אין קלט מצוטט — כל נתוני האזור הם אומדן מודל",
   ciRkPrice:"כרטיס כניסה גבוה — רגישות גבוהה לריבית",
   ciRkFall:p=>`מחירים בירידה שנתית של ${p}%`,
   ciRkBase:"חשיפה לשינויי ריבית ולתנאי השוק הכלליים",
+  ciLvlArea:"רמת אזור", ciProjN:"פרויקטים מאומתים", ciNoProjS:"פרויקט מאומת: אין",
+  ciNoProj:"פרויקטים מאומתים במערכת: 0 · שכבת קליטה מוכנה (מחירוני יזם, מלאי, CRM, מודיעין שטח).",
+  ciNoDeals:"עסקאות חיות מאומתות: 0 — ההקצאה למעלה היא יעד לאיתור ומו״מ, לא רכישה זמינה היום.",
+  ciLevMkt:"סביבת מו״מ · שוק",
+  ciMktScale:"פוטנציאל היקף · שוק", ciDealScale:"היקף עסקה מאומת", ciUnknown:"לא ידוע",
+  ciEvid:(inv,ti,rate,tt,ms,tm,mom,ty,sh)=>`נתמך ב: מלאי ${inv} יח׳ ${ti} ÷ ~${rate} מכירות/חודש ${tt} (קצב שנתי ÷ 12) = ~${ms} חודשי היצע ${tm} · מומנטום שנתי ${mom} ${ty} · תרחיש רכישה ≈${sh}% ממלאי האזור — מודל · רמת אזור`,
+  ciDealLevNA:"מנוף ברמת עסקה: לא ידוע — אין מלאי פרויקט מאומת",
+  ciTgt3:(a,b,c)=>`יעדים לפי אסטרטגיה: החזקה ≤ <b class="num">${a}</b> · מכירה ≤ <b class="num">${b}</b> · מרוכז ≤ <b class="num">${c}</b>`,
+  ciRetLine:(r,p)=>`מחיר מקסימלי ל-IRR של ${r}% (תרחיש בסיס · מדיניות): ≤ <b class="num">${p}</b>`,
+  ciRetAbove:r=>`IRR של ${r}% מושג גם במחיר גבוה ב-5% ממחיר הלוח — בתנאי המימון ובתרחיש הבסיס שלכם.`,
+  ciRetNone:r=>`IRR של ${r}% אינו מושג גם בחצי ממחיר הלוח — בתנאי המימון ובתרחיש הבסיס שלכם.`,
+  ciMktIrr:v=>`IRR במחיר הלוח (בסיס): ${v}`, ciBelowReq:r=>`מתחת ל-IRR הנדרש שלכם (<span class="num">${r}%</span>)`, ciBelowReqP:r=>`IRR הבסיס מתחת ל-IRR הנדרש שלכם (<span class="num">${r}%</span>)`,
+  ciNotElig:(s,n,m)=>`לא כשיר להקצאה · בסיס נתונים <span class="num">${s}/${n}</span> — המדיניות דורשת לפחות <span class="num">${m}/${n}</span>`,
+  ciNotFit:e=>`לא כשיר להקצאה · הון עצמי ליחידה <span class="num">${e}</span> גבוה מההון לפריסה`,
+  ciIrrDef:l=>`הגדרה: IRR ${l>0?"ממונף":"ללא מינוף"} אמיתי לפני מס, ממנוע מחשבון העסקה — תזרימים שנתיים: הון עצמי (כולל מס רכישה ועלויות) בשנה 0; שכירות נטו אחרי אי-תפוסה, תפעול ותחזוקה, עם הנחת צמיחת השכירות (ברירת מחדל: השינוי השנתי האחרון של האזור), פחות החזרי משכנתא; ובשנת האופק — מכירה לפי מחיר הלוח ועליית הערך שהנחתם, פחות עלויות מכירה ויתרת חוב. לא כולל מס שבח ומס הכנסה.`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותה שכבת נתונים ממשלתית): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול מחיר הלוח: ${gap}) — נתון נצפה, אינו משנה את הציון`,
+  ciCompThin:"מדגם קטן — לא לגזור מסקנת מחיר",
+  ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
+  cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
+  ciProvT:"מקורות ותקופות", ciRentTrend:"שינוי שכירות שנתי",
+  ciBulkT2:"תרחישי כוח-קנייה מרוכזת · מודל",
+  ciBulkModelled:"תרחיש מודל — לא מלאי מאומת: היקפים היפותטיים מול נפח השוק המקומי. יהפוך ל'תרחיש רכישה מאומת' רק כשקיים מלאי פרויקט מאומת.",
+  ciBulkU:"יח׳", ciBulkVal:"שווי במחיר היעד", ciBulkEq:"הון עצמי נדרש", ciBulkShare:"נתח מהמלאי המקומי",
+  ciBulkNote:(d,l)=>`שווי במחיר יעד של ${d}%- ממחיר הלוח; הון עצמי נדרש ${l>0?`במינוף ${l}%`:"ללא מינוף"}, כולל מס רכישה ועלויות. הנתח מוגבל ליכולת הספיגה המקומית (עסקאות ומלאי). ריכוז גבוה = מנוף גבוה יותר וגם סיכון יציאה גבוה יותר.`,
+  ciPolT:"מדיניות השקעה (מרכזית)",
+  ciPolHold:"תשואת החזקה נדרשת %", ciPolIrr:"IRR נדרש (שנתי, על ההון) %", ciPolBulk:"דיסקאונט מרוכז %", ciPolBasis:"בסיס נתונים מינימלי (מתוך 8)",
+  ciPolNote:"כללי מדיניות והנחות משתמש — לא אמת שוק: שינוי כאן מחשב מחדש את היעדים ואת התיק (כולל סינון ההקצאה); הדירוג אינו נשען עליהם.",
+  ciPolEdT:"הנחות ומדיניות התיק (מתקדם)",
+  ciPolG:{ops:"תפעול ועסקה",port:"תיק והקצאה",price:"תמחור ומימון"},
+  ciPolF:{vac:"אי-תפוסה %",opex:"תפעול %",capex:"תחזוקה %",tax:"מס רכישה %",fees:"עלויות רכישה %",sell:"עלויות מכירה %",rentG:"צמיחת שכירות % לשנה",
+    reserve:s=>`עתודה % (${s})`,capCity:"תקרה לעיר %",capLoc:"תקרה לשכונה %",pool:"גודל מאגר (אזורים)",
+    capTx:"קיבולת: % ממכירות",capInv:"קיבולת: % ממלאי",capMul:"קיבולת: מכפיל",ph1:"שלב 1 %",ph2:"שלב 2 %",
+    fairBand:"רצועה סביב מחיר הלוח ±%",resaleDisc:"דיסקאונט מכירה %",refiLtv:"מימון מחדש LTV %"},
+  ciPolEdNote:"כל ערך כאן הוא הנחה או כלל מדיניות שלכם — לא נתון שוק. ערך מחוץ לטווח אינו מוחל. שינוי מחשב מחדש את היעדים, התשואות והתיק; הדירוג נשען על נתוני הלוח בלבד.",
+  ciInvT:"תקציר השקעה · מודל", ciBestUse:"שימוש מיטבי",
+  ciStratA:"החזקה והשכרה", ciStratB:"קנייה ומכירה", ciStratC:"רכישה מרוכזת",
+  ciFairV:b=>`רצועה סביב מחיר הלוח ±${b}%`, ciPressureK:"לחץ שוק", ciLevK:"מנוף מו״מ",
+  ciScaleUpTo:(c,u)=>`עד ~${c} · ${u} יח׳`,
+  ciP0:"נמוך", ciP1:"מתון", ciP2:"מוגבר", ciP3:"גבוה",
+  ciL0:"נמוך", ciL1:"בינוני", ciL2:"גבוה", ciL3:"גבוה מאוד",
+  ciTargetLine:(p,d)=>`<b>יעד מחיר רכישה:</b> העסקה נהיית מעניינת מתחת ל-<b class="num">${p}</b> — הנחה של כ-<b class="num">${d}%</b> ממחיר הלוח. זהו יעד למשא-ומתן, לא מחיר מוסכם.`,
+  ciTargetNow:p=>`<b>מחיר הלוח (<span class="num">${p}</span>) כבר עומד ביעד</b> — ההזדמנות מעניינת גם ללא הנחה נוספת; כל הנחה משפרת את הכרית.`,
+  ciInvNote:"שלושה ציונים לשלוש אסטרטגיות — הזהוב הוא השימוש המיטבי לפי המודל. לחץ שוק ומנוף נגזרים ממלאי, קצב מכירות וגודל עסקה — ערכי מודל ברמת אזור, לא טענה על מצב פיננסי של יזם.",
+  ciDealLab:"לבדיקת עסקה ספציפית — מחשבון העסקה ←",
+  ciWhyNotLine:(n,p,c)=>`למה מעל ${n}? יתרון ב${p}${c?`; מנגד — ${n} חזק יותר ב${c}`:""}.`,
   inCity:c=>`ב${c}`, ofParent:p=>`מתוך ${p}`,
 },
 en:{
@@ -2085,8 +2148,8 @@ en:{
   cmpEmpty:"Pick up to four areas to compare", cmpMax:"Up to 4 areas",
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
   confTitle:"Data basis",
-  navCalc:"Calculator", calcLyr:"L4 · Investor", calcTitle:"Investor calculator",
-  calcNote:"Your scenario · every input is your assumption · an empty field is unavailable",
+  navCalc:"Deal", calcLyr:"L4 · Deal Lab", calcTitle:"Deal calculator",
+  calcNote:"Does a specific deal work? · every input is your assumption · an empty field is unavailable",
   calcG:{buy:"Purchase",fin:"Financing",ops:"Income & costs",exit:"Holding & exit"},
   calcIn:{price:"Property price",equity:"Equity",tax:"Purchase tax",fees:"Other purchase costs (legal, brokerage)",
     rate:"Mortgage rate (annual)",term:"Mortgage term",rent:"Monthly rent",vac:"Vacancy",opex:"Maintenance, management & repairs",
@@ -2208,150 +2271,190 @@ en:{
   gd6a:"Closing costs & delivery", gd6b:"Budget for purchase tax, legal fees, utility hookups and parking/storage; delivery delays beyond the legal grace entitle you to compensation.",
   cities:"Cities",nbhds:"Neighborhoods",districts:"Districts",searchEmpty:"No results. Try a city or neighborhood name.",
   navCap:"Capital",
-  ciUnitsN:n=>n===1?"1 unit":`${n} units`,
-  ciScoreT:"Investment score",
   vsNat:"vs national", cmpSet1:"Major cities", cmpSet2:"Central cities", cmpSet3:"Prime neighborhoods",
-  ciLvlArea:"Area level", ciProjN:"verified projects", ciNoProjS:"Verified project: none",
-  ciNoProj:"Verified projects in the system: 0 · ingestion layer ready (developer price lists, inventory, CRM, field intelligence).",
-  ciNoDeals:"Verified live deals: 0 — the allocation above is a sourcing/negotiation target, not a purchase available today.",
-  ciLevMkt:"Negotiation environment · market",
-  ciMktScale:"Market scale potential", ciDealScale:"Verified deal scale", ciUnknown:"Unknown",
-  ciEvid:(inv,rate,ms,mom,sh)=>`Supported by: ${inv} units inventory ÷ ~${rate} sales/month (window: annual pace ÷ 12) = ~${ms} months of supply (national ~26 per CBS, historically high) · ${mom} annual momentum · a modelled acquisition scenario ≈${sh}% of area inventory — modelled · area level`,
-  ciDealLevNA:"Deal-level leverage: unknown — no verified project inventory",
-  ciTgt3:(a,b,c)=>`Targets by strategy: hold ≤ <b class="num">${a}</b> · resale ≤ <b class="num">${b}</b> · bulk ≤ <b class="num">${c}</b>`,
-  ciRetLine:(r,p)=>`By required return (${r}%/yr on equity · policy, at current leverage): ≤ <b class="num">${p}</b>`,
-  ciRetAbove:r=>`The ${r}%/yr return target is met even at full market price — at current leverage, base scenario.`,
-  ciRetNone:r=>`The ${r}%/yr return target is not met even at a 50% discount under current financing and scenario.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (same government data layer): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the modelled anchor: ${gap}) — observed data; it does not alter the score`,
-  ciCompThin:"small sample — not a price conclusion",
-  ciPolicyTag:"policy", ciModelTag:"model",
-  ciCoverT:"Data coverage", ciCoverMiss:"missing",
-  cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
-  cvObs:"official", cvEst:"estimate", cvEstD:"derived estimate · city resolution",
-  ciProvLine:(a,b)=>`Sources & periods: new-home price index — CBS, May–Jun 2026 · transactions — annual pace (national 2025; TLV: CBS H1-2026 annualized) (${a}) · unsold inventory — CBS, end-June 2026 (${b}) · rent — observed: CBS national Q1/2026, cities 2025; +8% new-build premium — MODEL ASSUMPTION, not observed 2026 rent; trend from each city's observed change · city/neighborhood resolution · BoI rate — 6.7.2026 · retrieved 30.08.2026`,
-  ciBulkT2:"Bulk purchasing-power scenarios · model",
-  ciBulkModelled:"Modelled scenario — not verified inventory: hypothetical sizes against local market volume. Becomes a 'verified bulk scenario' only with verified project inventory.",
-  ciTgtUnits:n=>`target ~${n} units · sourcing`,
-  ciPolT:"Investment policy (central)",
-  ciPolHold:"Required hold yield %", ciPolIrr:"Required annual return on equity %", ciPolBulk:"Bulk discount %", ciPolConf:"Minimum confidence %",
-  ciPolNote:"Policy rules — not market truth: changing them recomputes targets, filtering and ranking for a different investor.",
-  ciAsmIrr:(r,c)=>`Policy: model IRR ${r}% pre-tax · min confidence ${c}%`,
-  ciIrrDef:l=>`Definition: ${l>0?"levered":"unlevered"} pre-tax model IRR — includes purchase tax & costs, financing, vacancy/opex/upkeep, rent growth, base-case appreciation and sale costs; excludes capital-gains and income tax.`,
   mOpp:"Opportunity score", rankOpp:"Top opportunities · model",
-  ciInvT:"Investment summary · model", ciBestUse:"Best use",
-  ciStratA:"Hold & rent", ciStratB:"Buy & resell", ciStratC:"Bulk purchase",
-  ciFairV:"Estimated value range", ciPressureK:"Market pressure", ciLevK:"Negotiation leverage",
-  ciScaleK:"Scale fit", ciScaleUpTo:(c,u)=>`up to ~${c} · ${u} units`,
-  ciYieldAtK:"Net yield at target price",
-  ciP0:"Low", ciP1:"Moderate", ciP2:"Elevated", ciP3:"High",
-  ciL0:"Low", ciL1:"Moderate", ciL2:"High", ciL3:"Very high",
-  ciTargetLine:(p,d)=>`<b>Target buy price:</b> the deal becomes attractive below <b class="num">${p}</b> — about <b class="num">${d}%</b> under the current price. A negotiation target, not an agreed price.`,
-  ciTargetNow:p=>`<b>The current price (<span class="num">${p}</span>) already meets the model target</b> — attractive even without a further discount; any discount adds margin.`,
-  ciInvNote:"Three scores for three strategies — gold marks the model's best use. Pressure and leverage are stated factually (inventory, absorption, deal size) — never a claim about a developer's finances.",
-  ciBulkT:"Bulk-purchase scenarios · at target price", ciBulkU:"Units", ciBulkCap:"Capital required", ciBulkShare:"Share of local inventory",
-  ciBulkNote:d=>`Capital assumes a ${d}% discount to value; the share is capped by local absorption (deals and inventory). Higher concentration = more leverage and more exit risk.`,
-  ciWhyNotLine:(n,p,c)=>`Why above ${n}? stronger on ${p}${c?`; in return, ${n} is stronger on ${c}`:""}.`,
-  ciAsmTargets:(y,r,b)=>`Price targets: hold yield ${y}% net · resale −${r}% · bulk −${b}%`,
   aZoom:"Map zoom", aZoomIn:"Zoom in", aZoomOut:"Zoom out", aZoomReset:"Reset map view",
 
   cmdKicker:"PROPX · Command Center",
   cmdFresh:MKT.checked?`Official indicators checked ${MKT.checkedDay} · CBS · Bank of Israel`:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
-  capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top investment score: ${n}, ${s} of 100 — open capital analysis`,
+  capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top of the model ranking: ${n}, ${s} of 100 — open capital analysis`,
   mapHint:"Click to select this area",
   lyr1:"L1 · Market", lyr1b:"L1 · Market", lyr1c:"L1 · Market",
   lyr2:"L2 · Location", lyr2b:"L2 · Location", lyr2c:"L2 · Location",
   lyr3:"L3 · Asset", lyr3b:"L3 · Asset",
   lyr4:"L4 · Capital", lyr4b:"L4 · Capital",
-  ciConfNote:"The final score is scaled by the area's data-confidence factor — weaker data lowers the ranking.",
   ciTitle:"Where does capital work hardest?", ciTeaserT:"Where does capital work hardest?",
-  ciSub:"The areas with the strongest mix of running cash flow, value-add potential and price appreciation — from the data on this board.",
-  ciChip:"Data-based investment score · not advice", ciTeaserNote:"Investment score · model",
+  ciSub:"The areas with the strongest mix of running cash flow, value-add potential and price trend — a model over PROPX data and the assumptions you choose.",
+  ciChip:"Investment model · visible assumptions · not advice", ciTeaserNote:"Model ranking",
   ciTeaserCTA:"Open the full investment analysis →", ciOppT:"Top markets to hunt · area level",
-  ciCap:"Capital", ciStrat:"Strategy", ciHorizon:"Horizon", ciLev:"Leverage",
+  ciRankBadge:"MODEL RANKING",
+  ciRankNote:(s,y,c)=>`Ranked by the strategy (${s}), horizon (${y} years) and ${c?"custom ":""}weights you chose, from the PROPX data available — every input classed (derived · static · modelled). A model output, not a recommendation.`,
+  ciCap:"Equity capital", ciStrat:"Strategy", ciHorizon:"Horizon", ciLev:"Leverage",
   ciY3:"3 years", ciY5:"5 years", ciY10:"10 years", ciNoLev:"None",
   ciStCash:"Cash flow", ciStBal:"Balanced", ciStVa:"Value-add", ciStGrowth:"Growth", ciStCons:"Conservative",
   ciRate:"Rate", ciTerm:"Term", ciYears:"yrs",
-  ciScoreK:"Score", ciScoreAria:s=>`Investment score ${s} out of 100`,
+  ciAppK:"Annual appreciation", ciAppBase:"Base %", ciAppDn:"Cons. spread", ciAppUp:"Upside spread",
+  ciAppRates:(c,b,u)=>`Appreciation assumption: conservative <span class="num">${c}%</span> · base <span class="num">${b}%</span> · upside <span class="num">${u}%</span> a year — the same for every area`,
+  ciScoreT:"Model score", ciScoreK:"Model score", ciScoreAria:s=>`Model score ${s} out of 100`,
   ciEntry:"Entry price", ciNetY:"Net yield", ciVaShort:"Value-add", ciLiqShort:"Liquidity",
-  ciConf:"Confidence", ciConfShort:"Conf.", ciHz:y=>`${y}y base`, ciHzFull:y=>`${y}-year horizon`,
+  ciBasisK:"Data basis", ciBasisShort:"Data basis",
+  ciBasisLvl:{h:"mostly sourced",m:"partial",l:"mostly modelled"},
+  ciBasisTip:(s,n)=>`${s} of ${n} inputs sourced (official/static/derived); the rest modelled`,
+  ciBasisNote:"The score is scaled by the data basis: × (0.82 + 0.18 × share of sourced inputs) — an area whose data is all modelled ranks lower. A provenance class, not a statistic.",
+  ciHz:y=>`IRR · ${y}y base`, ciHzFull:y=>`${y}-year horizon`,
   ciHigh:"High", ciMed:"Medium", ciLow:"Low",
-  ciWhy:"Why here?", ciRisk:"What's the risk?", ciScoreWhy:"Score breakdown",
-  ciFcf:"Cash flow", ciFap:"Appreciation", ciFva:"Value-add", ciFlq:"Liquidity", ciFdm:"Demand", ciFrk:"Data quality",
+  ciWhy:"Why here?", ciRisk:"What's the risk?", ciScoreWhy:"Score breakdown · model",
+  ciFcf:"Cash flow", ciFap:"Price trend", ciFva:"Value-add", ciFlq:"Liquidity", ciFdm:"Demand", ciFrk:"Risk profile",
+  ciTrendNote:"Price trend = the board's 1-year change blended with its 3-year change (annualised) — past data, not a forecast; the horizon sets the blend. Risk profile: higher = fewer risk flags.",
   ciCfT:"Estimated return", ciBuy:"Purchase", ciRentMo:"Monthly rent", ciRentYr:"Annual rent",
-  ciGross:"Gross yield", ciNet:"Estimated net yield", ciNetS:"After vacancy, opex and upkeep",
+  ciGross:"Gross yield", ciNet:"Estimated net yield", ciNetS:"After vacancy, opex and upkeep · on the purchase price",
   ciLevT:"Leverage & cash flow", ciEquity:"Equity required", ciEquityS:"Incl. purchase tax and costs",
   ciLoan:"Loan", ciPmt:"Monthly payment", ciCoC:"Cash-on-cash",
   ciCfMo:"Monthly cash flow", ciCfMoS:"Net rent minus mortgage payment",
   ciLevNote:"Leverage amplifies both return and risk — financing costs are shown in full.",
-  ciScenT:y=>`${y}-year scenarios`, ciConsSc:"Conservative", ciBaseSc:"Base", ciUpSc:"Upside",
-  ciValCh:"Value change", ciCumRent:"Cumulative net rent", ciSaleV:"Estimated asset value",
-  ciTotProp:"Return on property", ciTotRoe:"Return on equity",
-  ciScenNote:"Scenarios from explicit assumptions (history, momentum, supply) — not a forecast. Return on equity includes financing, cumulative rent and transaction costs.",
+  ciScenT:y=>`${y}-year scenarios · from your appreciation assumptions`, ciConsSc:"Conservative", ciBaseSc:"Base", ciUpSc:"Upside",
+  ciAppRow:"Annual appreciation", ciValCh:"Cumulative value change", ciCumRent:"Cumulative net rent", ciSaleV:"Estimated asset value",
+  ciTotProp:"Cumulative return on property (unlevered)", ciTotRoe:"Cumulative return on equity", ciIrrRow:"Annual IRR (pre-tax)",
+  ciScenNote:"Scenarios from your explicit assumptions — not a forecast. Cumulative returns include net rent, financing and transaction costs; the IRR comes from the deal calculator's engine on yearly cash flows.",
   ciExitT:y=>`Exit structure · year ${y} · base case`,
-  ciExBuy:"Purchase incl. costs", ciExRent:"Cumulative net rent", ciExDebt:"Debt balance at exit",
-  ciExSale:"Estimated sale price", ciExCost:"Sale costs", ciExProfit:"Profit before tax",
-  ciExitNote:y=>`Year-${y} exit logic: realized appreciation + accumulated rent + debt paydown. Before capital-gains and income tax.`,
-  ciRefiT:"Refinance · year-5 scenario",
-  ciRfVal:"Estimated value", ciRfDebt:"Debt remaining", ciRfEq:"Trapped equity (est.)", ciRfCap:"Refinance capacity (60% LTV)",
+  ciExBuy:"Purchase incl. tax and costs", ciExEq:"Equity invested", ciExRent:"Cumulative net rent", ciExDs:"Mortgage payments made",
+  ciExSale:"Estimated sale price", ciExCost:"Sale costs", ciExDebt:"Debt repaid at exit", ciExProfit:"Profit before tax", ciExIrr:"Annual IRR",
+  ciExitNote:y=>`Year-${y} exit logic: sale at the board price grown at your appreciation assumption, less sale costs and the remaining debt; plus cumulative net rent less mortgage payments; less the equity. Before capital-gains and income tax.`,
+  ciRefiT:"Refinance · year 5 · base case",
+  ciRfVal:"Estimated value", ciRfDebt:"Debt remaining", ciRfEq:"Trapped equity (est.)", ciRfCap:l=>`Refinance capacity (${l}% LTV)`,
   ciRefiNote:"A hypothetical financing scenario only — subject to actual value, rates and lender approval.",
   ciWT:"Score weights (advanced)",
   ciWNote:"Changing weights switches to a custom profile and recomputes the ranking and the portfolio.",
   ciPortT:"Capital management · target allocation for sourcing", ciPortNote:"Area-level sourcing and negotiation targets · model — not available deals, not a recommendation",
-  ciAllocT:c=>`Proposed allocation · ${c}`, ciUnits:"units", ciResv:"Liquidity & opportunity reserve",
+  ciAllocT:(c,l)=>`Proposed allocation · ${c} equity · ${l>0?`${l}% leverage`:"no leverage"}`,
+  ciTgtUnits:(n,v)=>`target ~${n} ${n===1?"unit":"units"} · ${v} value · sourcing`,
+  ciResv:"Liquidity & opportunity reserve · policy", ciUnused:"Deployable equity not allocated",
+  ciPortEmpty:"No area passes the current policy rules (minimum data basis, unit size, pool) — nothing is allocated.",
+  ciPortEmptyCaps:"Eligible areas exist, but the diversification and capacity limits leave no room for one whole unit — nothing is allocated.",
   ciDeployT:"Capital deployment plan",
   ciPh1:"Phase 1 · 90 days", ciPh1d:"Acquisitions in high-liquidity areas",
   ciPh2:"Phase 2 · months 4–12", ciPh2d:"Deployment into value-add areas",
   ciPh3:"Phase 3 · months 12–18", ciPh3d:"Opportunity capital — below-market entries",
-  ciPhR:"Reserve", ciPhRd:"Liquidity and below-market purchases",
-  ciTlT:"Holding timeline", ciCities:"cities",
+  ciPhR:"Reserve", ciPhRd:"Liquidity and below-market purchases", ciPhU:"Unallocated", ciPhUd:"Deployable equity the policy limits left unplaced",
+  ciTlT:"Holding timeline · illustration", ciCities:"cities",
   ciTlY0:"Year 0", ciTlA0:"Buy", ciTlD0:"Staged deployment",
   ciTlY1:"Years 1–3", ciTlA1:"Rent & improve", ciTlD1:"Cash flow + value-add",
   ciTlY2:"Year 3", ciTlA2:"Exit window", ciTlD2:"Fast realization — optional",
   ciTlY3:"Year 5", ciTlA3:"Revalue / refinance", ciTlD3:"Sell or re-leverage",
   ciTlY4:"Year 10", ciTlA4:"Long-term exit", ciTlD4:"Value + amortized debt",
-  ciTlPos:"Positions", ciTlScore:"Weighted score", ciTlYield:"Net yield", ciWeighted:"Allocation-weighted",
-  ciTlTop:"Top-city share", ciTlTopS:c=>`${c}% cap per city`, ciTlLiq:"High-liquidity exposure",
+  ciTlPos:"Positions", ciTlScore:"Weighted model score", ciTlYield:"Net yield", ciWeighted:"Weighted by property value",
+  ciTlTop:"Top-city share", ciTlTopS:c=>`${c}% of equity cap per city`, ciTlLiq:"High-liquidity exposure",
   ciHhiLow:"Well diversified", ciHhiMed:"Moderate concentration", ciHhiHigh:"High concentration",
+  ciAcctT:"Capital accounting · equity vs property value",
+  ciAcct:{cap:"Equity capital",resv:"Reserve (policy)",dep:"Deployable equity",used:"Equity used",usedS:"incl. purchase tax and costs",
+    unused:"Deployable equity not allocated",value:"Property value acquired",debt:"Debt (leverage)",costs:"Purchase tax & acquisition costs"},
+  ciUnitsAll:n=>n===1?"1 unit":`${n} units`,
   ciPortCf:"Portfolio monthly cash flow", ciPortCfS:l=>l>0?`At ${l}% LTV on all purchases · model`:"Unleveraged · model",
-  ciCapNote:(c,l)=>`Diversification limits: up to ${c}% per city and ${l}% per single neighborhood. Areas with weak data confidence receive no allocation. Deployability is capped by each area's transaction volume and available inventory.`,
-  ciAsmT:"Model assumptions",
-  ciAsmVac:"Vacancy", ciAsmOpx:"Opex & upkeep", ciAsmTax:"Purchase tax + costs",
-  ciAsmSell:"Sale costs", ciAsmFin:"Financing", ciAsmApp:"Appreciation: history + momentum, per horizon", ciAsmRent:"New-build rent: observed CBS base + 8% premium",
-  ciDisc:"An analytical model computed only from the market data on this board. All forward-looking values are scenarios built on explicit assumptions — not a forecast, not a promised return, and not investment advice. Leverage amplifies both return and risk.",
-  ciWhyGap:(g,c)=>`Price per m² is ${g}% below the ${c} average`,
+  ciPortIrrT:y=>`Portfolio IRR · ${y} years · pre-tax`,
+  ciPortIrrS:"On the equity invested (reserve excluded) · IRR of the summed yearly cash flows of all positions · deal calculator engine",
+  ciPortProfit:"Profit before tax (base):",
+  ciCapNote:(c,l,b,p,m,x,v)=>`Diversification limits: up to ${c}% of equity per city and ${l}% per single neighborhood · up to ${p} areas in the pool · only areas with ${b}+ sourced inputs (of 8) receive an allocation. Allocation is in whole units at the equity per unit (price × (1 − leverage) + tax and costs); each area's deployability is capped at ${m} × the lower of ${x}% of annual sales and ${v}% of inventory.`,
+  ciAsmT:"Assumptions · editable presets",
+  ciAsmApp:(c,b,u)=>`Appreciation: conservative <b class="num">${c}%</b> · base <b class="num">${b}%</b> · upside <b class="num">${u}%</b> a year`,
+  ciAsmVac:"Vacancy", ciAsmOpx:"Opex & upkeep", ciAsmTax:(a,b)=>`Purchase tax ${a} · acquisition costs ${b}`,
+  ciAsmSell:"Sale costs", ciAsmFin:(r,y,l)=>`Financing: rate ${r} · ${y} yrs · leverage ${l}`,
+  ciAsmRent:"New-build rent: observed CBS base × 1.08",
+  ciAsmRentGBoard:"Rent growth: each area's last 1-year change (board), held for the whole horizon — editable",
+  ciAsmRentG:a=>`Rent growth: ${a} a year in every area`, ciRentGPh:"area's 1-yr change",
+  ciAsmTrend:"Price trend: the board's 1- and 3-year change, weighted by horizon",
+  ciAsmScore:"Score: 6 factors × weights × data basis",
+  ciAsmTargets:(y,r,b,f)=>`Price targets: hold yield ${y}% net · resale −${r}% · bulk −${b}% · price band ±${f}%`,
+  ciAsmIrr:r=>`Required IRR: ${r}% a year, pre-tax`,
+  ciAsmBasis:b=>`Minimum data basis to allocate: ${b}/8`,
+  ciAsmPort:(r,c,l,p)=>`Reserve ${r}% · ${c}% cap per city · ${l}% per neighborhood · pool of ${p} areas`,
+  ciAsmCapR:(a,b,m)=>`Capacity per area: up to ${m} × the lower of ${a}% of annual sales and ${b}% of inventory`,
+  ciAsmFixed:f=>`Fixed allocation constants: area weight <span class="num">(score − min + ${f.tiltFloor})^${f.tilt}</span> · deployment stops at ${f.deployStop}% of deployable equity · bulk sizes ${f.bulkSizes.join("/")} units (up to ${f.bulkCapMul}× capacity) · high liquidity = liquidity sub-score ${f.liqHigh}+ · HHI below <span class="num">${fmtInt(f.hhi[0])}</span> low, below <span class="num">${fmtInt(f.hhi[1])}</span> moderate`,
+  ciAsmPh:(a,b)=>`Deployment phases by liquidity (whole positions, most liquid first): phase 1 until ${a}% of equity used · phase 2 until ${b}% · the rest in phase 3`,
+  ciAsmRefi:l=>`Refinance: ${l}% LTV`,
+  ciDisc:"An analytical model over PROPX data — every input classed (official · static · derived · modelled) — and your assumptions. Appreciation is your assumption, not a PROPX forecast; every forward value is a scenario — not a forecast, not a promised return, and not investment advice. Leverage amplifies both return and risk.",
+  ciWhyGap:(g,c)=>`The board's price per m² is ${g}% below the ${c} average`,
   ciWhySib:g=>`${g}% below comparable nearby areas`,
-  ciWhyYield:y=>`Net yield of ${y}% — top quartile nationally`,
+  ciWhyYield:y=>`Estimated net yield of ${y}% — top quartile among the board's areas`,
   ciWhyTight:m=>`Tight supply — about ${m} months of inventory`,
-  ciWhyTx:n=>`Deep market (${n} deals/yr) with a quality sample`,
+  ciWhyTx:n=>`High sales pace (~${n} a year)`,
   ciWhyRentG:p=>`Rents rising ${p}%/yr — above the national pace`,
   ciWhyMom:"Positive price momentum vs. its surroundings",
   ciRkYield:y=>`Low running yield (${y}%) — sensitive to financing costs`,
   ciRkSupply:m=>`Heavy inventory — about ${m} months of supply`,
-  ciRkSample:"Small transaction sample — low certainty",
-  ciRkEst:"Part of the data is a city-anchored estimate",
+  ciRkThin:"Low sales pace — a thin market",
+  ciRkModel:(s,n)=>s?`Only ${s} of ${n} inputs are sourced — the rest are model estimates`:"No sourced input — all of this area's data is a model estimate",
   ciRkPrice:"High ticket size — strong rate sensitivity",
   ciRkFall:p=>`Prices falling ${p}% annually`,
   ciRkBase:"Exposure to rate changes and general market conditions",
+  ciLvlArea:"Area level", ciProjN:"verified projects", ciNoProjS:"Verified project: none",
+  ciNoProj:"Verified projects in the system: 0 · ingestion layer ready (developer price lists, inventory, CRM, field intelligence).",
+  ciNoDeals:"Verified live deals: 0 — the allocation above is a sourcing/negotiation target, not a purchase available today.",
+  ciLevMkt:"Negotiation environment · market",
+  ciMktScale:"Market scale potential", ciDealScale:"Verified deal scale", ciUnknown:"Unknown",
+  ciEvid:(inv,ti,rate,tt,ms,tm,mom,ty,sh)=>`Supported by: ${inv} units inventory ${ti} ÷ ~${rate} sales/month ${tt} (annual pace ÷ 12) = ~${ms} months of supply ${tm} · ${mom} annual momentum ${ty} · an acquisition scenario ≈${sh}% of area inventory — model · area level`,
+  ciDealLevNA:"Deal-level leverage: unknown — no verified project inventory",
+  ciTgt3:(a,b,c)=>`Targets by strategy: hold ≤ <b class="num">${a}</b> · resale ≤ <b class="num">${b}</b> · bulk ≤ <b class="num">${c}</b>`,
+  ciRetLine:(r,p)=>`Highest price for an IRR of ${r}% (base case · policy): ≤ <b class="num">${p}</b>`,
+  ciRetAbove:r=>`An IRR of ${r}% is met even at 5% above the board price — under your financing and base case.`,
+  ciRetNone:r=>`An IRR of ${r}% is not met even at half the board price — under your financing and base case.`,
+  ciMktIrr:v=>`IRR at the board price (base): ${v}`, ciBelowReq:r=>`below your required IRR (<span class="num">${r}%</span>)`, ciBelowReqP:r=>`Base IRR below your required IRR (<span class="num">${r}%</span>)`,
+  ciNotElig:(s,n,m)=>`Not eligible for allocation · data basis <span class="num">${s}/${n}</span> — policy requires at least <span class="num">${m}/${n}</span>`,
+  ciNotFit:e=>`Not eligible for allocation · equity per unit <span class="num">${e}</span> exceeds the deployable equity`,
+  ciIrrDef:l=>`Definition: a true ${l>0?"levered":"unlevered"} pre-tax IRR from the deal calculator's engine — yearly cash flows: equity (incl. purchase tax and costs) in year 0; net rent after vacancy, opex and upkeep, growing at the rent-growth assumption (default: the area's last 1-year change), less mortgage payments; and in the horizon year a sale at the board price grown at your appreciation assumption, less sale costs and the remaining debt. Excludes capital-gains and income tax.`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (same government data layer): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the board price: ${gap}) — observed data; it does not alter the score`,
+  ciCompThin:"small sample — not a price conclusion",
+  ciCoverT:"Data coverage", ciCoverMiss:"missing",
+  cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
+  ciProvT:"Sources & periods", ciRentTrend:"Rent change y/y",
+  ciBulkT2:"Bulk purchasing-power scenarios · model",
+  ciBulkModelled:"Modelled scenario — not verified inventory: hypothetical sizes against local market volume. Becomes a 'verified bulk scenario' only with verified project inventory.",
+  ciBulkU:"Units", ciBulkVal:"Value at target price", ciBulkEq:"Equity required", ciBulkShare:"Share of local inventory",
+  ciBulkNote:(d,l)=>`Value at a target price ${d}% below the board price; equity required ${l>0?`at ${l}% leverage`:"without leverage"}, incl. purchase tax and costs. The share is capped by local absorption (deals and inventory). Higher concentration = more leverage and more exit risk.`,
+  ciPolT:"Investment policy (central)",
+  ciPolHold:"Required hold yield %", ciPolIrr:"Required IRR (annual, on equity) %", ciPolBulk:"Bulk discount %", ciPolBasis:"Minimum data basis (of 8)",
+  ciPolNote:"Policy rules and user assumptions — not market truth: changing them recomputes the targets and the portfolio (including the allocation filter); the ranking does not use them.",
+  ciPolEdT:"Portfolio assumptions & policy (advanced)",
+  ciPolG:{ops:"Operations & transaction",port:"Portfolio & allocation",price:"Pricing & financing"},
+  ciPolF:{vac:"Vacancy %",opex:"Opex %",capex:"Upkeep %",rentG:"Rent growth %/yr",tax:"Purchase tax %",fees:"Acquisition costs %",sell:"Sale costs %",
+    reserve:s=>`Reserve % (${s})`,capCity:"Cap per city %",capLoc:"Cap per neighborhood %",pool:"Pool size (areas)",
+    capTx:"Capacity: % of sales",capInv:"Capacity: % of inventory",capMul:"Capacity: multiplier",ph1:"Phase 1 %",ph2:"Phase 2 %",
+    fairBand:"Band around the board price ±%",resaleDisc:"Resale discount %",refiLtv:"Refinance LTV %"},
+  ciPolEdNote:"Every value here is your assumption or policy rule — not market data. A value outside its range is not applied. Changes recompute targets, returns and the portfolio; the ranking reads board data only.",
+  ciInvT:"Investment summary · model", ciBestUse:"Best use",
+  ciStratA:"Hold & rent", ciStratB:"Buy & resell", ciStratC:"Bulk purchase",
+  ciFairV:b=>`Band around the board price ±${b}%`, ciPressureK:"Market pressure", ciLevK:"Negotiation leverage",
+  ciScaleUpTo:(c,u)=>`up to ~${c} · ${u} units`,
+  ciP0:"Low", ciP1:"Moderate", ciP2:"Elevated", ciP3:"High",
+  ciL0:"Low", ciL1:"Moderate", ciL2:"High", ciL3:"Very high",
+  ciTargetLine:(p,d)=>`<b>Target buy price:</b> the deal becomes attractive below <b class="num">${p}</b> — about <b class="num">${d}%</b> under the board price. A negotiation target, not an agreed price.`,
+  ciTargetNow:p=>`<b>The board price (<span class="num">${p}</span>) already meets the target</b> — attractive even without a further discount; any discount adds margin.`,
+  ciInvNote:"Three scores for three strategies — gold marks the model's best use. Pressure and leverage are derived from inventory, sales pace and deal size — area-level model values, never a claim about a developer's finances.",
+  ciDealLab:"Test a specific deal — deal calculator →",
+  ciWhyNotLine:(n,p,c)=>`Why above ${n}? stronger on ${p}${c?`; in return, ${n} is stronger on ${c}`:""}.`,
   inCity:c=>`in ${c}`, ofParent:p=>`of ${p}`,
 }};
 
 /* =====================================================================
    3 · STATE + SELECTORS
    ===================================================================== */
-/* Capital Intelligence (scores, "opportunity" map layer, rankings, portfolio,
-   projections) reads an appreciation input built from NATIONAL_CURVE — an
-   approximate path, not observed local history. Until official index history
-   replaces it, the whole model stays off screen: no score, ranking or
-   recommendation derived from it may be shown. Gate: test/integrity.test.js. */
-const CI_ENABLED=false;
+/* Capital Intelligence (§CAPITAL INTELLIGENCE) — the investment model: model
+   scores, MODEL RANKINGS, area analysis, equity-based portfolio allocation and
+   returns. It reads the classified board data (vcOf) and the investor's own,
+   visible assumptions — no approximate price history. CI_ENABLED shows the
+   section. Its rankings stay inside it: CI_EXTERNAL gates every surface
+   outside the section (command-bar #1 signal, map opportunity layer, gold map
+   markers, profile score shortcut, insights teaser) and is off.
+   Gates: test/integrity.test.js, test/capital.test.js. */
+const CI_ENABLED=true;
+const CI_EXTERNAL=false;
 const state={
   lang:"he", mode:"sale", locId:"il",
   mapMetric:"price",
   filters:{rooms:"all",type:"all",area:"all",cond:"all"},
   compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
   sort:{key:"name",dir:1},
-  ci:{h:"5",strat:"bal",ltv:60,rate:4.9,term:25,cap:25e6,sel:null,w:null,capCity:30,capLoc:20},
+  ci:{h:"5",strat:"bal",ltv:60,rate:4.9,term:25,cap:25e6,sel:null,w:null,app:2,appDn:2,appUp:2},
 };
 const T=()=>I18N[state.lang];
 const heName=l=>state.lang==="he"?l.he:l.en;
@@ -2430,8 +2533,8 @@ const STATIC_SRC={
 };
 const isStatic=(l,f)=>{const s=STATIC_SRC.v[l.id];return!!s&&f in s&&l.base[f]===s[f]};
 const TX_H1_2026={tlv:1};   /* Tel Aviv's pace annualises an H1-2026 count — an estimate (see LOCATIONS) */
-function vcOf(l,field){
-  const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=filtersActive();
+function vcOf(l,field,base){   /* base: the unfiltered board value (the capital model reads l.base) */
+  const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=!base&&filtersActive();
   switch(field){
     case "price":case "sqm":return filt||est?"mod":"der";
     case "yoy":   /* national = the CBS new-homes index: RAW only from the live snapshot */
@@ -2444,9 +2547,9 @@ function vcOf(l,field){
   return "na";
 }
 /* the period a figure describes — a dated snapshot is never "the last 12 months" */
-function vcPer(l,field){
+function vcPer(l,field,base){
   const t=T();
-  if(vcOf(l,field)==="static")return STATIC_SRC.cite[field].per[state.lang];
+  if(vcOf(l,field,base)==="static")return STATIC_SRC.cite[field].per[state.lang];
   switch(field){
     case "yoy":return l.id==="il"&&MKT.nh?(state.lang==="he"?MKT.nh.periodHe:MKT.nh.periodEn):t.perYoy;
     case "y3":return t.perY3;
@@ -2546,14 +2649,14 @@ const MAP_METRICS=[
   {id:"yoy",f:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
   {id:"rent",f:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
   {id:"yield",f:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
-  ...(CI_ENABLED?[{id:"opp",f:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp}]:[]),
+  ...(CI_EXTERNAL?[{id:"opp",f:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp}]:[]),
 ];
 const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-10-01.p0-hardening";
+const PROPX_BUILD="2026-10-01.capital-restore";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -2891,7 +2994,7 @@ function renderMap(keepVB){
       inner+=`<text class="geo-label ${onDark(tv)?"on-dark":""}" x="${lx}" y="${ly}" font-size="${fsd.toFixed(2)}" style="stroke-width:${(fsd*.32).toFixed(2)}" text-anchor="middle">${heName(d).replace(state.lang==="he"?"מחוז ":"",'').replace(" District","")}</text>`;
     }
     /* city nodes — the geography carries the market; gold = top capital scores */
-    let capIds=[];if(CI_ENABLED)try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
+    let capIds=[];if(CI_EXTERNAL)try{capIds=ciRank(state.ci.h,state.ci.strat).slice(0,3)
       .map(r=>{const c=r.ev.f.l.type==="city"?r.ev.f.l:cityOf(r.ev.f.l);return c&&c.id})}catch(e){}
     /* progressive disclosure: major cities always; the rest as you zoom in */
     const vbw=vb[2];
@@ -3005,7 +3108,7 @@ function renderProfile(){
         <div class="where">${chain||t.kpiTitleNat}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:600">${t.filtered}</span>`:""}</div>
       </div>
       <div class="pf-side">
-        ${CI_ENABLED&&["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
+        ${CI_EXTERNAL&&["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
       </div>
     </div>
     <div class="asset-price">
@@ -3605,6 +3708,15 @@ const CALC_NEED=(()=>{
     irr:[...fin,...ops,"hold","rentG","app","sell"],
   };
 })();
+/* IRR of yearly flows (year 0 first): bisection on NPV; "noIrr" when the
+   flows do not change sign over the search range. Also used by the capital
+   model for its per-area and portfolio returns. */
+function calcIrr(flows){
+  const npv=k=>flows.reduce((a,c,t)=>a+c/Math.pow(1+k,t),0);
+  let lo=-0.99,hi=10,flo=npv(lo);if(flo*npv(hi)>0)return"noIrr";
+  for(let it=0;it<200;it++){const mid=(lo+hi)/2,fm=npv(mid);if(flo*fm<=0)hi=mid;else{lo=mid;flo=fm}}
+  return(lo+hi)/2*100;
+}
 function calcEngine(raw){
   const v={},invalid=[];
   for(const f of CALC_IN){
@@ -3626,6 +3738,7 @@ function calcEngine(raw){
   const exitV=()=>v.price*Math.pow(1+v.app/100,v.hold);
   const exitEq=()=>exitV()*(1-v.sell/100)-debtAt(v.hold);
   const cumCf=()=>{let s=0;for(let y=1;y<=v.hold;y++)s+=cfY(y);return s};
+  const flows=()=>{const f=[-invested()];for(let y=1;y<=v.hold;y++)f.push(cfY(y)+(y===v.hold?exitEq():0));return f};
   const out={};
   const put=(k,fn)=>{
     const miss=CALC_NEED[k].filter(i=>v[i]==null);
@@ -3640,16 +3753,11 @@ function calcEngine(raw){
   put("coc",()=>invested()>0?(noi1()-pmt()*12)/invested()*100:"zeroEq");
   put("exitV",exitV);put("debtRem",()=>debtAt(v.hold));put("exitEq",exitEq);put("cumCf",cumCf);
   put("profit",()=>exitEq()+cumCf()-invested());
-  put("irr",()=>{
-    const I=invested();if(!(I>0))return"zeroEq";
-    const flows=[-I];for(let y=1;y<=v.hold;y++)flows.push(cfY(y)+(y===v.hold?exitEq():0));
-    const npv=k=>flows.reduce((a,c,t)=>a+c/Math.pow(1+k,t),0);
-    let lo=-0.99,hi=10,flo=npv(lo);if(flo*npv(hi)>0)return"noIrr";
-    for(let it=0;it<200;it++){const mid=(lo+hi)/2,fm=npv(mid);if(flo*fm<=0)hi=mid;else{lo=mid;flo=fm}}
-    return(lo+hi)/2*100;
-  });
+  put("irr",()=>{const I=invested();if(!(I>0))return"zeroEq";return calcIrr(flows())});
   const surplus=v.price!=null&&v.tax!=null&&v.fees!=null&&v.equity!=null?Math.max(0,v.equity-cost()):0;
-  return{inputs:v,invalid,out,surplus};
+  /* the yearly flows behind the IRR, when every input it needs is valid */
+  const fl=CALC_NEED.irr.every(i=>v[i]!=null)&&invested()>0?flows():null;
+  return{inputs:v,invalid,out,surplus,flows:fl};
 }
 /* @calc-engine:end */
 
@@ -3730,20 +3838,34 @@ function initCalc(){
 
 /* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
-   DORMANT while CI_ENABLED=false (§3): its appreciation input is the
-   approximate NATIONAL_CURVE, so nothing below is rendered or called.
-   An analytical model computed ONLY from the LOCATIONS data already on
-   this board. Forward numbers are SCENARIOS from the explicit assumptions
-   in CI_ASSUME/CI_H — not predictions, not investment advice.
+   "Where should I deploy my capital?" A MODEL over the PROPX board data
+   (LOCATIONS — every input classed by vcOf: OFFICIAL · STATIC · DERIVED ·
+   MODELLED) and the investor's own assumptions (state.ci, CI_ASSUME, CI_INV —
+   every one shown and editable in the section). It reads no approximate
+   price history: appreciation is the investor's Conservative / Base / Upside
+   assumption, the same for every area, and every return — per area, at a
+   target price and for the portfolio — comes from the deal calculator's
+   cash-flow engine (calcEngine, calcIrr). Capital is EQUITY: leverage, debt,
+   purchase tax and acquisition costs are accounted for explicitly.
+   Rankings are MODEL RANKINGS and live only inside #capital; the outside
+   surfaces (command-bar signal, map layer, gold markers, profile shortcut,
+   insights teaser) stay off while CI_EXTERNAL=false (§3).
+   Nothing here is a forecast, an observation or investment advice.
    ===================================================================== */
-const CI_ASSUME={vacancy:.035,opex:.10,capex:.03,buyTax:.08,buyFees:.02,sellFees:.02};
-const CI_NETF=1-CI_ASSUME.vacancy-CI_ASSUME.opex-CI_ASSUME.capex;
-/* horizon params: factor tilts + appreciation blend (history vs momentum),
-   annual clamp and the conservative/upside spread around base */
+/* @ci-engine:start — model only (no DOM, no text); reads LOCATIONS, LOC, cityOf, childrenOf, vcOf, calcEngine, calcIrr, state.ci */
+
+/* operating + transaction assumptions (USER ASSUMPTION, editable): vacancy,
+   opex and capex as % of gross rent; tax, fees and sale costs as % of price */
+const CI_ASSUME={vac:3.5,opex:10,capex:3,tax:8,fees:2,sell:2,
+  rentG:null};                                    /* rent growth %/yr; null = each area's own last 1-year rent change (board) */
+const ciNetF=()=>1-(CI_ASSUME.vac+CI_ASSUME.opex+CI_ASSUME.capex)/100;
+/* horizon params: factor tilts and the price-trend blend (weight of the
+   board's annualised 3-year change vs its 1-year change). No appreciation
+   lives here — it is the investor's assumption (state.ci.app). */
 const CI_H={
-  "3":{y:3, tilt:{cf:1.15,ap:.85,va:1,  lq:1.2,dm:1,  rk:1.05}, hist:.35,mom:.65,clamp:[-2.5,6],  spread:[2.2,2.5]},
-  "5":{y:5, tilt:{cf:1,  ap:1,  va:1.1,lq:1,  dm:1,  rk:1},    hist:.55,mom:.45,clamp:[-1.5,6.5],spread:[1.8,2.2]},
-  "10":{y:10,tilt:{cf:.9, ap:1.2,va:1.05,lq:.9,dm:1.1,rk:.95},  hist:.75,mom:.25,clamp:[0,7],     spread:[1.5,1.8]},
+  "3":{y:3, tilt:{cf:1.15,ap:.85,va:1,  lq:1.2,dm:1,  rk:1.05}, w3:.35,w1:.65},
+  "5":{y:5, tilt:{cf:1,  ap:1,  va:1.1,lq:1,  dm:1,  rk:1},    w3:.55,w1:.45},
+  "10":{y:10,tilt:{cf:.9, ap:1.2,va:1.05,lq:.9,dm:1.1,rk:.95},  w3:.75,w1:.25},
 };
 /* strategy presets = the configurable weight model (cf/ap/va/lq/dm/rk) */
 const CI_STRATS={
@@ -3753,233 +3875,158 @@ const CI_STRATS={
   growth:{cf:10,ap:40,va:20,lq:10,dm:10,rk:10},
   cons:  {cf:20,ap:15,va:5, lq:25,dm:15,rk:20},
 };
-const CI_RESERVE={cash:.08,bal:.10,va:.08,growth:.06,cons:.15};
 const CI_CAPS=[5e6,10e6,25e6,50e6,100e6];
+/* CENTRAL INVESTMENT POLICY — business rules (policy / user assumption, not
+   market truth). Every rule is shown in the section and is editable there. */
+const CI_INV={
+  holdY:2.6,resaleDisc:10,bulkDisc:12,fairBand:4,reqIRR:8,
+  minBasis:4,                                     /* allocate only where ≥ N of 8 inputs are sourced */
+  reserve:{cash:8,bal:10,va:8,growth:6,cons:15},  /* % of equity held back, per strategy */
+  capCity:30,capLoc:20,pool:14,                   /* % of equity per city / per neighbourhood; candidate areas */
+  capTx:25,capInv:12,capMul:1.5,                  /* units per area ≤ mul × min(% of annual sales, % of inventory) */
+  ph1:35,ph2:40,                                  /* deployment tranches, % of equity used; phase 3 = the rest */
+  refiLtv:60,
+};
+/* fixed allocation constants — not editable; every one is shown in the assumptions bar */
+const CI_FIXED={tilt:1.6,tiltFloor:10,deployStop:97,bulkSizes:[10,25,50],bulkCapMul:1.6,liqHigh:60,hhi:[1500,2500]};
+/* accepted range of every editable input: [min, max, step, integer?] */
+const CI_LIM={
+  rate:[1,9,.1],term:[5,30,1,1],app:[-10,15,.5],appDn:[0,10,.5],appUp:[0,10,.5],
+  holdY:[1.5,6,.1],reqIRR:[3,15,.5],bulkDisc:[5,30,1],minBasis:[0,8,1,1],resaleDisc:[0,30,1],fairBand:[1,15,1],
+  reserve:[0,50,1],capCity:[10,100,5],capLoc:[5,100,5],pool:[1,30,1,1],capTx:[1,100,1],capInv:[1,100,1],
+  capMul:[.5,5,.1],ph1:[0,100,5],ph2:[0,100,5],refiLtv:[0,80,5],
+  vac:[0,30,.5],opex:[0,40,.5],capex:[0,20,.5],tax:[0,20,.5],fees:[0,10,.5],sell:[0,10,.5],rentG:[-10,15,.5],
+};
+const ciOkVal=(k,v)=>{const L=CI_LIM[k];return!!L&&Number.isFinite(v)&&v>=L[0]&&v<=L[1]&&(!L[3]||Number.isInteger(v))};
 
 const ciUniverse=()=>LOCATIONS.filter(l=>l.type==="city"||l.type==="nbhd"||l.type==="sub");
 let CI_FCACHE=null;
 function ciPct(sorted,v){let lo=0,hi=sorted.length;while(lo<hi){const mid=(lo+hi)>>1;if(sorted[mid]<=v)lo=mid+1;else hi=mid}return Math.round(lo/sorted.length*100)}
 
+/* DATA BASIS — which of the 8 inputs this model reads come from a cited
+   source (OFFICIAL / STATIC / DERIVED, vcOf on the unfiltered board value)
+   and which are MODELLED. It states provenance; it is not a statistic. */
+const CI_BASIS_F=["price","sqm","rent","yoy","y3","rentYoy","tx","listings"];
+function ciBasis(l){
+  const cls={};let src=0;
+  for(const k of CI_BASIS_F){const c=vcOf(l,k,true);cls[k]=c;if(c==="raw"||c==="static"||c==="der")src++}
+  return{cls,src,n:CI_BASIS_F.length,share:src/CI_BASIS_F.length,lvl:src>=5?"h":src>=2?"m":"l"};
+}
+
 /* raw per-location factors (horizon-independent) */
 function ciFactors(){
   if(CI_FCACHE)return CI_FCACHE;
-  const U=ciUniverse(),map={};
-  const natCagr=Math.pow(NATIONAL_CURVE.reduce((a,c)=>a*(1+c/100),1),1/10)-1;
+  const U=ciUniverse(),map={},netF=ciNetF();
   for(const l of U){
     const b=l.base;
-    const cagr10=(Math.pow(localCurve(l).reduce((a,c)=>a*(1+c/100),1),1/10)-1)*100;
-    const city=l.type==="city"?LOC[l.parent]:cityOf(l);          /* city rows compare to district */
+    const city=l.type==="city"?LOC[l.parent]:cityOf(l);
     const cityGap=city?(b.sqm/city.base.sqm-1)*100:0;
     const sibs=LOCATIONS.filter(x=>x.parent===l.parent&&x.id!==l.id);
     const sibMed=sibs.length?sibs.map(x=>x.base.sqm).sort((a,b2)=>a-b2)[Math.floor(sibs.length/2)]:b.sqm;
     const sibGap=(b.sqm/sibMed-1)*100;
     const cityMom=city?city.base.yoy:b.yoy;
-    const ms=b.listings/(b.tx/12);                                /* months of supply */
-    map[l.id]={l,netY:b.rent*12/b.price*100*CI_NETF,gross:b.rent*12/b.price*100,
-      cagr10,natCagr:natCagr*100,mom:b.yoy,cityGap,sibGap,momVsCity:b.yoy-cityMom,
-      ms,rentG:b.rentYoy,tx:b.tx,listings:b.listings,price:b.price,rent:b.rent,
-      offT:/t/.test(l.o||""),offL:/l/.test(l.o||""),est:!!l.e,
-      vaRaw:Math.max(0,-1)*0}; /* filled below */
+    const ms=b.listings/(b.tx/12);
+    map[l.id]={l,basis:ciBasis(l),
+      netY:b.rent*12/b.price*100*netF,gross:b.rent*12/b.price*100,
+      cagr3:(Math.pow(1+b.y3/100,1/3)-1)*100,mom:b.yoy,cityGap,sibGap,momVsCity:b.yoy-cityMom,ms,
+      rentG:b.rentYoy,tx:b.tx,listings:b.listings,price:b.price,rent:b.rent,vaRaw:0};
   }
-  for(const id in map){const f=map[id];
-    f.vaRaw=Math.max(0,-f.cityGap)+Math.max(0,-f.sibGap)*.6+Math.max(0,Math.min(3,f.momVsCity))*1.5;}
+  for(const id in map){const f=map[id];f.vaRaw=Math.max(0,-f.cityGap)+Math.max(0,-f.sibGap)*.6+Math.max(0,Math.min(3,f.momVsCity))*1.5}
   const arr=k=>Object.values(map).map(f=>f[k]).sort((a,b)=>a-b);
   CI_FCACHE={map,sorted:{netY:arr("netY"),vaRaw:arr("vaRaw"),tx:arr("tx"),ms:arr("ms"),rentG:arr("rentG")}};
   return CI_FCACHE;
 }
-
-/* appreciation scenario (annual %) for a horizon */
-function ciApp(f,hk){
-  const H=CI_H[hk];
-  const hist=f.cagr10*.7+f.natCagr*.3;
-  const momC=Math.max(-4,Math.min(5,f.mom*.6));
-  const scarcity=hk==="10"&&f.ms<14&&f.cityGap<0?.4:0;
-  const base=Math.max(H.clamp[0],Math.min(H.clamp[1],hist*H.hist+momC*H.mom+scarcity));
-  const cum=a=>+((Math.pow(1+a/100,H.y)-1)*100).toFixed(1);
-  return{base,cons:base-H.spread[0],up:base+H.spread[1],
-         cumBase:cum(base),cumCons:cum(base-H.spread[0]),cumUp:cum(base+H.spread[1])};
-}
-
-/* data-quality / inverse-risk score (absolute, 0-100) + risk flags */
+/* recorded PRICE TREND — past, not a forecast: the board's 3-year change,
+   annualised, blended with its 1-year change; the horizon sets the blend */
+const ciTrend=(f,hk)=>CI_H[hk].w3*f.cagr3+CI_H[hk].w1*f.mom;
+/* risk profile (higher = fewer flags): market flags from the board values and
+   one provenance flag — an area whose inputs are all model estimates */
 function ciRisk(f){
   let sc=100;const flags=[];
   if(f.mom<-3){sc-=18;flags.push("fall")}
   if(f.ms>30){sc-=14;flags.push("supply")}
   const thin=f.l.type==="city"?f.tx<80:f.tx<25;
-  if(thin){sc-=12;flags.push("sample")}
-  if(f.est){sc-=10;flags.push("est")}
+  if(thin){sc-=12;flags.push("thin")}
+  if(f.basis.lvl==="l"){sc-=10;flags.push("model")}
   if(f.price>4.5e6){sc-=8;flags.push("price")}
   if(f.netY<2.2){sc-=8;flags.push("yield")}
-  if(f.offT)sc+=6;if(f.offL)sc+=6;
   return{score:Math.max(20,Math.min(95,sc)),flags};
 }
-function ciConf(f){
-  const sample=Math.min(24,f.tx/(f.l.type==="city"?40:8));
-  const pct=Math.round(Math.max(25,Math.min(95,38+(f.offT?18:0)+(f.offL?10:0)+sample-(f.est?14:0)+(f.l.type==="city"?6:0))));
-  return{pct,lvl:pct>=70?"h":pct>=50?"m":"l"};
-}
-
-/* full evaluation of one location for horizon+strategy */
+/* the six-factor MODEL score: percentile sub-scores × strategy weights ×
+   horizon tilts, scaled by the data basis (0.82 … 1.00) */
 function ciEval(id,hk,strat){
-  const C=ciFactors(),f=C.map[id],H=CI_H[hk];
-  const app=ciApp(f,hk),risk=ciRisk(f),conf=ciConf(f);
-  const sub={
-    cf:Math.min(100,ciPct(C.sorted.netY,f.netY)+(f.rentG>4?4:0)),
-    ap:0,va:ciPct(C.sorted.vaRaw,f.vaRaw),
+  const C=ciFactors(),f=C.map[id],H=CI_H[hk],risk=ciRisk(f),basis=f.basis;
+  const sub={cf:Math.min(100,ciPct(C.sorted.netY,f.netY)+(f.rentG>4?4:0)),ap:0,va:ciPct(C.sorted.vaRaw,f.vaRaw),
     lq:Math.round(ciPct(C.sorted.tx,f.tx)*.55+(100-ciPct(C.sorted.ms,f.ms))*.45),
-    dm:Math.round(ciPct(C.sorted.rentG,f.rentG)*.5+(100-ciPct(C.sorted.ms,f.ms))*.5),
-    rk:risk.score,
-  };
-  /* appreciation percentile: rank cumBase across universe for this horizon */
-  if(!C["app"+hk]){C["app"+hk]=Object.keys(C.map).map(k=>ciApp(C.map[k],hk).cumBase).sort((a,b)=>a-b)}
-  sub.ap=ciPct(C["app"+hk],app.cumBase);
-  const W=state.ci.w||CI_STRATS[strat];
-  let num=0,den=0;
+    dm:Math.round(ciPct(C.sorted.rentG,f.rentG)*.5+(100-ciPct(C.sorted.ms,f.ms))*.5),rk:risk.score};
+  if(!C["tr"+hk])C["tr"+hk]=Object.keys(C.map).map(k=>ciTrend(C.map[k],hk)).sort((a,b)=>a-b);
+  sub.ap=ciPct(C["tr"+hk],ciTrend(f,hk));
+  const W=state.ci.w||CI_STRATS[strat];let num=0,den=0;
   for(const k in sub){const w=(W[k]||0)*H.tilt[k];num+=sub[k]*w;den+=w}
-  const score=Math.round(num/Math.max(1,den)*(0.82+0.18*conf.pct/100));
-  const vaLvl=sub.va>=67?"h":sub.va>=40?"m":"l";
-  const lqLvl=sub.lq>=60?"h":sub.lq>=38?"m":"l";
-  return{f,app,risk,conf,sub,score,vaLvl,lqLvl};
+  const score=Math.round(num/Math.max(1,den)*(0.82+0.18*basis.share));
+  return{f,risk,basis,sub,score,
+    vaLvl:sub.va>=67?"h":sub.va>=40?"m":"l",lqLvl:sub.lq>=60?"h":sub.lq>=38?"m":"l"};
 }
-
+/* MODEL RANKING of the whole universe — capital size does not enter it */
 function ciRank(hk,strat){
-  const U=ciUniverse();
-  return U.map(l=>({id:l.id,ev:ciEval(l.id,hk,strat)}))
-    .sort((a,b)=>b.ev.score-a.ev.score||b.ev.conf.pct-a.ev.conf.pct);
+  return ciUniverse().map(l=>({id:l.id,ev:ciEval(l.id,hk,strat)}))
+    .sort((a,b)=>b.ev.score-a.ev.score||b.ev.basis.src-a.ev.basis.src||(a.id<b.id?-1:a.id>b.id?1:0));
 }
 
-/* ---- financing (Spitzer) ---- */
-function ciPmt(loan,rate,years){if(loan<=0)return 0;const i=rate/100/12,n=years*12;return loan*i/(1-Math.pow(1+i,-n))}
-function ciDebtAt(loan,rate,years,after){if(loan<=0)return 0;const i=rate/100/12,n=years*12,m=Math.min(after*12,n);
-  return loan*(Math.pow(1+i,n)-Math.pow(1+i,m))/(Math.pow(1+i,n)-1)}
-function ciFin(f){
-  const {ltv,rate,term}=state.ci;
-  const loan=f.price*ltv/100;
-  const equity=f.price-loan+f.price*(CI_ASSUME.buyTax+CI_ASSUME.buyFees);
-  const pmt=ciPmt(loan,rate,term);
-  const rentNetM=f.rent*CI_NETF;
-  const cfM=rentNetM-pmt;
-  return{loan,equity,pmt,rentNetM,cfM,coc:cfM*12/equity*100};
-}
-/* cumulative net rent with rent growth over y years */
-function ciCumRent(f,y){let s=0,r=f.rent*CI_NETF*12;for(let t=0;t<y;t++){s+=r;r*=1+f.rentG/100}return s}
-function ciExit(f,hk,scen){
-  const H=CI_H[hk],fin=ciFin(f);
-  const app=ciApp(f,hk);
-  const cum={cons:app.cumCons,base:app.cumBase,up:app.cumUp}[scen];
-  const sale=f.price*(1+cum/100),saleNet=sale*(1-CI_ASSUME.sellFees);
-  const debtRem=ciDebtAt(fin.loan,state.ci.rate,state.ci.term,H.y);
-  const cumRent=ciCumRent(f,H.y),debtPaid=fin.pmt*12*H.y;
-  const profit=saleNet-debtRem+cumRent-debtPaid-fin.equity;
-  const basis=f.price*(1+CI_ASSUME.buyTax+CI_ASSUME.buyFees);
-  const propProfit=saleNet+cumRent-basis;
-  return{cum,sale,saleNet,debtRem,cumRent,debtPaid,profit,
-    roe:profit/fin.equity*100,propRet:propProfit/basis*100,fin};
-}
+/* ---- appreciation: the investor's own assumption, the same for every area ---- */
+function ciAppRates(){const c=state.ci;return{cons:+(c.app-c.appDn).toFixed(2),base:+c.app,up:+(c.app+c.appUp).toFixed(2)}}
+const ciCumApp=(r,y)=>(Math.pow(1+r/100,y)-1)*100;
 
-/* ---- portfolio allocation ---- */
-function ciPortfolio(hk,strat){
-  const cap=state.ci.cap,reserve=cap*CI_RESERVE[strat];
-  const target=cap-reserve;
-  const ranked=ciRank(hk,strat);
-  /* eligible pool: enough data confidence, affordable, with real deployability */
-  const pool=[];
-  for(const r of ranked){
-    if(r.ev.conf.pct<CI_INV.minConf)continue;   /* policy: never target weakest data */
-    const f=r.ev.f;
-    if(f.price>target)continue;
-    const unitsCap=Math.max(1,Math.round(Math.min(f.tx*.25,f.listings*.12)*1.5));
-    pool.push({r,f,l:f.l,unitsCap});
-    if(pool.length>=14)break;
+/* ---- one unit per area, priced by the deal calculator's engine ---- */
+/* equity per ₪1 of purchase price: the unfinanced share of the price plus
+   purchase tax and acquisition costs (lv = loan-to-value %, default: selected) */
+const ciEqK=lv=>1-(lv??state.ci.ltv)/100+(CI_ASSUME.tax+CI_ASSUME.fees)/100;
+/* forward rent growth: the user's rate, or (empty) the area's own last 1-year change */
+const ciRentG=f=>CI_ASSUME.rentG??f.rentG;
+function ciDealIn(f,o){
+  o=o||{};
+  const A=CI_ASSUME,ci=state.ci,price=o.price??f.price,ltv=o.unlev?0:ci.ltv;
+  const cost=price*(1+(A.tax+A.fees)/100);
+  return{price,equity:cost-price*ltv/100,tax:A.tax,fees:A.fees,rate:ci.rate,term:ci.term,
+    rent:f.rent,vac:A.vac,opex:A.opex+A.capex,hold:o.hold??CI_H[ci.h].y,rentG:ciRentG(f),
+    app:o.app??ciAppRates()[o.scen||"base"],sell:A.sell};
+}
+const ciDeal=(f,o)=>calcEngine(ciDealIn(f,o));
+const ciV=(r,k)=>r.out[k].ok?r.out[k].v:null;
+/* per-area scenario set at the horizon: levered (selected LTV) and unlevered */
+function ciScen(f){
+  const y=CI_H[state.ci.h].y,R=ciAppRates(),out={};
+  for(const s of ["cons","base","up"]){
+    const lev=ciDeal(f,{scen:s}),unl=ciDeal(f,{scen:s,unlev:1});
+    const noi=ciV(lev,"noi"),g=ciRentG(f)/100;
+    const cumNoi=noi==null?null:Math.abs(g)<1e-12?noi*y:noi*(Math.pow(1+g,y)-1)/g;
+    const eq=ciV(lev,"cost")-ciV(lev,"loan"),pmt=ciV(lev,"pmt");
+    out[s]={rate:R[s],cum:ciCumApp(R[s],y),lev,unl,cumNoi,eq,
+      ds:pmt==null?null:pmt*12*Math.min(y,state.ci.term),
+      roe:ciV(lev,"profit")!=null&&eq>0?ciV(lev,"profit")/eq*100:null,
+      prop:ciV(unl,"profit")!=null?ciV(unl,"profit")/ciV(unl,"cost")*100:null,
+      irr:ciV(lev,"irr"),irrWhy:lev.out.irr.ok?null:lev.out.irr.why,irrU:ciV(unl,"irr")};
   }
-  const minS=pool.length?Math.min(...pool.map(p=>p.r.ev.score)):0;
-  let wsum=0;for(const p of pool){p.wt=Math.pow(p.r.ev.score-minS+10,1.6);wsum+=p.wt}
-  const cityAmt={},pos=[];let deployed=0;
-  const cityCapFor=(cid,f)=>{
-    let c=cap*state.ci.capCity/100-(cityAmt[cid]||0);
-    if(!cityAmt[cid])c=Math.max(c,f.price);      /* small capital: first unit may exceed the pct cap */
-    return c;
-  };
-  /* pass 1 — score-proportional targets, clamped by diversification + deployability */
-  for(const p of pool){
-    const cid=(p.l.type==="city"?p.l:cityOf(p.l)).id;
-    const capLoc=p.l.type==="city"?Infinity:Math.max(cap*state.ci.capLoc/100,p.f.price);
-    const room=Math.min(target*p.wt/wsum,cityCapFor(cid,p.f),capLoc,p.unitsCap*p.f.price,target-deployed);
-    const units=Math.floor(room/p.f.price);
-    if(units<1)continue;
-    const amount=units*p.f.price;
-    pos.push({id:p.l.id,ev:p.r.ev,units,amount,cid});
-    cityAmt[cid]=(cityAmt[cid]||0)+amount;deployed+=amount;
-  }
-  /* pass 2 — distribute the remainder by rank, inside the same limits */
-  for(const p of pool){
-    if(deployed>=target*.97)break;
-    const cid=(p.l.type==="city"?p.l:cityOf(p.l)).id;
-    const cur=pos.find(x=>x.id===p.l.id);
-    const capLoc=p.l.type==="city"?Infinity:cap*state.ci.capLoc/100-(cur?cur.amount:0);
-    const room=Math.min(cap*state.ci.capCity/100-(cityAmt[cid]||0),capLoc,
-      (p.unitsCap-(cur?cur.units:0))*p.f.price,target-deployed);
-    const units=Math.floor(room/p.f.price);
-    if(units<1)continue;
-    const amount=units*p.f.price;
-    if(cur){cur.units+=units;cur.amount+=amount}
-    else pos.push({id:p.l.id,ev:p.r.ev,units,amount,cid});
-    cityAmt[cid]=(cityAmt[cid]||0)+amount;deployed+=amount;
-  }
-  const cash=cap-deployed;
-  /* diversification */
-  const byCity={};for(const p of pos)byCity[p.cid]=(byCity[p.cid]||0)+p.amount;
-  const shares=Object.values(byCity).map(v=>v/Math.max(1,deployed));
-  const hhi=Math.round(shares.reduce((a,v)=>a+v*v,0)*10000);
-  const top=shares.length?Math.max(...shares)*deployed/Math.max(1,cap)*100:0;
-  const netY=pos.reduce((a,p)=>a+p.ev.f.netY*p.amount,0)/Math.max(1,deployed);
-  const cfM=pos.reduce((a,p)=>a+ciFin(p.ev.f).cfM*p.units,0);
-  const liqShare=pos.filter(p=>p.ev.sub.lq>=60).reduce((a,p)=>a+p.amount,0)/Math.max(1,deployed)*100;
-  const score=pos.reduce((a,p)=>a+p.ev.score*p.amount,0)/Math.max(1,deployed);
-  /* phases: staged tranches (35/40/25) of the deployed book, most liquid first */
-  const byLq=[...pos].sort((a,b)=>b.ev.sub.lq-a.ev.sub.lq);
-  const t1=deployed*.35,t2=deployed*.75;
-  const p1=[],p2=[],p3=[];let acc=0;
-  for(const p of byLq){(acc<t1?p1:acc<t2?p2:p3).push(p);acc+=p.amount}
-  const sum=a=>a.reduce((x,p)=>x+p.amount,0);
-  return{pos,deployed,cash,byCity,hhi,top,netY,cfM,liqShare,score,
-    phases:[{k:"ciPh1",d:"ciPh1d",list:p1,amt:sum(p1)},{k:"ciPh2",d:"ciPh2d",list:p2,amt:sum(p2)},
-            {k:"ciPh3",d:"ciPh3d",list:p3,amt:sum(p3)},{k:"ciPhR",d:"ciPhRd",list:[],amt:cash}]};
+  return out;
+}
+/* return-based target price: the highest acquisition price whose levered,
+   pre-tax IRR (calcEngine, Base scenario) still meets the required IRR. The
+   exit stays anchored to the board price grown at the Base assumption —
+   buying below market adds margin; it does not raise the exit price. */
+function ciReturnTarget(f){
+  const y=CI_H[state.ci.h].y,fair=f.price,exitAt=fair*Math.pow(1+ciAppRates().base/100,y);
+  const irrAt=P=>{const r=ciDeal(f,{price:P,app:(Math.pow(exitAt/P,1/y)-1)*100});return r.out.irr.ok?r.out.irr.v:null};
+  const ok=P=>{const v=irrAt(P);return v!=null&&v>=CI_INV.reqIRR};
+  const atMkt=irrAt(fair);
+  let lo=fair*.5,hi=fair*1.05;
+  if(!ok(lo))return{p:null,atMkt};
+  if(ok(hi))return{p:Math.floor(hi/1000)*1000,above:true,atMkt};
+  for(let i=0;i<28;i++){const mid=(lo+hi)/2;if(ok(mid))lo=mid;else hi=mid}
+  return{p:Math.floor(lo/1000)*1000,atMkt};
 }
 
-/* ---- reasons & risks (only data-supported statements) ---- */
-function ciWhy(ev){
-  const t=T(),f=ev.f,out=[];
-  if(f.cityGap<-6)out.push(t.ciWhyGap(Math.abs(f.cityGap).toFixed(0),heName(f.l.type==="city"?LOC[f.l.parent]:cityOf(f.l))));
-  if(ev.sub.cf>=75)out.push(t.ciWhyYield(f.netY.toFixed(1)));
-  if(f.ms<16)out.push(t.ciWhyTight(Math.round(f.ms)));
-  if(f.rentG>=4.2)out.push(t.ciWhyRentG(f.rentG.toFixed(1)));
-  if(ev.sub.lq>=70&&(f.offT||f.tx>=400))out.push(t.ciWhyTx(fmtInt(f.tx)));
-  if(f.sibGap<-5)out.push(t.ciWhySib(Math.abs(f.sibGap).toFixed(0)));
-  if(f.momVsCity>1.5&&f.mom>0)out.push(t.ciWhyMom);
-  return out.slice(0,3);
-}
-function ciRisks(ev){
-  const t=T(),f=ev.f,out=[];
-  for(const fl of ev.risk.flags){
-    if(fl==="yield")out.push(t.ciRkYield(f.netY.toFixed(1)));
-    if(fl==="supply")out.push(t.ciRkSupply(Math.round(f.ms)));
-    if(fl==="sample")out.push(t.ciRkSample);
-    if(fl==="est")out.push(t.ciRkEst);
-    if(fl==="price")out.push(t.ciRkPrice);
-    if(fl==="fall")out.push(t.ciRkFall(Math.abs(f.mom).toFixed(1)));
-  }
-  if(!out.length)out.push(f.ms>22?t.ciRkSupply(Math.round(f.ms)):t.ciRkBase);
-  return out.slice(0,3);
-}
-
-
-/* ---- institutional lenses: fair value, target price, pressure, leverage,
-       strategy scores, scale fit. Derived from the same location data —
-       thresholds are explicit assumptions surfaced in the UI. ---- */
-/* CENTRAL INVESTMENT POLICY — business rules, deliberately configurable and
-   labeled as policy (not market truth). fairBand is a model assumption. */
-const CI_INV={holdY:2.6,resaleDisc:10,bulkDisc:12,fairBand:4,reqIRR:8,minConf:40};
+/* ---- institutional lenses: price band, targets, pressure, leverage,
+       strategy scores, scale. Area level; thresholds are policy (CI_INV). ---- */
 /* Intelligence levels — never collapsed into one claim:
    A=AREA (market/geography), B=PROJECT (verified project identity required),
    C=DEAL (verified price/inventory sufficient for a transaction thesis).
@@ -3992,83 +4039,134 @@ const PROJECTS_DB=[];
 const DEALS_DB=[];
 const ciProjectsOf=id=>PROJECTS_DB.filter(p=>p.cityId===id||p.nbhdId===id);
 const ciDealsOf=id=>DEALS_DB.filter(d=>{const p=PROJECTS_DB.find(x=>x.id===d.projectId);return p&&(p.cityId===id||p.nbhdId===id)});
-/* return-based target price: the maximum acquisition price that still meets the
-   policy's required annual return on equity, holding the exit anchored to FAIR
-   value (buying below market adds margin; it does not raise the exit price). */
-function ciReturnTarget(f){
-  const {ltv,rate,term}=state.ci,y=CI_H[state.ci.h].y;
-  const app=ciApp(f,state.ci.h);
-  const fair=f.price;
-  const saleNet=fair*(1+app.cumBase/100)*(1-CI_ASSUME.sellFees);
-  const cumRent=ciCumRent(f,y);
-  const req=Math.pow(1+CI_INV.reqIRR/100,y);
-  const ok=Pr=>{
-    const loan=Pr*ltv/100,eq=Pr-loan+Pr*(CI_ASSUME.buyTax+CI_ASSUME.buyFees);
-    const pmt=ciPmt(loan,rate,term),debtRem=ciDebtAt(loan,rate,term,y);
-    return (saleNet-debtRem+cumRent-pmt*12*y)/eq>=req;
-  };
-  let lo=fair*0.5,hi=fair*1.05;
-  if(!ok(lo))return{p:null};
-  if(ok(hi))return{p:Math.round(hi/1000)*1000,above:true};
-  for(let i=0;i<28;i++){const mid=(lo+hi)/2;ok(mid)?lo=mid:hi=mid}
-  return{p:Math.round(lo/1000)*1000};
-}
-/* per-opportunity data coverage — missing dimensions are shown, never hidden */
-function ciCoverage(f){
-  const t=T();
-  return[
-    {k:t.cvTx,ok:true,q:f.offT?t.cvObs:t.cvEst},
-    {k:t.cvRent,ok:true,q:t.cvEstD},
-    {k:t.cvInv,ok:true,q:f.offL?t.cvObs:t.cvEst},
-    {k:t.cvPlan,ok:false},
-    {k:t.cvProj,ok:false},
-  ];
-}
-
-const ciCapacityUnits=f=>Math.max(1,Math.round(Math.min(f.tx*.25,f.listings*.12)*1.5));
+/* deployable units per area (capacity rule, policy) */
+const ciCapacityUnits=f=>Math.max(1,Math.round(Math.min(f.tx*CI_INV.capTx/100,f.listings*CI_INV.capInv/100)*CI_INV.capMul));
 function ciInvest(id){
-  const ev=ciEval(id,state.ci.h,state.ci.strat),f=ev.f;
-  const rentNet=f.rent*12*CI_NETF;
+  const ev=ciEval(id,state.ci.h,state.ci.strat),f=ev.f,P=CI_INV;
+  const rentNet=f.rent*12*ciNetF();
   const fairMid=f.price;
-  const fair=[Math.round(fairMid*(1-CI_INV.fairBand/100)/1000)*1000,
-              Math.round(fairMid*(1+CI_INV.fairBand/100)/1000)*1000];
-  const tHold=Math.round(rentNet/(CI_INV.holdY/100)/1000)*1000;
-  const tResale=Math.round(fairMid*(1-CI_INV.resaleDisc/100)/1000)*1000;
-  const tBulk=Math.round(fairMid*(1-CI_INV.bulkDisc/100)/1000)*1000;
-  /* factual market-pressure signal from inventory + momentum */
+  const fair=[Math.round(fairMid*(1-P.fairBand/100)/1000)*1000,Math.round(fairMid*(1+P.fairBand/100)/1000)*1000];
+  const tHold=Math.round(rentNet/(P.holdY/100)/1000)*1000;
+  const tResale=Math.round(fairMid*(1-P.resaleDisc/100)/1000)*1000;
+  const tBulk=Math.round(fairMid*(1-P.bulkDisc/100)/1000)*1000;
+  /* market-pressure signal from modelled months of supply + momentum */
   let prs=f.ms<14?0:f.ms<22?1:f.ms<30?2:3;
   if(f.mom<-3&&prs<3)prs++;
-  /* negotiation leverage: supply pressure + the buyer's share of local inventory */
+  /* negotiation leverage: supply pressure + the buyer's share of local
+     inventory — the property one city's equity cap buys at this leverage */
   const unitsCap=ciCapacityUnits(f);
   const capacity=unitsCap*f.price;
-  const dealSize=Math.min(state.ci.cap*state.ci.capCity/100,capacity);
+  const dealSize=Math.min(state.ci.cap*P.capCity/100/ciEqK(),capacity);
   const invShare=Math.min(1,dealSize/Math.max(1,f.listings*f.price));
   const levScore=Math.min(100,Math.round(f.ms/30*45+invShare*130+(f.mom<0?12:0)+(f.ms>26?10:0)));
   const lev=levScore<25?0:levScore<45?1:levScore<68?2:3;
   /* discount potential feeds the resale strategy */
   const discPot=Math.min(100,Math.round(levScore*.55+(f.ms>22?25:f.ms>14?12:0)+(f.mom<-2?15:0)));
   const scaleScore=Math.min(100,unitsCap*4);
-  const g=x=>Math.round(x*(0.82+0.18*ev.conf.pct/100));
+  const g=x=>Math.round(x*(0.82+0.18*ev.basis.share));
   const sHold=g(.30*ev.sub.cf+.20*ev.sub.ap+.20*ev.sub.dm+.15*ev.sub.lq+.15*ev.sub.rk);
   const sResale=g(.30*discPot+.25*ev.sub.lq+.20*ev.sub.ap+.15*ev.sub.dm+.10*ev.sub.rk);
   const sBulk=g(.35*levScore+.25*scaleScore+.20*ev.sub.cf+.10*ev.sub.lq+.10*ev.sub.rk);
   const best=sHold>=sResale&&sHold>=sBulk?"A":sResale>=sBulk?"B":"C";
   const target=best==="A"?Math.min(tHold,fair[1]):best==="B"?tResale:tBulk;
   const discAt=t=>+((1-t/f.price)*100).toFixed(1);
-  const yieldAt=t=>+(rentNet/t*100).toFixed(2);
   const attractiveNow=target>=f.price;
-  /* bulk scenarios capped by realistic local capacity */
-  const bulkSizes=[10,25,50].filter(u=>u<=unitsCap*1.6);
+  /* bulk scenarios capped by realistic local capacity; equity at the
+     selected leverage, including purchase tax and acquisition costs */
+  const bulkSizes=CI_FIXED.bulkSizes.filter(u=>u<=unitsCap*CI_FIXED.bulkCapMul);
   if(!bulkSizes.length)bulkSizes.push(Math.max(2,unitsCap));
+  const k=ciEqK();
   const bulk=bulkSizes.map(u=>{const share=u/Math.max(1,f.listings)*100;
-    return{u,cap:u*tBulk,share,lev:share>25?3:share>12?2:1}});
-  return{ev,f,fair,fairMid,tHold,tResale,tBulk,target,best,attractiveNow,
-    discTarget:discAt(target),yieldTarget:yieldAt(target),
-    prs,lev,levScore,unitsCap,capacity,invShare,
-    fit:capacity>=state.ci.cap*.25?2:capacity>=state.ci.cap*.08?1:0,
-    sHold,sResale,sBulk,bulk};
+    return{u,value:u*tBulk,equity:u*tBulk*k,share,lev:share>25?3:share>12?2:1}});
+  return{ev,f,fair,fairMid,tHold,tResale,tBulk,target,best,attractiveNow,discTarget:discAt(target),
+    prs,lev,levScore,unitsCap,capacity,invShare,sHold,sResale,sBulk,bulk};
 }
-/* opportunity score for any geography (map lens): tx-weighted roll-up */
+
+/* ---- portfolio allocation — EQUITY accounting ----
+   With ₪cap of investor equity and the selected leverage: each unit consumes
+   price × (1 − LTV) + purchase tax + acquisition costs of equity; the debt
+   finances the rest. Reserve, caps and capacity are policy (CI_INV). */
+function ciPortfolio(hk,strat){
+  const C=state.ci.cap,P=CI_INV,A=CI_ASSUME,ltv=state.ci.ltv/100,k=ciEqK(),costR=(A.tax+A.fees)/100;
+  const resPct=P.reserve[strat],reserve=C*resPct/100,target=C-reserve;
+  const ranked=ciRank(hk,strat);
+  /* eligible pool: enough sourced data, a unit's equity fits, real deployability */
+  const pool=[];
+  for(const r of ranked){
+    if(r.ev.basis.src<P.minBasis)continue;          /* policy: never target model-only data */
+    const f=r.ev.f,eqU=f.price*k;
+    if(eqU>target)continue;
+    pool.push({r,f,l:f.l,eqU,unitsCap:ciCapacityUnits(f)});
+    if(pool.length>=P.pool)break;
+  }
+  const minS=pool.length?Math.min(...pool.map(p=>p.r.ev.score)):0;
+  let wsum=0;for(const p of pool){p.wt=Math.pow(p.r.ev.score-minS+CI_FIXED.tiltFloor,CI_FIXED.tilt);wsum+=p.wt}
+  const cityEq={},pos=[];let used=0;
+  const cidOf=l=>(l.type==="city"?l:cityOf(l)).id;
+  const cityCapFor=(cid,eqU)=>{
+    let c=C*P.capCity/100-(cityEq[cid]||0);
+    if(!cityEq[cid])c=Math.max(c,eqU);                 /* small capital: a first unit may exceed the cap */
+    return c;
+  };
+  const put=(p,units,cid)=>{
+    const cur=pos.find(x=>x.id===p.l.id),eq=units*p.eqU;
+    if(cur){cur.units+=units;cur.eq+=eq;cur.value+=units*p.f.price}
+    else pos.push({id:p.l.id,ev:p.r.ev,f:p.f,units,eq,value:units*p.f.price,cid});
+    cityEq[cid]=(cityEq[cid]||0)+eq;used+=eq;
+  };
+  /* pass 1 — score-proportional equity targets, clamped by diversification + deployability */
+  for(const p of pool){
+    const cid=cidOf(p.l);
+    const capLoc=p.l.type==="city"?Infinity:Math.max(C*P.capLoc/100,p.eqU);
+    const room=Math.min(target*p.wt/wsum,cityCapFor(cid,p.eqU),capLoc,p.unitsCap*p.eqU,target-used);
+    const units=Math.floor(room/p.eqU+1e-9);
+    if(units>=1)put(p,units,cid);
+  }
+  /* pass 2 — distribute the remainder by rank, inside the same limits */
+  for(const p of pool){
+    if(used>=target*CI_FIXED.deployStop/100)break;
+    const cid=cidOf(p.l),cur=pos.find(x=>x.id===p.l.id);
+    const capLoc=p.l.type==="city"?Infinity:cur?C*P.capLoc/100-cur.eq:Math.max(C*P.capLoc/100,p.eqU);
+    const room=Math.min(cityCapFor(cid,p.eqU),capLoc,(p.unitsCap-(cur?cur.units:0))*p.eqU,target-used);
+    const units=Math.floor(room/p.eqU+1e-9);
+    if(units>=1)put(p,units,cid);
+  }
+  const value=pos.reduce((a,p)=>a+p.value,0),debt=value*ltv,costs=value*costR;
+  const unused=Math.max(0,target-used),cash=C-used;
+  /* diversification (city shares of equity = of property value: one leverage for all) */
+  const byCity={};for(const p of pos)byCity[p.cid]=(byCity[p.cid]||0)+p.eq;
+  const shares=Object.values(byCity).map(v=>v/Math.max(1,used));
+  const hhi=Math.round(shares.reduce((a,v)=>a+v*v,0)*10000);
+  const top=pos.length?Math.max(...Object.values(byCity))/Math.max(1,C)*100:0;
+  const netY=pos.reduce((a,p)=>a+p.f.netY*p.value,0)/Math.max(1,value);
+  const liqShare=pos.filter(p=>p.ev.sub.lq>=CI_FIXED.liqHigh).reduce((a,p)=>a+p.eq,0)/Math.max(1,used)*100;
+  const score=pos.reduce((a,p)=>a+p.ev.score*p.eq,0)/Math.max(1,used);
+  /* cash flow and returns: each position's per-unit deal (calcEngine) × units;
+     the portfolio IRR is the IRR of the summed yearly flows (calcIrr) */
+  const y=CI_H[hk].y,S=["cons","base","up"],flows={};
+  for(const s of S)flows[s]=new Array(y+1).fill(0);
+  let cfM=0,profit=0,flowOk=pos.length>0;
+  for(const p of pos)for(const s of S){
+    const r=ciDeal(p.f,{scen:s,hold:y});
+    if(!r.flows){flowOk=false;continue}
+    r.flows.forEach((x,t)=>{flows[s][t]+=x*p.units});
+    if(s==="base"){cfM+=ciV(r,"cf")*p.units;profit+=ciV(r,"profit")*p.units}
+  }
+  const irr={},irrWhy={};
+  for(const s of S){const v=flowOk?calcIrr(flows[s]):null;irr[s]=typeof v==="number"?v:null;irrWhy[s]=typeof v==="string"?v:null}
+  /* phases: staged tranches of the equity used, most liquid first */
+  const byLq=[...pos].sort((a,b)=>b.ev.sub.lq-a.ev.sub.lq);
+  const t1=used*P.ph1/100,t2=used*(P.ph1+P.ph2)/100;
+  const p1=[],p2=[],p3=[];let acc=0;
+  for(const p of byLq){(acc<t1?p1:acc<t2?p2:p3).push(p);acc+=p.eq}
+  const sum=a=>a.reduce((x,p)=>x+p.eq,0);
+  return{pos,used,value,debt,costs,reserve,resPct,target,unused,cash,byCity,hhi,top,netY,cfM,profit,irr,irrWhy,flows,
+    blocked:pos.length?null:pool.length?"caps":"pool",
+    liqShare,score,pool:pool.length,
+    phases:[{k:"ciPh1",d:"ciPh1d",list:p1,amt:sum(p1)},{k:"ciPh2",d:"ciPh2d",list:p2,amt:sum(p2)},
+            {k:"ciPh3",d:"ciPh3d",list:p3,amt:sum(p3)},{k:"ciPhR",d:"ciPhRd",list:[],amt:reserve},{k:"ciPhU",d:"ciPhUd",list:[],amt:unused}]};
+}
+/* opportunity score for any geography (map lens, CI_EXTERNAL only): tx-weighted roll-up */
 const _oppCache={};
 function ciOppOf(id){
   const l=LOC[id];if(!l)return 0;
@@ -4081,6 +4179,44 @@ function ciOppOf(id){
   const kids=childrenOf(id);let w=0,acc=0;
   for(const k of kids){const v=ciOppOf(k.id),wt=k.base.tx;w+=wt;acc+=v*wt}
   return w?Math.round(acc/w):0;
+}
+/* @ci-engine:end */
+
+/* ---- reasons & risks — every statement carries the class of its data ---- */
+function ciWhy(ev){
+  const t=T(),f=ev.f,c=f.basis.cls,out=[];
+  if(f.cityGap<-6)out.push([t.ciWhyGap(Math.abs(f.cityGap).toFixed(0),heName(f.l.type==="city"?LOC[f.l.parent]:cityOf(f.l))),c.sqm]);
+  if(ciPct(ciFactors().sorted.netY,f.netY)>=75)out.push([t.ciWhyYield(f.netY.toFixed(1)),"mod"]);
+  if(f.ms<16)out.push([t.ciWhyTight(Math.round(f.ms)),"mod"]);
+  if(f.rentG>=LOC.il.base.rentYoy+0.7)out.push([t.ciWhyRentG(f.rentG.toFixed(1)),c.rentYoy]);   /* clearly above the national pace */
+  if(ev.sub.lq>=70&&f.tx>=400)out.push([t.ciWhyTx(fmtInt(f.tx)),c.tx]);
+  if(f.sibGap<-5)out.push([t.ciWhySib(Math.abs(f.sibGap).toFixed(0)),c.sqm]);
+  if(f.momVsCity>1.5&&f.mom>0)out.push([t.ciWhyMom,c.yoy]);
+  return out.slice(0,3);
+}
+function ciRisks(ev){
+  const t=T(),f=ev.f,c=f.basis.cls,out=[];
+  for(const fl of ev.risk.flags){
+    if(fl==="yield")out.push([t.ciRkYield(f.netY.toFixed(1)),"mod"]);
+    if(fl==="supply")out.push([t.ciRkSupply(Math.round(f.ms)),"mod"]);
+    if(fl==="thin")out.push([t.ciRkThin,c.tx]);
+    if(fl==="model")out.push([t.ciRkModel(f.basis.src,f.basis.n),"mod"]);
+    if(fl==="price")out.push([t.ciRkPrice,c.price]);
+    if(fl==="fall")out.push([t.ciRkFall(Math.abs(f.mom).toFixed(1)),c.yoy]);
+  }
+  if(!out.length)out.push(f.ms>22?[t.ciRkSupply(Math.round(f.ms)),"mod"]:[t.ciRkBase,null]);
+  return out.slice(0,3);
+}
+/* per-opportunity data coverage — every dimension shows its class; missing ones are shown */
+function ciCoverage(f){
+  const t=T(),c=f.basis.cls;
+  return[{k:t.cvTx,c:c.tx},{k:t.cvRent,c:c.rent},{k:t.cvInv,c:c.listings},{k:t.cvPlan,c:"na"},{k:t.cvProj,c:"na"}];
+}
+/* sources & periods of the inputs, from the classification layer */
+function ciProvHTML(f){
+  const t=T(),l=f.l,c=f.basis.cls;
+  const F=[["price",t.avgPrice],["sqm",t.psm],["rent",t.avgRent],["yoy",t.yoyLbl],["y3",t.y3],["rentYoy",t.ciRentTrend],["tx",t.tx],["listings",t.listings]];
+  return `${t.ciProvT}: `+F.map(([k,lb])=>`${lb} ${vcTag(c[k])} <span class="bs-p">(${vcPer(l,k,true)})</span>`).join(" · ");
 }
 /* rank explanation: why this opportunity sits above the next one */
 function ciWhyNot(rk,i){
@@ -4095,16 +4231,28 @@ function ciWhyNot(rk,i){
 
 /* ---- formatting helpers ---- */
 const ciM=n=>(n<0?"−":"")+fmtCompact(Math.abs(n));
-const ciPc=(n,d=0)=>(n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d)+"%";
-function ciPlate(score,lg,dim){
+/* an outflow row: "−₪X", or ₪0 when there is none (no "−₪0") */
+const ciNeg=n=>n==null?"—":n>=0.5?"−"+fmtCompact(n):fmtCompact(0);
+const ciPc=(n,d=0)=>{const a=Math.abs(n).toFixed(d);return(+a===0?"":n>0?"+":"−")+a+"%"};
+/* a value that cannot be computed is "—"; its reason, when known, is in the tooltip */
+const ciDash=why=>why?`<span title="${calcEsc(why)}">—</span>`:"—";
+const ciPcN=(n,d=1,why)=>n==null?ciDash(why):ciPc(n,d);
+const ciN=x=>+(+x).toFixed(2);
+function ciPlate(score,lg){
   const t=T();
   return `<span class="ci-plate${lg?" lg":""}" role="img" aria-label="${t.ciScoreAria(score)}">
     <span class="v num">${score}</span><span class="m"><i style="width:${score}%"></i></span>
     <span class="k">${t.ciScoreK}</span></span>`;
 }
-const ciHml=(lvl,txt)=>`<span class="ci-hml ${lvl}">${txt}</span>`;
+const ciHml=(lvl,txt,tip)=>`<span class="ci-hml ${lvl}"${tip?` title="${tip}"`:""}>${txt}</span>`;
 const ciLvlTxt=lvl=>({h:T().ciHigh,m:T().ciMed,l:T().ciLow}[lvl]);
 function ciPathOf(l){return chainOf(l).filter(x=>x.type!=="district").map(heName).join(" · ")}
+const ciStratName=s=>{const t=T();return{cash:t.ciStCash,bal:t.ciStBal,va:t.ciStVa,growth:t.ciStGrowth,cons:t.ciStCons}[s]};
+/* the class of each input, for the data-basis tooltip */
+function ciBasisTip(b){
+  const t=T(),lab={price:t.avgPrice,sqm:t.psm,rent:t.avgRent,yoy:t.yoyLbl,y3:t.y3,rentYoy:t.ciRentTrend,tx:t.tx,listings:t.listings};
+  return t.ciBasisTip(b.src,b.n)+" — "+CI_BASIS_F.map(k=>`${lab[k]}: ${t.vcName[b.cls[k]]}`).join(" · ");
+}
 
 /* =============================== UI =============================== */
 function renderCmd(){
@@ -4116,7 +4264,7 @@ function renderCmd(){
   el("cmdFresh").textContent=t.cmdFresh;
   el("cmdSub").innerHTML=t.h1sub;
   const sig=el("capSignal");
-  if(!CI_ENABLED){sig.hidden=true;return}
+  if(!CI_EXTERNAL){sig.hidden=true;return}   /* a model #1 outside the capital section: off */
   try{
     const top=ciRank(state.ci.h,state.ci.strat)[0];
     sig.hidden=false;
@@ -4136,25 +4284,27 @@ function initCmd(){
   el("capSignal").addEventListener("click",()=>el("capital").scrollIntoView({behavior:"smooth",block:"start"}));
 }
 
+/* insights teaser — a ranking outside the section: rendered only with CI_EXTERNAL */
 function renderCITeaser(){
   const box=el("ciTeaser");if(!box)return;
   const t=T(),rk=ciRank(state.ci.h,state.ci.strat).slice(0,3);
   box.innerHTML=rk.map((r,i)=>{
-    const f=r.ev.f;
+    const f=r.ev.f,irr=ciV(ciDeal(f,{scen:"base"}),"irr");
     return `<button class="ci-mini" data-cigo="${r.id}">
       <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
       <span><span class="mn">${heName(f.l)}</span><span class="mp">${ciPathOf(f.l)||heName(LOC[f.l.parent])}</span>
         <span class="mk"><span>${t.ciEntry} <b class="num">${fmtCompact(f.price)}</b></span>
         <span>${t.ciNetY} <b class="num">${f.netY.toFixed(1)}%</b></span>
-        <span>${t.ciHz(CI_H[state.ci.h].y)} <b class="num">${ciPc(r.ev.app.cumBase)}</b></span></span></span>
+        <span>${t.ciHz(CI_H[state.ci.h].y)} <b class="num">${ciPcN(irr)}</b></span></span></span>
       ${ciPlate(r.ev.score)}</button>`;
   }).join("")+`<button class="ci-cta" data-ciopen="1">${t.ciTeaserCTA}</button>`;
 }
 
 function ciDeckHTML(){
-  const t=T(),ci=state.ci;
+  const t=T(),ci=state.ci,R=ciAppRates();
   const seg=(items,attr,cur)=>`<div class="seg" role="group">${items.map(([v,lb])=>
     `<button data-${attr}="${v}" aria-pressed="${String(v)===String(cur)}">${lb}</button>`).join("")}</div>`;
+  const num=(id,k,v,lb)=>`<input class="ci-in sm num" id="${id}" type="number" step="${CI_LIM[k][2]}" min="${CI_LIM[k][0]}" max="${CI_LIM[k][1]}" value="${v}" aria-label="${lb}">`;
   return `
   <div class="ci-ctl"><span class="ci-lbl">${t.ciCap}</span>
     ${seg(CI_CAPS.map(c=>[c,fmtCompact(c)]),"cicap",ci.cap)}</div>
@@ -4164,41 +4314,53 @@ function ciDeckHTML(){
     ${seg([["3",t.ciY3],["5",t.ciY5],["10",t.ciY10]],"cih",ci.h)}</div>
   <div class="ci-ctl"><span class="ci-lbl">${t.ciLev}</span>
     ${seg([[0,t.ciNoLev],[50,"50%"],[60,"60%"],[70,"70%"]],"ciltv",ci.ltv)}</div>
-  <div class="ci-ctl"><span class="ci-lbl">${t.ciRate}</span>
-    <input class="ci-in sm num" id="ciRate" type="number" step="0.1" min="1" max="9" value="${ci.rate}" aria-label="${t.ciRate}"></div>
-  <div class="ci-ctl"><span class="ci-lbl">${t.ciTerm}</span>
-    <input class="ci-in sm num" id="ciTerm" type="number" step="1" min="5" max="30" value="${ci.term}" aria-label="${t.ciTerm}"></div>`;
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciRate}</span>${num("ciRate","rate",ci.rate,t.ciRate)}</div>
+  <div class="ci-ctl"><span class="ci-lbl">${t.ciTerm}</span>${num("ciTerm","term",ci.term,t.ciTerm)}</div>
+  <div class="ci-ctl ci-appctl"><span class="ci-lbl">${t.ciAppK} ${vcTag("usr")}</span>
+    <span class="ci-app3">
+      <label><span>${t.ciAppDn}</span>${num("ciAppDn","appDn",ci.appDn,t.ciAppDn)}</label>
+      <label><span>${t.ciAppBase}</span>${num("ciAppB","app",ci.app,t.ciAppBase)}</label>
+      <label><span>${t.ciAppUp}</span>${num("ciAppUp","appUp",ci.appUp,t.ciAppUp)}</label>
+    </span></div>
+  <div class="ci-ref"><span id="ciAppR">${t.ciAppRates(R.cons,R.base,R.up)}</span>${MKT.boi?` · ${vcTag("raw")} ${t.calcBoi(MKT.boi.valTxt,MKT.boi.checkedDay)}`:""}</div>`;
+}
+
+function ciRankNoteHTML(){
+  const t=T(),ci=state.ci;
+  return `<span class="ci-rankb">${t.ciRankBadge}</span><span>${t.ciRankNote(ciStratName(ci.strat),CI_H[ci.h].y,!!ci.w)}</span>`;
 }
 
 function ciCardHTML(r,i){
-  const t=T(),ev=r.ev,f=ev.f;
-  return `<button class="ci-card${r.id===state.ci.sel?" on":""}${ev.conf.lvl==="l"?" ci-lowconf":""}" data-cisel="${r.id}" aria-pressed="${r.id===state.ci.sel}">
+  const t=T(),ev=r.ev,f=ev.f,D=ciDeal(f,{scen:"base"}),irr=ciV(D,"irr"),irrWhy=D.out.irr.ok?null:t.calcWhy[D.out.irr.why],P=CI_INV;
+  const eqU=f.price*ciEqK(),dep=state.ci.cap*(1-P.reserve[state.ci.strat]/100);
+  const ne=ev.basis.src<P.minBasis?t.ciNotElig(ev.basis.src,ev.basis.n,P.minBasis):eqU>dep?t.ciNotFit(fmtCompact(eqU)):"";
+  return `<button class="ci-card${r.id===state.ci.sel?" on":""}${ev.basis.lvl==="l"?" ci-lowconf":""}" data-cisel="${r.id}" aria-pressed="${r.id===state.ci.sel}">
     <span class="ci-idx num">${String(i+1).padStart(2,"0")}</span>
     <span>
       <span class="ci-card-name">${heName(f.l)}</span>
       <span class="ci-card-path">${ciPathOf(f.l)||heName(LOC[f.l.parent])}</span>
       <span class="ci-card-kv">
-        <span>${t.ciEntry}<b class="num">${fmtCompact(f.price)}</b></span>
-        <span>${t.ciNetY}<b class="num">${f.netY.toFixed(1)}%</b></span>
-        <span>${t.ciHz(CI_H[state.ci.h].y)}<b class="num">${ciPc(ev.app.cumBase)}</b></span>
+        <span>${t.ciEntry} ${vcTag(ev.basis.cls.price)}<b class="num">${fmtCompact(f.price)}</b></span>
+        <span>${t.ciNetY} ${vcTag("mod")}<b class="num">${f.netY.toFixed(1)}%</b></span>
+        <span>${t.ciHz(CI_H[state.ci.h].y)} ${vcTag("mod")}<b class="num${irr!=null&&irr<0?" down":""}">${ciPcN(irr,1,irrWhy)}</b></span>
         <span>${t.ciVaShort}<b>${ciLvlTxt(ev.vaLvl)}</b></span>
-        <span>${t.ciConfShort}<b class="num">${ev.conf.pct}%</b></span>
-      </span>
+        <span>${t.ciBasisShort}<b class="num">${ev.basis.src}/${ev.basis.n}</b></span>
+      </span>${ne?`<span class="ci-card-ne">${ne}</span>`:""}
     </span>
     ${ciPlate(ev.score)}</button>`;
 }
 
 /* ONE TRANSACTION SOURCE OF TRUTH: the investment view reads the very same
    government-layer rows the deals section renders (txState) — as OBSERVED
-   comparables shown beside the modelled anchor. The locked scoring formulas
-   are not altered by it; the observation is disclosed, never blended in. */
+   comparables shown beside the board price, with the deals section's own
+   source badge, never over test-fixture rows. It never enters the score. */
 function ciComparables(f){
-  if(!txState.rows.length)return null;
+  if(!txState.rows.length||(txState.meta&&txState.meta.mode==="dev-fixture"))return null;
   const q=txQueryFor();
   const city=f.l.type==="city"?f.l:cityOf(f.l);
   if(!q||!city||normGeoQ(q.city||"")!==normGeoQ(city.he))return null;  /* same area only */
   const pick=r=>({psm:txPsm(r),n:r.newness});
-  const all=txState.rows.map(pick).filter(x=>x.psm);
+  const all=txResidential().map(pick).filter(x=>x.psm);      /* homes only — never land or commercial */
   const nw=all.filter(x=>x.n==="confirmed_new"||x.n==="probable_new");
   if(!all.length)return null;
   const med=a=>{const x=a.map(v=>v.psm).sort((p,q2)=>p-q2);const m=x.length>>1;
@@ -4207,17 +4369,25 @@ function ciComparables(f){
     scope:txState.scope,thin:all.length<3};
 }
 
-function ciDetailHTML(id){
-  const t=T(),he=state.lang==="he",ci=state.ci,H=CI_H[ci.h];
-  const ev=ciEval(id,ci.h,ci.strat),f=ev.f,fin=ciFin(f);
-  const ex={cons:ciExit(f,ci.h,"cons"),base:ciExit(f,ci.h,"base"),up:ciExit(f,ci.h,"up")};
+function ciDetailInHTML(id){
+  const t=T(),ci=state.ci,H=CI_H[ci.h],P=CI_INV;
+  const ev=ciEval(id,ci.h,ci.strat),f=ev.f,c=ev.basis.cls,S=ciScen(f),B=S.base.lev;
   const why=ciWhy(ev),risks=ciRisks(ev);
   const fb=[["cf",t.ciFcf],["ap",t.ciFap],["va",t.ciFva],["lq",t.ciFlq],["dm",t.ciFdm],["rk",t.ciFrk]];
-  const cfCls=fin.cfM>=0?"up":"down";
-  const refi=(()=>{const a5=ciApp(f,"5");const v5=f.price*(1+a5.cumBase/100);
-    const d5=ciDebtAt(fin.loan,ci.rate,ci.term,5);
-    return{v5,d5,eq:v5-d5,cap:Math.max(0,v5*.6-d5)}})();
-  return `<div class="ci-detail${ev.conf.lvl==="l"?" ci-lowconf":""}">
+  const cf=ciV(B,"cf"),cfCls=cf>=0?"up":"down";
+  const inv=ciInvest(id),rt=ciReturnTarget(f);
+  const lvlTx=n=>[t.ciL0,t.ciL1,t.ciL2,t.ciL3][n],prsTx=n=>[t.ciP0,t.ciP1,t.ciP2,t.ciP3][n];
+  const deals=ciDealsOf(id),projs=ciProjectsOf(id);
+  const cov=ciCoverage(f),covMiss=cov.filter(x=>x.c==="na").map(x=>x.k);
+  const M=vcTag("mod"),U=vcTag("usr");
+  const sc=["cons","base","up"];
+  const row=(lb,fmt,cls)=>`<tr${cls?` class="${cls}"`:""}><td>${lb}</td>${sc.map(s=>`<td class="num">${fmt(S[s])}</td>`).join("")}</tr>`;
+  const refi=ci.ltv>0?(()=>{const r=ciDeal(f,{scen:"base",hold:5}),v5=ciV(r,"exitV"),d5=ciV(r,"debtRem");
+    return{v5,d5,eq:v5-d5,cap:Math.max(0,v5*P.refiLtv/100-d5)}})():null;
+  const rk=ciRank(ci.h,ci.strat).slice(0,8),idx=rk.findIndex(r=>r.id===id),wn=idx>=0?ciWhyNot(rk,idx):"";
+  const cp=ciComparables(f);
+  const flag=([w,c2])=>`<li><span>${w}${c2?" "+vcTag(c2):""}</span></li>`;
+  return `
     <div class="ci-dhead">
       <div>
         <h3>${heName(f.l)}</h3>
@@ -4225,38 +4395,32 @@ function ciDetailHTML(id){
         <div class="ci-badges">
           ${ciHml(ev.vaLvl,t.ciVaShort+": "+ciLvlTxt(ev.vaLvl))}
           ${ciHml(ev.lqLvl,t.ciLiqShort+": "+ciLvlTxt(ev.lqLvl))}
-          ${ciHml(ev.conf.lvl,t.ciConf+": "+ev.conf.pct+"%")}
+          ${ciHml(ev.basis.lvl,`${t.ciBasisK}: ${ev.basis.src}/${ev.basis.n} · ${t.ciBasisLvl[ev.basis.lvl]}`,ciBasisTip(ev.basis))}
         </div>
       </div>
       ${ciPlate(ev.score,true)}
     </div>
 
-    ${(()=>{const inv=ciInvest(id);const lvlTx=n=>[t.ciL0,t.ciL1,t.ciL2,t.ciL3][n];
-      const prsTx=n=>[t.ciP0,t.ciP1,t.ciP2,t.ciP3][n];
-      const deals=ciDealsOf(id),projs=ciProjectsOf(id);
-      const rt=ciReturnTarget(f);
-      const cov=ciCoverage(f),covMiss=cov.filter(c=>!c.ok).map(c=>c.k);
-      return `<div class="ci-inv">
+    <div class="ci-inv">
       <div class="ci-inv-t">${t.ciInvT} · <span class="ci-lvl l1" style="font-size:9.5px">${t.ciLvlArea}</span></div>
       <div class="ci-inv-grid">
-        <div><div class="k">${t.ciBestUse}</div><div class="v">${{A:t.ciStratA,B:t.ciStratB,C:t.ciStratC}[inv.best]}</div></div>
-        <div><div class="k">${t.ciFairV}</div><div class="v num">${fmtCompact(inv.fair[0])}–${fmtCompact(inv.fair[1])}</div></div>
-        <div><div class="k">${t.ciPressureK}</div><div class="v"><span class="ci-lvl l${inv.prs}">${prsTx(inv.prs)}</span></div></div>
-        <div><div class="k">${t.ciLevMkt}</div><div class="v"><span class="ci-lvl l${inv.lev}">${lvlTx(inv.lev)}</span></div></div>
-        <div><div class="k">${t.ciMktScale}</div><div class="v num">${t.ciScaleUpTo(fmtCompact(inv.capacity),inv.unitsCap)}</div></div>
-        <div><div class="k">${t.ciDealScale}</div><div class="v">${deals.length?fmtCompact(deals.reduce((a,d)=>a+d.units*d.askPrice,0)):t.ciUnknown}</div></div>
+        <div><div class="k">${t.ciBestUse} ${M}</div><div class="v">${{A:t.ciStratA,B:t.ciStratB,C:t.ciStratC}[inv.best]}</div></div>
+        <div><div class="k">${t.ciFairV(P.fairBand)} ${vcTag(c.price)}</div><div class="v num">${fmtCompact(inv.fair[0])}–${fmtCompact(inv.fair[1])}</div></div>
+        <div><div class="k">${t.ciPressureK} ${M}</div><div class="v"><span class="ci-lvl l${inv.prs}">${prsTx(inv.prs)}</span></div></div>
+        <div><div class="k">${t.ciLevMkt} ${M}</div><div class="v"><span class="ci-lvl l${inv.lev}">${lvlTx(inv.lev)}</span></div></div>
+        <div><div class="k">${t.ciMktScale} ${M}</div><div class="v">${t.ciScaleUpTo(`<span class="num">${fmtCompact(inv.capacity)}</span>`,inv.unitsCap)}</div></div>
+        <div><div class="k">${t.ciDealScale}${deals.length?"":" "+vcTag("na")}</div><div class="v">${deals.length?fmtCompact(deals.reduce((a,d)=>a+d.units*d.askPrice,0)):t.ciUnknown}</div></div>
       </div>
-      ${(()=>{const cp=ciComparables(f);if(!cp)return"";
-        const gap=cp.medNew?((cp.medNew/f.l.base.sqm-1)*100):null;
-        return `<div class="ci-note" style="margin-top:7px;color:var(--ink-2)">${
-          t.ciComp(fmtInt(cp.nAll),fmtNIS(cp.medAll),cp.medNew?fmtNIS(cp.medNew):"—",fmtInt(cp.nNew),
-            cp.scope?cp.scope.description:"",gap!=null?fmtPct(gap):"—")}${cp.thin?" · "+t.ciCompThin:""}</div>`})()}
-      <div class="ci-note" style="margin-top:7px">${t.ciEvid(fmtInt(f.listings),(f.tx/12).toFixed(0),Math.round(f.ms),fmtPct(f.mom),(inv.invShare*100).toFixed(0))} · ${t.ciDealLevNA}</div>
+      ${cp?`<div class="ci-note" style="margin-top:7px;color:var(--ink-2)">${t.txOfficialBadge} — ${
+        t.ciComp(fmtInt(cp.nAll),fmtNIS(cp.medAll),cp.medNew?fmtNIS(cp.medNew):"—",fmtInt(cp.nNew),
+          cp.scope?calcEsc(cp.scope.description||""):"",cp.medNew?fmtPct((cp.medNew/f.l.base.sqm-1)*100):"—")}${cp.thin?" · "+t.ciCompThin:""}</div>`:""}
+      <div class="ci-note" style="margin-top:7px">${t.ciEvid(fmtInt(f.listings),vcTag(c.listings),(f.tx/12).toFixed(0),vcTag(c.tx),Math.round(f.ms),M,fmtPct(f.mom),vcTag(c.yoy),(inv.invShare*100).toFixed(1))} · ${t.ciDealLevNA}</div>
       <div class="ci-target">
         ${inv.attractiveNow?t.ciTargetNow(fmtCompact(f.price)):t.ciTargetLine(fmtCompact(inv.target),inv.discTarget.toFixed(0))}
         <div style="margin-top:5px;font-size:11.5px;color:var(--ink-2)">
-          ${t.ciTgt3(fmtCompact(inv.tHold),fmtCompact(inv.tResale),fmtCompact(inv.tBulk))}<br>
-          ${rt.p?(rt.above?t.ciRetAbove(CI_INV.reqIRR):t.ciRetLine(CI_INV.reqIRR,fmtCompact(rt.p))):t.ciRetNone(CI_INV.reqIRR)}
+          ${t.ciTgt3(fmtCompact(inv.tHold),fmtCompact(inv.tResale),fmtCompact(inv.tBulk))} ${M}<br>
+          ${rt.p?(rt.above?t.ciRetAbove(P.reqIRR):t.ciRetLine(P.reqIRR,fmtCompact(rt.p))):t.ciRetNone(P.reqIRR)}
+          · ${t.ciMktIrr(`<span class="num">${ciPcN(rt.atMkt)}</span>`)}${rt.atMkt!=null&&rt.atMkt<P.reqIRR?" · "+t.ciBelowReq(P.reqIRR):""} ${M}
           <span style="display:block;font-size:10.5px;color:var(--ink-3);margin-top:2px">${t.ciIrrDef(ci.ltv)}</span>
         </div>
       </div>
@@ -4265,42 +4429,43 @@ function ciDetailHTML(id){
         <div class="s3${inv.best==="B"?" best":""}"><div class="k">${t.ciStratB}</div><div class="v num">${inv.sResale}</div></div>
         <div class="s3${inv.best==="C"?" best":""}"><div class="k">${t.ciStratC}</div><div class="v num">${inv.sBulk}</div></div>
       </div>
-      <div class="ci-note">${t.ciCoverT}: ${cov.map(c=>`${c.k} ${c.ok?"✓"+(c.q?" ("+c.q+")":""):"✗"}`).join(" · ")}${covMiss.length?` — ${t.ciCoverMiss}: ${covMiss.join(", ")}`:""}</div>
-      <div class="ci-note">${t.ciProvLine(f.offT?t.cvObs:t.cvEst,f.offL?t.cvObs:t.cvEst)} · ${projs.length?projs.length+" "+t.ciProjN:t.ciNoProjS}</div>
-      <div class="ci-note">${t.ciInvNote}</div>
-    </div>`})()}
+      <div class="ci-note">${t.ciCoverT}: ${cov.map(x=>`${x.k} ${vcTag(x.c)}`).join(" · ")}${covMiss.length?` — ${t.ciCoverMiss}: ${covMiss.join(", ")}`:""}</div>
+      <div class="ci-note">${ciProvHTML(f)} · ${projs.length?projs.length+" "+t.ciProjN:t.ciNoProjS}</div>
+      <div class="ci-note">${t.ciInvNote} <a class="ci-lab" href="#calc">${t.ciDealLab}</a></div>
+    </div>
 
     <div class="ci-2col" style="margin-top:12px">
-      <div><div class="ci-sect-t">${t.ciWhy}</div><ul class="ci-flags">${why.map(w=>`<li>${w}</li>`).join("")}</ul></div>
-      <div><div class="ci-sect-t">${t.ciRisk}</div><ul class="ci-flags risk">${risks.map(w=>`<li>${w}</li>`).join("")}</ul></div>
+      <div><div class="ci-sect-t">${t.ciWhy}</div><ul class="ci-flags">${why.map(flag).join("")}</ul></div>
+      <div><div class="ci-sect-t">${t.ciRisk}</div><ul class="ci-flags risk">${risks.map(flag).join("")}</ul></div>
     </div>
 
     <div class="ci-sect"><div class="ci-sect-t">${t.ciScoreWhy}</div>
       <div class="ci-fb">${fb.map(([k,lb])=>`<span class="fk">${lb}</span>
         <span class="ci-track"><i style="width:${ev.sub[k]}%"></i></span>
         <span class="fv num">${ev.sub[k]}</span>`).join("")}</div>
-      <div class="ci-note">${t.ciConfNote}</div>
+      <div class="ci-note">${t.ciTrendNote}</div>
+      <div class="ci-note">${t.ciBasisNote}</div>
     </div>
 
     <div class="ci-sect"><div class="ci-sect-t">${t.ciCfT}</div>
       <div class="ci-kv">
-        <div><div class="k">${t.ciBuy}</div><div class="v num">${fmtNIS(f.price)}</div></div>
-        <div><div class="k">${t.ciRentMo}</div><div class="v num">${fmtNIS(f.rent)}</div></div>
-        <div><div class="k">${t.ciRentYr}</div><div class="v num">${fmtNIS(f.rent*12)}</div></div>
-        <div><div class="k">${t.ciGross}</div><div class="v num">${f.gross.toFixed(2)}%</div></div>
-        <div><div class="k">${t.ciNet}</div><div class="v num">${f.netY.toFixed(2)}%</div><div class="s">${t.ciNetS}</div></div>
+        <div><div class="k">${t.ciBuy} ${vcTag(c.price)}</div><div class="v num">${fmtNIS(f.price)}</div></div>
+        <div><div class="k">${t.ciRentMo} ${vcTag(c.rent)}</div><div class="v num">${fmtNIS(f.rent)}</div></div>
+        <div><div class="k">${t.ciRentYr} ${vcTag(c.rent)}</div><div class="v num">${fmtNIS(f.rent*12)}</div></div>
+        <div><div class="k">${t.ciGross} ${M}</div><div class="v num">${f.gross.toFixed(2)}%</div></div>
+        <div><div class="k">${t.ciNet} ${M}</div><div class="v num">${f.netY.toFixed(2)}%</div><div class="s">${t.ciNetS}</div></div>
       </div>
     </div>
 
     <div class="ci-sect"><div class="ci-sect-t">${t.ciLevT}</div>
       <div class="ci-kv">
-        <div><div class="k">${t.ciEquity}</div><div class="v num">${fmtCompact(fin.equity)}</div><div class="s">${t.ciEquityS}</div></div>
-        <div><div class="k">${t.ciLoan} · ${ci.ltv}%</div><div class="v num">${fmtCompact(fin.loan)}</div></div>
-        <div><div class="k">${t.ciPmt}</div><div class="v num">${fmtNIS(Math.round(fin.pmt))}</div><div class="s">${ci.rate}% · ${ci.term} ${t.ciYears}</div></div>
-        <div><div class="k">${t.ciCoC}</div><div class="v num">${fin.coc.toFixed(1)}%</div></div>
+        <div><div class="k">${t.ciEquity}</div><div class="v num">${fmtCompact(S.base.eq)}</div><div class="s">${t.ciEquityS}</div></div>
+        <div><div class="k">${t.ciLoan} · ${ci.ltv}%</div><div class="v num">${fmtCompact(ciV(B,"loan"))}</div></div>
+        <div><div class="k">${t.ciPmt}</div><div class="v num">${fmtNIS(Math.round(ciV(B,"pmt")))}</div><div class="s">${ci.rate}% · ${ci.term} ${t.ciYears}</div></div>
+        <div><div class="k">${t.ciCoC}</div><div class="v num">${ciV(B,"coc")!=null?ciV(B,"coc").toFixed(1)+"%":ciDash(B.out.coc.why&&t.calcWhy[B.out.coc.why])}</div></div>
       </div>
-      <div class="ci-cfline"><span class="k">${t.ciCfMo}</span>
-        <span class="v num ${cfCls}">${ciM(Math.round(fin.cfM))}</span>
+      <div class="ci-cfline"><span class="k">${t.ciCfMo} ${M}</span>
+        <span class="v num ${cfCls}">${ciM(Math.round(cf))}</span>
         <span class="s">${t.ciCfMoS}</span></div>
       <div class="ci-note">${t.ciLevNote}</div>
     </div>
@@ -4309,91 +4474,97 @@ function ciDetailHTML(id){
       <div class="ci-tblw"><table class="ci-tbl">
         <thead><tr><th></th><th class="num">${t.ciConsSc}</th><th class="num">${t.ciBaseSc}</th><th class="num">${t.ciUpSc}</th></tr></thead>
         <tbody>
-          <tr><td>${t.ciValCh}</td><td class="num">${ciPc(ex.cons.cum)}</td><td class="num">${ciPc(ex.base.cum)}</td><td class="num">${ciPc(ex.up.cum)}</td></tr>
-          <tr><td>${t.ciCumRent}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td></tr>
-          <tr><td>${t.ciSaleV}</td><td class="num">${fmtCompact(ex.cons.sale)}</td><td class="num">${fmtCompact(ex.base.sale)}</td><td class="num">${fmtCompact(ex.up.sale)}</td></tr>
-          <tr><td>${t.ciTotProp}</td><td class="num">${ciPc(ex.cons.propRet)}</td><td class="num">${ciPc(ex.base.propRet)}</td><td class="num">${ciPc(ex.up.propRet)}</td></tr>
-          <tr class="base"><td>${t.ciTotRoe}</td><td class="num">${ciPc(ex.cons.roe)}</td><td class="num">${ciPc(ex.base.roe)}</td><td class="num">${ciPc(ex.up.roe)}</td></tr>
+          ${row(`${t.ciAppRow} ${U}`,s=>ciPc(s.rate,1))}
+          ${row(t.ciValCh,s=>ciPc(s.cum,1))}
+          ${row(t.ciCumRent,s=>s.cumNoi!=null?fmtCompact(s.cumNoi):"—")}
+          ${row(t.ciSaleV,s=>ciV(s.lev,"exitV")!=null?fmtCompact(ciV(s.lev,"exitV")):"—")}
+          ${row(t.ciTotProp,s=>ciPcN(s.prop))}
+          ${row(t.ciTotRoe,s=>ciPcN(s.roe))}
+          ${row(`${t.ciIrrRow} ${M}`,s=>ciPcN(s.irr,1,s.irrWhy&&t.calcWhy[s.irrWhy]),"base")}
         </tbody></table></div>
       <div class="ci-note">${t.ciScenNote}</div>
     </div>
 
-    <details class="ci-more"><summary>${t.ciExitT(H.y)}</summary><div class="in">
+    <details class="ci-more" data-k="exit"><summary>${t.ciExitT(H.y)}</summary><div class="in">
       <div class="ci-tblw"><table class="ci-tbl">
         <tbody>
-          <tr><td>${t.ciExBuy}</td><td class="num">${fmtCompact(f.price*(1+CI_ASSUME.buyTax+CI_ASSUME.buyFees))}</td></tr>
-          <tr><td>${t.ciExRent}</td><td class="num">${fmtCompact(ex.base.cumRent)}</td></tr>
-          <tr><td>${t.ciExDebt}</td><td class="num">${fmtCompact(ex.base.debtRem)}</td></tr>
-          <tr><td>${t.ciExSale}</td><td class="num">${fmtCompact(ex.base.sale)}</td></tr>
-          <tr><td>${t.ciExCost}</td><td class="num">−${fmtCompact(ex.base.sale*CI_ASSUME.sellFees)}</td></tr>
-          <tr class="base"><td>${t.ciExProfit}</td><td class="num">${ciM(ex.base.profit)}</td></tr>
+          <tr><td>${t.ciExBuy}</td><td class="num">${fmtCompact(ciV(B,"cost"))}</td></tr>
+          <tr><td>${t.ciExEq}</td><td class="num">${ciNeg(S.base.eq)}</td></tr>
+          <tr><td>${t.ciExRent}</td><td class="num">${fmtCompact(S.base.cumNoi)}</td></tr>
+          <tr><td>${t.ciExDs}</td><td class="num">${ciNeg(S.base.ds)}</td></tr>
+          <tr><td>${t.ciExSale}</td><td class="num">${fmtCompact(ciV(B,"exitV"))}</td></tr>
+          <tr><td>${t.ciExCost}</td><td class="num">${ciNeg(ciV(B,"exitV")*CI_ASSUME.sell/100)}</td></tr>
+          <tr><td>${t.ciExDebt}</td><td class="num">${ciNeg(ciV(B,"debtRem"))}</td></tr>
+          <tr class="base"><td>${t.ciExProfit}</td><td class="num">${ciM(ciV(B,"profit"))}</td></tr>
+          <tr><td>${t.ciExIrr} ${M}</td><td class="num">${ciPcN(S.base.irr,1,S.base.irrWhy&&t.calcWhy[S.base.irrWhy])}</td></tr>
         </tbody></table></div>
       <div class="ci-note">${t.ciExitNote(H.y)}</div>
     </div></details>
 
-    ${(()=>{const inv=ciInvest(id);const rk=ciRank(ci.h,ci.strat).slice(0,8);
-      const idx=rk.findIndex(r=>r.id===id);const wn=idx>=0?ciWhyNot(rk,idx):"";
-      return `<details class="ci-more"><summary>${t.ciBulkT2}</summary><div class="in">
+    <details class="ci-more" data-k="bulk"><summary>${t.ciBulkT2}</summary><div class="in">
       <div class="ci-note" style="margin-top:2px">${t.ciBulkModelled}</div>
       <div class="ci-tblw"><table class="ci-tbl">
-        <thead><tr><th>${t.ciBulkU}</th><th class="num">${t.ciBulkCap}</th><th class="num">${t.ciBulkShare}</th><th>${t.ciLevK}</th></tr></thead>
-        <tbody>${inv.bulk.map(b=>`<tr><td class="num">${b.u}</td><td class="num">${fmtCompact(b.cap)}</td>
-          <td class="num">${b.share.toFixed(1)}%</td><td><span class="ci-lvl l${b.lev}">${[t.ciL0,t.ciL1,t.ciL2,t.ciL3][b.lev]}</span></td></tr>`).join("")}</tbody>
+        <thead><tr><th>${t.ciBulkU}</th><th class="num">${t.ciBulkVal}</th><th class="num">${t.ciBulkEq}</th><th class="num">${t.ciBulkShare}</th><th>${t.ciLevK}</th></tr></thead>
+        <tbody>${inv.bulk.map(b=>`<tr><td class="num">${b.u}</td><td class="num">${fmtCompact(b.value)}</td><td class="num">${fmtCompact(b.equity)}</td>
+          <td class="num">${b.share.toFixed(1)}%</td><td><span class="ci-lvl l${b.lev}">${lvlTx(b.lev)}</span></td></tr>`).join("")}</tbody>
       </table></div>
-      <div class="ci-note">${t.ciBulkNote(CI_INV.bulkDisc)}</div>
+      <div class="ci-note">${t.ciBulkNote(P.bulkDisc,ci.ltv)}</div>
     </div></details>
-    ${wn?`<div class="ci-whynot">${wn}</div>`:""}`})()}
-    ${ci.ltv>0?`<details class="ci-more"><summary>${t.ciRefiT}</summary><div class="in">
+    ${wn?`<div class="ci-whynot">${wn}</div>`:""}
+    ${refi?`<details class="ci-more" data-k="refi"><summary>${t.ciRefiT}</summary><div class="in">
       <div class="ci-kv">
         <div><div class="k">${t.ciRfVal}</div><div class="v num">${fmtCompact(refi.v5)}</div></div>
         <div><div class="k">${t.ciRfDebt}</div><div class="v num">${fmtCompact(refi.d5)}</div></div>
-        <div><div class="k">${t.ciRfEq}</div><div class="v num">${fmtCompact(refi.eq)}</div></div>
-        <div><div class="k">${t.ciRfCap}</div><div class="v num">${fmtCompact(refi.cap)}</div></div>
+        <div><div class="k">${t.ciRfEq}</div><div class="v num">${ciM(refi.eq)}</div></div>
+        <div><div class="k">${t.ciRfCap(P.refiLtv)}</div><div class="v num">${fmtCompact(refi.cap)}</div></div>
       </div>
       <div class="ci-note">${t.ciRefiNote}</div>
-    </div></details>`:""}
+    </div></details>`:""}`;
+}
 
-    <details class="ci-more"><summary>${t.ciWT}</summary><div class="in">
-      <div class="ci-sect-t" style="margin-top:4px">${t.ciPolT}</div>
+/* policy + factor weights (advanced) — global, not per area; rendered once
+   per full render so a value being typed keeps its focus */
+function ciAdvHTML(){
+  const t=T(),W=state.ci.w||CI_STRATS[state.ci.strat];
+  const fb=[["cf",t.ciFcf],["ap",t.ciFap],["va",t.ciFva],["lq",t.ciFlq],["dm",t.ciFdm],["rk",t.ciFrk]];
+  const pin=(k,lb)=>`<span>${lb}</span><input class="ci-in sm num" type="number" step="${CI_LIM[k][2]}" min="${CI_LIM[k][0]}" max="${CI_LIM[k][1]}" value="${CI_INV[k]}" data-cipol="${k}" aria-label="${lb}">`;
+  return `<details class="ci-more" data-k="adv"><summary>${t.ciWT}</summary><div class="in">
+      <div class="ci-sect-t" style="margin-top:4px">${t.ciPolT} ${vcTag("usr")}</div>
       <div class="ci-w" style="grid-template-columns:minmax(120px,auto) auto;justify-content:start">
-        <span>${t.ciPolHold}</span><input class="ci-in sm num" type="number" step="0.1" min="1.5" max="6" value="${CI_INV.holdY}" data-cipol="holdY">
-        <span>${t.ciPolIrr}</span><input class="ci-in sm num" type="number" step="0.5" min="3" max="15" value="${CI_INV.reqIRR}" data-cipol="reqIRR">
-        <span>${t.ciPolBulk}</span><input class="ci-in sm num" type="number" step="1" min="5" max="30" value="${CI_INV.bulkDisc}" data-cipol="bulkDisc">
-        <span>${t.ciPolConf}</span><input class="ci-in sm num" type="number" step="5" min="20" max="80" value="${CI_INV.minConf}" data-cipol="minConf">
+        ${pin("holdY",t.ciPolHold)}${pin("reqIRR",t.ciPolIrr)}${pin("bulkDisc",t.ciPolBulk)}${pin("minBasis",t.ciPolBasis)}
       </div>
       <div class="ci-note">${t.ciPolNote}</div>
       <div class="ci-sect-t" style="margin-top:10px">${t.ciWT}</div>
-      <div class="ci-w">${fb.map(([k,lb])=>{
-        const W=state.ci.w||CI_STRATS[state.ci.strat];
-        return `<span>${lb}</span><input type="range" min="0" max="50" step="5" value="${W[k]}" data-ciw="${k}" aria-label="${lb}">
-          <span class="wv num">${W[k]}%</span>`}).join("")}</div>
+      <div class="ci-w">${fb.map(([k,lb])=>`<span>${lb}</span><input type="range" min="0" max="50" step="5" value="${W[k]}" data-ciw="${k}" aria-label="${lb}">
+          <span class="wv num">${W[k]}%</span>`).join("")}</div>
       <div class="ci-note">${t.ciWNote}</div>
-    </div></details>
-  </div>`;
+    </div></details>`;
 }
 
 function ciPortHTML(){
-  const t=T(),ci=state.ci,P=ciPortfolio(ci.h,ci.strat);
-  const rows=[...P.pos].sort((a,b)=>b.amount-a.amount);
-  const maxAmt=Math.max(...rows.map(p=>p.amount),P.cash,1);
+  const t=T(),ci=state.ci,P=ciPortfolio(ci.h,ci.strat),A=t.ciAcct,M=vcTag("mod"),none=!P.pos.length;
+  const rows=[...P.pos].sort((a,b)=>b.eq-a.eq);
+  const maxAmt=Math.max(...rows.map(p=>p.eq),P.reserve,P.unused,1);
   const tile=(k,v,s)=>`<div class="ci-tile"><div class="k">${k}</div><div class="v num">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const kv=(k,v,s)=>`<div><div class="k">${k}</div><div class="v num">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const arow=(name,sub,v,cls)=>`<div class="ci-arow">
+        <span><span class="an">${name}</span>${sub?`<span class="as"> · ${sub}</span>`:""}</span>
+        <span class="ci-abar"><i${cls?` class="${cls}"`:""} style="width:${v/maxAmt*100}%"></i></span>
+        <span class="apc num">${(v/ci.cap*100).toFixed(0)}%</span>
+        <span class="am num">${fmtCompact(v)}</span></div>`;
   const cfCls=P.cfM>=0?"up":"down";
+  const irr=s=>`<span class="ci-irr1"><span class="s">${{cons:t.ciConsSc,base:t.ciBaseSc,up:t.ciUpSc}[s]}</span> <b class="num${P.irr[s]!=null&&P.irr[s]<0?" down":""}">${ciPcN(P.irr[s],1,P.irrWhy[s]&&t.calcWhy[P.irrWhy[s]])}</b></span>`;
+  const P0=CI_INV;
   return `
   <div class="ci-alloc">
-    <div class="ci-sect-t" style="margin-bottom:10px">${t.ciAllocT(fmtCompact(ci.cap))}</div>
-    ${rows.map(p=>{const f=p.ev.f;
-      return `<div class="ci-arow">
-        <span><span class="an">${heName(f.l)}</span><span class="as"> · ${t.ciTgtUnits(p.units)}</span></span>
-        <span class="ci-abar"><i style="width:${p.amount/maxAmt*100}%"></i></span>
-        <span class="apc num">${(p.amount/ci.cap*100).toFixed(0)}%</span>
-        <span class="am num">${fmtCompact(p.amount)}</span></div>`}).join("")}
-    <div class="ci-arow"><span><span class="an">${t.ciResv}</span></span>
-      <span class="ci-abar"><i class="rsv" style="width:${P.cash/maxAmt*100}%"></i></span>
-      <span class="apc num">${(P.cash/ci.cap*100).toFixed(0)}%</span>
-      <span class="am num">${fmtCompact(P.cash)}</span></div>
+    <div class="ci-sect-t" style="margin-bottom:10px">${t.ciAllocT(fmtCompact(ci.cap),ci.ltv)} ${M}</div>
+    ${none?`<div class="ci-note" style="margin:0 0 8px">${P.blocked==="caps"?t.ciPortEmptyCaps:t.ciPortEmpty}</div>`:""}
+    ${rows.map(p=>arow(`<button type="button" class="ci-alink" data-cisel="${p.id}">${heName(p.f.l)}</button>`,t.ciTgtUnits(p.units,fmtCompact(p.value)),p.eq,"")).join("")}
+    ${arow(t.ciResv,"",P.reserve,"rsv")}
+    ${P.unused>=1?arow(t.ciUnused,"",P.unused,"rsv"):""}
     <div class="ci-sect-t" style="margin:14px 0 4px">${t.ciDeployT}</div>
-    <div class="ci-ph">${P.phases.filter(ph=>ph.amt>0.5||ph.k==="ciPhR").map((ph,i)=>{
-      const names=ph.list.slice(0,3).map(p=>heName(p.ev.f.l)).join(", ");
+    <div class="ci-ph">${P.phases.filter(ph=>ph.k==="ciPhR"||ph.amt>=(ph.k==="ciPhU"?1:0.5)).map(ph=>{
+      const names=ph.list.slice(0,3).map(p=>heName(p.f.l)).join(", ");
       return `<div class="ci-phrow"><span class="n">${t[ph.k]}</span>
         <span><span class="t">${t[ph.d]}</span>${names?`<span class="d">${names}${ph.list.length>3?" +"+(ph.list.length-3):""}</span>`:""}</span>
         <span class="v num">${fmtCompact(ph.amt)}</span></div>`}).join("")}</div>
@@ -4409,45 +4580,108 @@ function ciPortHTML(){
   <div>
     <div class="ci-tiles">
       ${tile(t.ciTlPos,P.pos.length,Object.keys(P.byCity).length+" "+t.ciCities)}
-      ${tile(t.ciTlScore,Math.round(P.score)+"/100","")}
-      ${tile(t.ciTlYield,P.netY.toFixed(1)+"%",t.ciWeighted)}
-      ${tile(t.ciTlTop,P.top.toFixed(0)+"%",t.ciTlTopS(ci.capCity))}
-      ${tile("HHI",fmtInt(P.hhi),P.hhi<1500?t.ciHhiLow:P.hhi<2500?t.ciHhiMed:t.ciHhiHigh)}
-      ${tile(t.ciTlLiq,P.liqShare.toFixed(0)+"%","")}
+      ${tile(t.ciTlScore,none?"—":Math.round(P.score)+"/100","")}
+      ${tile(t.ciTlYield,none?"—":P.netY.toFixed(1)+"%",t.ciWeighted)}
+      ${tile(t.ciTlTop,P.top.toFixed(0)+"%",t.ciTlTopS(P0.capCity))}
+      ${tile("HHI",none?"—":fmtInt(P.hhi),none?"":P.hhi<CI_FIXED.hhi[0]?t.ciHhiLow:P.hhi<CI_FIXED.hhi[1]?t.ciHhiMed:t.ciHhiHigh)}
+      ${tile(t.ciTlLiq,none?"—":P.liqShare.toFixed(0)+"%","")}
     </div>
-    <div class="ci-cfline" style="margin-top:10px"><span class="k">${t.ciPortCf}</span>
+    <div class="ci-sect-t" style="margin-top:14px">${t.ciAcctT}</div>
+    <div class="ci-kv ci-acct">
+      ${kv(A.cap,fmtCompact(ci.cap),vcTag("usr"))}
+      ${kv(A.resv,fmtCompact(P.reserve),P.resPct+"%")}
+      ${kv(A.dep,fmtCompact(P.target),"")}
+      ${kv(A.used,fmtCompact(P.used),A.usedS)}
+      ${kv(A.unused,fmtCompact(P.unused),"")}
+      ${kv(A.value,fmtCompact(P.value),t.ciUnitsAll(P.pos.reduce((a,p)=>a+p.units,0)))}
+      ${kv(A.debt,fmtCompact(P.debt),ci.ltv+"% LTV")}
+      ${kv(A.costs,fmtCompact(P.costs),ciN(CI_ASSUME.tax+CI_ASSUME.fees)+"%")}
+    </div>
+    <div class="ci-cfline" style="margin-top:10px"><span class="k">${t.ciPortCf} ${M}</span>
       <span class="v num ${cfCls}">${ciM(Math.round(P.cfM))}</span>
       <span class="s">${t.ciPortCfS(ci.ltv)}</span></div>
+    <div class="ci-cfline ci-irr3" style="margin-top:8px"><span class="k">${t.ciPortIrrT(CI_H[ci.h].y)} ${M}</span>
+      ${irr("cons")}${irr("base")}${irr("up")}
+      <span class="s ci-irr-s">${P.irr.base!=null&&P.irr.base<P0.reqIRR?t.ciBelowReqP(P0.reqIRR)+" · ":""}${t.ciPortIrrS} · ${t.ciPortProfit} ${none?"—":`<span class="num">${ciM(P.profit)}</span>`}</span></div>
     <div class="ci-note" style="margin-top:8px">${t.ciNoProj}<br>${t.ciNoDeals}</div>
-    <div class="ci-note" style="margin-top:9px">${t.ciCapNote(ci.capCity,ci.capLoc)}</div>
+    <div class="ci-note" style="margin-top:9px">${t.ciCapNote(P0.capCity,P0.capLoc,P0.minBasis,P0.pool,P0.capMul,P0.capTx,P0.capInv)}</div>
   </div>`;
 }
 
-function renderCapital(){
-  const sec=el("capital");if(!sec)return;
-  const deck=el("ciDeck");
-  deck.innerHTML=ciDeckHTML();
-  const rk=ciRank(state.ci.h,state.ci.strat).slice(0,8);
-  if(!state.ci.sel||!rk.some(r=>r.id===state.ci.sel))state.ci.sel=rk[0].id;
-  el("ciList").innerHTML=rk.map((r,i)=>ciCardHTML(r,i)).join("");
-  el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);
-  el("ciPort").innerHTML=ciPortHTML();
-  const t=T(),A=CI_ASSUME;
-  const tag=k=>` <i style="font-style:normal;color:var(--brass);font-weight:800">· ${k}</i>`;
-  el("ciAssume").innerHTML=[
-    t.ciAsmVac+" <b class='num'>"+(A.vacancy*100).toFixed(1)+"%</b>"+tag(t.ciModelTag),
-    t.ciAsmOpx+" <b class='num'>"+((A.opex+A.capex)*100).toFixed(0)+"%</b>"+tag(t.ciModelTag),
-    t.ciAsmTax+" <b class='num'>"+(A.buyTax*100).toFixed(0)+"% + "+(A.buyFees*100).toFixed(0)+"%</b>"+tag(t.ciModelTag),
-    t.ciAsmSell+" <b class='num'>"+(A.sellFees*100).toFixed(0)+"%</b>"+tag(t.ciModelTag),
-    t.ciAsmFin+" <b class='num'>"+state.ci.rate+"% · "+state.ci.term+" "+t.ciYears+"</b>"+tag(t.ciModelTag),
-    t.ciAsmApp+tag(t.ciModelTag),
-    t.ciAsmRent+tag(t.ciModelTag),
-    t.ciAsmTargets(CI_INV.holdY,CI_INV.resaleDisc,CI_INV.bulkDisc)+tag(t.ciPolicyTag),
-    t.ciAsmIrr(CI_INV.reqIRR,CI_INV.minConf)+tag(t.ciPolicyTag),
-  ].map(x=>`<span class="ci-asm">${x}</span>`).join("");
+/* portfolio assumptions & policy editor — rendered once per full render */
+function ciPolEdHTML(){
+  const t=T(),F=t.ciPolF,s=state.ci.strat;
+  const fld=(attr,k,v,lb,ph)=>`<label class="ci-pf"><span>${lb}</span><input class="ci-in sm num" type="number" step="${CI_LIM[k][2]}" min="${CI_LIM[k][0]}" max="${CI_LIM[k][1]}" value="${v??""}"${ph?` placeholder="${ph}"`:""} data-${attr}="${k}"></label>`;
+  return `<details class="ci-more" data-k="pol"><summary>${t.ciPolEdT}</summary><div class="in">
+    <div class="ci-sect-t" style="margin-top:4px">${t.ciPolG.ops} ${vcTag("usr")}</div>
+    <div class="ci-polg">${["vac","opex","capex","tax","fees","sell"].map(k=>fld("ciasm",k,CI_ASSUME[k],F[k])).join("")}${fld("ciasm","rentG",CI_ASSUME.rentG,F.rentG,t.ciRentGPh)}</div>
+    <div class="ci-sect-t" style="margin-top:10px">${t.ciPolG.port} ${vcTag("usr")}</div>
+    <div class="ci-polg">${fld("cipol","reserve",CI_INV.reserve[s],F.reserve(ciStratName(s)))}${["capCity","capLoc","pool","capTx","capInv","capMul","ph1","ph2"].map(k=>fld("cipol",k,CI_INV[k],F[k])).join("")}</div>
+    <div class="ci-sect-t" style="margin-top:10px">${t.ciPolG.price} ${vcTag("usr")}</div>
+    <div class="ci-polg">${["fairBand","resaleDisc","refiLtv"].map(k=>fld("cipol",k,CI_INV[k],F[k])).join("")}</div>
+    <div class="ci-note">${t.ciPolEdNote}</div>
+  </div></details>`;
 }
 
-function ciRefresh(){renderCITeaser();renderCapital()}
+/* every assumption the section uses, with its class */
+function ciAssumeHTML(){
+  const t=T(),A=CI_ASSUME,P=CI_INV,ci=state.ci,R=ciAppRates(),U=vcTag("usr"),M=vcTag("mod");
+  const b=x=>`<b class="num">${x}</b>`;
+  return `<div class="ci-asm-t">${t.ciAsmT}</div>`+[
+    [t.ciAsmApp(R.cons,R.base,R.up),U],
+    [t.ciAsmVac+" "+b(ciN(A.vac)+"%"),U],
+    [t.ciAsmOpx+" "+b(ciN(A.opex+A.capex)+"%"),U],
+    [t.ciAsmTax(b(ciN(A.tax)+"%"),b(ciN(A.fees)+"%")),U],
+    [t.ciAsmSell+" "+b(ciN(A.sell)+"%"),U],
+    [A.rentG==null?t.ciAsmRentGBoard:t.ciAsmRentG(b(ciN(A.rentG)+"%")),U],
+    [t.ciAsmFin(b(ci.rate+"%"),b(ci.term),b(ci.ltv+"%")),U],
+    [t.ciAsmRent,M],
+    [t.ciAsmTrend,M],
+    [t.ciAsmScore,M],
+    [t.ciAsmTargets(P.holdY,P.resaleDisc,P.bulkDisc,P.fairBand),U],
+    [t.ciAsmIrr(P.reqIRR),U],
+    [t.ciAsmBasis(P.minBasis),U],
+    [t.ciAsmPort(P.reserve[ci.strat],P.capCity,P.capLoc,P.pool),U],
+    [t.ciAsmCapR(P.capTx,P.capInv,P.capMul),U],
+    [t.ciAsmFixed(CI_FIXED),M],
+    [t.ciAsmPh(P.ph1,ciN(P.ph1+P.ph2)),U],
+    [t.ciAsmRefi(P.refiLtv),U],
+  ].map(([x,tag])=>`<span class="ci-asm">${x} ${tag}</span>`).join("");
+}
+
+/* the parts that follow the inputs (ranking, analysis, portfolio, assumptions) */
+function ciBody(){
+  const rk=ciRank(state.ci.h,state.ci.strat).slice(0,8);
+  if(!state.ci.sel||!ciFactors().map[state.ci.sel])state.ci.sel=rk[0].id;   /* a selection outside the top 8 (opened from the allocation) is kept */
+  el("ciRankNote").innerHTML=ciRankNoteHTML();
+  el("ciList").innerHTML=rk.map((r,i)=>ciCardHTML(r,i)).join("");
+  ciShowDetail();
+  el("ciPort").innerHTML=ciPortHTML();
+  el("ciAssume").innerHTML=ciAssumeHTML();
+}
+function ciShowDetail(){
+  const ev=ciEval(state.ci.sel,state.ci.h,state.ci.strat);
+  el("ciDetailBox").classList.toggle("ci-lowconf",ev.basis.lvl==="l");
+  el("ciDetailIn").innerHTML=ciDetailInHTML(state.ci.sel);
+}
+/* re-rendering keeps every open panel open */
+function ciKeep(fn){
+  const sec=el("capital");
+  const open=[...sec.querySelectorAll("details[data-k][open]")].map(d=>d.dataset.k);
+  fn();
+  for(const k of open){const d=sec.querySelector(`details[data-k="${k}"]`);if(d)d.open=true}
+}
+function renderCapital(){
+  const sec=el("capital");if(!sec)return;
+  ciKeep(()=>{
+    el("ciDeck").innerHTML=ciDeckHTML();
+    el("ciDetail").innerHTML=`<div class="ci-detail" id="ciDetailBox"><div id="ciDetailIn"></div>${ciAdvHTML()}</div>`;
+    el("ciPolEd").innerHTML=ciPolEdHTML();
+    ciBody();
+  });
+}
+function ciRenderBody(){for(const k in _oppCache)delete _oppCache[k];ciKeep(ciBody)}
+function ciRefresh(){for(const k in _oppCache)delete _oppCache[k];renderCapital();if(CI_EXTERNAL)renderCITeaser()}
 function initCapital(){
   const sec=el("capital");if(!sec)return;
   const go=()=>{el("capital").scrollIntoView({behavior:"smooth",block:"start"})};
@@ -4457,10 +4691,10 @@ function initCapital(){
     if(mini){state.ci.sel=mini.dataset.cigo;ciRefresh();go();return}
     const card=e.target.closest("[data-cisel]");
     if(card){state.ci.sel=card.dataset.cisel;
-      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);
+      ciKeep(ciShowDetail);
       el("ciList").querySelectorAll(".ci-card").forEach(c=>{
         const on=c.dataset.cisel===state.ci.sel;c.classList.toggle("on",on);c.setAttribute("aria-pressed",String(on))});
-      if(window.innerWidth<1000)el("ciDetail").scrollIntoView({behavior:"smooth",block:"start"});
+      if(card.classList.contains("ci-alink")||window.innerWidth<1000)el("ciDetail").scrollIntoView({behavior:"smooth",block:"start"});
       return}
     const b=e.target.closest("#ciDeck button");if(!b)return;
     if(b.dataset.cicap){state.ci.cap=+b.dataset.cicap}
@@ -4470,23 +4704,42 @@ function initCapital(){
     else return;
     ciRefresh();
   });
+  /* typed values apply only inside their range. While a field holds an
+     invalid value, the value it had when focused stays applied (a partly typed
+     "12" never leaves "1" behind); leaving the field shows what is applied. */
+  const deckK={ciRate:"rate",ciTerm:"term",ciAppB:"app",ciAppDn:"appDn",ciAppUp:"appUp"};
+  const field=x=>{
+    const d=x.dataset,dk=deckK[x.id];
+    if(dk)return{k:dk,get:()=>state.ci[dk],set:v=>{state.ci[dk]=v;const R=ciAppRates();el("ciAppR").innerHTML=T().ciAppRates(R.cons,R.base,R.up)}};
+    if(d.cipol){const k=d.cipol;return{k,get:()=>k==="reserve"?CI_INV.reserve[state.ci.strat]:CI_INV[k],
+      set:v=>{if(k==="reserve")CI_INV.reserve[state.ci.strat]=v;else CI_INV[k]=v},
+      ok:v=>k==="ph1"?v+CI_INV.ph2<=100:k==="ph2"?CI_INV.ph1+v<=100:true}}
+    if(d.ciasm){const k=d.ciasm;return{k,get:()=>CI_ASSUME[k],set:v=>{CI_ASSUME[k]=v;CI_FCACHE=null},empty:k==="rentG"}}
+    return null;
+  };
+  /* "" → null only where empty has a meaning (rent growth: each area's own rate) */
+  const parse=(F,raw)=>F.empty&&String(raw).trim()===""?null:parseFloat(raw);
+  const valid=(F,v)=>v===null?!!F.empty:ciOkVal(F.k,v)&&(!F.ok||F.ok(v));
+  const later=()=>{clearTimeout(initCapital._t);initCapital._t=setTimeout(ciRenderBody,250)};
+  sec.addEventListener("focusin",e=>{const F=field(e.target);if(F)e.target.dataset.prev=F.get()??""});
   sec.addEventListener("input",e=>{
-    if(e.target.id==="ciRate"){const v=parseFloat(e.target.value);if(v>=1&&v<=9){state.ci.rate=v;
-      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);el("ciPort").innerHTML=ciPortHTML()}return}
-    if(e.target.id==="ciTerm"){const v=parseInt(e.target.value,10);if(v>=5&&v<=30){state.ci.term=v;
-      el("ciDetail").innerHTML=ciDetailHTML(state.ci.sel);el("ciPort").innerHTML=ciPortHTML()}return}
-    if(e.target.dataset.cipol){
-      const v=parseFloat(e.target.value);
-      if(isFinite(v)){CI_INV[e.target.dataset.cipol]=v;
-        clearTimeout(initCapital._t);initCapital._t=setTimeout(ciRefresh,300)}
-      return}
-    if(e.target.dataset.ciw){
+    const x=e.target,d=x.dataset;
+    if(d.ciw){
       const W=Object.assign({},state.ci.w||CI_STRATS[state.ci.strat]);
-      W[e.target.dataset.ciw]=+e.target.value;state.ci.w=W;
-      e.target.closest(".ci-w").querySelectorAll("input").forEach(inp=>{
-        inp.nextElementSibling.textContent=inp.value+"%"});
-      clearTimeout(initCapital._t);initCapital._t=setTimeout(ciRefresh,250);
+      W[d.ciw]=+x.value;state.ci.w=W;
+      x.closest(".ci-w").querySelectorAll("input").forEach(inp=>{inp.nextElementSibling.textContent=inp.value+"%"});
+      later();return;
     }
+    const F=field(x);if(!F)return;
+    if(d.prev===undefined)d.prev=F.get()??"";
+    const v=parse(F,x.value),ok=valid(F,v),want=ok?v:parse(F,d.prev);
+    x.setAttribute("aria-invalid",String(!ok));
+    if(want!==F.get()){F.set(want);later()}
+  });
+  sec.addEventListener("change",e=>{
+    const x=e.target,F=field(x);if(!F)return;
+    if(!valid(F,parse(F,x.value))){x.value=F.get()??"";x.setAttribute("aria-invalid","false")}
+    delete x.dataset.prev;
   });
 }
 
@@ -4658,7 +4911,8 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();if(CI_ENABLED){renderCITeaser();renderCapital()}renderTx();txFetch(false);
+    renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -4696,7 +4950,8 @@ el("geoCloseBtn").addEventListener("click",closeGeo);
 initTx();
 initSearch();
 initCalc();
-if(CI_ENABLED){initCapital();["capital","ciTeaserBlk","railCap"].forEach(id=>{el(id).hidden=false})}
+if(CI_ENABLED){initCapital();["capital","railCap"].forEach(id=>{el(id).hidden=false})}
+if(CI_EXTERNAL)el("ciTeaserBlk").hidden=false;
 initCmd();
 initMapZoom();
 refresh(true);

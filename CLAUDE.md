@@ -16,10 +16,18 @@
   coverage audit).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
-  with stored provenance; no ranking over non-official values; no embedded credential; capital model
-  stays off via `CI_ENABLED=false` while it reads the approximate `NATIONAL_CURVE`).
-- `test/calculator.test.js` = the investor calculator (`#calc`, `calcEngine`): visible, independent of
-  the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent appreciation.
+  with stored provenance; no ranking over non-official values outside the capital section's labelled
+  MODEL RANKING; no embedded credential; no approximate `NATIONAL_CURVE`; capital outside surfaces —
+  command-bar signal, map layer, gold markers, profile shortcut, insights teaser — stay off via
+  `CI_EXTERNAL=false`).
+- `test/capital.test.js` = the capital module (`#capital`, `@ci-engine` block run on the real board
+  data): equity accounting (value − debt + tax/costs = equity used; used + unused + reserve = capital),
+  caps/capacity/pool/minimum data basis, rankings independent of capital size and of the appreciation
+  assumption, every return a true IRR from `calcEngine`/`calcIrr`, data basis from `vcOf` (no o-flags),
+  every policy rule and assumption editable in the section.
+- `test/calculator.test.js` = the deal calculator (`#calc`, `calcEngine`, `calcIrr`): visible,
+  independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
+  appreciation.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index)
   feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand

@@ -10,7 +10,8 @@
 // sample-size "confidence", undated "last 12 months" labels, hardcoded
 // coverage, a score that reads the approximate appreciation curve, an
 // "official" class without stored provenance, a ranking over non-official
-// values — or a credential embedded in the public standalone build.
+// values outside the capital section's labelled MODEL RANKING — or a
+// credential embedded in the public standalone build.
 
 'use strict';
 
@@ -182,38 +183,59 @@ t('the areas table opens in name order', () => {
   assert.match(fnBody(INDEX, 'setMode'), /state\.sort=\{key:"name",dir:1\};/);
 });
 
-console.log('index.html — capital model gate');
-t('capital model is switched off while it reads the approximate curve', () => {
+console.log('index.html — capital model');
+t('the capital model reads no approximate curve, no generated history and no o-flag', () => {
+  assert.ok(!/NATIONAL_CURVE|localCurve|seriesFor\(/.test(INDEX), 'the approximate curve or generated history is back');
   const m = /const CI_ENABLED=(true|false);/.exec(INDEX);
   assert.ok(m, 'CI_ENABLED switch missing');
-  if (m[1] === 'true') {
-    assert.ok(!INDEX.includes('NATIONAL_CURVE') && !INDEX.includes('localCurve('),
-      'CI_ENABLED=true while the capital model still reads NATIONAL_CURVE/localCurve — replace it with official history first');
-  }
   assert.ok(INDEX.indexOf('const CI_ENABLED=') < INDEX.indexOf('const MAP_METRICS='), 'CI_ENABLED must be declared before MAP_METRICS');
+  const a = INDEX.indexOf('CAPITAL INTELLIGENCE — investment engine + UI'), b = INDEX.indexOf('national geography (canonical registry)');
+  assert.ok(a > 0 && b > a, 'capital block markers moved');
+  const cap = INDEX.slice(a, b);
+  assert.ok(!/\bl\.o\b|\.o\|\||\boffT\b|\boffL\b|\bciConf\b|conf\.pct|minConf/.test(cap), 'o-flags or the old confidence % are back');
+  assert.match(fnBody(INDEX, 'ciBasis'), /vcOf\(l,k,true\)/);   // data basis = value classes of the unfiltered inputs
 });
-t('every entry into the capital model outside its own block is gated by CI_ENABLED', () => {
+t('its rankings stay inside the section and say they are a model', () => {
+  assert.match(INDEX, /const CI_EXTERNAL=false;/);
+  assert.match(INDEX, /ciRankBadge:"דירוג מודל"/);
+  assert.match(INDEX, /ciRankBadge:"MODEL RANKING"/);
+  assert.match(fnBody(INDEX, 'ciRankNoteHTML'), /t\.ciRankBadge/);
+  assert.match(fnBody(INDEX, 'ciBody'), /el\("ciRankNote"\)\.innerHTML=ciRankNoteHTML\(\);\s*el\("ciList"\)\.innerHTML=/);
+  // every entry outside the block: the section by CI_ENABLED, every outside surface by CI_EXTERNAL
   const lines = INDEX.split('\n');
   const start = lines.findIndex((l) => l.includes('CAPITAL INTELLIGENCE — investment engine + UI'));
   const end = lines.findIndex((l) => l.includes('national geography (canonical registry)'));
-  assert.ok(start > 0 && end > start, 'capital block markers moved');
-  const entry = /\b(ciEval|ciRank|ciOppOf|ciApp|ciFactors|ciPortfolio|ciExit|ciReturnTarget|ciRefresh|renderCITeaser|renderCapital|initCapital)\(/;
+  const entry = /\b(ciEval|ciRank|ciOppOf|ciFactors|ciPortfolio|ciInvest|ciDeal|ciScen|ciReturnTarget|ciRefresh|renderCITeaser|renderCapital|initCapital)\(/g;
   const bad = [];
   lines.forEach((l, i) => {
     if (i >= start && i <= end) return;
     if (/^\s*function\s/.test(l)) return;
-    if (entry.test(l) && !l.includes('CI_ENABLED')) bad.push(`${i + 1}: ${l.trim().slice(0, 100)}`);
+    for (const m of l.matchAll(entry)) {
+      const want = /^(renderCapital|initCapital)$/.test(m[1]) ? 'CI_ENABLED' : 'CI_EXTERNAL';
+      const gates = [...l.slice(0, m.index).matchAll(/CI_(ENABLED|EXTERNAL)/g)];
+      if (!gates.length || gates[gates.length - 1][0] !== want) bad.push(`${i + 1}: ${m[1]} not behind ${want}`);
+    }
   });
   assert.deepEqual(bad, []);
-  assert.ok(!/NATIONAL_CURVE|localCurve\(/.test(lines.slice(0, start).concat(lines.slice(end)).join('\n')
-    .replace(/const NATIONAL_CURVE=[^\n]*\n|function localCurve\(l\)\{[\s\S]*?\n\}\n|\/\*[\s\S]*?\*\//g, '')),
-  'NATIONAL_CURVE/localCurve read outside the dormant capital model');
+  // the command-bar signal is rendered inside the block: it stays off with CI_EXTERNAL
+  assert.match(fnBody(INDEX, 'renderCmd'), /if\(!CI_EXTERNAL\)\{sig\.hidden=true;return\}/);
 });
-t('capital surfaces are hidden in the markup', () => {
+t('the section is shown by CI_ENABLED; the outside surfaces stay hidden', () => {
   assert.match(INDEX, /<section class="blk" id="capital" hidden>/);
+  assert.match(INDEX, /if\(CI_ENABLED\)\{initCapital\(\);\["capital","railCap"\]\.forEach\(id=>\{el\(id\)\.hidden=false\}\)\}/);
   assert.match(INDEX, /<div id="ciTeaserBlk" hidden>/);
-  assert.match(INDEX, /data-sec="capital" id="railCap" hidden>/);
+  assert.match(INDEX, /<button class="cap-signal" id="capSignal" type="button" hidden><\/button>/);
+  assert.match(INDEX, /\nif\(CI_EXTERNAL\)el\("ciTeaserBlk"\)\.hidden=false;/);
   assert.match(INDEX, /\.cap-signal\[hidden\],\.ri\[hidden\],#capital\[hidden\],#ciTeaserBlk\[hidden\]\{display:none!important\}/);
+});
+t('capital returns are true IRRs from the deal calculator engine — no "model IRR", no confidence %', () => {
+  const a = INDEX.indexOf('/* @ci-engine:start'), b = INDEX.indexOf('/* @ci-engine:end */');
+  const eng = INDEX.slice(a, b);
+  assert.ok(/calcEngine\(/.test(eng) && /calcIrr\(/.test(eng), 'capital returns no longer come from the calculator engine');
+  assert.ok(!/IRR מודל|model IRR|ודאות מינ|Minimum confidence/i.test(INDEX), 'an old misleading label is back');
+  // capital is equity: leverage and purchase tax/costs are in the equity per unit
+  assert.match(eng, /const ciEqK=lv=>1-\(lv\?\?state\.ci\.ltv\)\/100\+\(CI_ASSUME\.tax\+CI_ASSUME\.fees\)\/100;/);
+  assert.match(fnBody(INDEX, 'ciPortfolio'), /const f=r\.ev\.f,eqU=f\.price\*k;/);
 });
 
 console.log('standalone build');
@@ -227,11 +249,15 @@ t('the build script embeds no password and refuses one', () => {
 });
 t('standalone build matches index.html', () => {
   const sa = FILES.find((x) => x.f === 'standalone/israel-new-homes-v2.html').src;
-  for (const marker of ['const CI_ENABLED=false;', 'function vcOf(', 'function rankable(', 'function calcEngine(', 'מדגם מרכז היישוב', '<meta name="propx-build"']) {
+  for (const marker of ['const CI_EXTERNAL=false;', 'function ciPortfolio(', 'function vcOf(', 'function rankable(', 'function calcEngine(', 'מדגם מרכז היישוב', '<meta name="propx-build"']) {
     assert.ok(sa.includes(marker), 'standalone missing ' + marker + ' — run scripts/build-standalone.py');
   }
   const b = (s) => (/<meta name="propx-build" content="([^"]+)"/.exec(s) || [])[1];
   assert.equal(b(sa), b(INDEX), 'standalone build stamp differs — rebuild it');
+  // the build records the sha256 of the index.html it came from: any later edit fails here
+  const built = (/<meta name="propx-source-sha256" content="([0-9a-f]{64})">/.exec(sa) || [])[1];
+  const now = require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'index.html'))).digest('hex');
+  assert.equal(built, now, 'standalone was built from a different index.html — run python3 scripts/build-standalone.py');
 });
 
 console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

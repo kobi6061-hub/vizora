@@ -53,16 +53,33 @@ from a cited, dated publication), נגזר (derived), מודל (modelled) or ל�
 (unavailable). Nothing generated is presented as observed: there are no
 synthetic street transactions, no generated price history, no invented medians
 and no sample-size "confidence". Places are never ranked (#1/#2/#3, "leader",
-value sort) unless every ranked value is official. The capital model (scores,
-opportunity layer, portfolio) stays off (`CI_ENABLED=false`) while its
-appreciation input is an approximate curve rather than official history.
+value sort) unless every ranked value is official — with one labelled
+exception, the capital section below.
 
-The investor calculator (מחשבון משקיע) is separate from that model: every input
-is the investor's own assumption, an empty field leaves every result that
-needs it unavailable, and no appreciation or rent growth is ever assumed.
+The capital module (L4 · הון — "where should I deploy my capital?") is an
+investment MODEL over the classified board data and the investor's own,
+visible and editable assumptions: equity capital ₪5M–₪100M, strategy, horizon,
+leverage, rate, term, a Conservative / Base / Upside appreciation
+assumption (no approximate price history is read) and a rent-growth
+assumption (default: each area's own last 1-year change). It shows a six-factor model
+score, a MODEL RANKING (דירוג מודל) that stays inside the section, per-area
+analysis (price targets, the price that meets a required IRR, bulk, scenarios,
+exit, refinance) and an equity-based portfolio allocation: debt, purchase tax
+and acquisition costs are accounted for, so the portfolio answers "with ₪X of
+equity at Y% leverage, what can I acquire?". Every return is a true IRR from the
+deal calculator's engine. Each area's data basis is the class of its inputs
+(never the historical o-flags). The ranking's outside surfaces — command-bar
+signal, map layer, gold markers, profile shortcut, insights teaser — stay off
+(`CI_EXTERNAL=false`).
 
-`node test/integrity.test.js` and `node test/calculator.test.js` enforce this;
-they run with the other offline suites in the daily workflow.
+The deal calculator (מחשבון עסקה · Deal Lab — "does this specific deal work?")
+is separate from that model: every input is the investor's own assumption, an
+empty field leaves every result that needs it unavailable, and no appreciation
+or rent growth is ever assumed.
+
+`node test/integrity.test.js`, `node test/capital.test.js` and
+`node test/calculator.test.js` enforce this; they run with the other offline
+suites in the daily workflow.
 
 The offline build (`scripts/build-standalone.py` → `standalone/`) embeds no
 password or credential: the repository is public, so a client-side gate could

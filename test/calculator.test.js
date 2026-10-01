@@ -24,7 +24,7 @@ const ENGINE = block('/* @calc-engine:start', '/* @calc-engine:end */');
 const UI = block('/* @calc-ui:start */', '/* @calc-ui:end */');
 // a bare context: only the JavaScript built-ins. Any reach for the page
 // (document, state, LOC, MKT, metricsOf …) throws a ReferenceError here.
-const { calcEngine, CALC_IN, CALC_NEED } = vm.runInNewContext(ENGINE + '\n;({calcEngine,CALC_IN,CALC_NEED})', {});
+const { calcEngine, calcIrr, CALC_IN, CALC_NEED } = vm.runInNewContext(ENGINE + '\n;({calcEngine,calcIrr,CALC_IN,CALC_NEED})', {});
 
 let passed = 0;
 const t = (name, fn) => {
@@ -163,6 +163,16 @@ t('invalid values are reported as invalid — not dropped silently, not replaced
     }
   }
 });
+t('the reported IRR is calcIrr of the yearly flows the engine exposes', () => {
+  const r = calcEngine(FULL), ref = reference(FULL);
+  assert.equal(r.flows.length, 11, 'year 0 + 10 holding years');
+  near(r.flows[0], -800000, 1e-6, 'year-0 flow = equity invested');
+  near(r.flows.reduce((a, c) => a + c, 0), r.out.profit.v, 1e-6, 'flows add up to the profit');
+  assert.equal(calcIrr(r.flows), r.out.irr.v);
+  near(r.out.irr.v, ref.irr, 1e-6, 'irr');
+  assert.equal(calcEngine({ ...FULL, app: '' }).flows, null, 'no flows without every IRR input');
+  assert.equal(calcIrr([-100, -5, -5]), 'noIrr');
+});
 t('every computed result is a finite number across a fixed grid of scenarios', () => {
   for (const rate of ['0', '3.5', '9']) for (const term of ['1', '30']) for (const hold of ['1', '5', '40'])
     for (const equity of ['0', '600000', '3000000']) for (const app of ['-10', '0', '7']) {
@@ -177,10 +187,11 @@ t('the calculator section and its rail link are visible in the markup', () => {
   assert.ok(!/<section class="blk" id="calc"[^>]*\bhidden\b/.test(INDEX), 'calculator section hidden');
   assert.match(INDEX, /<a href="#calc" class="ri" data-sec="calc" id="railCalc">/);
 });
-t('it renders and initialises on every load — not behind CI_ENABLED', () => {
-  assert.match(INDEX, /renderConfidence\(\);renderCalc\(\);if\(CI_ENABLED\)\{renderCITeaser\(\);renderCapital\(\)\}/);
+t('it renders and initialises on every load — not behind CI_ENABLED or CI_EXTERNAL', () => {
+  // first, unconditionally, before the capital model (whose render is guarded so an error there can never blank it)
+  assert.match(INDEX, /renderConfidence\(\);renderCalc\(\);renderTx\(\);txFetch\(false\);\n\s*if\(CI_ENABLED\)\{try\{renderCapital\(\)\}catch\(e\)\{/);
   assert.match(INDEX, /\ninitCalc\(\);\nif\(CI_ENABLED\)\{initCapital\(\)/);
-  assert.match(INDEX, /const CI_ENABLED=false;/);
+  assert.match(INDEX, /const CI_ENABLED=(true|false);/);
 });
 t('it starts empty: no default value in any field', () => {
   assert.match(UI, /const calcState=\{v:\{\},src:\{\}\};/);

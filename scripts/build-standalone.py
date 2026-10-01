@@ -14,7 +14,7 @@ the server-side gate alone. Passing a password is refused on purpose.
 
 Usage: python3 scripts/build-standalone.py
 """
-import sys, pathlib
+import sys, pathlib, hashlib
 
 if len(sys.argv) > 1:
     sys.exit("build-standalone.py takes no arguments: the offline build embeds no "
@@ -25,6 +25,9 @@ SRC = ROOT / "index.html"
 DST = ROOT / "standalone" / "israel-new-homes-v2.html"
 
 s = SRC.read_text(encoding="utf-8")
+# the exact source this build came from — test/integrity.test.js recomputes it,
+# so a stale standalone fails the gate
+SRC_SHA = hashlib.sha256(SRC.read_bytes()).hexdigest()
 # the Artifact host supplies doctype/html/head/body — strip the deploy skeleton
 s = "\n".join(ln for ln in s.split("\n") if "<!-- doc-skeleton -->" not in ln)
 
@@ -41,6 +44,10 @@ assert s.count(TAG) == 1
 snap = (ROOT / "data" / "market" / "latest.js").read_text(encoding="utf-8")
 assert "<" not in snap.split("*/", 1)[-1], "snapshot must not contain raw '<'"
 s = s.replace(TAG, "<script>\n" + snap + "</script>", 1)
+
+BUILD_META = '<meta name="propx-build"'
+assert s.count(BUILD_META) == 1
+s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)
 
 assert "</style>" in s and s.count("</style>") == 1
 s = s.replace("</style>", OFFLINE_CSS + "</style>", 1)
