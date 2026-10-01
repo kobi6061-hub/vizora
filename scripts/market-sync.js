@@ -50,8 +50,8 @@ const per = (p) => `${p.year}-${String(p.month).padStart(2, '0')}`;
   const results = { boiRate: boi };
   if (disc.ok) {
     const [nh, dw] = await Promise.all([
-      settle(fetchCbsIndex('newHomesIndex', disc.data.picks.newHomesIndex, { fetchImpl, now })),
-      settle(fetchCbsIndex('dwellingsIndex', disc.data.picks.dwellingsIndex, { fetchImpl, now })),
+      settle(fetchCbsIndex('newHomesIndex', disc.data.picks.newHomesIndex, { fetchImpl, now, debug: has('dry-run') })),
+      settle(fetchCbsIndex('dwellingsIndex', disc.data.picks.dwellingsIndex, { fetchImpl, now, debug: has('dry-run') })),
     ]);
     results.newHomesIndex = nh;
     results.dwellingsIndex = dw;
@@ -85,6 +85,9 @@ const per = (p) => `${p.year}-${String(p.month).padStart(2, '0')}`;
     console.log(`\nCBS candidate series (${rel.length} of ${disc.data.candidates.length}):`);
     for (const c of rel.slice(0, 80)) console.log(`  ${c.code.padStart(7)}  ${c.name}`);
     console.log('picked:', JSON.stringify(disc.data.picks));
+    for (const k of ['newHomesIndex', 'dwellingsIndex']) {
+      if (results[k] && results[k].ok && results[k].data.recent) console.log(`recent ${k}: ${results[k].data.recent.join(' · ')}`);
+    }
   }
 
   const usable = Object.keys(I).length > 0;
