@@ -46,14 +46,27 @@ estimates. The recent-sales table shows official government transactions only.
 
 ### Data integrity
 
-Every figure on screen carries a class read from row metadata — רשמי (official),
-נגזר (derived), מודל (modelled) or לא זמין (unavailable) — plus the period it
-describes. Nothing generated is presented as observed: there are no synthetic
-street transactions, no generated price history, no invented medians and no
-sample-size "confidence". The capital model (scores, opportunity layer,
-portfolio) stays off (`CI_ENABLED=false`) while its appreciation input is an
-approximate curve rather than official history. `node test/integrity.test.js`
-enforces this; it runs with the other offline suites in the daily workflow.
+Every figure on screen carries a class plus the period it describes:
+רשמי (official — only values whose source, period and check time are stored,
+today the daily-synced CBS/Bank of Israel indicators), סטטי (static — typed in
+from a cited, dated publication), נגזר (derived), מודל (modelled) or לא זמין
+(unavailable). Nothing generated is presented as observed: there are no
+synthetic street transactions, no generated price history, no invented medians
+and no sample-size "confidence". Places are never ranked (#1/#2/#3, "leader",
+value sort) unless every ranked value is official. The capital model (scores,
+opportunity layer, portfolio) stays off (`CI_ENABLED=false`) while its
+appreciation input is an approximate curve rather than official history.
+
+The investor calculator (מחשבון משקיע) is separate from that model: every input
+is the investor's own assumption, an empty field leaves every result that
+needs it unavailable, and no appreciation or rent growth is ever assumed.
+
+`node test/integrity.test.js` and `node test/calculator.test.js` enforce this;
+they run with the other offline suites in the daily workflow.
+
+The offline build (`scripts/build-standalone.py` → `standalone/`) embeds no
+password or credential: the repository is public, so a client-side gate could
+only leak one. Production access is the server-side gate alone.
 
 ### Daily official-indicator sync
 

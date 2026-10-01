@@ -17,7 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-10-01.p0-data-integrity">
+<meta name="propx-build" content="2026-10-01.p0-hardening">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -367,6 +367,38 @@ section.blk{padding-block:22px}
 .rank-row .vl{font-weight:700;font-size:12.5px}
 .rank-row .bar{flex:0 0 54px;height:5px;border-radius:99px;background:var(--panel-2);overflow:hidden}
 .rank-row .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.rank-na{font-size:11.5px;color:var(--ink-3);line-height:1.55;margin:2px 0 6px}
+/* ============================ investor calculator ============================ */
+.calc{display:grid;gap:14px}
+@media(min-width:1000px){.calc{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:start}}
+.calc-in,.calc-out{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r-m);padding:14px 16px;min-width:0}
+.calc-g{margin-bottom:12px}
+.calc-gt{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--brass);margin-bottom:4px}
+.calc-f{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,200px);gap:4px 10px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--hairline)}
+.calc-f label{font-size:12.5px;color:var(--ink-2);display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-width:0}
+.calc-f .inp{display:flex;align-items:center;gap:5px;min-width:0}
+.calc-f input{flex:1 1 0;width:0;min-width:0;height:34px;border:1px solid var(--baseline);border-radius:8px;background:var(--paper);
+  color:var(--ink);padding-inline:9px;font-size:13.5px;font-variant-numeric:tabular-nums;text-align:end}
+.calc-f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.calc-f input[aria-invalid="true"]{border-color:var(--down)}
+.calc-f .u{flex:none;font-size:11px;color:var(--ink-3);white-space:nowrap}
+@media(max-width:560px){.calc-f{grid-template-columns:minmax(0,1fr)}.calc-f .inp input{height:38px}}
+.calc-ref{grid-column:1/-1;font-size:11px;color:var(--ink-3);display:flex;gap:6px;align-items:center;flex-wrap:wrap;line-height:1.5}
+.calc-ref button{font-size:11px;font-weight:700;color:var(--accent-deep);text-decoration:underline}
+.calc-og{margin-bottom:12px}
+.calc-ogt{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.calc-os{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.calc-o{border:1px solid var(--hairline);border-radius:10px;padding:8px 11px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.calc-o .l{font-size:11px;color:var(--ink-3);font-weight:600}
+.calc-o .v{font-family:var(--f-display);font-size:17px;font-weight:800}
+.calc-o .v.down{color:var(--down)}
+.calc-o.na .v{font-size:13.5px;color:var(--ink-3)}
+.calc-o .s{font-size:10.5px;color:var(--ink-3);line-height:1.5}
+.calc-need{font-size:12px;color:var(--ink-2);background:var(--panel-2);border-radius:8px;padding:8px 10px;margin-bottom:8px}
+.calc-foot{font-size:11px;color:var(--ink-3);line-height:1.6;margin-top:10px}
+.calc-reset{font-size:12px;font-weight:700;color:var(--ink-2);border:1px solid var(--hairline);border-radius:8px;padding:5px 10px}
+.vc.usr{color:var(--c2)}
+.rank-off{display:flex;gap:10px;align-items:baseline;padding:14px 6px;font-size:13px;color:var(--ink-2);line-height:1.65}
 
 /* ============================ profile + chart ============================ */
 .profile{padding:16px;display:flex;flex-direction:column;gap:14px}
@@ -552,7 +584,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 /* value classes — RAW / DERIVED / MODELLED / UNAVAILABLE, read from row metadata */
 .vc{display:inline-flex;align-items:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;
   padding:0 6px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;flex:none;vertical-align:middle}
-.vc.raw{color:var(--conf-high)} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
+.vc.raw{color:var(--conf-high)} .vc.static{color:var(--ink-2);border-style:dashed} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
 .kpi.na .val{color:var(--ink-3);font-size:16px;font-weight:700}
 .na-card .na-why{font-size:14px;font-weight:600;color:var(--ink-2);line-height:1.6}
 .na-card .na-next{font-size:12.5px;color:var(--ink-3);line-height:1.6}
@@ -924,7 +956,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 .cmp-starters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* rail: the two worlds of the product */
 .rail-div{display:block;height:1px;background:var(--hairline);margin:7px 15px}
-.ri[data-sec="capital"]:not(.on){color:var(--brass)}
+.ri[data-sec="capital"]:not(.on),.ri[data-sec="calc"]:not(.on){color:var(--brass)}
 @media(max-width:979px){.rail-div{display:none}}
 /* KPI micro-comparison vs national */
 .kpi .mc{font-weight:700;font-size:10.5px;white-space:nowrap}
@@ -1052,6 +1084,7 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
   <span class="rail-div" aria-hidden="true"></span>
+  <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">מחשבון</span></a>
   <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
@@ -1226,7 +1259,7 @@ details.ci-more>.in{padding:2px 13px 12px}
     <div class="blk-head">
       <div><span class="lyr" data-i="lyr2c">L2 · מיקום</span>
       <h2 data-i="cmpTitle">השוואת אזורים</h2></div>
-      <span class="note" data-i="cmpNote">עד ארבעה אזורים · ★ = המוביל במדד</span>
+      <span class="note" data-i="cmpNote">עד ארבעה אזורים · השוואה צד לצד, לפי סדר הבחירה</span>
     </div>
     <div class="card" style="padding:13px 14px;margin-bottom:10px">
       <div class="cmp-pick" id="cmpPick"></div>
@@ -1249,10 +1282,21 @@ details.ci-more>.in{padding:2px 13px 12px}
         <div class="card ci-teaser" id="ciTeaser"></div>
         </div>
         <div class="blk-head"><div><span class="lyr" data-i="lyr1c">L1 · שוק</span><h2 data-i="confTitle">בסיס הנתונים</h2></div>
-          <span class="note" data-i="basisNote">רשמי · נגזר · מודל · לא זמין</span></div>
+          <span class="note" data-i="basisNote">רשמי · סטטי · נגזר · מודל · לא זמין</span></div>
         <div class="card conf-card" id="confCard"></div>
       </div>
     </div>
+  </section>
+
+  <!-- Investor calculator — the investor's own scenario; independent of the
+       (hidden) capital model below -->
+  <section class="blk" id="calc">
+    <div class="blk-head">
+      <div><span class="lyr gold" data-i="calcLyr">L4 · משקיע</span>
+      <h2 data-i="calcTitle">מחשבון משקיע</h2></div>
+      <span class="note" data-i="calcNote">התרחיש שלכם · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין</span>
+    </div>
+    <div class="calc" id="calcBody"></div>
   </section>
 
   <!-- Capital intelligence -->
@@ -1451,6 +1495,9 @@ const UPDATED_AT = "2026-08";
      Kiryat Ono 1,330 · Kiryat Ata 1,220 · Ofakim 1,090 · El'ad 1,070 ·
      Kiryat Bialik 1,060); the rest estimated to sum to the national figure
    · e:1 rows — fully district/city-anchored estimates (no direct publication)
+   · o-flags ("t"/"l") are historical annotations only: they decide NO value
+     class. Cited figures live in STATIC_SRC (§3), which labels a value
+     STATIC only while it equals the cited figure.
    · neighborhoods/subs — real, recognized localities (CBS statistical-area /
      municipal naming); every figure is a city-anchored estimate               */
 const LOCATIONS = [
@@ -1717,14 +1764,14 @@ he:{
   avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
   avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
   est:"אומדן", perMonth:"לחודש", perYear:"לשנה", yoyLbl:"שינוי שנתי",
-  vcName:{raw:"רשמי",der:"נגזר",mod:"מודל",na:"לא זמין"},
-  vcTip:{raw:"ערך כפי שפורסם במקור רשמי",der:"חושב מנתון רשמי בנוסחה מוצהרת",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג"},
+  vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"לא זמין",usr:"הנחת משתמש"},
+  vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
-  perTx2025:"קצב שנתי · 2025", perTxH1:"מחצית א׳ 2026 בקצב שנתי", perTxEst:"קצב שנתי משוער",
-  perInv:"למ״ס · סוף יוני 2026", perInvEst:"מעוגן לסך הארצי",
+  perTxH1:"אומדן: מחצית א׳ 2026 בקצב שנתי", perTxEst:"קצב שנתי משוער",
+  perInvEst:"מעוגן לסך הארצי",
   naShort:"לא זמין", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
-  provNote:"כל ערך מסווג: רשמי · נגזר · מודל · לא זמין",
+  provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · לא זמין",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
   rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
@@ -1745,15 +1792,46 @@ he:{
   filterNote:"המסננים מתאימים מקדמים על שכבת האומדנים",
   rankTitle:"מה קורה בשוק?", scopeCities:"ערים מובילות בישראל", scopeNbhd:"שכונות בעיר",
   tExpensive:"הכי יקרות",tCheap:"הכי זולות",tRise:"העלייה הגבוהה ביותר",tFall:"הירידה החדה ביותר",tYield:"התשואה הגבוהה ביותר",tTx:"קצב המכירות הגבוה ביותר",
-  cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · ★ = המוביל במדד", cmpAdd:"+ הוסף אזור",
+  cmpTitle:"השוואת אזורים", cmpNote:"עד ארבעה אזורים · השוואה צד לצד, לפי סדר הבחירה", cmpAdd:"+ הוסף אזור",
   cmpEmpty:"בחר עד ארבעה אזורים להשוואה", cmpMax:"עד 4 אזורים",
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
-  confTitle:"בסיס הנתונים", basisNote:"רשמי · נגזר · מודל · לא זמין",
+  confTitle:"בסיס הנתונים",
+  navCalc:"מחשבון", calcLyr:"L4 · משקיע", calcTitle:"מחשבון משקיע",
+  calcNote:"התרחיש שלכם · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין",
+  calcG:{buy:"רכישה",fin:"מימון",ops:"הכנסה והוצאות",exit:"החזקה ומכירה"},
+  calcIn:{price:"מחיר הנכס",equity:"הון עצמי",tax:"מס רכישה",fees:"עלויות רכישה נוספות (עו״ד, תיווך)",
+    rate:"ריבית משכנתא שנתית",term:"תקופת המשכנתא",rent:"שכר דירה חודשי",vac:"אי-תפוסה",opex:"תחזוקה, ניהול ושיפוצים",
+    hold:"תקופת החזקה",rentG:"עליית שכר דירה שנתית — הנחה שלכם",app:"עליית ערך שנתית — הנחה שלכם",sell:"עלויות מכירה"},
+  calcUnit:{nis:"₪",nisMo:"₪ לחודש",pct:"% מהמחיר",pctYr:"% לשנה",pctRent:"% מהשכ״ד",yrs:"שנים"},
+  calcOutG:{acq:"עלות ומימון",y1:"שנה ראשונה",exit:"יציאה"},
+  calcOutT:{cost:"עלות רכישה כוללת",loan:"סכום המשכנתא",ltv:"שיעור מימון (LTV)",pmt:"החזר חודשי",
+    gross:"תשואה ברוטו",noi:"הכנסה נטו שנתית · שנה 1",net:"תשואה נטו על העלות",cf:"תזרים חודשי אחרי משכנתא · שנה 1",
+    coc:"תשואה על ההון · שנה 1",exitV:"שווי במכירה",debtRem:"יתרת משכנתא במכירה",exitEq:"הון נטו במכירה",
+    cumCf:"תזרים מצטבר בתקופה",profit:"רווח כולל",irr:"תשואה שנתית פנימית (IRR)"},
+  calcF:{cost:"מחיר × (1 + מס רכישה + עלויות רכישה)",loan:"עלות כוללת − הון עצמי (לא פחות מ-0)",ltv:"משכנתא ÷ מחיר",
+    pmt:"לוח שפיצר: משכנתא, ריבית ÷ 12, תקופה × 12",gross:"שכ״ד × 12 ÷ מחיר",noi:"שכ״ד × 12 × (1 − אי-תפוסה − תחזוקה)",
+    net:"הכנסה נטו ÷ עלות כוללת",cf:"הכנסה נטו ÷ 12 − החזר חודשי",coc:"(הכנסה נטו − החזרים שנתיים) ÷ הון מושקע",
+    exitV:"מחיר × (1 + עליית ערך)^שנות החזקה",debtRem:"יתרת לוח שפיצר בתום ההחזקה",exitEq:"שווי × (1 − עלויות מכירה) − יתרת משכנתא",
+    cumCf:"סכום התזרימים השנתיים; שכ״ד לפי ההנחה; החזרים עד תום המשכנתא",profit:"הון נטו במכירה + תזרים מצטבר − הון מושקע",
+    irr:"השיעור שמאפס: −הון מושקע, תזרימים שנתיים והון נטו במכירה"},
+  calcExitT:n=>`יציאה אחרי ${n} שנים — לפי ההנחות שלכם`,
+  calcExitNeed:"כדי לחשב יציאה נדרשת הנחת עליית ערך שנתית. המחשבון אינו מניח עליית ערך בעצמו; גם 0% הוא הנחה שיש להזין.",
+  calcMiss:l=>`חסר: ${l}`, calcBad:l=>`ערך לא תקין: ${l}`, calcBadShort:"לא תקין", calcBadTip:"הערך מחוץ לטווח או אינו מספר — הוא לא נכלל בחישוב",
+  calcWhy:{zeroEq:"אין הון מושקע — לא ניתן לחשב תשואה על ההון",noIrr:"לתזרימים אלה אין IRR יחיד",undef:"הנוסחה אינה מוגדרת עבור הערכים שהוזנו"},
+  calcDerTip:"חושב בנוסחה המוצגת מהקלטים שהזנתם",
+  calcUseBoard:(p,v)=>`מחיר ממוצע ב${p} בלוח: ${v}`, calcUseBtn:"העתק לשדה",
+  calcFromBoardTip:p=>`הועתק ממחיר ממוצע ב${p} בלוח (נגזר) — עריכה הופכת אותו להנחה שלכם`,
+  calcBoi:(v,d)=>`ריבית בנק ישראל ${v} · נבדק ${d} — ריבית המדיניות, לא ריבית משכנתא; אינה משמשת בחישוב`,
+  calcSurplus:"ההון העצמי עולה על עלות הרכישה — העודף אינו נכלל בחישוב.",
+  calcReset:"ניקוי כל השדות",
+  calcFoot:"חישוב אריתמטי בלבד מההנחות שהזנתם — אינו תחזית ואינו ייעוץ השקעות. המחשבון אינו משתמש בציוני השקעה, בדירוגים או בעקומת מחירים, ואינו מניח עליית ערך או עליית שכר דירה. ריבית משתנה, מס רכישה מדורג והצמדות אינם מחושבים — הזינו הנחות שמבטאות אותם.", basisNote:"רשמי · סטטי · נגזר · מודל · לא זמין",
   basisNA:"חציון מחיר ושכ״ד · היסטוריית מחירים מקומית · ציוני השקעה ודירוגי הון (מוסתרים עד שתיאסף היסטוריית מחירים רשמית)",
   basisTx:"עסקאות: נשלפות בזמן אמת ממאגר רשות המסים (טבלת העסקאות), עם היקף המדגם והכיסוי של כל שליפה.",
   txPace:"קצב מכירות שנתי",
-  tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות/שנה — רשמי רק היכן שפורסם, אחרת אומדן; שינוי שנתי — נגזר, מאי–יוני 2026.",
-  rankFoot:"הדירוג מחושב מערכי הלוח — נגזרים מפרסומים רשמיים או אומדני מודל, לפי שורה (הסיווג מופיע בטבלת האזורים).",
+  tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות/שנה ומלאי — סטטי היכן שצוטט פרסום, אחרת מודל; שינוי שנתי — נגזר, מאי–יוני 2026.",
+  rankFoot:"הדירוג מוצג רק כשכל ערך מדורג הוא נתון רשמי שמקורו נשמר במערכת.",
+  mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
+  rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
   geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
   geoLyr:"מרשם ארצי", geoClose:"סגור",
   geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
@@ -1798,7 +1876,7 @@ he:{
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
   srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
   srcA1:MKT.nh?`שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: ${MKT.nh.yoy<0?"ירידה של ":MKT.nh.yoy>0?"עלייה של ":"ללא שינוי"}${MKT.nh.yoy?Math.abs(MKT.nh.yoy).toFixed(1)+"%":""} (${MKT.nh.periodHe} מול שנה קודמת · סנכרון יומי); שינוי אזורי — נגזר, מאי–יוני 2026`:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
-  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 בקצב שנתי — למ״ס מחצית א׳ 2026: כ-2,056 מכירות (~342/חודש); הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
+  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
   srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · לא זמין) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
@@ -1978,14 +2056,14 @@ en:{
   avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"Sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
   est:"estimate", perMonth:"per month", perYear:"per year", yoyLbl:"Annual change",
-  vcName:{raw:"Official",der:"Derived",mod:"Modelled",na:"Unavailable"},
-  vcTip:{raw:"As published by an official source",der:"Computed from an official figure by a stated formula",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown"},
+  vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Unavailable",usr:"User assumption"},
+  vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
-  perTx2025:"annual pace · 2025", perTxH1:"H1 2026, annualized", perTxEst:"estimated annual pace",
-  perInv:"CBS · end-June 2026", perInvEst:"anchored to the national total",
+  perTxH1:"estimate: H1 2026 annualized", perTxEst:"estimated annual pace",
+  perInvEst:"anchored to the national total",
   naShort:"Unavailable", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
-  provNote:"Every value is classed: official · derived · modelled · unavailable",
+  provNote:"Every value is classed: official · static · derived · modelled · unavailable",
   mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
   mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
   rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
@@ -2006,15 +2084,46 @@ en:{
   filterNote:"Filters apply multipliers over the estimate layer",
   rankTitle:"What's moving in the market?", scopeCities:"Leading cities in Israel", scopeNbhd:"Neighborhoods in the city",
   tExpensive:"Most expensive",tCheap:"Most affordable",tRise:"Fastest rising",tFall:"Steepest decline",tYield:"Highest yield",tTx:"Highest sales pace",
-  cmpTitle:"Compare areas", cmpNote:"Up to four areas · ★ = leader per metric", cmpAdd:"+ Add area",
+  cmpTitle:"Compare areas", cmpNote:"Up to four areas · side by side, in the order chosen", cmpAdd:"+ Add area",
   cmpEmpty:"Pick up to four areas to compare", cmpMax:"Up to 4 areas",
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
-  confTitle:"Data basis", basisNote:"official · derived · modelled · unavailable",
+  confTitle:"Data basis",
+  navCalc:"Calculator", calcLyr:"L4 · Investor", calcTitle:"Investor calculator",
+  calcNote:"Your scenario · every input is your assumption · an empty field is unavailable",
+  calcG:{buy:"Purchase",fin:"Financing",ops:"Income & costs",exit:"Holding & exit"},
+  calcIn:{price:"Property price",equity:"Equity",tax:"Purchase tax",fees:"Other purchase costs (legal, brokerage)",
+    rate:"Mortgage rate (annual)",term:"Mortgage term",rent:"Monthly rent",vac:"Vacancy",opex:"Maintenance, management & repairs",
+    hold:"Holding period",rentG:"Annual rent growth — your assumption",app:"Annual appreciation — your assumption",sell:"Selling costs"},
+  calcUnit:{nis:"₪",nisMo:"₪ / month",pct:"% of price",pctYr:"% / year",pctRent:"% of rent",yrs:"years"},
+  calcOutG:{acq:"Cost & financing",y1:"First year",exit:"Exit"},
+  calcOutT:{cost:"Total acquisition cost",loan:"Mortgage amount",ltv:"Loan-to-value (LTV)",pmt:"Monthly payment",
+    gross:"Gross yield",noi:"Net income · year 1",net:"Net yield on cost",cf:"Monthly cash flow after mortgage · year 1",
+    coc:"Cash-on-cash · year 1",exitV:"Value at sale",debtRem:"Mortgage balance at sale",exitEq:"Net equity at sale",
+    cumCf:"Cumulative cash flow",profit:"Total profit",irr:"Internal rate of return (IRR)"},
+  calcF:{cost:"price × (1 + purchase tax + purchase costs)",loan:"total cost − equity (not below 0)",ltv:"mortgage ÷ price",
+    pmt:"annuity: mortgage, rate ÷ 12, term × 12",gross:"rent × 12 ÷ price",noi:"rent × 12 × (1 − vacancy − maintenance)",
+    net:"net income ÷ total cost",cf:"net income ÷ 12 − monthly payment",coc:"(net income − annual payments) ÷ equity invested",
+    exitV:"price × (1 + appreciation)^holding years",debtRem:"annuity balance at the end of the holding period",exitEq:"value × (1 − selling costs) − mortgage balance",
+    cumCf:"sum of yearly cash flows; rent per your assumption; payments until the term ends",profit:"net equity at sale + cumulative cash flow − equity invested",
+    irr:"the rate that zeroes: −equity invested, yearly cash flows and net equity at sale"},
+  calcExitT:n=>`Exit after ${n} years — on your assumptions`,
+  calcExitNeed:"An exit needs an annual appreciation assumption. The calculator never assumes appreciation itself; 0% is an assumption too and must be entered.",
+  calcMiss:l=>`missing: ${l}`, calcBad:l=>`invalid value: ${l}`, calcBadShort:"Invalid", calcBadTip:"Out of range or not a number — left out of the calculation",
+  calcWhy:{zeroEq:"no equity invested — cash-on-cash is undefined",noIrr:"these cash flows have no single IRR",undef:"the formula is undefined for these values"},
+  calcDerTip:"Computed by the formula shown from the inputs you entered",
+  calcUseBoard:(p,v)=>`Average price in ${p} on the board: ${v}`, calcUseBtn:"Copy to field",
+  calcFromBoardTip:p=>`Copied from the board's average price in ${p} (derived) — editing makes it your assumption`,
+  calcBoi:(v,d)=>`Bank of Israel rate ${v} · checked ${d} — the policy rate, not a mortgage rate; not used in the calculation`,
+  calcSurplus:"Equity exceeds the total acquisition cost — the surplus is left out.",
+  calcReset:"Clear all fields",
+  calcFoot:"Arithmetic on your assumptions only — not a forecast and not investment advice. The calculator uses no investment scores, rankings or price curve, and assumes no appreciation or rent growth. Variable rates, tiered purchase tax and indexation are not modelled — enter assumptions that reflect them.", basisNote:"official · static · derived · modelled · unavailable",
   basisNA:"Median price and rent · local price history · investment scores and capital rankings (hidden until official price history is collected)",
   basisTx:"Transactions: pulled live from the Tax Authority registry (transactions table), with each pull's sample scope and coverage.",
   txPace:"Annual sales pace",
-  tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; sales/yr is official only where published, otherwise estimated; annual change is derived, May–Jun 2026.",
-  rankFoot:"Rankings use the board's values — derived from official publications or model estimates, by row (classes are shown in the areas table).",
+  tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; sales/yr and inventory are static where a publication is cited, otherwise modelled; annual change is derived, May–Jun 2026.",
+  rankFoot:"A ranking is shown only when every ranked value is official, with its source stored in the system.",
+  mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
+  rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
   geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
   geoLyr:"National registry", geoClose:"Close",
   geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
@@ -2059,7 +2168,7 @@ en:{
   srcATitle:"Calibration basis — new developer homes only",
   srcAText:"Every value on this board covers new homes from developers only (no second-hand), approximated from official publications as of mid-2026:",
   srcA1:MKT.nh?`National annual change — CBS new-homes price index: ${MKT.nh.yoyTxt.replace("-","−")} (${MKT.nh.periodEn} vs. a year earlier · daily sync); regional change — derived, May–Jun 2026`:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
-  srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — ~34,000 new homes in 2025 (37.5% of all deals, ~a third subsidized); Tel Aviv 1,236",
+  srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026)",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
   srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · unavailable) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
   srcBTitle:"Data types — never mixed without labeling",
@@ -2244,7 +2353,7 @@ const state={
   mapMetric:"price",
   filters:{rooms:"all",type:"all",area:"all",cond:"all"},
   compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
-  sort:{key:"price",dir:-1},
+  sort:{key:"name",dir:1},
   ci:{h:"5",strat:"bal",ltv:60,rate:4.9,term:25,cap:25e6,sel:null,w:null,capCity:30,capLoc:20},
 };
 const T=()=>I18N[state.lang];
@@ -2294,40 +2403,70 @@ function metricsOf(id){
 }
 
 /* ---------- value classes ----------
-   Every figure on screen is RAW (as published by an official source),
-   DERIVED (computed from published figures by a stated formula), MODELLED
-   (an estimate — never an observation) or UNAVAILABLE (nothing supports it,
-   so nothing is shown). Classes come only from row metadata — the o/e flags
-   documented on LOCATIONS and the live MKT snapshot — never from a value. */
-const TX_H1_2026={tlv:1};   /* sales pace published for H1-2026, annualized (see LOCATIONS) */
+   Every figure on screen is one of:
+   · RAW (רשמי) — an official value with STORED provenance: today only the
+     live daily snapshot (MKT: CBS API series URL, period, checkedAt in
+     data/market/latest.json). A flag or a code comment is never enough.
+   · STATIC (סטטי) — transcribed by hand from a cited publication and period
+     (STATIC_SRC below); no copy of the source is stored, so it is not RAW.
+   · DERIVED (נגזר) — a stated formula over cited published figures.
+   · MODELLED (מודל) — an estimate, never an observation.
+   · UNAVAILABLE (לא זמין) — nothing supports it, so nothing is shown.
+   The historical o-flags on LOCATIONS decide nothing here. */
+const STATIC_SRC={
+  /* field → the citation (publisher · period) */
+  cite:{
+    yoy:{per:{he:"מאי–יוני 2026",en:"May–Jun 2026"},src:{he:"למ״ס · מדד מחירי הדירות החדשות",en:"CBS · new-homes price index"}},
+    tx:{per:{he:"קצב שנתי · 2025",en:"annual pace · 2025"},src:{he:"רשות המסים / הכלכלן הראשי · סיכום 2025",en:"Tax Authority / Chief Economist · 2025 summary"}},
+    listings:{per:{he:"למ״ס · סוף יוני 2026",en:"CBS · end-June 2026"},src:{he:"למ״ס · דירות חדשות שטרם נמכרו",en:"CBS · unsold new homes"}},
+  },
+  /* place → field → the cited figure; the label applies only while the
+     shown value equals it (test/integrity.test.js checks every entry) */
+  v:{
+    il:{yoy:-2.0,tx:34000,listings:84280},
+    "d-center":{listings:20620},"d-ta":{listings:25320},
+    tlv:{listings:9549},raanana:{listings:1580},lod:{listings:2720},"kiryat-gat":{listings:2190},
+    "beer-yaakov":{listings:1760},"ramat-hasharon":{listings:1490},netivot:{listings:1340},
+    "kiryat-ono":{listings:1330},"kiryat-ata":{listings:1220},ofakim:{listings:1090},
+    elad:{listings:1070},"kiryat-bialik":{listings:1060},
+  },
+};
+const isStatic=(l,f)=>{const s=STATIC_SRC.v[l.id];return!!s&&f in s&&l.base[f]===s[f]};
+const TX_H1_2026={tlv:1};   /* Tel Aviv's pace annualises an H1-2026 count — an estimate (see LOCATIONS) */
 function vcOf(l,field){
-  const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=filtersActive(),o=l.o||"";
+  const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=filtersActive();
   switch(field){
     case "price":case "sqm":return filt||est?"mod":"der";
-    case "yoy":return l.id==="il"?"raw":est?"mod":"der";   /* national = the CBS new-homes index */
+    case "yoy":   /* national = the CBS new-homes index: RAW only from the live snapshot */
+      return l.id==="il"&&MKT.nh?"raw":isStatic(l,"yoy")?"static":est?"mod":"der";
     case "y3":case "rentYoy":return est?"mod":"der";
-    case "tx":return !filt&&o.includes("t")?"raw":"mod";
-    case "listings":return !filt&&o.includes("l")?"raw":"mod";
-    case "ms":return !filt&&o.includes("t")&&o.includes("l")?"der":"mod";
+    case "tx":case "listings":return !filt&&isStatic(l,field)?"static":"mod";
+    case "ms":return "mod";   /* listings ÷ (sales/12): mixes figures of different dates and classes */
     case "rent":case "rentPsm":case "yield":case "ptr":return "mod";   /* ×1.08 new-build premium = model */
   }
   return "na";
 }
 /* the period a figure describes — a dated snapshot is never "the last 12 months" */
 function vcPer(l,field){
-  const t=T(),o=l.o||"";
+  const t=T();
+  if(vcOf(l,field)==="static")return STATIC_SRC.cite[field].per[state.lang];
   switch(field){
     case "yoy":return l.id==="il"&&MKT.nh?(state.lang==="he"?MKT.nh.periodHe:MKT.nh.periodEn):t.perYoy;
     case "y3":return t.perY3;
     case "price":case "sqm":return t.perPrice;
     case "rent":case "rentPsm":case "yield":case "ptr":return t.perRent;
     case "rentYoy":return l.type==="country"||l.type==="district"?t.perRentQ1:t.perRentCity;
-    case "tx":return TX_H1_2026[l.id]?t.perTxH1:o.includes("t")?t.perTx2025:t.perTxEst;
-    case "listings":return o.includes("l")?t.perInv:t.perInvEst;
+    case "tx":return TX_H1_2026[l.id]?t.perTxH1:t.perTxEst;
+    case "listings":return t.perInvEst;
   }
   return "";
 }
 const vcTag=cls=>`<span class="vc ${cls}" title="${T().vcTip[cls]}">${T().vcName[cls]}</span>`;
+/* A ranking — places ordered by a value, a #1/#2/#3 list or a "leader" mark —
+   is shown only when EVERY ranked value is RAW (official, stored provenance).
+   A class badge does not make a modelled, derived or static #1 defensible.
+   Every ranking surface goes through here (test/integrity.test.js). */
+function rankable(field,locs){return locs.length>1&&locs.every(l=>vcOf(l,field)==="raw")}
 
 
 /* =====================================================================
@@ -2405,19 +2544,19 @@ function divColor(t){return HEAT_DIV[Math.max(0,Math.min(HEAT_DIV.length-1,Math.
 const isDivergingMap=()=>state.mapMetric==="yoy";
 
 const MAP_METRICS=[
-  {id:"price",label:()=>T().mAvg,get:m=>m.price,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
-  {id:"sqm",label:()=>T().mPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
-  {id:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
-  {id:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
-  {id:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
-  ...(CI_ENABLED?[{id:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp}]:[]),
+  {id:"price",f:"price",label:()=>T().mAvg,get:m=>m.price,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
+  {id:"sqm",f:"sqm",label:()=>T().mPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),rank:()=>T().rankExpIn},
+  {id:"yoy",f:"yoy",label:()=>T().mYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),rank:()=>T().rankUp},
+  {id:"rent",f:"rent",label:()=>T().mRent,get:m=>m.rent,fmt:v=>fmtNIS(v),rank:()=>T().rankRent},
+  {id:"yield",f:"yield",label:()=>T().mYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",rank:()=>T().rankYield},
+  ...(CI_ENABLED?[{id:"opp",f:"opp",label:()=>T().mOpp,get:(m,id)=>ciOppOf(id),fmt:v=>String(Math.round(v)),rank:()=>T().rankOpp}]:[]),
 ];
 const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-10-01.p0-data-integrity";
+const PROPX_BUILD="2026-10-01.p0-hardening";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -2823,19 +2962,26 @@ function renderMap(keepVB){
     node.addEventListener("mouseleave",()=>tip.classList.remove("show"));
   });
 
-  /* ranked list beside the map */
-  const dir=state.mapMetric==="price"||state.mapMetric==="sqm"||state.mapMetric==="rent"||state.mapMetric==="yield"||state.mapMetric==="yoy"||state.mapMetric==="opp"?-1:1;
-  const ranked=[...ctx.items].sort((a,b)=>dir*(mm.get(metricsOf(a.id),a.id)-mm.get(metricsOf(b.id),b.id))).slice(0,8);
-  const rvals=ranked.map(i=>mm.get(metricsOf(i.id),i.id));
-  const rmax=Math.max(...rvals.map(Math.abs))||1;
-  el("mapRankTitle").textContent=(state.locId==="il"&&state.mapMetric==="price")?t.rankExp:mm.rank();
-  el("mapRankList").innerHTML=ranked.map((item,i)=>`
-    <button class="rank-row" data-go="${item.id}">
-      <span class="idx">${String(i+1).padStart(2,"0")}</span>
-      <span class="nm">${heName(item)}</span>
-      <span class="bar"><i style="width:${Math.max(6,Math.abs(rvals[i])/rmax*100)}%${rvals[i]<0?";background:var(--down)":""}"></i></span>
-      <span class="vl num">${mm.fmt(rvals[i])}</span>
-    </button>`).join("");
+  /* beside the map: a ranked list only when every ranked value is RAW;
+     otherwise the places in alphabetical order — navigation, not a ranking */
+  if(rankable(mm.f,ctx.items)){
+    const ranked=[...ctx.items].sort((a,b)=>mm.get(metricsOf(b.id),b.id)-mm.get(metricsOf(a.id),a.id)).slice(0,8);
+    const rvals=ranked.map(i=>mm.get(metricsOf(i.id),i.id));
+    const rmax=Math.max(...rvals.map(Math.abs))||1;
+    el("mapRankTitle").textContent=(state.locId==="il"&&state.mapMetric==="price")?t.rankExp:mm.rank();
+    el("mapRankList").innerHTML=ranked.map((item,i)=>`
+      <button class="rank-row" data-go="${item.id}">
+        <span class="idx">${String(i+1).padStart(2,"0")}</span>
+        <span class="nm">${heName(item)}</span>
+        <span class="bar"><i style="width:${Math.max(6,Math.abs(rvals[i])/rmax*100)}%${rvals[i]<0?";background:var(--down)":""}"></i></span>
+        <span class="vl num">${mm.fmt(rvals[i])}</span>
+      </button>`).join("");
+  }else{
+    const az=[...ctx.items].sort((a,b)=>heName(a).localeCompare(heName(b),state.lang));
+    el("mapRankTitle").textContent=t.mapListT;
+    el("mapRankList").innerHTML=`<p class="rank-na">${t.rankNA}</p>`+az.map(item=>`
+      <button class="rank-row az" data-go="${item.id}"><span class="nm">${heName(item)}</span></button>`).join("");
+  }
   el("mapRankList").querySelectorAll("[data-go]").forEach(b=>
     b.addEventListener("click",()=>selectLocation(b.dataset.go)));
   el("mapScope").hidden=state.locId==="il";
@@ -2964,15 +3110,18 @@ function renderTable(){
   const nameTh=rowType==="city"?t.thNameCity:rowType==="district"?t.thNameDist:t.thName;
   const cols=[
     {key:"name",label:nameTh,get:r=>heName(r.loc),num:false},
-    {key:"price",label:t.thPrice,get:r=>r.m.price,fmt:v=>fmtNIS(v)},
-    {key:"sqm",label:t.thPsm,get:r=>r.m.sqm,fmt:v=>fmtNIS(v)},
-    {key:"rent",label:t.thRent,get:r=>r.m.rent,fmt:v=>fmtNIS(v)},
-    {key:"yield",label:t.thYield,get:r=>r.m.grossYield,fmt:v=>v.toFixed(1)+"%"},
-    {key:"yoy",label:t.thYoy,get:r=>state.mode==="sale"?r.m.yoy:r.m.rentYoy,fmt:null},
-    {key:"tx",label:state.mode==="sale"?t.thTx:t.thListings,get:r=>state.mode==="sale"?r.m.tx:r.m.listings,fmt:fmtInt},
+    {key:"price",f:"price",label:t.thPrice,get:r=>r.m.price,fmt:v=>fmtNIS(v)},
+    {key:"sqm",f:"sqm",label:t.thPsm,get:r=>r.m.sqm,fmt:v=>fmtNIS(v)},
+    {key:"rent",f:"rent",label:t.thRent,get:r=>r.m.rent,fmt:v=>fmtNIS(v)},
+    {key:"yield",f:"yield",label:t.thYield,get:r=>r.m.grossYield,fmt:v=>v.toFixed(1)+"%"},
+    {key:"yoy",f:state.mode==="sale"?"yoy":"rentYoy",label:t.thYoy,get:r=>state.mode==="sale"?r.m.yoy:r.m.rentYoy,fmt:null},
+    {key:"tx",f:state.mode==="sale"?"tx":"listings",label:state.mode==="sale"?t.thTx:t.thListings,get:r=>state.mode==="sale"?r.m.tx:r.m.listings,fmt:fmtInt},
   ];
+  /* sorting by a value ranks the rows — allowed only when every value is RAW */
+  const canSort=c=>c.key==="name"||rankable(c.f,rows);
+  if(!canSort(cols.find(c=>c.key===state.sort.key)||cols[0]))state.sort={key:"name",dir:1};
   const data=rows.map(loc=>({loc,m:metricsOf(loc.id)}));
-  const sc=cols.find(c=>c.key===state.sort.key)||cols[1];
+  const sc=cols.find(c=>c.key===state.sort.key)||cols[0];
   data.sort((a,b)=>{
     if(sc.key==="name")return state.sort.dir*heName(a.loc).localeCompare(heName(b.loc),state.lang);
     if(!sc.get)return 0;
@@ -2980,7 +3129,7 @@ function renderTable(){
   });
   el("tbl").innerHTML=`
     <thead><tr>${cols.map(c=>{
-      const sortable=true;
+      const sortable=canSort(c);
       const active=state.sort.key===c.key;
       return `<th ${active?`aria-sort="${state.sort.dir===1?"ascending":"descending"}"`:""}>
         ${sortable?`<button data-sort="${c.key}">${c.label}<span class="arr">${active?(state.sort.dir===1?"▲":"▼"):"▼"}</span></button>`:c.label}</th>`;
@@ -3021,12 +3170,12 @@ function renderTable(){
 
 /* ---------- market rankings ---------- */
 const RANK_TABS=[
-  {id:"exp",label:()=>T().tExpensive,get:m=>m.price,dir:-1,fmt:v=>fmtCompact(v)},
-  {id:"cheap",label:()=>T().tCheap,get:m=>m.price,dir:1,fmt:v=>fmtCompact(v)},
-  {id:"rise",label:()=>T().tRise,get:m=>m.yoy,dir:-1,fmt:v=>fmtPct(v)},
-  {id:"fall",label:()=>T().tFall,get:m=>m.yoy,dir:1,fmt:v=>fmtPct(v)},
-  {id:"yield",label:()=>T().tYield,get:m=>m.grossYield,dir:-1,fmt:v=>v.toFixed(1)+"%"},
-  {id:"tx",label:()=>T().tTx,get:m=>m.tx,dir:-1,fmt:fmtInt},
+  {id:"exp",f:"price",label:()=>T().tExpensive,get:m=>m.price,dir:-1,fmt:v=>fmtCompact(v)},
+  {id:"cheap",f:"price",label:()=>T().tCheap,get:m=>m.price,dir:1,fmt:v=>fmtCompact(v)},
+  {id:"rise",f:"yoy",label:()=>T().tRise,get:m=>m.yoy,dir:-1,fmt:v=>fmtPct(v)},
+  {id:"fall",f:"yoy",label:()=>T().tFall,get:m=>m.yoy,dir:1,fmt:v=>fmtPct(v)},
+  {id:"yield",f:"yield",label:()=>T().tYield,get:m=>m.grossYield,dir:-1,fmt:v=>v.toFixed(1)+"%"},
+  {id:"tx",f:"tx",label:()=>T().tTx,get:m=>m.tx,dir:-1,fmt:fmtInt},
 ];
 let rankTab="exp";
 function renderRankings(){
@@ -3035,13 +3184,23 @@ function renderRankings(){
   const cty=cityOf(l);
   const scopeNbhd=!!cty&&childrenOf(cty.id).length>=4;
   const pool=scopeNbhd?childrenOf(cty.id):cityList();
+  /* only tabs whose every ranked value is RAW; none qualify today */
+  const tabs=RANK_TABS.filter(x=>rankable(x.f,pool));
+  if(!tabs.length){
+    el("rankScope").textContent="";
+    el("rankTabs").innerHTML="";
+    el("rankGrid").innerHTML=`<div class="rank-off">${vcTag("na")}<p>${t.rankOffWhy}</p></div>`;
+    el("rankFoot").textContent="";
+    return;
+  }
+  if(!tabs.some(x=>x.id===rankTab))rankTab=tabs[0].id;
   el("rankScope").textContent=scopeNbhd?`${t.scopeNbhd} · ${heName(cty)}`:t.scopeCities;
-  el("rankTabs").innerHTML=RANK_TABS.map(rt=>
+  el("rankTabs").innerHTML=tabs.map(rt=>
     `<button role="tab" data-rt="${rt.id}" aria-pressed="${rt.id===rankTab}">${rt.label()}</button>`).join("");
   el("rankTabs").querySelectorAll("[data-rt]").forEach(b=>b.addEventListener("click",()=>{
     rankTab=b.dataset.rt;renderRankings();
   }));
-  const rt=RANK_TABS.find(x=>x.id===rankTab);
+  const rt=tabs.find(x=>x.id===rankTab);
   const ranked=[...pool].sort((a,b)=>rt.dir*(rt.get(metricsOf(a.id))-rt.get(metricsOf(b.id)))).slice(0,10);
   const vals=ranked.map(x=>rt.get(metricsOf(x.id)));
   const vmax=Math.max(...vals.map(Math.abs));
@@ -3060,13 +3219,13 @@ function renderRankings(){
 /* ---------- comparison ---------- */
 const CMP_COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
 const CMP_METRICS=[
-  {label:()=>T().thPrice,get:m=>m.price,fmt:v=>fmtCompact(v),best:"max"},
-  {label:()=>T().thPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),best:"max"},
-  {label:()=>T().thRent,get:m=>m.rent,fmt:v=>fmtNIS(v),best:"max"},
-  {label:()=>T().thYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",best:"max"},
-  {label:()=>T().thYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),best:"max"},
-  {label:()=>T().y3,get:m=>m.y3,fmt:v=>fmtPct(v),best:"max"},
-  {label:()=>T().thTx,get:m=>m.tx,fmt:fmtInt,best:"max"},
+  {f:"price",label:()=>T().thPrice,get:m=>m.price,fmt:v=>fmtCompact(v),best:"max"},
+  {f:"sqm",label:()=>T().thPsm,get:m=>m.sqm,fmt:v=>fmtCompact(v),best:"max"},
+  {f:"rent",label:()=>T().thRent,get:m=>m.rent,fmt:v=>fmtNIS(v),best:"max"},
+  {f:"yield",label:()=>T().thYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",best:"max"},
+  {f:"yoy",label:()=>T().thYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),best:"max"},
+  {f:"y3",label:()=>T().y3,get:m=>m.y3,fmt:v=>fmtPct(v),best:"max"},
+  {f:"tx",label:()=>T().thTx,get:m=>m.tx,fmt:fmtInt,best:"max"},
 ];
 function cmpLabel(id){const l=LOC[id];const c=cityOf(l);
   return c&&c.id!==l.id?`${heName(c)} — ${heName(l)}`:heName(l)}
@@ -3111,11 +3270,11 @@ function renderCompare(){
   el("cmpBody").innerHTML=CMP_METRICS.map(cm=>{
     const vals=items.map(it=>cm.get(it.m));
     const vmax=Math.max(...vals.map(Math.abs))||1;
-    const bestV=Math.max(...vals);
+    const bestV=rankable(cm.f,items.map(it=>LOC[it.id]))?Math.max(...vals):null;   /* ★ only over RAW values */
     return `<div class="cmp-metric">
       <div class="l">${cm.label()}</div>
       <div class="cmp-bars">${items.map((it,i)=>`
-        <div class="cmp-bar ${vals[i]===bestV?"best":""}">
+        <div class="cmp-bar ${bestV!=null&&vals[i]===bestV?"best":""}">
           <span class="who">${cmpLabel(it.id)}</span>
           <span class="tr"><i style="width:${Math.max(4,Math.abs(vals[i])/vmax*100)}%;background:${it.color}"></i></span>
           <span class="vl num">${cm.fmt(vals[i])}</span>
@@ -3142,11 +3301,11 @@ function renderInsights(){
     ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> בשנה (${cp("yoy")}), ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים (${cp("y3")}).`
     :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> year on year (${cp("yoy")}) and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years (${cp("y3")}).`);
   if(state.locId==="il")out.push(he
-    ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית (סוף יוני 2026) — כ-<b class="num">26</b> חודשי היצע; ${MKT.nh?MKT.nh.sentHe:`קצב הירידה השנתי של מדד הדירות החדשות התמתן ל-<b class="num">2.0%-</b>.`}`
-    :`Unsold new-home inventory: <b class="num">84,280</b> nationally (end-June 2026) — ≈<b class="num">26</b> months of supply; ${MKT.nh?MKT.nh.sentEn:`the new-homes index's annual decline eased to <b class="num">-2.0%</b>.`}`);
+    ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית — כ-<b class="num">26</b> חודשי היצע (סטטי · למ״ס, סוף יוני 2026); ${MKT.nh?MKT.nh.sentHe.replace(/\.$/,"")+" (רשמי · סנכרון יומי).":`מדד הדירות החדשות של הלמ״ס: <b class="num">2.0%-</b> שנתי (סטטי · מאי–יוני 2026).`}`
+    :`Unsold new-home inventory: <b class="num">84,280</b> nationally — ≈<b class="num">26</b> months of supply (static · CBS, end-June 2026); ${MKT.nh?MKT.nh.sentEn.replace(/\.$/,"")+" (official · daily sync).":`CBS new-homes index: <b class="num">-2.0%</b> year on year (static · May–Jun 2026).`}`);
   if(state.locId==="il")out.push(he
-    ?`צד ההיצע ממשיך להתרחב: <b class="num">80,010</b> התחלות בנייה ב-2025 (<b class="num">+14.6%</b>) — השיא מאז 1991; ${MKT.boi?`ריבית בנק ישראל עומדת על <b class="num">${MKT.boi.valTxt}</b>.`:`ריבית בנק ישראל ירדה ל-<b class="num">3.25%</b> (1.9.2026).`}`
-    :`Supply keeps expanding: <b class="num">80,010</b> housing starts in 2025 (<b class="num">+14.6%</b>) — the highest since 1991; ${MKT.boi?`the Bank of Israel rate stands at <b class="num">${MKT.boi.valTxt}</b>.`:`the Bank of Israel rate was cut to <b class="num">3.25%</b> (1.9.2026).`}`);
+    ?(MKT.boi?`ריבית בנק ישראל עומדת על <b class="num">${MKT.boi.valTxt}</b> (רשמי · נבדק ${MKT.boi.checkedDay}).`:`ריבית בנק ישראל ירדה ל-<b class="num">3.25%</b> (סטטי · 1.9.2026).`)
+    :(MKT.boi?`The Bank of Israel rate stands at <b class="num">${MKT.boi.valTxt}</b> (official · checked ${MKT.boi.checkedDay}).`:`The Bank of Israel rate was cut to <b class="num">3.25%</b> (static · 1.9.2026).`));
   if(m.rentYoy>m.yoy+0.15)out.push(he
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, לעומת <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, vs <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — upward pressure on yields.`);
@@ -3178,10 +3337,10 @@ function renderConfidence(){
   const F=state.mode==="sale"
     ?[["price",t.avgPrice],["sqm",t.psm],["yoy",t.yoyLbl],["y3",t.y3],["tx",t.tx],["listings",t.listings]]
     :[["rent",t.avgRent],["rentPsm",t.rpsm],["rentYoy",t.yoyLbl],["yield",t.grossYield],["listings",t.listings]];
-  const by={raw:[],der:[],mod:[]};
+  const by={raw:[],static:[],der:[],mod:[]};
   for(const[f,lb]of F)by[vcOf(l,f)].push(`${lb} <span class="bs-p">(${vcPer(l,f)})</span>`);
   const row=(c,items)=>items.length?`<div class="bs-row">${vcTag(c)}<span>${items.join(" · ")}</span></div>`:"";
-  el("confCard").innerHTML=row("raw",by.raw)+row("der",by.der)+row("mod",by.mod)+
+  el("confCard").innerHTML=row("raw",by.raw)+row("static",by.static)+row("der",by.der)+row("mod",by.mod)+
     `<div class="bs-row">${vcTag("na")}<span>${t.basisNA}</span></div>`+
     `<div class="conf-note">${t.basisTx}</div>`;
 }
@@ -3294,7 +3453,9 @@ function renderTx(){
     <span style="flex:1"></span>
     <span class="tx-src">${txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:""}</span>`;
   const M=txState.meta;
-  el("txProv").innerHTML=t.txOfficialBadge+
+  /* "official · observed" is claimed only for the live official source — never
+     for the local verification fixture */
+  el("txProv").innerHTML=(txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:t.txOfficialBadge)+
     (M&&M.latestTransactionDate?` · ${t.txLatestInSrc(M.latestTransactionDate.split("-").reverse().join("."))}`:"")+
     (M&&M.syncedAt?` · ${t.txSynced(new Date(M.syncedAt).toLocaleString(state.lang==="he"?"he-IL":"en-GB"))}`:"");
 
@@ -3420,6 +3581,155 @@ function initTx(){
   });
 }
 
+
+/* =====================================================================
+   INVESTOR CALCULATOR — the investor's own scenario.
+   Independent of the capital model below: it reads no score, ranking,
+   curve or appreciation of its own. Every input is the investor's (a board
+   price may be copied in explicitly, labelled DERIVED). An empty or invalid
+   input leaves every result that needs it UNAVAILABLE — nothing is defaulted,
+   and no appreciation or rent growth is ever assumed.
+   ===================================================================== */
+/* @calc-engine:start — pure arithmetic; no DOM, no board data, no globals */
+const CALC_IN=[
+  {id:"price",min:1,max:1e10},{id:"equity",min:0,max:1e10},{id:"tax",min:0,max:20},{id:"fees",min:0,max:20},
+  {id:"rate",min:0,max:30},{id:"term",min:1,max:40,int:1},
+  {id:"rent",min:0,max:1e7},{id:"vac",min:0,max:100},{id:"opex",min:0,max:100},
+  {id:"hold",min:1,max:40,int:1},{id:"rentG",min:-50,max:50},{id:"app",min:-50,max:50},{id:"sell",min:0,max:20},
+];
+/* result → every input it is computed from */
+const CALC_NEED=(()=>{
+  const acq=["price","tax","fees","equity"],fin=[...acq,"rate","term"],ops=["rent","vac","opex"];
+  return{
+    cost:["price","tax","fees"],loan:acq,ltv:acq,pmt:fin,
+    gross:["price","rent"],noi:ops,net:["price","tax","fees",...ops],cf:[...fin,...ops],coc:[...fin,...ops],
+    exitV:["price","app","hold"],debtRem:[...fin,"hold"],exitEq:[...fin,"hold","app","sell"],
+    cumCf:[...fin,...ops,"hold","rentG"],profit:[...fin,...ops,"hold","rentG","app","sell"],
+    irr:[...fin,...ops,"hold","rentG","app","sell"],
+  };
+})();
+function calcEngine(raw){
+  const v={},invalid=[];
+  for(const f of CALC_IN){
+    const x=raw?raw[f.id]:undefined;
+    if(x===undefined||x===null||String(x).trim()===""){v[f.id]=null;continue}
+    const n=Number(String(x).replace(/[,\s₪%]/g,""));
+    if(!isFinite(n)||n<f.min||n>f.max||(f.int&&!Number.isInteger(n))){v[f.id]=null;invalid.push(f.id);continue}
+    v[f.id]=n;
+  }
+  const cost=()=>v.price*(1+(v.tax+v.fees)/100);
+  const loan=()=>Math.max(0,cost()-v.equity);
+  const invested=()=>cost()-loan();                       /* = min(equity, total cost) */
+  const mr=()=>v.rate/1200,nm=()=>v.term*12;
+  const pmt=()=>{const L=loan();if(L===0)return 0;return mr()===0?L/nm():L*mr()/(1-Math.pow(1+mr(),-nm()))};
+  const debtAt=yrs=>{const L=loan();if(L===0)return 0;const N=nm(),m=Math.min(yrs*12,N);
+    if(mr()===0)return L*(1-m/N);const q=1+mr();return L*(Math.pow(q,N)-Math.pow(q,m))/(Math.pow(q,N)-1)};
+  const noi1=()=>v.rent*12*(1-(v.vac+v.opex)/100);
+  const cfY=y=>noi1()*Math.pow(1+v.rentG/100,y-1)-(y<=v.term?pmt()*12:0);
+  const exitV=()=>v.price*Math.pow(1+v.app/100,v.hold);
+  const exitEq=()=>exitV()*(1-v.sell/100)-debtAt(v.hold);
+  const cumCf=()=>{let s=0;for(let y=1;y<=v.hold;y++)s+=cfY(y);return s};
+  const out={};
+  const put=(k,fn)=>{
+    const miss=CALC_NEED[k].filter(i=>v[i]==null);
+    if(miss.length){out[k]={ok:false,missing:miss.filter(i=>!invalid.includes(i)),invalid:miss.filter(i=>invalid.includes(i))};return}
+    const r=fn();
+    out[k]=typeof r==="string"?{ok:false,missing:[],invalid:[],why:r}
+      :isFinite(r)?{ok:true,v:r}:{ok:false,missing:[],invalid:[],why:"undef"};
+  };
+  put("cost",cost);put("loan",loan);put("ltv",()=>loan()/v.price*100);put("pmt",pmt);
+  put("gross",()=>v.rent*12/v.price*100);put("noi",noi1);put("net",()=>noi1()/cost()*100);
+  put("cf",()=>noi1()/12-pmt());
+  put("coc",()=>invested()>0?(noi1()-pmt()*12)/invested()*100:"zeroEq");
+  put("exitV",exitV);put("debtRem",()=>debtAt(v.hold));put("exitEq",exitEq);put("cumCf",cumCf);
+  put("profit",()=>exitEq()+cumCf()-invested());
+  put("irr",()=>{
+    const I=invested();if(!(I>0))return"zeroEq";
+    const flows=[-I];for(let y=1;y<=v.hold;y++)flows.push(cfY(y)+(y===v.hold?exitEq():0));
+    const npv=k=>flows.reduce((a,c,t)=>a+c/Math.pow(1+k,t),0);
+    let lo=-0.99,hi=10,flo=npv(lo);if(flo*npv(hi)>0)return"noIrr";
+    for(let it=0;it<200;it++){const mid=(lo+hi)/2,fm=npv(mid);if(flo*fm<=0)hi=mid;else{lo=mid;flo=fm}}
+    return(lo+hi)/2*100;
+  });
+  const surplus=v.price!=null&&v.tax!=null&&v.fees!=null&&v.equity!=null?Math.max(0,v.equity-cost()):0;
+  return{inputs:v,invalid,out,surplus};
+}
+/* @calc-engine:end */
+
+/* @calc-ui:start */
+const CALC_GROUPS=[["buy",["price","equity","tax","fees"]],["fin",["rate","term"]],["ops",["rent","vac","opex"]],["exit",["hold","rentG","app","sell"]]];
+const CALC_UNIT={price:"nis",equity:"nis",tax:"pct",fees:"pct",rate:"pctYr",term:"yrs",rent:"nisMo",vac:"pctRent",opex:"pctRent",hold:"yrs",rentG:"pctYr",app:"pctYr",sell:"pct"};
+const CALC_OUT_G=[["acq",["cost","loan","ltv","pmt"]],["y1",["gross","noi","net","cf","coc"]],["exit",["exitV","debtRem","exitEq","cumCf","profit","irr"]]];
+const CALC_FMT={ltv:1,gross:2,net:2,coc:2,irr:2};          /* percentages; the rest are ₪ */
+const calcState={v:{},src:{}};                               /* starts EMPTY — no defaults */
+const calcEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const calcFmt=(k,x)=>k in CALC_FMT?x.toFixed(CALC_FMT[k])+"%":(x<0?"−":"")+fmtNIS(Math.abs(x));
+function calcInputTag(id,r){
+  const t=T(),x=calcState.v[id];
+  if(x==null||String(x).trim()==="")return `<span class="vc na" title="${t.vcTip.na}">${t.vcName.na}</span>`;
+  if(r.invalid.includes(id))return `<span class="vc na" title="${t.calcBadTip}">${t.calcBadShort}</span>`;
+  const s=calcState.src[id];
+  if(s&&LOC[s.loc])return `<span class="vc der" title="${t.calcFromBoardTip(heName(LOC[s.loc]))}">${t.vcName.der}</span>`;
+  return `<span class="vc usr" title="${t.vcTip.usr}">${t.vcName.usr}</span>`;
+}
+function calcOutputsHTML(r){
+  const t=T(),lab=i=>t.calcIn[i];
+  const noApp=r.inputs.app==null;
+  return CALC_OUT_G.map(([g,ks])=>`<div class="calc-og">
+    <div class="calc-ogt">${g==="exit"&&r.inputs.hold!=null?t.calcExitT(r.inputs.hold):t.calcOutG[g]}</div>
+    ${g==="exit"&&noApp?`<div class="calc-need">${t.calcExitNeed}</div>`:""}
+    <div class="calc-os">${ks.map(k=>{
+      const o=r.out[k];
+      if(o.ok)return `<div class="calc-o" data-o="${k}"><span class="l">${t.calcOutT[k]}</span>
+        <span class="v num${o.v<0?" down":""}">${calcFmt(k,o.v)}</span>
+        <span class="s"><span class="vc der" title="${t.calcDerTip}">${t.vcName.der}</span> ${t.calcF[k]}</span></div>`;
+      const why=o.why?t.calcWhy[o.why]:[o.invalid.length?t.calcBad(o.invalid.map(lab).join(", ")):"",
+        o.missing.length?t.calcMiss(o.missing.map(lab).join(", ")):""].filter(Boolean).join(" · ");
+      return `<div class="calc-o na" data-o="${k}"><span class="l">${t.calcOutT[k]}</span>
+        <span class="v">${t.naShort}</span><span class="s"><span class="vc na">${t.vcName.na}</span> ${why}</span></div>`;
+    }).join("")}</div></div>`).join("")+
+    (r.surplus>0?`<div class="calc-need">${t.calcSurplus}</div>`:"")+`<p class="calc-foot">${t.calcFoot}</p>`;
+}
+function renderCalc(){
+  const sec=el("calcBody");if(!sec)return;
+  const t=T(),l=LOC[state.locId],r=calcEngine(calcState.v);
+  /* a board price may be copied in — only a DERIVED one, never a modelled one */
+  const boardPrice=!filtersActive()&&vcOf(l,"price")==="der"?metricsOf(l.id).price:null;
+  sec.innerHTML=`<div class="calc-in">${CALC_GROUPS.map(([g,ids])=>`<div class="calc-g"><div class="calc-gt">${t.calcG[g]}</div>
+    ${ids.map(id=>`<div class="calc-f">
+      <label for="calc_${id}">${t.calcIn[id]} <span id="calcTag_${id}">${calcInputTag(id,r)}</span></label>
+      <span class="inp"><input id="calc_${id}" data-calc="${id}" type="text" inputmode="decimal" dir="ltr" autocomplete="off"
+        value="${calcEsc(calcState.v[id]??"")}" aria-invalid="${r.invalid.includes(id)}"><span class="u">${t.calcUnit[CALC_UNIT[id]]}</span></span>
+      ${id==="price"&&boardPrice?`<div class="calc-ref">${t.calcUseBoard(heName(l),fmtNIS(boardPrice))} ${vcTag("der")}
+        <button type="button" data-calcfill="${boardPrice}" data-calcloc="${l.id}">${t.calcUseBtn}</button></div>`:""}
+      ${id==="rate"&&MKT.boi?`<div class="calc-ref">${vcTag("raw")} ${t.calcBoi(MKT.boi.valTxt,MKT.boi.checkedDay)}</div>`:""}
+    </div>`).join("")}</div>`).join("")}
+    <button type="button" class="calc-reset" id="calcReset">${t.calcReset}</button></div>
+    <div class="calc-out" id="calcOut">${calcOutputsHTML(r)}</div>`;
+}
+/* typing refreshes tags and results only, so the field keeps its focus */
+function calcUpdate(){
+  const r=calcEngine(calcState.v);
+  for(const f of CALC_IN){
+    const tg=el("calcTag_"+f.id);if(tg)tg.innerHTML=calcInputTag(f.id,r);
+    const inp=el("calc_"+f.id);if(inp)inp.setAttribute("aria-invalid",String(r.invalid.includes(f.id)));
+  }
+  el("calcOut").innerHTML=calcOutputsHTML(r);
+}
+function initCalc(){
+  const sec=el("calcBody");if(!sec)return;
+  sec.addEventListener("input",e=>{
+    const id=e.target.dataset.calc;if(!id)return;
+    calcState.v[id]=e.target.value;delete calcState.src[id];calcUpdate();
+  });
+  sec.addEventListener("click",e=>{
+    const fill=e.target.closest("[data-calcfill]");
+    if(fill){calcState.v.price=fill.dataset.calcfill;calcState.src.price={loc:fill.dataset.calcloc};
+      el("calc_price").value=fill.dataset.calcfill;calcUpdate();return}
+    if(e.target.closest("#calcReset")){calcState.v={};calcState.src={};renderCalc()}
+  });
+}
+/* @calc-ui:end */
 
 /* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
@@ -4351,7 +4661,7 @@ function refresh(withSkeleton){
   function postKpi(){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
-    renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();if(CI_ENABLED){renderCITeaser();renderCapital()}renderTx();txFetch(false);
+    renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();if(CI_ENABLED){renderCITeaser();renderCapital()}renderTx();txFetch(false);
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -4368,7 +4678,7 @@ function setMode(mode){
   state.mode=mode;
   document.querySelectorAll('#modeToggle button,#modeToggleM button').forEach(b=>
     b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
-  state.sort={key:mode==="sale"?"price":"rent",dir:-1};
+  state.sort={key:"name",dir:1};
   refresh(true);
 }
 function setLang(lang){
@@ -4388,6 +4698,7 @@ setStatics();
 el("geoCloseBtn").addEventListener("click",closeGeo);
 initTx();
 initSearch();
+initCalc();
 if(CI_ENABLED){initCapital();["capital","ciTeaserBlk","railCap"].forEach(id=>{el(id).hidden=false})}
 initCmd();
 initMapZoom();
