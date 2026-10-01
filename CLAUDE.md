@@ -50,7 +50,8 @@
   `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` are set as server-side secrets.
 - `lib/gov/tx-refresh.js` + `api/jobs/tx-refresh.js` + `.github/workflows/tx-refresh.yml` = the transaction
   refresh core shared by the GitHub job (`scripts/tx-sync.js`) and PROPX's own Vercel runtime (token-protected,
-  fail-closed `POST /api/jobs/tx-refresh?mode=probe|run`; `middleware.js` lets exactly that path — and no other
+  fail-closed `POST /api/jobs/tx-refresh?mode=probe|sample|run` — PROPX_JOB_TOKEN or a verified GitHub OIDC token of this
+  repo's production-branch job workflow, `lib/gov/oidc.js`; `middleware.js` lets exactly that path — and no other
   `/api/jobs/…` — past the session gate). A window is `complete` only when the sweep proves it;
   refused/timeout/cap/partial never are. `lib/store-config.js` validates the store env and redacts it from any text.
 - `supabase/` = migrations + `supabase/README.md` (activation steps for the dedicated PROPX project, secret names

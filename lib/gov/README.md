@@ -132,8 +132,16 @@ before they reach a run record, a log or an answer.
 a warning — never worked around). The same refresh can run inside PROPX's own
 Vercel runtime: `POST /api/jobs/tx-refresh` (`api/jobs/tx-refresh.js`) — the
 one exact path the browser session gate lets through (decided on the parsed
-pathname in `middleware.js`) — authenticated by a bearer token
-(`PROPX_JOB_TOKEN`, server-side env; fail-closed: unset → 503, wrong → 401).
+pathname in `middleware.js`) — authenticated by a bearer token: `PROPX_JOB_TOKEN`
+(server-side env; fail-closed: unset → 503, wrong → 401), or a GitHub Actions
+OIDC token minted by `tx-refresh.yml` for audience `propx-jobs` — GitHub's
+signature and the repository id, production branch, workflow and event are all
+verified (`lib/gov/oidc.js`), so no shared secret is needed.
+`mode=sample` runs the page's own transaction path (`/api/gov/transactions`'s
+service and providers) for a few cities and returns what each answered, why
+when empty, and the newest official rows (`lib/gov/tx-probe.js`); `mode=probe`
+reports the source's raw answer to the runtime (status, edge headers, a short
+excerpt of a refusal).
 `mode=probe` sends the raw address-lookup request and reports whether that
 runtime is accepted; `mode=run` refreshes into the Supabase ledger and records
 each area `running` before it starts and with its result after. Every official

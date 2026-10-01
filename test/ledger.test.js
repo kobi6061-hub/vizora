@@ -288,11 +288,12 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
     });
     await t('probe: one official request, reported as reachable or refused — nothing written', async () => {
       const seen = [];
-      const refuse = async (u) => { seen.push(String(u)); return { ok: false, status: 403, json: async () => ({}) }; };
+      const refuse = async (u) => { seen.push(String(u)); return { ok: false, status: 403, json: async () => ({}), text: async () => 'Forbidden' }; };
       const p1 = await call(makeHandler({ env: { PROPX_JOB_TOKEN: TOKEN }, fetchImpl: refuse }), { mode: 'probe', auth: 'Bearer ' + TOKEN });
       assert.equal(p1.status, 200); assert.deepEqual([p1.json.reachable, p1.json.status], [false, 'refused']);
       assert.equal(seen.length, 1); assert.match(seen[0], /govmap\.gov\.il\/api\/search-service\/autocomplete$/);
-      const answer = async () => ({ ok: true, status: 200, json: async () => ({ results: [{ text: 'באר שבע', shape: 'POINT(3874799 3766263)' }] }) });
+      const answer = async () => ({ ok: true, status: 200, json: async () => ({ results: [{ text: 'באר שבע', shape: 'POINT(3874799 3766263)' }] }),
+        text: async () => JSON.stringify({ results: [{ text: 'באר שבע', shape: 'POINT(3874799 3766263)' }] }) });
       const p2 = await call(makeHandler({ env: { PROPX_JOB_TOKEN: TOKEN }, fetchImpl: answer }), { mode: 'probe', auth: 'Bearer ' + TOKEN });
       assert.equal(p2.json.reachable, true);
       assert.equal((await call(makeHandler({ env: { PROPX_JOB_TOKEN: TOKEN } }), { mode: 'drop', auth: 'Bearer ' + TOKEN })).status, 400);
@@ -373,6 +374,63 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
       assert.deepEqual(await sweep(1), { windowCheck: 'complete', gaps: [] });
       const cut = await sweep(250);
       assert.equal(cut.windowCheck, 'partial'); assert.ok(cut.gaps.includes('page-limit'));
+    });
+    /* GitHub OIDC: a signing key of our own stands in for GitHub's; its JWKS is served by the fetch double */
+    const crypto = require('node:crypto');
+    const { verifyGithubOidc, EXPECT, ISSUER, JWKS_URL } = require('../lib/gov/oidc');
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const other = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const jwk = { ...publicKey.export({ format: 'jwk' }), kid: 'unit-kid', alg: 'RS256', use: 'sig' };
+    const b64 = (o) => Buffer.from(typeof o === 'string' ? o : JSON.stringify(o)).toString('base64url');
+    const nowS = Math.floor(Date.now() / 1000);
+    const goodClaims = { iss: ISSUER, aud: 'propx-jobs', iat: nowS - 5, nbf: nowS - 5, exp: nowS + 300, repository: EXPECT.repository,
+      repository_id: EXPECT.repositoryId, ref: EXPECT.ref, event_name: 'workflow_dispatch', workflow_ref: `${EXPECT.repository}/.github/workflows/tx-refresh.yml@${EXPECT.ref}` };
+    const jwt = (claims = {}, { header = {}, key = privateKey } = {}) => {
+      const h = b64({ alg: 'RS256', kid: 'unit-kid', typ: 'JWT', ...header }), pl = b64({ ...goodClaims, ...claims });
+      return `${h}.${pl}.${crypto.sign('RSA-SHA256', Buffer.from(h + '.' + pl), key).toString('base64url')}`;
+    };
+    const withJwks = (rest) => async (u, init) => (String(u) === JWKS_URL ? { ok: true, status: 200, json: async () => ({ keys: [jwk] }) } : rest(u, init));
+    const noNet = withJwks(async () => ({ ok: false, status: 599, json: async () => ({}), text: async () => '' }));
+    await t('GitHub OIDC: only this repository, its production branch and its job workflow — every other token is refused', async () => {
+      const claims = await verifyGithubOidc(jwt(), { fetchImpl: noNet });
+      assert.equal(claims.repository, 'kobi6061-hub/vizora');
+      const bad = [
+        [jwt({ aud: 'other' }), /audience/], [jwt({ repository_id: '1' }), /repository/], [jwt({ repository: 'someone/vizora' }), /repository/],
+        [jwt({ ref: 'refs/heads/main' }), /ref/], [jwt({ ref: 'refs/pull/1/merge' }), /ref/], [jwt({ event_name: 'pull_request' }), /event/],
+        [jwt({ workflow_ref: `${EXPECT.repository}/.github/workflows/evil.yml@${EXPECT.ref}` }), /workflow/],
+        [jwt({ exp: nowS - 120 }), /expired/], [jwt({ iss: 'https://evil.example' }), /issuer/],
+        [jwt({}, { key: other.privateKey }), /bad signature/], [jwt({}, { header: { kid: 'nope' } }), /unknown signing key/],
+        [jwt({}, { header: { alg: 'none' } }), /algorithm/], [jwt({}, { header: { alg: 'HS256' } }), /algorithm/], ['a.b', /not a JWT/],
+      ];
+      for (const [tok, why] of bad) await assert.rejects(verifyGithubOidc(tok, { fetchImpl: noNet }), why);
+      // the endpoint: a verified OIDC token passes without PROPX_JOB_TOKEN; an unverifiable one is 401, never 503
+      const answer = withJwks(async () => ({ ok: true, status: 200, headers: { get: () => null }, json: async () => ({ results: [] }), text: async () => '{"results":[]}' }));
+      const ok = await call(makeHandler({ env: {}, fetchImpl: answer }), { mode: 'probe', auth: 'Bearer ' + jwt() });
+      assert.equal(ok.status, 200, ok.raw); assert.deepEqual([ok.json.reachable, ok.json.status, ok.json.http.status], [true, 'accepted', 200]);
+      assert.equal((await call(makeHandler({ env: {}, fetchImpl: answer }), { mode: 'probe', auth: 'Bearer ' + jwt({ ref: 'refs/heads/main' }) })).status, 401);
+    });
+    await t('probe reports a refusal as the source sent it; sample runs the page path per city with official rows', async () => {
+      const refuse = withJwks(async () => ({ ok: false, status: 403, headers: { get: (k) => ({ server: 'edge-x', 'content-type': 'text/html' })[k] || null },
+        json: async () => ({}), text: async () => '<html><title>Access denied</title><body>Request blocked. <script>x()</script></body></html>' }));
+      const pr = await call(makeHandler({ env: {}, fetchImpl: refuse }), { mode: 'probe', auth: 'Bearer ' + jwt() });
+      assert.deepEqual([pr.json.reachable, pr.json.status, pr.json.http.status, pr.json.http.headers.server], [false, 'refused', 403, 'edge-x']);
+      assert.match(pr.json.http.bodyExcerpt, /Access denied Request blocked/); assert.ok(!/script|x\(\)/.test(pr.json.http.bodyExcerpt));
+      const d = new Date(Date.now() - 8 * 864e5).toISOString().slice(0, 10);
+      const gm = withJwks(async (u) => { u = String(u); const j = (o) => ({ ok: true, status: 200, json: async () => o });
+        if (u.includes('/search-service/autocomplete')) return j({ results: [{ text: 'x', shape: 'POINT(3874799 3766263)' }] });
+        if (/\/real-estate\/deals\//.test(u)) return j([{ polygon_id: 'P1' }]);
+        if (u.includes('/real-estate/street-deals/')) return j({ totalCount: 1, data: [{ objectid: u.includes('dealType=1') ? 11 : 12, dealDate: d, dealAmount: 2100000,
+          assetArea: 100, assetRoomNum: 4, floorNumber: 5, settlementNameHeb: 'באר שבע', streetNameHeb: 'רגר', houseNumber: 7, propertyTypeDescription: 'דירה בבית קומות' }] });
+        return { ok: false, status: 404, json: async () => ({}) }; });
+      const sm = await call(makeHandler({ env: {}, fetchImpl: gm }), { mode: 'sample', auth: 'Bearer ' + jwt() });
+      assert.equal(sm.status, 200, sm.raw); assert.equal(sm.json.cities.length, 4);
+      const c0 = sm.json.cities[0];
+      assert.deepEqual([c0.city, c0.status, c0.counts.official, c0.counts.residential, c0.latestTransactionDate], ['באר שבע', 'ok', 2, 2, d]);
+      assert.deepEqual(Object.keys(c0.rows[0]), ['date', 'city', 'street', 'houseNumber', 'rooms', 'areaSqm', 'floor', 'price', 'newness', 'dealType']);
+      assert.equal(c0.rows[0].price, 2100000); assert.ok(c0.unavailable.some((u) => /taxes\.gov\.il/.test(u)), 'the Tax Authority connector state is reported');
+      assert.equal((await call(makeHandler({ env: {}, fetchImpl: gm }), { mode: 'sample', auth: 'Bearer ' + jwt(), url: 'x' })).status, 200);
+      const bad = await call(makeHandler({ env: {}, fetchImpl: gm }), { mode: 'sample&cities=' + encodeURIComponent('<script>'), auth: 'Bearer ' + jwt() });
+      assert.equal(bad.status, 400);
     });
     await t('the session gate lets past only the login, crawler files and exactly /api/jobs/tx-refresh', async () => {
       const src = fs.readFileSync(path.join(__dirname, '..', 'middleware.js'), 'utf8');
