@@ -143,8 +143,93 @@ async function gis(id) {
   }
 }
 
+/* SOURCE-COMPLETENESS AUDIT (read-only): is 7c8255d0 still the authoritative
+   structured source, where does its event horizon end and why, and is there
+   any other official structured publication of later lotteries? */
+const CORE = '7c8255d0-49ef-49db-8904-4cf917586031';
+const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})/;
+async function audit() {
+  const { createHash } = require('node:crypto');
+  // 1 · the core resource and every sibling in its package, with every date CKAN keeps
+  const res = await ck('resource_show', { id: CORE });
+  const pkg = await ck('package_show', { id: res.package_id });
+  out({ kind: 'auditPackage', name: pkg.name, title: pkg.title, org: pkg.organization && pkg.organization.title, orgName: pkg.organization && pkg.organization.name,
+    metadata_created: pkg.metadata_created, metadata_modified: pkg.metadata_modified, notes: trim(pkg.notes, 900),
+    extras: (pkg.extras || []).map((e) => `${e.key}=${trim(e.value, 120)}`), tags: (pkg.tags || []).map((t) => t.name) });
+  for (const r of pkg.resources) {
+    out({ kind: 'auditResource', id: r.id, name: r.name, format: r.format, datastore_active: r.datastore_active, created: r.created,
+      last_modified: r.last_modified, metadata_modified: r.metadata_modified, size: r.size, hash: r.hash || null, url: trim(r.url, 220),
+      description: trim(r.description, 400), url_type: r.url_type || null, mimetype: r.mimetype || null });
+    if (!r.datastore_active || r.id === CORE) continue;
+    try {
+      const ds = await ck('datastore_search', { resource_id: r.id, limit: 1 });
+      out({ kind: 'auditSibling', id: r.id, total: ds.total, fields: ds.fields.map((f) => f.id).slice(0, 60) });
+    } catch (e) { out({ kind: 'auditSibling', id: r.id, error: e.message }); }
+  }
+  // 2 · the core table itself: event horizon by every date field, by programme, by marketing body, by year
+  const { rows, total, fields } = await allRows(CORE);
+  const dates = (f) => rows.map((r) => (DATE_RE.exec(String(r[f] || '')) || [])[0]).filter(Boolean).sort();
+  const byYear = {}, byProgYear = {};
+  for (const r of rows) {
+    const y = (DATE_RE.exec(String(r.LotteryExecutionDate || '')) || [])[1] || 'none';
+    byYear[y] = (byYear[y] || 0) + 1;
+    const k = `${r.MarketingMethodDesc}|${r.MarketingRep}|${r.LotteryType}`;
+    byProgYear[k] = byProgYear[k] || {}; byProgYear[k][y] = (byProgYear[k][y] || 0) + 1;
+  }
+  const exec = dates('LotteryExecutionDate'), signup = dates('LotteryEndSignupDate');
+  out({ kind: 'auditCore', total, fetched: rows.length, fields: fields.map((f) => `${f.id}:${f.type}`),
+    lotteryDate: { min: exec[0], max: exec[exec.length - 1], n: exec.length }, signupEnd: { min: signup[0], max: signup[signup.length - 1], n: signup.length },
+    byYear, byProgrammeBodyType: byProgYear,
+    maxLotteryId: Math.max(...rows.map((r) => Number(r.LotteryId) || 0)), maxRowId: Math.max(...rows.map((r) => Number(r._id) || 0)),
+    newestByRowId: rows.slice().sort((a, b) => Number(b._id) - Number(a._id)).slice(0, 3).map((r) => ({ _id: r._id, LotteryId: r.LotteryId, LotteryExecutionDate: r.LotteryExecutionDate, LamasName: r.LamasName })),
+    highestLotteryIds: rows.slice().sort((a, b) => Number(b.LotteryId) - Number(a.LotteryId)).slice(0, 5).map((r) => ({ LotteryId: r.LotteryId, LotteryExecutionDate: r.LotteryExecutionDate, LotteryStatusValue: r.LotteryStatusValue, LamasName: r.LamasName })) });
+  // did the CONTENT change since PROPX's stored snapshot? (same hash rule as lib/housing/normalize.js)
+  const hash = createHash('sha1').update(JSON.stringify(rows.map((r) => { const { _id, ...rest } = r; return rest; }).map((r) => JSON.stringify(r)).sort())).digest('hex');
+  out({ kind: 'auditHash', hash, matchesPropxSnapshot: hash === (process.env.PROPX_SNAPSHOT_HASH || '') });
+  // 3 · the original file behind the resource (the CKAN datastore is loaded from it): its own headers
+  if (res.url) {
+    try {
+      const r = await fetch(res.url, { method: 'HEAD', headers: { 'User-Agent': UA }, redirect: 'follow' });
+      out({ kind: 'auditFile', url: trim(res.url, 220), status: r.status, lastModified: r.headers.get('last-modified'), etag: r.headers.get('etag'),
+        length: r.headers.get('content-length'), type: r.headers.get('content-type') });
+    } catch (e) { out({ kind: 'auditFile', url: trim(res.url, 220), error: e.message }); }
+  }
+  // 4 · every dataset of the two publishing bodies (Ministry of Construction and Housing; Israel Land Authority)
+  for (const q of [`organization:${pkg.organization && pkg.organization.name}`, 'organization:israel-land-authority', 'organization:rmi', 'organization:rami']) {
+    try {
+      const r = await ck('package_search', { fq: q, rows: 200 });
+      out({ kind: 'auditOrg', fq: q, count: r.count, packages: r.results.map((p) => ({ name: p.name, title: p.title, modified: p.metadata_modified, resources: p.num_resources })) });
+    } catch (e) { out({ kind: 'auditOrg', fq: q, error: e.message }); }
+  }
+  try {
+    const orgs = await ck('organization_list', { all_fields: true, limit: 500 });
+    out({ kind: 'auditOrgList', orgs: orgs.filter((o) => /בינוי|שיכון|מקרקעי|דיור|housing|land/i.test(`${o.title} ${o.name}`)).map((o) => ({ name: o.name, title: o.title, packages: o.package_count })) });
+  } catch (e) { out({ kind: 'auditOrgList', error: e.message }); }
+  // 5 · a wider catalogue search for a successor or parallel publication of later lotteries
+  const seen = new Set();
+  for (const q of ['הגרלה', 'הגרלות', 'הגרלות דירה בהנחה', 'דירה בהנחה', 'מחיר למשתכן', 'מחיר מטרה', 'דיור בהישג יד', 'דיור מוזל', 'זוכים בהגרלה',
+    'מגרשים לבנייה עצמית', 'דירות בהנחה רמ"י', 'משרד הבינוי והשיכון הגרלות', 'lottery', 'dira behanacha', 'affordable housing', 'mechir lamishtaken']) {
+    try {
+      const r = await ck('package_search', { q, rows: 40 });
+      const hits = r.results.filter((p) => !seen.has(p.name));
+      hits.forEach((p) => seen.add(p.name));
+      out({ kind: 'auditSearch', q, count: r.count, hits: hits.map((p) => ({ name: p.name, title: p.title, org: p.organization && p.organization.title, modified: p.metadata_modified,
+        resources: (p.resources || []).map((x) => ({ id: x.id, name: x.name, ds: x.datastore_active, last_modified: x.last_modified })) })) });
+    } catch (e) { out({ kind: 'auditSearch', q, error: e.message }); }
+  }
+  // 6 · the Ministry's lottery website (an official PAGE — recorded, not an open-data contract)
+  for (const u of ['https://www.dira.moch.gov.il/', 'https://www.dira.moch.gov.il/ProjectsList']) {
+    try {
+      const r = await get(u, 'text/html');
+      out({ kind: 'auditSite', url: u, status: r.status, type: r.type, bytes: r.text.length,
+        scripts: [...r.text.matchAll(/<script[^>]+src="([^"]+)"/g)].map((m) => m[1]).slice(0, 10), title: (/<title>([^<]*)<\/title>/i.exec(r.text) || [])[1] || null });
+    } catch (e) { out({ kind: 'auditSite', url: u, error: e.message }); }
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--audit')) return audit();
   if (process.argv.includes('--profile')) return profile(one);
   if (process.argv.includes('--gis')) return gis(one);
   if (one) return describeResource(one, 5);
