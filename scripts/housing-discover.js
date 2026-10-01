@@ -319,7 +319,7 @@ async function dealsRepublished(city = 'באר שבע') {
     const spec = JSON.parse((await get(BASE + '/openapi.json')).text);
     out({ kind: 'republishedSpec', info: trim(spec.info, 1200), servers: spec.servers || null });
     for (const [path, ops] of Object.entries(spec.paths || {})) {
-      if (!/deal|nadlan|licen|terms/i.test(path)) continue;
+      if (!/^\/api\/deals\/(search|settlements|stats)$|licen|terms/i.test(path)) continue;
       for (const [method, op] of Object.entries(ops)) {
         const params = (op.parameters || []).map((x) => ({ name: x.name, in: x.in, req: !!x.required,
           type: x.schema && (x.schema.type || (x.schema.anyOf || []).map((a) => a.type).join('|')), enum: x.schema && x.schema.enum,
@@ -330,21 +330,36 @@ async function dealsRepublished(city = 'באר שבע') {
       }
     }
   } catch (e) { out({ kind: 'republishedSpec', error: e.message }); }
-  // the answer's own caveats and notes, and the newest deals of a few cities under each documented sort
-  for (const c of [city, 'תל אביב-יפו', 'ירושלים', 'חיפה']) {
-    for (const s of (sortValues.length ? sortValues : ['-date', 'date_desc']).slice(0, 4)) {
-      try {
-        const r = await get(`${BASE}/api/deals/search?settlement=${encodeURIComponent(c)}&limit=5&sort=${encodeURIComponent(s)}`);
-        const j = JSON.parse(r.text);
-        out({ kind: 'republishedCity', city: c, sort: s, status: r.status, echoedSort: j.sort, total: j.total, capped: j.total_capped, count: j.count,
-          rows: (j.data || []).map((d) => [d.date, d.amount, d.nature, d.rooms, d.area_sqm, d.portion, (d.addresses || []).slice(0, 2).join(' / ')].join(' · ')),
-          ...(c === city && s === (sortValues[0] || '-date') ? { caveats: trim(j.caveats, 1500), notes: trim(j.notes, 1500), address: trim(j.address, 300),
-            processed: trim(j.processed, 300), rowUrl: trim(j.row_url, 200), keys0: j.data && j.data[0] ? Object.keys(j.data[0]) : null } : {}) });
-      } catch (e) { out({ kind: 'republishedCity', city: c, sort: s, error: e.message }); }
-    }
+  // the exact shapes PROPX will depend on: the settlement list, the stats and change log, the
+  // answer's own caveats and notes, page-size and date-filter acceptance, the street filter
+  const show = async (label, path, pick) => {
+    try {
+      const r = await get(BASE + path);
+      let j = null; try { j = JSON.parse(r.text); } catch { /* not JSON */ }
+      out({ kind: 'republishedProbe', label, url: BASE + path, status: r.status, ...(j ? pick(j) : { excerpt: trim(plain(r.text), 300) }) });
+    } catch (e) { out({ kind: 'republishedProbe', label, url: BASE + path, error: e.message }); }
+  };
+  const arr = (j) => (Array.isArray(j) ? j : j.data || j.settlements || j.items || j.results || []);
+  await show('settlements', '/api/deals/settlements', (j) => ({ type: Array.isArray(j) ? 'array' : Object.keys(j).join(','), n: arr(j).length,
+    first: trim(arr(j).slice(0, 4), 400),
+    matches: trim(arr(j).filter((x) => /תל אביב|יפו|נוף הגליל|נצרת|קרי+ת|מודיעין|באר שבע|ירושלים|חיפה|פתח תקו/.test(JSON.stringify(x))).slice(0, 30), 1800) }));
+  await show('stats', '/api/deals/stats', (j) => ({ body: trim(j, 1500) }));
+  await show('log', '/api/deals/log', (j) => ({ n: arr(j).length, head: trim(arr(j).slice(0, 4), 1500) }));
+  const bs = encodeURIComponent(city);
+  await show('caveats', `/api/deals/search?settlement=${bs}&limit=2`, (j) => ({ caveats: trim(j.caveats, 1500), notes: trim(j.notes, 1500),
+    rowUrl: trim(j.row_url, 300), address: trim(j.address, 300), processed: trim(j.processed, 300), consoleSql: trim(j.console_sql, 300) }));
+  for (const [label, qs] of [['limit120+dateFrom', `limit=120&date_from=2026-01-01`], ['limit500', 'limit=500'], ['limit200', 'limit=200'],
+    ['dateFromDMY', 'limit=3&date_from=01/01/2026'], ['offset120', 'limit=3&offset=120']]) {
+    await show(label, `/api/deals/search?settlement=${bs}&${qs}`, (j) => ({ total: j.total, capped: j.total_capped, count: j.count, limit: j.limit, offset: j.offset,
+      query: trim(j.query, 300), firstDate: j.data && j.data[0] && j.data[0].date, lastDate: j.data && j.data.length ? j.data[j.data.length - 1].date : null,
+      detail: j.detail ? trim(j.detail, 400) : undefined }));
+  }
+  for (const [label, qs] of [['street', `street=${encodeURIComponent('רגר')}&limit=3`], ['street+house', `street=${encodeURIComponent('גרץ')}&house=5&limit=3`]]) {
+    await show(label, `/api/deals/search?settlement=${bs}&${qs}`, (j) => ({ total: j.total, count: j.count, address: trim(j.address, 600), caveats: trim(j.caveats, 600),
+      rows: (j.data || []).map((d) => [d.date, d.amount, d.nature, d.gush + '/' + d.helka + '/' + d.sub_parcel, (d.addresses || []).join(' / ')].join(' · ')) }));
   }
   const q = encodeURIComponent(city);
-  for (const p of ['/api/deals/search', `/api/deals/search?settlement=${q}&limit=3`]) {
+  for (const p of [`/api/deals/search?settlement=${q}&limit=1`]) {
     try {
       const r = await get(BASE + p);
       let j = null; try { j = JSON.parse(r.text); } catch { /* not JSON */ }
