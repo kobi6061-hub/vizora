@@ -1,9 +1,10 @@
 // PROPX · official market indicators — offline test suite.
 // `node test/market.test.js`
 //
-// Every response below is SYNTHETIC: it follows the documented shapes of the
-// Bank of Israel PublicApi and the CBS index API, but its codes and values are
-// invented for the test and appear nowhere in the product.
+// Every response below is SYNTHETIC: it follows the shapes of the Bank of
+// Israel PublicApi and the CBS index API (catalog shapes as observed from the
+// live API on 01.10.2026), but its codes and values are invented for the test
+// and appear nowhere in the product.
 
 'use strict';
 
@@ -33,20 +34,31 @@ const fakeFetch = (routes) => async (url) => {
 
 const NOW = new Date('2026-10-01T04:00:00Z');
 const BOI = { currentInterest: 3.25, nextInterestDate: '2026-10-21T00:00:00Z', lastPublishedDate: '2026-09-01T00:00:00Z' };
-const CBS_ALL = { month: [
-  { code: 90010, name: 'מדד מחירי דירות' },
-  { code: 90020, name: 'מדד מחירי דירות - מחוז ירושלים' },
-  { code: 90050, name: 'מדד מחירי דירות חדשות' },
-  { code: 90051, name: 'מדד מחירי דירות חדשות ללא עסקאות דירה בהנחה' },
-  { code: 90060, name: 'מדד מחירי דירות יד שנייה' },
-  { code: 990010, name: 'מדד המחירים לצרכן - כללי' },
-  { code: 990020, name: 'מדד תשומות הבנייה למגורים' },
+const CATALOG = { chapters: [
+  { chapterId: 'a', chapterName: 'מדד המחירים לצרכן', chapterOrder: 1, mainCode: 990010, subject: null },
+  { chapterId: 'aa', chapterName: 'מדד מחירי דירות', chapterOrder: 2, mainCode: 90010, subject: null },
 ] };
+const CHAPTER_A = { chapterId: 'a', chapterName: null, chapterOrder: null, mainCode: null,
+  subject: [{ subjectId: 37, subjectName: 'מדד המחירים לצרכן, לפי קבוצות צריכה', code: null }] };
+const CHAPTER_AA = { chapterId: 'aa', chapterName: null, chapterOrder: null, mainCode: null, subject: [
+  { subjectId: 45, subjectName: 'מדד מחירי דירות', code: null },
+  { subjectId: 166, subjectName: 'מדד מחירי דירות לפי מחוזות', code: null },
+  { subjectId: 167, subjectName: 'מדד מחירי דירות חדשות', code: null }] };
+const SUBJECT = (id, name, codes) => ({ subjectId: id, subjectName: name, code: codes.map(([c, n]) => ({ codeId: c, codeName: n })) });
+const CBS_ROUTES = [
+  ['catalog/catalog', CATALOG],
+  ['catalog/chapter?id=aa&', CHAPTER_AA],
+  ['catalog/chapter?id=a&', CHAPTER_A],
+  ['subject?id=45&', SUBJECT(45, 'מדד מחירי דירות', [[90010, 'מדד מחירי דירות']])],
+  ['subject?id=166&', SUBJECT(166, 'מדד מחירי דירות לפי מחוזות', [[90020, 'מדד מחירי דירות - מחוז ירושלים'], [90030, 'מדד מחירי דירות - מחוז תל אביב']])],
+  ['subject?id=167&', SUBJECT(167, 'מדד מחירי דירות חדשות', [[90050, 'מדד מחירי דירות חדשות'],
+    [90051, 'מדד מחירי דירות חדשות ללא עסקאות דירה בהנחה'], [90060, 'מדד מחירי דירות יד שנייה']])],
+];
 const series = (code, name, pts) => ({ month: [{ code, name, date: pts.map(([y, m, v, p, py]) => (
   { year: y, month: m, percent: p, percentYear: py, currBase: { baseDesc: 'ממוצע 2024=100', value: v } })) }] });
 const NH = series(90050, 'מדד מחירי דירות חדשות', [[2026, 7, 98.7, 0.4, -1.4], [2026, 6, 98.3, 0.2, -1.9]]);
 const DW = series(90010, 'מדד מחירי דירות', [[2026, 7, 101.2, -0.3, -1.2], [2026, 6, 101.5, -0.4, -1.5]]);
-const ROUTES = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL], ['id=90050', NH], ['id=90010', DW]];
+const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&', NH], ['price?id=90010&', DW]];
 
 (async () => {
   console.log('Bank of Israel connector');
@@ -80,21 +92,28 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL], ['id=900
     assert.equal(d.picks.newHomesIndex.code, '90050');
     assert.equal(d.picks.dwellingsIndex.code, '90010');
   });
-  await t('discovery falls back to the catalog chapters when price_all fails', async () => {
+  await t('discovery walks catalog → chapters → housing subjects → series, expanding only housing subjects', async () => {
+    const seen = [];
+    const f = fakeFetch(ROUTES);
+    const d = await discoverCbsSeries({ fetchImpl: async (u, i) => { seen.push(String(u)); return f(u, i); } });
+    assert.ok(d.tried.some((x) => /housing subjects: 45 מדד מחירי דירות \| 166 .* \| 167 /.test(x)), d.tried.join(' / '));
+    assert.ok(seen.some((u) => u.includes('subject?id=167&')) && !seen.some((u) => u.includes('subject?id=37&')));
+  });
+  await t('a catalog subject id is never taken for a series code', async () => {
     const d = await discoverCbsSeries({ fetchImpl: fakeFetch([
-      ['price_all', {}, 500],
-      ['catalog/catalog', { chapters: [{ chapterId: 'aa', name: 'דיור' }] }],
-      ['catalog/chapter?id=aa', { indices: CBS_ALL.month }],
+      ['catalog/catalog', { chapters: [{ chapterId: 'aa', chapterName: 'x', mainCode: null }] }],
+      ['catalog/chapter?id=aa&', CHAPTER_AA],
+      ['subject?id=', { subjectId: 167, subjectName: 'מדד מחירי דירות חדשות', code: null }],
     ]) });
-    assert.equal(d.picks.newHomesIndex.code, '90050');
-    assert.ok(d.tried.some((x) => /price_all/.test(x)) && d.tried.some((x) => /catalog: 1 chapters/.test(x)));
+    assert.equal(d.picks.newHomesIndex, null);
   });
   await t('series are recognised under codeId/codeName and other key casings', async () => {
     const d = await discoverCbsSeries({ fetchImpl: fakeFetch([
-      ['price_all', {}, 500],
-      ['catalog/catalog', { chapters: [{ chapterId: 'aa' }] }],
-      ['catalog/chapter?id=aa', { chapters: { chapterId: 'aa', subject: [{ subjectId: 1, subjectName: 'דיור', code: [
-        { codeId: 90010, codeName: 'מדד מחירי דירות' }, { CodeID: '90050', CODENAME: 'מדד מחירי דירות חדשות' }] }] } }],
+      ['catalog/catalog', { chapters: [{ chapterId: 'aa', chapterName: 'x', mainCode: null }] }],
+      ['catalog/chapter?id=aa&', CHAPTER_AA],
+      ['subject?id=45&', { subjectId: 45, subjectName: 'מדד מחירי דירות', code: [{ CODE: '90010', NAME: 'מדד מחירי דירות' }] }],
+      ['subject?id=167&', { subjectId: 167, subjectName: 'n', code: [{ CodeID: '90050', CODENAME: 'מדד מחירי דירות חדשות' }] }],
+      ['subject?id=', { code: [] }],
     ]) });
     assert.equal(d.picks.newHomesIndex.code, '90050');
     assert.equal(d.picks.dwellingsIndex.code, '90010');
@@ -113,16 +132,16 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL], ['id=900
   });
   await t('y/y is computed from same-base levels only when CBS omits it', async () => {
     const body = series(1, 'x', [[2026, 7, 103, null, null], [2025, 7, 100, null, null]]);
-    const r = await fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['id=1', body]]), now: NOW });
+    const r = await fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['price?id=1&', body]]), now: NOW });
     assert.equal(r.yoy, 3);
   });
   await t('a dead series (no current point) is refused', async () => {
     const body = series(1, 'x', [[2025, 6, 100, 0.1, 1.0]]);
-    await assert.rejects(fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['id=1', body]]), now: NOW }), /not current/);
+    await assert.rejects(fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['price?id=1&', body]]), now: NOW }), /not current/);
   });
   await t('an implausible annual change is refused', async () => {
     const body = series(1, 'x', [[2026, 7, 100, 0.1, 75]]);
-    await assert.rejects(fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['id=1', body]]), now: NOW }), /implausible/);
+    await assert.rejects(fetchCbsIndex('newHomesIndex', { code: '1', name: 'x' }, { fetchImpl: fakeFetch([['price?id=1&', body]]), now: NOW }), /implausible/);
   });
   await t('a missing series is a clear failure, not a different series', async () => {
     await assert.rejects(fetchCbsIndex('newHomesIndex', null, { fetchImpl: fakeFetch(ROUTES), now: NOW }), /not found/);
@@ -198,9 +217,9 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL], ['id=900
   // the stubbed CBS points must be "current" relative to the real clock
   const d = new Date(); const y = d.getUTCFullYear(); const m = d.getUTCMonth() + 1;
   const pm = m > 2 ? [y, m - 2] : [y - 1, m + 10];
-  const live = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL],
-    ['id=90050', series(90050, 'מדד מחירי דירות חדשות', [[pm[0], pm[1], 98.7, 0.4, -1.4]])],
-    ['id=90010', series(90010, 'מדד מחירי דירות', [[pm[0], pm[1], 101.2, -0.3, -1.2]])]];
+  const live = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES,
+    ['price?id=90050&', series(90050, 'מדד מחירי דירות חדשות', [[pm[0], pm[1], 98.7, 0.4, -1.4]])],
+    ['price?id=90010&', series(90010, 'מדד מחירי דירות', [[pm[0], pm[1], 101.2, -0.3, -1.2]])]];
   await t('all sources OK → exit 0, latest.json + latest.js + history written', () => {
     const r = run(live);
     assert.equal(r.status, 0, r.stdout + r.stderr);
