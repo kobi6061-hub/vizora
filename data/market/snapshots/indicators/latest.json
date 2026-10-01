@@ -1,8 +1,7 @@
 {
- "schema": 1,
- "syncedAt": "2026-10-01T08:03:01.787Z",
- "ok": true,
- "indicators": {
+ "at": "2026-10-01T08:03:05.957Z",
+ "hash": "f46f5e1c0854b00def119d963838238365cd76d3",
+ "payload": {
   "boiRate": {
    "value": 3.25,
    "unit": "%",
@@ -13,9 +12,7 @@
     "authorityEn": "Bank of Israel",
     "dataset": "PublicApi/GetInterest",
     "url": "https://www.boi.org.il/PublicApi/GetInterest"
-   },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
-   "stale": false
+   }
   },
   "newHomesIndex": {
    "yoy": -0.8,
@@ -36,9 +33,7 @@
     "authorityEn": "Central Bureau of Statistics",
     "dataset": "מדד מחירי דירות חדשות",
     "url": "https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"
-   },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
-   "stale": false
+   }
   },
   "dwellingsIndex": {
    "yoy": -1.2,
@@ -59,10 +54,7 @@
     "authorityEn": "Central Bureau of Statistics",
     "dataset": "מחירי דירות",
     "url": "https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"
-   },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
-   "stale": false
+   }
   }
- },
- "failures": []
+ }
 }
