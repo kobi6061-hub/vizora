@@ -3,15 +3,25 @@
 # Runs scripts/housing-discover.js on a GitHub runner (gov.il is reachable
 # here, not from the Claude sandbox) and prints what the official open-data
 # sources actually expose: datasets, resources, update times, schemas, row
-# counts, sample rows. Read-only: nothing is written or committed.
+# counts, sample rows, whole-table profiles and GIS layers. Read-only:
+# nothing is written or committed.
 
 name: Government housing — source discovery
 
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: 'catalogue | profile (whole table) | gis (zipped shapefile)'
+        type: choice
+        options: [catalogue, profile, gis]
+        default: catalogue
       resource:
-        description: 'Optional: one data.gov.il resource id to describe in depth'
+        description: 'data.gov.il resource id (profile / gis / one resource in depth)'
+        type: string
+        default: ''
+      city:
+        description: 'profile: also print every row of this LamasCode / city name'
         type: string
         default: ''
 
@@ -35,10 +45,12 @@ jobs:
 
       - name: Discover official sources (read-only)
         env:
+          MODE: ${{ inputs.mode }}
           RESOURCE: ${{ inputs.resource }}
+          CITY: ${{ inputs.city }}
         run: |
-          if [ -n "$RESOURCE" ]; then
-            node scripts/housing-discover.js --resource "$RESOURCE"
-          else
-            node scripts/housing-discover.js
-          fi
+          case "$MODE" in
+            profile) node scripts/housing-discover.js --profile --resource "$RESOURCE" ${CITY:+--city "$CITY"} ;;
+            gis)     node scripts/housing-discover.js --gis --resource "$RESOURCE" ;;
+            *)       if [ -n "$RESOURCE" ]; then node scripts/housing-discover.js --resource "$RESOURCE"; else node scripts/housing-discover.js; fi ;;
+          esac

@@ -68,8 +68,85 @@ async function describeResource(id, samples = 3) {
   }
 }
 
+/* every row of a datastore resource (paged) */
+async function allRows(id) {
+  const rows = [];
+  for (let offset = 0; ; offset += 1000) {
+    const r = await ck('datastore_search', { resource_id: id, limit: 1000, offset });
+    rows.push(...r.records);
+    if (r.records.length < 1000 || rows.length >= r.total) return { rows, total: r.total, fields: r.fields };
+  }
+}
+const isBlank = (v) => v == null || String(v).trim() === '' || String(v).trim() === '-';
+
+/* the whole table: date ranges, vocabularies, blanks, one city's rows */
+async function profile(id) {
+  const { rows, total, fields } = await allRows(id);
+  out({ kind: 'profile', id, total, fetched: rows.length });
+  for (const f of fields.map((x) => x.id).filter((k) => k !== '_id')) {
+    const vals = rows.map((r) => r[f]);
+    const blank = vals.filter(isBlank).length;
+    const distinct = new Set(vals.filter((v) => !isBlank(v)).map(String));
+    const shapes = {};
+    for (const v of vals) if (!isBlank(v)) { const s = String(v).replace(/[0-9]/g, '9').replace(/[א-ת]+/g, 'א').slice(0, 24); shapes[s] = (shapes[s] || 0) + 1; }
+    const top = Object.entries(shapes).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const sorted = [...distinct].sort();
+    out({ kind: 'field', id, field: f, blank, distinct: distinct.size, min: trim(sorted[0], 40), max: trim(sorted[sorted.length - 1], 40), shapes: top });
+    if (distinct.size <= 40) {
+      const counts = {};
+      for (const v of vals) { const k = isBlank(v) ? '∅' : String(v); counts[k] = (counts[k] || 0) + 1; }
+      out({ kind: 'vocab', id, field: f, values: Object.entries(counts).sort((a, b) => b[1] - a[1]) });
+    }
+  }
+  const city = argVal('city');
+  if (city) for (const r of rows.filter((x) => String(x.LamasCode) === city || x.LamasName === city)) out({ kind: 'cityRow', id, record: r });
+  // identity checks
+  const ids = rows.map((r) => r.LotteryId).filter((v) => !isBlank(v));
+  out({ kind: 'identity', id, rows: rows.length, lotteryIds: ids.length, distinctLotteryIds: new Set(ids.map(String)).size,
+    distinctProjectIds: new Set(rows.map((r) => r.ProjectId).filter((v) => !isBlank(v)).map(String)).size });
+}
+
+/* a GIS layer published as a zipped shapefile: files, fields, CRS, a few features */
+async function gis(id) {
+  const { execFileSync } = require('node:child_process');
+  const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
+  const res = await ck('resource_show', { id });
+  const r = await fetch(res.url, { headers: { 'User-Agent': UA } });
+  const buf = Buffer.from(await r.arrayBuffer());
+  out({ kind: 'gis', id, name: res.name, url: res.url, status: r.status, bytes: buf.length, last_modified: res.last_modified });
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gis-'));
+  fs.writeFileSync(path.join(dir, 'layer.zip'), buf);
+  execFileSync('unzip', ['-o', '-q', path.join(dir, 'layer.zip'), '-d', path.join(dir, 'x')]);
+  const files = [];
+  (function walk(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); e.isDirectory() ? walk(p) : files.push(p); } })(path.join(dir, 'x'));
+  out({ kind: 'gisFiles', id, files: files.map((f) => `${path.relative(dir, f)} (${fs.statSync(f).size})`) });
+  for (const shp of files.filter((f) => /\.shp$/i.test(f))) {
+    const base = shp.slice(0, -4), b = fs.readFileSync(shp);
+    const prj = files.find((f) => f.toLowerCase() === (base + '.prj').toLowerCase());
+    const cpg = files.find((f) => f.toLowerCase() === (base + '.cpg').toLowerCase());
+    out({ kind: 'shp', layer: path.basename(base), shapeType: b.readInt32LE(32),
+      bbox: [b.readDoubleLE(36), b.readDoubleLE(44), b.readDoubleLE(52), b.readDoubleLE(60)].map((x) => Math.round(x)),
+      prj: prj ? trim(fs.readFileSync(prj, 'utf8'), 300) : null, cpg: cpg ? fs.readFileSync(cpg, 'utf8').trim() : null });
+    const dbfPath = files.find((f) => f.toLowerCase() === (base + '.dbf').toLowerCase());
+    if (!dbfPath) continue;
+    const d = fs.readFileSync(dbfPath), n = d.readUInt32LE(4), hlen = d.readUInt16LE(8), rlen = d.readUInt16LE(10);
+    const flds = [];
+    for (let o = 32; d[o] !== 0x0d && o < hlen; o += 32) flds.push({ name: d.toString('latin1', o, o + 11).replace(/\0.*$/, ''), type: String.fromCharCode(d[o + 11]), len: d[o + 16] });
+    const enc = cpg && /utf-?8/i.test(fs.readFileSync(cpg, 'utf8')) ? 'utf-8' : 'windows-1255';
+    const dec = new TextDecoder(enc);
+    out({ kind: 'dbf', layer: path.basename(base), records: n, encoding: enc, fields: flds.map((f) => `${f.name}:${f.type}${f.len}`) });
+    for (let i = 0; i < Math.min(4, n); i++) {
+      let o = hlen + i * rlen + 1; const rec = {};
+      for (const f of flds) { rec[f.name] = dec.decode(d.subarray(o, o + f.len)).trim(); o += f.len; }
+      out({ kind: 'dbfRow', layer: path.basename(base), record: rec });
+    }
+  }
+}
+
 async function main() {
   const one = argVal('resource');
+  if (process.argv.includes('--profile')) return profile(one);
+  if (process.argv.includes('--gis')) return gis(one);
   if (one) return describeResource(one, 5);
 
   // 1 · catalogue search
