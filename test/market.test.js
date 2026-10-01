@@ -89,6 +89,20 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ['price_all', CBS_ALL], ['id=900
     assert.equal(d.picks.newHomesIndex.code, '90050');
     assert.ok(d.tried.some((x) => /price_all/.test(x)) && d.tried.some((x) => /catalog: 1 chapters/.test(x)));
   });
+  await t('series are recognised under codeId/codeName and other key casings', async () => {
+    const d = await discoverCbsSeries({ fetchImpl: fakeFetch([
+      ['price_all', {}, 500],
+      ['catalog/catalog', { chapters: [{ chapterId: 'aa' }] }],
+      ['catalog/chapter?id=aa', { chapters: { chapterId: 'aa', subject: [{ subjectId: 1, subjectName: 'דיור', code: [
+        { codeId: 90010, codeName: 'מדד מחירי דירות' }, { CodeID: '90050', CODENAME: 'מדד מחירי דירות חדשות' }] }] } }],
+    ]) });
+    assert.equal(d.picks.newHomesIndex.code, '90050');
+    assert.equal(d.picks.dwellingsIndex.code, '90010');
+  });
+  await t('a non-JSON body is reported with its type and opening text', async () => {
+    const htmlRes = async () => ({ ok: true, status: 200, headers: { get: () => 'text/html' }, text: async () => '<html>maintenance</html>' });
+    await assert.rejects(fetchBoiRate({ fetchImpl: htmlRes, now: NOW }), /not JSON \(text\/html\).*maintenance/);
+  });
   await t('series parse: latest period, CBS-published y/y and m/m', async () => {
     const r = await fetchCbsIndex('newHomesIndex', { code: '90050', name: 'מדד מחירי דירות חדשות' }, { fetchImpl: fakeFetch(ROUTES), now: NOW });
     assert.deepEqual(r.period, { year: 2026, month: 7 });

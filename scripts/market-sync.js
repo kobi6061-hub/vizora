@@ -46,7 +46,7 @@ const per = (p) => `${p.year}-${String(p.month).padStart(2, '0')}`;
   const fetchImpl = globalThis.fetch;
   const prev = readPrev();
 
-  const [boi, disc] = await Promise.all([settle(fetchBoiRate({ fetchImpl, now })), settle(discoverCbsSeries({ fetchImpl }))]);
+  const [boi, disc] = await Promise.all([settle(fetchBoiRate({ fetchImpl, now })), settle(discoverCbsSeries({ fetchImpl, debug: has('discover') }))]);
   const results = { boiRate: boi };
   if (disc.ok) {
     const [nh, dw] = await Promise.all([
@@ -79,6 +79,8 @@ const per = (p) => `${p.year}-${String(p.month).padStart(2, '0')}`;
   }
 
   if (has('discover') && disc.ok) {
+    console.log('\nCBS response shapes:');
+    for (const sh of disc.data.shapes) console.log('  ' + sh.slice(0, 1500));
     const rel = disc.data.candidates.filter((c) => /דיר|שכר|מחיר/.test(c.name));
     console.log(`\nCBS candidate series (${rel.length} of ${disc.data.candidates.length}):`);
     for (const c of rel.slice(0, 80)) console.log(`  ${c.code.padStart(7)}  ${c.name}`);
