@@ -13,5 +13,9 @@
 - `lib/geo/` + `api/geo/` + `data/geo/` + `scripts/build-geo-registry.py` + `scripts/geo-audit.js`
   = the national geography registry (every official locality + street, canonical codes, search API,
   coverage audit).
+- `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
+  `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index)
+  feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand
+  (see `lib/market/README.md`).
 
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).

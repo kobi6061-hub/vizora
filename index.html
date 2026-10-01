@@ -17,7 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-08-31.street-names-full-coverage">
+<meta name="propx-build" content="2026-10-01.daily-official-indicators">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -617,7 +617,7 @@ main section.blk:nth-of-type(even) .blk-head h2::before{background:var(--brass)}
 .tp:last-child{border-inline-end:none}
 .tp-k{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;white-space:nowrap}
 .tp-v{font-family:var(--f-display);font-size:16px;font-weight:700;color:var(--ink);white-space:nowrap}
-.tp-v.dn{color:var(--down)} .tp-v.up-t{color:var(--up);font-size:14.5px}
+.tp-v.dn{color:var(--down)} .tp-v.up{color:var(--up)} .tp-v.up-t{color:var(--up);font-size:14.5px}
 .tp-s{font-size:10.5px;color:var(--ink-3);white-space:nowrap}
 .tp.meta{background:var(--panel-2)}
 
@@ -1178,12 +1178,12 @@ details.ci-more>.in{padding:2px 13px 12px}
     </div>
     <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
     <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
-      <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
+      <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn" id="tpNhV" data-i="blt1v">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
       <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num">84,280</span><span class="tp-s" data-i="blt2s">כ-26 חודשי היצע · יוני 2026</span></div>
       <div class="tp"><span class="tp-k" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num">~34,000</span><span class="tp-s" data-i="blt3s">37.5% מהעסקאות · כשליש בסבסוד</span></div>
       <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">חזרת מבצעי המימון · הכלכלן הראשי</span></div>
-      <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num">3.5%</span><span class="tp-s" data-i="tapeBoiS">הורדה שלישית ב-2026 · 6.7.2026</span></div>
-      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
+      <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num" data-i="tapeBoiV">3.25%</span><span class="tp-s" data-i="tapeBoiS">הורדה ל-3.25% · 1.9.2026</span></div>
+      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num" data-i="tapeRetV">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
     </div>
   </div>
 </div>
@@ -1470,8 +1470,46 @@ details.ci-more>.in{padding:2px 13px 12px}
   </div>
 </footer>
 
+<script src="/data/market/latest.js"></script>
 <script>
 "use strict";
+
+/* =====================================================================
+   0 · OFFICIAL INDICATORS — DAILY SYNC
+   window.PROPX_MARKET comes from /data/market/latest.js, rewritten every
+   day by scripts/market-sync.js (.github/workflows/market-sync.yml) from
+   the Bank of Israel and CBS APIs. Only a validated value is used; when one
+   is missing the dated published figure below stays. A value whose source
+   failed keeps the date it was last checked — never today's — and the
+   "checked" date shown is the OLDEST among the values on screen.
+   ===================================================================== */
+const MKT=(()=>{
+  const s=window.PROPX_MARKET,I=(s&&s.schema===1&&s.indicators)||{};
+  const num=x=>typeof x==="number"&&isFinite(x);
+  const HE_M=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+  const EN_M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const ilDay=iso=>{const d=new Date(iso);if(isNaN(d))return null;
+    try{return d.toLocaleDateString("en-GB",{timeZone:"Asia/Jerusalem"}).replace(/\//g,".")}
+    catch(e){return d.toISOString().slice(0,10).split("-").reverse().join(".")}};
+  const dDay=x=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(x||"");return m?`${m[3]}.${m[2]}.${m[1]}`:null};
+  // CBS dwelling-price indices cover two-month windows dated by the 2nd month
+  const pair=(p,M)=>p.month>1?`${M[p.month-2]}–${M[p.month-1]} ${p.year}`:`${M[11]} ${p.year-1}–${M[0]} ${p.year}`;
+  const b=I.boiRate;
+  const boi=b&&num(b.value)&&b.value>=0&&b.value<=20&&b.checkedAt&&ilDay(b.checkedAt)
+    ?{value:b.value,stale:!!b.stale,valTxt:+b.value.toFixed(2)+"%",next:dDay(b.nextDecision),checkedAt:b.checkedAt,checkedDay:ilDay(b.checkedAt)}:null;
+  const n=I.newHomesIndex,p=n&&n.period;
+  // only a period at least as recent as the published May–Jun 2026 figure may replace it
+  const nh=n&&num(n.yoy)&&Math.abs(n.yoy)<=40&&p&&num(p.year)&&p.month>=1&&p.month<=12&&p.year*12+p.month>=2026*12+6&&n.checkedAt&&ilDay(n.checkedAt)
+    ?(()=>{const a=Math.abs(n.yoy).toFixed(1),pHe=pair(p,HE_M),pEn=pair(p,EN_M);return{
+      yoy:n.yoy,stale:!!n.stale,checkedAt:n.checkedAt,periodHe:pHe,periodEn:pEn,
+      yoyTxt:(n.yoy>0?"+":n.yoy<0?"-":"")+a+"%",
+      sentHe:n.yoy===0?`מדד הדירות החדשות של הלמ״ס (${pHe}) ללא שינוי שנתי.`
+        :`מדד הדירות החדשות של הלמ״ס (${pHe}): ${n.yoy<0?"ירידה":"עלייה"} שנתית של <b class="num">${a}%</b>.`,
+      sentEn:n.yoy===0?`the CBS new-homes index (${pEn}) is flat year on year.`
+        :`the CBS new-homes index (${pEn}) is ${n.yoy<0?"down":"up"} <b class="num">${a}%</b> year on year.`}})():null;
+  const checked=[boi,nh].filter(Boolean).map(x=>x.checkedAt).sort()[0]||null;
+  return{boi,nh,checked,checkedDay:checked?ilDay(checked):null};
+})();
 
 /* =====================================================================
    1 · DEMO DATA MODEL
@@ -1737,6 +1775,9 @@ const LOCATIONS = [
     base:{price:2980000,sqm:31400,rent:5590,yoy:-2.7,y3:3.6,rentYoy:3.8,tx:90,listings:420}},
 ];
 
+/* the national row's annual change IS the CBS new-homes index — it follows
+   the daily official snapshot (§0); districts/cities stay derived as dated above */
+if(MKT.nh)LOCATIONS.find(l=>l.id==="il").base.yoy=MKT.nh.yoy;
 const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 
 /* Transactions come exclusively from the official government layer at
@@ -1890,13 +1931,13 @@ he:{
   aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
   aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
   pageCtx:"סקירת שוק הנדל״ן בישראל | פנימי",
-  tapeRet:"נתונים נשלפו", tapeSrc:"מקור עדכני: אוג׳ 2026",
-  tapeBoi:"ריבית בנק ישראל", tapeBoiS:"הורדה שלישית ב-2026 · 6.7.2026",
+  tapeRet:MKT.checked?"עודכן מול המקורות":"נתונים נשלפו", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"סנכרון יומי · בנק ישראל · למ״ס":"מקור עדכני: אוג׳ 2026",
+  tapeBoi:"ריבית בנק ישראל", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`נבדק לאחרונה ${MKT.boi.checkedDay}`:MKT.boi.next?`החלטה הבאה: ${MKT.boi.next}`:`בנק ישראל · ${MKT.boi.checkedDay}`):"הורדה ל-3.25% · 1.9.2026",
   provBtn:"מקור הנתון", provOfficial:"פרסום רשמי", provEst:"אומדן", provDerived:"נגזר מפרסום",
   prov:{
     rows:[
       {n:"מחיר ממוצע",s:"ממוצעי למ״ס לפי עיר/מחוז (רבעונים א׳–ב׳ 2026) + פרמיית דירה חדשה ~12%",cls:l=>l.e?"אומדן":"נגזר מפרסום"},
-      {n:"שינוי שנתי",s:"מדד מחירי הדירות החדשות של הלמ״ס, מאי–יוני 2026; אזורי: מגמה כללית −0.5 נק׳",cls:l=>l.id==="il"?"פרסום רשמי":"נגזר מפרסום"},
+      {n:"שינוי שנתי",s:MKT.nh?`ארצי: מדד מחירי הדירות החדשות של הלמ״ס, ${MKT.nh.periodHe} (סנכרון יומי); אזורי: מגמה כללית −0.5 נק׳ (מאי–יוני 2026)`:"מדד מחירי הדירות החדשות של הלמ״ס, מאי–יוני 2026; אזורי: מגמה כללית −0.5 נק׳",cls:l=>l.id==="il"?"פרסום רשמי":"נגזר מפרסום"},
       {n:"שכירות",s:"ממוצעי שכ״ד למ״ס — ארצי/מחוזי רבעון א׳ 2026, ערים 2025 — + ~8% פרמיה",cls:()=>"אומדן"},
       {n:"מכירות",s:"רשות המסים / הכלכלן הראשי, סיכום 2025",cls:l=>(l.o||"").includes("t")?"פרסום רשמי":"אומדן"},
       {n:"מלאי",s:"למ״ס — מלאי דירות חדשות שטרם נמכרו, סוף יוני 2026",cls:l=>(l.o||"").includes("l")?"פרסום רשמי":"אומדן"},
@@ -1904,7 +1945,7 @@ he:{
     foot:"נשלף: 30.08.2026 · שכונות ותתי-שכונות: אומדן יחסי המעוגן בנתוני העיר · אינו סטטיסטיקה רשמית",
   },
   bltTitle:"מבזקי שוק · דירות חדשות", bltNote:"נתונים ארציים מהפרסומים הרשמיים · אמצע 2026",
-  blt1k:"מדד הדירות החדשות", blt1s:"שינוי שנתי · למ״ס, מאי–יוני 2026",
+  blt1k:"מדד הדירות החדשות", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`שינוי שנתי · למ״ס, ${MKT.nh.periodHe}`:"שינוי שנתי · למ״ס, מאי–יוני 2026",
   blt2k:"מלאי שטרם נמכר", blt2s:"כ-26 חודשי היצע · יוני 2026",
   blt3k:"מכירות קבלנים 2025", blt3s:"37.5% מהעסקאות · כשליש בסבסוד",
   blt4k:"מגמת מאי 2026", blt4v:"התאוששות ↗", blt4s:"חזרת מבצעי המימון · הכלכלן הראשי",
@@ -1989,7 +2030,7 @@ he:{
   stTopT:"רחובות מובילים · מודל 5 שנים", stTopNote:"רק רחובות עם 5+ עסקאות מדגם מדורגים; הציון משוקלל בוודאות הנתונים.",
 
   cmdKicker:"PROPX · מרכז שליטה",
-  cmdFresh:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
+  cmdFresh:MKT.checked?`מדדים רשמיים עודכנו ${MKT.checkedDay} · למ״ס · בנק ישראל`:"נתונים: למ״ס והכלכלן הראשי · נשלפו 30.08.2026",
   cmdScopeIL:"טווח נוכחי: כל ישראל", cmdScopeBack:n=>`טווח נוכחי: ${n} — לחיצה חוזרת לכל ישראל`,
   capSignalK:"הון עובד הכי טוב", capSignalA:(n,s)=>`ציון השקעה מוביל: ${n}, ${s} מתוך 100 — מעבר לניתוח ההון`,
   mapHint:"לחיצה לבחירת האזור",
@@ -2169,13 +2210,13 @@ en:{
   aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
   aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
   pageCtx:"Israeli Market Overview | Internal",
-  tapeRet:"Data retrieved", tapeSrc:"Freshest: Aug 2026",
-  tapeBoi:"Bank of Israel rate", tapeBoiS:"Third cut of 2026 · 6.7.2026",
+  tapeRet:MKT.checked?"Checked against sources":"Data retrieved", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"Daily sync · Bank of Israel · CBS":"Freshest: Aug 2026",
+  tapeBoi:"Bank of Israel rate", tapeBoiV:MKT.boi?MKT.boi.valTxt:"3.25%", tapeBoiS:MKT.boi?(MKT.boi.stale?`Last checked ${MKT.boi.checkedDay}`:MKT.boi.next?`Next decision: ${MKT.boi.next}`:`Bank of Israel · ${MKT.boi.checkedDay}`):"Cut to 3.25% · 1.9.2026",
   provBtn:"Data source", provOfficial:"Official", provEst:"Estimate", provDerived:"Derived",
   prov:{
     rows:[
       {n:"Average price",s:"CBS city/district averages (Q1–Q2 2026) + ~12% new-build premium",cls:l=>l.e?"Estimate":"Derived"},
-      {n:"Annual change",s:"CBS new-homes price index, May–Jun 2026; regional: general trend −0.5pp",cls:l=>l.id==="il"?"Official":"Derived"},
+      {n:"Annual change",s:MKT.nh?`National: CBS new-homes price index, ${MKT.nh.periodEn} (daily sync); regional: general trend −0.5pp (May–Jun 2026)`:"CBS new-homes price index, May–Jun 2026; regional: general trend −0.5pp",cls:l=>l.id==="il"?"Official":"Derived"},
       {n:"Rent",s:"CBS rents — national/district Q1-2026, cities 2025 — + ~8% premium",cls:()=>"Estimate"},
       {n:"Sales",s:"Tax Authority / Chief Economist, 2025 summary",cls:l=>(l.o||"").includes("t")?"Official":"Estimate"},
       {n:"Inventory",s:"CBS — unsold new-home inventory, end-June 2026",cls:l=>(l.o||"").includes("l")?"Official":"Estimate"},
@@ -2183,7 +2224,7 @@ en:{
     foot:"Retrieved: 30.08.2026 · Neighborhoods & sub-areas: relative estimates anchored to the city · not official statistics",
   },
   bltTitle:"Market bulletins · new homes", bltNote:"National figures from the official publications · mid-2026",
-  blt1k:"New-homes price index", blt1s:"Annual change · CBS, May–Jun 2026",
+  blt1k:"New-homes price index", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`Annual change · CBS, ${MKT.nh.periodEn}`:"Annual change · CBS, May–Jun 2026",
   blt2k:"Unsold inventory", blt2s:"≈26 months of supply · June 2026",
   blt3k:"Developer sales, 2025", blt3s:"37.5% of all deals · ~a third subsidized",
   blt4k:"May 2026 trend", blt4v:"Recovery ↗", blt4s:"Financing deals returned · Chief Economist",
@@ -2268,7 +2309,7 @@ en:{
   stTopT:"Top streets · 5-year model", stTopNote:"Only streets with 5+ sampled deals are ranked; scores are scaled by data confidence.",
 
   cmdKicker:"PROPX · Command Center",
-  cmdFresh:"Data: CBS & Chief Economist · retrieved 30.08.2026",
+  cmdFresh:MKT.checked?`Official indicators updated ${MKT.checkedDay} · CBS · Bank of Israel`:"Data: CBS & Chief Economist · retrieved 30.08.2026",
   cmdScopeIL:"Current scope: all of Israel", cmdScopeBack:n=>`Current scope: ${n} — click to return to Israel`,
   capSignalK:"Capital works hardest", capSignalA:(n,s)=>`Top investment score: ${n}, ${s} of 100 — open capital analysis`,
   mapHint:"Click to select this area",
@@ -2501,7 +2542,7 @@ const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-08-31.street-names-full-coverage";
+const PROPX_BUILD="2026-10-01.daily-official-indicators";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -2509,6 +2550,7 @@ function setStatics(){
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
   document.title="PROPX";
   const bs=el("buildStamp");if(bs)bs.textContent="build "+PROPX_BUILD;
+  const nv=el("tpNhV");if(nv&&MKT.nh)nv.className="tp-v num "+(MKT.nh.yoy<0?"dn":MKT.nh.yoy>0?"up":"");
   document.querySelectorAll("[data-i]").forEach(node=>{
     const key=node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
@@ -3336,11 +3378,11 @@ function renderInsights(){
     ?`מחיר הדירות החדשות ב${name} ${m.yoy>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> ב-12 החודשים האחרונים, ו${m.y3>=0?"עלה":"ירד"} ב-<b class="num">${fmtPct(Math.abs(m.y3),false)}</b> בשלוש שנים.`
     :`New-home prices in ${name} ${m.yoy>=0?"rose":"fell"} <b class="num">${fmtPct(Math.abs(m.yoy),false)}</b> over the last 12 months and ${m.y3>=0?"gained":"lost"} <b class="num">${fmtPct(Math.abs(m.y3),false)}</b> over three years.`);
   if(state.locId==="il")out.push(he
-    ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית (סוף יוני 2026) — כ-<b class="num">26</b> חודשי היצע; קצב הירידה השנתי של מדד הדירות החדשות התמתן ל-<b class="num">2.0%-</b>.`
-    :`Unsold new-home inventory: <b class="num">84,280</b> nationally (end-June 2026) — ≈<b class="num">26</b> months of supply; the new-homes index's annual decline eased to <b class="num">-2.0%</b>.`);
+    ?`מלאי הדירות החדשות שטרם נמכרו: <b class="num">84,280</b> ארצית (סוף יוני 2026) — כ-<b class="num">26</b> חודשי היצע; ${MKT.nh?MKT.nh.sentHe:`קצב הירידה השנתי של מדד הדירות החדשות התמתן ל-<b class="num">2.0%-</b>.`}`
+    :`Unsold new-home inventory: <b class="num">84,280</b> nationally (end-June 2026) — ≈<b class="num">26</b> months of supply; ${MKT.nh?MKT.nh.sentEn:`the new-homes index's annual decline eased to <b class="num">-2.0%</b>.`}`);
   if(state.locId==="il")out.push(he
-    ?`צד ההיצע ממשיך להתרחב: <b class="num">80,010</b> התחלות בנייה ב-2025 (<b class="num">+14.6%</b>) — השיא מאז 1991; ריבית בנק ישראל ירדה ל-<b class="num">3.5%</b>.`
-    :`Supply keeps expanding: <b class="num">80,010</b> housing starts in 2025 (<b class="num">+14.6%</b>) — the highest since 1991; the Bank of Israel rate is down to <b class="num">3.5%</b>.`);
+    ?`צד ההיצע ממשיך להתרחב: <b class="num">80,010</b> התחלות בנייה ב-2025 (<b class="num">+14.6%</b>) — השיא מאז 1991; ${MKT.boi?`ריבית בנק ישראל עומדת על <b class="num">${MKT.boi.valTxt}</b>.`:`ריבית בנק ישראל ירדה ל-<b class="num">3.25%</b> (1.9.2026).`}`
+    :`Supply keeps expanding: <b class="num">80,010</b> housing starts in 2025 (<b class="num">+14.6%</b>) — the highest since 1991; ${MKT.boi?`the Bank of Israel rate stands at <b class="num">${MKT.boi.valTxt}</b>.`:`the Bank of Israel rate was cut to <b class="num">3.25%</b> (1.9.2026).`}`);
   if(m.rentYoy>m.yoy+0.15)out.push(he
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> לעומת <b class="num">${fmtPct(m.yoy)}</b>) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> vs <b class="num">${fmtPct(m.yoy)}</b>) — upward pressure on yields.`);

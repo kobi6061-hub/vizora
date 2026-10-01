@@ -1,0 +1,79 @@
+# PROPX · daily sync of official market indicators.
+#
+# Fetches the Bank of Israel policy rate and the CBS dwelling-price indices
+# from their official APIs (scripts/market-sync.js), commits the snapshot under
+# data/market/, and Vercel redeploys the site from that commit. A source that
+# fails keeps its last good value, marked stale on the site, and turns this run
+# red so the failure is noticed. Nothing outside data/market/ is ever touched.
+
+name: Daily market data sync
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # every day 03:17 UTC = 06:17 Israel (summer) / 05:17 (winter)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and print only (also lists CBS candidate series) — commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline test suites (must pass before any data is written)
+        run: |
+          node test/gov.test.js
+          node test/market.test.js
+
+      - name: Fetch official indicators
+        id: sync
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/market-sync.js --dry-run --discover
+          else
+            node scripts/market-sync.js --summary-file "$RUNNER_TEMP/summary.txt"
+          fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Commit snapshot
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/market
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if any source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "market-sync exited with ${{ steps.sync.outputs.code }} — see the step above for which source failed and why." >&2
+          exit 1

@@ -42,4 +42,10 @@ All figures are calibrated to official Israeli publications (CBS, Tax Authority,
 Chief Economist, Bank of Israel) as of the retrieval date shown in the in-app
 market tape; every metric carries provenance (official / derived / estimate)
 surfaced via the "מקור הנתון" panel. Neighborhood rows are labeled relative
-estimates. The recent-sales table is a labeled structural illustration.
+estimates. The recent-sales table shows official government transactions only.
+
+### Daily official-indicator sync
+
+The Bank of Israel rate and the CBS new-homes price index are re-checked every
+day by `.github/workflows/market-sync.yml` (`scripts/market-sync.js`), committed
+to `data/market/`, and loaded by the page — see `lib/market/README.md`.

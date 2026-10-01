@@ -96,6 +96,15 @@ GATE_JS = """<script>
 </script>
 """ % PASSWORD
 
+# no server offline: inline the latest official-indicator snapshot in place of
+# the /data/market/latest.js request (the page falls back to its dated figures
+# if the snapshot is empty)
+TAG = '<script src="/data/market/latest.js"></script>'
+assert s.count(TAG) == 1
+snap = (ROOT / "data" / "market" / "latest.js").read_text(encoding="utf-8")
+assert "<" not in snap.split("*/", 1)[-1], "snapshot must not contain raw '<'"
+s = s.replace(TAG, "<script>\n" + snap + "</script>", 1)
+
 assert "</style>" in s and s.count("</style>") == 1
 s = s.replace("</style>", GATE_CSS + "</style>", 1)
 anchor = '<header class="top">'
