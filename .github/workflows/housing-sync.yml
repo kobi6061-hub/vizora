@@ -1,0 +1,44 @@
+# PROPX · government (subsidized) housing — official source discovery.
+#
+# Runs scripts/housing-discover.js on a GitHub runner (gov.il is reachable
+# here, not from the Claude sandbox) and prints what the official open-data
+# sources actually expose: datasets, resources, update times, schemas, row
+# counts, sample rows. Read-only: nothing is written or committed.
+
+name: Government housing — source discovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource:
+        description: 'Optional: one data.gov.il resource id to describe in depth'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: housing-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Discover official sources (read-only)
+        env:
+          RESOURCE: ${{ inputs.resource }}
+        run: |
+          if [ -n "$RESOURCE" ]; then
+            node scripts/housing-discover.js --resource "$RESOURCE"
+          else
+            node scripts/housing-discover.js
+          fi
