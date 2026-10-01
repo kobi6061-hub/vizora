@@ -31,6 +31,7 @@ create table if not exists market.sources (
 -- ---------------------------------------------------------------- sync runs
 create table if not exists market.sync_runs (
   id                 uuid primary key default gen_random_uuid(),
+  run_key            text unique,                   -- the sync job's own run id (also in the file run log)
   source_id          text not null references market.sources(id),
   started_at         timestamptz not null,
   finished_at        timestamptz,
@@ -60,7 +61,7 @@ create table if not exists market.raw_snapshots (
   source_updated_at  timestamptz,
   row_count          integer not null,
   payload            jsonb not null,
-  sync_run_id        uuid references market.sync_runs(id),
+  run_key            text,                          -- sync_runs.run_key of the run that first fetched it
   unique (source_id, content_hash)
 );
 
@@ -106,6 +107,7 @@ create table if not exists market.transactions (
   deal_type          text,                          -- the source's own classification, verbatim
   newness            text,
   content_hash       text not null,                 -- facts only: a change means the SOURCE changed the row
+  revisions          jsonb not null default '[]'::jsonb,  -- earlier versions the source replaced (newest first)
   provenance         jsonb not null,
   raw                jsonb not null,
   primary key (source_id, record_key)

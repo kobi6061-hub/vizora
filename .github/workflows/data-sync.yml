@@ -112,8 +112,15 @@ jobs:
           echo 'Push failed after 3 attempts.' >&2
           exit 1
 
+      # exit 3 = the transaction source refused this runner (HTTP 401/403). That is
+      # an access decision of the source, not a bug: it is logged, nothing is
+      # worked around, and the run warns instead of failing every day.
+      - name: Warn when a source refused access
+        if: steps.tx.outputs.code == '3'
+        run: echo "::warning title=Transactions not refreshed::The transaction source refused access from this runner (HTTP 401/403). The ledger keeps its stored rows; see data/transactions/sync-runs.jsonl."
+
       - name: Fail the run if a source failed
-        if: (steps.housing.outputs.code != '' && steps.housing.outputs.code != '0') || (steps.tx.outputs.code != '' && steps.tx.outputs.code != '0')
+        if: (steps.housing.outputs.code != '' && steps.housing.outputs.code != '0') || (steps.tx.outputs.code != '' && steps.tx.outputs.code != '0' && steps.tx.outputs.code != '3')
         run: |
           echo "housing=${{ steps.housing.outputs.code }} transactions=${{ steps.tx.outputs.code }} — see the steps above for which source failed and why." >&2
           exit 1

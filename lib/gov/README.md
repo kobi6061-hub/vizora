@@ -77,10 +77,11 @@ Every row gets a stable `recordKey`:
   **never** merged, however alike they look.
 - **`fp:<sha1>#<k>`** otherwise: the SHA-1 of city|street|house|date|price|area,
   plus `k` = the occurrence number of that fingerprint **inside one source
-  response** (`batchOf` = source | request URL | retrieval). Two identical
-  id-less rows in one response are two deals (e.g. two identical apartments
-  sold the same day) and stay two; the same response fetched again yields the
-  same keys, so re-checks are idempotent.
+  response** (`batchOf` = source | request URL | `responseId`, which the
+  provider stamps once per request — never per row). Two identical id-less
+  rows in one response are two deals (e.g. two identical apartments sold the
+  same day) and stay two; the same response fetched again yields the same
+  keys, so re-checks are idempotent.
 
 `dedupe()` merges rows that share a `recordKey` (null fields fill, every
 provenance entry is kept), then folds a bare row into an id'd row across
@@ -98,8 +99,11 @@ then upserts into the ledger:
 
 - key `(source_id, record_key)`; a new key is inserted with `first_seen_at`
   = the fetch that first saw it; an unchanged row only moves `last_seen_at`;
-  a changed row is updated (facts hash `content_hash`) and keeps its
-  `first_seen_at`;
+  a changed row is updated (facts hash `content_hash`), keeps its
+  `first_seen_at`, and its earlier facts go to `revisions` (newest first);
+- each run records `windowCheck`: `partial` when the sweep was capped
+  (polygon limit), cut by its time budget, hit a page limit or lost a request
+  — the window is then not claimed as re-checked;
 - nothing is ever deleted because a later response omitted it;
 - undated rows are rejected (a ledger row needs `transaction_date`).
 

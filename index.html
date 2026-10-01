@@ -17,7 +17,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-build" content="2026-10-01.capital-restore">
+<meta name="propx-build" content="2026-10-01.gov-housing">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -595,6 +595,111 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 
 /* ============================ transactions ============================ */
 .tx-note{font-size:11px;color:var(--ink-3)}
+/* transaction freshness + data maturity (a reporting-lag statement, not confidence) */
+.tx-fresh{padding:8px 15px;font-size:11.5px;color:var(--ink-3);line-height:1.6;border-bottom:1px solid var(--hairline)}
+.tx-fresh .tx-mat{display:inline-block;font-size:10px;font-weight:800;border:1px solid;border-radius:99px;padding:0 7px;margin-inline-end:4px;vertical-align:1px}
+.tx-fresh .tx-mat.upd{color:var(--brass);border-color:var(--brass)}
+.tx-fresh .tx-mat.hist{color:var(--ink-3);border-color:var(--baseline)}
+.tx-fresh .note{display:block;margin-top:2px}
+/* government (subsidized) housing */
+.ho-sub{font-size:12px;color:var(--ink-3);margin-top:3px;font-weight:600}
+.ho-prov{max-width:560px;line-height:1.55}
+.ho-prov .vc{margin-inline-end:4px;vertical-align:1px}
+.ho-bar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:11px 15px;border-bottom:1px solid var(--hairline)}
+.ho-per{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--paper);border:1px solid var(--hairline);border-radius:16px;padding:2px}
+.ho-per button{font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;color:var(--ink-3)}
+.ho-per button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.ho-sel,.ho-in{font:inherit;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--paper);border:1px solid var(--hairline);
+  border-radius:8px;padding:5px 8px;max-width:210px;min-width:0}
+.ho-in{font-weight:500;width:220px}
+.ho-dates{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--ink-3)}
+.ho-dates input{font:inherit;font-size:12px;color:var(--ink-2);background:var(--paper);border:1px solid var(--hairline);border-radius:8px;padding:4px 6px}
+.ho-dates input[aria-invalid="true"]{border-color:var(--down)}
+.ho-reset{font-size:12px;font-weight:700;color:var(--accent-deep);padding:4px 6px}
+.ho-loc{font-size:12px;font-weight:700;color:var(--ink-2);border:1px dashed var(--baseline);border-radius:99px;padding:4px 10px}
+.ho-cov{padding:9px 15px;font-size:12.5px;color:var(--ink-2);line-height:1.55;border-bottom:1px solid var(--hairline);background:var(--panel-2)}
+.ho-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 15px 8px}
+@media(min-width:1000px){.ho-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ho-k{border:1px solid var(--hairline);border-radius:10px;padding:9px 11px;min-width:0}
+.ho-k .l{font-size:11px;font-weight:600;color:var(--ink-3);display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.ho-k .v{font-family:var(--f-display);font-size:19px;font-weight:800;margin-top:3px;line-height:1.2}
+.ho-k .s{font-size:10.5px;color:var(--ink-3);margin-top:3px;line-height:1.4}
+.ho-nopub{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:0 15px 12px;font-size:11.5px;color:var(--ink-3)}
+.ho-nopub b{font-weight:700;color:var(--ink-2)}
+.ho-mat{display:inline-block;font-size:10px;font-weight:800;border:1px solid;border-radius:99px;padding:0 7px}
+.ho-mat.upd{color:var(--brass);border-color:var(--brass)}
+.ho-mat.hist{color:var(--ink-3);border-color:var(--baseline)}
+.ho-mid{display:grid;gap:12px;padding:0 15px 14px}
+@media(min-width:1000px){.ho-mid{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.ho-box{border:1px solid var(--hairline);border-radius:10px;padding:10px 12px;min-width:0}
+.ho-bh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ho-bh h3{font-size:13px;font-weight:800}
+.ho-tg{display:inline-flex;flex-wrap:wrap;gap:2px}
+.ho-tg button{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;color:var(--ink-3);border:1px solid transparent}
+.ho-tg button[aria-pressed="true"]{color:var(--ink);border-color:var(--baseline);background:var(--paper)}
+.ho-svgw{direction:ltr}
+.ho-svg{width:100%;height:auto;display:block;max-height:220px}
+.ho-svg .b{fill:var(--accent)}
+.ho-svg .b.part{opacity:.45}
+.ho-svg .b:hover{fill:var(--accent-deep)}
+.ho-svg text{font-size:10px;fill:var(--ink-3);font-family:inherit}
+.ho-svg .ax{stroke:var(--hairline)}
+.ho-note{font-size:11px;color:var(--ink-3);line-height:1.5;margin-top:6px}
+.ho-crumbs{display:flex;flex-wrap:wrap;gap:2px 6px;align-items:center;font-size:12px;margin-bottom:6px}
+.ho-crumbs button{font-weight:700;color:var(--accent-deep)}
+.ho-crumbs span{color:var(--ink-3)}
+.ho-gt{width:100%;border-collapse:collapse;font-size:12px}
+.ho-gt th{font-size:10.5px;color:var(--ink-3);font-weight:700;text-align:start;padding:4px 6px;border-bottom:1px solid var(--hairline)}
+.ho-gt td{padding:6px;border-bottom:1px solid var(--hairline);font-variant-numeric:tabular-nums}
+.ho-gt td.n{text-align:end;white-space:nowrap}
+.ho-gt tbody tr[data-hogo]{cursor:pointer}
+.ho-gt tbody tr[data-hogo]:hover{background:var(--accent-wash)}
+.ho-gt tbody tr:last-child td{border-bottom:none}
+.ho-more{font-size:11.5px;font-weight:700;color:var(--accent-deep);margin-top:6px}
+.ho-geo{overflow-x:auto}
+@media(max-width:479px){.ho-gt th:nth-child(5),.ho-gt td:nth-child(5){display:none}.ho-gt td,.ho-gt th{padding:5px 4px}}
+.ho-tblhead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between;padding:10px 15px;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.ho-tblhead h3{font-size:13px;font-weight:800}
+.ho-tbl td,.ho-tbl th{padding-inline:8px}
+.ho-tbl td.w{white-space:normal;min-width:96px;max-width:190px;line-height:1.35}
+.ho-tbl tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ho-chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--hairline);border-radius:99px;padding:0 7px;color:var(--ink-2);white-space:nowrap}
+.ho-chip.cont{border-style:dashed;color:var(--ink-3)}
+.ho-na{color:var(--ink-3)}
+.ho-pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:9px 15px;border-top:1px solid var(--hairline);font-size:12px;color:var(--ink-3)}
+.ho-pager button{font-weight:700;color:var(--accent-deep);padding:4px 8px;border:1px solid var(--hairline);border-radius:8px}
+.ho-pager button:disabled{color:var(--ink-3);opacity:.5;cursor:default}
+.ho-msg{padding:16px 18px;font-size:13px;color:var(--ink-2)}
+.ho-drawer{position:fixed;inset:0;z-index:90}
+.ho-drawer[hidden]{display:none}
+.ho-drawer-bg{position:absolute;inset:0;background:rgba(8,13,24,.5)}
+.ho-panel{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(580px,100%);background:var(--panel);
+  border-inline-start:1px solid var(--edge);overflow-y:auto;padding:16px 18px 30px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.ho-panel:focus{outline:none}
+.ho-dh{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.ho-dh h3{font-size:17px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
+.ho-dh .sub{font-size:12px;color:var(--ink-3);margin-top:3px}
+.ho-x{flex:none;font-size:20px;line-height:1;width:34px;height:34px;border-radius:9px;border:1px solid var(--hairline);color:var(--ink-2)}
+.ho-dsec{border-top:1px solid var(--hairline);padding-top:10px;margin-top:12px}
+.ho-dsec h4{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:7px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ho-dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 14px}
+.ho-dl>div{min-width:0}
+.ho-dl .k{font-size:10.5px;color:var(--ink-3)}
+.ho-dl .v{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.ho-dt{width:100%;border-collapse:collapse;font-size:12px}
+.ho-dt th{font-size:10.5px;color:var(--ink-3);font-weight:700;text-align:start;padding:4px 5px;border-bottom:1px solid var(--hairline)}
+.ho-dt td{padding:5px;border-bottom:1px solid var(--hairline);font-variant-numeric:tabular-nums}
+.ho-dt tr.on td{background:var(--accent-wash);font-weight:700}
+.ho-dt tbody tr[data-hoid]{cursor:pointer}
+@media(max-width:719px){
+  .ho-bar{gap:8px}
+  .ho-sel,.ho-in{max-width:none;flex:1 1 calc(50% - 8px)}
+  .ho-in{width:auto}
+  .ho-kpis{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 12px 6px}
+  .ho-mid{padding:0 12px 12px}
+  .ho-nopub{padding:0 12px 10px}
+  .ho-k .v{font-size:17px}
+}
 
 /* ============================ sources ============================ */
 details.src{border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--panel)}
@@ -1124,6 +1229,7 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
+  <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
   <div class="rail-sp"></div>
@@ -1240,7 +1346,7 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="card chart-card na-card" id="trendNA">
         <div class="chart-tools">
           <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
-          <span class="vc na" data-i="vcNA">לא זמין</span>
+          <span class="vc na" data-i="vcNA">חסר</span>
         </div>
         <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
         <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
@@ -1319,7 +1425,7 @@ details.ci-more>.in{padding:2px 13px 12px}
         <div class="card ci-teaser" id="ciTeaser"></div>
         </div>
         <div class="blk-head"><div><span class="lyr" data-i="lyr1c">L1 · שוק</span><h2 data-i="confTitle">בסיס הנתונים</h2></div>
-          <span class="note" data-i="basisNote">רשמי · סטטי · נגזר · מודל · לא זמין</span></div>
+          <span class="note" data-i="basisNote">רשמי · סטטי · נגזר · מודל · חסר</span></div>
         <div class="card conf-card" id="confCard"></div>
       </div>
     </div>
@@ -1364,7 +1470,7 @@ details.ci-more>.in{padding:2px 13px 12px}
     <div class="blk-head">
       <div><span class="lyr gold" data-i="calcLyr">L4 · מעבדת עסקה</span>
       <h2 data-i="calcTitle">מחשבון עסקה</h2></div>
-      <span class="note" data-i="calcNote">האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין</span>
+      <span class="note" data-i="calcNote">האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = אין תוצאה (—)</span>
     </div>
     <div class="calc" id="calcBody"></div>
   </section>
@@ -1381,9 +1487,40 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="tx-sum" id="txSum" hidden></div>
       <div class="tx-scope" id="txScope" hidden></div>
       <div class="tx-warn" id="txWarn" hidden></div>
+      <div class="tx-fresh" id="txFresh"></div>
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
       <div class="tbl-cards" id="txCards"></div>
       <p class="tx-empty" id="txEmpty" hidden></p>
+    </div>
+  </section>
+
+  <!-- Government (subsidized) housing — official lottery records, read through
+       the session-gated api/housing.js (summary · one page of rows · one record) -->
+  <section class="blk" id="housing">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrHo">L1 · שוק · דיור ממשלתי</span>
+      <h2 data-i="hoTitle">דיור מסובסד</h2>
+      <p class="ho-sub" data-i="hoSub">מחיר למשתכן · מחיר מטרה · דירה בהנחה</p></div>
+      <span class="tx-note ho-prov" id="hoProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="ho-bar" id="hoBar"></div>
+      <div class="ho-cov" id="hoCov" hidden></div>
+      <div class="ho-kpis" id="hoKpis"></div>
+      <div class="ho-nopub" id="hoNoPub"></div>
+      <div class="ho-mid">
+        <div class="ho-box" id="hoSeries"></div>
+        <div class="ho-box ho-geo" id="hoGeo"></div>
+      </div>
+      <div class="ho-tblhead" id="hoTblHead"></div>
+      <div class="tbl-scroll"><table class="tbl ho-tbl" id="hoTbl"></table></div>
+      <div class="tbl-cards" id="hoCards"></div>
+      <div class="ho-pager" id="hoPager"></div>
+      <p class="tbl-foot" id="hoFoot"></p>
+    </div>
+    <div class="ho-drawer" id="hoDrawer" hidden>
+      <div class="ho-drawer-bg" data-hoclose></div>
+      <aside class="ho-panel" id="hoPanel" role="dialog" aria-modal="true" aria-labelledby="hoDTitle" tabindex="-1"></aside>
     </div>
   </section>
 
@@ -1434,7 +1571,7 @@ details.ci-more>.in{padding:2px 13px 12px}
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
             <li data-i="srcA6">עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו</li>
           </ul>
-          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · לא זמין) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
+          <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.</p>
         </div>
         <div class="src-types">
           <h4 data-i="srcBTitle">סוגי נתונים — לעולם לא מעורבבים ללא סימון</h4>
@@ -1790,18 +1927,18 @@ he:{
   avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
   avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
   est:"אומדן", perMonth:"לחודש", perYear:"לשנה", yoyLbl:"שינוי שנתי",
-  vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"לא זמין",usr:"הנחת משתמש"},
+  vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"חסר",usr:"הנחת משתמש"},
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
   perTxH1:"אומדן: מחצית א׳ 2026 בקצב שנתי", perTxEst:"קצב שנתי משוער",
   perInvEst:"מעוגן לסך הארצי",
-  naShort:"לא זמין", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
-  provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · לא זמין",
+  naShort:"—", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
+  provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · חסר",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
   mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
   rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
-  trendTitle:"מגמת מחירים", vcNA:"לא זמין",
+  trendTitle:"מגמת מחירים", vcNA:"חסר",
   trendNAWhy:"היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.",
   trendNANext:"השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.",
   svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן לדירה חדשה מקבלן",
@@ -1823,7 +1960,7 @@ he:{
   insTitle:"תובנות מהנתונים", insNote:"מחושב מהנתונים המוצגים ומנתוני רקע רשמיים",
   confTitle:"בסיס הנתונים",
   navCalc:"עסקה", calcLyr:"L4 · מעבדת עסקה", calcTitle:"מחשבון עסקה",
-  calcNote:"האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = לא זמין",
+  calcNote:"האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = אין תוצאה (—)",
   calcG:{buy:"רכישה",fin:"מימון",ops:"הכנסה והוצאות",exit:"החזקה ומכירה"},
   calcIn:{price:"מחיר הנכס",equity:"הון עצמי",tax:"מס רכישה",fees:"עלויות רכישה נוספות (עו״ד, תיווך)",
     rate:"ריבית משכנתא שנתית",term:"תקופת המשכנתא",rent:"שכר דירה חודשי",vac:"אי-תפוסה",opex:"תחזוקה, ניהול ושיפוצים",
@@ -1850,7 +1987,7 @@ he:{
   calcBoi:(v,d)=>`ריבית בנק ישראל ${v} · נבדק ${d} — ריבית המדיניות, לא ריבית משכנתא; אינה משמשת בחישוב`,
   calcSurplus:"ההון העצמי עולה על עלות הרכישה — העודף אינו נכלל בחישוב.",
   calcReset:"ניקוי כל השדות",
-  calcFoot:"חישוב אריתמטי בלבד מההנחות שהזנתם — אינו תחזית ואינו ייעוץ השקעות. המחשבון אינו משתמש בציוני השקעה, בדירוגים או בעקומת מחירים, ואינו מניח עליית ערך או עליית שכר דירה. ריבית משתנה, מס רכישה מדורג והצמדות אינם מחושבים — הזינו הנחות שמבטאות אותם.", basisNote:"רשמי · סטטי · נגזר · מודל · לא זמין",
+  calcFoot:"חישוב אריתמטי בלבד מההנחות שהזנתם — אינו תחזית ואינו ייעוץ השקעות. המחשבון אינו משתמש בציוני השקעה, בדירוגים או בעקומת מחירים, ואינו מניח עליית ערך או עליית שכר דירה. ריבית משתנה, מס רכישה מדורג והצמדות אינם מחושבים — הזינו הנחות שמבטאות אותם.", basisNote:"רשמי · סטטי · נגזר · מודל · חסר",
   basisNA:"חציון מחיר ושכ״ד · היסטוריית מחירים מקומית · ציוני השקעה ודירוגי הון (מוסתרים עד שתיאסף היסטוריית מחירים רשמית)",
   basisTx:"עסקאות: נשלפות בזמן אמת ממאגר רשות המסים (טבלת העסקאות), עם היקף המדגם והכיסוי של כל שליפה.",
   txPace:"קצב מכירות שנתי",
@@ -1904,7 +2041,7 @@ he:{
   srcA1:MKT.nh?`שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: ${MKT.nh.yoy<0?"ירידה של ":MKT.nh.yoy>0?"עלייה של ":"ללא שינוי"}${MKT.nh.yoy?Math.abs(MKT.nh.yoy).toFixed(1)+"%":""} (${MKT.nh.periodHe} מול שנה קודמת · סנכרון יומי); שינוי אזורי — נגזר, מאי–יוני 2026`:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
-  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · לא זמין) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
+  srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מוזנת אך ורק ממאגר העסקאות הרשמי (רשות המסים דרך GovMap) בזמן אמת.", srcA6:"עסקאות — מאגר העסקאות הרשמי של רשות המסים (דרך GovMap), נשלף בזמן אמת לפי האזור והתקופה שנבחרו",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -1914,6 +2051,74 @@ he:{
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
+  navHousing:"דיור", lyrHo:"L1 · שוק · דיור ממשלתי", hoTitle:"דיור מסובסד", hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה",
+  hoSrcName:"משרד הבינוי והשיכון · data.gov.il",
+  hoProv:(src,upd,chk)=>`מקור: ${src} · עודכן במקור ${upd} · נבדק ב-PROPX ${chk}`,
+  hoPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים",all:"כל התקופה",custom:"טווח מותאם"},
+  hoFrom:"מ-", hoTo:"עד", hoCity:"יישוב", hoAllCities:"כל הארץ", hoNbhd:"שכונה", hoAllNbhd:"כל השכונות",
+  hoProgram:"תוכנית", hoAllPrograms:"כל התוכניות", hoDev:"יזם", hoAllDevs:"כל היזמים",
+  hoStatus:"שלב בתהליך", hoAllStatus:"כל השלבים", hoPermit:"היתר בנייה", hoAllPermits:"כל סטטוסי ההיתר",
+  hoType:"סוג הגרלה", hoAllTypes:"ראשונות והמשך", hoTypeFirst:"ראשונה", hoTypeCont:"המשך",
+  hoQ:"חיפוש", hoQPh:"פרויקט, יזם או שכונה", hoReset:"איפוס", hoUseLoc:n=>`סינון לפי ${n}`,
+  hoProg:{"mechir-lamishtaken":"מחיר למשתכן","mechir-matara":"מחיר מטרה","dira-behanacha":"דירה בהנחה",other:"אחר"},
+  hoLoading:"טוען נתונים רשמיים…", hoErr:"נתוני הדיור המסובסד אינם נטענים כרגע. הם נשמרים בשרת ויוצגו כשהחיבור יחזור.",
+  hoOffline:"נתוני הדיור המסובסד נטענים מהשרת של PROPX ואינם כלולים בגרסה הלא מקוונת.",
+  hoNotSynced:"טרם בוצע סנכרון מהמקור הרשמי.",
+  hoCovNone:d=>`המקור הרשמי אינו כולל הגרלות אחרי ${d}. לתקופה שנבחרה אין בו נתונים, ולכן מוצג "—", לא אפס.`,
+  hoCovPartial:d=>`כיסוי חלקי: נתוני המקור מסתיימים ב-${d}; מה שאחרי התאריך אינו נכלל.`,
+  hoCovFull:(a,b)=>`המקור מכסה הגרלות מ-${a} עד ${b}.`,
+  hoNoneHere:"המקור הרשמי אינו מפרט הגרלות לסינון זה בתקופה המכוסה.",
+  hoMissingTip:"הנתון אינו קיים כרגע במקור הרשמי המחובר",
+  hoKLot:"הגרלות", hoKLotS:(f,c)=>`${f} ראשונות · ${c} המשך`, hoKProj:"פרויקטים", hoKCities:"יישובים",
+  hoKUnits:"יח״ד בהגרלה", hoKUnitsS:r=>`הגרלות ראשונות · ועוד ${r} הצעות חוזרות בהגרלות המשך — אותן יח״ד יכולות להיות מוצעות שוב בכמה הגרלות; לא יח״ד חדשות`,
+  hoKMkt:"יח״ד ששווקו בהרשמה", hoKMktS:"הגרלות ראשונות",
+  hoKWin:"זוכים", hoKWinS:"בכל ההגרלות · זוכה בהגרלה אינו רוכש",
+  hoKApp:"הרשמות להגרלות", hoKAppS:r=>`סכום הנרשמים בכל ההגרלות — אדם אחד יכול להירשם לרבות · ${r} הרשמות ליח״ד בהגרלות הראשונות`,
+  hoKPrice:"מחיר רשמי למ״ר (חציון)", hoKPriceS:n=>`${n} הגרלות ראשונות שבהן פורסם מחיר`,
+  hoNoPubT:"לא מפורסם במקור:", hoNoPub:["יח״ד בתוכנית","חוזים חתומים","מלאי זמין","התחלת בנייה / גמר","שיעור מסובסד מהמלאי שלא נמכר"],
+  hoMatUpd:"מתעדכן", hoMatUpdS:(n,d)=>`${n} הגרלות שטרם נרשמו בהן זוכים או שנערכו ב-${d} הימים האחרונים`,
+  hoMatPart:"כיסוי חלקי", hoMatPartS:"התקופה נמשכת אחרי ההגרלה האחרונה שבמקור — הגרלות מאוחרות יותר עשויות עוד להתפרסם",
+  hoMatHist:"תקופה היסטורית", hoMatTip:d=>`הגרלה שנרשמו בה זוכים ושנערכה לפני יותר מ-${d} יום — סביר שלא תשתנה, אך המקור עשוי לעדכן גם רשומות ישנות.`,
+  hoPickRange:"בחרו תאריך התחלה ותאריך סיום לטווח המותאם.", hoTblTNone:"רשומות רשמיות: —",
+  hoExcluded:n=>`רשומה רשמית אחת אינה הגרלת דיור ואינה נספרת כאן: ${n}.`, hoUndated:n=>`${n} הגרלות ללא תאריך במקור נספרות במדדים אך אינן בגרף.`,
+  hoDelistedN:n=>`${n} רשומות שהמקור הפסיק לפרט נשמרות ונספרות (מסומנות בטבלה).`, hoDelisted:"לא ברשימת המקור",
+  hoHistOn:n=>`(${n} הגרלות בפרויקט)`,
+  hoSeriesT:"פעילות לאורך זמן", hoM:{lotteries:"הגרלות",units:"יח״ד בהגרלה",marketed:"יח״ד ששווקו",winners:"זוכים"},
+  hoB:{month:"חודש",year:"שנה"}, hoSeriesNone:"אין נקודות בתקופה המכוסה.",
+  hoSeriesNote:"לפי תאריך ההגרלה · אירועי שיווק והגרלה — לא עסקאות חתומות · יח״ד: הגרלות ראשונות בלבד · עמודה בהירה = תקופה שכיסוי המקור בה חלקי.",
+  hoGeoT:"איפה בישראל", hoIsrael:"ישראל", hoGCity:"יישוב", hoGNbhd:"שכונה", hoGProj:"פרויקט",
+  hoGLot:"הגרלות", hoGUnits:"יח״ד", hoGWin:"זוכים", hoGLast:"אחרונה", hoNbhdNone:"לא צוינה במקור",
+  hoGeoNote:"גיאוגרפיה רשמית בלבד: קוד יישוב של הלמ״ס ושכונה כפי שפורסמה. במקור אין קואורדינטות, ולכן הפרויקטים אינם ממוקמים על המפה.",
+  hoMore:n=>`הצגת כל ${n}`, hoLess:"פחות",
+  hoTblT:n=>`${n} רשומות רשמיות`, hoTblS:"לחיצה על שורה פותחת את פרטי ההגרלה והפרויקט",
+  hoC:{date:"תאריך הגרלה",project:"פרויקט",place:"יישוב · שכונה",program:"תוכנית",dev:"יזם",type:"סוג",units:"יח״ד",win:"זוכים",price:"₪ למ״ר",permit:"היתר",status:"שלב"},
+  hoPrev:"הקודם", hoNext:"הבא", hoPage:(p,n)=>`עמוד ${p} מתוך ${n}`,
+  hoFoot:"כל שורה היא רשומה רשמית של משרד הבינוי והשיכון (רשמי); ספירות, סכומים וחציונים נגזרים ממנה (נגזר). זוכה בהגרלה אינו רוכש: המקור אינו מפרסם חוזים חתומים, מלאי זמין או שלבי בנייה, והם מוצגים כ-—. יח״ד בהגרלות המשך הן יח״ד שהוצעו מחדש ואינן מתווספות לסך היח״ד. אין במקור קשר רשמי למלאי הדירות שלא נמכרו, ולכן שיעור הדיור המסובסד מתוכו אינו מחושב.",
+  hoDClose:"סגירה", hoDLot:id=>`הגרלה ${id}`,
+  hoDIds:"מזהים רשמיים", hoDLotId:"מזהה הגרלה", hoDProjId:"מזהה פרויקט", hoDParent:"הגרלת אם", hoDCont:"הגרלת המשך", hoDType:"סוג הגרלה",
+  hoDProgT:"תוכנית ושיווק", hoDProg:"תוכנית", hoDBody:"גוף משווק", hoDElig:"זכאות", hoDRound:"סבב", hoDLotSt:"סטטוס הגרלה",
+  hoDDates:"מועדים", hoDSignup:"סיום הרשמה", hoDLotDate:"מועד ההגרלה",
+  hoDUnitsT:"יח״ד, נרשמים וזוכים", hoDUnits:"יח״ד בהגרלה", hoDUnitsSign:"יח״ד בהרשמה", hoDUnitsLocal:"יח״ד לבני המקום",
+  hoDApp:"נרשמים", hoDAppLocal:"נרשמים בני המקום", hoDAppDis:"נרשמים עם מוגבלות", hoDAppUp:"משפרי דיור (נרשמים)",
+  hoDWin:"זוכים", hoDWinLocal:"זוכים בני המקום", hoDWinHome:"זוכים חסרי דירה (ללא דירה בבעלותם)", hoDWinUp:"זוכים משפרי דיור",
+  hoDPrice:"מחיר רשמי למ״ר", hoDSigned:"חוזים חתומים", hoDInv:"מלאי זמין",
+  hoDLifeT:"שלב הפרויקט — ראיה רשמית בלבד", hoDPermit:"היתר בנייה", hoDStage:"שלב בתהליך המשרד", hoDBuild:"התחלת בנייה",
+  hoDDone:"גמר בנייה", hoDOcc:"אכלוס", hoDOccYes:"מתועד (בקרה לאחר אכלוס)",
+  hoDLifeNote:"התחלת בנייה וגמר אינם מופיעים במקור הזה, ואינם מוסקים מגיל ההגרלה.",
+  hoDProjT:n=>`כל ההגרלות בפרויקט (${n})`, hoDHistT:"שינויים שנצפו ב-PROPX", hoDHistNone:"לא נצפו שינויים במקור מאז הקליטה הראשונה.",
+  hoDHistRow:(f,a,b,d)=>`${d}: ${f} ${a} ← ${b}`,
+  hoDProvT:"מקור ומועדים", hoDSrc:"מקור", hoDRes:"משאב", hoDRow:"שורה במקור", hoDSrcUpd:"עודכן במקור", hoDFirst:"נקלט לראשונה ב-PROPX",
+  hoDChecked:"נבדק לאחרונה", hoDSnap:"תמונת מקור", hoDInSrc:"ברשימה העדכנית של המקור", hoDYes:"כן", hoDNo:"לא — נשמר, לא נמחק",
+  hoField:{lotteryStatus:"סטטוס הגרלה",projectStatusHe:"שלב",permitStatusHe:"היתר",winners:"זוכים",unitsInLottery:"יח״ד בהגרלה",unitsAtSignup:"יח״ד בהרשמה",
+    applicants:"נרשמים",pricePerSqm:"מחיר למ״ר",inLatestSource:"ברשימת המקור",projectId:"מזהה פרויקט",parentLotteryId:"הגרלת אם",continuationLotteryId:"הגרלת המשך",
+    lotteryTypeHe:"סוג הגרלה",round:"סבב",programHe:"תוכנית",marketingMethodCode:"קוד שיווק",marketingBodyHe:"גוף משווק",eligibility:"זכאות",signupEndDate:"סיום הרשמה",
+    lotteryDate:"מועד ההגרלה",localityCode:"קוד יישוב",city:"יישוב",neighborhood:"שכונה",projectName:"שם הפרויקט",developer:"יזם",unitsLocalResidents:"יח״ד לבני המקום",
+    unitsLocalResidentsAtSignup:"יח״ד לבני המקום בהרשמה",applicantsLocalResidents:"נרשמים בני המקום",applicantsDisabled:"נרשמים עם מוגבלות",applicantsUpgraders:"משפרי דיור (נרשמים)",
+    applicantsSeries:"נרשמים לפי סדרה",winnersLocalResidents:"זוכים בני המקום",winnersHomeless:"זוכים חסרי דירה",winnersUpgraders:"זוכים משפרי דיור",winnersSeries:"זוכים לפי סדרה"},
+  txFreshNote:"נתוני העסקאות מבוססים על עסקאות שדווחו ונקלטו במקורות הרשמיים. עסקאות חדשות עשויות להופיע בעיכוב, ולכן נתוני התקופות האחרונות ממשיכים להתעדכן.",
+  txMatUpd:"מתעדכן", txMatUpdS:(d,days,n)=>`עסקאות מ-${d} ואילך (${days} הימים האחרונים)${n?` · ${n} בתצוגה`:""}`,
+  txMatHist:"תקופה היסטורית", txMatHistS:d=>`עסקאות לפני ${d}`,
+  txMatTip:"תקופה היסטורית אינה בהכרח סגורה — עסקה שדווחה באיחור עדיין יכולה להופיע. גבול הימים ניתן לשינוי, ויכויל לפי העיכוב שיימדד בפועל.",
   logout:"יציאה", themeDark:"כהה", themeLight:"בהיר",
   aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
   aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
@@ -2118,18 +2323,18 @@ en:{
   avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"Sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
   est:"estimate", perMonth:"per month", perYear:"per year", yoyLbl:"Annual change",
-  vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Unavailable",usr:"User assumption"},
+  vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Missing",usr:"User assumption"},
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
   perTxH1:"estimate: H1 2026 annualized", perTxEst:"estimated annual pace",
   perInvEst:"anchored to the national total",
-  naShort:"Unavailable", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
-  provNote:"Every value is classed: official · static · derived · modelled · unavailable",
+  naShort:"—", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
+  provNote:"Every value is classed: official · static · derived · modelled · missing",
   mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
   mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
   rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
-  trendTitle:"Price trend", vcNA:"Unavailable",
+  trendTitle:"Price trend", vcNA:"Missing",
   trendNAWhy:"Official local price history has not been collected yet, so no trend chart is shown here.",
   trendNANext:"The latest annual change is on the overview cards, with its source and period. A chart will return only from official series actually collected.",
   svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · new-home estimate",
@@ -2151,7 +2356,7 @@ en:{
   insTitle:"Data insights", insNote:"Computed from the displayed data plus official background figures",
   confTitle:"Data basis",
   navCalc:"Deal", calcLyr:"L4 · Deal Lab", calcTitle:"Deal calculator",
-  calcNote:"Does a specific deal work? · every input is your assumption · an empty field is unavailable",
+  calcNote:"Does a specific deal work? · every input is your assumption · an empty field gives no result (—)",
   calcG:{buy:"Purchase",fin:"Financing",ops:"Income & costs",exit:"Holding & exit"},
   calcIn:{price:"Property price",equity:"Equity",tax:"Purchase tax",fees:"Other purchase costs (legal, brokerage)",
     rate:"Mortgage rate (annual)",term:"Mortgage term",rent:"Monthly rent",vac:"Vacancy",opex:"Maintenance, management & repairs",
@@ -2178,7 +2383,7 @@ en:{
   calcBoi:(v,d)=>`Bank of Israel rate ${v} · checked ${d} — the policy rate, not a mortgage rate; not used in the calculation`,
   calcSurplus:"Equity exceeds the total acquisition cost — the surplus is left out.",
   calcReset:"Clear all fields",
-  calcFoot:"Arithmetic on your assumptions only — not a forecast and not investment advice. The calculator uses no investment scores, rankings or price curve, and assumes no appreciation or rent growth. Variable rates, tiered purchase tax and indexation are not modelled — enter assumptions that reflect them.", basisNote:"official · static · derived · modelled · unavailable",
+  calcFoot:"Arithmetic on your assumptions only — not a forecast and not investment advice. The calculator uses no investment scores, rankings or price curve, and assumes no appreciation or rent growth. Variable rates, tiered purchase tax and indexation are not modelled — enter assumptions that reflect them.", basisNote:"official · static · derived · modelled · missing",
   basisNA:"Median price and rent · local price history · investment scores and capital rankings (hidden until official price history is collected)",
   basisTx:"Transactions: pulled live from the Tax Authority registry (transactions table), with each pull's sample scope and coverage.",
   txPace:"Annual sales pace",
@@ -2232,7 +2437,7 @@ en:{
   srcA1:MKT.nh?`National annual change — CBS new-homes price index: ${MKT.nh.yoyTxt.replace("-","−")} (${MKT.nh.periodEn} vs. a year earlier · daily sync); regional change — derived, May–Jun 2026`:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026)",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
-  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · unavailable) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
+  srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · missing) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — the official Israel Tax Authority deal registry (via GovMap), retrieved live for the selected area and period",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -2242,6 +2447,81 @@ en:{
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
   navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
+  navHousing:"Housing", lyrHo:"L1 · Market · Government housing", hoTitle:"Government Housing / Subsidized Housing Intelligence",
+  hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה — Mechir LaMishtaken · Mechir Matara · Dira BeHanacha",
+  hoSrcName:"Ministry of Construction and Housing · data.gov.il",
+  hoProv:(src,upd,chk)=>`Source: ${src} · source updated ${upd} · checked by PROPX ${chk}`,
+  hoPer:{"6m":"6 months","12m":"12 months","24m":"24 months",all:"All history",custom:"Custom range"},
+  hoFrom:"From", hoTo:"To", hoCity:"Locality", hoAllCities:"All Israel", hoNbhd:"Neighborhood", hoAllNbhd:"All neighborhoods",
+  hoProgram:"Program", hoAllPrograms:"All programs", hoDev:"Developer", hoAllDevs:"All developers",
+  hoStatus:"Process stage", hoAllStatus:"All stages", hoPermit:"Building permit", hoAllPermits:"All permit statuses",
+  hoType:"Lottery type", hoAllTypes:"First and continuation", hoTypeFirst:"First", hoTypeCont:"Continuation",
+  hoQ:"Search", hoQPh:"Project, developer or neighborhood", hoReset:"Reset", hoUseLoc:n=>`Filter to ${n}`,
+  hoProg:{"mechir-lamishtaken":"Mechir LaMishtaken","mechir-matara":"Mechir Matara","dira-behanacha":"Dira BeHanacha",other:"Other"},
+  hoLoading:"Loading official records…", hoErr:"Subsidized-housing data is not loading right now. It is stored on the server and will show when the connection returns.",
+  hoOffline:"Subsidized-housing data is loaded from the PROPX server and is not part of the offline build.",
+  hoNotSynced:"No sync from the official source has run yet.",
+  hoCovNone:d=>`The official source lists no lottery after ${d}. It has no data for the selected period, so "—" is shown, not zero.`,
+  hoCovPartial:d=>`Partial coverage: the source's data ends on ${d}; nothing after that date is included.`,
+  hoCovFull:(a,b)=>`The source covers lotteries from ${a} to ${b}.`,
+  hoNoneHere:"The official source lists no lottery for this filter in the covered period.",
+  hoMissingTip:"Data not currently present in the connected official source.",
+  hoKLot:"Lotteries", hoKLotS:(f,c)=>`${f} first · ${c} continuation`, hoKProj:"Projects", hoKCities:"Localities",
+  hoKUnits:"Lottery units", hoKUnitsS:r=>`first lotteries · plus ${r} unit re-offers in continuation lotteries — the same units can be re-offered in several; not new units`,
+  hoKMkt:"Units marketed at signup", hoKMktS:"first lotteries",
+  hoKWin:"Winners", hoKWinS:"all lotteries · a lottery winner is not a buyer",
+  hoKApp:"Lottery registrations", hoKAppS:r=>`applicants summed over lotteries — one person can register for many · ${r} registrations per unit in first lotteries`,
+  hoKPrice:"Official price per m² (median)", hoKPriceS:n=>`${n} first lotteries with a published price`,
+  hoNoPubT:"Not published by the source:", hoNoPub:["Program units","Signed sales","Available inventory","Construction start / completion","Subsidized share of unsold inventory"],
+  hoMatUpd:"Still updating", hoMatUpdS:(n,d)=>`${n} lotteries with no winners recorded yet or held in the last ${d} days`,
+  hoMatPart:"Partial coverage", hoMatPartS:"the period runs past the source's latest lottery — later lotteries may still be published",
+  hoMatHist:"Historical period", hoMatTip:d=>`Lotteries with winners recorded, held more than ${d} days ago — unlikely to change, though the source can still revise older records.`,
+  hoPickRange:"Choose a start and an end date for the custom range.", hoTblTNone:"Official records: —",
+  hoExcluded:n=>`One official record is not a housing lottery and is not counted here: ${n}.`, hoUndated:n=>`${n} lotteries without a date in the source are in the figures but not in the chart.`,
+  hoDelistedN:n=>`${n} records the source stopped listing are kept and counted (marked in the table).`, hoDelisted:"not in the source listing",
+  hoHistOn:n=>`(${n} lotteries of the project)`,
+  hoSeriesT:"Activity over time", hoM:{lotteries:"Lotteries",units:"Lottery units",marketed:"Marketed units",winners:"Winners"},
+  hoB:{month:"Month",year:"Year"}, hoSeriesNone:"No points in the covered period.",
+  hoSeriesNote:"By lottery date · marketing and lottery events — not signed transactions · units: first lotteries only · a light bar = a period the source covers only partly.",
+  hoGeoT:"Where in Israel", hoIsrael:"Israel", hoGCity:"Locality", hoGNbhd:"Neighborhood", hoGProj:"Project",
+  hoGLot:"Lotteries", hoGUnits:"Units", hoGWin:"Winners", hoGLast:"Latest", hoNbhdNone:"not given by the source",
+  hoGeoNote:"Official geography only: the CBS locality code and the neighborhood as published. The source has no coordinates, so projects are not placed on the map.",
+  hoMore:n=>`Show all ${n}`, hoLess:"Less",
+  hoTblT:n=>`${n} official records`, hoTblS:"Select a row for the lottery and project details",
+  hoC:{date:"Lottery date",project:"Project",place:"Locality · neighborhood",program:"Program",dev:"Developer",type:"Type",units:"Units",win:"Winners",price:"₪ per m²",permit:"Permit",status:"Stage"},
+  hoPrev:"Previous", hoNext:"Next", hoPage:(p,n)=>`Page ${p} of ${n}`,
+  hoFoot:"Every row is an official record of the Ministry of Construction and Housing (Official); counts, sums and medians are derived from them (Derived). A lottery winner is not a buyer: the source publishes no signed sales, available inventory or construction stages, so they show as —. Units in continuation lotteries are re-offered units and are not added to the unit total. The source has no official link to the unsold new-home inventory, so the subsidized share of it is not computed.",
+  hoDClose:"Close", hoDLot:id=>`Lottery ${id}`,
+  hoDIds:"Official identifiers", hoDLotId:"Lottery id", hoDProjId:"Project id", hoDParent:"Parent lottery", hoDCont:"Continuation lottery", hoDType:"Lottery type",
+  hoDProgT:"Program and marketing", hoDProg:"Program", hoDBody:"Marketing body", hoDElig:"Eligibility", hoDRound:"Round", hoDLotSt:"Lottery status",
+  hoDDates:"Dates", hoDSignup:"Signup closed", hoDLotDate:"Lottery held",
+  hoDUnitsT:"Units, applicants and winners", hoDUnits:"Units in the lottery", hoDUnitsSign:"Units at signup", hoDUnitsLocal:"Units for local residents",
+  hoDApp:"Applicants", hoDAppLocal:"Local-resident applicants", hoDAppDis:"Applicants with disabilities", hoDAppUp:"Upgrading applicants",
+  hoDWin:"Winners", hoDWinLocal:"Local-resident winners", hoDWinHome:"Non-owner winners (own no home)", hoDWinUp:"Upgrading winners",
+  hoDPrice:"Official price per m²", hoDSigned:"Signed sales", hoDInv:"Available inventory",
+  hoDLifeT:"Project stage — official evidence only", hoDPermit:"Building permit", hoDStage:"Ministry process stage", hoDBuild:"Construction start",
+  hoDDone:"Completion", hoDOcc:"Occupancy", hoDOccYes:"Evidenced (post-occupancy control)",
+  hoDLifeNote:"Construction start and completion are not in this source, and are never inferred from a lottery's age.",
+  hoDProjT:n=>`All lotteries in the project (${n})`, hoDHistT:"Changes observed by PROPX", hoDHistNone:"No source change observed since the first ingestion.",
+  hoDHistRow:(f,a,b,d)=>`${d}: ${f} ${a} → ${b}`,
+  hoDProvT:"Source and timing", hoDSrc:"Source", hoDRes:"Resource", hoDRow:"Source row", hoDSrcUpd:"Source updated", hoDFirst:"First ingested by PROPX",
+  hoDChecked:"Last checked", hoDSnap:"Source snapshot", hoDInSrc:"In the source's latest listing", hoDYes:"Yes", hoDNo:"No — kept, not deleted",
+  hoField:{lotteryStatus:"Lottery status",projectStatusHe:"Stage",permitStatusHe:"Permit",winners:"Winners",unitsInLottery:"Lottery units",unitsAtSignup:"Units at signup",
+    applicants:"Applicants",pricePerSqm:"Price per m²",inLatestSource:"In the source listing",projectId:"Project id",parentLotteryId:"Parent lottery",continuationLotteryId:"Continuation lottery",
+    lotteryTypeHe:"Lottery type",round:"Round",programHe:"Program",marketingMethodCode:"Marketing code",marketingBodyHe:"Marketing body",eligibility:"Eligibility",signupEndDate:"Signup closed",
+    lotteryDate:"Lottery held",localityCode:"Locality code",city:"Locality",neighborhood:"Neighborhood",projectName:"Project name",developer:"Developer",unitsLocalResidents:"Units for local residents",
+    unitsLocalResidentsAtSignup:"Local-resident units at signup",applicantsLocalResidents:"Local-resident applicants",applicantsDisabled:"Applicants with disabilities",applicantsUpgraders:"Upgrading applicants",
+    applicantsSeries:"Applicants by series",winnersLocalResidents:"Local-resident winners",winnersHomeless:"Non-owner winners",winnersUpgraders:"Upgrading winners",winnersSeries:"Winners by series"},
+  hoGloss:{"היתר מלא":"Full permit","היתר מלא לחלק מהמגרשים":"Full permit for some plots","החלטת ועדה (היתר בתנאים)":"Committee decision (conditional permit)",
+    "החלטת ועדה (היתר בתנאים) לחלק מהמגרשים":"Committee decision (conditional) for some plots","הוגשה בקשה":"Application submitted",
+    "הוגשה בקשה לחלק מהמגרשים":"Application submitted for some plots","טרם הוגשה בקשה":"No application yet",
+    "בתהליכי הגרלה":"Lottery process","בחירת דירות":"Unit selection","בקרת חוזים":"Contract control","בקרה לאחר אכלוס":"Post-occupancy control",
+    "פורסמו תוצאות":"Results published","חידוש הרשמה במשרדי הקבלן":"Registration renewed at the developer","הגרלה נסגרה לרישום":"Registration closed",
+    "ראשונה":"First","המשך":"Continuation","משב\"ש":"Ministry of Construction and Housing","רמ\"י":"Israel Land Authority"},
+  txFreshNote:"Transaction data reflects deals reported and available in official sources. Recent transactions may appear with a reporting delay, so recent periods continue to update.",
+  txMatUpd:"Still updating", txMatUpdS:(d,days,n)=>`deals from ${d} on (the last ${days} days)${n?` · ${n} shown`:""}`,
+  txMatHist:"Historical period", txMatHistS:d=>`deals before ${d}`,
+  txMatTip:"A historical period is not guaranteed complete — a late-reported deal can still appear. The day boundary is configurable and will be calibrated from the reporting lag PROPX measures.",
   logout:"Log out", themeDark:"Dark", themeLight:"Light",
   aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
   aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
@@ -2513,7 +2793,7 @@ function metricsOf(id){
      (STATIC_SRC below); no copy of the source is stored, so it is not RAW.
    · DERIVED (נגזר) — a stated formula over cited published figures.
    · MODELLED (מודל) — an estimate, never an observation.
-   · UNAVAILABLE (לא זמין) — nothing supports it, so nothing is shown.
+   · MISSING (חסר, shown as "—") — nothing supports it, so nothing is shown.
    The historical o-flags on LOCATIONS decide nothing here. */
 const STATIC_SRC={
   /* field → the citation (publisher · period) */
@@ -3456,6 +3736,14 @@ function renderConfidence(){
    here carries sourceFamily OFFICIAL_GOVERNMENT and is dropped otherwise.
    ===================================================================== */
 let txDebug=null;
+/* DATA MATURITY of transaction periods — reporting lag, not confidence: deals
+   reach the official source after they happen, so the most recent
+   TX_MATURITY_DAYS keep updating (the same window the scheduled refresh
+   re-checks). Configurable; to be calibrated from the measured
+   first_seen − transaction_date once PROPX has observed it — no delay figure
+   is claimed before that. */
+const TX_MATURITY_DAYS=120;
+const txMaturityBound=()=>new Date(Date.now()-TX_MATURITY_DAYS*864e5).toISOString().slice(0,10);
 const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
   tab:"all",months:24,mapOn:false,key:"",err:null,unavailable:[]};
 
@@ -3602,6 +3890,9 @@ function renderTx(){
   const thin=prices.length>0&&prices.length<3;
   const streetLevel=sc&&(sc.level==="street"||sc.level==="building");
   el("txWarn").hidden=!thin;
+  const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
+  const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
+  el("txFresh").innerHTML=`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
   if(thin)el("txWarn").textContent=streetLevel
     ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
     : t.txThin(prices.length);
@@ -4902,6 +5193,354 @@ function initSearch(){
 }
 
 /* =====================================================================
+   GOVERNMENT (SUBSIDIZED) HOUSING — official lottery records
+   Read through the session-gated API (api/housing.js): the browser asks for
+   one summary and one page of rows at a time — never the national dataset.
+   A row's values are OFFICIAL (Ministry of Construction and Housing);
+   counts, sums and medians over them are DERIVED; anything the source does
+   not publish (signed sales, inventory, construction stages, coordinates)
+   is "—". Nothing here is a sale, and nothing is modelled.
+   ===================================================================== */
+const HO_PAGE=25;
+const HO_FILTERS=["period","from","to","city","neighborhood","project","developer","program","status","permit","type","q"];
+const hoState={f:{period:"all"},page:1,sort:"lotteryDate",order:"desc",metric:"lotteries",bucket:null,geoAll:false,
+  sum:null,rec:null,facets:null,status:"idle",err:null,req:0,started:false,detail:null,detailErr:null,openId:null,returnFocus:null};
+const hoE=s=>calcEsc(s==null?"":s);
+const hoDash=()=>`<span class="ho-na" title="${hoE(T().hoMissingTip)}">—</span>`;
+const hoN=(v,f=fmtInt)=>v==null?hoDash():`<span class="num">${f(v)}</span>`;
+const hoDate=d=>d?`<span class="num">${hoE(String(d).slice(0,10).split("-").reverse().join("."))}</span>`:hoDash();
+/* official text, verbatim; in English the known vocabularies carry a gloss, the original stays in the tooltip */
+function hoTx(he){
+  if(he==null||he==="")return hoDash();
+  const g=state.lang==="en"&&T().hoGloss&&T().hoGloss[he];
+  return g?`<span title="${hoE(he)}">${hoE(g)}</span>`:hoE(he);
+}
+function hoCityName(name){
+  if(!name)return hoDash();
+  if(state.lang==="en"){const id=coveredIdByName(name);if(id&&LOC[id]&&LOC[id].en)return hoE(LOC[id].en)}
+  return hoE(name);
+}
+const hoProgName=(p,he)=>(p&&T().hoProg[p])?T().hoProg[p]:he?hoE(he):hoDash();
+const hoTypeChip=ty=>ty==="continuation"?`<span class="ho-chip cont">${T().hoTypeCont}</span>`:ty==="first"?`<span class="ho-chip">${T().hoTypeFirst}</span>`:hoDash();
+
+function hoQS(extra){
+  const p=new URLSearchParams();
+  for(const k of HO_FILTERS){const v=hoState.f[k];if(v!=null&&v!=="")p.set(k,v)}
+  for(const[k,v]of Object.entries(extra||{}))if(v!=null&&v!=="")p.set(k,String(v));
+  return p.toString();
+}
+async function hoGet(q){
+  const r=await fetch("/api/housing?"+q,{credentials:"same-origin",headers:{Accept:"application/json"}});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+/* "all": summary + rows; "rows": one page only (paging, sorting) */
+function hoLoad(what){
+  hoState.started=true;
+  const f=hoState.f;
+  /* an incomplete custom range shows no numbers at all — never the previous period's — and cancels answers in flight */
+  if(f.period==="custom"&&!(f.from&&f.to&&f.from<=f.to)){hoState.req++;hoState.sum=null;hoState.rec=null;hoState.status="range";renderHousing();return}
+  const id=++hoState.req;hoState.status="loading";renderHousing();
+  const sum=what==="rows"&&hoState.sum?Promise.resolve(hoState.sum):hoGet(hoQS({view:"summary",bucket:hoState.bucket}));
+  const rec=hoGet(hoQS({view:"records",sort:hoState.sort,order:hoState.order,page:hoState.page,size:HO_PAGE}));
+  Promise.all([sum,rec]).then(([S,R])=>{
+    if(id!==hoState.req)return;
+    hoState.sum=S;hoState.rec=R;hoState.facets=S.facets;hoState.status="ok";hoState.err=null;renderHousing();
+  }).catch(e=>{
+    if(id!==hoState.req)return;
+    hoState.status="error";hoState.err=e.message;renderHousing();
+  });
+}
+const hoOffline=()=>location.protocol==="file:"||!location.host;
+
+function hoBarHTML(){
+  const t=T(),f=hoState.f,S=hoState.sum,F=(S&&S.facets)||hoState.facets||{};   /* the choices survive a pending custom range */
+  const per=["6m","12m","24m","all","custom"].map(k=>`<button type="button" data-hoper="${k}" aria-pressed="${f.period===k}">${t.hoPer[k]}</button>`).join("");
+  const opt=(v,l,n,sel)=>`<option value="${hoE(v)}"${sel?" selected":""}>${l}${n!=null?` (${fmtInt(n)})`:""}</option>`;   /* n is for the selected period; none when the source does not cover it */
+  const sel=(k,all,list,lab)=>`<select class="ho-sel" data-hof="${k}" aria-label="${hoE(lab)}">${opt("",all,null,!f[k])}${(list||[]).map(x=>opt(x.value,x.label!=null?x.label:x.value,x.n,String(f[k])===String(x.value))).join("")}</select>`;
+  const cityList=(F.city||[]).map(c=>({value:c.value,label:hoCityName(c.label),n:c.n}));
+  if(f.city&&!cityList.some(c=>String(c.value)===String(f.city)))cityList.unshift({value:f.city,label:hoE(f.city),n:null});
+  const progList=(F.program||[]).map(x=>({value:x.value,label:hoProgName(x.value),n:x.n}));
+  const glossed=l=>(l||[]).map(x=>({value:x.value,label:state.lang==="en"&&t.hoGloss&&t.hoGloss[x.value]?hoE(t.hoGloss[x.value]):hoE(x.value),n:x.n}));
+  const devList=(F.developer||[]).map(x=>({value:x.value,label:hoE(x.value),n:x.n}));
+  if(f.developer&&!devList.some(x=>x.value===f.developer))devList.unshift({value:f.developer,label:hoE(f.developer),n:null});
+  const nbList=(F.neighborhood||[]).map(x=>({value:x.value,label:hoE(x.value),n:x.n}));
+  /* the page's own locality, when the source lists it, is one click away */
+  let loc="";
+  const cur=LOC[state.locId],city=cur&&(cur.type==="city"?cur:cityOf(cur));
+  if(city&&!f.city&&F.city){const m=F.city.find(c=>normGeoQ(c.label)===normGeoQ(city.he));
+    if(m)loc=`<button type="button" class="ho-loc" data-hoset="city" data-hov="${hoE(m.value)}">${t.hoUseLoc(heName(city))}</button>`}
+  const custom=f.period==="custom"?`<span class="ho-dates"><label>${t.hoFrom} <input type="date" data-hod="from" value="${hoE(f.from||"")}"${f.from&&f.to&&f.from>f.to?' aria-invalid="true"':""}></label>
+    <label>${t.hoTo} <input type="date" data-hod="to" value="${hoE(f.to||"")}"></label></span>`:"";
+  const dirty=HO_FILTERS.some(k=>k!=="period"&&f[k])||f.period!=="all";
+  return `<span class="ho-per" role="group" aria-label="${hoE(t.hoPer.all)}">${per}</span>${custom}
+    ${sel("city",t.hoAllCities,cityList,t.hoCity)}
+    ${f.city?sel("neighborhood",t.hoAllNbhd,nbList,t.hoNbhd):""}
+    ${sel("program",t.hoAllPrograms,progList,t.hoProgram)}
+    ${sel("developer",t.hoAllDevs,devList,t.hoDev)}
+    ${sel("status",t.hoAllStatus,glossed(F.status),t.hoStatus)}
+    ${sel("permit",t.hoAllPermits,glossed(F.permit),t.hoPermit)}
+    ${sel("type",t.hoAllTypes,[{value:"first",label:t.hoTypeFirst},{value:"continuation",label:t.hoTypeCont}],t.hoType)}
+    <input class="ho-in" type="search" data-hoq value="${hoE(f.q||"")}" placeholder="${hoE(t.hoQPh)}" aria-label="${hoE(t.hoQ)}">
+    ${loc}${dirty?`<button type="button" class="ho-reset" data-horeset>${t.hoReset}</button>`:""}`;
+}
+
+function hoKpisHTML(S){
+  const t=T(),K=S.kpis,D=vcTag("der");
+  const tile=(l,v,sub)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  if(!K)return["hoKLot","hoKProj","hoKUnits","hoKMkt","hoKWin","hoKApp","hoKPrice"].map(k=>tile(t[k],hoDash(),"")).join("");
+  return [
+    tile(t.hoKLot,hoN(K.lotteries),K.lotteries?t.hoKLotS(fmtInt(K.firstLotteries),fmtInt(K.continuationLotteries)):""),
+    tile(t.hoKProj,hoN(K.projects),""),
+    hoState.f.city?"":tile(t.hoKCities,hoN(K.cities),""),
+    tile(t.hoKUnits,hoN(K.unitsFirst),K.unitsReoffered?t.hoKUnitsS(fmtInt(K.unitsReoffered)):""),
+    tile(t.hoKMkt,hoN(K.unitsAtSignupFirst),t.hoKMktS),
+    tile(t.hoKWin,hoN(K.winners),t.hoKWinS),
+    tile(t.hoKApp,hoN(K.applicants),K.applicantsPerUnit!=null?t.hoKAppS(K.applicantsPerUnit.toFixed(1)):""),
+    tile(t.hoKPrice,K.medianPricePerSqm!=null?`<span class="num">${fmtNIS(K.medianPricePerSqm)}</span>`:hoDash(),K.pricedLotteries?t.hoKPriceS(fmtInt(K.pricedLotteries)):""),
+  ].join("");
+}
+
+/* month/year bars from the API's series — zeros only inside the source's coverage */
+function hoChartHTML(S){
+  const t=T(),pts=(S.series&&S.series.points)||[];
+  const key={lotteries:"lotteries",units:"unitsFirst",marketed:"unitsAtSignupFirst",winners:"winners"}[hoState.metric];
+  const tg=(attr,cur,map)=>`<span class="ho-tg">${Object.keys(map).map(k=>`<button type="button" data-${attr}="${k}" aria-pressed="${cur===k}">${map[k]}</button>`).join("")}</span>`;
+  const head=`<div class="ho-bh"><h3>${t.hoSeriesT} ${vcTag("der")}</h3>${tg("hom",hoState.metric,t.hoM)}${tg("hob",S.series&&S.series.bucket,t.hoB)}</div>`;
+  if(!pts.length)return head+`<p class="ho-note">${t.hoSeriesNone}</p><p class="ho-note">${t.hoSeriesNote}</p>`;
+  const W=640,H=170,top=16,bot=22,vals=pts.map(p=>p[key]||0),max=Math.max(1,...vals),slot=W/pts.length,bw=Math.max(1.5,slot*.72);
+  const lab=d=>S.series.bucket==="year"?d:d.slice(5,7)+"/"+d.slice(2,4);
+  const part=p=>!!p.partial;
+  const bars=pts.map((p,i)=>{const v=p[key]||0,h=v/max*(H-top-bot),x=i*slot+(slot-bw)/2,y=H-bot-h;
+    return `<rect class="b${part(p)?" part":""}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}"><title>${lab(p.period)} · ${t.hoM[hoState.metric]}: ${fmtInt(v)}</title></rect>`}).join("");
+  const every=Math.max(1,Math.ceil(pts.length/8));
+  const ticks=pts.map((p,i)=>i%every===0||i===pts.length-1?`<text x="${(i*slot+slot/2).toFixed(1)}" y="${H-6}" text-anchor="middle">${lab(p.period)}</text>`:"").join("");
+  const svg=`<svg class="ho-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${hoE(t.hoSeriesT+" · "+t.hoM[hoState.metric])}">
+    <line class="ax" x1="0" x2="${W}" y1="${H-bot}" y2="${H-bot}"/>${bars}${ticks}<text x="2" y="11">${fmtInt(max)}</text></svg>`;
+  return head+`<div class="ho-svgw">${svg}</div><p class="ho-note">${t.hoSeriesNote}</p>`;
+}
+
+/* country → locality → neighborhood → project, from official fields only */
+function hoGeoHTML(S){
+  const t=T(),f=hoState.f,B=S.breakdown||{rows:[],level:"city"};
+  const fc=f.city&&S.facets&&S.facets.city&&S.facets.city.find(c=>String(c.value)===String(f.city));
+  const crumbs=[`<button type="button" data-hocrumb="all">${t.hoIsrael}</button>`];
+  if(f.city)crumbs.push(`<button type="button" data-hocrumb="city">${fc?hoCityName(fc.label):hoE(f.city)}</button>`);
+  if(f.neighborhood)crumbs.push(`<button type="button" data-hocrumb="nbhd">${hoE(f.neighborhood)}</button>`);
+  const nameCol={city:t.hoGCity,neighborhood:t.hoGNbhd,project:t.hoGProj}[B.level];
+  const rows=hoState.geoAll?B.rows:B.rows.slice(0,10);
+  const go=r=>B.level==="city"?`data-hogo="city" data-hov="${hoE(r.key)}"`:B.level==="neighborhood"?(r.label?`data-hogo="neighborhood" data-hov="${hoE(r.label)}"`:""):`data-hogo="project" data-hov="${hoE(r.key)}"`;
+  const label=r=>B.level==="city"?hoCityName(r.label):r.label?hoE(r.label):`<span class="ho-na">${t.hoNbhdNone}</span>`;
+  const table=B.rows.length?`<table class="ho-gt"><thead><tr><th>${nameCol}</th><th>${t.hoGLot}</th><th>${t.hoGUnits}</th><th>${t.hoGWin}</th><th>${t.hoGLast}</th></tr></thead><tbody>${
+    rows.map(r=>`<tr ${go(r)} tabindex="${go(r)?0:-1}"><td>${label(r)}</td><td class="n">${hoN(r.lotteries)}</td><td class="n">${hoN(r.unitsFirst)}</td><td class="n">${hoN(r.winners)}</td><td class="n">${hoDate(r.lastLotteryDate)}</td></tr>`).join("")}</tbody></table>`
+    :`<p class="ho-note">${S.kpis?t.hoNoneHere:t.hoSeriesNone}</p>`;
+  const more=B.rows.length>10?`<button type="button" class="ho-more" data-hogeoall>${hoState.geoAll?t.hoLess:t.hoMore(B.rows.length)}</button>`:"";
+  return `<div class="ho-bh"><h3>${t.hoGeoT} ${vcTag("der")}</h3></div><div class="ho-crumbs">${crumbs.join("<span>›</span>")}</div>${table}${more}<p class="ho-note">${t.hoGeoNote}</p>`;
+}
+
+function hoTableHTML(R){
+  const t=T(),C=t.hoC;
+  const sortable={date:"lotteryDate",project:"projectName",place:"city",dev:"developer",units:"unitsInLottery",win:"winners",price:"pricePerSqm"};
+  const th=k=>{const s=sortable[k];if(!s)return`<th>${C[k]}</th>`;
+    const on=hoState.sort===s;return`<th${on?` aria-sort="${hoState.order==="asc"?"ascending":"descending"}"`:""}><button type="button" data-hosort="${s}">${C[k]}<span class="arr">${on?(hoState.order==="asc"?"▲":"▼"):"▲"}</span></button></th>`};
+  const head=`<thead><tr>${["date","project","place","program","dev","type","units","win","price","permit","status"].map(th).join("")}</tr></thead>`;
+  const row=r=>`<tr tabindex="0" data-hoid="${hoE(r.id)}">
+    <td class="num">${hoDate(r.lotteryDate)}</td>
+    <td class="w"><span class="nm">${hoE(r.projectName)||hoDash()}</span><div class="sub num">#${r.projectId} · ${t.hoDLot(r.lotteryId)}</div>${r.inLatestSource===false?`<span class="ho-chip cont">${t.hoDelisted}</span>`:""}</td>
+    <td class="w">${hoCityName(r.city)}<div class="sub">${r.neighborhood?hoE(r.neighborhood):hoDash()}</div></td>
+    <td>${hoProgName(r.program,r.programHe)}</td>
+    <td class="w">${r.developer?hoE(r.developer):hoDash()}</td>
+    <td>${hoTypeChip(r.lotteryType)}</td>
+    <td class="num">${hoN(r.unitsInLottery)}</td>
+    <td class="num">${hoN(r.winners)}</td>
+    <td class="num">${r.pricePerSqm!=null?hoN(r.pricePerSqm):hoDash()}</td>
+    <td class="w">${hoTx(r.permitStatusHe)}</td>
+    <td class="w">${hoTx(r.projectStatusHe)}</td></tr>`;
+  return R.rows.length?head+"<tbody>"+R.rows.map(row).join("")+"</tbody>":"";
+}
+function hoCardsHTML(R){
+  const t=T();
+  return R.rows.map(r=>`<div class="tcard" tabindex="0" data-hoid="${hoE(r.id)}">
+    <div class="r1"><b>${hoE(r.projectName)||hoDash()}</b>${hoDate(r.lotteryDate)}</div>
+    <div class="r2" style="color:var(--ink-3)">${hoCityName(r.city)} · ${r.neighborhood?hoE(r.neighborhood):hoDash()} · ${hoProgName(r.program,r.programHe)}</div>
+    <div class="r2"><span>${t.hoC.units} ${hoN(r.unitsInLottery)}</span><span>${t.hoC.win} ${hoN(r.winners)}</span><span>${t.hoC.price} ${hoN(r.pricePerSqm)}</span>${hoTypeChip(r.lotteryType)}</div>
+    <div class="r2">${r.developer?hoE(r.developer):hoDash()}</div>
+    <div class="r2"><span>${t.hoC.permit}: ${hoTx(r.permitStatusHe)}</span><span>${t.hoC.status}: ${hoTx(r.projectStatusHe)}</span></div></div>`).join("");
+}
+
+function renderHousing(){
+  const sec=el("housing");if(!sec)return;
+  const t=T(),S=hoState.sum,R=hoState.rec,st=hoState.status;
+  /* the bar re-renders with every answer: keep the focused control, its caret and what is being typed */
+  const a=document.activeElement,bar=el("hoBar");
+  const key=a&&bar.contains(a)?(a.dataset.hoq!==undefined?"[data-hoq]":a.dataset.hof?`[data-hof="${a.dataset.hof}"]`
+    :a.dataset.hod?`[data-hod="${a.dataset.hod}"]`:a.dataset.hoper?`[data-hoper="${a.dataset.hoper}"]`:null):null;
+  const typed=key==="[data-hoq]"?a.value:null,ss=typed!=null?a.selectionStart:null,se=typed!=null?a.selectionEnd:null;
+  bar.innerHTML=hoBarHTML();
+  if(key){const n=bar.querySelector(key);if(n){if(typed!=null)n.value=typed;n.focus();if(ss!=null)try{n.setSelectionRange(ss,se)}catch(e){}}}
+  const fr=S&&S.freshness;
+  el("hoProv").innerHTML=fr&&fr.synced?`${vcTag("raw")}${t.hoProv(hoE(t.hoSrcName),hoDate(fr.sourceUpdatedAt),hoDate(fr.checkedAt))}`:"";
+  /* states: not started / loading / error / not synced */
+  const msg=st==="error"?(hoOffline()?t.hoOffline:t.hoErr):st==="range"?t.hoPickRange:(!S&&st==="loading")?t.hoLoading:(S&&fr&&!fr.synced)?t.hoNotSynced:"";
+  const show=!!S&&!(fr&&!fr.synced)&&st!=="error";
+  for(const id of["hoKpis","hoNoPub","hoSeries","hoGeo","hoTblHead","hoTbl","hoCards","hoPager"])el(id).hidden=!show;
+  const cov=el("hoCov");
+  if(!show){cov.hidden=!msg;cov.className="ho-msg";cov.textContent=msg;el("hoFoot").textContent="";sec.setAttribute("aria-busy",String(st==="loading"));return}
+  sec.setAttribute("aria-busy",String(st==="loading"));
+  cov.className="ho-cov";
+  const C=S.coverage||{};
+  cov.hidden=false;
+  const notes=[];
+  if(S.excluded&&S.excluded.length)notes.push(t.hoExcluded(S.excluded.map(x=>`${hoE(x.projectName)} · ${hoE(x.city)}`).join("; ")));
+  if(S.undated)notes.push(t.hoUndated(fmtInt(S.undated)));
+  if(S.delisted)notes.push(t.hoDelistedN(fmtInt(S.delisted)));
+  cov.innerHTML=(C.state==="none"?t.hoCovNone(hoDate(C.coveredTo)):C.state==="partial"?t.hoCovPartial(hoDate(C.coveredTo))
+    :t.hoCovFull(hoDate(C.coveredFrom),hoDate(C.coveredTo))+(S.kpis&&S.kpis.lotteries===0?" "+t.hoNoneHere:""))+(notes.length?" "+notes.join(" "):"");
+  /* maturity of the selected period: still updating · partly covered · historical — never "complete" */
+  const M=S.maturity,days=(M&&M.days)||(fr&&fr.maturityDays)||90;
+  const mat=!M?"":M.updating?`<span class="ho-mat upd" title="${hoE(t.hoMatTip(days))}">${t.hoMatUpd}</span> <span>${t.hoMatUpdS(fmtInt(M.updating),days)}</span>`
+    :M.coverage==="partial"?`<span class="ho-mat upd" title="${hoE(t.hoMatPartS)}">${t.hoMatPart}</span> <span>${t.hoMatPartS}</span>`
+    :`<span class="ho-mat hist" title="${hoE(t.hoMatTip(days))}">${t.hoMatHist}</span>`;
+  el("hoKpis").innerHTML=hoKpisHTML(S);
+  el("hoNoPub").innerHTML=`${mat}<span><b>${t.hoNoPubT}</b> ${t.hoNoPub.map(x=>`${x} ${hoDash()}`).join(" · ")}</span>`;
+  el("hoSeries").innerHTML=hoChartHTML(S);
+  el("hoGeo").innerHTML=hoGeoHTML(S);
+  if(R){
+    el("hoTblHead").innerHTML=`<h3>${R.total==null?t.hoTblTNone:t.hoTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${t.hoTblS}</span>`;
+    el("hoTbl").innerHTML=hoTableHTML(R);
+    el("hoCards").innerHTML=hoCardsHTML(R);
+    el("hoPager").hidden=R.pages<=1;
+    el("hoPager").innerHTML=`<button type="button" data-hopage="${R.page-1}"${R.page<=1?" disabled":""}>${t.hoPrev}</button>
+      <span>${t.hoPage(`<span class="num">${R.page}</span>`,`<span class="num">${R.pages}</span>`)}</span>
+      <button type="button" data-hopage="${R.page+1}"${R.page>=R.pages?" disabled":""}>${t.hoNext}</button>`;
+  }
+  el("hoFoot").textContent=t.hoFoot;
+  if(hoState.openId)renderHoDrawer();
+}
+
+/* ---------------- project detail (drawer) ---------------- */
+async function hoOpen(id,from){
+  hoState.openId=id;hoState.detail=null;hoState.detailErr=null;
+  if(from)hoState.returnFocus=from;
+  el("hoDrawer").hidden=false;document.body.style.overflow="hidden";
+  renderHoDrawer();el("hoPanel").focus();
+  try{
+    const d=await hoGet("view=record&id="+encodeURIComponent(id));
+    if(hoState.openId!==id)return;
+    hoState.detail=d;
+  }catch(e){if(hoState.openId!==id)return;hoState.detailErr=e.message}
+  renderHoDrawer();
+}
+function hoClose(){
+  hoState.openId=null;hoState.detail=null;
+  el("hoDrawer").hidden=true;document.body.style.overflow="";
+  const f=hoState.returnFocus;hoState.returnFocus=null;
+  if(f&&document.contains(f))f.focus();
+}
+function renderHoDrawer(){
+  const t=T(),d=hoState.detail,p=el("hoPanel");
+  const close=`<button type="button" class="ho-x" data-hoclose aria-label="${hoE(t.hoDClose)}">×</button>`;
+  if(!d){p.innerHTML=`<div class="ho-dh"><h3 id="hoDTitle">${hoState.detailErr?(hoOffline()?t.hoOffline:t.hoErr):t.hoLoading}</h3>${close}</div>`;return}
+  const r=d.record,L=d.lifecycle||{},P=r.provenance||{},J=d.project||{};
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
+  const O=vcTag("raw");
+  const life=[
+    kv(t.hoDPermit,L.permit?hoTx(L.permit.value):hoDash()),
+    kv(t.hoDStage,L.projectStage?hoTx(L.projectStage.value):hoDash()),
+    kv(t.hoDBuild,hoDash()),
+    kv(t.hoDDone,hoDash()),
+    kv(t.hoDOcc,L.occupied?t.hoDOccYes:hoDash()),
+  ].join("");
+  const sib=(J.lotteries||[]).map(x=>`<tr data-hoid="${hoE(x.id)}"${x.id===r.id?' class="on"':""}><td>${hoDate(x.lotteryDate)}</td><td>${hoTypeChip(x.lotteryType)}</td>
+    <td class="num">${hoN(x.unitsInLottery)}</td><td class="num">${hoN(x.winners)}</td><td>${hoTx(x.lotteryStatus)}</td></tr>`).join("");
+  const fld=k=>(t.hoField&&t.hoField[k])||k;
+  const val=v=>v==null||v===""?"—":typeof v==="boolean"?(v?t.hoDYes:t.hoDNo)
+    :typeof v==="object"?hoE(Object.entries(v).map(([k,x])=>`${k}: ${x==null?"—":x}`).join(" · ")):hoE(String(v));
+  const hist=(d.history||[]).slice(0,30).map(h=>{const ids=h.ids||[h.id];
+    return `<li>${t.hoDHistRow(hoE(fld(h.field)),val(h.from),val(h.to),hoDate(h.observedAt))}${ids.length>1?` <span class="ho-na">${t.hoHistOn(ids.length)}</span>`
+      :ids[0]!==r.id?` <span class="ho-na">(${t.hoDLot(hoE(String(ids[0]).replace("lottery:","")))})</span>`:""}</li>`}).join("");
+  p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.hoTitle.split(" / ")[0]} · ${t.hoDLot(r.lotteryId)}</span>
+      <h3 id="hoDTitle">${hoE(r.projectName)||hoDash()}</h3>
+      <div class="sub">${hoCityName(r.city)} · ${r.neighborhood?hoE(r.neighborhood):hoDash()} · ${r.developer?hoE(r.developer):hoDash()}</div></div>${close}</div>
+    ${sec(t.hoDIds,O,`<div class="ho-dl">${kv(t.hoDLotId,`<span class="num">${r.lotteryId}</span>`)}${kv(t.hoDProjId,`<span class="num">${r.projectId}</span>`)}
+      ${kv(t.hoDType,hoTypeChip(r.lotteryType))}${kv(t.hoDParent,r.parentLotteryId?`<span class="num">${r.parentLotteryId}</span>`:hoDash())}${kv(t.hoDCont,r.continuationLotteryId?`<span class="num">${r.continuationLotteryId}</span>`:hoDash())}</div>`)}
+    ${sec(t.hoDProgT,O,`<div class="ho-dl">${kv(t.hoDProg,hoProgName(r.program,r.programHe))}${kv(t.hoDBody,hoTx(r.marketingBodyHe))}
+      ${kv(t.hoDElig,hoTx(r.eligibility))}${kv(t.hoDRound,hoTx(r.round))}${kv(t.hoDLotSt,hoTx(r.lotteryStatus))}</div>`)}
+    ${sec(t.hoDDates,O,`<div class="ho-dl">${kv(t.hoDSignup,hoDate(r.signupEndDate))}${kv(t.hoDLotDate,hoDate(r.lotteryDate))}</div>`)}
+    ${sec(t.hoDUnitsT,O,`<div class="ho-dl">${kv(t.hoDUnits,hoN(r.unitsInLottery))}${kv(t.hoDUnitsSign,hoN(r.unitsAtSignup))}${kv(t.hoDUnitsLocal,hoN(r.unitsLocalResidents))}
+      ${kv(t.hoDApp,hoN(r.applicants))}${kv(t.hoDAppLocal,hoN(r.applicantsLocalResidents))}${kv(t.hoDAppDis,hoN(r.applicantsDisabled))}${kv(t.hoDAppUp,hoN(r.applicantsUpgraders))}
+      ${kv(t.hoDWin,hoN(r.winners))}${kv(t.hoDWinLocal,hoN(r.winnersLocalResidents))}${kv(t.hoDWinHome,hoN(r.winnersHomeless))}${kv(t.hoDWinUp,hoN(r.winnersUpgraders))}
+      ${kv(t.hoDPrice,r.pricePerSqm!=null?`<span class="num">${fmtNIS(r.pricePerSqm)}</span>`:hoDash())}${kv(t.hoDSigned,hoDash())}${kv(t.hoDInv,hoDash())}</div>`)}
+    ${sec(t.hoDLifeT,O,`<div class="ho-dl">${life}</div><p class="ho-note">${t.hoDLifeNote}</p>`)}
+    ${sec(t.hoDProjT(fmtInt((J.lotteries||[]).length)),O,`<table class="ho-dt"><thead><tr><th>${t.hoC.date}</th><th>${t.hoC.type}</th><th>${t.hoC.units}</th><th>${t.hoC.win}</th><th>${t.hoDLotSt}</th></tr></thead><tbody>${sib}</tbody></table>`)}
+    ${sec(t.hoDHistT,"",hist?`<ul class="ho-note" style="padding-inline-start:16px">${hist}</ul>`:`<p class="ho-note">${t.hoDHistNone}</p>`)}
+    ${sec(t.hoDProvT,"",`<div class="ho-dl">${kv(t.hoDSrc,hoE(t.hoSrcName))}${kv(t.hoDRes,`<span class="num" style="font-size:11px">${hoE(P.resourceId||"")}</span>`)}
+      ${kv(t.hoDRow,P.sourceRowId!=null?`<span class="num">${hoE(String(P.sourceRowId))}</span>`:hoDash())}${kv(t.hoDSrcUpd,hoDate(P.sourceUpdatedAt))}
+      ${kv(t.hoDFirst,hoDate(r.firstSeenAt))}${kv(t.hoDChecked,hoDate(r.lastSeenAt))}${kv(t.hoDInSrc,r.inLatestSource===false?t.hoDNo:t.hoDYes)}
+      ${kv(t.hoDSnap,`<span class="num" style="font-size:11px">${hoE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
+}
+
+function initHousing(){
+  const sec=el("housing");if(!sec)return;
+  const setF=(k,v)=>{const f=hoState.f;f[k]=v||null;
+    if(k==="city"){f.neighborhood=null;f.project=null}
+    if(k==="neighborhood")f.project=null;
+    hoState.page=1;hoState.geoAll=false;hoLoad()};
+  sec.addEventListener("click",e=>{
+    const b=e.target.closest("[data-hoper],[data-hoset],[data-horeset],[data-hom],[data-hob],[data-hocrumb],[data-hogo],[data-hogeoall],[data-hosort],[data-hopage],[data-hoclose],[data-hoid]");
+    if(!b)return;
+    const d=b.dataset,f=hoState.f;
+    if(d.hoclose!==undefined){hoClose();return}
+    if(d.hoper){f.period=d.hoper;if(d.hoper!=="custom"){f.from=null;f.to=null}hoState.page=1;hoLoad();return}
+    if(d.hoset){setF(d.hoset,d.hov);return}
+    if(d.horeset!==undefined){hoState.f={period:"all"};hoState.page=1;hoState.geoAll=false;hoLoad();return}
+    if(d.hom){hoState.metric=d.hom;renderHousing();return}
+    if(d.hob){hoState.bucket=d.hob;hoLoad();return}
+    if(d.hocrumb){if(d.hocrumb==="all"){f.city=null;f.neighborhood=null;f.project=null}else if(d.hocrumb==="city"){f.neighborhood=null;f.project=null}else f.project=null;
+      hoState.page=1;hoState.geoAll=false;hoLoad();return}
+    if(d.hogo){setF(d.hogo,d.hov);return}
+    if(d.hogeoall!==undefined){hoState.geoAll=!hoState.geoAll;renderHousing();return}
+    if(d.hosort){if(hoState.sort===d.hosort)hoState.order=hoState.order==="asc"?"desc":"asc";else{hoState.sort=d.hosort;hoState.order=d.hosort==="lotteryDate"?"desc":"asc"}
+      hoState.page=1;hoLoad("rows");return}
+    if(d.hopage){hoState.page=Math.max(1,+d.hopage);hoLoad("rows");el("hoTblHead").scrollIntoView({block:"nearest"});return}
+    if(d.hoid){hoOpen(d.hoid,b.closest("#hoPanel")?hoState.returnFocus:b);return}
+  });
+  sec.addEventListener("change",e=>{
+    const x=e.target,d=x.dataset;
+    if(d.hof){setF(d.hof,x.value);return}
+    if(d.hod){hoState.f[d.hod]=x.value||null;hoState.page=1;hoLoad();return}
+  });
+  let qt;
+  sec.addEventListener("input",e=>{
+    if(e.target.dataset.hoq===undefined)return;
+    clearTimeout(qt);const v=e.target.value.trim();
+    qt=setTimeout(()=>{if((hoState.f.q||"")===v)return;hoState.f.q=v||null;hoState.page=1;hoLoad()},350);
+  });
+  sec.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-hoid],.tcard[data-hoid],tr[data-hogo]");
+      if(r&&e.target===r){e.preventDefault();r.click()}}
+  });
+  document.addEventListener("keydown",e=>{
+    if(!hoState.openId)return;
+    if(e.key==="Escape"){hoClose();return}
+    if(e.key==="Tab"){   /* keep focus inside the open drawer */
+      const p=el("hoPanel"),q=[...p.querySelectorAll("button,[href],[tabindex]:not([tabindex='-1'])")].filter(x=>x.offsetParent!==null);
+      if(!q.length){e.preventDefault();p.focus();return}
+      const first=q[0],last=q[q.length-1];
+      if(e.shiftKey&&(document.activeElement===first||document.activeElement===p)){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+      else if(!p.contains(document.activeElement)){e.preventDefault();first.focus()}
+    }
+  });
+  /* fetch when the section comes near the viewport — not on every page load */
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!hoState.started)hoLoad()}},{rootMargin:"800px 0px"});
+    io.observe(sec);
+  }else hoLoad();
+}
+
+/* =====================================================================
    7 · ORCHESTRATION
    ===================================================================== */
 function refresh(withSkeleton){
@@ -4914,7 +5553,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -4956,6 +5595,7 @@ if(CI_ENABLED){initCapital();["capital","railCap"].forEach(id=>{el(id).hidden=fa
 if(CI_EXTERNAL)el("ciTeaserBlk").hidden=false;
 initCmd();
 initMapZoom();
+initHousing();
 refresh(true);
 </script>
 </body><!-- doc-skeleton -->

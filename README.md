@@ -90,3 +90,46 @@ only leak one. Production access is the server-side gate alone.
 The Bank of Israel rate and the CBS new-homes price index are re-checked every
 day by `.github/workflows/market-sync.yml` (`scripts/market-sync.js`), committed
 to `data/market/`, and loaded by the page — see `lib/market/README.md`.
+
+### Government (subsidized) housing — דיור מסובסד
+
+The section `#housing` (מחיר למשתכן · מחיר מטרה · דירה בהנחה) shows the
+official lottery records of the Ministry of Construction and Housing
+(data.gov.il, resource `7c8255d0…`): filters (locality, neighborhood, program,
+developer, process stage, permit status, lottery type, free text), periods (last
+6 / 12 / 24 months, all history, custom range), DERIVED KPIs over the OFFICIAL
+rows, activity over time, a country → locality → neighborhood → project
+drill-down, a paginated table and a per-lottery drawer with the project's
+lotteries, the observed change history and full provenance.
+
+Lottery units, units marketed at signup, registrations and winners are shown
+separately and never relabelled; a winner is not a buyer. The source publishes
+no signed sales, available inventory, construction start/completion or
+coordinates — those show "—" (nothing is inferred, nothing is placed on the
+map), and the subsidized share of unsold inventory is "—" because no official
+join exists. A period the source does not cover (its newest lottery is dated
+27.01.2025) shows "—", never 0.
+
+The page reads `GET /api/housing?view=…` (session-gated, one summary and one
+page of rows at a time); the records live in `data/housing/`, written by the
+daily `.github/workflows/data-sync.yml` (and in the PROPX Supabase project once
+its server-side secrets are set). Details: `lib/housing/README.md`;
+tests: `node test/housing.test.js`.
+
+### Transaction freshness
+
+Deals reach the official source after they happen, so recent periods are
+never treated as closed: the deals section states this and marks the last
+`TX_MATURITY_DAYS` (120) as "מתעדכן / Still updating" and older dates as
+"תקופה היסטורית / Historical period" — a reporting-lag notion, not
+confidence; no reporting delay is claimed until PROPX has measured one. The
+scheduled refresh re-checks the same 120-day window and upserts into the
+transaction ledger (`lib/gov/ledger.js`, `scripts/tx-sync.js`): first_seen_at is
+kept, earlier versions are kept as revisions, nothing is deleted, legitimate
+identical deals stay separate, and each run records whether the window was
+re-checked completely (`lib/gov/README.md`). The transaction source currently refuses the GitHub
+runner (HTTP 403); the run records that and stores nothing — it is never worked
+around.
+
+Missing factual values everywhere in the app read "—"; the class of such a
+value is MISSING (חסר).

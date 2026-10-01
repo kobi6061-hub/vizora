@@ -52,6 +52,12 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
     assert.deepEqual(s, { inserted: 0, updated: 1, unchanged: 0, rejected: 0 });
     const [r] = await store.all('govmap');
     assert.equal(r.price, 1450000); assert.equal(r.first_seen_at, 'a'); assert.equal(r.last_seen_at, 'b');
+    // the source's earlier version is kept, not overwritten
+    assert.equal(r.revisions.length, 1);
+    assert.deepEqual([r.revisions[0].price, r.revisions[0].replaced_at, r.revisions[0].last_seen_at], [1400000, 'b', 'a']);
+    await L.upsert('govmap', [deal(7, '2026-07-01', { price: 1460000 })], { fetchedAt: 'c' });
+    const [r2] = await store.all('govmap');
+    assert.deepEqual(r2.revisions.map((x) => x.price), [1450000, 1400000], 'newest revision first');
   });
   await t('a row missing from a later response is never deleted', async () => {
     const store = new MemoryLedgerStore(), L = new TxLedger(store);
@@ -77,6 +83,22 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
     assert.equal((await L.upsert('taxauth', twins(), { fetchedAt: 'a' })).inserted, 2);
     assert.deepEqual(await L.upsert('taxauth', twins(), { fetchedAt: 'b' }), { inserted: 0, updated: 0, unchanged: 2, rejected: 0 });
     assert.deepEqual((await store.all('taxauth')).map((r) => r.ordinal).sort(), [1, 2]);
+  });
+  await t('through the real GovMap normalizer: two identical id-less deals of one response stay two, whatever the clock', async () => {
+    const { GovMapProvider } = require('../lib/gov/providers/govmap');
+    const { MemoryStore } = require('../lib/gov/store');
+    let tick = 0;
+    const gm = new GovMapProvider({ store: new MemoryStore(), now: () => new Date(Date.UTC(2026, 8, 1, 3, 0, 0, tick++)).toISOString() });
+    gm.now = () => new Date(Date.UTC(2026, 8, 1, 3, 0, 0, tick++)).toISOString();   // every row normalized a millisecond apart
+    const raw = { dealDate: '2026-08-20T00:00:00', dealAmount: 1500000, assetArea: 90, assetRoomNum: 4, floorNumber: 3,
+      settlementNameHeb: 'באר שבע', streetNameHeb: 'רגר', houseNumber: 10, propertyTypeDescription: 'דירה בבית קומות' };
+    const ctx = { dealType: 2, sourceUrl: 'https://www.govmap.gov.il/api/real-estate/street-deals/9?dealType=2', retrievedAt: 'r1', responseId: 'resp-1' };
+    const twins = [gm.normalizeDeal({ ...raw }, ctx), gm.normalizeDeal({ ...raw }, ctx)];
+    const store = new MemoryLedgerStore(), L = new TxLedger(store);
+    assert.equal((await L.upsert('govmap', twins, { fetchedAt: 'a' })).inserted, 2, 'legitimate identical deals were collapsed');
+    // the same response fetched again (a new response id) re-observes the same two deals — nothing new
+    const again = [gm.normalizeDeal({ ...raw }, { ...ctx, responseId: 'resp-2' }), gm.normalizeDeal({ ...raw }, { ...ctx, responseId: 'resp-2' })];
+    assert.deepEqual(await L.upsert('govmap', again, { fetchedAt: 'b' }), { inserted: 0, updated: 0, unchanged: 2, rejected: 0 });
   });
   await t('a row with no transaction date is rejected, not guessed', async () => {
     const L = new TxLedger(new MemoryLedgerStore());
@@ -112,6 +134,8 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
     assert.equal(row.first_seen_at, 'old', 'the first sighting is carried over');
     assert.equal(row.last_seen_at, 'new');
     assert.ok(!('previous' in row));
+    // the stored row's hash differs → an update: its earlier version travels to the database
+    assert.equal(row.revisions.length, 1); assert.equal(row.revisions[0].content_hash, 'x');
   });
 
   console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

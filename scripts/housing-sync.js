@@ -17,8 +17,10 @@
 //   --allow-shrink                                 accept a response under half the listed rows
 //
 // No fake record can reach the production data directory: there, --from only
-// replays an official raw snapshot that a live run wrote to data/housing/raw/
-// (a test fixture is replayed only into a separate HOUSING_DATA_DIR).
+// replays an official raw snapshot that a live run wrote to data/housing/raw/ —
+// its content must match the hash in its name, a live-api run must have
+// recorded it in sync-runs.jsonl, and an older snapshot is refused unless
+// --force. A fixture is replayed only into a separate HOUSING_DATA_DIR.
 //
 // Storage: data/housing/ (committed by .github/workflows/data-sync.yml); in
 // addition the PROPX Supabase project when SUPABASE_URL and
@@ -31,35 +33,39 @@ const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
 const { SOURCE, fetchLotteries } = require('../lib/housing/source');
-const { normalizeAll, hashRows, NORMALIZER_VERSION } = require('../lib/housing/normalize');
-const { mergeRecords, FileHousingStore, SupabaseHousingStore } = require('../lib/housing/store');
+const { normalizeAll, hashRows, recordTypeOf, NORMALIZER_VERSION } = require('../lib/housing/normalize');
+const { mergeRecords, FileHousingStore, SupabaseHousingStore, readRawSnapshot, verifyOfficialSnapshot } = require('../lib/housing/store');
 
-const DIR = process.env.HOUSING_DATA_DIR || path.join(__dirname, '..', 'data', 'housing');
+const PROD_DIR = path.join(__dirname, '..', 'data', 'housing');
+const DIR = process.env.HOUSING_DATA_DIR || PROD_DIR;
+const IS_PROD = path.resolve(DIR) === path.resolve(PROD_DIR);
 const argVal = (f) => { const i = process.argv.indexOf('--' + f); return i > -1 ? process.argv[i + 1] : null; };
 const has = (f) => process.argv.includes('--' + f);
 /* the columns the normalizer cannot work without — a renamed column fails the run instead of nulling a field */
 const REQUIRED_COLUMNS = ['LotteryId', 'ProjectId', 'LamasCode', 'LamasName', 'LotteryExecutionDate', 'LotteryType',
   'MarketingMethodDesc', 'LotteryHousingUnits', 'Winners', 'Subscribers', 'ProjectStatus', 'ConstructionPermitName'];
 const SHRINK_GUARD = 0.5;
+const findRaw = (dir, hash) => { try { const f = fs.readdirSync(path.join(dir, 'raw')).find((x) => hash && x.includes(hash.slice(0, 12))); return f ? readRawSnapshot(path.join(dir, 'raw', f)) : null; } catch { return null; } };
 
+/* What may be replayed where (see the header). Returns the payload to ingest. */
 function guardReplay(file) {
-  if (process.env.HOUSING_DATA_DIR || has('dry-run')) return 'replay';
-  const raw = path.resolve(DIR, 'raw') + path.sep;
-  if (!path.resolve(file).startsWith(raw)) throw new Error('refused: into the production data directory --from only replays an official raw snapshot from data/housing/raw/');
-  return 'replay-official-snapshot';
+  if (has('dry-run') || !IS_PROD) {
+    const buf = fs.readFileSync(file);
+    const j = JSON.parse((file.endsWith('.gz') ? zlib.gunzipSync(buf) : buf).toString('utf8'));
+    const rows = Array.isArray(j) ? j : j.rows;
+    return { rows, sourceUpdatedAt: (!Array.isArray(j) && j.sourceUpdatedAt) || argVal('source-updated') || null,
+      endpoint: 'file:' + path.basename(file), retrievalMethod: 'replay' };
+  }
+  const { snap, run: wrote, when } = verifyOfficialSnapshot(PROD_DIR, file, { force: has('force'), hashRows });
+  return { rows: snap.rows, sourceUpdatedAt: snap.sourceUpdatedAt || wrote.sourceUpdatedAt || null, fetchedAt: when,
+    endpoint: snap.endpoint || wrote.endpoint || 'file:' + path.basename(file), retrievalMethod: 'replay-official-snapshot' };
 }
 
-function readPayload(file, method) {
-  const buf = fs.readFileSync(file);
-  const j = JSON.parse((file.endsWith('.gz') ? zlib.gunzipSync(buf) : buf).toString('utf8'));
-  const rows = Array.isArray(j) ? j : j.rows;
-  return { rows, total: rows.length, sourceUpdatedAt: (!Array.isArray(j) && j.sourceUpdatedAt) || argVal('source-updated') || null,
-    endpoint: 'file:' + path.basename(file), retrievalMethod: method };
-}
-
+/* the dates the source's LOTTERIES span (a national grants row does not widen them) */
 function coverage(records) {
-  const d = records.filter((r) => r.inLatestSource !== false).map((r) => r.lotteryDate).filter(Boolean).sort();
-  const s = records.filter((r) => r.inLatestSource !== false).map((r) => r.signupEndDate).filter(Boolean).sort();
+  const lot = records.filter((r) => r.inLatestSource !== false && (r.recordType || recordTypeOf(r)) === 'lottery');
+  const d = lot.map((r) => r.lotteryDate).filter(Boolean).sort();
+  const s = lot.map((r) => r.signupEndDate).filter(Boolean).sort();
   return { lotteryDateFrom: d[0] || null, lotteryDateTo: d[d.length - 1] || null, signupEndDateTo: s[s.length - 1] || null };
 }
 
@@ -69,14 +75,16 @@ function coverage(records) {
     try { replay = guardReplay(argVal('from')); }
     catch (e) { console.error(e.message); process.exitCode = 1; return; }   // refused before anything is written
   }
+  const now = new Date().toISOString();
   const startedAt = new Date().toISOString();
   const dry = has('dry-run');
   const store = new FileHousingStore(DIR);
   const run = { id: 'housing-' + startedAt.replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z'), source: SOURCE.id, startedAt, status: 'failed' };
   let code = 0, summary = '';
   try {
-    const got = replay ? readPayload(argVal('from'), replay) : { ...(await fetchLotteries()), retrievalMethod: 'live-api' };
-    const fetchedAt = new Date().toISOString();
+    const got = replay || { ...(await fetchLotteries()), retrievalMethod: 'live-api' };
+    const live = got.retrievalMethod === 'live-api';
+    const fetchedAt = got.fetchedAt || new Date().toISOString();       // when this content was fetched from the source
     Object.assign(run, { endpoint: got.endpoint, retrievalMethod: got.retrievalMethod, fetched: got.rows.length, sourceUpdatedAt: got.sourceUpdatedAt });
     if (!got.rows.length) throw new Error('the source returned no rows');
     const cols = new Set(got.rows.flatMap((r) => Object.keys(r)));
@@ -84,11 +92,8 @@ function coverage(records) {
     if (lost.length) throw new Error('schema changed — missing column(s): ' + lost.join(', '));
 
     const prevMeta = store.readMeta();
-    const prev = store.readRecords();
+    let prev = store.readRecords();
     const listed = prev.filter((r) => r.inLatestSource !== false).length;
-    if (listed && got.rows.length < listed * SHRINK_GUARD && !has('allow-shrink')) {
-      throw new Error(`the source returned ${got.rows.length} rows, under half of the ${listed} it listed last time — not applied (check the source, then rerun with --allow-shrink)`);
-    }
     const hash = hashRows(got.rows);
     const changed = !prevMeta || prevMeta.snapshotHash !== hash;
     /* same content, new normalizer: re-derive the records, keep their observation times, no history events */
@@ -96,18 +101,45 @@ function coverage(records) {
     const ctx = { source: SOURCE, sourceUpdatedAt: got.sourceUpdatedAt, snapshotHash: hash, retrievalMethod: got.retrievalMethod,
       fetchedAt: changed ? fetchedAt : prevMeta.snapshotFetchedAt || fetchedAt };
     const { records: fresh, rejected } = normalizeAll(got.rows, ctx);
+    Object.assign(run, { rejected: rejected.length, rejectedSample: rejected.slice(0, 5) });
     if (!fresh.length) throw new Error(`no row passed normalization (${rejected.length} rejected)`);
+    /* a response that mostly fails normalization is a source or schema problem, not news */
+    const maxRejected = Math.max(5, Math.ceil(got.rows.length * 0.02));
+    if (rejected.length > maxRejected && !has('allow-rejects')) {
+      throw new Error(`${rejected.length} of ${got.rows.length} rows failed normalization (allowed ${maxRejected}) — not applied; see rejectedSample`);
+    }
+    if (listed && fresh.length < listed * SHRINK_GUARD && !has('allow-shrink')) {
+      throw new Error(`only ${fresh.length} valid rows, under half of the ${listed} listed last time — not applied (check the source, then rerun with --allow-shrink)`);
+    }
+    /* every id the source LISTED, including rows that failed normalization: those are never marked delisted */
+    const presentIds = new Set(got.rows.map((r) => Number(String(r.LotteryId ?? '').replace(/,/g, ''))).filter((n) => Number.isInteger(n) && n > 0).map((n) => 'lottery:' + n));
+    /* a new normalizer and new content in one run: re-derive the stored version from ITS raw snapshot first,
+       so history shows only what the source changed */
+    if (changed && prevMeta && prevMeta.normalizerVersion !== NORMALIZER_VERSION && prev.length) {
+      const old = findRaw(DIR, prevMeta.snapshotHash);
+      if (old) {
+        const byId = new Map(prev.map((r) => [r.id, r]));
+        const re = normalizeAll(old.rows, { source: SOURCE, sourceUpdatedAt: prevMeta.sourceUpdatedAt, fetchedAt: prevMeta.snapshotFetchedAt,
+          snapshotHash: prevMeta.snapshotHash, retrievalMethod: 'live-api' }).records;
+        const reIds = new Set(re.map((r) => r.id));
+        prev = re.map((r) => { const o = byId.get(r.id) || {};
+          return { ...r, provenance: o.provenance || r.provenance, firstSeenAt: o.firstSeenAt || r.provenance.fetchedAt, inLatestSource: o.inLatestSource !== false,
+            ...(o.inLatestSource === false ? { lastSeenAt: o.lastSeenAt } : {}) }; })
+          .concat(prev.filter((r) => !reIds.has(r.id)));
+        run.rederivedPrevious = true;
+      }
+    }
 
     let merged = null, history = [], stats = { inserted: 0, updated: 0, unchanged: fresh.length, missingFromSource: 0 };
-    if (changed) ({ records: merged, history, stats } = mergeRecords(prev, fresh, { fetchedAt, syncRunId: run.id }));
+    if (changed) ({ records: merged, history, stats } = mergeRecords(prev, fresh, { fetchedAt, syncRunId: run.id, prevCheckedAt: prevMeta && prevMeta.checkedAt, presentIds }));
     else if (reDerive) {
       const old = new Map(prev.map((r) => [r.id, r])), ids = new Set(fresh.map((r) => r.id));
-      merged = fresh.map((r) => { const o = old.get(r.id) || {}; return { ...r, firstSeenAt: o.firstSeenAt || fetchedAt, lastSeenAt: o.lastSeenAt || fetchedAt, inLatestSource: true }; })
+      merged = fresh.map((r) => { const o = old.get(r.id) || {}; return { ...r, firstSeenAt: o.firstSeenAt || fetchedAt, inLatestSource: true }; })
         .concat(prev.filter((r) => !ids.has(r.id))).sort((a, b) => a.lotteryId - b.lotteryId);
     }
     const all = merged || prev;
     Object.assign(run, { status: 'ok', contentChanged: changed, reDerived: reDerive, normalizerVersion: NORMALIZER_VERSION, snapshotHash: hash,
-      ...stats, rejected: rejected.length, rejectedSample: rejected.slice(0, 5), historyEvents: history.length });
+      ...stats, historyEvents: history.length });
     const meta = {
       source: { ...SOURCE },
       endpoint: got.endpoint,
@@ -115,7 +147,7 @@ function coverage(records) {
       snapshotHash: hash,
       snapshotFetchedAt: changed ? fetchedAt : prevMeta.snapshotFetchedAt, // when PROPX first fetched this content
       normalizerVersion: NORMALIZER_VERSION,
-      checkedAt: fetchedAt,                                        // the latest successful check
+      checkedAt: live ? now : (prevMeta && prevMeta.checkedAt) || fetchedAt,   // the latest successful check of the LIVE source
       rows: got.rows.length, records: all.length, rejected: rejected.length,
       inLatestSource: all.filter((r) => r.inLatestSource !== false).length,
       notInLatestSource: all.filter((r) => r.inLatestSource === false).length,
@@ -124,17 +156,18 @@ function coverage(records) {
     };
     summary = `Housing: ${got.rows.length} official rows · source updated ${String(got.sourceUpdatedAt || '—').slice(0, 10)} · `
       + (changed ? `+${stats.inserted} new, ${stats.updated} changed, ${stats.missingFromSource} no longer listed` : 'content unchanged')
+      + (reDerive ? ` · records re-derived (normalizer v${NORMALIZER_VERSION})` : '')
       + (rejected.length ? ` · ${rejected.length} rejected` : '');
     if (!dry) {
-      const rawName = changed ? store.snapshotRaw(got.rows, hash, fetchedAt) : null;
+      const rawName = changed ? store.snapshotRaw(got.rows, hash, fetchedAt, { sourceUpdatedAt: got.sourceUpdatedAt, endpoint: got.endpoint }) : null;
       run.rawSnapshot = rawName;
       run.finishedAt = new Date().toISOString();
       store.write({ records: merged, history, meta, run });
       const { SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: key } = process.env;
       if (url && key) {
         try {
-          await new SupabaseHousingStore({ url, key }).write({ records: merged, history, run, source: SOURCE,
-            raw: changed ? { hash, rows: got.rows, fetchedAt } : null });
+          await new SupabaseHousingStore({ url, key }).write({ records: merged, all, history, run, source: SOURCE,
+            raw: { hash, rows: got.rows, fetchedAt } });
           summary += ' · Supabase ✓';
         } catch (e) { code = 2; summary += ' · Supabase write failed'; console.error('supabase:', e.message); }
       }

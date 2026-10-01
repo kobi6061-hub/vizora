@@ -18,6 +18,9 @@
 create table if not exists market.housing_lotteries (
   id                       text primary key,         -- 'lottery:<LotteryId>'
   lottery_id               integer not null unique,  -- the source's LotteryId
+  record_type              text not null default 'lottery'
+                             check (record_type in ('lottery','grant-program','national-program')),
+                                                     -- the source also lists a national grants program: kept, never counted as a lottery
   project_id               integer not null,         -- the source's ProjectId
   parent_lottery_id        integer,
   continuation_lottery_id  integer,
@@ -45,7 +48,7 @@ create table if not exists market.housing_lotteries (
   applicants               integer,
   winners                  integer,
   first_seen_at            timestamptz not null,     -- first observed by PROPX
-  last_seen_at             timestamptz not null,     -- last fetch whose content contained it
+  last_seen_at             timestamptz not null,     -- latest check at which the source listed it
   in_latest_source         boolean not null default true,
   provenance               jsonb not null,           -- source, resource, row id, snapshot hash, fetched_at
   record                   jsonb not null            -- the full normalized record (every official field)
@@ -64,7 +67,7 @@ create table if not exists market.housing_status_history (
   from_value   jsonb,
   to_value     jsonb,
   observed_at  timestamptz not null,
-  sync_run_id  text
+  run_key      text                                  -- sync_runs.run_key
 );
 create index if not exists housing_status_history_record on market.housing_status_history (record_id, observed_at desc);
 
@@ -88,6 +91,7 @@ select
   max(lottery_date)                                         as last_lottery_date,
   bool_or(in_latest_source)                                 as in_latest_source
 from market.housing_lotteries
+where record_type = 'lottery'
 group by project_id;
 
 -- ---------------------------------------------------------------- provenance (per record)

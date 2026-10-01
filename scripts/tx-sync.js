@@ -16,7 +16,9 @@
 //   node scripts/tx-sync.js                 refresh every target, write
 //   node scripts/tx-sync.js --dry-run       fetch and report, write nothing
 //
-// Exit: 0 all targets OK · 2 partial · 1 nothing usable.
+// Exit: 0 all targets OK · 2 partial · 1 nothing usable · 3 the source
+// refused this environment (HTTP 401/403 on every target): recorded as
+// "refused", nothing written to the ledger, never worked around.
 
 'use strict';
 
@@ -52,11 +54,16 @@ function ledgerStore() {
       const fetchedAt = new Date().toISOString();
       const st = await ledger.upsert(SOURCE_ID, rows, { fetchedAt });
       const dates = rows.map((r) => r.date).filter(Boolean).sort();
+      /* was the window really re-checked? not if the sweep was capped, cut by its time budget, hit a page limit or lost requests */
+      const d = rows.diagnostics || null;
+      const complete = d ? d.polygonsQueried >= d.polygonsPlanned && d.polygonsPlanned >= d.polygonsAvailable
+        && d.requestsRun >= d.requestsPlanned && !d.polyErrors && !d.pageLimitHits : null;
       runs.push({ target: tg.id, status: 'ok', startedAt: started, finishedAt: new Date().toISOString(),
-        window: { from: win.from, to: win.to }, fetched: rows.length, ...st,
-        newestTransactionDate: dates[dates.length - 1] || null, coverage: rows.diagnostics || null });
+        window: { from: win.from, to: win.to }, windowCheck: complete === true ? 'complete' : complete === false ? 'partial' : 'unknown',
+        fetched: rows.length, ...st, newestTransactionDate: dates[dates.length - 1] || null, coverage: d });
     } catch (e) {
-      runs.push({ target: tg.id, status: 'failed', startedAt: started, finishedAt: new Date().toISOString(),
+      const refused = /\bHTTP 40[13]\b/.test(e.message);
+      runs.push({ target: tg.id, status: refused ? 'refused' : 'failed', startedAt: started, finishedAt: new Date().toISOString(),
         window: { from: win.from, to: win.to }, error: e.message });
     }
   }
@@ -67,9 +74,13 @@ function ledgerStore() {
   }
   const ok = runs.filter((r) => r.status === 'ok').length;
   const sum = (k) => runs.reduce((a, r) => a + (r[k] || 0), 0);
-  const summary = `Transactions ${now.toISOString().slice(0, 10)} — ${ok}/${runs.length} targets · re-checked ${win.from}…${win.to} · +${sum('inserted')} new · ${sum('updated')} changed · ${sum('unchanged')} unchanged`;
+  const refused = runs.filter((r) => r.status === 'refused').length;
+  const partial = runs.filter((r) => r.windowCheck === 'partial').length;
+  const summary = `Transactions ${now.toISOString().slice(0, 10)} — ${ok}/${runs.length} targets · window ${win.from}…${win.to} · +${sum('inserted')} new · ${sum('updated')} changed · ${sum('unchanged')} unchanged`
+    + (partial ? ` · window only partly re-checked on ${partial} (polygon cap / time budget / page limit)` : '')
+    + (refused ? ` · source refused access on ${refused}` : '');
   console.log(summary);
   const sf = process.argv.indexOf('--summary-file');
   if (sf > -1) fs.appendFileSync(process.argv[sf + 1], summary + '\n');
-  process.exitCode = ok === runs.length ? 0 : ok ? 2 : 1;
+  process.exitCode = ok === runs.length ? 0 : ok ? 2 : refused === runs.length ? 3 : 1;
 })().catch((e) => { console.error('tx-sync failed:', e.message); process.exitCode = 1; });

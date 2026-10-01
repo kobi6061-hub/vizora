@@ -15,7 +15,7 @@ const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 const { SOURCE } = require('../lib/housing/source');
 const { normalizeLottery, normalizeAll, hashRows } = require('../lib/housing/normalize');
-const { mergeRecords, FileHousingStore, SupabaseHousingStore } = require('../lib/housing/store');
+const { mergeRecords, FileHousingStore, SupabaseHousingStore, readRawSnapshot, verifyOfficialSnapshot } = require('../lib/housing/store');
 const Q = require('../lib/housing/query');
 
 const ROOT = path.join(__dirname, '..');
@@ -131,9 +131,10 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     const recs = normalizeAll(nation(), CTX).records;
     const m1 = mergeRecords([], recs, { fetchedAt: 'T1' });
     const m2 = mergeRecords(m1.records, normalizeAll(nation(), { ...CTX, fetchedAt: 'T2' }).records, { fetchedAt: 'T2' });
-    assert.equal(m2.records.length, 6); assert.deepEqual(m2.stats, { inserted: 0, updated: 0, unchanged: 6, missingFromSource: 0 });
+    assert.equal(m2.records.length, 6); assert.deepEqual(m2.stats, { inserted: 0, updated: 0, unchanged: 6, rederived: 0, missingFromSource: 0, keptUnparsed: 0 });
     assert.equal(new Set(m2.records.map((r) => r.id)).size, 6);
-    assert.ok(m2.records.every((r) => r.firstSeenAt === 'T1' && r.lastSeenAt === 'T2'));
+    assert.ok(m2.records.every((r) => r.firstSeenAt === 'T1' && r.provenance.fetchedAt === CTX.fetchedAt), 'an unchanged record was rewritten');
+    assert.deepEqual(m2.records, m1.records, 'an unchanged source must leave every stored record byte-identical');
   });
   await t('a changed official field is updated and recorded in the status history; firstSeenAt stays', () => {
     const m1 = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' });
@@ -148,7 +149,7 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
   });
   await t('a lottery the source stops listing is kept (inLatestSource:false), never deleted — and can return', () => {
     const m1 = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' });
-    const m2 = mergeRecords(m1.records, normalizeAll(nation().slice(1), CTX).records, { fetchedAt: 'T2' });
+    const m2 = mergeRecords(m1.records, normalizeAll(nation().slice(1), CTX).records, { fetchedAt: 'T2', prevCheckedAt: 'T1' });
     assert.equal(m2.records.length, 6); assert.equal(m2.stats.missingFromSource, 1);
     const gone = m2.records.find((r) => r.id === 'lottery:990001');
     assert.equal(gone.inLatestSource, false); assert.equal(gone.lastSeenAt, 'T1');
@@ -290,7 +291,10 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     assert.equal(s.series.bucket, 'month');
     assert.deepEqual(s.series.points.map((p) => p.period), ['2024-10', '2024-11', '2024-12', '2025-01']);
     assert.deepEqual(s.series.points.map((p) => p.lotteries), [0, 0, 1, 2]);
-    assert.equal(s.series.points[3].partialMonth, true);
+    assert.equal(s.series.points[3].partial, true, 'the source ends inside January 2025');
+    assert.equal(s.series.points[0].partial, false);
+    const c = S('period=custom&from=2024-12-15&to=2025-03-31');
+    assert.equal(c.series.points[0].partial, true, 'a window starting mid-month is a partial first month');
     assert.equal(S('period=all').series.bucket, 'year');
   });
   await t('geographic drill-down: national → city → neighborhood → project, from official fields only', () => {
@@ -319,11 +323,130 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     assert.equal(Q.record('lottery:990006', { dataDir: DIR }).lifecycle.occupied.value, 'בקרה לאחר אכלוס');
     assert.equal(Q.record('lottery:1', { dataDir: DIR }), null);
   });
-  await t('data maturity: results pending or a recent lottery is "updating"', () => {
-    const r = normalizeLottery(row({ LotteryStatusValue: 'הגרלה נסגרה לרישום' }), CTX).record;
-    assert.equal(Q.maturityOf(r, '2026-10-01'), 'updating');
-    assert.equal(Q.maturityOf({ ...r, lotteryStatus: 'פורסמו תוצאות', lotteryDate: '2026-09-01' }, '2026-10-01'), 'updating');
-    assert.equal(Q.maturityOf({ ...r, lotteryStatus: 'פורסמו תוצאות', lotteryDate: '2025-01-27' }, '2026-10-01'), 'settled');
+  await t('data maturity: no winners recorded yet, or a recent lottery, is "updating"; a status text is not read as pending', () => {
+    const r = normalizeLottery(row({ Winners: '' }), CTX).record;
+    assert.equal(Q.maturityOf(r, '2026-10-01'), 'updating', 'no winners recorded');
+    assert.equal(Q.maturityOf({ ...r, winners: 26, lotteryDate: '2026-09-01' }, '2026-10-01'), 'updating', 'held 30 days ago');
+    assert.equal(Q.maturityOf({ ...r, winners: 26, lotteryDate: '2025-01-27' }, '2026-10-01'), 'settled');
+    // "registration renewed at the developer" with winners drawn years ago is history, not pending
+    assert.equal(Q.maturityOf({ ...r, winners: 26, lotteryStatus: 'חידוש הרשמה במשרדי הקבלן', lotteryDate: '2022-03-07' }, '2026-10-01'), 'settled');
+  });
+
+  console.log('adversarial-review regressions');
+  /* the source's national grants row: official, but not a housing lottery in a locality */
+  const grant = () => row({ LotteryId: '992315', ProjectId: '1234567', LamasCode: '9999', LamasName: 'כלל הישובים', Neighborhood: '',
+    ProjectName: 'מענקים לרוכשי דירות יד שנייה', ProviderName: 'מענקים לרוכשי דירות יד שנייה', MarketingMethod: '90', PriceForMeter: '0.00',
+    LotteryHousingUnits: '1000', LotterySignupHousingUnits: '1000', Winners: '790', Subscribers: '20818', LotteryExecutionDate: '2024-12-01 10:00:00' });
+  await t('a grants program row is kept as OFFICIAL but never counted as a lottery, project, units, winners or locality', () => {
+    assert.equal(normalizeLottery(grant(), CTX).record.recordType, 'grant-program');
+    assert.equal(normalizeLottery(row(), CTX).record.recordType, 'lottery');
+    const dir = tmp(); const r = syncInto(dir, [...nation(), grant()]); assert.equal(r.status, 0, r.stderr);
+    const all = Q.summary(F(''), { dataDir: dir }), base = Q.summary(F(''), { dataDir: DIR });
+    for (const k of ['lotteries', 'projects', 'cities', 'unitsFirst', 'unitsAtSignupFirst', 'winners', 'applicants']) assert.equal(all.kpis[k], base.kpis[k], k + ' counted the grants row');
+    assert.deepEqual(all.excluded.map((x) => [x.lotteryId, x.recordType]), [[992315, 'grant-program']]);
+    assert.ok(!all.facets.city.some((c) => c.value === '9999'), 'the city filter offers "כלל הישובים"');
+    assert.ok(!all.breakdown.rows.some((x) => x.key === '9999'));
+    assert.equal(Q.records(F(''), { dataDir: dir }).total, 6);
+    assert.equal(Q.record('lottery:992315', { dataDir: dir }).record.recordType, 'grant-program', 'still openable as an official record');
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, 'meta.json'), 'utf8')).coverage.lotteryDateTo, '2025-01-27');
+  });
+  await t('a period the source does not cover has no record count ("—"), and filter counts follow the period', () => {
+    assert.equal(Q.records(F('period=6m'), { dataDir: DIR }).total, null);
+    assert.equal(Q.records(F('period=all'), { dataDir: DIR }).total, 6);
+    assert.ok(Q.summary(F('period=6m'), { dataDir: DIR }).facets.city.every((c) => c.n === null), 'counts shown for an uncovered period');
+    const c24 = Q.summary(F('period=24m'), { dataDir: DIR }).facets.city;
+    assert.deepEqual(c24.map((c) => [c.value, c.n]), [['99001', 3], ['99002', 0], ['99003', 0]], 'counts are for the selected period; every city stays selectable');
+  });
+  /* 300 valid rows, for the share-based guards */
+  const many = (n = 300) => { rid = 0; return Array.from({ length: n }, (_, i) => row({ LotteryId: String(991000 + i), ProjectId: String(870000 + i), _id: i + 1 })); };
+  await t('a response that mostly fails normalization is refused; a few rejected rows are never marked delisted', () => {
+    const dir = tmp(); assert.equal(syncInto(dir, many()).status, 0);
+    const before = fs.readFileSync(path.join(dir, 'lotteries.json'), 'utf8');
+    const bad = many().map((x, i) => (i < 200 ? { ...x, LamasCode: '' } : x));
+    const r = syncInto(dir, bad);
+    assert.equal(r.status, 1); assert.match(r.stderr, /failed normalization/);
+    assert.equal(fs.readFileSync(path.join(dir, 'lotteries.json'), 'utf8'), before, 'records changed by a refused run');
+    const few = many().map((x, i) => (i < 3 ? { ...x, LamasCode: '' } : i === 10 ? { ...x, Winners: '99' } : x));
+    const r2 = syncInto(dir, few); assert.equal(r2.status, 0, r2.stderr);
+    const recs = JSON.parse(fs.readFileSync(path.join(dir, 'lotteries.json'), 'utf8'));
+    assert.ok(recs.every((x) => x.inLatestSource), 'a listed row that failed normalization was marked delisted');
+    const hist = fs.readFileSync(path.join(dir, 'history.jsonl'), 'utf8');
+    assert.ok(!/inLatestSource/.test(hist) && /"winners"/.test(hist));
+  });
+  await t('history records SOURCE values only: no derived keys, one event per source change; derived-only changes are silent', () => {
+    const m1 = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' });
+    const rows = nation(); rows[0].ConstructionPermitName = 'הוגשה בקשה'; rows[0].LotteryExecutionDate = '2025-01-28 09:00:00';
+    const m2 = mergeRecords(m1.records, normalizeAll(rows, CTX).records, { fetchedAt: 'T2' });
+    assert.deepEqual(m2.history.map((h) => h.field).sort(), ['lotteryDate', 'permitStatusHe']);
+    assert.deepEqual(m2.history.find((h) => h.field === 'lotteryDate'), { id: 'lottery:990001', field: 'lotteryDate', from: '2025-01-27T10:38:07', to: '2025-01-28T09:00:00', observedAt: 'T2', syncRunId: null });
+    const stale = m1.records.map((x) => (x.id === 'lottery:990002' ? { ...x, permitStage: 'old-mapping' } : x));   // an older normalizer's derived value
+    const m3 = mergeRecords(stale, normalizeAll(nation(), CTX).records, { fetchedAt: 'T3' });
+    assert.equal(m3.history.length, 0); assert.equal(m3.stats.rederived, 1);
+    assert.equal(m3.records.find((x) => x.id === 'lottery:990002').permitStage, 'full');
+  });
+  await t('the drawer history lists a project-level change once, with the lotteries it appeared on', () => {
+    const dir = tmp(); syncInto(dir, nation());
+    const ev = (id) => JSON.stringify({ id, field: 'permitStatusHe', from: 'היתר מלא', to: 'הוגשה בקשה', observedAt: '2026-10-02T03:00:00Z', syncRunId: 'r' });
+    fs.writeFileSync(path.join(dir, 'history.jsonl'), ev('lottery:990001') + '\n' + ev('lottery:990003') + '\n');
+    const h = Q.record('lottery:990001', { dataDir: dir }).history;
+    assert.equal(h.length, 1); assert.deepEqual(h[0].ids.sort(), ['lottery:990001', 'lottery:990003']);
+  });
+  await t('replay into the production directory: only an official snapshot a live run recorded, unforged and not older', () => {
+    const { hashRows: hr } = require('../lib/housing/normalize');
+    const dir = tmp(); fs.mkdirSync(path.join(dir, 'raw'));
+    const write = (rows, at, live = true) => {
+      const h = hr(rows), name = `${at.slice(0, 10)}-${h.slice(0, 12)}.json.gz`;
+      fs.writeFileSync(path.join(dir, 'raw', name), require('node:zlib').gzipSync(JSON.stringify({ contentHash: h, fetchedAt: at, sourceUpdatedAt: 'S', rows })));
+      fs.appendFileSync(path.join(dir, 'sync-runs.jsonl'), JSON.stringify({ rawSnapshot: name, retrievalMethod: live ? 'live-api' : 'replay', snapshotHash: h, finishedAt: at }) + '\n');
+      return { file: path.join(dir, 'raw', name), h };
+    };
+    const a = write(nation(), '2026-10-01T03:00:00Z');
+    fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ snapshotHash: a.h, snapshotFetchedAt: '2026-10-01T03:00:00Z' }));
+    assert.equal(verifyOfficialSnapshot(dir, a.file, { hashRows: hr }).snap.rows.length, 6);
+    // a forged payload under an official-looking name
+    const forged = path.join(dir, 'raw', path.basename(a.file).replace(/^2026-10-01/, '2026-10-02'));
+    fs.writeFileSync(forged, require('node:zlib').gzipSync(JSON.stringify([...nation(), row({ LotteryId: '777777', LotteryHousingUnits: '5000' })])));
+    assert.throws(() => verifyOfficialSnapshot(dir, forged, { hashRows: hr }), /does not match/);
+    // a snapshot no live run recorded
+    const fx = write(nation().slice(0, 5), '2026-10-03T03:00:00Z', false);
+    assert.throws(() => verifyOfficialSnapshot(dir, fx.file, { hashRows: hr }), /no live run/);
+    // an older official snapshot is a rollback: refused unless forced
+    const newer = nation(); newer[0].Winners = '101';
+    const b = write(newer, '2026-10-04T03:00:00Z');
+    fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ snapshotHash: b.h, snapshotFetchedAt: '2026-10-04T03:00:00Z' }));
+    assert.throws(() => verifyOfficialSnapshot(dir, a.file, { hashRows: hr }), /older/);
+    assert.ok(verifyOfficialSnapshot(dir, a.file, { hashRows: hr, force: true }));
+    // a file outside raw/ is never accepted
+    const out = path.join(dir, 'x.json.gz'); fs.copyFileSync(a.file, out);
+    assert.throws(() => verifyOfficialSnapshot(dir, out, { hashRows: hr }), /only replays an official raw snapshot/);
+    // both snapshot formats read back (v1 wrote the bare rows array)
+    assert.equal(readRawSnapshot(forged).rows.length, 7);
+  });
+  await t('HOUSING_DATA_DIR pointed at the production directory is still the production directory', () => {
+    const f = path.join(tmp(), 'fixture.json'); fs.writeFileSync(f, JSON.stringify(nation()));
+    const prodDir = path.join(ROOT, 'data', 'housing');
+    const before = fs.existsSync(prodDir) ? fs.readdirSync(prodDir).sort().join() : null;
+    const r = spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'housing-sync.js'), '--from', f],
+      { env: { ...process.env, HOUSING_DATA_DIR: prodDir + '/', SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '' }, encoding: 'utf8' });
+    assert.equal(r.status, 1); assert.match(r.stderr, /refused/);
+    assert.equal(fs.existsSync(prodDir) ? fs.readdirSync(prodDir).sort().join() : null, before);
+  });
+  await t('Supabase is seeded with every record when it holds fewer than PROPX (secrets added later, or a failed write)', async () => {
+    const recs = mergeRecords([], normalizeAll(nation(), CTX).records, { fetchedAt: 'T1' }).records;
+    const run = (count) => { const calls = [];
+      const fetchImpl = async (url, o = {}) => { calls.push({ url: url.replace('https://example.supabase.co/rest/v1/', ''), method: o.method || 'GET', body: o.body, prefer: o.headers && o.headers.Prefer });
+        return { ok: true, text: async () => '', headers: { get: (h) => (h === 'content-range' ? `0-0/${count}` : null) } }; };
+      return { calls, store: new SupabaseHousingStore({ url: 'https://example.supabase.co', key: 'k', fetchImpl }) }; };
+    const empty = run(0);
+    await empty.store.write({ records: null, all: recs, run: { id: 'r2', status: 'ok' }, source: SOURCE, raw: { hash: 'h', rows: nation(), fetchedAt: 'T1' } });
+    const posted = empty.calls.find((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries'));
+    assert.ok(posted && JSON.parse(posted.body).length === 6, 'the empty project was not seeded');
+    const raw = empty.calls.find((c) => c.url.startsWith('raw_snapshots'));
+    assert.ok(raw && /ignore-duplicates/.test(raw.prefer), 'the raw snapshot keeps its first fetch time');
+    const full = run(6);
+    await full.store.write({ records: null, all: recs, run: { id: 'r3', status: 'ok' }, source: SOURCE, raw: { hash: 'h', rows: nation(), fetchedAt: 'T1' } });
+    assert.ok(!full.calls.some((c) => c.method === 'POST' && c.url.startsWith('housing_lotteries')), 'an up-to-date project was rewritten');
+    assert.ok(full.calls.some((c) => c.method === 'PATCH'), 'last_seen_at not moved');
   });
 
   console.log('production boundary');
@@ -350,12 +473,103 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
       assert.equal(r.provenance.source, SOURCE.id); assert.equal(r.provenance.resourceId, SOURCE.resourceId);
       assert.ok(['live-api', 'replay-official-snapshot'].includes(r.provenance.retrievalMethod), r.id + ' ' + r.provenance.retrievalMethod);
       assert.match(r.provenance.snapshotHash, /^[0-9a-f]{40}$/);
-      assert.ok(r.provenance.sourceRowId != null && r.firstSeenAt && r.lastSeenAt);
+      assert.ok(r.provenance.sourceRowId != null && r.firstSeenAt && (r.inLatestSource !== false || r.lastSeenAt));
       assert.equal(r.signedSales, null); assert.equal(r.availableInventory, null); assert.equal(r.coordinates, null);
       for (const k of ['unitsInLottery', 'winners', 'applicants']) assert.ok(r[k] == null || (Number.isInteger(r[k]) && r[k] >= 0), r.id + ' ' + k);
     }
     assert.equal(meta.source.id, SOURCE.id);
     assert.equal(meta.records, recs.length);
+  });
+
+  console.log('page — the government housing section (run with the page\'s own strings)');
+  const INDEX = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const matched = (anchor) => {
+    const i = INDEX.indexOf(anchor); assert.ok(i >= 0, 'missing ' + anchor);
+    const open = INDEX.indexOf('{', i + anchor.length - 1); let depth = 0;
+    for (let k = open; k < INDEX.length; k++) { if (INDEX[k] === '{') depth++; else if (INDEX[k] === '}' && --depth === 0) return INDEX.slice(i, k + 1); }
+    throw new Error('unbalanced ' + anchor);
+  };
+  const HO_SRC = INDEX.slice(INDEX.indexOf('const HO_PAGE='), INDEX.indexOf('function initHousing('));
+  const UI = require('node:vm').runInNewContext(matched('const I18N={') + `;
+    const T=()=>I18N[state.lang];
+    const calcEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    const nf=new Intl.NumberFormat("en-US");const fmtInt=n=>nf.format(Math.round(n));const fmtNIS=n=>"₪"+fmtInt(n);
+    const vcTag=c=>'<span class="vc '+c+'">'+T().vcName[c]+'</span>';
+    function coveredIdByName(){return null}
+    ` + HO_SRC + ';({hoN,hoDash,hoKpisHTML,hoChartHTML,hoGeoHTML,hoTableHTML,I18N,state,hoState})',
+  { state: { lang: 'he', locId: null }, LOC: {}, MKT: { nh: null, boi: null }, location: { protocol: 'https:', host: 'x' }, Intl });
+  const stripTags = (h) => h.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+  await t('the section exists, is in the rail, and carries the specified titles', () => {
+    assert.match(INDEX, /<section class="blk" id="housing">/);
+    assert.match(INDEX, /<a href="#housing" class="ri" data-sec="housing">/);
+    assert.equal(UI.I18N.he.hoTitle, 'דיור מסובסד');
+    assert.equal(UI.I18N.he.hoSub, 'מחיר למשתכן · מחיר מטרה · דירה בהנחה');
+    assert.equal(UI.I18N.en.hoTitle, 'Government Housing / Subsidized Housing Intelligence');
+  });
+  await t('missing factual values render as "—" (with the source tooltip); a real zero stays 0', () => {
+    const dash = UI.hoN(null);
+    assert.match(dash, />—</); assert.match(dash, /הנתון אינו קיים כרגע במקור הרשמי המחובר/);
+    assert.match(UI.hoN(0), />0</);
+    const none = stripTags(UI.hoKpisHTML({ kpis: null }));
+    assert.equal((none.match(/—/g) || []).length, 7, 'every KPI of an uncovered period is "—"');
+    assert.ok(!/\d/.test(none), 'a number appeared for an uncovered period: ' + none);
+    /* what a user can read: every page string (both languages) and the markup outside scripts, styles and comments */
+    const leaves = (o) => Object.values(o).flatMap((v) => typeof v === 'string' ? [v] : typeof v === 'function' ? [String(v)] : v && typeof v === 'object' ? leaves(v) : []);
+    const visible = [...leaves(UI.I18N.he), ...leaves(UI.I18N.en)].join('\n') + INDEX.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '').replace(/<!--[\s\S]*?-->/g, '');
+    assert.ok(!/לא זמין|UNAVAILABLE|\bUnavailable\b/.test(visible), 'an "unavailable" value label is back');
+    assert.equal(UI.I18N.he.naShort, '—'); assert.equal(UI.I18N.en.naShort, '—');
+    assert.equal(UI.I18N.he.vcName.na, 'חסר'); assert.equal(UI.I18N.en.vcName.na, 'Missing');
+  });
+  await t('winners are never labelled as sales; units are never labelled as inventory', () => {
+    for (const L of ['he', 'en']) {
+      const s = UI.I18N[L];
+      assert.ok(!/מכיר|נמכר|עסק|sale|sold|deal/i.test(s.hoKWin), L + ' winners label: ' + s.hoKWin);
+      assert.match(s.hoKWinS, L === 'he' ? /אינו רוכש/ : /not a buyer/);
+      for (const k of ['hoKUnits', 'hoKMkt', 'hoKUnitsS', 'hoKMktS']) {
+        const v = typeof s[k] === 'function' ? s[k]('1') : s[k];
+        assert.ok(!/מלאי|inventory|מכיר|sale/i.test(v), `${L}.${k}: ${v}`);
+      }
+      assert.ok(s.hoNoPub.length === 5, 'the not-published list');
+    }
+    const K = Q.summary(Q.parseFilters(new URLSearchParams('city=9000&period=all'), NOW).filters).kpis;
+    if (K) {   // with the synced production data
+      const html = stripTags(UI.hoKpisHTML({ kpis: K }));
+      assert.ok(html.includes(new Intl.NumberFormat('en-US').format(K.winners)) && html.includes(new Intl.NumberFormat('en-US').format(K.unitsFirst)));
+      assert.equal(K.signedSales, null); assert.equal(K.availableInventory, null);
+    }
+  });
+  await t('official text from the source is escaped before it enters the page', () => {
+    const evil = '<img src=x onerror=alert(1)>';
+    const html = UI.hoTableHTML({ rows: [{ id: 'lottery:1', lotteryId: 1, projectId: 2, lotteryDate: '2024-01-01', city: evil, neighborhood: evil, projectName: evil, developer: evil,
+      program: 'other', programHe: evil, lotteryType: 'first', unitsInLottery: 1, winners: 1, pricePerSqm: null, permitStatusHe: evil, projectStatusHe: evil }] });
+    assert.ok(!html.includes('<img'), 'unescaped source text'); assert.ok(html.includes('&lt;img'));
+  });
+  await t('the page queries the API one page at a time and embeds no housing records', () => {
+    assert.match(INDEX, /fetch\("\/api\/housing\?"\+q/);
+    assert.match(INDEX, /const HO_PAGE=25;/);
+    const sa = fs.readFileSync(path.join(ROOT, 'standalone', 'israel-new-homes-v2.html'), 'utf8');
+    for (const src of [INDEX, sa]) assert.ok(!/"lotteryId":\d|lottery:\d{3,}|LotteryHousingUnits/.test(src), 'housing records embedded in a page');
+  });
+  await t('transaction freshness: the specified note, a configurable maturity window, no claimed average delay', () => {
+    assert.equal(UI.I18N.he.txFreshNote, 'נתוני העסקאות מבוססים על עסקאות שדווחו ונקלטו במקורות הרשמיים. עסקאות חדשות עשויות להופיע בעיכוב, ולכן נתוני התקופות האחרונות ממשיכים להתעדכן.');
+    assert.equal(UI.I18N.en.txFreshNote, 'Transaction data reflects deals reported and available in official sources. Recent transactions may appear with a reporting delay, so recent periods continue to update.');
+    assert.match(INDEX, /const TX_MATURITY_DAYS=120;/);
+    assert.equal(UI.I18N.he.txMatUpd, 'מתעדכן'); assert.equal(UI.I18N.en.txMatUpd, 'Still updating');
+    for (const L of ['he', 'en']) for (const k of ['txFreshNote', 'txMatTip', 'txMatHist', 'txMatUpd', 'hoMatTip', 'hoMatHist']) {
+      assert.ok(!/ממוצע|average/i.test(UI.I18N[L][k]), `${L}.${k} claims an average delay`);
+    }
+    // a historical period is never called complete
+    assert.match(UI.I18N.he.txMatTip, /אינה בהכרח סגורה/); assert.match(UI.I18N.en.txMatTip, /not guaranteed complete/);
+    assert.ok(!/complete|סגור/.test(UI.I18N.en.txMatHist + UI.I18N.he.txMatHist));
+  });
+  await t('drill-down and series carry no coordinates and no zeros outside coverage', () => {
+    const S = Q.summary(Q.parseFilters(new URLSearchParams('period=6m'), NOW).filters);
+    if (S.freshness.synced) {
+      assert.equal(S.coverage.state, 'none'); assert.equal(S.kpis, null);
+      assert.ok(!/<rect/.test(UI.hoChartHTML(S)), 'bars drawn for an uncovered period');
+    }
+    const geo = UI.hoGeoHTML({ breakdown: { level: 'city', rows: [{ key: '1', label: 'x', lotteries: 1, unitsFirst: 1, winners: 1, lastLotteryDate: '2024-01-01' }] }, facets: {}, kpis: {} });
+    assert.ok(!/lat|lng|coord/i.test(geo.replace(/קואורדינטות|coordinates/g, '')));
   });
 
   console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

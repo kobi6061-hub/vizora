@@ -67,5 +67,10 @@
       ]
     }
   ],
-  "framework": null
+  "framework": null,
+  "functions": {
+    "api/housing.js": {
+      "includeFiles": "data/housing/*.json*"
+    }
+  }
 }
