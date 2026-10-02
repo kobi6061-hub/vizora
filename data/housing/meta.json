@@ -17,7 +17,7 @@
  "snapshotHash": "f1b72332e9e9902fffd4b5d659b79cab9d180e22",
  "snapshotFetchedAt": "2026-10-01T16:44:34.681Z",
  "normalizerVersion": 2,
- "checkedAt": "2026-10-01T17:39:26.830Z",
+ "checkedAt": "2026-10-02T08:59:13.295Z",
  "rows": 2352,
  "records": 2352,
  "rejected": 0,
@@ -28,5 +28,6 @@
   "lotteryDateTo": "2025-01-27",
   "signupEndDateTo": "2025-01-21"
  },
- "lastRun": "housing-20261001T173926Z"
+ "historyEvents": 0,
+ "lastRun": "housing-20261002T085913Z"
 }
