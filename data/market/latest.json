@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "syncedAt": "2026-10-01T08:03:01.787Z",
+ "syncedAt": "2026-10-02T09:42:31.575Z",
  "ok": true,
  "indicators": {
   "boiRate": {
@@ -14,7 +14,7 @@
     "dataset": "PublicApi/GetInterest",
     "url": "https://www.boi.org.il/PublicApi/GetInterest"
    },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
+   "checkedAt": "2026-10-02T09:42:31.575Z",
    "stale": false
   },
   "newHomesIndex": {
@@ -37,7 +37,7 @@
     "dataset": "מדד מחירי דירות חדשות",
     "url": "https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"
    },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
+   "checkedAt": "2026-10-02T09:42:31.575Z",
    "stale": false
   },
   "dwellingsIndex": {
@@ -60,7 +60,7 @@
     "dataset": "מחירי דירות",
     "url": "https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"
    },
-   "checkedAt": "2026-10-01T08:03:01.787Z",
+   "checkedAt": "2026-10-02T09:42:31.575Z",
    "stale": false
   }
  },
