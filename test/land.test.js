@@ -409,6 +409,7 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.equal(u.lots, 4); assert.equal(u.units, 44 + 60 + 10 + 5, 'lot 2197 counted once with its latest units (44)');
     assert.equal(u.rawLotUnits, 40 + 60 + 44 + 60 + 10 + 5 + 5 + 10); assert.equal(u.duplicateUnits, u.rawLotUnits - u.units);
     assert.equal(u.tendersCovered, 4); assert.equal(u.tendersNotDeduplicable, 1); assert.equal(u.unitsNotDeduplicable, 100);
+    assert.deepEqual(u.byLatestStage, { open: 44 + 60 + 10 + 5, pending: 0, awarded: 0, failed: 0, decidedNotRead: 0, other: 0 }, 'composition by the latest marketing stage of each lot');
     assert.ok(Lin.uniquePipeline([P1, P2], (r) => r.lotRefs).lots === 2, 'a shared parcel never merges lots');
   });
   await t('read model: current vs historical scope, unit semantics kept apart, developer coverage, land-basis population, winner metrics only from detail-read records', () => {
