@@ -1,0 +1,56 @@
+# PROPX · Production smoke (read-only).
+#
+# From a GitHub runner (which can reach the deployed site, unlike the
+# development sandbox): the login page answers, the page and every API route
+# are gated by the session middleware (302 to /login.html — never 404, never
+# 500), and the deployment identifies itself. No credential is used or stored;
+# nothing is written. Data behind the gate is verified locally against the
+# same bundled files (test/*.test.js, browser QA) before a deploy.
+
+name: Production smoke (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'Site origin'
+        type: string
+        default: 'https://propx.live'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Open surfaces and gated routes
+        env:
+          HOST: ${{ inputs.host || 'https://propx.live' }}
+        run: |
+          set +e
+          fail=0
+          probe() {   # path · expected code(s) · expected redirect target (optional)
+            local path="$1" want="$2" redir="$3"
+            local out code loc vid
+            out=$(curl -sS -m 20 -o /dev/null -D - "$HOST$path")
+            code=$(printf '%s' "$out" | awk 'NR==1{print $2}')
+            loc=$(printf '%s' "$out" | tr -d '\r' | awk 'tolower($1)=="location:"{print $2}')
+            vid=$(printf '%s' "$out" | tr -d '\r' | awk 'tolower($1)=="x-vercel-id:"{print $2}')
+            if printf '%s' "$want" | grep -qw "$code" && { [ -z "$redir" ] || printf '%s' "$loc" | grep -q "$redir"; }; then
+              echo "  ✓ $path → $code ${loc:+→ $loc} ${vid:+· vercel $vid}"
+            else
+              echo "  ✗ $path → ${code:-no answer} ${loc:+→ $loc} (wanted $want ${redir:+→ $redir})"; fail=1
+            fi
+          }
+          echo "Production smoke on $HOST"
+          probe /login.html 200
+          probe /robots.txt 200
+          probe / "302 307" login.html
+          probe "/api/land?view=status" "302 307" login.html
+          probe "/api/land?view=summary" "302 307" login.html
+          probe "/api/housing?view=status" "302 307" login.html
+          probe "/api/gov/transactions?settlement=5000" "302 307" login.html
+          probe "/data/land/meta.json" "302 307 404" ""
+          exit $fail
