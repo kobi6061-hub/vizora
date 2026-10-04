@@ -19,7 +19,7 @@ on:
       detail_budget:
         description: 'Tender details to (re)read this run'
         type: string
-        default: '1500'
+        default: '2500'
       map_budget:
         description: 'Map centroids to read this run'
         type: string
@@ -27,7 +27,7 @@ on:
       max_minutes:
         description: 'Stop reading details/maps after this many minutes'
         type: string
-        default: '40'
+        default: '60'
       ids:
         description: 'MichrazIDs to read first (comma-separated)'
         type: string
@@ -47,7 +47,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 90
     env:
       DRY_RUN: ${{ inputs.dry_run == true }}
     steps:
@@ -68,9 +68,9 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          DETAIL_BUDGET: ${{ inputs.detail_budget || '1500' }}
+          DETAIL_BUDGET: ${{ inputs.detail_budget || '2500' }}
           MAP_BUDGET: ${{ inputs.map_budget || '400' }}
-          MAX_MINUTES: ${{ inputs.max_minutes || '40' }}
+          MAX_MINUTES: ${{ inputs.max_minutes || '60' }}
           IDS: ${{ inputs.ids || '' }}
         run: |
           set +e
