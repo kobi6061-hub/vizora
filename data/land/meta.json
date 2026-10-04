@@ -10,12 +10,325 @@
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
  "snapshotHash": "0ac8f6f9382cf5a171cbdb94970331f07baad2a946dd7a7464f5ed693f837d9d",
  "snapshotFetchedAt": "2026-10-04T21:25:36.686Z",
- "checkedAt": "2026-10-04T22:41:34.522Z",
+ "checkedAt": "2026-10-04T22:53:37.306Z",
  "normalizerVersion": 4,
  "rows": 10631,
  "records": 10631,
  "inLatestSource": 10631,
  "notInLatestSource": 0,
+ "detailCoverage": {
+  "listed": 10631,
+  "retrieved": 7597,
+  "unavailable": 517,
+  "refused": 0,
+  "pending": 2517,
+  "checked": 8114,
+  "pct": 76.3,
+  "retrievedPct": 71.5,
+  "byYear": [
+   {
+    "year": "2026",
+    "listed": 205,
+    "retrieved": 205,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2025",
+    "listed": 492,
+    "retrieved": 492,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2024",
+    "listed": 453,
+    "retrieved": 447,
+    "unavailable": 6,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2023",
+    "listed": 384,
+    "retrieved": 178,
+    "unavailable": 206,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2022",
+    "listed": 490,
+    "retrieved": 217,
+    "unavailable": 273,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2021",
+    "listed": 482,
+    "retrieved": 482,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2020",
+    "listed": 398,
+    "retrieved": 398,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2019",
+    "listed": 493,
+    "retrieved": 493,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2018",
+    "listed": 528,
+    "retrieved": 528,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2017",
+    "listed": 389,
+    "retrieved": 389,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2016",
+    "listed": 377,
+    "retrieved": 377,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2015",
+    "listed": 339,
+    "retrieved": 336,
+    "unavailable": 3,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2014",
+    "listed": 412,
+    "retrieved": 409,
+    "unavailable": 3,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2013",
+    "listed": 423,
+    "retrieved": 414,
+    "unavailable": 9,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2012",
+    "listed": 425,
+    "retrieved": 422,
+    "unavailable": 3,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2011",
+    "listed": 514,
+    "retrieved": 511,
+    "unavailable": 3,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2010",
+    "listed": 446,
+    "retrieved": 446,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 0,
+    "complete": true
+   },
+   {
+    "year": "2009",
+    "listed": 481,
+    "retrieved": 476,
+    "unavailable": 4,
+    "refused": 0,
+    "pending": 1,
+    "complete": false
+   },
+   {
+    "year": "2008",
+    "listed": 476,
+    "retrieved": 259,
+    "unavailable": 7,
+    "refused": 0,
+    "pending": 210,
+    "complete": false
+   },
+   {
+    "year": "2007",
+    "listed": 408,
+    "retrieved": 24,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 384,
+    "complete": false
+   },
+   {
+    "year": "2006",
+    "listed": 285,
+    "retrieved": 18,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 267,
+    "complete": false
+   },
+   {
+    "year": "2005",
+    "listed": 346,
+    "retrieved": 14,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 332,
+    "complete": false
+   },
+   {
+    "year": "2004",
+    "listed": 330,
+    "retrieved": 16,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 314,
+    "complete": false
+   },
+   {
+    "year": "2003",
+    "listed": 280,
+    "retrieved": 12,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 268,
+    "complete": false
+   },
+   {
+    "year": "2002",
+    "listed": 241,
+    "retrieved": 12,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 229,
+    "complete": false
+   },
+   {
+    "year": "2001",
+    "listed": 288,
+    "retrieved": 14,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 274,
+    "complete": false
+   },
+   {
+    "year": "2000",
+    "listed": 246,
+    "retrieved": 8,
+    "unavailable": 0,
+    "refused": 0,
+    "pending": 238,
+    "complete": false
+   }
+  ],
+  "completeYears": [
+   "2026",
+   "2025",
+   "2024",
+   "2023",
+   "2022",
+   "2021",
+   "2020",
+   "2019",
+   "2018",
+   "2017",
+   "2016",
+   "2015",
+   "2014",
+   "2013",
+   "2012",
+   "2011",
+   "2010"
+  ],
+  "completeFrom": "2010",
+  "state": "partial"
+ },
+ "detail": {
+  "withDetail": 7597,
+  "withGeometry": 24,
+  "oldestDetailFetchedAt": "2026-10-04T18:55:33.598Z",
+  "newestDetailFetchedAt": "2026-10-04T23:03:35.709Z",
+  "activeWithDetail": 439,
+  "active": 439,
+  "detailUnavailable": 517,
+  "budget": {
+   "detail": 2500,
+   "map": 400,
+   "minutes": 60,
+   "requests": 1190,
+   "failStreak": 12
+  },
+  "lastRunFetched": 1176
+ },
+ "byLifecycle": {
+  "open": 286,
+  "closed": 634,
+  "awarded": 4590,
+  "decided-no-award": 1524,
+  "cancelled": 561,
+  "published": 153,
+  "frozen": 22,
+  "decided": 2861
+ },
+ "byTrack": {
+  "open-market": 5142,
+  "commercial-other": 2944,
+  "subsidized": 850,
+  "residential-lottery": 749,
+  "special-population": 301,
+  "rental": 171,
+  "mixed-use": 174,
+  "lottery": 300
+ },
  "coverage": {
   "publishedFrom": "2000-01-08",
   "publishedTo": "2026-09-22",
@@ -24,52 +337,15 @@
   "committeeFrom": "2000-03-07",
   "committeeTo": "2026-09-15"
  },
- "detail": {
-  "withDetail": 6421,
-  "withGeometry": 24,
-  "oldestDetailFetchedAt": "2026-10-04T18:55:33.598Z",
-  "newestDetailFetchedAt": "2026-10-04T22:51:16.663Z",
-  "activeWithDetail": 439,
-  "active": 439,
-  "detailUnavailable": 506,
-  "budget": {
-   "detail": 2500,
-   "map": 400,
-   "minutes": 60,
-   "requests": 1190,
-   "failStreak": 12
-  },
-  "lastRunFetched": 1174
- },
- "byLifecycle": {
-  "open": 286,
-  "closed": 634,
-  "awarded": 3789,
-  "decided-no-award": 1210,
-  "cancelled": 561,
-  "published": 153,
-  "frozen": 22,
-  "decided": 3976
- },
- "byTrack": {
-  "open-market": 5142,
-  "commercial-other": 2944,
-  "subsidized": 850,
-  "residential-lottery": 626,
-  "special-population": 301,
-  "rental": 171,
-  "mixed-use": 174,
-  "lottery": 423
- },
  "plans": {
   "xplan": 410,
   "inventory": 1104,
   "inventoryAsOf": "2022-02-17T10:59:42.023Z",
   "tendersWithJoinedPlan": 950,
-  "xplanMisses": 2100
+  "xplanMisses": 2427
  },
  "construction": {
-  "tendersWithLinks": 63,
+  "tendersWithLinks": 114,
   "source": {
    "rows": 10371,
    "joinableParcels": 1242,
@@ -78,9 +354,9 @@
  },
  "joins": {
   "xplan": {
-   "asked": 342,
-   "requests": 35,
-   "found": 1,
+   "asked": 327,
+   "requests": 33,
+   "found": 0,
    "complete": true,
    "known": 410,
    "errors": []
@@ -99,6 +375,6 @@
    "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
   }
  },
- "historyEvents": 52089,
- "lastRun": "land-20261004T224116Z"
+ "historyEvents": 63495,
+ "lastRun": "land-20261004T225312Z"
 }
