@@ -11,6 +11,7 @@
 //   node scripts/land-discover.js --rmi-detail <id,id,…>   profiled detail + map payload of given MichrazIDs
 //   node scripts/land-discover.js --rmi-full <id,id,…>     the complete detail payload (every lot, bid, parcel) of given MichrazIDs
 //   node scripts/land-discover.js --rmi-codes      the public app's bundle: API paths and the code tables / labels it ships
+//   node scripts/land-discover.js --rmi-tables     GeneralTablesApi/Get in full: every code table the site uses
 //   node scripts/land-discover.js --datagov        data.gov.il catalogue: land / tender / planning datasets + schemas
 //   node scripts/land-discover.js --datagov-profile  whole-table profiles + join checks of the resources found
 //   node scripts/land-discover.js --xplan          Planning Administration ArcGIS (xplan) services and plan layers
@@ -360,6 +361,9 @@ async function xplan() {
 (async () => {
   const all = has('all');
   if (has('rmi-codes')) await rmiCodes();
+  if (has('rmi-tables')) { const r = await req(RMI + '/GeneralTablesApi/Get', { headers: RMI_HEADERS }); const rows = Array.isArray(r.json) ? r.json : [];
+    const by = {}; for (const x of rows) (by[x.TableID + ' ' + x.TableName] = by[x.TableID + ' ' + x.TableName] || []).push([x.Code, x.Value, x.MichrazPail, x.Status, x.Group]);
+    out({ kind: 'rmiTables', status: r.status, n: rows.length, tables: by }); }
   if (has('datagov-profile')) await datagovProfile();
   if (has('rmi-full')) await rmiFull(String(argVal('rmi-full') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (has('rmi-detail')) await rmiDetails(String(argVal('rmi-detail') || '').split(',').map((x) => x.trim()).filter(Boolean).map((id) => ({ id, label: 'asked' })));
