@@ -1,0 +1,47 @@
+# PROPX · Land & Tender — read-only source discovery.
+#
+# Runs scripts/land-discover.js on a GitHub runner (gov.il is reachable here,
+# not from the Claude sandbox) and prints what the public land, marketing and
+# tender sources actually expose: endpoints, fields, code tables, counts, date
+# ranges and a few real records. Nothing is written or committed.
+
+name: Land & tenders — source discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'rmi (ILA tender site API) | datagov (catalogue + schemas) | moch (MoCH tender datasets) | xplan (Planning Administration GIS) | all | rmi-detail (ids = MichrazIDs, comma-separated)'
+        type: choice
+        options: [all, rmi, datagov, moch, xplan, rmi-detail]
+        default: all
+      ids:
+        description: 'rmi-detail: MichrazIDs, comma-separated'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: land-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover public land & tender sources (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          IDS: ${{ inputs.ids }}
+        run: |
+          case "$MODE" in
+            rmi-detail) node scripts/land-discover.js --rmi-detail "$IDS" ;;
+            *)          node scripts/land-discover.js --"$MODE" ;;
+          esac
