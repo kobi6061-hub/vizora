@@ -10,7 +10,7 @@
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
  "snapshotHash": "0ac8f6f9382cf5a171cbdb94970331f07baad2a946dd7a7464f5ed693f837d9d",
  "snapshotFetchedAt": "2026-10-04T21:25:36.686Z",
- "checkedAt": "2026-10-04T22:53:37.306Z",
+ "checkedAt": "2026-10-04T23:05:35.433Z",
  "normalizerVersion": 4,
  "rows": 10631,
  "records": 10631,
@@ -18,13 +18,13 @@
  "notInLatestSource": 0,
  "detailCoverage": {
   "listed": 10631,
-  "retrieved": 7597,
+  "retrieved": 8785,
   "unavailable": 517,
   "refused": 0,
-  "pending": 2517,
-  "checked": 8114,
-  "pct": 76.3,
-  "retrievedPct": 71.5,
+  "pending": 1329,
+  "checked": 9302,
+  "pct": 87.5,
+  "retrievedPct": 82.6,
   "byYear": [
    {
     "year": "2026",
@@ -182,46 +182,46 @@
    {
     "year": "2009",
     "listed": 481,
-    "retrieved": 476,
+    "retrieved": 477,
     "unavailable": 4,
     "refused": 0,
-    "pending": 1,
-    "complete": false
+    "pending": 0,
+    "complete": true
    },
    {
     "year": "2008",
     "listed": 476,
-    "retrieved": 259,
+    "retrieved": 469,
     "unavailable": 7,
     "refused": 0,
-    "pending": 210,
-    "complete": false
+    "pending": 0,
+    "complete": true
    },
    {
     "year": "2007",
     "listed": 408,
-    "retrieved": 24,
+    "retrieved": 408,
     "unavailable": 0,
     "refused": 0,
-    "pending": 384,
-    "complete": false
+    "pending": 0,
+    "complete": true
    },
    {
     "year": "2006",
     "listed": 285,
-    "retrieved": 18,
+    "retrieved": 285,
     "unavailable": 0,
     "refused": 0,
-    "pending": 267,
-    "complete": false
+    "pending": 0,
+    "complete": true
    },
    {
     "year": "2005",
     "listed": 346,
-    "retrieved": 14,
+    "retrieved": 340,
     "unavailable": 0,
     "refused": 0,
-    "pending": 332,
+    "pending": 6,
     "complete": false
    },
    {
@@ -287,16 +287,20 @@
    "2013",
    "2012",
    "2011",
-   "2010"
+   "2010",
+   "2009",
+   "2008",
+   "2007",
+   "2006"
   ],
-  "completeFrom": "2010",
+  "completeFrom": "2006",
   "state": "partial"
  },
  "detail": {
-  "withDetail": 7597,
+  "withDetail": 8785,
   "withGeometry": 24,
   "oldestDetailFetchedAt": "2026-10-04T18:55:33.598Z",
-  "newestDetailFetchedAt": "2026-10-04T23:03:35.709Z",
+  "newestDetailFetchedAt": "2026-10-04T23:13:22.470Z",
   "activeWithDetail": 439,
   "active": 439,
   "detailUnavailable": 517,
@@ -307,27 +311,27 @@
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 1176
+  "lastRunFetched": 1188
  },
  "byLifecycle": {
   "open": 286,
   "closed": 634,
-  "awarded": 4590,
-  "decided-no-award": 1524,
+  "awarded": 5335,
+  "decided-no-award": 1896,
   "cancelled": 561,
   "published": 153,
   "frozen": 22,
-  "decided": 2861
+  "decided": 1744
  },
  "byTrack": {
   "open-market": 5142,
   "commercial-other": 2944,
   "subsidized": 850,
-  "residential-lottery": 749,
+  "residential-lottery": 891,
   "special-population": 301,
   "rental": 171,
   "mixed-use": 174,
-  "lottery": 300
+  "lottery": 158
  },
  "coverage": {
   "publishedFrom": "2000-01-08",
@@ -342,10 +346,10 @@
   "inventory": 1104,
   "inventoryAsOf": "2022-02-17T10:59:42.023Z",
   "tendersWithJoinedPlan": 950,
-  "xplanMisses": 2427
+  "xplanMisses": 2788
  },
  "construction": {
-  "tendersWithLinks": 114,
+  "tendersWithLinks": 129,
   "source": {
    "rows": 10371,
    "joinableParcels": 1242,
@@ -354,8 +358,8 @@
  },
  "joins": {
   "xplan": {
-   "asked": 327,
-   "requests": 33,
+   "asked": 361,
+   "requests": 37,
    "found": 0,
    "complete": true,
    "known": 410,
@@ -375,6 +379,6 @@
    "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
   }
  },
- "historyEvents": 63495,
- "lastRun": "land-20261004T225312Z"
+ "historyEvents": 74880,
+ "lastRun": "land-20261004T230518Z"
 }
