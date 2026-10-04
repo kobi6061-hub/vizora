@@ -265,6 +265,23 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const m3 = mergeRecords(m2.records, [r2[0], norm(b, null, null)], { fetchedAt: '2026-10-03T00:00:00Z', syncRunId: 'run3' });
     assert.ok(m3.history.some((h) => h.field === 'inLatestSource' && h.to === true)); assert.equal(m3.stats.unchanged, 2); assert.ok(m3.records.every((r) => r.inLatestSource));
   });
+  await t('merge: a detail that answered 404, or a re-read with identical facts, is written (no history event) — never lost and re-asked', () => {
+    const a = row({ StatusMichraz: 5 });
+    const base = N.normalizeTender({ row: a }, CTX).record;
+    const m1 = mergeRecords([], [base], { fetchedAt: '2026-10-01T00:00:00Z', syncRunId: 'r1' });
+    const err = N.normalizeTender({ row: a, prior: m1.records[0], detailError: { status: 404, at: '2026-10-02T00:00:00Z' } }, { ...CTX, fetchedAt: '2026-10-02T00:00:00Z' }).record;
+    const m2 = mergeRecords(m1.records, [err], { fetchedAt: '2026-10-02T00:00:00Z', syncRunId: 'r2' });
+    assert.equal(m2.history.length, 0); assert.equal(m2.stats.observed, 1); assert.equal(m2.records[0].provenance.detailError.status, 404, 'the 404 is persisted');
+    assert.equal(m2.records[0].firstSeenAt, '2026-10-01T00:00:00Z');
+    const payload = detail(a);                                                         // the same answer twice: identical facts
+    const read1 = N.normalizeTender({ row: a, detail: payload }, { ...CTX, fetchedAt: '2026-10-03T00:00:00Z', detailFetchedAt: '2026-10-03T00:00:00Z' }).record;
+    const m3 = mergeRecords(m2.records, [read1], { fetchedAt: '2026-10-03T00:00:00Z', syncRunId: 'r3' });
+    assert.ok(m3.history.some((h) => h.field === 'lotCount'), 'first detail: lot count observed');
+    const read2 = N.normalizeTender({ row: a, detail: payload }, { ...CTX, fetchedAt: '2026-10-09T00:00:00Z', detailFetchedAt: '2026-10-09T00:00:00Z' }).record;
+    const m4 = mergeRecords(m3.records, [read2], { fetchedAt: '2026-10-09T00:00:00Z', syncRunId: 'r4' });
+    assert.equal(m4.history.length, 0, 'identical facts: no event'); assert.equal(m4.records[0].provenance.detail.fetchedAt, '2026-10-09T00:00:00Z', 'but the read time is refreshed');
+    assert.equal(m4.records[0].provenance.detailError, null, 'a successful read clears the earlier error');
+  });
   await t('a stored detail is carried forward when the run read only the list; a fresh list status still rules', () => {
     const a = row({ StatusMichraz: 3 });
     const first = norm(a, detail(a, { Tik: [lot(), lot()] }), map(a));

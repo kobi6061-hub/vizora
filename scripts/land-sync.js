@@ -19,6 +19,7 @@
 //   node scripts/land-sync.js                    live (GitHub runner; land.gov.il is reachable there)
 //     --dry-run                                  fetch + normalize + report, write nothing
 //     --detail-budget N (1500) --map-budget N (400) --max-minutes M (40) --joins-minutes M (15) --xplan-requests N (150)
+//     --request-cap N (1190: the site's observed ~1,200 calls/hour) --fail-streak N (12: stop on consecutive failures)
 //     --ids 20260158,20250516                    read these tenders' detail first
 //     --no-joins                                 skip xplan / inventory / construction
 //     --summary-file <path>                      append a one-line summary (commit message)
@@ -91,7 +92,11 @@ function readReplay(file) {
   const startedAt = new Date().toISOString(), t0 = Date.now();
   const store = new FileLandStore(DIR);
   const run = { id: 'land-' + startedAt.replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z'), source: SOURCE_ID, startedAt, status: 'failed' };
-  const budget = { detail: Number(argVal('detail-budget', 1500)), map: Number(argVal('map-budget', 400)), minutes: Number(argVal('max-minutes', 40)) };
+  /* the site allows about 1,200 calls per hour from one address (observed: three runs in a row answered exactly 1,198 details + 2 list
+     calls, then refused every further call for the rest of the hour). The sweep stops at the cap and on a streak of failures —
+     a refused source is never hammered; the next run continues where this one stopped. */
+  const budget = { detail: Number(argVal('detail-budget', 1500)), map: Number(argVal('map-budget', 400)), minutes: Number(argVal('max-minutes', 40)),
+    requests: Number(argVal('request-cap', 1190)), failStreak: Number(argVal('fail-streak', 12)) };
   const forced = String(argVal('ids', '')).split(',').map((s) => s.trim()).filter(Boolean);
   const client = new RmiClient({ delayMs: Number(process.env.RMI_DELAY_MS || 150) });
   let code = 0, summary = '';
@@ -123,24 +128,35 @@ function readReplay(file) {
     /* 2 · details on a budget */
     const plan = planDetails(rows, prevById, { forced });
     const details = new Map(), maps = new Map(), rawDetails = [], errors = [], detailErrors = new Map();
-    let detailStopped = null;
+    let detailStopped = null, streak = 0, transient = 0;
     for (const id of plan.order) {
       if (details.size >= budget.detail) { detailStopped = 'budget'; break; }
       if (outOfTime()) { detailStopped = 'time'; break; }
+      if (client.requests >= budget.requests) { detailStopped = 'request-cap'; break; }
       const mid = id.slice(4);
-      try { const d = await client.detail(mid); if (d && d.MichrazID) { details.set(id, d); rawDetails.push(d); } else errors.push({ id, error: 'empty detail' }); }
-      catch (e) { errors.push({ id, error: e.message }); if (e.status) detailErrors.set(id, { status: e.status, at: new Date().toISOString() }); if (e.status === 403 || e.status === 429) { detailStopped = 'refused:' + e.status; break; } }
+      try { const d = await client.detail(mid); streak = 0; if (d && d.MichrazID) { details.set(id, d); rawDetails.push(d); } else errors.push({ id, error: 'empty detail' }); }
+      catch (e) {
+        errors.push({ id, error: e.message });
+        if (e.status) { detailErrors.set(id, { status: e.status, at: new Date().toISOString() }); if (e.status !== 404) streak++; }
+        else { streak++; transient++; }                                   // no HTTP answer at all (fetch failed / timeout)
+        if (e.status === 403 || e.status === 429) { detailStopped = 'refused:' + e.status; break; }
+        if (streak >= budget.failStreak) { detailStopped = `source-unresponsive (${streak} consecutive failures)`; break; }
+      }
     }
+    run.transientErrors = transient;
     const detailFetchedAt = new Date().toISOString();
     /* 3 · maps for tenders that have a detail and no position yet (new detail first, then stored ones, newest first) */
     const needMap = [...details.keys()].filter((id) => !(prevById.get(id) && prevById.get(id).geometry))
       .concat(prev.filter((r) => r.lotsCount != null && !r.geometry && !details.has(r.id) && !(r.provenance.map && ageDays(r.provenance.map.fetchedAt) < 90)).sort((a, b) => b.michrazId - a.michrazId).map((r) => r.id));
     let mapStopped = null;
+    let mapStreak = 0;
     for (const id of needMap) {
       if (maps.size >= budget.map) { mapStopped = 'budget'; break; }
       if (outOfTime()) { mapStopped = 'time'; break; }
-      try { const m = await client.map(id.slice(4)); maps.set(id, m || {}); }
-      catch (e) { errors.push({ id, error: 'map: ' + e.message }); if (e.status === 403 || e.status === 429) { mapStopped = 'refused:' + e.status; break; } }
+      if (client.requests >= budget.requests) { mapStopped = 'request-cap'; break; }
+      if (detailStopped && /unresponsive|refused|request-cap/.test(detailStopped)) { mapStopped = 'after:' + detailStopped; break; }
+      try { const m = await client.map(id.slice(4)); maps.set(id, m || {}); mapStreak = 0; }
+      catch (e) { errors.push({ id, error: 'map: ' + e.message }); mapStreak++; if (e.status === 403 || e.status === 429) { mapStopped = 'refused:' + e.status; break; } if (mapStreak >= budget.failStreak) { mapStopped = `source-unresponsive (${mapStreak} consecutive failures)`; break; } }
     }
     Object.assign(run, { detailPlan: plan.tiers, detailsFetched: details.size, detailStopped, mapsFetched: maps.size, mapStopped, requests: client.requests,
       errors: errors.length, errorSample: errors.slice(0, 5) });
