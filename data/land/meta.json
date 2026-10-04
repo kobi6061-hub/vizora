@@ -10,7 +10,7 @@
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
  "snapshotHash": "0ac8f6f9382cf5a171cbdb94970331f07baad2a946dd7a7464f5ed693f837d9d",
  "snapshotFetchedAt": "2026-10-04T21:25:36.686Z",
- "checkedAt": "2026-10-04T21:25:36.686Z",
+ "checkedAt": "2026-10-04T22:29:43.354Z",
  "normalizerVersion": 4,
  "rows": 10631,
  "records": 10631,
@@ -25,52 +25,80 @@
   "committeeTo": "2026-09-15"
  },
  "detail": {
-  "withDetail": 4068,
+  "withDetail": 5247,
   "withGeometry": 24,
   "oldestDetailFetchedAt": "2026-10-04T18:55:33.598Z",
-  "newestDetailFetchedAt": "2026-10-04T22:25:23.204Z",
+  "newestDetailFetchedAt": "2026-10-04T22:39:48.365Z",
   "activeWithDetail": 439,
   "active": 439,
-  "detailUnavailable": 485,
+  "detailUnavailable": 494,
   "budget": {
-   "detail": 0,
-   "map": 0,
-   "minutes": 40
+   "detail": 2500,
+   "map": 400,
+   "minutes": 60,
+   "requests": 1190,
+   "failStreak": 12
   },
-  "lastRunFetched": 0
+  "lastRunFetched": 1179
  },
  "byLifecycle": {
   "open": 286,
   "closed": 634,
-  "awarded": 2227,
-  "decided-no-award": 667,
+  "awarded": 3037,
+  "decided-no-award": 856,
   "cancelled": 561,
   "published": 153,
   "frozen": 22,
-  "decided": 6081
+  "decided": 5082
  },
  "byTrack": {
   "open-market": 5142,
   "commercial-other": 2944,
   "subsidized": 850,
-  "residential-lottery": 295,
+  "residential-lottery": 456,
   "special-population": 301,
   "rental": 171,
   "mixed-use": 174,
-  "lottery": 754
+  "lottery": 593
  },
  "plans": {
-  "xplan": 399,
+  "xplan": 409,
   "inventory": 1104,
   "inventoryAsOf": "2022-02-17T10:59:42.023Z",
-  "tendersWithJoinedPlan": 898,
-  "xplanMisses": 1448
+  "tendersWithJoinedPlan": 947,
+  "xplanMisses": 1759
  },
  "construction": {
-  "tendersWithLinks": 8,
-  "source": null
+  "tendersWithLinks": 18,
+  "source": {
+   "rows": 10371,
+   "joinableParcels": 1242,
+   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
+  }
  },
- "joins": {},
- "historyEvents": 29429,
- "lastRun": "land-20261004T222616Z"
+ "joins": {
+  "xplan": {
+   "asked": 321,
+   "requests": 33,
+   "found": 10,
+   "complete": true,
+   "known": 409,
+   "errors": []
+  },
+  "inventory": {
+   "rows": 1112,
+   "sourceUpdatedAt": "2022-02-17T10:59:42.023Z"
+  },
+  "construction": {
+   "rows": 10371,
+   "joinableParcels": 1242,
+   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
+  },
+  "developmentCosts": {
+   "rows": 1454,
+   "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
+  }
+ },
+ "historyEvents": 40765,
+ "lastRun": "land-20261004T222926Z"
 }
