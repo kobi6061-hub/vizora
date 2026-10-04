@@ -67,9 +67,20 @@ detail payloads of each run (`raw_snapshots`, source `rmi:michrazim:detail`).
 
 Detail budget per run (default 1,500; `--ids` first, then list rows whose status changed or are new, active tenders not
 re-read for 7 days, decided in the last year not re-read for 30 days, never-read newest first, then the oldest read).
-Every record says when its detail was read (`provenance.detail.fetchedAt`); a 404 is remembered 60 days. Map budget 400.
-The xplan join asks for plan numbers not known or older than 30 days (misses re-asked after 90 days), in batches of 10.
-Exit 0 ok · 2 Supabase write failed · 1 failed. The read side serves the bundled files (`freshness.store: 'git'`).
+Every record says when its detail was read (`provenance.detail.fetchedAt`); a tender whose detail answered 404 is re-asked
+only after every read tender (lowest priority) for 60 days. Map budget 400. The joins run on their own budget
+(`--joins-minutes`, default 15): the xplan join asks for plan numbers not known or older than 30 days (misses re-asked after
+90 days) in batches of 10, up to `--xplan-requests` (150) per run; a failed batch leaves its plans "not checked" (never
+"not found"); when the MoCH progress source does not answer, each tender keeps the construction evidence of its last
+successful join. Into `data/land/` only an official raw list snapshot from `data/land/raw/` recorded by a live run may be
+replayed (`--from`, to restate the records under a new normalizer). Exit 0 ok · 2 Supabase write failed · 1 failed.
+The read side serves the bundled files (`freshness.store: 'git'`).
+
+Price basis: the detail's competition code first (`SugTacharut` 1 = price competition, also seen on lottery types 2 and 3);
+a lottery / priority type without it allocates at a fixed price (the allottee is named, the sum may not be published);
+an open-market type whose older detail carries no code is a price tender by the Authority's type (`basisEvidence`).
+Land per unit on the page: competitive bids only, open-market track unless a track is selected. Construction evidence is
+attached only to an awarded tender and only from rows whose contract year is not before the award.
 
 ## API (`api/land.js`, session-gated)
 

@@ -28,7 +28,8 @@ create table if not exists market.land_tenders (
   award_scope        text check (award_scope in ('all-lots','some-lots')),
   type_code          integer,                     -- TableID 215 (marketing method)
   purpose_code       integer,                     -- TableID -1 (purpose)
-  track              text check (track in ('open-market','subsidized','rental','special-population','residential-lottery','mixed-use','commercial-other','unknown')),
+  track              text check (track in ('open-market','subsidized','rental','special-population','residential-lottery','lottery','mixed-use','commercial-other','unknown')),
+                                                  -- 'lottery': a lottery / priority type whose population list (in the detail) has not been read yet
   region_code        integer,
   locality_code      integer,                     -- CBS semel yeshuv (KodYeshuv)
   neighborhood       text,                        -- as published; never assigned by PROPX

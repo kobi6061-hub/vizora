@@ -35,10 +35,11 @@ module.exports = async (req, res) => {
     if (view === 'tender') { const out = g('id') ? Q.record(g('id')) : null; return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     const { filters, error } = Q.parseFilters(url.searchParams);
     if (error) return send(res, 400, { error });
-    if (view === 'summary') return send(res, 200, Q.summary(filters, { bucket: g('bucket'), limit: Math.min(100, Number(g('limit')) || 40) }));
+    const lim = (d, max) => Math.max(1, Math.min(max, Math.floor(Number(g('limit'))) || d));
+    if (view === 'summary') return send(res, 200, Q.summary(filters, { bucket: g('bucket'), limit: lim(40, 100) }));
     if (view === 'tenders') return send(res, 200, Q.records(filters, { sort: g('sort'), order: g('order'), page: g('page'), size: g('size') }));
-    if (view === 'pipeline') return send(res, 200, Q.pipeline(filters, { limit: Math.min(100, Number(g('limit')) || 30) }));
-    if (view === 'map') return send(res, 200, Q.mapPoints(filters, { limit: Math.min(5000, Number(g('limit')) || 3000) }));
+    if (view === 'pipeline') return send(res, 200, Q.pipeline(filters, { limit: lim(30, 100) }));
+    if (view === 'map') return send(res, 200, Q.mapPoints(filters, { limit: lim(3000, 5000) }));
     return send(res, 400, { error: 'unknown view' });
   } catch (e) {
     console.error('land api:', e.message);

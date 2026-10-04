@@ -11,7 +11,7 @@
  "snapshotHash": "58743c381e979c2b12dcef3c4c9bd884be4e956d711eef11f65e7ffd4e2acc05",
  "snapshotFetchedAt": "2026-10-04T19:14:09.530Z",
  "checkedAt": "2026-10-04T19:14:09.530Z",
- "normalizerVersion": 2,
+ "normalizerVersion": 3,
  "rows": 10631,
  "records": 10631,
  "inLatestSource": 10631,
@@ -25,17 +25,17 @@
   "active": 439,
   "detailUnavailable": 485,
   "budget": {
-   "detail": 2500,
-   "map": 400,
-   "minutes": 45
+   "detail": 0,
+   "map": 0,
+   "minutes": 40
   },
-  "lastRunFetched": 1198
+  "lastRunFetched": 0
  },
  "byLifecycle": {
   "open": 260,
   "closed": 634,
-  "awarded": 733,
-  "decided-no-award": 308,
+  "awarded": 754,
+  "decided-no-award": 287,
   "cancelled": 561,
   "published": 179,
   "decided": 7934,
@@ -45,10 +45,11 @@
   "open-market": 5142,
   "commercial-other": 2944,
   "subsidized": 850,
-  "residential-lottery": 1197,
+  "residential-lottery": 73,
   "special-population": 153,
   "rental": 171,
-  "mixed-use": 174
+  "mixed-use": 174,
+  "lottery": 1124
  },
  "coverage": {
   "publishedFrom": "2000-01-08",
@@ -66,10 +67,10 @@
   "xplanMisses": 0
  },
  "construction": {
-  "tendersWithLinks": 6,
+  "tendersWithLinks": 4,
   "source": null
  },
  "joins": {},
- "historyEvents": 4075,
- "lastRun": "land-20261004T191352Z"
+ "historyEvents": 5902,
+ "lastRun": "land-20261004T200159Z"
 }

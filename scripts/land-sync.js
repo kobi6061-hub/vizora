@@ -18,7 +18,7 @@
 //
 //   node scripts/land-sync.js                    live (GitHub runner; land.gov.il is reachable there)
 //     --dry-run                                  fetch + normalize + report, write nothing
-//     --detail-budget N (1500) --map-budget N (400) --max-minutes M (40)
+//     --detail-budget N (1500) --map-budget N (400) --max-minutes M (40) --joins-minutes M (15) --xplan-requests N (150)
 //     --ids 20260158,20250516                    read these tenders' detail first
 //     --no-joins                                 skip xplan / inventory / construction
 //     --summary-file <path>                      append a one-line summary (commit message)
@@ -59,7 +59,7 @@ function planDetails(rows, prevById, { forced = [], now = Date.now() }) {
     const status = Number(row.StatusMichraz);
     if (want.has(id)) tiers.forced.push(id);
     else if (!prev || prev.statusCode !== status) tiers.changed.push(id);
-    else if (!det && err && err.status === 404 && ageDays(err.at, now) < 60) tiers.rolling.push([id, err.at]);   // the site has no detail page for it; re-asked after 60 days
+    else if (!det && err && err.status === 404 && ageDays(err.at, now) < 60) tiers.rolling.push([id, err.at]);   // the site answered 404: lowest priority (behind every read tender) for 60 days
     else if (!det) tiers.unread.push(id);
     else if ((status === 1 || status === 2) && age > 7) tiers.active.push(id);
     else if (status === 5 && row.VaadaDate && ageDays(row.VaadaDate, now) < 365 && age > 30) tiers.decided.push(id);
@@ -79,13 +79,20 @@ function readReplay(file) {
 
 (async () => {
   const dry = has('dry-run');
-  if (argVal('from') && IS_PROD && !dry) { console.error('refused: --from replays only into a separate LAND_DATA_DIR, or with --dry-run'); process.exitCode = 1; return; }
+  if (argVal('from') && IS_PROD && !dry) {
+    /* into data/land only an official raw list snapshot a live run wrote (name = date + content hash, recorded in sync-runs.jsonl) may be replayed —
+       to restate the stored records under a new normalizer; no fixture can reach the production directory */
+    const abs = path.resolve(argVal('from')), m = /^\d{4}-\d{2}-\d{2}-([0-9a-f]{12})\.json\.gz$/.exec(path.basename(abs));
+    const runs = new FileLandStore(PROD_DIR).readRuns();
+    const ok = abs.startsWith(path.resolve(PROD_DIR, 'raw') + path.sep) && m && hashRows(readReplay(abs)).startsWith(m[1]) && runs.some((r) => r.rawSnapshot === path.basename(abs) && r.retrievalMethod === 'live-api');
+    if (!ok) { console.error('refused: into data/land --from replays only an official raw list snapshot from data/land/raw/ recorded by a live run'); process.exitCode = 1; return; }
+  }
   const startedAt = new Date().toISOString(), t0 = Date.now();
   const store = new FileLandStore(DIR);
   const run = { id: 'land-' + startedAt.replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z'), source: SOURCE_ID, startedAt, status: 'failed' };
   const budget = { detail: Number(argVal('detail-budget', 1500)), map: Number(argVal('map-budget', 400)), minutes: Number(argVal('max-minutes', 40)) };
   const forced = String(argVal('ids', '')).split(',').map((s) => s.trim()).filter(Boolean);
-  const client = new RmiClient({ delayMs: Number(process.env.RMI_DELAY_MS || 250) });
+  const client = new RmiClient({ delayMs: Number(process.env.RMI_DELAY_MS || 150) });
   let code = 0, summary = '';
   const outOfTime = () => (Date.now() - t0) / 60000 > budget.minutes;
   try {
@@ -95,6 +102,7 @@ function readReplay(file) {
     if (argVal('from')) rows = readReplay(argVal('from'));
     else {
       const full = await client.search(), active = await client.search({ activeOnly: true });
+      if (!active.length && !full.some((r) => Number(r.StatusMichraz) === 1 || Number(r.StatusMichraz) === 2)) throw new Error('the active list answered no rows — not applied (every active tender would be marked delisted)');
       const byId = new Map(full.map((r) => [r.MichrazID, r]));
       for (const r of active) byId.set(r.MichrazID, r);
       rows = [...byId.values()];
@@ -148,12 +156,13 @@ function readReplay(file) {
     const xplanByKey = new Map((plans.xplan || []).map((p) => [p.planKey, p]));
     const invByKey = new Map((plans.inventory || []).map((p) => [p.planKey, p]));
     let plansChanged = false, progressByParcel = null, reference = null;
-    if (!has('no-joins') && !outOfTime()) {
+    const joinsT0 = Date.now(), joinsMinutes = Number(argVal('joins-minutes', 15));
+    if (!has('no-joins')) {
       const lotKeys = [...new Set(freshRaw.flatMap((r) => (r.plans || []).filter((p) => p.via === 'lot').map((p) => planKey(p.plan))))];
       const misses = new Map((plans.xplanMisses || []).map((m) => [m.planKey, m.askedAt]));
       const ask = lotKeys.filter((k) => { const x = xplanByKey.get(k); if (x) return ageDays(x.provenance.fetchedAt) > 30; const m = misses.get(k); return !m || ageDays(m) > 90; });
       try {
-        const got = await P.fetchXplanPlans(ask, { maxRequests: Number(argVal('xplan-requests', 300)) });
+        const got = await P.fetchXplanPlans(ask, { maxRequests: Number(argVal('xplan-requests', 150)), deadline: joinsT0 + joinsMinutes * 60000 });
         for (const [k, p] of got.found) { xplanByKey.set(k, p); misses.delete(k); plansChanged = true; }
         for (const k of got.askedKeys) if (!got.found.has(k)) { misses.set(k, detailFetchedAt); plansChanged = true; }
         joins.xplan = { asked: ask.length, requests: got.requests, found: got.found.size, complete: got.complete, known: xplanByKey.size, errors: got.errors };
@@ -184,7 +193,9 @@ function readReplay(file) {
       } catch (e) { joins.developmentCosts = { error: e.message }; }
     }
     run.joins = joins;
-    const fresh = freshRaw.map((r) => { let x = P.joinPlans(r, { xplan: xplanByKey, inventory: invByKey }); if (progressByParcel) x = P.joinConstruction(x, progressByParcel); return x; });
+    const missKeys = new Set((plans.xplanMisses || []).map((m) => m.planKey));
+    /* no progress answer this run: each tender keeps the construction evidence of its last successful join (never re-labelled) */
+    const fresh = freshRaw.map((r) => { let x = P.joinPlans(r, { xplan: xplanByKey, inventory: invByKey, misses: missKeys }); if (progressByParcel) x = P.joinConstruction(x, progressByParcel); return x; });
 
     /* 6 · merge */
     const presentIds = new Set(rows.map((r) => `rmi:${r.MichrazID}`));

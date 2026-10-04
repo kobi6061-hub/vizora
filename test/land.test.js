@@ -107,7 +107,7 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const r5 = row({ StatusMichraz: 5 });
     const r = norm(r5, detail(r5, { Tik: [lot(WIN)] }), null);
     assert.equal(r.contracted, null); assert.equal(r.contractedEvidence, 'not-published-by-source');
-    assert.equal(r.construction.permit, null); assert.equal(r.construction.start, null); assert.equal(r.construction.evidence, 'no-exact-parcel-join');
+    assert.equal(r.construction.permit, null); assert.equal(r.construction.start, null); assert.equal(r.construction.evidence, 'not-checked', 'no join ran: not checked');
   });
 
   console.log('land: economics');
@@ -137,11 +137,43 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.equal(e.landPerUnit, null); assert.ok(e.landPerUnitUnavailable);
     assert.equal(r.economics.landPerUnit, null); assert.equal(r.economics.pricePerSqmMin, 5885);
   });
-  await t('lottery / priority types are fixed-price allocations, not competitive bids', () => {
+  await t('price basis follows the Authority\'s competition code first: a lottery type with SugTacharut 1 is a competitive bid; without the code it is a fixed-price allocation', () => {
     const r6 = row({ StatusMichraz: 6, KodSugMichraz: 2, KodYeudMichraz: 1 });
-    const r = norm(r6, detail(r6, { Uchlusiyot: ['1'], Tik: [lot({ Kibolet: 1, mechirShuma: 69100, SchumZchiya: 21421 })] }), null);
-    assert.equal(r.priceBasis, 'fixed-price-allocation'); assert.equal(r.track, 'special-population'); assert.equal(r.lifecycle, 'lottery-pending');
+    const r = norm(r6, detail(r6, { SugTacharut: null, Uchlusiyot: ['1'], Tik: [lot({ Kibolet: 1, mechirShuma: 69100, SchumZchiya: 21421 })] }), null);
+    assert.equal(r.priceBasis, 'fixed-price-allocation'); assert.equal(r.basisEvidence, 'tender-type'); assert.equal(r.track, 'special-population'); assert.equal(r.lifecycle, 'lottery-pending');
     assert.equal(r.lots[0].winner, undefined, 'a price without a name is not a winner');
+    /* type 3 (מגרש בלתי מסוים) with SugTacharut 1: different bids over one minimum — as rmi:20220410 in the data */
+    const r3 = row({ StatusMichraz: 5, KodSugMichraz: 3, KodYeudMichraz: 1 });
+    const c = norm(r3, detail(r3, { SugTacharut: 1, Uchlusiyot: ['5'], Tik: [lot({ Kibolet: 1, MechirSaf: 1785500, mechirShuma: 3820606, ShemZoche: 'TEST FIXTURE א, TEST FIXTURE ב', SchumZchiya: 5612345 })] }), null);
+    assert.equal(c.priceBasis, 'competitive-bid'); assert.equal(c.basisEvidence, 'SugTacharut'); assert.equal(c.lifecycle, 'awarded');
+    assert.equal(c.lots[0].economics.premiumVsMinimum, Number((5612345 / 1785500 - 1).toFixed(4)));
+    /* a lottery type with a stated competition code other than 1: lottery / priority allocation at a fixed price; an open-market type with such a code is not guessed */
+    assert.equal(norm(r3, detail(r3, { SugTacharut: 4 }), null).priceBasis, 'fixed-price-allocation');
+    assert.equal(norm(row({ KodSugMichraz: 1 }), detail(row(), { SugTacharut: 2 }), null).priceBasis, 'unknown');
+    /* an open-market type whose older detail carries no competition code: the Authority's type says price tender */
+    const r1 = row({ StatusMichraz: 5, KodSugMichraz: 1 });
+    const o = norm(r1, detail(r1, { SugTacharut: null, Tik: [lot(WIN)] }), null);
+    assert.equal(o.priceBasis, 'competitive-bid'); assert.equal(o.basisEvidence, 'tender-type'); assert.equal(o.economics.landPerUnit, 120000);
+  });
+  await t('a lottery allocation names its allottee (a winner without a published sum); elsewhere a name without a sum is a named party, never an award', () => {
+    const r6 = row({ StatusMichraz: 5, KodSugMichraz: 2, KodYeudMichraz: 1 });
+    const a = norm(r6, detail(r6, { SugTacharut: null, Uchlusiyot: ['1'], Tik: [lot({ Kibolet: 1, mechirShuma: 426280, ShemZoche: 'TEST FIXTURE משפחה', SchumZchiya: null })] }), null);
+    assert.equal(a.lifecycle, 'awarded'); assert.equal(a.lots[0].winner.amount, null); assert.match(a.lots[0].winner.evidence, /fixed-price allocation/);
+    assert.equal(a.economics.awardedLandTotal, null); assert.equal(a.economics.landPerUnit, null, 'no published sum → no price figure');
+    const r1 = row({ StatusMichraz: 5, KodSugMichraz: 1 });
+    const b = norm(r1, detail(r1, { Tik: [lot({ ShemZoche: 'TEST FIXTURE חברה', SchumZchiya: null })] }), null);
+    assert.equal(b.lots[0].winner, undefined); assert.equal(b.lots[0].namedWithoutSum.name, 'TEST FIXTURE חברה'); assert.equal(b.lifecycle, 'decided-no-award'); assert.equal(b.namedWithoutSum, 1);
+  });
+  await t('a lottery type without detail is track "lottery" (population list not read), never "general public"', () => {
+    const r = norm(row({ KodSugMichraz: 2, KodYeudMichraz: 1 }), null, null);
+    assert.equal(r.track, 'lottery'); assert.equal(r.trackBasis, 'type+purpose');
+    assert.equal(norm(row({ KodSugMichraz: 2, KodYeudMichraz: 1 }), detail(row(), { Uchlusiyot: ['5'] }), null).track, 'residential-lottery');
+  });
+  await t('awarded total sums every priced lot; the per-unit figure only the lots with units, and says so', () => {
+    const r5 = row({ StatusMichraz: 5 });
+    const r = norm(r5, detail(r5, { Tik: [lot(WIN), lot({ ...WIN, Kibolet: 0, SchumZchiya: 3000000 })] }), null);
+    assert.equal(r.economics.pricedLots, 2); assert.equal(r.economics.awardedLandTotal, 15000000); assert.equal(r.economics.perUnitLots, 1);
+    assert.equal(r.economics.awardedUnits, 100); assert.equal(r.economics.landPerUnit, 120000); assert.equal(r.economics.perUnitScope, 'lots-with-units-only');
   });
   await t('tender-level economics: only awarded lots are summed; dev cost per unit only when every awarded lot has one', () => {
     const r5 = row({ StatusMichraz: 5 });
@@ -171,7 +203,10 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const j = P.joinPlans(r, { xplan: new Map([[x.planKey, x], [near.planKey, near]]), inventory: new Map() });
     const lotPlan = j.plans.find((p) => p.via === 'lot'), link = j.plans.find((p) => p.via === 'site-link');
     assert.equal(lotPlan.join, 'exact-plan-number'); assert.equal(lotPlan.xplan.approvedUnits, 1200); assert.equal(lotPlan.xplan.station, 'אישור');
-    assert.equal(link.join, 'not-a-plan-number'); assert.equal(link.xplan, null);
+    assert.equal(link.join, 'not-a-plan-number'); assert.equal(link.xplan, null); assert.equal(lotPlan.xplanStatus, 'found');
+    const unchecked = P.joinPlans(r, { xplan: new Map(), inventory: new Map() }).plans.find((p) => p.via === 'lot');
+    assert.equal(unchecked.xplanStatus, 'not-checked', 'never asked → not checked, not "not found"');
+    assert.equal(P.joinPlans(r, { xplan: new Map(), inventory: new Map(), misses: new Set(['תמל/9999']) }).plans.find((p) => p.via === 'lot').xplanStatus, 'not-found');
     assert.equal(j.planning.approvedUnitsInPlans, 1200); assert.equal(j.planning.basis, 'exact-plan-number');
   });
   await t('construction evidence only through an exact block AND parcel; parcel "0" never joins; the stale date travels with it', () => {
@@ -182,11 +217,20 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const other = P.normalizeProgressRow({ _id: 3, GUSH: '99999', HELKA: '8', TAARICH_SHLAV_BNIYA_5: '41000' }, pctx);
     assert.equal(zero.joinable, false);
     const by = new Map([['99999/7', [hit]], ['99999/8', [other]]]);
-    const j = P.joinConstruction(r, by);
+    /* an un-awarded tender never carries construction evidence, whatever its parcels say */
+    const na = P.joinConstruction(r, by);
+    assert.equal(na.construction.links.length, 0); assert.match(na.construction.evidence, /not-applicable/); assert.equal(na.construction.checked, true);
+    const a5 = row({ StatusMichraz: 5, VaadaDate: '2010-05-01T00:00:00+03:00' });
+    const awarded = norm(a5, detail(a5, { Tik: [lot(WIN)] }), null);
+    /* a row contracted before the award belongs to an earlier marketing of the parcel */
+    const early = P.normalizeProgressRow({ _id: 4, GUSH: '99999', HELKA: '7', SHNAT_HOZE: '1997', TAARICH_SHLAV_BNIYA_5: '36000' }, pctx);
+    assert.equal(P.joinConstruction(awarded, new Map([['99999/7', [early]]])).construction.links.length, 0);
+    const j = P.joinConstruction(awarded, by);
     assert.equal(j.construction.links.length, 1); assert.equal(j.construction.links[0].join, 'exact-block-parcel'); assert.equal(j.construction.evidence, 'moch-progress:exact-block-parcel');
     assert.equal(j.construction.start, '2012-04-01'); assert.equal(j.construction.completion, null); assert.equal(j.construction.permit, null);
     assert.equal(j.construction.links[0].asOf, '2024-03-01');
-    assert.equal(P.joinConstruction(r, new Map()).construction.evidence, 'no-exact-parcel-join');
+    assert.equal(P.joinConstruction(awarded, new Map()).construction.evidence, 'no-exact-parcel-join');
+    assert.equal(N.decorate(N.normalizeTender({ row: a5, detail: detail(a5, { Tik: [lot(WIN)] }) }, CTX).record).construction.evidence, 'not-checked', 'no join run → not checked, never "no join"');
   });
   await t('the planning inventory is state land only and dated; potential units are never read as nationwide coverage', () => {
     const p = P.normalizeInventoryRow({ _id: 1, 'מפתח לפוליגון תכנית': 806201, 'מספר תוכנית': 'תמל/9999', 'שם תוכנית': 'TEST FIXTURE', 'שלב תכנוני': 'תוקף', 'סמל יישוב': 99001, 'יישוב': 'TEST', 'תאריך פרסום לאישור ברשומות': '19/12/2017', 'יחד פוטנציאל לשיווק': 4002 },
@@ -194,6 +238,13 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.equal(p.stateLandOnly, true); assert.equal(p.asOf, '2022-02-17'); assert.equal(p.potentialUnits, 4002); assert.equal(p.approvalDate, '2017-12-19');
     const src = byId['datagov:rmi:planning-inventory'];
     assert.equal(src.classification, 'STALE'); assert.match(src.geographicCoverage, /state land only/i);
+  });
+
+  await t('xplan lookups: a failed batch leaves its plans unasked (re-asked next run); only a successful batch can produce a miss', async () => {
+    let n = 0;
+    const fetchImpl = async () => { n++; if (n === 2) throw new Error('timeout'); return { json: async () => ({ features: [{ attributes: { pl_number: n === 1 ? 'A/1' : 'C/1', pq_authorised_quantity_120: 10 } }] }) }; };
+    const got = await P.fetchXplanPlans(['A/1', 'A/2', 'B/1', 'B/2', 'C/1', 'C/2'], { fetchImpl, batch: 2 });
+    assert.equal(got.found.size, 2); assert.deepEqual([...got.askedKeys].sort(), ['A/1', 'A/2', 'C/1', 'C/2']); assert.equal(got.complete, false); assert.equal(got.errors.length, 1);
   });
 
   console.log('land: history & store');
@@ -268,14 +319,26 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.equal(S.kpis.tenders, 3); assert.equal(S.kpis.awarded, 1); assert.equal(S.kpis.open, 1); assert.equal(S.kpis.cancelled, 1);
     assert.equal(S.kpis.unitsAwarded, 150); assert.equal(S.kpis.awardedLandTotal, 20000000); assert.equal(S.kpis.landPerUnit, Math.round(20000000 / 150));
     assert.equal(S.kpis.landPerUnitLots, 2); assert.equal(S.kpis.vat, 'not-stated-by-source'); assert.equal(S.kpis.contracted, null); assert.equal(S.kpis.permits, null);
+    assert.deepEqual(S.kpis.landPerUnitTracks, ['open-market']); assert.equal(S.kpis.landPerUnitBasis, 'competitive-bid');
+    /* a subsidized (מחיר מטרה) tender and a fixed-price lottery allocation never enter the open-market land figure */
+    const sub = row({ StatusMichraz: 5, KodSugMichraz: 5, KodYeshuv: 5000, PirsumDate: '2023-05-01T00:00:00+03:00' }), lotr = row({ StatusMichraz: 5, KodSugMichraz: 2, KodYeudMichraz: 1, KodYeshuv: 5000, PirsumDate: '2023-04-01T00:00:00+03:00' });
+    const extra = [N.normalizeTender({ row: sub, detail: detail(sub, { Tik: [lot({ ...WIN, SchumZchiya: 100000 })] }) }, CTX).record,
+      N.normalizeTender({ row: lotr, detail: detail(lotr, { SugTacharut: null, Uchlusiyot: ['5'], Tik: [lot({ Kibolet: 1, ShemZoche: 'TEST FIXTURE זוכה הגרלה', SchumZchiya: 500000 })] }) }, CTX).record];
+    const s2 = new FileLandStore(dir); s2.write({ records: mergeRecords(records, [...records, ...extra], { fetchedAt: CTX.fetchedAt }).records, meta: s2.readMeta(), run: { id: 'r2' } });
+    const S2 = Q.summary(F('period=all').filters, { dataDir: dir });
+    assert.equal(S2.kpis.landPerUnit, Math.round(20000000 / 150), 'unchanged by the subsidized and lottery lots'); assert.equal(S2.kpis.fixedPriceLots, 1);
+    assert.equal(Q.summary(F('track=subsidized').filters, { dataDir: dir }).kpis.landPerUnit, 1000, 'a selected track reports its own figure');
+    const lotDev = S2.developers.find((d) => d.name === 'TEST FIXTURE זוכה הגרלה');
+    assert.equal(lotDev.landTotalCompetitive, null); assert.equal(lotDev.fixedLots, 1); assert.equal(lotDev.lotsWon, 1);
     assert.equal(S.developers.length, 2, 'two different winner strings stay two developers');
+    assert.equal(S.kpis.decidedWithoutDetail, 0);
     assert.deepEqual(S.developers.map((d) => d.basis), ['observed-public-tender-wins', 'observed-public-tender-wins']);
     assert.equal(S.cities[0].localityCode, 5000); assert.equal(S.cities[0].city, 'תל אביב - יפו');
     assert.ok(S.methodology.landPerUnit.includes('same awarded lots'));
     const none = Q.summary(F('period=custom&from=2027-01-01&to=2027-02-01').filters, { dataDir: dir });
     assert.equal(none.coverage.state, 'none'); assert.equal(none.kpis, null, 'a period the source does not cover is "—", not zero');
     const R = Q.records(F('period=all').filters, { dataDir: dir, sort: 'publishedDate', order: 'desc', size: 2 });
-    assert.equal(R.pages, 1); assert.equal(R.size, 5, 'page size floor'); assert.equal(R.rows.length, 3); assert.equal(R.rows[0].lifecycle, 'awarded'); assert.equal(R.rows[0].winners.length, 2); assert.equal(R.rows[0].page, `https://apps.land.gov.il/MichrazimSite/#/michraz/${R.rows[0].michrazId}`);
+    assert.equal(R.pages, 1); assert.equal(R.size, 5, 'page size floor'); assert.equal(R.rows.length, 5); assert.equal(R.rows[0].lifecycle, 'awarded'); assert.equal(R.rows[0].winners.length, 2); assert.equal(R.rows[0].page, `https://apps.land.gov.il/MichrazimSite/#/michraz/${R.rows[0].michrazId}`);
     assert.equal(R.rows[1].lots, 1); assert.equal(R.rows[1].winners.length, 0);
     const one = Q.record(String(recs[0].michrazId), { dataDir: dir });
     assert.equal(one.record.lots.length, 2, 'lots hydrated from the year shard'); assert.equal(one.lifecycle.stage, 'awarded'); assert.equal(one.lifecycle.contracted, null); assert.equal(one.lifecycle.permit, null);
