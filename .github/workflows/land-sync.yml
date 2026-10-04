@@ -1,0 +1,109 @@
+# PROPX · Land & Tender — daily sync of the Israel Land Authority tenders.
+#
+# scripts/land-sync.js on a GitHub runner (land.gov.il, data.gov.il and
+# ags.iplan.gov.il are reachable here): the whole tender list, per-tender
+# detail on a budget (lots, bids, winners, parcels, plan numbers), map
+# centroids, exact joins to the Planning Administration layer, the RMI
+# planning inventory and the MoCH construction-progress reports → data/land/
+# (upsert, never delete, history). Also the PROPX Supabase project when the
+# repository secrets SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY exist
+# (server-side only). The commit redeploys the site on Vercel.
+
+name: Land & tenders — daily sync
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # every day 03:17 UTC, after the housing/transactions sync
+  workflow_dispatch:
+    inputs:
+      detail_budget:
+        description: 'Tender details to (re)read this run'
+        type: string
+        default: '1500'
+      map_budget:
+        description: 'Map centroids to read this run'
+        type: string
+        default: '400'
+      max_minutes:
+        description: 'Stop reading details/maps after this many minutes'
+        type: string
+        default: '40'
+      ids:
+        description: 'MichrazIDs to read first (comma-separated)'
+        type: string
+        default: ''
+      dry_run:
+        description: 'Fetch and report only — write and commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline test suites (must pass before any data is written)
+        run: |
+          node test/land.test.js
+          node test/housing.test.js
+          node test/integrity.test.js
+
+      - name: Israel Land Authority tenders — list, details, maps, exact joins
+        id: land
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DETAIL_BUDGET: ${{ inputs.detail_budget || '1500' }}
+          MAP_BUDGET: ${{ inputs.map_budget || '400' }}
+          MAX_MINUTES: ${{ inputs.max_minutes || '40' }}
+          IDS: ${{ inputs.ids || '' }}
+        run: |
+          set +e
+          ARGS="--detail-budget $DETAIL_BUDGET --map-budget $MAP_BUDGET --max-minutes $MAX_MINUTES"
+          [ -n "$IDS" ] && ARGS="$ARGS --ids $IDS"
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/land-sync.js --dry-run $ARGS
+          else
+            node scripts/land-sync.js $ARGS --summary-file "$RUNNER_TEMP/summary.txt"
+          fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Commit
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          [ -e data/land ] && git add data/land
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          { echo "Land & tender sync $(date -u +%F)"; echo; cat "$RUNNER_TEMP/summary.txt" 2>/dev/null; } > "$RUNNER_TEMP/msg.txt"
+          git commit -q -F "$RUNNER_TEMP/msg.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if the source failed
+        if: steps.land.outputs.code != '' && steps.land.outputs.code != '0'
+        run: |
+          echo "land=${{ steps.land.outputs.code }} — see the step above (1 = source/schema failure, 2 = written but the Supabase write failed)." >&2
+          exit 1
