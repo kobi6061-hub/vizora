@@ -37,7 +37,7 @@ const lot = (o = {}) => ({ TikID: '0000800099' + String(++seq).padStart(3, '0'),
 const detail = (r, o = {}) => ({ MichrazID: r.MichrazID, StatusMichrazMurchav: r.StatusMichraz, SugTacharut: 1, SugMechirMufchat: 0, KayamSivsud: 0, MechirSafMichraz: 1, MechirSafType: 1,
   MaxToWin: null, UpdateDate: '2026-08-05T16:09:02.903+03:00', HagralaDate: null, Uchlusiyot: [], Tik: [lot()], MichrazDocList: [], MessageDetails: { messageText: 'TEST FIXTURE' }, MichrazLinks: [], ...o });
 const map = (r) => ({ MichrazID: r.MichrazID, CenterX: 228701.281, CenterY: 768507.438, MinX: 228566.609, MinY: 768388.563, MaxX: 228843.922, MaxY: 768669.3, Migrashim: [{ TikShape: 'MULTIPOLYGON (())' }] });
-const norm = (r, d, m, prior) => N.normalizeTender({ row: r, detail: d, map: m, prior }, CTX).record;
+const norm = (r, d, m, prior) => N.decorate(N.normalizeTender({ row: r, detail: d, map: m, prior }, CTX).record);
 const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000, mpHatzaaotMitcham: [{ HatzaaID: 1, HatzaaSum: 12000000, HatzaaDescription: 1 }, { HatzaaID: 2, HatzaaSum: 11000000, HatzaaDescription: 2 }, { HatzaaID: 3, HatzaaSum: 9000000, HatzaaDescription: null }] };
 
 (async () => {
@@ -88,9 +88,9 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
   await t('a note in the winner column ("אין הצעות למתחם זה") is a note, never a winner; a name needs an award sum or a winning bid', () => {
     const r5 = row({ StatusMichraz: 5 });
     const a = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: ' אין הצעות למתחם זה', SchumZchiya: 0 })] }), null);
-    assert.equal(a.lots[0].winner, null); assert.equal(a.lots[0].sourceNote, 'אין הצעות למתחם זה'); assert.equal(a.lifecycle, 'decided-no-award');
+    assert.equal(a.lots[0].winner, undefined); assert.equal(a.lots[0].sourceNote, 'אין הצעות למתחם זה'); assert.equal(a.lifecycle, 'decided-no-award');
     const b = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: 'בחירת מתחם תערך במרחב', SchumZchiya: 0 })] }), null);
-    assert.equal(b.lots[0].winner, null);
+    assert.equal(b.lots[0].winner, undefined);
     const c = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: 'TEST FIXTURE זוכה', SchumZchiya: null, mpHatzaaotMitcham: [{ HatzaaID: 9, HatzaaSum: 777, HatzaaDescription: 1 }] })] }), null);
     assert.equal(c.lots[0].winner.amount, 777); assert.equal(c.lots[0].winner.evidence, 'winner-name+winning-bid');
   });
@@ -141,7 +141,7 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const r6 = row({ StatusMichraz: 6, KodSugMichraz: 2, KodYeudMichraz: 1 });
     const r = norm(r6, detail(r6, { Uchlusiyot: ['1'], Tik: [lot({ Kibolet: 1, mechirShuma: 69100, SchumZchiya: 21421 })] }), null);
     assert.equal(r.priceBasis, 'fixed-price-allocation'); assert.equal(r.track, 'special-population'); assert.equal(r.lifecycle, 'lottery-pending');
-    assert.equal(r.lots[0].winner, null, 'a price without a name is not a winner');
+    assert.equal(r.lots[0].winner, undefined, 'a price without a name is not a winner');
   });
   await t('tender-level economics: only awarded lots are summed; dev cost per unit only when every awarded lot has one', () => {
     const r5 = row({ StatusMichraz: 5 });
@@ -164,6 +164,7 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
   console.log('land: joins');
   await t('plan join is by the exact plan number (whitespace removed); site-link ids are never joined; a near miss does not join', () => {
     assert.equal(N.planKey(' תמל/ 9999 '), 'תמל/9999');
+    assert.deepEqual(norm(row(), detail(row()), null).winners, [], 'winners carry lot units for the read model');
     const r = norm(row(), detail(row(), { MichrazLinks: [{ url: 'https://apps.land.gov.il/TabaSearch/#/Plans?planNumber=2051381' }] }), null);
     const x = P.normalizeXplanFeature({ pl_number: 'תמל/9999', pl_id: 1, pl_name: 'TEST FIXTURE', station_desc: 'אישור', pq_authorised_quantity_120: 1200, pl_date_8: 1700000000000, pl_area_dunam: 50 }, { fetchedAt: CTX.fetchedAt });
     const near = P.normalizeXplanFeature({ pl_number: 'תמל/999', pq_authorised_quantity_120: 5 }, { fetchedAt: CTX.fetchedAt });
@@ -230,10 +231,73 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     s.write({ records: recs, history: [{ id: recs[0].id, field: 'statusCode', from: 1, to: 2, observedAt: CTX.fetchedAt }], meta: { snapshotHash: 'a'.repeat(64) }, run: { id: 'r' } });
     assert.equal(s.readRecords().length, 1); assert.equal(s.readHistory().length, 1); assert.equal(s.readRuns().length, 1); assert.ok(name && fs.existsSync(path.join(dir, 'raw', name)));
     assert.equal(fs.readFileSync(path.join(dir, 'tenders.json'), 'utf8').split('\n').length, 4);
+    assert.ok(!fs.readFileSync(path.join(dir, 'tenders.json'), 'utf8').includes('"lots":['), 'lots live in the per-year shard, not in tenders.json');
+    assert.ok(fs.existsSync(path.join(dir, 'lots-9990.json')) && s.readRecords()[0].lots.length === 1, 'lots re-attached from the shard');
   });
   await t('the sync refuses to replay a file into the production data directory', () => {
     const r = spawnSync(process.execPath, [path.join(ROOT, 'scripts/land-sync.js'), '--from', path.join(ROOT, 'package.json')], { encoding: 'utf8' });
     assert.equal(r.status, 1); assert.match(r.stderr + r.stdout, /refused/);
+  });
+
+  console.log('land: read model (api views over a fixture store)');
+  await t('filters: period by published / close / committee date, custom range validated, city by code or official name, winner exact, lifecycle list', () => {
+    const dir = tmp(), s = new FileLandStore(dir);
+    const a = row({ StatusMichraz: 5, KodYeshuv: 5000, PirsumDate: '2026-01-10T00:00:00+02:00', SgiraDate: '2026-03-01T12:00:00+02:00', VaadaDate: '2026-04-02T00:00:00+03:00' });
+    const b = row({ StatusMichraz: 2, KodYeshuv: 6100, PirsumDate: '2025-06-01T00:00:00+03:00', SgiraDate: '2025-08-01T12:00:00+03:00' });
+    const c = row({ StatusMichraz: 7, KodYeshuv: 5000, PirsumDate: '2024-01-01T00:00:00+02:00' });
+    const recs = [N.normalizeTender({ row: a, detail: detail(a, { Tik: [lot(WIN), lot({ ...WIN, ShemZoche: 'TEST FIXTURE זוכה ב', SchumZchiya: 8000000, Kibolet: 50 })] }) }, CTX).record,
+      N.normalizeTender({ row: b, detail: detail(b) }, CTX).record, N.normalizeTender({ row: c }, CTX).record];
+    const { records } = mergeRecords([], recs, { fetchedAt: CTX.fetchedAt, syncRunId: 'r' });
+    s.write({ records, meta: { checkedAt: CTX.fetchedAt, snapshotHash: 'a'.repeat(64), coverage: { publishedFrom: '2024-01-01', publishedTo: '2026-01-10', closeFrom: '2025-08-01', closeTo: '2026-03-01', committeeFrom: '2026-04-02', committeeTo: '2026-04-02' }, detail: { withDetail: 2 } }, run: { id: 'r' } });
+    const Q = require('../lib/land/query');
+    const F = (q) => Q.parseFilters(new URLSearchParams(q), new Date('2026-10-04T12:00:00Z'));
+    assert.equal(F('period=custom&from=2026-02-01').error, 'custom period needs from and to as YYYY-MM-DD');
+    assert.equal(F('period=custom&from=2026-02-01&to=2026-01-01').error, 'from is after to');
+    assert.equal(F('period=12m').filters.from, '2025-10-04');
+    const n = (q, o) => Q.records(F(q).filters, { dataDir: dir, ...o }).total;
+    assert.equal(n('period=all'), 3);
+    assert.equal(n('period=custom&from=2026-01-01&to=2026-01-31'), 1, 'published in January 2026');
+    assert.equal(n('period=custom&from=2026-01-01&to=2026-01-31&dateField=close'), 0, 'none closed in January');
+    assert.equal(n('period=custom&from=2026-03-01&to=2026-03-01&dateField=close'), 1);
+    assert.equal(n('period=custom&from=2026-04-01&to=2026-04-30&dateField=committee'), 1);
+    assert.equal(n('city=5000'), 2); assert.equal(n('city=תל אביב-יפו'), 2, 'the official locality name resolves through the registry'); assert.equal(n('city=6100'), 1);
+    assert.equal(n('lifecycle=awarded,cancelled'), 2); assert.equal(n('awarded=1'), 1);
+    assert.equal(n('winner=' + encodeURIComponent('TEST FIXTURE זוכה בע"מ')), 1); assert.equal(n('winner=' + encodeURIComponent('TEST FIXTURE זוכה')), 0, 'winner is an exact string, not a prefix');
+    assert.equal(n('q=' + encodeURIComponent('זוכה ב')), 1);
+    const S = Q.summary(F('period=all').filters, { dataDir: dir });
+    assert.equal(S.kpis.tenders, 3); assert.equal(S.kpis.awarded, 1); assert.equal(S.kpis.open, 1); assert.equal(S.kpis.cancelled, 1);
+    assert.equal(S.kpis.unitsAwarded, 150); assert.equal(S.kpis.awardedLandTotal, 20000000); assert.equal(S.kpis.landPerUnit, Math.round(20000000 / 150));
+    assert.equal(S.kpis.landPerUnitLots, 2); assert.equal(S.kpis.vat, 'not-stated-by-source'); assert.equal(S.kpis.contracted, null); assert.equal(S.kpis.permits, null);
+    assert.equal(S.developers.length, 2, 'two different winner strings stay two developers');
+    assert.deepEqual(S.developers.map((d) => d.basis), ['observed-public-tender-wins', 'observed-public-tender-wins']);
+    assert.equal(S.cities[0].localityCode, 5000); assert.equal(S.cities[0].city, 'תל אביב - יפו');
+    assert.ok(S.methodology.landPerUnit.includes('same awarded lots'));
+    const none = Q.summary(F('period=custom&from=2027-01-01&to=2027-02-01').filters, { dataDir: dir });
+    assert.equal(none.coverage.state, 'none'); assert.equal(none.kpis, null, 'a period the source does not cover is "—", not zero');
+    const R = Q.records(F('period=all').filters, { dataDir: dir, sort: 'publishedDate', order: 'desc', size: 2 });
+    assert.equal(R.pages, 1); assert.equal(R.size, 5, 'page size floor'); assert.equal(R.rows.length, 3); assert.equal(R.rows[0].lifecycle, 'awarded'); assert.equal(R.rows[0].winners.length, 2); assert.equal(R.rows[0].page, `https://apps.land.gov.il/MichrazimSite/#/michraz/${R.rows[0].michrazId}`);
+    assert.equal(R.rows[1].lots, 1); assert.equal(R.rows[1].winners.length, 0);
+    const one = Q.record(String(recs[0].michrazId), { dataDir: dir });
+    assert.equal(one.record.lots.length, 2, 'lots hydrated from the year shard'); assert.equal(one.lifecycle.stage, 'awarded'); assert.equal(one.lifecycle.contracted, null); assert.equal(one.lifecycle.permit, null);
+    assert.match(one.lifecycle.evidence, /StatusMichraz 5/); assert.equal(one.record.provenance.source, 'rmi:michrazim'); assert.ok(one.record.provenance.detail.fetchedAt);
+    assert.equal(one.locality.he, 'תל אביב - יפו');
+    const listOnly = Q.record(String(recs[2].michrazId), { dataDir: dir });
+    assert.equal(listOnly.record.lots, null); assert.equal(listOnly.record.detailLevel, 'list');
+    const P = Q.pipeline(F('period=all').filters, { dataDir: dir });
+    assert.equal(P.inventory.label, 'POTENTIAL UNITS FOR MARKETING — STATE LAND ONLY'); assert.equal(P.inventory.stale, true); assert.equal(P.funnel.contracted, null);
+    const M = Q.mapPoints(F('period=all').filters, { dataDir: dir });
+    assert.equal(M.points.length, 0, 'no polygon → no point'); assert.equal(M.localities.length, 2, 'locality-level counts from the registry'); assert.ok(M.localities.every((l) => l.basis === 'locality'));
+    const st = Q.status({ dataDir: dir });
+    assert.equal(st.freshness.store, 'git'); assert.ok(st.sources.some((x) => x.id === 'datagov:rmi:planning-inventory' && x.classification === 'STALE'));
+  });
+  await t('a tender with a locality the registry cannot place is reported as without position — never a guessed pin', () => {
+    const dir = tmp(), s = new FileLandStore(dir);
+    const a = row({ KodYeshuv: 99001 });
+    const { records } = mergeRecords([], [N.normalizeTender({ row: a }, CTX).record], { fetchedAt: CTX.fetchedAt, syncRunId: 'r' });
+    s.write({ records, meta: { checkedAt: CTX.fetchedAt, snapshotHash: 'b'.repeat(64), coverage: { publishedFrom: '2026-07-09', publishedTo: '2026-07-09' } }, run: { id: 'r' } });
+    const Q = require('../lib/land/query');
+    const M = Q.mapPoints(Q.parseFilters(new URLSearchParams('period=all')).filters, { dataDir: dir });
+    assert.equal(M.points.length + M.localities.length, 0); assert.equal(M.withoutPosition, 1);
   });
 
   console.log('land: distinctness & registry');

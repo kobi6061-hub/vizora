@@ -10,6 +10,7 @@ outside the repository.
 | --- | --- |
 | `20261001120000_market_foundation.sql` | schema `market`: `sources`, `sync_runs`, `raw_snapshots`, `geo_links`, `transactions`; RLS on, service role only |
 | `20261001120100_housing.sql` | `housing_lotteries`, `housing_status_history`, views `housing_projects`, `housing_provenance` |
+| `20261004120000_land_tenders.sql` | `land_tenders`, `land_lots`, `land_tender_history`, `land_plans`, view `land_winners` (Land & Tender Intelligence; written by `land-sync.yml`) |
 | `20261001120200_user_state.sql` | schema `user_state` (profiles, watchlists, saved filters, capital scenarios, alerts) — separate from market data |
 | `20261001120300_tx_refresh_coverage.sql` | `sync_runs.target` / `window_check` / status `refused`; `transactions.first_seen_target` / `first_seen_run`; view `transaction_reporting_lag` |
 | `20261001120400_store_integrity.sql` | a status-history event is stored once (unique key — the sync's history repair is idempotent); a trigger keeps a transaction's earliest first sighting whatever order concurrent writers commit in |

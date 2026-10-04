@@ -75,6 +75,9 @@
     "api/housing.js": {
       "includeFiles": "data/housing/*.json*"
     },
+    "api/land.js": {
+      "includeFiles": "{data/land/*.json*,data/geo/localities.json}"
+    },
     "api/jobs/tx-refresh.js": {
       "maxDuration": 60,
       "includeFiles": "data/transactions/watch.json"

@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="0b5943a64da50ff9caef0f6d758edc0811ac818f6f02f7683938807104b8f0c8">
+<meta name="propx-source-sha256" content="0bbb4535f0ca60d67661ab3c3f65e554399d7bf1e2914d02340a06a43dc82027">
 <meta name="propx-build" content="2026-10-01.gh-1.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -668,6 +668,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .ho-chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--hairline);border-radius:99px;padding:0 7px;color:var(--ink-2);white-space:nowrap}
 .ho-chip.cont{border-style:dashed;color:var(--ink-3)}
 .ho-na{color:var(--ink-3)}
+.ld-chk{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.ld-h4{font-size:11px;font-weight:800;color:var(--ink-3);margin:10px 0 5px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ld-ul{padding-inline-start:16px;margin:0}
+.ld-note{font-weight:500;color:var(--ink-3);text-transform:none;letter-spacing:0}
+.ld-scroll{overflow-x:auto;max-width:100%}
+.ho-chip.ld-open,.ho-chip.ld-published{border-color:var(--accent);color:var(--accent-deep)}
+.ho-chip.ld-awarded{border-color:var(--up);color:var(--up)}
+.ho-chip.ld-cancelled,.ho-chip.ld-frozen{border-style:dashed;color:var(--ink-3)}
 .ho-pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:9px 15px;border-top:1px solid var(--hairline);font-size:12px;color:var(--ink-3)}
 .ho-pager button{font-weight:700;color:var(--accent-deep);padding:4px 8px;border:1px solid var(--hairline);border-radius:8px}
 .ho-pager button:disabled{color:var(--ink-3);opacity:.5;cursor:default}
@@ -1233,6 +1241,7 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
+  <a href="#land" class="ri" data-sec="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 12l9-7 9 7"/></svg><span data-i="navLand">קרקעות</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
   <div class="rail-sp"></div>
@@ -1528,6 +1537,40 @@ details.ci-more>.in{padding:2px 13px 12px}
     </div>
   </section>
 
+  <!-- Land & Tender Intelligence — the Israel Land Authority's residential land tenders (api/land.js).
+       A separate layer from Government Housing (subsidized lotteries) and from Transactions. -->
+  <section class="blk" id="land">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrLd">L1 · שוק · קרקעות ומכרזים</span>
+      <h2 data-i="ldTitle">קרקעות ומכרזים</h2>
+      <p class="ho-sub" data-i="ldSub">מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות</p></div>
+      <span class="tx-note ho-prov" id="ldProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="ho-bar" id="ldBar"></div>
+      <div class="ho-cov" id="ldCov" hidden></div>
+      <div class="ho-kpis" id="ldKpis"></div>
+      <div class="ho-nopub" id="ldNoPub"></div>
+      <div class="ho-mid">
+        <div class="ho-box" id="ldSeries"></div>
+        <div class="ho-box ho-geo" id="ldCities"></div>
+      </div>
+      <div class="ho-mid">
+        <div class="ho-box ho-geo" id="ldDevs"></div>
+        <div class="ho-box" id="ldPipe"></div>
+      </div>
+      <div class="ho-tblhead" id="ldTblHead"></div>
+      <div class="tbl-scroll"><table class="tbl ho-tbl" id="ldTbl"></table></div>
+      <div class="tbl-cards" id="ldCards"></div>
+      <div class="ho-pager" id="ldPager"></div>
+      <p class="tbl-foot" id="ldFoot"></p>
+    </div>
+    <div class="ho-drawer" id="ldDrawer" hidden>
+      <div class="ho-drawer-bg" data-ldclose></div>
+      <aside class="ho-panel" id="ldPanel" role="dialog" aria-modal="true" aria-labelledby="ldDTitle" tabindex="-1"></aside>
+    </div>
+  </section>
+
   <!-- Sources -->
   <!-- buyer's guide — general educational content, not advice -->
   <section class="blk" id="guide">
@@ -1574,6 +1617,7 @@ details.ci-more>.in{padding:2px 13px 12px}
             <li data-i="srcA4">מכירות — קצב שנתי: ארצית כ-34,000 (2025); תל אביב ~4,100 בקצב שנתי (למ״ס מחצית א׳ 2026: כ-2,056 מכירות, ~342/חודש)</li>
             <li data-i="srcA5">שינוי אזורי ושכונות — אומדנים נגזרים; פרמיית שכירות לדירה חדשה — הנחת מודל</li>
             <li data-i="srcA6">עסקאות — רשומות מאגר העסקאות של רשות המסים: דרך GovMap כשהוא עונה; כרגע דרך הפרסום העצמאי של גרסאות לעם (over.org.il) — עותק מתוארך של המאגר, לא ערוץ ממשלתי (תאריך העותק מוצג בסקשן העסקאות); נשלף לפי האזור והתקופה שנבחרו</li>
+            <li data-i="srcA7">קרקעות ומכרזים — רשומות מכרזי המקרקעין של רשות מקרקעי ישראל (אתר המכרזים): רשימה יומית, פירוט מגרשים/זוכים בתקציב יומי; שלבים לפי קוד הסטטוס של רמ״י; תוכניות בצירוף מספר תוכנית מדויק (מינהל התכנון; מלאי תכנוני רמ״י 2022 — קרקעות מדינה בלבד); ראיית בנייה רק בצירוף גוש/חלקה לדיווחי משרד הבינוי (2024); מע״מ לא צוין במקור</li>
           </ul>
           <p style="margin-top:8px" data-i="srcADemo">העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מציגה רק רשומות שפורסמו במאגר העסקאות של רשות המסים — דרך GovMap, או דרך הפרסום העצמאי של גרסאות לעם כפי שמצוין בסקשן עצמו.</p>
         </div>
@@ -1600,7 +1644,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 
 <script>
 /* generated by scripts/market-sync.js — do not edit by hand */
-window.PROPX_MARKET={"schema":1,"syncedAt":"2026-10-01T08:03:01.787Z","ok":true,"indicators":{"boiRate":{"value":3.25,"unit":"%","nextDecision":"2026-10-21","publishedAt":"2026-09-01","source":{"authority":"בנק ישראל","authorityEn":"Bank of Israel","dataset":"PublicApi/GetInterest","url":"https://www.boi.org.il/PublicApi/GetInterest"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false},"newHomesIndex":{"yoy":-0.8,"mom":0.5,"level":541.2,"base":"2017 אוקטובר","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"70000","name":"מדד מחירי דירות חדשות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי דירות חדשות","url":"https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false},"dwellingsIndex":{"yoy":-1.2,"mom":0.2,"level":594.8,"base":"1993 ממוצע","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"40010","name":"מחירי דירות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מחירי דירות","url":"https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-01T08:03:01.787Z","stale":false}},"failures":[]};
+window.PROPX_MARKET={"schema":1,"syncedAt":"2026-10-04T09:43:45.762Z","ok":true,"indicators":{"boiRate":{"value":3.25,"unit":"%","nextDecision":"2026-10-21","publishedAt":"2026-09-01","source":{"authority":"בנק ישראל","authorityEn":"Bank of Israel","dataset":"PublicApi/GetInterest","url":"https://www.boi.org.il/PublicApi/GetInterest"},"checkedAt":"2026-10-04T09:43:45.762Z","stale":false},"newHomesIndex":{"yoy":-0.8,"mom":0.5,"level":541.2,"base":"2017 אוקטובר","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"70000","name":"מדד מחירי דירות חדשות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי דירות חדשות","url":"https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-04T09:43:45.762Z","stale":false},"dwellingsIndex":{"yoy":-1.2,"mom":0.2,"level":594.8,"base":"1993 ממוצע","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"40010","name":"מחירי דירות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מחירי דירות","url":"https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"},"checkedAt":"2026-10-04T09:43:45.762Z","stale":false}},"failures":[]};
 </script>
 <script>
 "use strict";
@@ -2063,6 +2107,7 @@ he:{
   srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
   srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מציגה רק רשומות שפורסמו במאגר העסקאות של רשות המסים — דרך GovMap, או דרך הפרסום העצמאי של גרסאות לעם כפי שמצוין בסקשן עצמו.", srcA6:"עסקאות — רשומות מאגר העסקאות של רשות המסים: דרך GovMap כשהוא עונה; כרגע דרך הפרסום העצמאי של גרסאות לעם (over.org.il) — עותק מתוארך של המאגר, לא ערוץ ממשלתי (תאריך העותק מוצג בסקשן העסקאות); נשלף לפי האזור והתקופה שנבחרו",
+  srcA7:"קרקעות ומכרזים — רשומות מכרזי המקרקעין של רשות מקרקעי ישראל (אתר המכרזים): רשימה יומית, פירוט מגרשים/זוכים בתקציב יומי; שלבים לפי קוד הסטטוס של רמ״י; תוכניות בצירוף מספר תוכנית מדויק (מינהל התכנון; מלאי תכנוני רמ״י 2022 — קרקעות מדינה בלבד); ראיית בנייה רק בצירוף גוש/חלקה לדיווחי משרד הבינוי (2024); מע״מ לא צוין במקור",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
   srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
@@ -2072,6 +2117,67 @@ he:{
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
+  navLand:"קרקעות", lyrLd:"L1 · שוק · קרקעות ומכרזים", ldTitle:"קרקעות ומכרזים", ldSub:"מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות",
+  ldSrcName:"רשות מקרקעי ישראל · אתר המכרזים", ldProv:src=>`מקור: ${src} · רשומות מכרז רשמיות; ספירות וסכומים נגזרים`,
+  ldPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים","5y":"5 שנים",all:"כל המכרזים במקור",custom:"טווח מותאם"}, ldPerL:"תקופה",
+  ldDateField:{published:"לפי תאריך פרסום",close:"לפי מועד סגירה",committee:"לפי מועד ועדה"},
+  ldF:{chk:"נבדק ב-PROPX",latest:"פרסום אחרון במקור",detail:"פירוט מלא (מגרשים/זוכים)",per:"כיסוי התקופה",maps:"מיקום מפוליגון"},
+  ldFPer:{within:"בטווח המקור",partial:d=>`חלקי — עד ${d}`,none:"אין",all:(a,b)=>`${a}–${b}`},
+  ldCovAll:(a,b)=>`המקור מפרט מכרזים שפורסמו מ-${a} עד ${b}. "הושלם" מתייחס לרשימת המכרזים של האתר; פירוט המגרשים והזוכים נקרא בתקציב יומי, ומועד הקריאה של כל מכרז מוצג בפרטיו.`,
+  ldCovNone:d=>`המקור אינו כולל מכרזים אחרי ${d}. לתקופה שנבחרה אין בו נתונים, ולכן מוצג "—", לא אפס.`,
+  ldCovPartial:d=>`כיסוי חלקי: רשימת המקור מסתיימת ב-${d}.`, ldCovWithin:(a,b)=>`התקופה שנבחרה נמצאת בטווח המקור (${a} עד ${b}).`,
+  ldNoneHere:"אין מכרזים בסינון זה בתקופה שנבחרה.",
+  ldFrom:"מ-", ldTo:"עד", ldCity:"יישוב", ldAllCities:"כל הארץ", ldRegion:"מרחב רמ״י", ldAllRegions:"כל המרחבים",
+  ldTrack:"מסלול", ldAllTracks:"כל המסלולים", ldLife:"שלב", ldAllLife:"כל השלבים", ldType:"סוג מכרז", ldAllTypes:"כל הסוגים",
+  ldWinner:"זוכה", ldAllWinners:"כל הזוכים", ldQ:"חיפוש", ldQPh:"מכרז, יישוב, שכונה, זוכה או תוכנית", ldReset:"איפוס", ldUseLoc:n=>`סינון לפי ${n}`,
+  ldResOnly:"מגורים בלבד", ldMapOn:"הצגה במפה", ldMapOff:"הסתרה מהמפה",
+  ldTracks:{"open-market":"שוק חופשי","subsidized":"מחיר מטרה / למשתכן / מופחת","rental":"דיור להשכרה","special-population":"אוכלוסייה מיוחדת","residential-lottery":"הגרלה / קדימות (מגרשים)","mixed-use":"מגורים משולב","commercial-other":"מסחר / אחר",unknown:"לא מסווג"},
+  ldLife:{published:"פורסם",open:"פתוח להצעות",closed:"נסגר — ממתין להחלטה","lottery-pending":"ממתין להגרלה",decided:"נדון בוועדה",awarded:"הוכרזו זוכים","decided-no-award":"נדון — ללא זוכה",frozen:"נדחה / מוקפא",cancelled:"בוטל"},
+  ldLifeL:"שלב",
+  ldBasis:{"competitive-bid":"הצעת מחיר (סה״כ לקרקע)","price-per-sqm-bid":"₪ למ״ר בנוי תחת מחיר מרבי","fixed-price-allocation":"הקצאה במחיר קבוע",unknown:"בסיס לא מפורסם"},
+  ldLoading:"טוען רשומות מכרזים…", ldErr:"נתוני הקרקעות והמכרזים אינם נטענים כרגע. הם נשמרים בשרת ויוצגו כשהחיבור יחזור.",
+  ldOffline:"נתוני הקרקעות והמכרזים נטענים מהשרת של PROPX ואינם כלולים בגרסה הלא מקוונת.", ldNotSynced:"טרם בוצע סנכרון מאתר המכרזים של רמ״י.",
+  ldPickRange:"בחרו תאריך התחלה ותאריך סיום לטווח המותאם.", ldMissingTip:"הנתון אינו מפורסם במקור הרשמי המחובר",
+  ldKTenders:"מכרזים", ldKTendersS:(r,c)=>`${r} למגורים · ${c} יישובים`, ldKOpen:"פתוחים / פורסמו", ldKOpenS:u=>u?`${u} יח״ד מפורסמות`:"",
+  ldKClosed:"נסגרו — ממתינים להחלטה", ldKAwarded:"הוכרזו זוכים", ldKAwardedS:u=>u?`${u} יח״ד במגרשים שהוכרז בהם זוכה`:"",
+  ldKCancelled:"בוטלו / מוקפאים", ldKUnits:"יח״ד מפורסמות (מגורים)", ldKUnitsS:"סכום יח״ד שרמ״י פרסמה במכרזים — לא יח״ד שנבנו",
+  ldKLand:"קרקע ליח״ד (זוכים)", ldKLandS:(l,u)=>`Σ הצעות זוכות ÷ Σ יח״ד באותם ${l} מגרשים (${u} יח״ד) · הצעת מחיר בלבד · מע״מ לא צוין`,
+  ldKPsm:"₪ למ״ר — מחיר למשתכן", ldKPsmS:n=>`${n} מגרשים · הצעה למ״ר בנוי, לא מחיר קרקע`,
+  ldKBids:"הצעות שהתקבלו", ldKBidsS:n=>`ב-${n} מכרזים שפורסמו בהם הצעות`, ldKWinners:"זוכים (שמות)",
+  ldNoPubT:"לא מפורסם במקורות:", ldNoPub:["חוזים חתומים","היתרי בנייה","התחלות בנייה"], ldVat:"מע״מ: לא צוין במקור",
+  ldSeriesT:"פעילות לאורך זמן", ldM:{tenders:"מכרזים",units:"יח״ד מפורסמות",awarded:"הוכרזו זוכים",unitsAwarded:"יח״ד שהוקצו"}, ldB:{month:"חודש",year:"שנה"},
+  ldSeriesNone:"אין נקודות בתקופה המכוסה.", ldSeriesNote:"אירועי מכרז לפי התאריך שנבחר · לא עסקאות · עמודה בהירה = תקופה שכיסוי המקור בה חלקי.",
+  ldCitiesT:"יישובים לפי יח״ד במכרזים", ldCCity:"יישוב", ldCTend:"מכרזים", ldCOpen:"פתוחים", ldCUnits:"יח״ד", ldCAw:"הוקצו", ldCLand:"קרקע/יח״ד", ldCLast:"פרסום אחרון",
+  ldCitiesNote:"יח״ד כפי שרמ״י פרסמה · קרקע ליח״ד רק ממגרשים שהוכרז בהם זוכה בהצעת מחיר · קרקעות מדינה בלבד — לא כיסוי של שוק הקרקע הפרטי.",
+  ldDevT:"יזמים — זכיות שנצפו במכרזים פומביים", ldDName:"זוכה (כפי שפורסם)", ldDLots:"מגרשים", ldDTend:"מכרזים", ldDUnits:"יח״ד", ldDLand:"סה״כ קרקע", ldDLast:"זכייה אחרונה",
+  ldDevNote:"קיבוץ לפי מחרוזת השם המדויקת שפרסמה רמ״י — ישויות אינן ממוזגות לפי דמיון שמות. זכיות שנצפו באתר זה בלבד; לא ״בנק קרקעות״. סכומים: הצעות מחיר בלבד, מע״מ לא צוין.",
+  ldPipeT:"צנרת תכנון ושיווק", ldPipeInv:"מלאי תכנוני — קרקעות מדינה בלבד", ldPipeInvS:d=>`רמ״י, data.gov.il · עדכון מקור ${d} — ישן; יח״ד פוטנציאליות לשיווק, לא תחזית`,
+  ldPipePlans:"תוכניות שהמכרזים מפנים אליהן", ldPipePlansS:"מינהל התכנון (xplan) · צירוף לפי מספר תוכנית מדויק",
+  ldPipeFunnel:"משפך המכרזים", ldPipeStage:{published:"פורסם",open:"פתוח",closed:"נסגר",awarded:"הוכרזו זוכים",cancelled:"בוטל",construction:"ראיית בנייה (גוש/חלקה)"},
+  ldPipeNote:"כל שלב הוא קוד הסטטוס של רמ״י. חוזה, היתר והתחלת בנייה אינם מפורסמים במקורות אלה; ראיית בנייה רק מצירוף גוש/חלקה מדויק לדיווחי משרד הבינוי (מתוארכים).",
+  ldPipePlansN:n=>`${n} תוכניות`, ldPipeUnits:"יח״ד מאושרות בתוכניות", ldPipePot:"יח״ד פוטנציאליות לשיווק", ldPipeStages:"לפי שלב תכנוני",
+  ldMore:n=>`הצגת כל ${n}`, ldLess:"פחות",
+  ldTblT:n=>`${n} מכרזים`, ldTblTNone:"מכרזים: —", ldTblS:"לחיצה על שורה פותחת את פרטי המכרז, המגרשים והזוכים",
+  ldC:{date:"פורסם",tender:"מכרז",place:"יישוב · שכונה",track:"מסלול · סוג",purpose:"ייעוד",units:"יח״ד",lots:"מגרשים",winner:"זוכה",land:"סה״כ קרקע",lpu:"קרקע/יח״ד",close:"סגירה",committee:"ועדה"},
+  ldPrev:"הקודם", ldNext:"הבא", ldPage:(p,n)=>`עמוד ${p} מתוך ${n}`,
+  ldFoot:"כל שורה היא רשומת מכרז של רשות מקרקעי ישראל (רשמי); שלבים לפי קוד הסטטוס של רמ״י; ספירות וסכומים נגזרים (נגזר). פרסום מכרז ≠ הכרזת זוכה ≠ חוזה ≠ היתר ≠ התחלת בנייה. הצעה זוכה היא מחיר קרקע, לא מחיר דירה; מע״מ לא צוין במקור.",
+  ldDelisted:"לא ברשימת המקור", ldListOnly:"פירוט טרם נקרא", ldNoWinner:"—",
+  ldDClose:"סגירה", ldDTender:id=>`מכרז ${id}`, ldDOpen:"לדף המכרז באתר רמ״י",
+  ldDIds:"מזהים ושלב", ldDId:"מזהה (MichrazID)", ldDName:"מספר מכרז", ldDStatus:"סטטוס רמ״י", ldDLife:"שלב", ldDScope:"היקף ההכרזה", ldDScopeV:{"all-lots":"כל המגרשים","some-lots":"חלק מהמגרשים"},
+  ldDClass:"סיווג", ldDType:"סוג מכרז", ldDPurpose:"ייעוד", ldDTrack:"מסלול", ldDRegion:"מרחב", ldDPops:"אוכלוסיות", ldDBasisL:"בסיס המחיר",
+  ldDDates:"מועדים", ldDPub:"פרסום", ldDOpenD:"פתיחה", ldDCloseD:"סגירה", ldDComm:"ועדת מכרזים", ldDLottery:"הגרלה", ldDSrcUpd:"עודכן ברמ״י",
+  ldDLots:n=>`מגרשים (${n})`, ldDL:{lot:"מגרש",area:"שטח מ״ר",units:"יח״ד",dev:"הוצאות פיתוח",min:"מחיר מינימום",app:"שומה",winner:"זוכה",amount:"סכום זכייה",bids:"הצעות",lpu:"קרקע/יח״ד"},
+  ldDTokenMin:"מינימום סמלי (₪1)", ldDNote:"הערת המקור", ldDLotsNone:"פירוט המגרשים טרם נקרא מהמקור (נקרא בתקציב יומי).",
+  ldDEcon:"כלכלה — נגזר", ldDE:{basis:"בסיס",vat:"מע״מ",aw:"מגרשים שהוכרז בהם זוכה",units:"יח״ד במגרשים אלה",total:"סה״כ הצעות זוכות",lpu:"קרקע ליח״ד",dpu:"פיתוח ליח״ד",tpu:"בסיס כולל ליח״ד",prem:"פרמיה מעל המינימום",app:"מול השומה",bids:"הצעות שהתקבלו",psm:"₪ למ״ר (טווח)",ceil:"מחיר מרבי למ״ר"},
+  ldDEconNote:"מונה ומכנה מאותם מגרשים בלבד. ₪ למ״ר (מחיר למשתכן) אינו מחולק ליח״ד. מע״מ: לא צוין במקור.",
+  ldDPlans:"תוכניות", ldDP:{plan:"תוכנית",join:"צירוף",station:"שלב סטטוטורי",units:"יח״ד מאושרות",date:"אישור",pot:"פוטנציאל לשיווק (רמ״י, ישן)",link:"מינהל התכנון"},
+  ldDPlanExact:"מספר תוכנית מדויק", ldDPlanNo:"לא נמצאה בשכבת מינהל התכנון", ldDPlanLink:"קישור באתר רמ״י (לא מספר תוכנית)", ldDPlansNone:"המכרז אינו מציין מספרי תוכנית.",
+  ldDParcels:"גוש / חלקה", ldDConst:"בנייה — ראיה בלבד", ldDConstNone:"אין צירוף גוש/חלקה מדויק לדיווחי התקדמות בנייה של משרד הבינוי (מתוארכים 2024). חוזה, היתר והתחלת בנייה אינם מפורסמים במקורות אלה — לא מוסקים.",
+  ldDConstRow:(b,s,d)=>`בניין ${b}: ${s} (${d})`, ldDStage:{excavation:"חפירה",foundations:"יסודות","ground-floor":"קומת קרקע",frame:"שלד",roof:"גג",finishing:"גמר","form-4":"טופס 4",completion:"סיום"},
+  ldDHist:"שינויים שנצפו ב-PROPX", ldDHistNone:"לא נצפו שינויים במקור מאז הקליטה הראשונה.", ldDHistRow:(f,a,b,d)=>`${d}: ${f} ${a} ← ${b}`,
+  ldDProv:"מקור ומועדים", ldDSrc:"מקור", ldDListAt:"רשימה נקראה", ldDDetailAt:"פירוט נקרא", ldDMapAt:"מפה נקראה", ldDFirst:"נקלט לראשונה ב-PROPX", ldDChecked:"נבדק לאחרונה", ldDInSrc:"ברשימת המקור", ldDYes:"כן", ldDNo:"לא — נשמר, לא נמחק", ldDSnap:"תמונת רשימה", ldDGeo:"מיקום", ldDGeoV:{"tender-polygon-centroid":"מרכז פוליגון המכרז (רמ״י)",locality:"ברמת יישוב בלבד"},
+  ldField:{statusCode:"קוד סטטוס",lifecycle:"שלב",units:"יח״ד",publishedDate:"פרסום",openDate:"פתיחה",closeDate:"סגירה",committeeDate:"ועדה",lotteryDate:"הגרלה",typeCode:"סוג",purposeCode:"ייעוד",localityCode:"יישוב",neighborhood:"שכונה",winners:"זוכים",lotCount:"מגרשים",bidCount:"הצעות",docsUpdatedAt:"מסמכים",sourceUpdatedAt:"עדכון רמ״י",inLatestSource:"ברשימת המקור"},
+  ldMapLeg:"מכרזים: ריבוע = מרכז פוליגון רמ״י · עיגול = ברמת יישוב (ללא פוליגון)",
   navHousing:"דיור", lyrHo:"L1 · שוק · דיור ממשלתי", hoTitle:"דיור מסובסד", hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה",
   hoSrcName:"משרד הבינוי והשיכון · data.gov.il",
   hoProv:src=>`מקור: ${src}`,
@@ -2477,6 +2583,7 @@ en:{
   srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026)",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
   srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · missing) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — Israel Tax Authority deal-register records: via GovMap when it answers; currently via the independent republication by גרסאות לעם (over.org.il) — a dated copy of the register, not a government channel (the copy date is shown in the deals section); retrieved for the selected area and period",
+  srcA7:"Land & tenders — Israel Land Authority tender records (tender site): daily list, lot/winner detail on a daily budget; stages follow the ILA status code; plans joined by exact plan number (Planning Administration; ILA planning inventory 2022 — state land only); construction evidence only via block/parcel joins to MoCH reports (2024); VAT not stated by the source",
   srcBTitle:"Data types — never mixed without labeling",
   srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
@@ -2486,6 +2593,67 @@ en:{
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
   navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
+  navLand:"Land", lyrLd:"L1 · Market · Land & tenders", ldTitle:"Land & Tender Intelligence", ldSub:"Israel Land Authority residential land tenders · planning · winners · costs — not subsidized-housing lotteries, not apartment sales",
+  ldSrcName:"Israel Land Authority · tender site", ldProv:src=>`Source: ${src} · official tender records; counts and sums derived`,
+  ldPer:{"6m":"6 months","12m":"12 months","24m":"24 months","5y":"5 years",all:"All tenders in source",custom:"Custom range"}, ldPerL:"Period",
+  ldDateField:{published:"by publication date",close:"by closing date",committee:"by committee date"},
+  ldF:{chk:"Checked by PROPX",latest:"Latest publication in source",detail:"Full detail (lots/winners)",per:"Period coverage",maps:"Polygon positions"},
+  ldFPer:{within:"Within the source's range",partial:d=>`Partial — to ${d}`,none:"None",all:(a,b)=>`${a}–${b}`},
+  ldCovAll:(a,b)=>`The source lists tenders published ${a} to ${b}. "Complete" refers to the site's tender list; lot and winner detail is read on a daily budget, and each tender shows when its detail was read.`,
+  ldCovNone:d=>`The source lists no tender after ${d}. The selected period has no data in it, so "—" is shown, not zero.`,
+  ldCovPartial:d=>`Partial coverage: the source's list ends on ${d}.`, ldCovWithin:(a,b)=>`The selected period lies within the source's range (${a} to ${b}).`,
+  ldNoneHere:"No tender matches this filter in the selected period.",
+  ldFrom:"From", ldTo:"To", ldCity:"Locality", ldAllCities:"All Israel", ldRegion:"ILA region", ldAllRegions:"All regions",
+  ldTrack:"Track", ldAllTracks:"All tracks", ldLife:"Stage", ldAllLife:"All stages", ldType:"Tender type", ldAllTypes:"All types",
+  ldWinner:"Winner", ldAllWinners:"All winners", ldQ:"Search", ldQPh:"Tender, locality, neighborhood, winner or plan", ldReset:"Reset", ldUseLoc:n=>`Filter by ${n}`,
+  ldResOnly:"Residential only", ldMapOn:"Show on map", ldMapOff:"Hide from map",
+  ldTracks:{"open-market":"Open market","subsidized":"Target price / Mechir LaMishtaken / reduced","rental":"Rental housing","special-population":"Special population","residential-lottery":"Lottery / priority (plots)","mixed-use":"Mixed residential","commercial-other":"Commercial / other",unknown:"Unclassified"},
+  ldLife:{published:"Published",open:"Open for bids",closed:"Closed — decision pending","lottery-pending":"Awaiting lottery",decided:"Committee decided",awarded:"Awarded","decided-no-award":"Decided — no winner recorded",frozen:"Postponed / frozen",cancelled:"Cancelled"},
+  ldLifeL:"Stage",
+  ldBasis:{"competitive-bid":"Competitive bid (total land price)","price-per-sqm-bid":"₪ per built m² under a ceiling","fixed-price-allocation":"Fixed-price allocation",unknown:"Basis not published"},
+  ldLoading:"Loading tender records…", ldErr:"Land & tender data is not loading right now. It is kept on the server and will show when the connection returns.",
+  ldOffline:"Land & tender data loads from the PROPX server and is not part of the offline build.", ldNotSynced:"No sync from the ILA tender site yet.",
+  ldPickRange:"Pick a start and an end date for the custom range.", ldMissingTip:"Not published by the connected official source",
+  ldKTenders:"Tenders", ldKTendersS:(r,c)=>`${r} residential · ${c} localities`, ldKOpen:"Open / published", ldKOpenS:u=>u?`${u} units published`:"",
+  ldKClosed:"Closed — decision pending", ldKAwarded:"Awarded", ldKAwardedS:u=>u?`${u} units in lots with a recorded winner`:"",
+  ldKCancelled:"Cancelled / frozen", ldKUnits:"Units published (residential)", ldKUnitsS:"Σ units the ILA published on tenders — not units built",
+  ldKLand:"Land per unit (awarded)", ldKLandS:(l,u)=>`Σ winning bids ÷ Σ units over the same ${l} lots (${u} units) · competitive bids only · VAT not stated`,
+  ldKPsm:"₪/m² — Mechir LaMishtaken", ldKPsmS:n=>`${n} lots · bid per built m², not a land price`,
+  ldKBids:"Bids received", ldKBidsS:n=>`in ${n} tenders with published bids`, ldKWinners:"Winners (names)",
+  ldNoPubT:"Not published by the sources:", ldNoPub:["Signed contracts","Building permits","Construction starts"], ldVat:"VAT: not stated by the source",
+  ldSeriesT:"Activity over time", ldM:{tenders:"Tenders",units:"Units published",awarded:"Awarded",unitsAwarded:"Units awarded"}, ldB:{month:"Month",year:"Year"},
+  ldSeriesNone:"No points in the covered period.", ldSeriesNote:"Tender events by the selected date · not transactions · light bar = period only partly covered by the source.",
+  ldCitiesT:"Localities by tender units", ldCCity:"Locality", ldCTend:"Tenders", ldCOpen:"Open", ldCUnits:"Units", ldCAw:"Awarded", ldCLand:"Land/unit", ldCLast:"Last published",
+  ldCitiesNote:"Units as the ILA published them · land per unit only from lots awarded on a competitive bid · state land only — not coverage of the private land market.",
+  ldDevT:"Developers — observed public tender wins", ldDName:"Winner (as published)", ldDLots:"Lots", ldDTend:"Tenders", ldDUnits:"Units", ldDLand:"Land total", ldDLast:"Last win",
+  ldDevNote:"Grouped by the exact name string the ILA published — entities are never merged by name similarity. Wins observed on this site only; not a land bank. Sums: competitive bids only, VAT not stated.",
+  ldPipeT:"Planning & marketing pipeline", ldPipeInv:"Planning inventory — STATE LAND ONLY", ldPipeInvS:d=>`ILA, data.gov.il · source updated ${d} — stale; potential units for marketing, not a forecast`,
+  ldPipePlans:"Plans the tenders reference", ldPipePlansS:"Planning Administration (xplan) · exact plan-number join",
+  ldPipeFunnel:"Tender funnel", ldPipeStage:{published:"Published",open:"Open",closed:"Closed",awarded:"Awarded",cancelled:"Cancelled",construction:"Construction evidence (block/parcel)"},
+  ldPipeNote:"Each stage is the ILA's status code. Contract, permit and construction start are not published by these sources; construction evidence only via an exact block/parcel join to MoCH progress reports (dated).",
+  ldPipePlansN:n=>`${n} plans`, ldPipeUnits:"Approved units in plans", ldPipePot:"Potential units for marketing", ldPipeStages:"By planning stage",
+  ldMore:n=>`Show all ${n}`, ldLess:"Less",
+  ldTblT:n=>`${n} tenders`, ldTblTNone:"Tenders: —", ldTblS:"Click a row for the tender's lots, bids and winners",
+  ldC:{date:"Published",tender:"Tender",place:"Locality · neighborhood",track:"Track · type",purpose:"Purpose",units:"Units",lots:"Lots",winner:"Winner",land:"Land total",lpu:"Land/unit",close:"Close",committee:"Committee"},
+  ldPrev:"Previous", ldNext:"Next", ldPage:(p,n)=>`Page ${p} of ${n}`,
+  ldFoot:"Every row is an Israel Land Authority tender record (official); stages follow the ILA status code; counts and sums are derived. Tender published ≠ awarded ≠ contracted ≠ permit ≠ construction start. A winning bid is a land price, not an apartment price; VAT is not stated by the source.",
+  ldDelisted:"Not in the source listing", ldListOnly:"Detail not read yet", ldNoWinner:"—",
+  ldDClose:"Close", ldDTender:id=>`Tender ${id}`, ldDOpen:"Open on the ILA tender site",
+  ldDIds:"Identifiers & stage", ldDId:"Id (MichrazID)", ldDName:"Tender number", ldDStatus:"ILA status", ldDLife:"Stage", ldDScope:"Award scope", ldDScopeV:{"all-lots":"All lots","some-lots":"Some lots"},
+  ldDClass:"Classification", ldDType:"Tender type", ldDPurpose:"Purpose", ldDTrack:"Track", ldDRegion:"Region", ldDPops:"Populations", ldDBasisL:"Price basis",
+  ldDDates:"Dates", ldDPub:"Published", ldDOpenD:"Opened", ldDCloseD:"Closed", ldDComm:"Tender committee", ldDLottery:"Lottery", ldDSrcUpd:"Updated at ILA",
+  ldDLots:n=>`Lots (${n})`, ldDL:{lot:"Lot",area:"Area m²",units:"Units",dev:"Development cost",min:"Minimum",app:"Appraisal",winner:"Winner",amount:"Award sum",bids:"Bids",lpu:"Land/unit"},
+  ldDTokenMin:"Token minimum (₪1)", ldDNote:"Source note", ldDLotsNone:"Lot detail not read from the source yet (read on a daily budget).",
+  ldDEcon:"Economics — derived", ldDE:{basis:"Basis",vat:"VAT",aw:"Lots with a recorded winner",units:"Units in those lots",total:"Σ winning sums",lpu:"Land per unit",dpu:"Development per unit",tpu:"Total basis per unit",prem:"Premium over minimum",app:"vs appraisal",bids:"Bids received",psm:"₪/m² (range)",ceil:"Ceiling ₪/m²"},
+  ldDEconNote:"Numerator and denominator from the same lots only. ₪/m² (Mechir LaMishtaken) is never divided into units. VAT: not stated by the source.",
+  ldDPlans:"Plans", ldDP:{plan:"Plan",join:"Join",station:"Statutory station",units:"Approved units",date:"Approval",pot:"Marketing potential (ILA, stale)",link:"Planning Administration"},
+  ldDPlanExact:"Exact plan number", ldDPlanNo:"Not found in the Planning Administration layer", ldDPlanLink:"ILA site link (not a plan number)", ldDPlansNone:"The tender names no plan numbers.",
+  ldDParcels:"Block / parcel", ldDConst:"Construction — evidence only", ldDConstNone:"No exact block/parcel join to the MoCH construction-progress reports (dated 2024). Contract, permit and construction start are not published by these sources — not inferred.",
+  ldDConstRow:(b,s,d)=>`Building ${b}: ${s} (${d})`, ldDStage:{excavation:"excavation",foundations:"foundations","ground-floor":"ground floor",frame:"frame",roof:"roof",finishing:"finishing","form-4":"Form 4",completion:"completion"},
+  ldDHist:"Changes observed by PROPX", ldDHistNone:"No source change observed since first ingestion.", ldDHistRow:(f,a,b,d)=>`${d}: ${f} ${a} → ${b}`,
+  ldDProv:"Source & dates", ldDSrc:"Source", ldDListAt:"List read", ldDDetailAt:"Detail read", ldDMapAt:"Map read", ldDFirst:"First seen by PROPX", ldDChecked:"Last checked", ldDInSrc:"In the source listing", ldDYes:"Yes", ldDNo:"No — kept, not deleted", ldDSnap:"List snapshot", ldDGeo:"Position", ldDGeoV:{"tender-polygon-centroid":"ILA tender polygon centroid",locality:"Locality level only"},
+  ldField:{statusCode:"Status code",lifecycle:"Stage",units:"Units",publishedDate:"Published",openDate:"Opened",closeDate:"Closed",committeeDate:"Committee",lotteryDate:"Lottery",typeCode:"Type",purposeCode:"Purpose",localityCode:"Locality",neighborhood:"Neighborhood",winners:"Winners",lotCount:"Lots",bidCount:"Bids",docsUpdatedAt:"Documents",sourceUpdatedAt:"ILA update",inLatestSource:"In source listing"},
+  ldMapLeg:"Tenders: square = ILA polygon centroid · circle = locality level (no polygon)",
   navHousing:"Housing", lyrHo:"L1 · Market · Government housing", hoTitle:"Government Housing / Subsidized Housing Intelligence",
   hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה — Mechir LaMishtaken · Mechir Matara · Dira BeHanacha",
   hoSrcName:"Ministry of Construction and Housing · data.gov.il",
@@ -3355,7 +3523,7 @@ function renderMap(keepVB){
       inner+=`<text class="geo-label" x="${(x+side*(dotR+2.5)).toFixed(1)}" y="${(y+fs*0.35).toFixed(1)}" font-size="${fs.toFixed(1)}"${side<0?' text-anchor="end"':""}>${heName(c)}</text>`;
     }
   }
-  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+txMarkersSVG(sf)+geoPinSVG(sf);
+  svg.innerHTML=defs+(ctx.level==="country"?"":"")+inner+txMarkersSVG(sf)+landMarkersSVG(sf)+geoPinSVG(sf);
   if(keepVB){currentVB=vb.slice();svg.setAttribute("viewBox",vb.join(" "))}
   else{mapCtxVB=vb.slice();svg.setAttribute("viewBox",currentVB.join(" "));animateViewBox(svg,vb)}
 
@@ -5677,6 +5845,354 @@ function initHousing(){
 }
 
 /* =====================================================================
+   LAND & TENDER INTELLIGENCE — the Israel Land Authority's residential land
+   tenders (api/land.js over data/land/). A separate layer from Government
+   Housing (subsidized lotteries) and from Transactions: a tender is a land
+   marketing event, never an apartment sale. Every stage is the ILA's own
+   status code; every figure is the source's value or a labelled derivation.
+   ===================================================================== */
+const LD_PAGE=25;
+const LD_FILTERS=["period","from","to","dateField","city","region","track","lifecycle","type","winner","residential","q"];
+const ldState={f:{period:"all",dateField:"published"},page:1,sort:"publishedDate",order:"desc",metric:"tenders",bucket:null,citiesAll:false,devsAll:false,
+  sum:null,rec:null,pipe:null,facets:null,status:"idle",err:null,req:0,started:false,detail:null,detailErr:null,openId:null,returnFocus:null,mapOn:false,map:null,mapReq:0};
+const ldE=s=>calcEsc(s==null?"":s);
+const ldDash=()=>`<span class="ho-na" title="${ldE(T().ldMissingTip)}">—</span>`;
+const ldN=(v,f=fmtInt)=>v==null?ldDash():`<span class="num">${f(v)}</span>`;
+const ldNIS=v=>v==null?ldDash():`<span class="num">${fmtNIS(v)}</span>`;
+const ldPct=v=>v==null?ldDash():`<span class="num">${(v>0?"+":"")+(v*100).toFixed(1)}%</span>`;
+const ldDate=d=>d?`<span class="num">${ldE(String(d).slice(0,10).split("-").reverse().join("."))}</span>`:ldDash();
+const ldCity=r=>r?(state.lang==="en"&&r.cityEn?ldE(r.cityEn):r.city?ldE(r.city):r.localityCode?`<span class="num">${r.localityCode}</span>`:ldDash()):ldDash();
+const ldLifeChip=lc=>lc?`<span class="ho-chip ld-${ldE(lc)}">${ldE(T().ldLife[lc]||lc)}</span>`:ldDash();
+const ldTrackName=tr=>T().ldTracks[tr]||tr||"—";
+/* official Hebrew labels verbatim; in English the known vocabularies carry a gloss, the original stays in the tooltip */
+const ldTx=he=>he==null||he===""?ldDash():ldE(he);
+function ldQS(extra){
+  const p=new URLSearchParams();
+  for(const k of LD_FILTERS){const v=ldState.f[k];if(v!=null&&v!==""&&v!==false)p.set(k,v===true?"1":v)}
+  for(const[k,v]of Object.entries(extra||{}))if(v!=null&&v!=="")p.set(k,String(v));
+  return p.toString();
+}
+async function ldGet(q){
+  const r=await fetch("/api/land?"+q,{credentials:"same-origin",headers:{Accept:"application/json"}});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+function ldLoad(what){
+  ldState.started=true;
+  const f=ldState.f;
+  if(f.period==="custom"&&!(f.from&&f.to&&f.from<=f.to)){ldState.req++;ldState.sum=null;ldState.rec=null;ldState.status="range";renderLand();return}
+  const id=++ldState.req;ldState.status="loading";renderLand();
+  const sum=what==="rows"&&ldState.sum?Promise.resolve(ldState.sum):ldGet(ldQS({view:"summary",bucket:ldState.bucket}));
+  const rec=ldGet(ldQS({view:"tenders",sort:ldState.sort,order:ldState.order,page:ldState.page,size:LD_PAGE}));
+  const pipe=what==="rows"&&ldState.pipe?Promise.resolve(ldState.pipe):ldGet(ldQS({view:"pipeline"}));
+  Promise.all([sum,rec,pipe]).then(([S,R,P])=>{
+    if(id!==ldState.req)return;
+    ldState.sum=S;ldState.rec=R;ldState.pipe=P;ldState.facets=S.facets;ldState.status="ok";ldState.err=null;renderLand();
+    if(ldState.mapOn)ldMapLoad();
+  }).catch(e=>{if(id!==ldState.req)return;ldState.status="error";ldState.err=e.message;renderLand()});
+}
+function ldMapLoad(){
+  const id=++ldState.mapReq;
+  ldGet(ldQS({view:"map"})).then(M=>{if(id!==ldState.mapReq)return;ldState.map=M;renderMap(true)}).catch(()=>{});
+}
+const ldOffline=()=>location.protocol==="file:"||!location.host;
+
+function ldBarHTML(){
+  const t=T(),f=ldState.f,S=ldState.sum,F=(S&&S.facets)||ldState.facets||{};
+  const per=["6m","12m","24m","5y","all","custom"].map(k=>`<button type="button" data-ldper="${k}" aria-pressed="${f.period===k}">${t.ldPer[k]}</button>`).join("");
+  const opt=(v,l,n,sel)=>`<option value="${ldE(v)}"${sel?" selected":""}>${l}${n!=null?` (${fmtInt(n)})`:""}</option>`;
+  const sel=(k,all,list,lab)=>`<select class="ho-sel" data-ldf="${k}" aria-label="${ldE(lab)}">${opt("",all,null,!f[k])}${(list||[]).map(x=>opt(x.value,x.label!=null?x.label:x.value,x.n,String(f[k])===String(x.value))).join("")}</select>`;
+  const cityList=(F.city||[]).map(c=>({value:c.value,label:state.lang==="en"&&c.labelEn?ldE(c.labelEn):c.label?ldE(c.label):c.value,n:c.n}));
+  if(f.city&&!cityList.some(c=>String(c.value)===String(f.city)))cityList.unshift({value:f.city,label:ldE(f.city),n:null});
+  const trackList=(F.track||[]).map(x=>({value:x.value,label:ldE(ldTrackName(x.value)),n:x.n}));
+  const lifeList=(F.lifecycle||[]).map(x=>({value:x.value,label:ldE(t.ldLife[x.value]||x.value),n:x.n}));
+  const typeList=(F.type||[]).map(x=>({value:x.value,label:ldE(x.label),n:x.n}));
+  const regList=(F.region||[]).map(x=>({value:x.value,label:ldE(x.label),n:x.n}));
+  const winList=(F.winner||[]).map(x=>({value:x.value,label:ldE(x.value),n:x.n}));
+  if(f.winner&&!winList.some(x=>x.value===f.winner))winList.unshift({value:f.winner,label:ldE(f.winner),n:null});
+  let loc="";
+  const cur=LOC[state.locId],city=cur&&(cur.type==="city"?cur:cityOf(cur));
+  if(city&&!f.city&&F.city){const m=F.city.find(c=>normGeoQ(c.label)===normGeoQ(city.he));
+    if(m)loc=`<button type="button" class="ho-loc" data-ldset="city" data-ldv="${ldE(m.value)}">${t.ldUseLoc(heName(city))}</button>`}
+  const custom=f.period==="custom"?`<span class="ho-dates"><label>${t.ldFrom} <input type="date" data-ldd="from" value="${ldE(f.from||"")}"${f.from&&f.to&&f.from>f.to?' aria-invalid="true"':""}></label>
+    <label>${t.ldTo} <input type="date" data-ldd="to" value="${ldE(f.to||"")}"></label></span>`:"";
+  const dirty=LD_FILTERS.some(k=>!["period","dateField"].includes(k)&&f[k])||f.period!=="all"||f.dateField!=="published";
+  const df=`<select class="ho-sel" data-ldf="dateField" aria-label="${ldE(t.ldPerL)}">${["published","close","committee"].map(k=>opt(k,t.ldDateField[k],null,f.dateField===k)).join("")}</select>`;
+  return `<span class="ho-per" role="group" aria-label="${ldE(t.ldPerL)}">${per}</span>${custom}${df}
+    ${sel("city",t.ldAllCities,cityList,t.ldCity)}
+    ${sel("region",t.ldAllRegions,regList,t.ldRegion)}
+    ${sel("track",t.ldAllTracks,trackList,t.ldTrack)}
+    ${sel("lifecycle",t.ldAllLife,lifeList,t.ldLifeL)}
+    ${sel("type",t.ldAllTypes,typeList,t.ldType)}
+    ${sel("winner",t.ldAllWinners,winList,t.ldWinner)}
+    <label class="ld-chk"><input type="checkbox" data-ldres${f.residential?" checked":""}> ${t.ldResOnly}</label>
+    <input class="ho-in" type="search" data-ldq value="${ldE(f.q||"")}" placeholder="${ldE(t.ldQPh)}" aria-label="${ldE(t.ldQ)}">
+    <button type="button" class="ho-loc" data-ldmap aria-pressed="${ldState.mapOn}">${ldState.mapOn?t.ldMapOff:t.ldMapOn}</button>
+    ${loc}${dirty?`<button type="button" class="ho-reset" data-ldreset>${t.ldReset}</button>`:""}`;
+}
+function ldKpisHTML(S){
+  const t=T(),K=S.kpis,D=vcTag("der");
+  const tile=(l,v,sub)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  if(!K)return["ldKTenders","ldKOpen","ldKClosed","ldKAwarded","ldKUnits","ldKLand","ldKPsm","ldKBids"].map(k=>tile(t[k],ldDash(),"")).join("");
+  return [
+    tile(t.ldKTenders,ldN(K.tenders),t.ldKTendersS(fmtInt(K.residentialTenders),fmtInt(K.cities))),
+    tile(t.ldKOpen,ldN(K.open+K.published),t.ldKOpenS(K.unitsOpen!=null?fmtInt(K.unitsOpen):"")),
+    tile(t.ldKClosed,ldN(K.closed+K.lotteryPending),""),
+    tile(t.ldKAwarded,ldN(K.awarded),t.ldKAwardedS(K.unitsAwarded!=null?fmtInt(K.unitsAwarded):"")),
+    tile(t.ldKCancelled,ldN(K.cancelled+K.frozen),""),
+    tile(t.ldKUnits,ldN(K.unitsResidential),t.ldKUnitsS),
+    tile(t.ldKLand,ldNIS(K.landPerUnit),K.landPerUnit!=null?t.ldKLandS(fmtInt(K.landPerUnitLots),fmtInt(K.landPerUnitUnits)):""),
+    tile(t.ldKPsm,K.pricePerSqmMin!=null?`<span class="num">${fmtNIS(K.pricePerSqmMin)}–${fmtNIS(K.pricePerSqmMax)}</span>`:ldDash(),K.pricePerSqmLots?t.ldKPsmS(fmtInt(K.pricePerSqmLots)):""),
+    tile(t.ldKBids,ldN(K.bidsReceived),K.tendersWithBids?t.ldKBidsS(fmtInt(K.tendersWithBids)):""),
+    tile(t.ldKWinners,ldN(K.winners),""),
+  ].join("");
+}
+function ldChartHTML(S){
+  const t=T(),pts=(S.series&&S.series.points)||[];
+  const key={tenders:"tenders",units:"units",awarded:"awarded",unitsAwarded:"unitsAwarded"}[ldState.metric];
+  const tg=(attr,cur,map)=>`<span class="ho-tg">${Object.keys(map).map(k=>`<button type="button" data-${attr}="${k}" aria-pressed="${cur===k}">${map[k]}</button>`).join("")}</span>`;
+  const head=`<div class="ho-bh"><h3>${t.ldSeriesT} ${vcTag("der")}</h3>${tg("ldm",ldState.metric,t.ldM)}${tg("ldb",S.series&&S.series.bucket,t.ldB)}</div>`;
+  if(!pts.length)return head+`<p class="ho-note">${t.ldSeriesNone}</p><p class="ho-note">${t.ldSeriesNote}</p>`;
+  const W=640,H=170,top=16,bot=22,vals=pts.map(p=>p[key]||0),max=Math.max(1,...vals),slot=W/pts.length,bw=Math.max(1.5,slot*.72);
+  const lab=d=>S.series.bucket==="year"?d:d.slice(5,7)+"/"+d.slice(2,4);
+  const bars=pts.map((p,i)=>{const v=p[key]||0,h=v/max*(H-top-bot),x=i*slot+(slot-bw)/2,y=H-bot-h;
+    return `<rect class="b${p.partial?" part":""}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}"><title>${lab(p.period)} · ${t.ldM[ldState.metric]}: ${fmtInt(v)}</title></rect>`}).join("");
+  const every=Math.max(1,Math.ceil(pts.length/8));
+  const ticks=pts.map((p,i)=>i%every===0||i===pts.length-1?`<text x="${(i*slot+slot/2).toFixed(1)}" y="${H-6}" text-anchor="middle">${lab(p.period)}</text>`:"").join("");
+  return head+`<div class="ho-svgw"><svg class="ho-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${ldE(t.ldSeriesT)}"><line class="ax" x1="0" x2="${W}" y1="${H-bot}" y2="${H-bot}"/>${bars}${ticks}<text x="2" y="11">${fmtInt(max)}</text></svg></div><p class="ho-note">${t.ldSeriesNote}</p>`;
+}
+function ldCitiesHTML(S){
+  const t=T(),rows=S.cities||[],show=ldState.citiesAll?rows:rows.slice(0,10);
+  const table=rows.length?`<table class="ho-gt"><thead><tr><th>${t.ldCCity}</th><th>${t.ldCTend}</th><th>${t.ldCOpen}</th><th>${t.ldCUnits}</th><th>${t.ldCAw}</th><th>${t.ldCLand}</th><th>${t.ldCLast}</th></tr></thead><tbody>${
+    show.map(r=>`<tr data-ldgo="city" data-ldv="${r.localityCode}" tabindex="0"><td>${ldCity(r)}</td><td class="n">${ldN(r.tenders)}</td><td class="n">${ldN(r.open)}</td><td class="n">${ldN(r.units)}</td><td class="n">${ldN(r.unitsAwarded)}</td><td class="n">${ldNIS(r.landPerUnit)}</td><td class="n">${ldDate(r.lastPublished)}</td></tr>`).join("")}</tbody></table>`
+    :`<p class="ho-note">${t.ldNoneHere}</p>`;
+  const more=rows.length>10?`<button type="button" class="ho-more" data-ldcitiesall>${ldState.citiesAll?t.ldLess:t.ldMore(rows.length)}</button>`:"";
+  return `<div class="ho-bh"><h3>${t.ldCitiesT} ${vcTag("der")}</h3></div>${table}${more}<p class="ho-note">${t.ldCitiesNote}</p>`;
+}
+function ldDevsHTML(S){
+  const t=T(),rows=S.developers||[],show=ldState.devsAll?rows:rows.slice(0,10);
+  const table=rows.length?`<table class="ho-gt"><thead><tr><th>${t.ldDName}</th><th>${t.ldDLots}</th><th>${t.ldDTend}</th><th>${t.ldDUnits}</th><th>${t.ldDLand}</th><th>${t.ldDLast}</th></tr></thead><tbody>${
+    show.map(r=>`<tr data-ldgo="winner" data-ldv="${ldE(r.name)}" tabindex="0"><td><bdi>${ldE(r.name)}</bdi></td><td class="n">${ldN(r.lotsWon)}</td><td class="n">${ldN(r.tendersWon)}</td><td class="n">${ldN(r.unitsInLotsWon)}</td><td class="n">${ldNIS(r.landTotalCompetitive)}</td><td class="n">${ldDate(r.lastWin)}</td></tr>`).join("")}</tbody></table>`
+    :`<p class="ho-note">${t.ldNoneHere}</p>`;
+  const more=rows.length>10?`<button type="button" class="ho-more" data-lddevsall>${ldState.devsAll?t.ldLess:t.ldMore(rows.length)}</button>`:"";
+  return `<div class="ho-bh"><h3>${t.ldDevT} ${vcTag("der")}</h3></div>${table}${more}<p class="ho-note">${t.ldDevNote}</p>`;
+}
+function ldPipeHTML(P){
+  const t=T();if(!P)return"";
+  const I=P.inventory||{},R=P.referencedPlans||{},F=P.funnel||{};
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const stages=(I.byStage||[]).slice(0,5).map(s=>`<li>${ldTx(s.stage)}: <span class="num">${fmtInt(s.plans)}</span> · <span class="num">${fmtInt(s.potentialUnits)}</span></li>`).join("");
+  const funnel=["published","open","closed","awarded","cancelled"].map(k=>kv(t.ldPipeStage[k],ldN(F[k])));
+  return `<div class="ho-bh"><h3>${t.ldPipeT} ${vcTag("der")}</h3></div>
+    <h4 class="ld-h4">${t.ldPipeFunnel}</h4><div class="ho-dl">${funnel.join("")}${kv(t.ldPipeStage.construction,ldN(F.withConstructionLink))}</div>
+    <h4 class="ld-h4">${t.ldPipePlans} <span class="ld-note">${ldE(t.ldPipePlansS)}</span></h4><div class="ho-dl">${kv(t.ldPipePlansN(fmtInt(R.count||0)),"")}${kv(t.ldPipeUnits,ldN(R.approvedUnits))}</div>
+    <h4 class="ld-h4">${t.ldPipeInv} <span class="ld-note">${ldE(t.ldPipeInvS(I.asOf?String(I.asOf).slice(0,10).split("-").reverse().join("."):"—"))}</span></h4>
+    <div class="ho-dl">${kv(t.ldPipePlansN(fmtInt(I.plans||0)),"")}${kv(t.ldPipePot,ldN(I.potentialUnits))}</div>${stages?`<p class="ho-note">${t.ldPipeStages}:</p><ul class="ho-note ld-ul">${stages}</ul>`:""}
+    <p class="ho-note">${t.ldPipeNote}</p>`;
+}
+function ldCovHTML(S){
+  const t=T(),fr=S.freshness||{},C=S.coverage||{},all=(S.filters&&S.filters.period)==="all";
+  const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
+  const per=all?t.ldFPer.all(ldDate(C.coveredFrom),ldDate(C.coveredTo)):C.state==="none"?t.ldFPer.none:C.state==="partial"?t.ldFPer.partial(ldDate(C.coveredTo)):t.ldFPer.within;
+  const say=all?t.ldCovAll(ldDate(C.coveredFrom),ldDate(C.coveredTo)):C.state==="none"?t.ldCovNone(ldDate(C.coveredTo)):C.state==="partial"?t.ldCovPartial(ldDate(C.coveredTo)):t.ldCovWithin(ldDate(C.coveredFrom),ldDate(C.coveredTo))+(S.kpis&&S.kpis.tenders===0?" "+t.ldNoneHere:"");
+  const d=fr.detail||{};
+  return `<div class="ho-facts">${fact(t.ldF.chk,ldDate(fr.checkedAt))}${fact(t.ldF.latest,ldDate(fr.latestPublished))}${fact(t.ldF.detail,d.withDetail!=null?`<span class="num">${fmtInt(d.withDetail)}/${fmtInt(fr.inLatestSource||0)}</span>`:"—")}${fact(t.ldF.maps,d.withGeometry!=null?`<span class="num">${fmtInt(d.withGeometry)}</span>`:"—")}${fact(t.ldF.per,per)}</div><p class="ho-covs">${say}</p>`;
+}
+function ldTableHTML(R){
+  const t=T(),C=t.ldC;
+  const sortable={date:"publishedDate",place:"city",units:"units",land:"awardedLandTotal",lpu:"landPerUnit",close:"closeDate",committee:"committeeDate"};
+  const th=k=>{const s=sortable[k];if(!s)return`<th>${C[k]}</th>`;const on=ldState.sort===s;
+    return`<th${on?` aria-sort="${ldState.order==="asc"?"ascending":"descending"}"`:""}><button type="button" data-ldsort="${s}">${C[k]}<span class="arr">${on?(ldState.order==="asc"?"▲":"▼"):"▲"}</span></button></th>`};
+  const head=`<thead><tr>${["date","tender","place","track","purpose","units","lots","winner","land","lpu","close","committee"].map(th).join("")}</tr></thead>`;
+  const winner=r=>!r.winners?`<span class="ho-na">${t.ldListOnly}</span>`:r.winners.length?`<bdi>${ldE(r.winners[0].name)}</bdi>${r.winners.length>1?` <span class="ho-chip">+${r.winners.length-1}</span>`:""}`:ldDash();
+  const row=r=>`<tr tabindex="0" data-ldid="${ldE(r.id)}">
+    <td class="num">${ldDate(r.publishedDate)}</td>
+    <td class="w"><span class="nm num">${ldE(r.name)}</span><div class="sub">${ldLifeChip(r.lifecycle)}${r.inLatestSource===false?` <span class="ho-chip cont">${t.ldDelisted}</span>`:""}</div></td>
+    <td class="w">${ldCity(r)}<div class="sub">${r.neighborhood?ldE(r.neighborhood):ldDash()}</div></td>
+    <td class="w">${ldE(ldTrackName(r.track))}<div class="sub">${ldTx(r.type)}</div></td>
+    <td class="w p">${ldTx(r.purpose)}</td>
+    <td class="num">${ldN(r.units)}</td>
+    <td class="num">${ldN(r.lots)}</td>
+    <td class="w">${winner(r)}</td>
+    <td class="num">${r.priceBasis==="price-per-sqm-bid"&&r.pricePerSqmMin!=null?`<span class="num">${fmtNIS(r.pricePerSqmMin)}/m²</span>`:ldNIS(r.awardedLandTotal)}</td>
+    <td class="num">${ldNIS(r.landPerUnit)}</td>
+    <td class="num">${ldDate(r.closeDate)}</td>
+    <td class="num">${ldDate(r.committeeDate)}</td></tr>`;
+  return R.rows.length?head+"<tbody>"+R.rows.map(row).join("")+"</tbody>":"";
+}
+function ldCardsHTML(R){
+  const t=T();
+  return R.rows.map(r=>`<div class="tcard" tabindex="0" data-ldid="${ldE(r.id)}">
+    <div class="r1"><b class="num">${ldE(r.name)}</b>${ldDate(r.publishedDate)}</div>
+    <div class="r2" style="color:var(--ink-3)">${ldCity(r)} · ${r.neighborhood?ldE(r.neighborhood):ldDash()} · ${ldE(ldTrackName(r.track))}</div>
+    <div class="r2">${ldLifeChip(r.lifecycle)}<span>${t.ldC.units} ${ldN(r.units)}</span><span>${t.ldC.lots} ${ldN(r.lots)}</span></div>
+    <div class="r2">${r.winners&&r.winners.length?`<bdi>${ldE(r.winners[0].name)}</bdi>`:r.winners?ldDash():`<span class="ho-na">${t.ldListOnly}</span>`}<span>${t.ldC.lpu} ${ldNIS(r.landPerUnit)}</span></div></div>`).join("");
+}
+function renderLand(){
+  const sec=el("land");if(!sec)return;
+  const t=T(),S=ldState.sum,R=ldState.rec,st=ldState.status;
+  const a=document.activeElement,bar=el("ldBar");
+  const key=a&&bar.contains(a)?(a.dataset.ldq!==undefined?"[data-ldq]":a.dataset.ldf?`[data-ldf="${a.dataset.ldf}"]`:a.dataset.ldd?`[data-ldd="${a.dataset.ldd}"]`:a.dataset.ldper?`[data-ldper="${a.dataset.ldper}"]`:null):null;
+  const typed=key==="[data-ldq]"?a.value:null,ss=typed!=null?a.selectionStart:null,se=typed!=null?a.selectionEnd:null;
+  bar.innerHTML=ldBarHTML();
+  if(key){const n=bar.querySelector(key);if(n){if(typed!=null)n.value=typed;n.focus();if(ss!=null)try{n.setSelectionRange(ss,se)}catch(e){}}}
+  const fr=S&&S.freshness;
+  el("ldProv").innerHTML=fr&&fr.synced?`${vcTag("raw")}${t.ldProv(ldE(t.ldSrcName))}`:"";
+  const msg=st==="error"?(ldOffline()?t.ldOffline:t.ldErr):st==="range"?t.ldPickRange:(!S&&st==="loading")?t.ldLoading:(S&&fr&&!fr.synced)?t.ldNotSynced:"";
+  const show=!!S&&!(fr&&!fr.synced)&&st!=="error";
+  for(const id of["ldKpis","ldNoPub","ldSeries","ldCities","ldDevs","ldPipe","ldTblHead","ldTbl","ldCards","ldPager"])el(id).hidden=!show;
+  const cov=el("ldCov");
+  if(!show){cov.hidden=!msg;cov.className="ho-msg";cov.textContent=msg;el("ldFoot").textContent="";sec.setAttribute("aria-busy",String(st==="loading"));return}
+  sec.setAttribute("aria-busy",String(st==="loading"));
+  cov.className="ho-cov";cov.hidden=false;cov.innerHTML=ldCovHTML(S);
+  el("ldKpis").innerHTML=ldKpisHTML(S);
+  el("ldNoPub").innerHTML=`<span><b>${t.ldNoPubT}</b> ${t.ldNoPub.map(x=>`${x} ${ldDash()}`).join(" · ")} · ${t.ldVat}</span>`;
+  el("ldSeries").innerHTML=ldChartHTML(S);
+  el("ldCities").innerHTML=ldCitiesHTML(S);
+  el("ldDevs").innerHTML=ldDevsHTML(S);
+  el("ldPipe").innerHTML=ldPipeHTML(ldState.pipe);
+  if(R){
+    el("ldTblHead").innerHTML=`<h3>${R.total==null?t.ldTblTNone:t.ldTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${t.ldTblS}</span>`;
+    el("ldTbl").innerHTML=ldTableHTML(R);
+    el("ldCards").innerHTML=ldCardsHTML(R);
+    el("ldPager").hidden=R.pages<=1;
+    el("ldPager").innerHTML=`<button type="button" data-ldpage="${R.page-1}"${R.page<=1?" disabled":""}>${t.ldPrev}</button>
+      <span>${t.ldPage(`<span class="num">${R.page}</span>`,`<span class="num">${R.pages}</span>`)}</span>
+      <button type="button" data-ldpage="${R.page+1}"${R.page>=R.pages?" disabled":""}>${t.ldNext}</button>`;
+  }
+  el("ldFoot").textContent=t.ldFoot;
+  if(ldState.openId)renderLdDrawer();
+}
+/* tender markers on the SVG map: square = the ILA polygon centroid; circle = locality-level count (no polygon published) — never a synthetic pin */
+function landMarkersSVG(sf){
+  if(!ldState.mapOn||!ldState.map)return"";
+  const M=ldState.map,t=T(),col=lc=>lc==="awarded"?"var(--up)":lc==="cancelled"||lc==="frozen"?"var(--ink-3)":lc==="open"||lc==="published"?"var(--accent)":"var(--brass)";
+  const sq=M.points.map(p=>{const[x,y]=proj(p.lat,p.lng),s=2.2*sf;
+    return`<rect x="${(x-s).toFixed(2)}" y="${(y-s).toFixed(2)}" width="${(2*s).toFixed(2)}" height="${(2*s).toFixed(2)}" fill="${col(p.lifecycle)}" stroke="#fff" stroke-width="${(.6*sf).toFixed(1)}" opacity=".92"><title>${ldE(p.name)} · ${ldE(p.city||"")} · ${ldE(t.ldLife[p.lifecycle]||"")}${p.units?` · ${fmtInt(p.units)} ${t.ldC.units}`:""}</title></rect>`}).join("");
+  const ci=M.localities.map(l=>{const[x,y]=proj(l.lat,l.lng),r=Math.min(9,2+Math.sqrt(l.tenders))*sf;
+    return`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}" fill="none" stroke="var(--accent-deep)" stroke-width="${(.9*sf).toFixed(1)}" opacity=".85"><title>${ldE(state.lang==="en"&&l.cityEn?l.cityEn:l.city)} · ${fmtInt(l.tenders)} ${t.ldKTenders}${l.units?` · ${fmtInt(l.units)} ${t.ldC.units}`:""} · ${t.ldDGeoV.locality}</title></circle>`}).join("");
+  return`<g class="ld-pins">${ci}${sq}</g>`;
+}
+/* ---------------- tender detail (drawer) ---------------- */
+async function ldOpen(id,from){
+  ldState.openId=id;ldState.detail=null;ldState.detailErr=null;
+  if(from)ldState.returnFocus=from;
+  el("ldDrawer").hidden=false;document.body.style.overflow="hidden";
+  renderLdDrawer();el("ldPanel").focus();
+  try{const d=await ldGet("view=tender&id="+encodeURIComponent(id));if(ldState.openId!==id)return;ldState.detail=d}
+  catch(e){if(ldState.openId!==id)return;ldState.detailErr=e.message}
+  renderLdDrawer();
+}
+function ldClose(){
+  ldState.openId=null;ldState.detail=null;
+  el("ldDrawer").hidden=true;document.body.style.overflow="";
+  const f=ldState.returnFocus;ldState.returnFocus=null;
+  if(f&&document.contains(f))f.focus();
+}
+function renderLdDrawer(){
+  const t=T(),d=ldState.detail,p=el("ldPanel");
+  const close=`<button type="button" class="ho-x" data-ldclose aria-label="${ldE(t.ldDClose)}">×</button>`;
+  if(!d){p.innerHTML=`<div class="ho-dh"><h3 id="ldDTitle">${ldState.detailErr?(ldOffline()?t.ldOffline:t.ldErr):t.ldLoading}</h3>${close}</div>`;return}
+  const r=d.record,P=r.provenance||{},E=r.economics,L=d.lifecycle||{},loc=d.locality;
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
+  const O=vcTag("raw"),D=vcTag("der");
+  const cityName=loc?(state.lang==="en"&&loc.en?ldE(loc.en):ldE(loc.he)):ldDash();
+  const lotRow=l=>{const e=l.economics||{};return`<tr><td><span class="num">${ldE(l.name||l.lotId)}</span>${l.sourceNote?`<div class="sub"><span class="ho-na">${t.ldDNote}: ${ldE(l.sourceNote)}</span></div>`:""}</td>
+    <td class="num">${ldN(l.areaSqm)}</td><td class="num">${ldN(l.units)}</td><td class="num">${ldNIS(l.developmentCost)}</td>
+    <td class="num">${l.minimumIsToken?`<span class="ho-na" title="${ldE(t.ldDTokenMin)}">₪1</span>`:ldNIS(l.minimumPrice)}</td><td class="num">${ldNIS(l.appraisal)}</td>
+    <td>${l.winner?`<bdi>${ldE(l.winner.name)}</bdi>`:ldDash()}</td>
+    <td class="num">${l.winner?(r.priceBasis==="price-per-sqm-bid"?`${fmtNIS(l.winner.amount)}/m²${l.ceilingPerSqm?` <span class="ho-na">(≤ ${fmtNIS(l.ceilingPerSqm)})</span>`:""}`:fmtNIS(l.winner.amount)):ldDash()}</td>
+    <td class="num">${e.bidsReceived!=null?fmtInt(e.bidsReceived):ldDash()}</td><td class="num">${ldNIS(e.landPerUnit)}</td></tr>`};
+  const lots=r.lots?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["lot","area","units","dev","min","app","winner","amount","bids","lpu"].map(k=>`<th>${t.ldDL[k]}</th>`).join("")}</tr></thead><tbody>${r.lots.map(lotRow).join("")}</tbody></table></div>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
+  const econ=E?`<div class="ho-dl">${kv(t.ldDE.basis,ldE(t.ldBasis[E.basis]||E.basis))}${kv(t.ldDE.vat,ldE(t.ldVat.split(":")[1]||E.vat))}${kv(t.ldDE.aw,`<span class="num">${fmtInt(E.awardedLots)}/${fmtInt(E.lots)}</span>`)}
+    ${E.basis==="price-per-sqm-bid"?kv(t.ldDE.psm,E.pricePerSqmMin!=null?`<span class="num">${fmtNIS(E.pricePerSqmMin)}–${fmtNIS(E.pricePerSqmMax)}</span>`:ldDash())+kv(t.ldDE.ceil,E.ceilingPerSqmMin!=null?`<span class="num">${fmtNIS(E.ceilingPerSqmMin)}–${fmtNIS(E.ceilingPerSqmMax)}</span>`:ldDash())
+    :kv(t.ldDE.units,ldN(E.awardedUnits))+kv(t.ldDE.total,ldNIS(E.awardedLandTotal))+kv(t.ldDE.lpu,ldNIS(E.landPerUnit))+kv(t.ldDE.dpu,ldNIS(E.developmentPerUnit))+kv(t.ldDE.tpu,ldNIS(E.totalBasisPerUnit))+kv(t.ldDE.prem,ldPct(E.premiumVsMinimum))+kv(t.ldDE.app,ldPct(E.premiumVsAppraisal))}
+    ${kv(t.ldDE.bids,ldN(E.bidsReceived))}</div><p class="ho-note">${t.ldDEconNote}</p>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
+  const plans=(d.plans||[]).length?`<table class="ho-dt"><thead><tr>${["plan","join","station","units","date","pot","link"].map(k=>`<th>${t.ldDP[k]}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory;
+    return`<tr><td class="num">${ldE(pl.plan)}</td><td>${pl.via==="lot"?(x?`<span class="ho-chip">${t.ldDPlanExact}</span>`:`<span class="ho-na">${t.ldDPlanNo}</span>`):`<span class="ho-na">${t.ldDPlanLink}</span>`}</td>
+      <td>${x?ldTx(x.station):ldDash()}</td><td class="num">${x?ldN(x.approvedUnits):ldDash()}</td><td class="num">${x?ldDate(x.approvalDate):ldDash()}</td><td class="num">${inv?`${fmtInt(inv.potentialUnits)} <span class="ho-na">(${ldE(String(inv.asOf||"").slice(0,4))})</span>`:ldDash()}</td>
+      <td>${x&&x.url?`<a href="${ldE(x.url)}" target="_blank" rel="noopener">↗</a>`:ldDash()}</td></tr>`}).join("")}</tbody></table>`:`<p class="ho-note">${t.ldDPlansNone}</p>`;
+  const parcels=(r.parcels||[]).map(x=>`<span class="ho-chip num">${ldE(x.block)}/${ldE(x.parcel||"—")}</span>`).join(" ");
+  const C=r.construction||{};
+  const cons=C.links&&C.links.length?`<ul class="ho-note ld-ul">${C.links.map(l=>`<li>${t.ldDConstRow(ldE(l.building||"—"),l.latestStage?`${ldE(t.ldDStage[l.latestStage[0]]||l.latestStage[0])} ${ldDate(l.latestStage[1])}`:"—",ldE(l.asOf||""))} · <span class="num">${ldE(l.block)}/${ldE(l.parcel)}</span></li>`).join("")}</ul>`:`<p class="ho-note">${t.ldDConstNone}</p>`;
+  const fld=k=>(t.ldField&&t.ldField[k])||k;
+  const val=v=>v==null||v===""?"—":typeof v==="boolean"?(v?t.ldDYes:t.ldDNo):Array.isArray(v)?ldE(v.map(w=>w.name||w).join("; ")):typeof v==="object"?ldE(JSON.stringify(v)):ldE(String(v));
+  const hist=(d.history||[]).slice(0,30).map(h=>`<li>${t.ldDHistRow(ldE(fld(h.field)),val(h.from),val(h.to),ldDate(h.observedAt))}</li>`).join("");
+  const pops=(r.populations||[]).map(x=>ldE(x.he)).join(" · ");
+  p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.ldTitle} · ${t.ldDTender(`<span class="num">${ldE(r.name)}</span>`)}</span>
+      <h3 id="ldDTitle">${cityName}${r.neighborhood?` · ${ldE(r.neighborhood)}`:""}</h3>
+      <div class="sub">${ldLifeChip(r.lifecycle)} ${ldE(ldTrackName(r.track))} · ${ldTx(r.type)} · ${ldTx(r.purpose)}</div></div>${close}</div>
+    ${sec(t.ldDIds,O,`<div class="ho-dl">${kv(t.ldDId,`<span class="num">${r.michrazId}</span>`)}${kv(t.ldDName,`<span class="num">${ldE(r.name)}</span>`)}${kv(t.ldDStatus,ldTx(r.status))}${kv(t.ldDLife,ldLifeChip(r.lifecycle))}
+      ${kv(t.ldDScope,r.awardScope?ldE(t.ldDScopeV[r.awardScope]):ldDash())}${kv(t.ldDGeo,ldE(t.ldDGeoV[r.geoBasis]||"—"))}</div>
+      <p class="ho-note"><a href="${ldE(r.page)}" target="_blank" rel="noopener">${t.ldDOpen} ↗</a></p>`)}
+    ${sec(t.ldDClass,O,`<div class="ho-dl">${kv(t.ldDType,ldTx(r.type))}${kv(t.ldDPurpose,ldTx(r.purpose))}${kv(t.ldDTrack,ldE(ldTrackName(r.track)))}${kv(t.ldDRegion,ldTx(r.region))}${kv(t.ldDPops,pops||ldDash())}${kv(t.ldDBasisL,r.priceBasis?ldE(t.ldBasis[r.priceBasis]):ldDash())}</div>`)}
+    ${sec(t.ldDDates,O,`<div class="ho-dl">${kv(t.ldDPub,ldDate(r.publishedDate))}${kv(t.ldDOpenD,ldDate(r.openDate))}${kv(t.ldDCloseD,ldDate(r.closeDate))}${kv(t.ldDComm,ldDate(r.committeeDate))}${kv(t.ldDLottery,ldDate(r.lotteryDate))}${kv(t.ldDSrcUpd,ldDate(r.sourceUpdatedAt))}</div>`)}
+    ${sec(t.ldDLots(r.lots?fmtInt(r.lots.length):"—"),O,lots)}
+    ${sec(t.ldDEcon,D,econ)}
+    ${sec(t.ldDPlans,D,plans+(parcels?`<p class="ho-note">${t.ldDParcels}: ${parcels}</p>`:""))}
+    ${sec(t.ldDConst,D,cons)}
+    ${sec(t.ldDHist,"",hist?`<ul class="ho-note ld-ul">${hist}</ul>`:`<p class="ho-note">${t.ldDHistNone}</p>`)}
+    ${sec(t.ldDProv,"",`<div class="ho-dl">${kv(t.ldDSrc,ldE(t.ldSrcName))}${kv(t.ldDListAt,ldDate(P.fetchedAt))}${kv(t.ldDDetailAt,P.detail?ldDate(P.detail.fetchedAt):ldDash())}${kv(t.ldDMapAt,P.map?ldDate(P.map.fetchedAt):ldDash())}
+      ${kv(t.ldDFirst,ldDate(r.firstSeenAt))}${kv(t.ldDChecked,ldDate(r.lastSeenAt))}${kv(t.ldDInSrc,r.inLatestSource===false?t.ldDNo:t.ldDYes)}${kv(t.ldDSnap,`<span class="num" style="font-size:11px">${ldE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
+}
+function initLand(){
+  const sec=el("land");if(!sec)return;
+  const drawer=el("ldDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
+  const setF=(k,v)=>{ldState.f[k]=v||null;ldState.page=1;ldState.citiesAll=false;ldState.devsAll=false;ldLoad()};
+  const onClick=e=>{
+    const b=e.target.closest("[data-ldper],[data-ldset],[data-ldreset],[data-ldm],[data-ldb],[data-ldgo],[data-ldcitiesall],[data-lddevsall],[data-ldsort],[data-ldpage],[data-ldclose],[data-ldid],[data-ldmap]");
+    if(!b)return;
+    const d=b.dataset,f=ldState.f;
+    if(d.ldclose!==undefined){ldClose();return}
+    if(d.ldper){f.period=d.ldper;if(d.ldper!=="custom"){f.from=null;f.to=null}ldState.page=1;ldLoad();return}
+    if(d.ldset){setF(d.ldset,d.ldv);return}
+    if(d.ldreset!==undefined){ldState.f={period:"all",dateField:"published"};ldState.page=1;ldLoad();return}
+    if(d.ldm){ldState.metric=d.ldm;renderLand();return}
+    if(d.ldb){ldState.bucket=d.ldb;ldLoad();return}
+    if(d.ldgo){setF(d.ldgo,d.ldv);return}
+    if(d.ldcitiesall!==undefined){ldState.citiesAll=!ldState.citiesAll;renderLand();return}
+    if(d.lddevsall!==undefined){ldState.devsAll=!ldState.devsAll;renderLand();return}
+    if(d.ldmap!==undefined){ldState.mapOn=!ldState.mapOn;if(ldState.mapOn)ldMapLoad();else renderMap(true);renderLand();return}
+    if(d.ldsort){if(ldState.sort===d.ldsort)ldState.order=ldState.order==="asc"?"desc":"asc";else{ldState.sort=d.ldsort;ldState.order=["publishedDate","closeDate","committeeDate","awardedLandTotal","landPerUnit","units"].includes(d.ldsort)?"desc":"asc"}
+      ldState.page=1;ldLoad("rows");return}
+    if(d.ldpage){ldState.page=Math.max(1,+d.ldpage);ldLoad("rows");el("ldTblHead").scrollIntoView({block:"nearest"});return}
+    if(d.ldid){ldOpen(d.ldid,b.closest("#ldPanel")?ldState.returnFocus:b);return}
+  };
+  sec.addEventListener("click",onClick);
+  if(drawer)drawer.addEventListener("click",onClick);
+  sec.addEventListener("change",e=>{
+    const x=e.target,d=x.dataset;
+    if(d.ldf){setF(d.ldf,x.value);return}
+    if(d.ldd){ldState.f[d.ldd]=x.value||null;ldState.page=1;ldLoad();return}
+    if(d.ldres!==undefined){ldState.f.residential=x.checked||null;ldState.page=1;ldLoad();return}
+  });
+  let qt;
+  sec.addEventListener("input",e=>{
+    if(e.target.dataset.ldq===undefined)return;
+    clearTimeout(qt);const v=e.target.value.trim();
+    qt=setTimeout(()=>{if((ldState.f.q||"")===v)return;ldState.f.q=v||null;ldState.page=1;ldLoad()},350);
+  });
+  sec.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-ldid],.tcard[data-ldid],tr[data-ldgo]");if(r&&e.target===r){e.preventDefault();r.click()}}
+  });
+  document.addEventListener("keydown",e=>{
+    if(!ldState.openId)return;
+    if(e.key==="Escape"){ldClose();return}
+    if(e.key==="Tab"){const p=el("ldPanel"),q=[...p.querySelectorAll("button,[href],[tabindex]:not([tabindex='-1'])")].filter(x=>x.offsetParent!==null);
+      if(!q.length){e.preventDefault();p.focus();return}
+      const first=q[0],last=q[q.length-1];
+      if(e.shiftKey&&(document.activeElement===first||document.activeElement===p)){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+      else if(!p.contains(document.activeElement)){e.preventDefault();first.focus()}}
+  });
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!ldState.started)ldLoad()}},{rootMargin:"800px 0px"});
+    io.observe(sec);
+  }else ldLoad();
+}
+
+/* =====================================================================
    7 · ORCHESTRATION
    ===================================================================== */
 function refresh(withSkeleton){
@@ -5689,7 +6205,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -5732,5 +6248,6 @@ if(CI_EXTERNAL)el("ciTeaserBlk").hidden=false;
 initCmd();
 initMapZoom();
 initHousing();
+initLand();
 refresh(true);
 </script>

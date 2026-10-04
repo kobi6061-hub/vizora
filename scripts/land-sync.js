@@ -54,10 +54,12 @@ function planDetails(rows, prevById, { forced = [], now = Date.now() }) {
   for (const row of rows) {
     const id = `rmi:${row.MichrazID}`, prev = prevById.get(id);
     const det = prev && prev.provenance && prev.provenance.detail;
+    const err = prev && prev.provenance && prev.provenance.detailError;
     const age = ageDays(det && det.fetchedAt, now);
     const status = Number(row.StatusMichraz);
     if (want.has(id)) tiers.forced.push(id);
     else if (!prev || prev.statusCode !== status) tiers.changed.push(id);
+    else if (!det && err && err.status === 404 && ageDays(err.at, now) < 60) tiers.rolling.push([id, err.at]);   // the site has no detail page for it; re-asked after 60 days
     else if (!det) tiers.unread.push(id);
     else if ((status === 1 || status === 2) && age > 7) tiers.active.push(id);
     else if (status === 5 && row.VaadaDate && ageDays(row.VaadaDate, now) < 365 && age > 30) tiers.decided.push(id);
@@ -88,7 +90,16 @@ function readReplay(file) {
   const outOfTime = () => (Date.now() - t0) / 60000 > budget.minutes;
   try {
     /* 1 · the list */
-    const rows = argVal('from') ? readReplay(argVal('from')) : await client.search();
+    /* the site's full list answers only tenders past their active stage; the active list (published / open) is a second call — merged on MichrazID */
+    let rows;
+    if (argVal('from')) rows = readReplay(argVal('from'));
+    else {
+      const full = await client.search(), active = await client.search({ activeOnly: true });
+      const byId = new Map(full.map((r) => [r.MichrazID, r]));
+      for (const r of active) byId.set(r.MichrazID, r);
+      rows = [...byId.values()];
+      run.listCalls = { full: full.length, active: active.length, merged: rows.length };
+    }
     const fetchedAt = new Date().toISOString();
     if (!rows.length) throw new Error('the list answered no rows');
     const cols = new Set(rows.flatMap((r) => Object.keys(r)));
@@ -102,19 +113,19 @@ function readReplay(file) {
 
     /* 2 · details on a budget */
     const plan = planDetails(rows, prevById, { forced });
-    const details = new Map(), maps = new Map(), rawDetails = [], errors = [];
+    const details = new Map(), maps = new Map(), rawDetails = [], errors = [], detailErrors = new Map();
     let detailStopped = null;
     for (const id of plan.order) {
       if (details.size >= budget.detail) { detailStopped = 'budget'; break; }
       if (outOfTime()) { detailStopped = 'time'; break; }
       const mid = id.slice(4);
       try { const d = await client.detail(mid); if (d && d.MichrazID) { details.set(id, d); rawDetails.push(d); } else errors.push({ id, error: 'empty detail' }); }
-      catch (e) { errors.push({ id, error: e.message }); if (e.status === 403 || e.status === 429) { detailStopped = 'refused:' + e.status; break; } }
+      catch (e) { errors.push({ id, error: e.message }); if (e.status) detailErrors.set(id, { status: e.status, at: new Date().toISOString() }); if (e.status === 403 || e.status === 429) { detailStopped = 'refused:' + e.status; break; } }
     }
     const detailFetchedAt = new Date().toISOString();
     /* 3 · maps for tenders that have a detail and no position yet (new detail first, then stored ones, newest first) */
     const needMap = [...details.keys()].filter((id) => !(prevById.get(id) && prevById.get(id).geometry))
-      .concat(prev.filter((r) => r.lots && !r.geometry && !details.has(r.id) && !(r.provenance.map && ageDays(r.provenance.map.fetchedAt) < 90)).sort((a, b) => b.michrazId - a.michrazId).map((r) => r.id));
+      .concat(prev.filter((r) => r.lotsCount != null && !r.geometry && !details.has(r.id) && !(r.provenance.map && ageDays(r.provenance.map.fetchedAt) < 90)).sort((a, b) => b.michrazId - a.michrazId).map((r) => r.id));
     let mapStopped = null;
     for (const id of needMap) {
       if (maps.size >= budget.map) { mapStopped = 'budget'; break; }
@@ -128,7 +139,7 @@ function readReplay(file) {
 
     /* 4 · normalize (stored detail carried forward where none was read this run) */
     const ctx = { snapshotHash: hash, fetchedAt, retrievalMethod: run.retrievalMethod, detailFetchedAt, mapFetchedAt: detailFetchedAt };
-    const { records: freshRaw, rejected } = normalizeList(rows, ctx, { details, maps, prior: prevById });
+    const { records: freshRaw, rejected } = normalizeList(rows, ctx, { details, maps, prior: prevById, detailErrors });
     Object.assign(run, { rejected: rejected.length, rejectedSample: rejected.slice(0, 5) });
     if (!freshRaw.length) throw new Error('no row passed normalization');
 
@@ -138,15 +149,14 @@ function readReplay(file) {
     const invByKey = new Map((plans.inventory || []).map((p) => [p.planKey, p]));
     let plansChanged = false, progressByParcel = null, reference = null;
     if (!has('no-joins') && !outOfTime()) {
-      const lotKeys = [...new Set(freshRaw.flatMap((r) => (r.plans || []).filter((p) => p.via === 'lot').map((p) => p.planKey)))];
+      const lotKeys = [...new Set(freshRaw.flatMap((r) => (r.plans || []).filter((p) => p.via === 'lot').map((p) => planKey(p.plan))))];
       const misses = new Map((plans.xplanMisses || []).map((m) => [m.planKey, m.askedAt]));
       const ask = lotKeys.filter((k) => { const x = xplanByKey.get(k); if (x) return ageDays(x.provenance.fetchedAt) > 30; const m = misses.get(k); return !m || ageDays(m) > 90; });
       try {
         const got = await P.fetchXplanPlans(ask, { maxRequests: Number(argVal('xplan-requests', 300)) });
         for (const [k, p] of got.found) { xplanByKey.set(k, p); misses.delete(k); plansChanged = true; }
-        const askedNow = new Set(ask.slice(0, got.requests * 40));
-        for (const k of askedNow) if (!got.found.has(k)) { misses.set(k, detailFetchedAt); plansChanged = true; }
-        joins.xplan = { asked: ask.length, requests: got.requests, found: got.found.size, complete: got.complete, known: xplanByKey.size };
+        for (const k of got.askedKeys) if (!got.found.has(k)) { misses.set(k, detailFetchedAt); plansChanged = true; }
+        joins.xplan = { asked: ask.length, requests: got.requests, found: got.found.size, complete: got.complete, known: xplanByKey.size, errors: got.errors };
         plans.xplanMisses = [...misses].map(([planKey, askedAt]) => ({ planKey, askedAt }));
       } catch (e) { joins.xplan = { error: e.message }; }
       try {
@@ -185,15 +195,17 @@ function readReplay(file) {
     const live = all.filter((r) => r.inLatestSource !== false);
     const byKey = (arr, k) => arr.reduce((o, r) => { const v = r[k] == null ? 'null' : r[k]; o[v] = (o[v] || 0) + 1; return o; }, {});
     const detailAges = live.filter((r) => r.provenance.detail).map((r) => r.provenance.detail.fetchedAt).sort();
-    const pub = live.map((r) => r.publishedDate).filter(Boolean).sort(), close = live.map((r) => r.closeDate).filter(Boolean).sort();
+    const pub = live.map((r) => r.publishedDate).filter(Boolean).sort(), close = live.map((r) => r.closeDate).filter(Boolean).sort(), comm = live.map((r) => r.committeeDate).filter(Boolean).sort();
     const meta = {
       source: { id: SOURCE.id, publisher: SOURCE.publisher, name: SOURCE.name, url: SOURCE.url, classification: SOURCE.classification, cadence: SOURCE.cadence },
       endpoint: LIST_ENDPOINT, snapshotHash: hash, snapshotFetchedAt: listChanged ? fetchedAt : prevMeta.snapshotFetchedAt, checkedAt: argVal('from') ? (prevMeta && prevMeta.checkedAt) || fetchedAt : fetchedAt,
       normalizerVersion: NORMALIZER_VERSION, rows: rows.length, records: all.length, inLatestSource: live.length, notInLatestSource: all.length - live.length,
-      detail: { withDetail: live.filter((r) => r.lots).length, withGeometry: live.filter((r) => r.geometry).length, oldestDetailFetchedAt: detailAges[0] || null, newestDetailFetchedAt: detailAges[detailAges.length - 1] || null,
-        activeWithDetail: live.filter((r) => r.active && r.lots).length, active: live.filter((r) => r.active).length, budget, lastRunFetched: details.size },
+      detail: { withDetail: live.filter((r) => r.lotsCount != null).length, withGeometry: live.filter((r) => r.geometry).length, oldestDetailFetchedAt: detailAges[0] || null, newestDetailFetchedAt: detailAges[detailAges.length - 1] || null,
+        activeWithDetail: live.filter((r) => (r.statusCode === 1 || r.statusCode === 2) && r.lotsCount != null).length, active: live.filter((r) => r.statusCode === 1 || r.statusCode === 2).length,
+        detailUnavailable: live.filter((r) => r.lotsCount == null && r.provenance.detailError).length, budget, lastRunFetched: details.size },
       byLifecycle: byKey(live, 'lifecycle'), byTrack: byKey(live, 'track'),
-      coverage: { publishedFrom: pub[0] || null, publishedTo: pub[pub.length - 1] || null, closeTo: close[close.length - 1] || null },
+      coverage: { publishedFrom: pub[0] || null, publishedTo: pub[pub.length - 1] || null, closeFrom: close[0] || null, closeTo: close[close.length - 1] || null,
+        committeeFrom: comm[0] || null, committeeTo: comm[comm.length - 1] || null },
       plans: { xplan: xplanByKey.size, inventory: invByKey.size, inventoryAsOf: plans.inventoryMeta ? plans.inventoryMeta.sourceUpdatedAt : null, tendersWithJoinedPlan: live.filter((r) => r.planning && r.planning.joined).length,
         xplanMisses: (plans.xplanMisses || []).length },
       construction: { tendersWithLinks: live.filter((r) => r.construction && r.construction.links && r.construction.links.length).length, source: joins.construction || null },

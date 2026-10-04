@@ -60,6 +60,7 @@ jobs:
           node test/ledger.test.js
           node test/republished.test.js
           node test/housing.test.js
+          node test/land.test.js
           node test/integrity.test.js
           node test/calculator.test.js
           node test/capital.test.js

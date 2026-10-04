@@ -11,7 +11,7 @@
  "snapshotHash": "7d761fa06d9099aaad8feea799ad7d54696aeca475faeb34a7618003e073423c",
  "snapshotFetchedAt": "2026-10-04T18:47:36.801Z",
  "checkedAt": "2026-10-04T18:47:36.801Z",
- "normalizerVersion": 1,
+ "normalizerVersion": 2,
  "rows": 10192,
  "records": 10192,
  "inLatestSource": 10192,
@@ -50,7 +50,10 @@
  "coverage": {
   "publishedFrom": "2000-01-08",
   "publishedTo": "2026-08-17",
-  "closeTo": "2027-01-11"
+  "closeTo": "2027-01-11",
+  "closeFrom": "2000-03-05",
+  "committeeFrom": "2000-03-07",
+  "committeeTo": "2026-09-15"
  },
  "plans": {
   "xplan": 0,

@@ -39,6 +39,15 @@
   status history, raw snapshots; served paginated by `GET /api/housing?view=…` and shown in the page's
   `#housing` section (see `lib/housing/README.md`). Missing factual values render "—" (class MISSING / חסר).
   `scripts/housing-discover.js` + `.github/workflows/housing-discover.yml` = read-only source discovery.
+- `lib/land/` + `api/land.js` + `data/land/` + `scripts/land-sync.js` + `.github/workflows/land-sync.yml` + `test/land.test.js`
+  = Land & Tender Intelligence (`#land`, "קרקעות ומכרזים"): the Israel Land Authority's tender site API (list + per-tender
+  detail on a daily budget + map centroids) normalized per MichrazID with lifecycle from the Authority's status codes
+  (published ≠ open ≠ closed ≠ decided ≠ awarded — awarded only with a winner name and an award sum or winning bid), track
+  from type/purpose/population codes, per-lot economics with their basis and VAT "not stated", exact joins only (xplan
+  plan number; RMI planning inventory — STALE 2022, state land only; MoCH construction progress by block/parcel). Slim
+  records in `tenders.json`, lots in `lots-<year>.json` shards, history, raw list snapshots; Supabase `land_*` tables
+  (`supabase/migrations/20261004120000_land_tenders.sql`). Not subsidized-housing lotteries, not transactions
+  (see `lib/land/README.md`). `scripts/land-discover.js` + `.github/workflows/land-discover.yml` = read-only discovery.
 - `lib/gov/providers/overDeals.js` + `test/republished.test.js` = the deals source in use since 02.10.2026 (owner's
   decision): the Tax Authority register as republished by גרסאות לעם (over.org.il) — not a government channel, labelled so
   on the page (never "official source"); a copy dated by `scraped_at`; address only via the parcel crosswalk; partial sales

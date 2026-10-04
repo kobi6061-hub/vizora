@@ -44,7 +44,7 @@ const n = async (q) => (await rest(q, { count: true })).total;
 
   console.log('schema · migrations applied, market schema exposed to the service role');
   for (const t of ['sources', 'sync_runs', 'raw_snapshots', 'geo_links', 'transactions', 'housing_lotteries', 'housing_status_history',
-    'housing_projects', 'housing_provenance', 'transaction_reporting_lag']) {
+    'housing_projects', 'housing_provenance', 'transaction_reporting_lag', 'land_tenders', 'land_lots', 'land_tender_history', 'land_plans', 'land_winners']) {
     const r = await rest(`${t}?limit=1`);
     check(`market.${t} readable by the service role`, r.status === 200, r.status === 200 ? '' : `HTTP ${r.status} ${redact(JSON.stringify(r.body)).slice(0, 120)}`);
   }

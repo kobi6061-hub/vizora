@@ -1,0 +1,79 @@
+# Land & Tender Intelligence — `lib/land/`
+
+The Israel Land Authority's residential land tenders — what land is marketed,
+which tenders are open or decided, who won, at what land price, with what
+development cost, for how many units — traced, where exact evidence exists,
+to planning capacity and to construction. A separate layer from Government
+Housing (subsidized lotteries) and from Transactions: a tender is a land
+marketing event, never an apartment sale. Nothing here is synthesized.
+
+```
+ILA tender site API (list · detail · map)              rmi.js, codes.js (the Authority's code tables, verbatim)
+  → both lists merged (the "all" answer omits active)   scripts/land-sync.js
+  → detail on a daily budget, remembered 404s, maps
+  → one record per MichrazID: lifecycle, track, lots,   normalize.js
+    winners (with evidence), economics with basis, geometry
+  → exact joins: xplan plan number · RMI inventory ·    planning.js
+    MoCH construction progress by block/parcel
+  → upsert-merge, history, never delete                 store.js → data/land/ (+ Supabase land_*)
+  → filters · periods · KPIs · cities · developers ·    query.js → api/land.js → #land
+    pipeline · map points · one tender
+```
+
+## Sources (`sources.js` — the registry with classification, cadence, ids, limitations)
+
+| id | what | class | use |
+| --- | --- | --- | --- |
+| `rmi:michrazim` | ILA tender site API: `SearchApi/Search` (whole list; `ActiveMichraz` true/false — merged), `MichrazDetailsApi/Get` (lots, bids, winners, parcels, plan numbers, documents), `GetMichrazMapaDetails` (ITM polygons), `GeneralTablesApi/Get` (code tables), `YeshuvimApi/Get` | CONFIRMED_STRUCTURED_API | the tender records |
+| `iplan:xplan` | Planning Administration ArcGIS blue-lines layer (`PlanningPublic/Xplan/MapServer/1`, ~37k plans): station, approval date, approved units (`pq_authorised_quantity_120`) | CONFIRMED_GIS | joined by the **exact** plan number (whitespace removed) |
+| `datagov:rmi:planning-inventory` | "מלאי תכנוני למגורים" (`99aad98f…`), 1,112 plans, potential units for marketing | **STALE** (2022-02-17) · **STATE LAND ONLY** | the pipeline view, dated; joined by exact plan number |
+| `datagov:moch:construction-progress` | "דיווחי התקדמות הבניה" (`1ec45809…`), building-level stage dates by GUSH/HELKA | STALE (2024-03-01) | the only construction evidence: exact block **and** parcel join (parcel "0" never joins) |
+| `datagov:moch:development-costs` | "עלויות פיתוח בבניה העירונית" (`bf164a03…`) | CONFIRMED_STRUCTURED_FILE | locality reference only — no exact key to a tender, never attached to one |
+| `datagov:moch:development-tenders` / `-bids` | MoCH infrastructure tenders (enabling signal) / bid sums with blank ids | FILE / **UNJOINABLE** | not joined |
+| `rmi:results-press`, `gov:tenders-portal` | result pages, the government tenders portal | OFFICIAL_PAGE_ONLY | not read |
+
+## Semantics (`codes.js`, `normalize.js`)
+
+* **Lifecycle** = the Authority's status code (TableID 237): 1 published · 2 open · 3 closed (decision pending) · 4 frozen ·
+  5 decided → `awarded` only when a lot carries a winner **name and** an award sum or a winning bid, else
+  `decided-no-award` · 6 lottery pending · 7 cancelled. A note the source writes into the winner column
+  ("אין הצעות למתחם זה", "בחירת מתחם תערך במרחב") is a note, never a winner. **Contract, permit and construction start are
+  not in this source** and are never inferred from an award.
+* **Track** from type (TableID 215) + purpose (TableID −1, group מגורים/אחר) + priority populations: open-market
+  (types 1, 9, 10, 11) · subsidized (5 מחיר מטרה, 7 מחיר למשתכן, 8 מופחת) · rental (6 / purposes 20, 21) ·
+  special-population / residential-lottery (2, 3, 4) · mixed-use (purpose 12) · commercial-other. Never from text.
+* **Price basis** per tender: `competitive-bid` (SugTacharut 1 — a total land price) · `price-per-sqm-bid` (type 7 or
+  SugMechirMufchat 1 — ₪ per built m² under `MechirMaximum`; never divided into units) · `fixed-price-allocation`
+  (types 2, 3, 4) · `unknown`. `MechirSaf = 1` is a token minimum (no premium computed). **VAT: not stated by the source.**
+* **Economics** per lot only when numerator and denominator are the lot's own: land/unit = winning sum ÷ lot units;
+  development/unit = `HotzaotPituach` ÷ units; total basis = both; premium vs minimum / appraisal; bids received
+  (null when no bid list is published — not zero). Tender-level figures sum **awarded lots only** (`scope`).
+* **Positions**: the tender polygon's centroid, ITM → WGS84 exactly (`lib/geo/itm.js`); otherwise locality-level
+  presentation from the registry — never a synthetic pin.
+* **Developers** = observed public tender wins on this site, grouped by the exact winner string. Never merged by name
+  similarity; never a "land bank".
+
+## Storage (`store.js`, `data/land/`)
+
+`tenders.json` (one slim record per line, null keys dropped) · `lots-<year>.json` (the lots, bids, parcels of each tender
+with detail) · `plans.json` (xplan plans + RMI inventory + xplan misses) · `reference.json` (MoCH development costs) ·
+`meta.json` · `history.jsonl` (every change of a source field: status, lifecycle, dates, units, winners, lot/bid counts,
+documents, listing) · `sync-runs.jsonl` · `raw/<date>-<hash>.json.gz` (the list payload when its content changed).
+Upsert on `rmi:<MichrazID>`, `firstSeenAt` kept, a delisted tender kept with `inLatestSource:false`. The Supabase project
+(`market.land_tenders / land_lots / land_tender_history / land_plans`, view `land_winners`) receives the same rows and the
+detail payloads of each run (`raw_snapshots`, source `rmi:michrazim:detail`).
+
+## Sync (`scripts/land-sync.js`, `.github/workflows/land-sync.yml`, daily 03:17 UTC)
+
+Detail budget per run (default 1,500; `--ids` first, then list rows whose status changed or are new, active tenders not
+re-read for 7 days, decided in the last year not re-read for 30 days, never-read newest first, then the oldest read).
+Every record says when its detail was read (`provenance.detail.fetchedAt`); a 404 is remembered 60 days. Map budget 400.
+The xplan join asks for plan numbers not known or older than 30 days (misses re-asked after 90 days), in batches of 10.
+Exit 0 ok · 2 Supabase write failed · 1 failed. The read side serves the bundled files (`freshness.store: 'git'`).
+
+## API (`api/land.js`, session-gated)
+
+`view=summary|tenders|tender|pipeline|map|status` · `period=6m|12m|24m|5y|all|custom` over `dateField=published|close|committee` ·
+`city` (CBS code or name) · `region` · `track` · `lifecycle` · `type` · `purpose` · `basis` · `winner` (exact) · `plan` ·
+`residential=1` · `awarded=1` · `q`. Every answer carries `freshness` (checked at, latest publication, detail coverage) and
+`summary.methodology`. Missing values are null → "—" on the page.
