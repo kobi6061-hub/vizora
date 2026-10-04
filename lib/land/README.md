@@ -82,6 +82,41 @@ an open-market type whose older detail carries no code is a price tender by the 
 Land per unit on the page: competitive bids only, open-market track unless a track is selected. Construction evidence is
 attached only to an awarded tender and only from rows whose contract year is not before the award.
 
+## Coverage, scope, unit semantics, lineage (`coverage.js`, `lineage.js`, `query.js`)
+
+* **Coverage** is counted over the stored records, never estimated: `retrieved` (detail read), `unavailable` (the site
+  answered 404), `refused` (403/429), `pending`; `checked = retrieved + unavailable + refused`; per year of the
+  tender id, with the newest years that are complete. Every API answer carries it (`detailCoverage`), and the page's
+  coverage strip tags each figure **FULL LIST** (the whole tender list) · **PARTIAL DETAIL** (depends on detail read on a
+  budget) · **DERIVED SUBSET** (derived only from detail-read tenders). Winner / lot / developer analytics are never
+  presented as full-market statistics while coverage is partial.
+* **Scope** `scope=current` (the page's default) = tenders still in play (published / open / closed / awaiting
+  lottery / frozen) plus every decision — award, no award, cancellation — of the last 24 months (`decisionDate` =
+  committee ∥ lottery ∥ close ∥ publication date); `scope=all` = every source record since 2000 (lifetime totals, not a
+  pipeline).
+* **Units** keep four meanings apart and are never summed into one another: *published tender units* (the Authority's
+  YechidotDiur on every tender in scope — includes re-tenders, cancelled and failed ones; not unique supply) · *currently
+  open units* (published / open) · *pending decision* (closed / awaiting lottery) · *awarded* (units of lots with a
+  recorded winner; the published units of awarded tenders are reported beside it) · *failed / cancelled* (cancelled,
+  frozen, decided with no winner) · *decided, detail not read* (outcome unknown). The **unique pipeline** counts a lot
+  once by the Authority's lot file id (TikID) with the units of its latest marketing in scope, over detail-read tenders
+  only; the tenders it cannot deduplicate (detail not read) are reported with their units, never silently included or
+  excluded.
+* **Lineage** links two tenders only when they share a lot file id (TikID — the same id returns when a lot is marketed
+  again), corroborated by the plan+lot numbers printed on the lot. The relationship follows the earlier tender's own
+  outcome: `re-tender` (it failed: cancelled / frozen / no winner) · `unawarded-lot-re-marketed` · `awarded-lot-re-marketed`
+  · `round-after-closing` · `parallel-marketing` (same publication date) · `successive-marketing`. A shared block/parcel
+  without a shared lot is a `same-parcel` site-level link, never used to merge or deduplicate. Names and localities
+  never link anything. Each tender's drawer lists its predecessors and successors with the evidence.
+* **Land per unit** states its population on every answer (`landBasis`): competitive bids only, open-market track unless
+  a track is selected, the lots / units / tenders counted, the tender types included, the median lot figure, the
+  period and scope, development cost excluded, nominal ₪ at award, VAT not stated.
+* **Construction** evidence is an explicit chain — tender → block/parcel → MoCH progress record (site, building, units)
+  → latest stage → source and as-of date — only on awarded tenders; everything else is "—".
+* **Store truth** (`view=status` → `store`): the page reads the bundled `data/land/` files; the Supabase tables exist in
+  the migration and are written only when the Actions secrets exist (each run records its store outcome); DB-first reads
+  are not implemented.
+
 ## API (`api/land.js`, session-gated)
 
 `view=summary|tenders|tender|pipeline|map|status` · `period=6m|12m|24m|5y|all|custom` over `dateField=published|close|committee` ·

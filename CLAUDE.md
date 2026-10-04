@@ -45,9 +45,11 @@
   (published ≠ open ≠ closed ≠ decided ≠ awarded — awarded only with a winner name and an award sum or winning bid), track
   from type/purpose/population codes, per-lot economics with their basis and VAT "not stated", exact joins only (xplan
   plan number; RMI planning inventory — STALE 2022, state land only; MoCH construction progress by block/parcel). Slim
-  records in `tenders.json`, lots in `lots-<year>.json` shards, history, raw list snapshots; Supabase `land_*` tables
-  (`supabase/migrations/20261004120000_land_tenders.sql`). Not subsidized-housing lotteries, not transactions
-  (see `lib/land/README.md`). `scripts/land-discover.js` + `.github/workflows/land-discover.yml` = read-only discovery.
+  records in `tenders.json` (with `lotRefs`), lots in `lots-<year>.json` shards, history, raw list snapshots; Supabase `land_*` tables
+  (`supabase/migrations/20261004120000_land_tenders.sql`). `lib/land/coverage.js` counts detail coverage (the page tags
+  every figure FULL LIST / PARTIAL DETAIL / DERIVED SUBSET); `lib/land/lineage.js` links re-tenders only through the
+  Authority's lot file id (TikID) and counts the unique pipeline once per lot; the page defaults to the CURRENT market
+  (`scope=current`). Not subsidized-housing lotteries, not transactions (see `lib/land/README.md`). `scripts/land-discover.js` + `.github/workflows/land-discover.yml` = read-only discovery.
 - `lib/gov/providers/overDeals.js` + `test/republished.test.js` = the deals source in use since 02.10.2026 (owner's
   decision): the Tax Authority register as republished by גרסאות לעם (over.org.il) — not a government channel, labelled so
   on the page (never "official source"); a copy dated by `scraped_at`; address only via the parcel crosswalk; partial sales

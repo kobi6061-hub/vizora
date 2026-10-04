@@ -36,6 +36,7 @@ const { normalizeList, hashRows, planKey, NORMALIZER_VERSION, SOURCE_ID, LIST_EN
 const { mergeRecords, FileLandStore, SupabaseLandStore } = require('../lib/land/store');
 const P = require('../lib/land/planning');
 const { storeConfig, redact } = require('../lib/store-config');
+const { coverageOf } = require('../lib/land/coverage');
 
 const SOURCE = byId['rmi:michrazim'];
 const PROD_DIR = path.join(__dirname, '..', 'data', 'land');
@@ -211,6 +212,7 @@ function readReplay(file) {
       source: { id: SOURCE.id, publisher: SOURCE.publisher, name: SOURCE.name, url: SOURCE.url, classification: SOURCE.classification, cadence: SOURCE.cadence },
       endpoint: LIST_ENDPOINT, snapshotHash: hash, snapshotFetchedAt: listChanged ? fetchedAt : prevMeta.snapshotFetchedAt, checkedAt: argVal('from') ? (prevMeta && prevMeta.checkedAt) || fetchedAt : fetchedAt,
       normalizerVersion: NORMALIZER_VERSION, rows: rows.length, records: all.length, inLatestSource: live.length, notInLatestSource: all.length - live.length,
+      coverage: coverageOf(live),
       detail: { withDetail: live.filter((r) => r.lotsCount != null).length, withGeometry: live.filter((r) => r.geometry).length, oldestDetailFetchedAt: detailAges[0] || null, newestDetailFetchedAt: detailAges[detailAges.length - 1] || null,
         activeWithDetail: live.filter((r) => (r.statusCode === 1 || r.statusCode === 2) && r.lotsCount != null).length, active: live.filter((r) => r.statusCode === 1 || r.statusCode === 2).length,
         detailUnavailable: live.filter((r) => r.lotsCount == null && r.provenance.detailError).length, budget, lastRunFetched: details.size },
@@ -238,9 +240,11 @@ function readReplay(file) {
           await new SupabaseLandStore({ url: cfg.url, key: cfg.key }).write({ records: changedRecords, all: merged, history, allHistory: store.readHistory(), run, source: SOURCE, meta,
             plans: plansChanged ? { xplan: [...xplanByKey.values()], inventory: plans.inventory || [] } : null, raw: listChanged ? { hash, rows, fetchedAt } : null,
             rawDetails: rawDetails.length ? { hash: hashRows(rawDetails), rows: rawDetails, fetchedAt: detailFetchedAt } : null });
-          summary += ' · Supabase ✓';
-        } catch (e) { code = 2; summary += ' · Supabase write failed'; console.error('supabase:', redact(e.message)); }
-      } else if (cfg.reason === 'store-misconfigured') { code = 2; summary += ' · Supabase misconfigured'; }
+          summary += ' · Supabase ✓'; run.store = 'supabase-written';
+        } catch (e) { code = 2; summary += ' · Supabase write failed'; run.store = 'supabase-write-failed'; console.error('supabase:', redact(e.message)); }
+      } else if (cfg.reason === 'store-misconfigured') { code = 2; summary += ' · Supabase misconfigured'; run.store = 'supabase-misconfigured'; }
+      else run.store = 'not-configured';
+      store.appendRun({ id: run.id + ':store', source: SOURCE_ID, startedAt, finishedAt: new Date().toISOString(), status: 'ok', note: 'store outcome of ' + run.id, store: run.store, retrievalMethod: 'none' });
     }
     console.log(JSON.stringify({ run: { ...run, rejectedSample: undefined, errorSample: run.errorSample }, meta }, null, 1));
   } catch (e) {

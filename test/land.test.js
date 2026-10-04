@@ -363,6 +363,97 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.equal(M.points.length + M.localities.length, 0); assert.equal(M.withoutPosition, 1);
   });
 
+  console.log('land: coverage, lineage, unique pipeline, scope (post-release gate)');
+  const Cov = require('../lib/land/coverage'), Lin = require('../lib/land/lineage');
+  await t('detail coverage: retrieved / unavailable (404) / refused / pending are counted over the stored records, never estimated', () => {
+    const mk = (o) => ({ michrazId: o.id, lotsCount: o.lots ?? null, provenance: o.err ? { detailError: { status: o.err } } : {} });
+    const c = Cov.coverageOf([mk({ id: 20260001, lots: 2 }), mk({ id: 20260002, lots: 0 }), mk({ id: 20250001, err: 404 }), mk({ id: 20250002, err: 403 }), mk({ id: 20240001 }), mk({ id: 20240002 })]);
+    assert.deepEqual([c.listed, c.retrieved, c.unavailable, c.refused, c.pending, c.checked], [6, 2, 1, 1, 2, 4]); assert.equal(c.pct, 66.7); assert.equal(c.state, 'partial');
+    assert.deepEqual(c.completeYears, ['2026', '2025']); assert.equal(c.completeFrom, '2025');
+    assert.equal(Cov.coverageOf([mk({ id: 20260001, lots: 1 })]).state, 'complete'); assert.equal(Cov.coverageOf([mk({ id: 20260001 })]).state, 'none');
+  });
+  await t('lineage: tenders link only through a shared lot file id; the relationship follows the earlier tender\'s own outcome; a list-only tender is never linked', () => {
+    const r5 = row({ StatusMichraz: 7, PirsumDate: '2023-07-20T00:00:00+03:00' });                                 // cancelled
+    const lotA = lot({ TikID: '0000800002197', TochnitMigrash: [{ Tochnit: 'תמל/1044', MigrashName: '2140' }], Kibolet: 40 });
+    const lotB = lot({ TikID: '0000800002198', TochnitMigrash: [{ Tochnit: 'תמל/1044', MigrashName: '2141' }], Kibolet: 60 });
+    const E = N.normalizeTender({ row: r5, detail: detail(r5, { Tik: [lotA, lotB] }) }, CTX).record;
+    const r2 = row({ StatusMichraz: 2, PirsumDate: '2024-12-17T00:00:00+02:00' });                                 // open, same lots
+    const L = N.normalizeTender({ row: r2, detail: detail(r2, { Tik: [{ ...lotA, Kibolet: 44 }, { ...lotB }] }) }, CTX).record;
+    const r1 = row({ StatusMichraz: 5, PirsumDate: '2024-01-01T00:00:00+02:00' });                                 // awarded one lot, the other re-marketed later
+    const A = N.normalizeTender({ row: r1, detail: detail(r1, { Tik: [lot({ ...WIN, TikID: '0000800009001', Kibolet: 10 }), lot({ TikID: '0000800009002', Kibolet: 5 })] }) }, CTX).record;
+    const r3 = row({ StatusMichraz: 2, PirsumDate: '2025-03-01T00:00:00+02:00' });
+    const B = N.normalizeTender({ row: r3, detail: detail(r3, { Tik: [lot({ TikID: '0000800009002', Kibolet: 5 }), lot({ TikID: '0000800009001', Kibolet: 10 })] }) }, CTX).record;
+    const listOnly = N.normalizeTender({ row: row({ StatusMichraz: 5, KodYeshuv: E.localityCode, YechidotDiur: 100 }) }, CTX).record;   // same locality and units: no evidence
+    const unrelated = N.normalizeTender({ row: row({ StatusMichraz: 5 }), detail: detail(row(), { Tik: [lot({ TikID: '0000800077777', GushHelka: [{ Gush: '1', Helka: '1' }] })] }) }, CTX).record;
+    assert.ok(E.lotRefs && E.lotRefs[0].id === '0000800002197' && E.lotRefs[0].keys[0] === 'תמל/1044|2140', 'lot refs on the slim record');
+    const { links, byTender } = Lin.buildLineage([E, L, A, B, listOnly, unrelated], (r) => r.lotRefs);
+    const el = links.find((l) => l.from === E.id && l.to === L.id);
+    assert.ok(el, 'cancelled → open linked'); assert.equal(el.relation, 're-tender'); assert.equal(el.sharedLots.length, 2); assert.deepEqual(el.sharedKeys, ['תמל/1044|2140', 'תמל/1044|2141']); assert.match(el.evidence, /TikID\) ×2/);
+    const ab = links.find((l) => l.from === A.id && l.to === B.id);
+    assert.equal(ab.relation, 'awarded-lot-re-marketed', 'the shared lot 9001 had a winner in A');
+    assert.equal(links.filter((l) => l.from === listOnly.id || l.to === listOnly.id).length, 0, 'no lot ids → no link');
+    assert.equal(links.filter((l) => l.from === unrelated.id || l.to === unrelated.id).length, 0, 'own lot, own parcel: no link of any kind');
+    assert.equal(links.filter((l) => l.relation !== 'same-parcel' && (l.from === listOnly.id || l.to === listOnly.id)).length, 0);
+    const lotLevel = (xs) => xs.filter((l) => l.relation !== 'same-parcel');
+    assert.equal(lotLevel(byTender.get(L.id).predecessors)[0].from, E.id); assert.equal(lotLevel(byTender.get(E.id).successors)[0].to, L.id);
+    assert.equal(Lin.relationOf({ lifecycle: 'closed', publishedDate: '2022-01-01' }, { lifecycle: 'open', publishedDate: '2024-01-01' }, false), 'round-after-closing');
+    assert.equal(Lin.relationOf({ lifecycle: 'open', publishedDate: '2024-01-01' }, { lifecycle: 'open', publishedDate: '2024-01-01' }, false), 'parallel-marketing');
+    assert.equal(Lin.relationOf({ lifecycle: 'awarded', publishedDate: '2024-01-01' }, { lifecycle: 'open', publishedDate: '2024-06-01' }, false), 'unawarded-lot-re-marketed');
+    /* same parcel without a shared lot: site-level only */
+    const P1 = N.normalizeTender({ row: row({ StatusMichraz: 5 }), detail: detail(row(), { Tik: [lot({ TikID: '0000800005001', GushHelka: [{ Gush: '555', Helka: '9' }] })] }) }, CTX).record;
+    const P2 = N.normalizeTender({ row: row({ StatusMichraz: 2 }), detail: detail(row(), { Tik: [lot({ TikID: '0000800005002', GushHelka: [{ Gush: '555', Helka: '9' }] })] }) }, CTX).record;
+    const sp = Lin.buildLineage([P1, P2], (r) => r.lotRefs).links;
+    assert.equal(sp.length, 1); assert.equal(sp[0].relation, 'same-parcel'); assert.deepEqual(sp[0].sharedParcels, ['555/9']);
+    /* unique pipeline: each lot once, units of the latest marketing; the list-only tender is reported, not counted */
+    const u = Lin.uniquePipeline([E, L, A, B, listOnly], (r) => r.lotRefs);
+    assert.equal(u.lots, 4); assert.equal(u.units, 44 + 60 + 10 + 5, 'lot 2197 counted once with its latest units (44)');
+    assert.equal(u.rawLotUnits, 40 + 60 + 44 + 60 + 10 + 5 + 5 + 10); assert.equal(u.duplicateUnits, u.rawLotUnits - u.units);
+    assert.equal(u.tendersCovered, 4); assert.equal(u.tendersNotDeduplicable, 1); assert.equal(u.unitsNotDeduplicable, 100);
+    assert.ok(Lin.uniquePipeline([P1, P2], (r) => r.lotRefs).lots === 2, 'a shared parcel never merges lots');
+  });
+  await t('read model: current vs historical scope, unit semantics kept apart, developer coverage, land-basis population, winner metrics only from detail-read records', () => {
+    const dir = tmp(), s = new FileLandStore(dir), Q = require('../lib/land/query');
+    const today = '2026-10-04', old = '2021-03-01T00:00:00+02:00', recent = '2026-05-01T00:00:00+03:00';
+    const mk = (o, det) => N.normalizeTender({ row: row({ KodYeshuv: 5000, ...o }), detail: det === undefined ? undefined : det }, CTX).record;
+    const open = mk({ StatusMichraz: 2, YechidotDiur: 50, PirsumDate: recent, SgiraDate: '2026-12-01T12:00:00+02:00' }, detail(row(), { Tik: [lot({ Kibolet: 50 })] }));
+    const closed = mk({ StatusMichraz: 3, YechidotDiur: 30, PirsumDate: recent }, detail(row(), { Tik: [lot({ Kibolet: 30 })] }));
+    const r5 = row({ StatusMichraz: 5, YechidotDiur: 100, PirsumDate: recent, VaadaDate: '2026-08-01T00:00:00+03:00', KodYeshuv: 5000 });
+    const awarded = N.normalizeTender({ row: r5, detail: detail(r5, { Tik: [lot(WIN), lot({ Kibolet: 20 })] }) }, CTX).record;            // 100 published, 100 in the lot with a winner... wait: lot(WIN) has 100 units
+    const cancelled = mk({ StatusMichraz: 7, YechidotDiur: 40, PirsumDate: recent });
+    const r5n = row({ StatusMichraz: 5, YechidotDiur: 25, PirsumDate: recent, VaadaDate: '2026-07-01T00:00:00+03:00', KodYeshuv: 5000 });
+    const noAward = N.normalizeTender({ row: r5n, detail: detail(r5n, { Tik: [lot({ Kibolet: 25, ShemZoche: 'אין הצעות למתחם זה' })] }) }, CTX).record;
+    const notRead = mk({ StatusMichraz: 5, YechidotDiur: 60, PirsumDate: recent, VaadaDate: '2026-06-01T00:00:00+03:00' });
+    const r5o = row({ StatusMichraz: 5, YechidotDiur: 200, PirsumDate: old, VaadaDate: '2021-06-01T00:00:00+03:00', KodYeshuv: 5000 });
+    const oldAwarded = N.normalizeTender({ row: r5o, detail: detail(r5o, { Tik: [lot({ ...WIN, Kibolet: 200, SchumZchiya: 10000000, ShemZoche: 'TEST FIXTURE זוכה ישן' })] }) }, CTX).record;
+    const oldCancelled = mk({ StatusMichraz: 7, YechidotDiur: 70, PirsumDate: old, SgiraDate: '2021-05-01T12:00:00+03:00' });
+    const all = [open, closed, awarded, cancelled, noAward, notRead, oldAwarded, oldCancelled];
+    const { records } = mergeRecords([], all, { fetchedAt: CTX.fetchedAt, syncRunId: 'r' });
+    s.write({ records, meta: { checkedAt: CTX.fetchedAt, snapshotHash: 'c'.repeat(64), coverage: { publishedFrom: '2021-03-01', publishedTo: '2026-05-01' } }, run: { id: 'r' } });
+    const F = (q) => Q.parseFilters(new URLSearchParams(q), new Date(today + 'T12:00:00Z')).filters;
+    const cur = Q.summary(F('scope=current'), { dataDir: dir }), hist = Q.summary(F('scope=all'), { dataDir: dir });
+    assert.equal(cur.kpis.tenders, 6, 'current: in play + decided within 24 months'); assert.equal(hist.kpis.tenders, 8);
+    assert.equal(cur.scope.mode, 'current'); assert.equal(cur.scope.currentFrom, '2024-10-04'); assert.equal(hist.scope.mode, 'all');
+    const K = cur.kpis;
+    assert.equal(K.unitsResidential, 50 + 30 + 100 + 40 + 25 + 60, 'PUBLISHED tender units: every tender, including cancelled and failed');
+    assert.equal(K.unitsOpen, 50, 'CURRENTLY OPEN'); assert.equal(K.unitsPendingDecision, 30);
+    assert.equal(K.unitsAwarded, 100, 'AWARDED = units of lots with a recorded winner'); assert.equal(K.unitsAwardedTenders, 100);
+    assert.equal(K.unitsFailed, 40 + 25, 'FAILED / CANCELLED = cancelled + frozen + decided with no winner'); assert.equal(K.unitsDecidedNotRead, 60);
+    assert.equal(K.unique.units, 50 + 30 + 120 + 25, 'unique pipeline over detail-read tenders (lots counted once)'); assert.equal(K.unique.tendersNotDeduplicable, 2); assert.equal(K.unique.unitsNotDeduplicable, 100);
+    assert.deepEqual([K.detailCoverage.listed, K.detailCoverage.retrieved, K.detailCoverage.pending], [6, 4, 2]);
+    assert.equal(cur.developersCoverage.inScope, 6); assert.equal(cur.developersCoverage.detailRead, 4); assert.match(cur.developersCoverage.basis, /DETAIL-READ RECORDS/);
+    assert.equal(cur.developers.length, 1, 'the old award is outside the current scope'); assert.equal(hist.developers.length, 2);
+    assert.equal(K.landBasis.lots, 1); assert.equal(K.landBasis.units, 100); assert.equal(K.landBasis.perUnit, 120000); assert.equal(K.landBasis.medianLotPerUnit, 120000);
+    assert.equal(K.landBasis.basis, 'competitive-bid'); assert.deepEqual(K.landBasis.tracks, ['open-market']); assert.equal(K.landBasis.vat, 'not-stated-by-source'); assert.match(K.landBasis.developmentCost, /excluded/);
+    assert.deepEqual(K.landBasis.competitionTypes.map((x) => x.code), [1]); assert.equal(K.landBasis.period.scope, 'current');
+    assert.equal(hist.kpis.landBasis.lots, 2); assert.equal(hist.kpis.landBasis.perUnit, Math.round((12000000 + 10000000) / 300));
+    assert.ok(cur.stateLand.includes('not all residential land'));
+    const st = Q.status({ dataDir: dir });
+    assert.equal(st.store.reads, 'bundled files (data/land/ in the deployment)'); assert.ok(st.detailCoverage.listed === 8);
+    /* a record view carries lineage and the construction chain; no evidence → "—"-grade nulls */
+    const one = Q.record(awarded.id, { dataDir: dir });
+    assert.ok(one.lineage.predecessors.every((l) => l.relation === 'same-parcel'), 'fixture lots share a parcel: site-level links only, never a lot-level link'); assert.equal(one.construction.chain.length, 0); assert.equal(one.construction.permit, null); assert.equal(one.construction.start, null);
+  });
+
   console.log('land: distinctness & registry');
   await t('nothing in the layer is a transaction: no sale-record fields, and subsidized lotteries are a different source', () => {
     const r = norm(row(), detail(row(), { Tik: [lot(WIN)] }), null);
