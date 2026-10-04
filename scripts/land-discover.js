@@ -15,6 +15,7 @@
 //   node scripts/land-discover.js --datagov        data.gov.il catalogue: land / tender / planning datasets + schemas
 //   node scripts/land-discover.js --datagov-profile  whole-table profiles + join checks of the resources found
 //   node scripts/land-discover.js --xplan          Planning Administration ArcGIS (xplan) services and plan layers
+//   node scripts/land-discover.js --xplan-plan 'a|b'  exact plan-number lookups in the blue-lines layer, every attribute
 //   node scripts/land-discover.js --moch           MoCH development / infrastructure tender datasets (data.gov.il)
 //   node scripts/land-discover.js --all
 //
@@ -361,6 +362,23 @@ async function xplan() {
 (async () => {
   const all = has('all');
   if (has('rmi-codes')) await rmiCodes();
+  if (has('xplan-plan')) {
+    // exact plan-number lookups in the blue-lines layer, with every attribute (so the quantity codes can be read off known plans)
+    const nums = String(argVal('xplan-plan') || '').split('|').map((x) => x.trim()).filter(Boolean);
+    for (const n of nums) {
+      for (const [label, where] of [['exact', `pl_number='${n.replace(/'/g, "''")}'`], ['like', `pl_number LIKE '%${n.replace(/'/g, "''").replace(/^[^\/]*\//, '')}%'`]]) {
+        try {
+          const r = await req(`${XPLAN}/PlanningPublic/Xplan/MapServer/1/query?where=${encodeURIComponent(where)}&outFields=*&returnGeometry=false&resultRecordCount=5&f=pjson`, { timeoutMs: 60000 });
+          const feats = (r.json && r.json.features) || [];
+          out({ kind: 'xplanPlan', plan: n, label, status: r.status, n: feats.length, rows: feats.map((f) => f.attributes), error: r.json && r.json.error });
+        } catch (e) { out({ kind: 'xplanPlan', plan: n, label, error: e.message }); }
+        if (label === 'exact') { /* the like-search only when exact found nothing */ }
+      }
+    }
+    // the Mavat quantity code glossary, if the layer's metadata carries field aliases / domains
+    try { const r = await req(`${XPLAN}/PlanningPublic/Xplan/MapServer/1?f=pjson`); out({ kind: 'xplanLayerMeta', fields: (r.json.fields || []).map((f) => [f.name, f.alias, f.domain ? trim(f.domain, 200) : null]), description: trim(r.json.description, 600) }); }
+    catch (e) { out({ kind: 'xplanLayerMeta', error: e.message }); }
+  }
   if (has('rmi-tables')) { const r = await req(RMI + '/GeneralTablesApi/Get', { headers: RMI_HEADERS }); const rows = Array.isArray(r.json) ? r.json : [];
     const by = {}; for (const x of rows) (by[x.TableID + ' ' + x.TableName] = by[x.TableID + ' ' + x.TableName] || []).push([x.Code, x.Value, x.MichrazPail, x.Status, x.Group]);
     out({ kind: 'rmiTables', status: r.status, n: rows.length, tables: by }); }

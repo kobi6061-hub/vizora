@@ -13,10 +13,10 @@ on:
       mode:
         description: 'rmi (ILA tender site API) | datagov (catalogue + schemas) | moch (MoCH tender datasets) | xplan (Planning Administration GIS) | all | rmi-detail / rmi-full (ids = MichrazIDs, comma-separated) | rmi-codes (the app bundle: API paths + code tables)'
         type: choice
-        options: [all, rmi, datagov, datagov-profile, moch, xplan, rmi-detail, rmi-full, rmi-codes, rmi-tables]
+        options: [all, rmi, datagov, datagov-profile, moch, xplan, rmi-detail, rmi-full, rmi-codes, rmi-tables, xplan-plan]
         default: all
       ids:
-        description: 'rmi-detail: MichrazIDs, comma-separated'
+        description: 'rmi-detail / rmi-full: MichrazIDs, comma-separated · xplan-plan: plan numbers, |-separated'
         type: string
         default: ''
 
@@ -40,5 +40,6 @@ jobs:
           case "$MODE" in
             rmi-detail) node scripts/land-discover.js --rmi-detail "$IDS" ;;
             rmi-full)   node scripts/land-discover.js --rmi-full "$IDS" ;;
+            xplan-plan) node scripts/land-discover.js --xplan-plan "$IDS" ;;
             *)          node scripts/land-discover.js --"$MODE" ;;
           esac
