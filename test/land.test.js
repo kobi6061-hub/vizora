@@ -467,6 +467,12 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     assert.ok(cur.stateLand.includes('not all residential land'));
     const st = Q.status({ dataDir: dir });
     assert.equal(st.store.reads, 'bundled files (data/land/ in the deployment)'); assert.ok(st.detailCoverage.listed === 8);
+    assert.equal(st.store.supabase, 'no live run recorded'); assert.equal(st.store.supabaseRun, null); assert.match(st.store.dbFirstReads, /not implemented/);
+    /* the store outcome lives in the run's own `<runId>:store` entry; the status reports that recorded value, never a guess */
+    s.appendRun({ id: 'land-run-1', source: 'rmi:michrazim', startedAt: '2026-10-04T23:24:45.712Z', finishedAt: '2026-10-04T23:35:07.000Z', status: 'ok', retrievalMethod: 'live-api' });
+    s.appendRun({ id: 'land-run-1:store', source: 'rmi:michrazim', startedAt: '2026-10-04T23:24:45.712Z', finishedAt: '2026-10-04T23:35:07.528Z', status: 'ok', note: 'store outcome of land-run-1', store: 'not-configured', retrievalMethod: 'none' });
+    const st2 = Q.status({ dataDir: dir });
+    assert.equal(st2.store.supabase, 'not-configured'); assert.deepEqual(st2.store.supabaseRun, { id: 'land-run-1', recordedAt: '2026-10-04T23:35:07.528Z' });
     /* a record view carries lineage and the construction chain; no evidence → "—"-grade nulls */
     const one = Q.record(awarded.id, { dataDir: dir });
     assert.ok(one.lineage.predecessors.every((l) => l.relation === 'same-parcel'), 'fixture lots share a parcel: site-level links only, never a lot-level link'); assert.equal(one.construction.chain.length, 0); assert.equal(one.construction.permit, null); assert.equal(one.construction.start, null);

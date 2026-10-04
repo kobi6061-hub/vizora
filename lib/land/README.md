@@ -114,8 +114,9 @@ attached only to an awarded tender and only from rows whose contract year is not
 * **Construction** evidence is an explicit chain — tender → block/parcel → MoCH progress record (site, building, units)
   → latest stage → source and as-of date — only on awarded tenders; everything else is "—".
 * **Store truth** (`view=status` → `store`): the page reads the bundled `data/land/` files; the Supabase tables exist in
-  the migration and are written only when the Actions secrets exist (each run records its store outcome); DB-first reads
-  are not implemented.
+  the migration and are written only when the Actions secrets exist (each run records its store outcome in its own
+  `<runId>:store` entry of `sync-runs.jsonl`, and `store.supabase` reports that recorded value — `not-configured` until the
+  secrets exist — with the run it comes from); DB-first reads are not implemented.
 
 ## API (`api/land.js`, session-gated)
 
