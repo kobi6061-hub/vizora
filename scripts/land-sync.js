@@ -228,7 +228,7 @@ function readReplay(file) {
       source: { id: SOURCE.id, publisher: SOURCE.publisher, name: SOURCE.name, url: SOURCE.url, classification: SOURCE.classification, cadence: SOURCE.cadence },
       endpoint: LIST_ENDPOINT, snapshotHash: hash, snapshotFetchedAt: listChanged ? fetchedAt : prevMeta.snapshotFetchedAt, checkedAt: argVal('from') ? (prevMeta && prevMeta.checkedAt) || fetchedAt : fetchedAt,
       normalizerVersion: NORMALIZER_VERSION, rows: rows.length, records: all.length, inLatestSource: live.length, notInLatestSource: all.length - live.length,
-      coverage: coverageOf(live),
+      detailCoverage: coverageOf(live),                                  // retrieved / unavailable / refused / pending, per year (lib/land/coverage.js)
       detail: { withDetail: live.filter((r) => r.lotsCount != null).length, withGeometry: live.filter((r) => r.geometry).length, oldestDetailFetchedAt: detailAges[0] || null, newestDetailFetchedAt: detailAges[detailAges.length - 1] || null,
         activeWithDetail: live.filter((r) => (r.statusCode === 1 || r.statusCode === 2) && r.lotsCount != null).length, active: live.filter((r) => r.statusCode === 1 || r.statusCode === 2).length,
         detailUnavailable: live.filter((r) => r.lotsCount == null && r.provenance.detailError).length, budget, lastRunFetched: details.size },
