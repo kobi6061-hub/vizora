@@ -12,6 +12,7 @@
 //   node scripts/land-discover.js --rmi-full <id,id,…>     the complete detail payload (every lot, bid, parcel) of given MichrazIDs
 //   node scripts/land-discover.js --rmi-codes      the public app's bundle: API paths and the code tables / labels it ships
 //   node scripts/land-discover.js --datagov        data.gov.il catalogue: land / tender / planning datasets + schemas
+//   node scripts/land-discover.js --datagov-profile  whole-table profiles + join checks of the resources found
 //   node scripts/land-discover.js --xplan          Planning Administration ArcGIS (xplan) services and plan layers
 //   node scripts/land-discover.js --moch           MoCH development / infrastructure tender datasets (data.gov.il)
 //   node scripts/land-discover.js --all
@@ -234,6 +235,67 @@ async function datagov() {
   }
 }
 
+/* whole-table profile of the datastore resources the vertical would depend on: fill rates, code / status
+   distributions, year ranges, join-key coverage between the MoCH tender table and its bids table */
+const LT_RESOURCES = {
+  planningInventory: '99aad98f-2b54-4eea-834d-650b56389bf3',   // רמ"י · מלאי תכנוני למגורים
+  mochTenders: '04e375ef-08a6-4327-8044-7bd595c4d106',         // משרד הבינוי · תוצאות מכרזי פיתוח ותשתית
+  mochBids: '722aebc6-5541-46fa-abcf-15b06e02c70c',            // משרד הבינוי · סכומי ההצעות
+  mochDevCosts: 'bf164a03-55c7-4bea-8740-66ce60a51a2c',        // משרד הבינוי · עלויות פיתוח בבניה העירונית
+  mochProgress: '1ec45809-5927-430a-9b30-77f77f528ce3',        // משרד הבינוי · דיווחי התקדמות הבניה - בניה רוויה
+};
+async function allRows(id) {
+  const rows = []; let offset = 0;
+  for (;;) {
+    const r = await ck('datastore_search', { resource_id: id, limit: 2000, offset });
+    rows.push(...r.records); offset += r.records.length;
+    if (!r.records.length || offset >= r.total) return { rows, total: r.total, fields: r.fields };
+  }
+}
+async function datagovProfile() {
+  const got = {};
+  for (const [name, id] of Object.entries(LT_RESOURCES)) {
+    try {
+      const { rows, total, fields } = await allRows(id);
+      got[name] = rows;
+      const meta = await ck('resource_show', { id });
+      const o = { kind: 'ltProfile', name, id, total, read: rows.length, lastModified: meta.last_modified, fields: fields.map((f) => f.id + ':' + f.type), profile: profile(rows, 40) };
+      if (name === 'planningInventory') Object.assign(o, { stage: dist(rows, 'שלב תכנוני'), initiator: dist(rows, 'יזם תכנון', 15),
+        approvalYear: dist(rows.map((r) => ({ y: String(r['תאריך פרסום לאישור ברשומות'] || '').slice(0, 4) })), 'y', 30),
+        depositYear: dist(rows.map((r) => ({ y: String(r['תאריך פרסום להפקדה ברשומות'] || '').slice(0, 4) })), 'y', 30),
+        unitsTotal: rows.reduce((a, r) => a + (Number(r['יחד פוטנציאל לשיווק']) || 0), 0),
+        topCities: Object.entries(rows.reduce((a, r) => { const k = r['יישוב']; a[k] = (a[k] || 0) + (Number(r['יחד פוטנציאל לשיווק']) || 0); return a; }, {})).sort((x, y) => y[1] - x[1]).slice(0, 15),
+        planNumberShapes: dist(rows.map((r) => ({ s: String(r['מספר תוכנית'] || '').replace(/\d+/g, '#') })), 's', 15), sample: rows.slice(0, 3) });
+      if (name === 'mochTenders') Object.assign(o, { withTenderId: rows.filter((r) => String(r.TenderID || '').trim()).length, year: dist(rows, 'TenderYear', 20),
+        descriptions: dist(rows.map((r) => ({ d: String(r.TenderDescription || '').split(/[\s-]/)[0] })), 'd', 25), proposals: dist(rows, 'ProposalsNumber', 12),
+        decisionRange: dateRange(rows, 'DecisionDate'), publishRange: dateRange(rows, 'PublishDate'), omdanTotal: rows.reduce((a, r) => a + (Number(r.OMDAN) || 0), 0), sample: rows.slice(0, 3) });
+      if (name === 'mochBids') Object.assign(o, { status: dist(rows, 'ProposalStatus', 12), withProvider: rows.filter((r) => String(r.ProviderName || '').trim()).length,
+        distinctTenders: new Set(rows.map((r) => r.TenderID)).size, sample: rows.slice(0, 3) });
+      if (name === 'mochDevCosts') Object.assign(o, { status: dist(rows, 'StatusDescription', 20), districts: dist(rows, 'MahozName', 10), unitsTotal: rows.reduce((a, r) => a + (Number(r.LivingUnits) || 0), 0),
+        tenderIndexYears: dist(rows.map((r) => ({ y: String(r.TenderIndexDate || '').slice(-4) })), 'y', 25), sample: rows.slice(0, 3) });
+      if (name === 'mochProgress') Object.assign(o, { marketing: dist(rows, 'SHITAT_SHIVUK', 15), contractYear: dist(rows, 'SHNAT_HOZE', 25), districts: dist(rows, 'MAHOZ', 10),
+        withGush: rows.filter((r) => String(r.GUSH || '').trim() && r.GUSH !== '0').length, unitsTotal: rows.reduce((a, r) => a + (Number(r.YEHIDOT_BINYAN) || 0), 0),
+        stageFilled: Object.fromEntries(Object.keys(rows[0] || {}).filter((k) => /TAARICH_SHLAV/.test(k)).map((k) => [k, rows.filter((r) => String(r[k] || '').trim()).length])), sample: rows.slice(0, 3) });
+      out(o);
+    } catch (e) { out({ kind: 'ltProfile', name, id, error: e.message }); }
+  }
+  // the MoCH tender ↔ bids join: by TenderID when filled, and whether the bids table's TenderID matches the _id or TenderNumber instead
+  if (got.mochTenders && got.mochBids) {
+    const bidIds = new Set(got.mochBids.map((r) => String(r.TenderID)));
+    const byTenderId = got.mochTenders.filter((r) => bidIds.has(String(r.TenderID))).length;
+    const byRowId = got.mochTenders.filter((r) => bidIds.has(String(r._id))).length;
+    const byNumber = got.mochTenders.filter((r) => bidIds.has(String(r.TenderNumber))).length;
+    out({ kind: 'ltJoin', tenders: got.mochTenders.length, bidTenders: bidIds.size, joinByTenderID: byTenderId, joinByRowId: byRowId, joinByTenderNumber: byNumber,
+      bidIdRange: [...bidIds].map(Number).filter(Number.isFinite).sort((a, b) => a - b).filter((_, i, a) => i === 0 || i === a.length - 1) });
+  }
+  // MoCH sites ↔ construction progress ↔ dev costs: shared site codes
+  if (got.mochDevCosts && got.mochProgress) {
+    const atar = new Set(got.mochDevCosts.map((r) => `${r.LamasCode}|${r.AtarCode}`));
+    out({ kind: 'ltJoin2', devCostSites: atar.size, progressRowsWithAtarName: got.mochProgress.filter((r) => String(r.ATAR || '').trim()).length,
+      progressMithamSample: got.mochProgress.slice(0, 5).map((r) => [r.YESHUV_LAMAS, r.ATAR, r.MISPAR_MITHAM, r.SHEM_MITHAM, r.MIGRASH, r.GUSH, r.HELKA, r.SHITAT_SHIVUK, r.SHNAT_HOZE]) });
+  }
+}
+
 /* ───────────────────────── MoCH tenders (data.gov.il) ───────────────────────── */
 async function moch() {
   for (const q of ['פיתוח ותשתית', 'מכרזי פיתוח ותשתית', 'אומדן', 'הצעות זוכות', 'מכרזים משרד הבינוי']) {
@@ -282,6 +344,7 @@ async function xplan() {
 (async () => {
   const all = has('all');
   if (has('rmi-codes')) await rmiCodes();
+  if (has('datagov-profile')) await datagovProfile();
   if (has('rmi-full')) await rmiFull(String(argVal('rmi-full') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (has('rmi-detail')) await rmiDetails(String(argVal('rmi-detail') || '').split(',').map((x) => x.trim()).filter(Boolean).map((id) => ({ id, label: 'asked' })));
   if (all || has('rmi')) await rmi();
