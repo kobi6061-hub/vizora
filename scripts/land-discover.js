@@ -164,9 +164,25 @@ async function rmiCodes() {
         while ((i = js.text.indexOf(kw, i + 1)) > -1 && n++ < 6) ctx.push(js.text.slice(Math.max(0, i - 160), i + 260).replace(/\s+/g, ' '));
         out({ kind: 'rmiKeyword', kw, n: ctx.length, ctx });
       }
-      // Hebrew string literals that look like status / type names
-      const he = [...new Set([...js.text.matchAll(/"([֐-׿][֐-׿ \-"'/()״׳]{3,45})"/g)].map((m) => m[1]))].filter((x) => /מכרז|מפורסם|בוטל|זוכ|ועד|הגרל|מחיר|דיור|בניי|מגורים|מסחר|מוקפא|נדחה|נסגר|תוצא|הקפא|פעיל|הושלם|חוזה/.test(x));
-      out({ kind: 'rmiHebrewLiterals', url: u, n: he.length, literals: he.slice(0, 300) });
+      // the bundle escapes Hebrew as \uXXXX: decode, then list the literals that look like status / type names
+      const dec = js.text.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+      const he = [...new Set([...dec.matchAll(/"([֐-׿][֐-׿ \-"'/()״׳,.:]{3,60})"/g)].map((m) => m[1]))].filter((x) => /מכרז|מפורסם|בוטל|זוכ|ועד|הגרל|מחיר|דיור|בניי|מגורים|מסחר|מוקפא|נדחה|נסגר|תוצא|הקפא|פעיל|הושלם|חוזה|שומה|פיתוח|ערבות/.test(x));
+      out({ kind: 'rmiHebrewLiterals', url: u, n: he.length, literals: he.slice(0, 400) });
+      // where the code tables come from: every URL-ish literal (assets, json, api) and the table ids the app names
+      const urls = [...new Set([...dec.matchAll(/"([^"\s]*(?:assets|\.json|\/api\/|GeneralTable|generalTable|Config|config)[^"\s]*)"/g)].map((m) => m[1]))].filter((x) => x.length < 160);
+      const tableIds = [...new Set([...dec.matchAll(/(generalTable_[A-Za-z]+|codeValue_[A-Za-z]+)\s*[:=]\s*("?[\w]+"?)/g)].map((m) => m[1] + '=' + m[2]))];
+      out({ kind: 'rmiAppUrls', urls: urls.slice(0, 120), tableIds: tableIds.slice(0, 80) });
+      for (const cand of urls.filter((x) => /\.json$/i.test(x)).slice(0, 12)) {
+        const cu = cand.startsWith('http') ? cand : RMI_SITE + cand.replace(/^\.?\//, '');
+        try { const r = await req(cu); out({ kind: 'rmiAsset', url: cu, status: r.status, type: r.type, excerpt: trim(r.json || r.text, 3000) }); }
+        catch (e) { out({ kind: 'rmiAsset', url: cu, error: e.message }); }
+      }
+      // the general-table service: the shapes an Angular service of that name would call
+      for (const p of ['GeneralTableApi/Get', 'GeneralTableApi/GetAll', 'GeneralTablesApi/Get', 'TablesApi/Get', 'KodimApi/GetAll', 'SearchApi/GetGeneralTables', 'MichrazDetailsApi/GetGeneralTable', 'ConfigApi/Get', 'ConfigurationApi/Get']) {
+        try { const r = await req(RMI + '/' + p, { headers: RMI_HEADERS }); if (r.status !== 404) out({ kind: 'rmiRef2', path: p, status: r.status, excerpt: trim(r.json || r.text, 2500) }); }
+        catch (e) { out({ kind: 'rmiRef2', path: p, error: e.message }); }
+        await sleep(400);
+      }
     } catch (e) { out({ kind: 'rmiBundle', url: u, error: e.message }); }
   }
 }

@@ -23,10 +23,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: land-discover
-  cancel-in-progress: false
-
 jobs:
   discover:
     runs-on: ubuntu-latest
