@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'rmi (ILA tender site API) | datagov (catalogue + schemas) | moch (MoCH tender datasets) | xplan (Planning Administration GIS) | all | rmi-detail (ids = MichrazIDs, comma-separated)'
+        description: 'rmi (ILA tender site API) | datagov (catalogue + schemas) | moch (MoCH tender datasets) | xplan (Planning Administration GIS) | all | rmi-detail / rmi-full (ids = MichrazIDs, comma-separated) | rmi-codes (the app bundle: API paths + code tables)'
         type: choice
-        options: [all, rmi, datagov, moch, xplan, rmi-detail]
+        options: [all, rmi, datagov, moch, xplan, rmi-detail, rmi-full, rmi-codes]
         default: all
       ids:
         description: 'rmi-detail: MichrazIDs, comma-separated'
@@ -43,5 +43,6 @@ jobs:
         run: |
           case "$MODE" in
             rmi-detail) node scripts/land-discover.js --rmi-detail "$IDS" ;;
+            rmi-full)   node scripts/land-discover.js --rmi-full "$IDS" ;;
             *)          node scripts/land-discover.js --"$MODE" ;;
           esac

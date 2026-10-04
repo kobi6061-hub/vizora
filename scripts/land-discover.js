@@ -8,7 +8,9 @@
 // .github/workflows/land-discover.yml); the Claude sandbox cannot reach it.
 //
 //   node scripts/land-discover.js --rmi            Israel Land Authority tender site API (apps.land.gov.il/MichrazimSite)
-//   node scripts/land-discover.js --rmi-detail <id,id,…>   full detail + map payload of given MichrazIDs
+//   node scripts/land-discover.js --rmi-detail <id,id,…>   profiled detail + map payload of given MichrazIDs
+//   node scripts/land-discover.js --rmi-full <id,id,…>     the complete detail payload (every lot, bid, parcel) of given MichrazIDs
+//   node scripts/land-discover.js --rmi-codes      the public app's bundle: API paths and the code tables / labels it ships
 //   node scripts/land-discover.js --datagov        data.gov.il catalogue: land / tender / planning datasets + schemas
 //   node scripts/land-discover.js --xplan          Planning Administration ArcGIS (xplan) services and plan layers
 //   node scripts/land-discover.js --moch           MoCH development / infrastructure tender datasets (data.gov.il)
@@ -140,6 +142,46 @@ async function rmiDetails(list) {
   }
 }
 
+/* the public app's bundle: every API path it calls, and the code tables it ships (status / type / purpose / region labels) */
+async function rmiCodes() {
+  const page = await req(RMI_SITE, { accept: 'text/html' });
+  const scripts = [...page.text.matchAll(/src="([^"]+\.js)"/g)].map((m) => m[1]).filter((s) => /main|chunk|app/i.test(s));
+  for (const s of scripts) {
+    const u = s.startsWith('http') ? s : RMI_SITE + s.replace(/^\.?\//, '');
+    try {
+      const js = await req(u, { accept: '*/*', timeoutMs: 90000 });
+      const paths = new Set([...js.text.matchAll(/([A-Za-z]+Api\/[A-Za-z]+)/g)].map((m) => m[1]));
+      out({ kind: 'rmiBundle', url: u, status: js.status, chars: js.text.length, apiPaths: [...paths].sort() });
+      // Hebrew labels next to numeric codes: {id:3,name:"מפורסם"} / value:3,label:"…" / case 3: "…"
+      const labels = [];
+      for (const m of js.text.matchAll(/\{[^{}]{0,40}?(?:id|value|code|Kod[A-Za-z]*|key)\s*:\s*(\d{1,3})\s*,[^{}]{0,80}?(?:name|label|text|title|Teur|desc)[A-Za-z]*\s*:\s*"([^"]{2,60})"[^{}]{0,60}\}/g)) labels.push(m[1] + '=' + m[2]);
+      for (const m of js.text.matchAll(/case\s+(\d{1,3})\s*:\s*(?:return\s+)?"([֐-׿][^"]{1,60})"/g)) labels.push('case ' + m[1] + '=' + m[2]);
+      out({ kind: 'rmiLabels', url: u, n: labels.length, labels: [...new Set(labels)].slice(0, 400) });
+      // context around the status / type / purpose keywords, so the mapping is read from the app itself
+      for (const kw of ['StatusMichraz', 'KodSugMichraz', 'KodYeudMichraz', 'KodMerchav', 'StatusMichrazMurchav', 'SugTacharut', 'MechirSafType', 'KodTzuratHaknaya', 'SugMechirMufchat']) {
+        const ctx = []; let i = -1, n = 0;
+        while ((i = js.text.indexOf(kw, i + 1)) > -1 && n++ < 6) ctx.push(js.text.slice(Math.max(0, i - 160), i + 260).replace(/\s+/g, ' '));
+        out({ kind: 'rmiKeyword', kw, n: ctx.length, ctx });
+      }
+      // Hebrew string literals that look like status / type names
+      const he = [...new Set([...js.text.matchAll(/"([֐-׿][֐-׿ \-"'/()״׳]{3,45})"/g)].map((m) => m[1]))].filter((x) => /מכרז|מפורסם|בוטל|זוכ|ועד|הגרל|מחיר|דיור|בניי|מגורים|מסחר|מוקפא|נדחה|נסגר|תוצא|הקפא|פעיל|הושלם|חוזה/.test(x));
+      out({ kind: 'rmiHebrewLiterals', url: u, n: he.length, literals: he.slice(0, 300) });
+    } catch (e) { out({ kind: 'rmiBundle', url: u, error: e.message }); }
+  }
+}
+/* the complete payload of a few tenders (every lot, bid and parcel row), for the normalizer contract */
+async function rmiFull(ids) {
+  for (const id of ids) {
+    try {
+      const r = await req(`${RMI}/MichrazDetailsApi/Get?michrazID=${encodeURIComponent(id)}`, { headers: RMI_HEADERS });
+      const j = r.json || {};
+      const { MichrazDocList, Comments, MichrazFullDocument, ...rest } = j;
+      out({ kind: 'rmiFull', id, status: r.status, docs: Array.isArray(MichrazDocList) ? MichrazDocList.length : null, payload: rest });
+    } catch (e) { out({ kind: 'rmiFull', id, error: e.message }); }
+    await sleep(800);
+  }
+}
+
 /* ───────────────────────── data.gov.il ───────────────────────── */
 async function ck(action, params = {}) {
   const u = new URL(CKAN + '/' + action);
@@ -239,6 +281,8 @@ async function xplan() {
 
 (async () => {
   const all = has('all');
+  if (has('rmi-codes')) await rmiCodes();
+  if (has('rmi-full')) await rmiFull(String(argVal('rmi-full') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (has('rmi-detail')) await rmiDetails(String(argVal('rmi-detail') || '').split(',').map((x) => x.trim()).filter(Boolean).map((id) => ({ id, label: 'asked' })));
   if (all || has('rmi')) await rmi();
   if (all || has('datagov')) await datagov();
