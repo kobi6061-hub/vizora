@@ -17,7 +17,7 @@
  "snapshotHash": "f1b72332e9e9902fffd4b5d659b79cab9d180e22",
  "snapshotFetchedAt": "2026-10-01T16:44:34.681Z",
  "normalizerVersion": 2,
- "checkedAt": "2026-10-05T09:35:49.814Z",
+ "checkedAt": "2026-10-06T09:23:58.024Z",
  "rows": 2352,
  "records": 2352,
  "rejected": 0,
@@ -29,5 +29,5 @@
   "signupEndDateTo": "2025-01-21"
  },
  "historyEvents": 0,
- "lastRun": "housing-20261005T093549Z"
+ "lastRun": "housing-20261006T092358Z"
 }
