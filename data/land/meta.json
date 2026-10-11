@@ -8,9 +8,9 @@
   "cadence": "continuous — the site is the Authority's operational tender system; UpdateDate per tender"
  },
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
- "snapshotHash": "c230d7e1e1e67a0d62118597d3cb96e1e00829fe1182786f798825f571271e96",
- "snapshotFetchedAt": "2026-10-10T09:50:45.000Z",
- "checkedAt": "2026-10-10T09:50:45.000Z",
+ "snapshotHash": "0a75f6221025758e2e8f1af73e2d5bcb5176427c5a52561e67e1cf59c73fef8e",
+ "snapshotFetchedAt": "2026-10-11T10:00:39.916Z",
+ "checkedAt": "2026-10-11T10:00:39.916Z",
  "normalizerVersion": 4,
  "rows": 10643,
  "records": 10643,
@@ -305,8 +305,8 @@
  "detail": {
   "withDetail": 10640,
   "withGeometry": 24,
-  "oldestDetailFetchedAt": "2026-10-04T23:03:35.709Z",
-  "newestDetailFetchedAt": "2026-10-10T09:59:32.095Z",
+  "oldestDetailFetchedAt": "2026-10-04T23:13:22.470Z",
+  "newestDetailFetchedAt": "2026-10-11T10:09:24.506Z",
   "activeWithDetail": 445,
   "active": 445,
   "detailUnavailable": 3,
@@ -317,15 +317,15 @@
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 1157
+  "lastRunFetched": 1188
  },
  "byLifecycle": {
-  "open": 262,
+  "open": 263,
   "closed": 630,
   "awarded": 6576,
   "decided-no-award": 2404,
   "cancelled": 563,
-  "published": 183,
+  "published": 182,
   "frozen": 22,
   "decided": 3
  },
@@ -363,8 +363,8 @@
  },
  "joins": {
   "xplan": {
-   "asked": 2,
-   "requests": 1,
+   "asked": 0,
+   "requests": 0,
    "found": 0,
    "complete": true,
    "known": 444,
@@ -384,6 +384,6 @@
    "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
   }
  },
- "historyEvents": 92937,
- "lastRun": "land-20261010T095028Z"
+ "historyEvents": 92958,
+ "lastRun": "land-20261011T100021Z"
 }
