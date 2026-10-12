@@ -75,6 +75,15 @@
   and where they go); `scripts/supabase-verify.js` + `.github/workflows/supabase-verify.yml` verify it. Store of
   record: Supabase once configured; `data/housing/` is the bundled fallback (`freshness.store` says which served).
 
+- `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
+  `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
+  its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,
+  XIRR, MOIC = distributions ÷ invested, break-even / max-price solvers, scenarios + stress presets, explained risk score,
+  hurdle-based structure signal), inline-SVG charts and CSV / XLSX / print-PDF / JSON exports. Its only PROPX touch points
+  are one rail link in `index.html` (hidden in the offline build), the rewrite and dev-server parity; it reads PROPX data
+  GET-only (geo search, transactions, land, housing, market snapshot) and keeps deals / fund settings in the browser
+  (`altaris:*` keys) — there is no server-side ALTARIS store yet (see `altaris/README.md`).
+
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).
 `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` / `PROPX_JOB_TOKEN` live only in GitHub Actions / server env — never
 in the repo or the page.

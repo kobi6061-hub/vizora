@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='.5' y='.5' width='23' height='23' rx='5.5' fill='%23ffffff' stroke='%23c9ced6' stroke-width='1'/%3E%3Cpath d='M5 12h4.5M9.5 12c3 0 3.5-5 7-5H19M9.5 12H19M9.5 12c3 0 3.5 5 7 5H19' fill='none' stroke='%2312294f' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<script>/* the shared PROPX theme preference (dark default; a stored "light" wins) — applied before first paint */
+try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentElement.dataset.theme="dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<title>ALTARIS · PROPX</title>
+<meta name="altaris-build" content="2026-10-12.ax-1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
+<link rel="stylesheet" href="/altaris/altaris.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="lockup" href="/" aria-label="PROPX — חזרה לדשבורד">
+      <span class="wordmark"><b>PROPX</b><span>מידע הוא הנכס הראשון</span></span>
+    </a>
+    <span class="page-ctx">ALTARIS · מנוע חיתום והקצאת הון | פנימי</span>
+    <div class="top-end">
+      <button class="tool-btn" id="themeBtn" type="button" aria-label="מצב תצוגה"></button>
+      <a class="tool-btn" href="/api/logout" aria-label="יציאה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- the PROPX rail, replicated: every PROPX item opens its section on the dashboard -->
+<nav class="rail" aria-label="ניווט ראשי">
+  <a href="/#overview" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>סקירה</span></a>
+  <a href="/#map" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>מפה</span></a>
+  <a href="/#prices" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span>מחירים</span></a>
+  <a href="/#table" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span>שכונות</span></a>
+  <a href="/#compare" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span>השוואה</span></a>
+  <a href="/#insightsSec" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span>תובנות</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
+  <a href="/#capital" class="ri cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span>הון</span></a>
+  <a href="/#calc" class="ri cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span>עסקה</span></a>
+  <a href="/#txSection" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span>מכירות</span></a>
+  <a href="/#housing" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span>דיור</span></a>
+  <a href="/#land" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 12l9-7 9 7"/></svg><span>קרקעות</span></a>
+  <a href="/altaris" class="ri on" aria-current="page" title="ALTARIS — מנוע חיתום והקצאת הון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h6"/><path d="M9 12c3.2 0 4-6 8-6h4"/><path d="M9 12h12"/><path d="M9 12c3.2 0 4 6 8 6h4"/></svg><span>ALTARIS</span></a>
+  <a href="/#guide" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span>מדריך</span></a>
+  <a href="/#sources" class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span>מקורות</span></a>
+  <div class="rail-sp"></div>
+  <button class="ri rt" id="themeBtnRail" type="button" aria-label="מצב תצוגה"></button>
+  <a class="ri rt" href="/api/logout" aria-label="יציאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg><span>יציאה</span></a>
+</nav>
+
+<div class="ax-head">
+  <div class="wrap ax-head-in">
+    <div class="ax-title-row">
+      <div>
+        <div class="ax-mark"><span class="ax-word">ALTARIS</span><i aria-hidden="true"></i></div>
+        <h1>ALTARIS — מנוע חיתום והקצאת הון</h1>
+        <p class="ax-sub">השווה בין רכישה, מימון ומבנה היברידי וקבע את מבנה ההון האופטימלי לעסקה.</p>
+        <p class="ax-muted" style="margin-top:2px">בחינת עסקאות מגורים, מבנה ההון, סיכון ותשואה</p>
+      </div>
+      <div class="ax-head-tools">
+        <button class="ax-btn" type="button" data-act="new">עסקה חדשה ריקה</button>
+        <button class="ax-btn" id="axSettingsBtn" type="button" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2"/></svg>הגדרות קרן</button>
+      </div>
+    </div>
+    <div class="ax-tabs-row">
+      <div class="ax-tabs" id="axTabs" role="group" aria-label="מצבי ALTARIS">
+        <button type="button" data-view="deal" aria-pressed="true">עסקה חדשה</button>
+        <button type="button" data-view="compare" aria-pressed="false">השוואת מבנים</button>
+        <button type="button" data-view="portfolio" aria-pressed="false">פורטפוליו</button>
+        <button type="button" data-view="saved" aria-pressed="false">עסקאות שמורות<span class="n"></span></button>
+      </div>
+    </div>
+    <nav class="ax-steps" id="axSteps" aria-label="תהליך החיתום"></nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="ax-layout" id="axLayout">
+    <div class="ax-main" id="axMain" aria-live="off"></div>
+    <aside class="ax-aside" id="axAside" aria-label="סיכום חיתום חי"></aside>
+  </div>
+</main>
+
+<div class="ax-mbar" id="axMbar" hidden aria-label="סיכום חיתום"></div>
+<div class="ax-tip" id="axTip" role="tooltip" hidden></div>
+<div id="ax-print"></div>
+<noscript><p style="padding:24px">ALTARIS דורש JavaScript.</p></noscript>
+
+<!-- read-only PROPX market snapshot (Bank of Israel rate, CBS index), then the module -->
+<script src="/data/market/latest.js" defer></script>
+<script src="/altaris/engine.js" defer></script>
+<script src="/altaris/charts.js" defer></script>
+<script src="/altaris/export.js" defer></script>
+<script src="/altaris/app.js" defer></script>
+</body>
+</html>

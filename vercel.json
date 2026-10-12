@@ -40,6 +40,24 @@
       ]
     },
     {
+      "source": "/altaris",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/altaris/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-cache, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/login.html",
       "headers": [
         {
@@ -82,5 +100,11 @@
       "maxDuration": 60,
       "includeFiles": "data/transactions/watch.json"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/altaris",
+      "destination": "/altaris/index.html"
+    }
+  ]
 }

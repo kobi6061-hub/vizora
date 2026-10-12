@@ -32,8 +32,9 @@ SRC_SHA = hashlib.sha256(SRC.read_bytes()).hexdigest()
 s = "\n".join(ln for ln in s.split("\n") if "<!-- doc-skeleton -->" not in ln)
 
 OFFLINE_CSS = """
-/* offline build: no server session — hide logout controls */
-#logoutBtn,.rail a[href="/api/logout"]{display:none!important}
+/* offline build: no server session — hide logout controls, and the ALTARIS
+   link (a server route, /altaris, that an offline file cannot open) */
+#logoutBtn,.rail a[href="/api/logout"],.rail a[href="/altaris"]{display:none!important}
 """
 
 # no server offline: inline the latest official-indicator snapshot in place of

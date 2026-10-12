@@ -13,7 +13,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET || '';
 const COOKIE = 'kobix_session';
 const MAX_AGE_S = 60 * 60 * 12;
 
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.txt': 'text/plain', '.ico': 'image/x-icon' };
+const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.txt': 'text/plain', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
 const hmacHex = (msg) => createHmac('sha256', SESSION_SECRET).update('kobix|' + msg).digest('hex');
 
@@ -70,7 +70,8 @@ http.createServer(async (req, res) => {
   }
 
   // static
-  const file = p === '/' ? '/index.html' : p;
+  // vercel.json rewrites: /altaris → /altaris/index.html (the ALTARIS module); a directory path serves its index
+  const file = p === '/' ? '/index.html' : p === '/altaris' || p === '/altaris/' ? '/altaris/index.html' : p;
   try {
     const data = await readFile(path.join(ROOT, path.normalize(file).replace(/^([.][.][/\\])+/, '')));
     res.setHeader('content-type', MIME[path.extname(file)] || 'application/octet-stream');
