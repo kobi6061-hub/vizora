@@ -380,7 +380,7 @@ t('the local dev server mirrors the rewrite', () => {
   assert.match(SRC('scripts/kobix-dev-server.mjs'), /p === '\/altaris' \|\| p === '\/altaris\/' \? '\/altaris\/index\.html'/);
 });
 const APP = SRC('altaris/app.js');
-const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
+const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/cases.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
 t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else', () => {
   assert.ok(!/method\s*:/.test(APP), 'a request with an explicit method');
   assert.equal((APP.match(/\bfetch\(/g) || []).length, 1, 'fetch used outside getJSON');
@@ -400,7 +400,7 @@ t('no randomness, no credential, no secret in any ALTARIS file', () => {
   }
 });
 t('the developer price is never chosen automatically; a choice comes from the user (or the labelled example)', () => {
-  assert.ok(!/chosen\s*[:=]\s*'developer'/.test(APP + SRC('altaris/engine.js')));
+  assert.ok(!/chosen\s*[:=]\s*'developer'/.test(APP + SRC('altaris/engine.js') + SRC('altaris/cases.js')));
   const sets = [...APP.matchAll(/\.chosen\s*=(?!=)\s*([^;]+);/g)].map((m) => m[1].trim());
   assert.deepEqual(sets, ['el.value'], 'value.chosen is set somewhere other than the user radio');
   assert.match(APP, /chosen: 'units' \};\n\s*return d;/, 'the example deal chooses its unit-level values');
@@ -417,7 +417,7 @@ t('the page is native to PROPX: same tokens, theme key and session-gated shell',
     assert.ok(css.includes(tok) && idx.includes(tok.replace(':', ':')), tok);
   }
   assert.match(html, /localStorage\.getItem\("kobix:theme"\)/);
-  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/methodology.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
+  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/methodology.js', '/altaris/cases.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
   assert.ok(html.indexOf('/altaris/methodology.js') < html.indexOf('/altaris/app.js'), 'the methodology loads before the page controller');
 });
 
@@ -646,6 +646,154 @@ t('the methodology module is pure data: no DOM, storage, network or calculation'
   const m = SRC('altaris/methodology.js').replace(/\/\*[\s\S]*?\*\//g, '');
   assert.ok(!/document\.|window\.|localStorage|fetch\(|XMLHttpRequest|Math\./.test(m.replace(/root\.AltarisMethodology/g, '')));
   assert.ok(!/require\(/.test(m), 'the methodology does not import the engine');
+});
+
+/* ------------------------------------------------------------------------------------------------
+ * Investment cases (altaris/cases.js): five illustrative, synthetic institutional deals. They are
+ * inputs only — every figure comes from the ordinary engine — and they never enter saved deals,
+ * the portfolio or any PROPX dataset unless the user creates a working copy.
+ * ---------------------------------------------------------------------------------------------- */
+console.log('altaris: investment cases');
+const CSX = require('../altaris/cases.js');
+const CASE_SRC = SRC('altaris/cases.js');
+const runCase = (c, settings) => A.run(JSON.parse(JSON.stringify(c.deal)), settings || {}, { today: TODAY, portfolio: [] });
+const CASE_R = Object.fromEntries(CSX.CASES.map((c) => [c.id, runCase(c)]));
+const fnBody = (name) => { const i = APP.indexOf('function ' + name + '('); assert.ok(i >= 0, name); const j = APP.indexOf('\n  }\n', i); return APP.slice(i, j); };
+
+t('exactly five illustrative case templates, frozen, with the notice wording', () => {
+  assert.equal(CSX.CASES.length, 5);
+  assert.deepEqual(CSX.CASES.map((c) => c.id), ['park-18', 'hanassi-42', 'ganei-hapark', 'hagefen-renewal', 'coastal-portfolio-i']);
+  assert.ok(Object.isFrozen(CSX.CASES) && CSX.CASES.every((c) => Object.isFrozen(c) && Object.isFrozen(c.deal) && Object.isFrozen(c.deal.units)));
+  assert.equal(CSX.NOTICE.he, 'מקרה השקעה להמחשה · הנתונים סינתטיים ונבנו לצורך הדגמת מודל החיתום.');
+  assert.equal(CSX.NOTICE.en, 'Illustrative investment case · Synthetic data created to demonstrate the underwriting model.');
+  assert.match(CSX.EXPORT_MARK, /^ILLUSTRATIVE CASE · מקרה השקעה להמחשה/);
+});
+t('every template is complete: bilingual card + IC memo, deal details, varied unit rows, an explicit value, terms for all three structures, scenarios', () => {
+  const geo = JSON.parse(SRC('data/geo/localities.json'));
+  const locs = Array.isArray(geo) ? geo : geo.localities || geo.items || Object.values(geo)[0];
+  for (const c of CSX.CASES) {
+    for (const f of ['title', 'category', 'location', 'scale', 'thesis']) assert.ok(bi(c[f]), `${c.id}.${f}`);
+    for (const f of ['thesis', 'whyNow', 'risks', 'protection', 'exit']) assert.ok(bi(c.memo[f]) && c.memo[f].he.length > 60, `${c.id}.memo.${f}`);
+    assert.ok(A.STRATS.includes(c.primary));
+    const d = c.deal, i = d.info;
+    for (const f of ['name', 'developer', 'project', 'city', 'cityCode', 'neighborhood', 'address', 'unitTypes', 'constructionStatus', 'completionDate', 'startDate', 'source', 'owner', 'developerRating', 'notes']) assert.ok(String(i[f] || '').trim(), `${c.id}.info.${f}`);
+    assert.ok(locs.some((l) => String(l.code) === i.cityCode && l.he === i.city), `${c.id}: ${i.city} is the official locality ${i.cityCode}`);
+    assert.match(i.startDate, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(d.units.length >= 5 && d.units.every((u) => u.label && u.rooms >= 3 && u.sqm > 60 && u.supported > u.proposed && u.proposed > 0), `${c.id}: unit rows`);
+    assert.ok(new Set(d.units.map((u) => u.sqm)).size >= 0.6 * d.units.length && new Set(d.units.map((u) => u.supported)).size >= 0.8 * d.units.length && new Set(d.units.map((u) => u.rooms)).size >= 3, `${c.id}: units are not identical copies`);
+    assert.ok(A.VALUE_SOURCES.includes(d.value.chosen) && d.value.chosen !== 'developer' && !d.value.propx && !d.value.comparables, `${c.id}: the value is an explicit scenario choice, never PROPX data`);
+    for (const k of Object.keys(d.value)) if (d.value[k] && d.value[k].note) assert.match(d.value[k].note, /הנחת תרחיש \(סינתטית\)/, `${c.id}: ${k} labelled a scenario assumption`);
+    for (const k of A.STRATS) assert.ok(Object.keys(d[k]).length >= 15, `${c.id}: ${k} terms entered`);
+    assert.ok(d.scen.downside && d.scen.upside, `${c.id}: scenarios`);
+    assert.equal(d.selected, null, `${c.id}: no structure is chosen in advance`);
+  }
+});
+t('cases are inputs only: no calculation path of their own, no predetermined winner, no "fake / demo / dummy" wording, never OFFICIAL', () => {
+  const code = CASE_SRC.replace(/\/\*[\s\S]*?\*\//g, '').replace(/'(?:[^'\\]|\\.)*'/g, "''");
+  assert.ok(!/Math\.|\.irr|xirr|run\(|metricsOf|fetch\(|localStorage|document\.|window\./.test(code.replace(/root\.AltarisCases/g, '')), 'cases.js computes or touches the page');
+  assert.ok(!/STRONG BUY|PREFER (FINANCE|HYBRID)|DO NOT PROCEED|winner|preferred structure/i.test(CASE_SRC.replace(/no case names a preferred structure/, '')), 'a case names an outcome');
+  assert.ok(!/\b(fake|dummy|demo)\b|(^|[^\u0590-\u05FF])(דמה|דמו)(?![\u0590-\u05FF])/i.test(CASE_SRC));
+  assert.ok(!/OFFICIAL|רשמי|PROPX-DERIVED|נגזר · PROPX/.test(CASE_SRC.replace(/\/\*[\s\S]*?\*\//g, '')));
+  // the page computes a case with the ordinary engine, through the ordinary recompute
+  assert.equal((APP.match(/S\.R = E\.run\(/g) || []).length, 1);
+  assert.match(fnBody('openCase'), /S\.deal = normalizeDeal\(clone\(c\.deal\)\); S\.deal\.case = \{ id: c\.id, v: CS\.VERSION \};/);
+  assert.match(APP, /portfolio: isCase\(S\.deal\) \? \[\] : portfolioCtx\(\)/);
+});
+t('each case runs through the normal engine: all three structures compute, no NaN / undefined / Infinity', () => {
+  const finite = (v, msg) => assert.ok(typeof v === 'number' && isFinite(v), msg + ' = ' + v);
+  for (const c of CSX.CASES) {
+    const R = CASE_R[c.id];
+    assert.ok(R.ready && R.signal && R.signal.code && R.signal.why.length >= 1, c.id);
+    for (const k of A.STRATS) {
+      const s = R.strategies[k];
+      for (const sc of ['base', 'downside', 'upside']) {
+        const r = s[sc]; assert.ok(r && r.ok, `${c.id} ${k} ${sc}`);
+        for (const f of ['profit', 'invested', 'distributions', 'peakCapital', 'atRisk', 'months']) finite(r[f], `${c.id} ${k} ${sc} ${f}`);
+        finite(A.irrOf(r), `${c.id} ${k} ${sc} irr`); finite(A.moicOf(r), `${c.id} ${k} ${sc} moic`);
+      }
+      finite(s.mos, `${c.id} ${k} mos`); finite(s.risk.overall, `${c.id} ${k} risk`);
+      for (const x of A.STRESS) assert.ok(s.stress[x.id].ok && isFinite(A.irrOf(s.stress[x.id])), `${c.id} ${k} stress ${x.id}`);
+      assert.ok(s.attribution && s.velocity, `${c.id} ${k} attribution / velocity`);
+    }
+    assert.ok(!/NaN|Infinity/.test(JSON.stringify(R, (key, v) => (typeof v === 'number' && !isFinite(v) ? 'NaN' : v))), c.id);
+  }
+});
+t('accounting reconciles for every case, structure and scenario (bridge, cash flows, MOIC, peak, IRR root, capital at risk)', () => {
+  for (const c of CSX.CASES) {
+    const R = CASE_R[c.id];
+    for (const k of A.STRATS) for (const sc of ['base', 'downside', 'upside']) {
+      const r = R.strategies[k][sc], tag = `${c.id} ${k} ${sc}`;
+      const byM = new Map(); for (const f of r.flows) byM.set(f.m, (byM.get(f.m) || 0) + f.amount);
+      const net = [...byM.values()], tol = 1e-6 * Math.max(1, r.invested);
+      near(net.reduce((a, x) => a + x, 0), r.profit, tol, tag + ' profit = Σ flows');
+      near(net.filter((x) => x < 0).reduce((a, x) => a - x, 0), r.invested, tol, tag + ' invested');
+      near(net.filter((x) => x > 0).reduce((a, x) => a + x, 0), r.distributions, tol, tag + ' distributions');
+      if (r.moic != null) near(r.moic, r.distributions / r.invested, 1e-9, tag + ' MOIC');
+      let cum = 0, mn = 0; for (const m of [...byM.keys()].sort((a, b) => a - b)) { cum += byM.get(m); mn = Math.min(mn, cum); }
+      near(r.peakCapital, -mn, tol, tag + ' peak');
+      if (r.irr != null) {
+        const t0 = R.facts.t0, npv = [...byM.entries()].reduce((a, [m, x]) => a + x / Math.pow(1 + r.irr, A.daysBetween(t0, A.addMonths(t0, m)) / 365), 0);
+        near(npv, 0, 1e-4 * r.invested, tag + ' NPV at the IRR');
+      }
+      if (k === 'buy') near(r.bridgeCheck, r.profit, 1, tag + ' BUY value bridge');
+      if (k !== 'hybrid') assert.equal(r.atRisk, r.peakCapital, tag);
+      else { const i = R.strategies.hybrid.inputs; assert.equal(r.atRisk, Math.max(r.commitment, r.capital + (i.backstopOn ? +i.backstopPrice : 0) + (i.optionOn ? +i.optionPrice : 0), r.peakCapital), tag); }
+    }
+  }
+});
+t('the five cases differ materially: geography, scale, structure, duration, leverage, liquidity, counterparty', () => {
+  const F = (c) => CASE_R[c.id].facts, cs = CSX.CASES;
+  assert.equal(new Set(cs.map((c) => c.deal.info.city)).size, 5, 'cities');
+  assert.ok(new Set(cs.map((c) => c.primary)).size === 3, 'primary structures cover BUY, FINANCE and HYBRID');
+  assert.ok(new Set(cs.map((c) => c.deal.hybrid.structure)).size >= 4, 'hybrid structures');
+  assert.equal(new Set(cs.map((c) => JSON.stringify([c.deal.hybrid.structure, c.deal.hybrid.optionOn, c.deal.hybrid.backstopOn, c.deal.hybrid.prefPct, c.deal.hybrid.couponPct]))).size, 5, 'a different hybrid term set in every case');
+  const smv = cs.map((c) => F(c).smv); assert.ok(Math.min(...smv) < 25e6 && Math.max(...smv) > 80e6, 'scale ' + smv);
+  const months = cs.map((c) => CASE_R[c.id].strategies[c.primary].base.months); assert.ok(Math.max(...months) >= 2.5 * Math.min(...months), 'duration ' + months);
+  assert.ok(new Set(cs.map((c) => c.deal.buy.ltvPct)).size === 5, 'leverage');
+  assert.ok(new Set(cs.map((c) => c.deal.info.constructionStatus)).size >= 3, 'project stage');
+  assert.equal(new Set(cs.map((c) => c.deal.info.developer)).size, 5, 'counterparties');
+  assert.ok(cs.some((c) => c.deal.buy.rentOn) && cs.some((c) => c.deal.hybrid.backstopOn) && cs.some((c) => c.deal.hybrid.optionOn) && cs.some((c) => c.deal.finance.seniority === 'first') && cs.some((c) => c.deal.finance.seniority === 'second'));
+  const disc = cs.map((c) => F(c).discount); assert.ok(Math.max(...disc) - Math.min(...disc) > 0.1, 'entry discounts ' + disc);
+});
+t('case data never enters PROPX datasets or pages: the names exist only in the ALTARIS case file', () => {
+  const names = CSX.CASES.flatMap((c) => [c.deal.info.project, c.deal.info.developer]);
+  const walk = (dir, out) => { for (const e of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) walk(p, out); else if (/\.(js|json|html|sql|csv|md)$/.test(e.name)) out.push(p); } return out; };
+  const files = ['index.html'].concat(...['data', 'lib', 'api', 'standalone', 'supabase'].filter((d) => fs.existsSync(path.join(ROOT, d))).map((d) => walk(d, [])));
+  for (const f of files) { const txt = SRC(f); for (const n of names) assert.ok(!txt.includes(n), `${n} appears in ${f}`); }
+  assert.ok(!/cases\.js/.test(SRC('index.html')) && !/AltarisCases/.test(SRC('index.html')));
+  assert.equal((SRC('altaris/index.html').match(/cases\.js/g) || []).length, 1);
+});
+t('opening a case never touches saved deals or the portfolio; saving is replaced by "create working copy"', () => {
+  const open = fnBody('openCase');
+  assert.ok(!/S\.deals|persistDeals|KEY\.deals/.test(open), 'openCase writes saved deals');
+  assert.match(fnBody('saveDeal'), /if \(isCase\(S\.deal\)\) \{ toast\('מקרה להמחשה אינו נשמר בעסקאות — צרו עותק עבודה'\); return; \}/);
+  assert.match(APP, /const footHTML = \(\) => \(isCase\(S\.deal\) \? `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="case-copy">יצירת עותק עבודה<\/button>/);
+  assert.match(APP, /CS\.NOTICE\.he/);
+});
+t('working copy: a user deal tagged with its origin; an imported case file becomes a working copy; the template stays intact', () => {
+  const cp = fnBody('caseCopy');
+  assert.match(cp, /const d = clone\(S\.deal\); delete d\.case;/);
+  assert.match(cp, /d\.origin = \{ kind: 'illustrative-case', id: c\.id, v: CS\.VERSION, copiedAt: TODAY \};/);
+  assert.match(cp, /saveDeal\(\);/); assert.match(cp, /rec\.origin = 'illustrative-case'/);
+  assert.match(APP, /const deCase = \(d\) => \{ if \(d && d\.case\) \{ d\.origin = \{ kind: 'illustrative-case'/);
+  const before = JSON.stringify(CSX.CASES);
+  for (const c of CSX.CASES) { const d = JSON.parse(JSON.stringify(c.deal)); d.buy.haircutPct = 99; d.units.pop(); }
+  assert.equal(JSON.stringify(CSX.CASES), before);
+});
+t('reset: leaving a case gives a clean blank deal; blank and example deals carry no case state', () => {
+  assert.match(APP, /case 'case-exit': newDeal\(false\); break;/);
+  const bd = /const blankDeal = \(\) => (\(\{[^\n]+\}\));/.exec(APP)[1];
+  assert.ok(!/case|origin/.test(bd), 'the blank deal mentions case state');
+  assert.ok(!/\.case\b|origin/.test(fnBody('exampleDeal')));
+});
+t('exports of a case (and of a working copy) are marked illustrative on every page / sheet; ordinary deals are untouched', () => {
+  assert.match(APP, /if \(illusKind\(\)\) \{ const mark = \[\{ v: illusMark\(\), b: true \}\]; meta\.unshift\(mark\); summary\.unshift\(mark, \[''\]\); \}/);
+  assert.match(APP, /if \(illusKind\(\)\) sheets\.forEach\(\(sh, i\) => \{ if \(i > 0\) sh\.rows = \[\[\{ v: illusMark\(\), b: true \}\], \[''\]\]\.concat\(sh\.rows\); \}\);/);
+  assert.match(APP, /'ALTARIS-' \+ \(illusKind\(\) \? 'ILLUSTRATIVE-' : ''\)/);
+  assert.match(APP, /illustrative: illusKind\(\) \? illusMark\(\) : undefined/);
+  assert.match(APP, /return `<div class="ax-ic">\$\{illusBanner\(\)\}/);
+  assert.match(APP, /if \(illusKind\(\)\) \{ const pp = html\.split\('<div class="ax-pp">'\);/);
+  assert.match(APP, /const illusKind = \(\) => \(isCase\(S\.deal\) \? 'case' : fromCase\(S\.deal\) \? 'copy' : null\);/);
 });
 
 console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

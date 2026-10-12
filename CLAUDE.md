@@ -87,6 +87,9 @@
   documents the engine (never computes), pinned to the engine's sha256; the page's ⓘ marks → popover → "Metric
   Conventions" view (`#method`), the optional PDF appendix and the Excel "Metric Conventions" sheet all read it.
   `test/fixtures/altaris-baseline.json` freezes engine outputs (zero-drift gate in `test/altaris.test.js`).
+  `altaris/cases.js` = five illustrative, synthetic investment cases (inputs only, fictional names, real localities as
+  setting); loaded into the ordinary deal screen via "מקרי השקעה"; never saved / in the portfolio / in any PROPX dataset
+  unless the user creates a working copy; exports marked ILLUSTRATIVE CASE.
 
 Secrets: `SITE_PASSWORD` / `SESSION_SECRET` live only in Vercel env vars (see `.env.example`).
 `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` / `PROPX_JOB_TOKEN` live only in GitHub Actions / server env — never

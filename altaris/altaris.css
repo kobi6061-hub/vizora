@@ -277,6 +277,7 @@ table.ax-tbl{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560p
 .ax-lr.tot{border-bottom:2px solid var(--ink)}
 .ax-lr .v.neg{color:var(--down)}
 .ax-lr .v.na{color:var(--ink-3);font-weight:600}
+.ax-lr.txt .v{white-space:normal;direction:inherit;text-align:start;font-family:var(--f-body);font-weight:600;font-size:12px;line-height:1.45}
 .ax-lgt{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--brass);padding:10px 0 3px;border-bottom:1px solid var(--hairline)}
 .ax-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-block:2px solid var(--ink)}
 @media(min-width:640px){.ax-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -425,7 +426,7 @@ table.ax-tbl{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560p
 .ax-empty p{font-size:12.5px;max-width:52ch;line-height:1.6}
 .ax-status{height:28px;border:1px solid var(--hairline);border-radius:7px;background:var(--paper);font-size:12px;padding-inline:5px}
 .ax-diff td.ch{background:var(--wash-brass)}
-.ax-toast{position:fixed;inset-inline-start:50%;transform:translateX(50%);bottom:84px;z-index:90;background:var(--ink);color:var(--paper);font-size:12.5px;font-weight:700;border-radius:9px;padding:8px 14px;box-shadow:var(--shadow-pop)}
+.ax-toast{position:fixed;inset-inline-start:50%;transform:translateX(50%);bottom:84px;z-index:90;max-width:calc(100vw - 24px);background:var(--ink);color:var(--paper);font-size:12.5px;font-weight:700;border-radius:9px;padding:8px 14px;box-shadow:var(--shadow-pop)}
 [dir="ltr"] .ax-toast{transform:translateX(-50%)}
 @media(min-width:1100px){.ax-toast{bottom:24px}}
 
@@ -585,3 +586,28 @@ input.dflt{border-style:dashed!important}
   .ax-mapx .ax-mcls>div{font-size:9.5px}
   .ax-mapx .ax-mm.hl{background:none;box-shadow:none}
 }
+
+/* ============================ investment cases (illustrative, synthetic) ============================ */
+.ax-tag.ill{color:var(--brass);background:transparent;border-color:var(--brass)}
+.ax-pop.cases{width:min(470px,calc(100vw - 16px));max-height:min(78vh,640px);overflow-y:auto}
+.ax-cases{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.ax-case{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;text-align:start;width:100%;padding:8px 6px;border-radius:9px;border:1px solid transparent;transition:background .15s,border-color .15s}
+.ax-case:hover,.ax-case:focus-visible{background:var(--panel-2);border-color:var(--hairline)}
+.ax-case[aria-current="true"]{border-color:var(--brass)}
+.ax-case .n{font-family:var(--f-display);font-size:11px;font-weight:800;color:var(--brass);width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--panel-2)}
+.ax-case .b{display:flex;flex-direction:column;gap:1px;min-width:0}
+.ax-case b{font-family:var(--f-display);font-size:13px;font-weight:800;color:var(--ink)}
+.ax-case .m{font-size:11px;color:var(--ink-3)}
+.ax-case .t{font-size:12px;color:var(--ink-2);line-height:1.5}
+.ax-case-note{border:1px solid var(--edge);border-inline-start:3px solid var(--brass);border-radius:10px;background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.ax-case-note .h{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.ax-case-note .h b{font-family:var(--f-display);font-size:14px;font-weight:800}
+.ax-case-note p{font-size:12px;color:var(--ink-2);line-height:1.55}
+.ax-case-note summary{font-size:12px;font-weight:700;color:var(--accent-deep);cursor:pointer}
+.ax-case-note dl{display:grid;grid-template-columns:minmax(0,1fr);gap:2px 14px;margin-top:6px}
+@media(min-width:760px){.ax-case-note dl{grid-template-columns:130px minmax(0,1fr)}}
+.ax-case-note dt{font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--brass);padding-top:5px}
+.ax-case-note dd{font-size:12.5px;color:var(--ink-2);line-height:1.6;padding-top:3px}
+.ax-case-note .act{display:flex;gap:6px;flex-wrap:wrap}
+.ax-illus{font-family:Montserrat,var(--f-display),sans-serif;font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--brass);border:1px solid var(--brass);border-radius:6px;padding:4px 8px;margin-bottom:8px;text-align:center}
+@media print{.ax-illus{font-size:9px;margin-bottom:6px}}

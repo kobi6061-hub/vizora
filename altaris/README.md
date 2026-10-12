@@ -52,6 +52,7 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
 | `altaris/altaris.css` | PROPX tokens (copied, not shared — the PROPX page is untouched) + module styles |
 | `altaris/engine.js` | the calculation engine: pure functions, no DOM, loadable in Node (`test/altaris.test.js`) |
 | `altaris/methodology.js` | the metric conventions (pure bilingual data, versioned; documents the engine, computes nothing) |
+| `altaris/cases.js` | five illustrative investment cases (synthetic inputs only; the engine computes every figure) |
 | `altaris/app.js` | UI: inputs, live underwriting ledger, compare, stress, portfolio, saved deals, settings |
 | `altaris/charts.js` | inline-SVG institutional charts with hover tooltips and table twins |
 | `altaris/export.js` | CSV, XLSX (dependency-free writer), print-to-PDF views, JSON import/export |
@@ -109,6 +110,28 @@ written from the engine as implemented; the engine stays the source of truth and
   engine changes until the methodology is reviewed and re-stamped. `test/fixtures/altaris-baseline.json` freezes the
   engine outputs of six deals × two fund settings and a portfolio (sha256 of each full result + headline figures);
   the tests prove they are reproduced bit for bit.
+
+## Investment cases (illustrative, synthetic)
+
+`altaris/cases.js` holds five fully worked institutional cases — Park 18 (distressed bulk BUY, Petah Tikva),
+HaNassi 42 (senior secured bridge, Haifa), Ganei HaPark (preferred capital + option + backstop, Be'er Sheva), HaGefen
+Renewal (pre-construction urban renewal, Ramat Gan) and Coastal Portfolio I (30 let units, Netanya · Bat Yam · Ashdod).
+Every project, developer and counterparty is fictional; the localities are real settings only; values are labelled
+"הנחת תרחיש (סינתטית)" and never PROPX data. The file holds INPUTS only — deal details, unit rows, an explicit
+underwriting value, terms for BUY / FINANCE / HYBRID, scenario assumptions and a five-part IC memo — and names no
+preferred structure: the ordinary engine computes every figure.
+
+* **Entry.** "מקרי השקעה" next to "עסקה חדשה ריקה" (and in the empty-deal intro) opens a compact selector (title,
+  structure, location, scale, one-line thesis); a phone gets a bottom sheet. A case loads into the existing deal screen
+  with a notice ("מקרה השקעה להמחשה · הנתונים סינתטיים ונבנו לצורך הדגמת מודל החיתום.") and the IC memo.
+* **Isolation.** A case is never saved, never enters the portfolio and is judged without saved deals as concentration
+  context; "save" is replaced by "יצירת עותק עבודה", which saves the case as the user's own deal tagged with its origin
+  (`origin.kind = 'illustrative-case'`). An imported case file becomes such a working copy. "יציאה לעסקה חדשה" returns
+  to a clean blank deal.
+* **Exports.** File names carry `ILLUSTRATIVE`; every Excel sheet, the CSV, the JSON and every report page of the PDFs
+  open with "ILLUSTRATIVE CASE · מקרה השקעה להמחשה"; a working copy is marked "BASED ON AN ILLUSTRATIVE CASE".
+* **Known modelling limit.** The engine models one BUY exit event, so staged disposals are entered as the weighted-average
+  sale date (stated in each memo).
 
 ## Design notes
 
