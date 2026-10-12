@@ -51,6 +51,7 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
 | `altaris/index.html` | page shell (PROPX header + rail, ALTARIS modes) |
 | `altaris/altaris.css` | PROPX tokens (copied, not shared — the PROPX page is untouched) + module styles |
 | `altaris/engine.js` | the calculation engine: pure functions, no DOM, loadable in Node (`test/altaris.test.js`) |
+| `altaris/methodology.js` | the metric conventions (pure bilingual data, versioned; documents the engine, computes nothing) |
 | `altaris/app.js` | UI: inputs, live underwriting ledger, compare, stress, portfolio, saved deals, settings |
 | `altaris/charts.js` | inline-SVG institutional charts with hover tooltips and table twins |
 | `altaris/export.js` | CSV, XLSX (dependency-free writer), print-to-PDF views, JSON import/export |
@@ -83,6 +84,31 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
   have more than one IRR; the engine reports the root its bracketed search finds, while profit and MOIC are unambiguous.
   In the FINANCE / HYBRID upside a negative delay means earlier repayment, so profit in shekels can be lower than the
   base while IRR is higher.
+
+## Metric conventions (calculation basis)
+
+`altaris/methodology.js` documents every decision metric the page shows — 32 entries in six groups (A returns ·
+B capital & exposure · C credit & collateral · D value & protection · E fund decision rules · F scenarios), each with
+what ALTARIS measures, the calculation basis, a formula, the per-structure treatment (BUY / FINANCE / HYBRID), how to
+read it, the convention and its data basis (OFFICIAL · PROPX-DERIVED · MODEL · USER ASSUMPTION · USER OVERRIDE). It is
+written from the engine as implemented; the engine stays the source of truth and is not changed by it.
+
+* **Three levels.** (1) a subtle ⓘ mark next to a metric; (2) a popover — the metric name, one ALTARIS line, how this
+  deal's figure was formed, and "View calculation basis" (desktop: hover previews, click pins; phone: tap opens a bottom
+  sheet; Escape / the close button / a click outside close it and focus returns to the mark); (3) the **Metric
+  Conventions** view (`/altaris#method`, `#method/<id>` deep-links an entry), in Hebrew (RTL) or English (LTR), with
+  Latin acronyms isolated in Hebrew text and Hebrew in English text (`<bdi>`), formulas left-to-right.
+* **Comparison cards** carry IRR, capital at risk, MOIC and the risk score (labelled MODEL — a 0–100 score, higher =
+  lower assessed risk, never a probability) and the fund-hurdle line "passed/total · what failed"; the hurdle popover
+  lists every hurdle with its threshold, the actual value and pass / fail in words.
+* **Exports.** IC and full PDFs keep their pages and add a one-line footer; an optional methodology appendix
+  ("ALTARIS Metric Conventions") follows the report (checkbox next to the export buttons, on by default). Excel gains a
+  last sheet "Metric Conventions" and CSV a last section — the existing sheets are unchanged. JSON exports and every
+  saved version carry the methodology id (`altaris-metric-methodology-v1`); versions saved before it read "not stamped".
+* **Versioning.** `VERSION.engine` pins the engine version and the sha256 of `altaris/engine.js`; a test fails when the
+  engine changes until the methodology is reviewed and re-stamped. `test/fixtures/altaris-baseline.json` freezes the
+  engine outputs of six deals × two fund settings and a portfolio (sha256 of each full result + headline figures);
+  the tests prove they are reproduced bit for bit.
 
 ## Design notes
 

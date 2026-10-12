@@ -380,7 +380,7 @@ t('the local dev server mirrors the rewrite', () => {
   assert.match(SRC('scripts/kobix-dev-server.mjs'), /p === '\/altaris' \|\| p === '\/altaris\/' \? '\/altaris\/index\.html'/);
 });
 const APP = SRC('altaris/app.js');
-const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
+const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
 t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else', () => {
   assert.ok(!/method\s*:/.test(APP), 'a request with an explicit method');
   assert.equal((APP.match(/\bfetch\(/g) || []).length, 1, 'fetch used outside getJSON');
@@ -417,7 +417,217 @@ t('the page is native to PROPX: same tokens, theme key and session-gated shell',
     assert.ok(css.includes(tok) && idx.includes(tok.replace(':', ':')), tok);
   }
   assert.match(html, /localStorage\.getItem\("kobix:theme"\)/);
-  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
+  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/methodology.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
+  assert.ok(html.indexOf('/altaris/methodology.js') < html.indexOf('/altaris/app.js'), 'the methodology loads before the page controller');
+});
+
+/* ------------------------------------------------------------------------------------------------
+ * Metric conventions (altaris/methodology.js): the explanation layer documents the engine — it never
+ * computes. These gates prove every explained metric exists in the real engine for exactly the
+ * structures it names, that the definitions match the engine's own rules, that every metric has an
+ * inline entry point in the page, and that adding the layer moved no number (zero drift).
+ * ---------------------------------------------------------------------------------------------- */
+console.log('altaris: metric conventions');
+const MD = require('../altaris/methodology.js');
+const FX = JSON.parse(SRC('test/fixtures/altaris-baseline.json'));
+const sha256 = (s) => require('node:crypto').createHash('sha256').update(s).digest('hex');
+const FXR = Object.fromEntries(Object.entries(FX.runs).map(([k, r]) => [k, A.run(FX.deals[r.deal], FX.settings[r.settings], { today: FX.generatedWith.today })]));
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
+const bi = (v) => v && typeof v.he === 'string' && v.he.trim() && typeof v.en === 'string' && v.en.trim();
+
+t('ZERO numeric drift: every frozen engine output (6 deals × 2 fund settings + a portfolio) is reproduced bit for bit', () => {
+  assert.equal(Object.keys(FX.runs).length, 12);
+  for (const [k, r] of Object.entries(FX.runs)) {
+    const R = FXR[k];
+    assert.equal(sha256(JSON.stringify(R)), r.sha256, `${k}: the engine output changed (headline then: ${JSON.stringify(r.headline.buy.base)})`);
+    assert.equal(R.signal.code, r.headline.signal, k);
+    for (const s of A.STRATS) if (r.headline[s].base) assert.equal(R.strategies[s].base.irr, r.headline[s].base.irr, `${k} ${s} irr`);
+  }
+  const names = Object.keys(FX.deals);
+  const P = A.portfolio(names.map((k, i) => ({ id: k, deal: Object.assign({}, FX.deals[k], { selected: FX.portfolio.selected[i % 3] }), status: 'active' })), FX.settings[FX.portfolio.settings], { today: FX.generatedWith.today });
+  assert.equal(sha256(JSON.stringify(P)), FX.portfolio.sha256, 'the portfolio output changed');
+});
+t('the methodology is versioned and pinned to this engine revision (an engine change fails here until the methodology is reviewed)', () => {
+  assert.equal(MD.VERSION.id, 'altaris-metric-methodology-v1');
+  assert.equal(MD.VERSION.label.en, 'ALTARIS Metric Methodology v1');
+  assert.ok(Object.isFrozen(MD.VERSION));
+  assert.equal(MD.VERSION.engine.version, A.VERSION);
+  assert.equal(MD.VERSION.engine.sha256, sha256(fs.readFileSync(path.join(ROOT, 'altaris/engine.js'))), 'altaris/engine.js changed since the methodology was written');
+});
+t('every entry is complete and bilingual; ids unique; six groups A–F; expert-first titles', () => {
+  assert.deepEqual(MD.GROUPS.map((g) => g.code).join(''), 'ABCDEF');
+  const ids = MD.METRICS.map((m) => m.id);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.ok(ids.length >= 30, ids.length);
+  for (const m of MD.METRICS) {
+    assert.ok(MD.GROUPS.some((g) => g.id === m.group), m.id + ' group');
+    for (const f of ['name', 'title', 'short', 'measures', 'basis', 'interpretation']) assert.ok(bi(m[f]), `${m.id}.${f} must exist in Hebrew and English`);
+    if (m.convention) assert.ok(bi(m.convention), m.id + '.convention');
+    assert.ok(m.usedIn.length && m.usedIn.every((k) => A.STRATS.includes(k)), m.id + ' usedIn');
+    assert.ok(m.data.length && m.data.every((c) => MD.CLASSES[c]), m.id + ' data classes');
+    assert.match(m.title.en, / — /, m.id + ': titles read "<metric> — <aspect>"');
+    for (const k of Object.keys(m.perStructure || {})) { assert.ok(m.usedIn.includes(k), `${m.id}: a per-structure text for ${k}, which it is not used in`); assert.ok(bi(m.perStructure[k]), `${m.id}.perStructure.${k}`); }
+  }
+  for (const g of MD.GROUPS) assert.ok(bi(g) && MD.METRICS.some((m) => m.group === g.id), g.id);
+  for (const c of Object.values(MD.CLASSES)) assert.ok(c.he && c.en && bi(c.d));
+  for (const f of Object.values(MD.FIELDS)) assert.ok(bi(f));
+  assert.deepEqual(Object.keys(MD.CLASSES), ['official', 'propx', 'model', 'user', 'override']);
+});
+t('the required metrics are all documented', () => {
+  for (const id of ['irr', 'moic', 'capitalAtRisk', 'hurdles', 'riskScore', 'supportedValue', 'entryDiscount', 'invested', 'profit', 'ltv', 'coverage', 'breakEven', 'mos', 'velocity', 'wal',
+    'debt', 'contingent', 'committed', 'peakCapital', 'recovery', 'scenarios', 'stress', 'exitValue', 'extension', 'signal']) assert.ok(MD.byId[id], id);
+  assert.match(MD.byId.coverage.convention.en, /does not compute DSCR/, 'collateral coverage is not mislabelled as DSCR');
+});
+t('every explained metric exists in the real engine output, for exactly the structures listed', () => {
+  for (const [k, R] of Object.entries(FXR)) {
+    for (const m of MD.METRICS) {
+      const e = m.engine || {};
+      for (const s of A.STRATS) {
+        const S = R.strategies[s]; if (!S.base.ok) continue;
+        const inUse = m.usedIn.includes(s), alt = (e.alt || {})[s];
+        if (inUse) {
+          for (const key of alt || e.base || []) assert.notStrictEqual(S.base[key], undefined, `${k} ${m.id}: base.${key} missing in ${s}`);
+          for (const p of Array.isArray(e.strategy) ? e.strategy : ((e.strategy || {})[s] || [])) {
+            if (/^recoveryCase\.recovery\./.test(p) && S.recoveryCase && S.recoveryCase.recovery == null) {   // the documented exception: no capital funded → no claim, no default path
+              assert.ok(s === 'hybrid' && S.base.capital === 0 && /no capital funded/.test(m.perStructure.hybrid.en), `${k} ${m.id}: no recovery outside the documented case`);
+              continue;
+            }
+            assert.ok(getPath(S, p) !== undefined, `${k} ${m.id}: ${p} missing in ${s}`);
+          }
+        } else if (e.exclusive) for (const key of e.base) assert.strictEqual(S.base[key], undefined, `${k} ${m.id}: ${key} exists in ${s}, which the methodology says it is not used in`);
+      }
+      for (const p of e.facts || []) assert.notStrictEqual(R.facts[p], undefined, `${m.id}: facts.${p}`);
+      for (const p of e.run || []) assert.notStrictEqual(getPath(R, p), undefined, `${m.id}: ${p}`);
+    }
+  }
+  const P = A.portfolio([{ id: 'a', deal: FX.deals.example, status: 'active' }], {}, { today: TODAY });
+  for (const m of MD.METRICS) for (const p of (m.engine || {}).portfolio || []) assert.notStrictEqual(P.summary[p], undefined, `${m.id}: portfolio.${p}`);
+});
+t('capital at risk is explained exactly as the engine computes it (peak; HYBRID max of commitment, capital + backstop + option, peak)', () => {
+  let hybridAbovePeak = 0;
+  for (const [k, R] of Object.entries(FXR)) for (const s of A.STRATS) for (const sc of ['base', 'downside', 'upside']) {
+    const r = R.strategies[s][sc]; if (!r || !r.ok) continue;
+    if (s !== 'hybrid') { assert.equal(r.atRisk, r.peakCapital, `${k} ${s} ${sc}`); continue; }
+    const i = R.strategies.hybrid.inputs, extra = (i.backstopOn ? A.num(i.backstopPrice) || 0 : 0) + (i.optionOn ? A.num(i.optionPrice) || 0 : 0);
+    assert.equal(r.atRisk, Math.max(r.commitment, r.capital + extra, r.peakCapital), `${k} hybrid ${sc}`);
+    assert.equal(A.capOf(r), r.atRisk);
+    if (r.atRisk > r.peakCapital + 1) hybridAbovePeak++;
+  }
+  assert.ok(hybridAbovePeak > 0, 'the fixtures exercise a HYBRID exposure above its peak deployment');
+  const c = MD.byId.capitalAtRisk;
+  assert.match(c.formula, /max\(commitment, capital \+ backstop \+ option, peak\)/);
+  for (const w of ['peak', 'option', 'backstop', 'commitment', 'fee-only']) assert.ok((c.perStructure.hybrid.en + c.convention.en + c.short.en).toLowerCase().includes(w), w);
+  // a backstop that is not called invests nothing: IRR / MOIC are stated on committed capital — the case the convention names
+  const b = FXR['backstop#0'].strategies.hybrid.base;
+  assert.ok(b.invested <= 1e-9 && b.irr == null && b.irrCommit != null && A.irrOf(b) === b.irrCommit);
+});
+t('fund hurdles: the documented list, test direction and fund-size rule match the engine pass/fail logic', () => {
+  const spec = MD.byId.hurdles.hurdles, byK = Object.fromEntries(spec.map((h) => [h.k, h]));
+  for (const h of spec) assert.equal(h.name.he, A.HURDLE_HE[h.k], h.k + ' name');
+  for (const [k, R] of Object.entries(FXR)) {
+    const st = A.settingsOf(FX.settings[FX.runs[k].settings]);
+    for (const s of A.STRATS) {
+      const H = R.strategies[s].hurdles; if (!R.strategies[s].base.ok) { assert.equal(H.length, 0); continue; }
+      const expect = spec.filter((h) => h.usedIn.includes(s) && (!h.fund || st.fundSize > 0)).map((h) => h.k);
+      assert.deepEqual(H.map((h) => h.k), expect, `${k} ${s}: hurdle set`);
+      for (const h of H) {
+        const sp = byK[h.k];
+        assert.equal(h.limit, ['minMoic', 'minCoverage', 'maxDuration'].includes(sp.setting) ? st[sp.setting] : st[sp.setting] / 100, `${k} ${s} ${h.k} threshold`);
+        const want = h.value != null && (sp.dir === 'min' ? h.value >= h.limit : h.value <= h.limit);
+        assert.equal(h.pass, want, `${k} ${s} ${h.k}: pass ≠ ${sp.dir} test`);
+      }
+    }
+  }
+  assert.match(MD.byId.hurdles.basis.en, /BUY is tested on 8 hurdles, FINANCE and HYBRID on 9/);
+  assert.equal(spec.filter((h) => h.usedIn.includes('buy')).length, 8);
+  assert.equal(spec.filter((h) => h.usedIn.includes('finance')).length, 9);
+});
+t('the risk score is documented as a MODEL score — not a probability — with the engine components and weighted mean', () => {
+  const r = MD.byId.riskScore;
+  assert.match(r.title.en, /MODEL/); assert.match(r.short.en, /Not a probability/); assert.match(r.short.he, /אינו הסתברות/);
+  assert.match(r.short.en, /higher = lower assessed risk/);
+  assert.equal(r.formula, 'Score = Σ wᵢ × sᵢ ÷ Σ wᵢ');
+  for (const [k, R] of Object.entries(FXR)) for (const s of A.STRATS) {
+    const rk = R.strategies[s].risk; if (!rk) continue;
+    assert.deepEqual(rk.components.map((c) => c.k), r.components.map((c) => c.k), `${k} ${s} components`);
+    const tw = rk.components.reduce((a, c) => a + c.weight, 0), ts = rk.components.reduce((a, c) => a + c.weight * c.score, 0);
+    assert.equal(rk.overall, Math.round(ts / tw), `${k} ${s}: overall = weighted mean`);
+    assert.ok(rk.overall >= 0 && rk.overall <= 100 && rk.components.every((c) => c.score >= 0 && c.score <= 100));
+  }
+  assert.ok(!/F\.pct\([^)]*risk/.test(APP_SRC), 'the risk score is never formatted as a percentage');
+});
+t('BUY / FINANCE / HYBRID differences: taxes, debt, exit value only in BUY; commitment and contingent exposure only in HYBRID', () => {
+  assert.deepEqual(MD.byId.taxes.usedIn, ['buy']); assert.deepEqual(MD.byId.debt.usedIn, ['buy']); assert.deepEqual(MD.byId.exitValue.usedIn, ['buy']);
+  assert.deepEqual(MD.byId.committed.usedIn, ['hybrid']); assert.deepEqual(MD.byId.contingent.usedIn, ['hybrid']);
+  assert.deepEqual(MD.byId.extension.usedIn, ['finance']); assert.deepEqual(MD.byId.recovery.usedIn, ['finance', 'hybrid']);
+  const R = FXR['levered#0'];
+  assert.ok(R.strategies.buy.base.afterTax && R.strategies.finance.base.afterTax === undefined && R.strategies.hybrid.base.afterTax === undefined);
+});
+t('supported value: never automatically the asking price, market, appraisal, PROPX or exit value; origin shown as PROPX-DERIVED / USER ASSUMPTION / USER OVERRIDE', () => {
+  const v = MD.byId.supportedValue;
+  assert.match(v.short.en, /not automatically the asking price, market value, appraisal, PROPX value or exit value/);
+  assert.deepEqual(v.data, ['propx', 'user', 'override']);
+  assert.match(APP_SRC, /const valueOrigin = \(k, src\) => \(k === 'propx' \|\| k === 'comparables' \? \(src && src\.auto === false \? 'override' : 'propx'\) : k === 'manual' \? 'override' : 'user'\);/);
+  assert.ok((APP_SRC.match(/clsTag\(valueOrigin\(/g) || []).length >= 2, 'the origin tag sits on the value strip and the ledger');
+  assert.match(v.convention.en, /over\.org\.il/); assert.ok(!/official source/i.test(v.convention.en));
+});
+const UI_IDS = (() => {
+  const ids = new Set();
+  for (const m of APP_SRC.matchAll(/\bmi\('([A-Za-z]+)'/g)) ids.add(m[1]);
+  for (const m of APP_SRC.matchAll(/\bm: '([A-Za-z]+)'/g)) ids.add(m[1]);
+  for (const blk of APP_SRC.matchAll(/const (?:CMP_M|IC_M) = \{([\s\S]*?)\};/g)) for (const m of blk[1].matchAll(/: '([A-Za-z]+)'/g)) ids.add(m[1]);
+  return ids;
+})();
+t('every metric has an inline entry point in the page, and every entry point names a documented metric', () => {
+  for (const id of UI_IDS) assert.ok(MD.byId[id], `the page references an undocumented metric "${id}"`);
+  for (const m of MD.METRICS) assert.ok(UI_IDS.has(m.id), `${m.id} has no info mark in the page`);
+});
+t('level 1 — a subtle info mark, never a large question mark; the comparison cards carry IRR, capital at risk, MOIC, risk score (MODEL) and the hurdle breakdown', () => {
+  assert.ok(!/aria-label="איך זה מחושב\?">\?<\/button>/.test(APP_SRC), 'the "?" mark is gone');
+  assert.match(APP_SRC, /const INFO_I = '<svg viewBox="0 0 16 16"/);
+  const cards = APP_SRC.slice(APP_SRC.indexOf('function paintCards()'), APP_SRC.indexOf('function renderStratInputs()'));
+  for (const s of ["mi('irr'", "mi('capitalAtRisk'", "mi('moic'", "mi('riskScore')", 'modelTag()', 'data-hurdles=', '${pass}/${tot}', 'לא עומד', 'כולם מתקיימים']) assert.ok(cards.includes(s), s);
+  assert.ok(!/<button[^>]*class="ax-card"[^>]*data-strat/.test(cards), 'a card is no longer a button wrapping buttons');
+});
+t('level 2 — popover: hover/click on desktop, tap → bottom sheet on a phone, Escape and focus return, link to the calculation basis', () => {
+  for (const s of ["matchMedia('(hover: none), (max-width: 640px)')", "e.pointerType === 'mouse'", "el.classList.toggle('sheet', sheet)", "if (e.key === 'Escape') { if (POP.trigger) { closePop(true); return; }",
+    "t.focus({ preventScroll: true })", "href=\"#method/${m.id}\" data-mgo=", "'View calculation basis ›'", "'בסיס החישוב המלא ›'", 'aria-haspopup="dialog"', "e.target.id === 'axPopBd'"]) assert.ok(APP_SRC.includes(s), s);
+  const html = SRC('altaris/index.html');
+  assert.match(html, /<div class="ax-pop" id="axPop" role="dialog" tabindex="-1" hidden><\/div>/);
+  assert.match(html, /id="axMethodBtn" type="button" data-view="method"/);
+});
+t('level 3 — Metric Conventions view: route, Hebrew RTL / English LTR, bidi isolation, formulas left-to-right', () => {
+  assert.match(APP_SRC, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method'\];/);
+  for (const s of ["h: 'מתודולוגיית מדדים', sub: 'בסיס חישוב והגדרות השקעה'", "h: 'Metric Conventions', sub: 'Calculation Basis & Investment Definitions'", 'dir="${dir}" lang="${L}"', '<code class="ax-fx" dir="ltr">']) assert.ok(APP_SRC.includes(s), s);
+  // the bidi helper, run on real methodology text
+  const re = new RegExp(/he: (\/\(\?<!.*?\/g), en: (\/.*?\/g) \};/.exec(APP_SRC)[1].slice(1, -2), 'g');
+  const latin = [...MD.byId.irr.short.he.matchAll(re)].map((m) => m[0]);
+  assert.ok(latin.includes('XIRR'), latin.join('|'));
+  assert.deepEqual([...'IRR ומ-MOIC; LTV 1.10x'.matchAll(re)].map((m) => m[0]), ['IRR', 'MOIC', 'LTV'], 'a unit after a number is not isolated away from it');
+});
+t('exports: the IC page is unchanged plus a one-line footer; the appendix is optional; Excel gains a "Metric Conventions" sheet; JSON and saved versions carry the version id', () => {
+  assert.match(APP_SRC, /function printIC\(\) \{ X\.printHTML\(`<div class="ax-pp">\$\{icHTML\(true\)\}\$\{printFoot\(\)\}<\/div>\$\{appendix\(\)\}`/);
+  assert.match(APP_SRC, /'Metrics follow ALTARIS calculation conventions\. See methodology appendix\.'/);
+  assert.match(APP_SRC, /html \+= appendix\(\);\n\s*X\.printHTML\(html, fileBase\(\) \+ '-underwriting'\);/);
+  assert.match(APP_SRC, /const appendix = \(\) => \(S\.mAppendix !== false \? methodPrintHTML\(\) : ''\);/);
+  assert.match(APP_SRC, /\.concat\(\[\{ name: 'Metric Conventions', rows: methodRows\(\)/);
+  assert.match(APP_SRC, /\.concat\(\[\{ title: 'Metric Conventions', rows: methodRows\(\) \}\]\)/);
+  assert.match(APP_SRC, /kind: 'altaris-deal', schema: 1, methodology: MD\.VERSION\.id,/);
+  assert.match(APP_SRC, /strategy: S\.R\.ic\.strategy, methodology: MD\.VERSION\.id \}\);/);
+  // the existing calculation sheets are untouched: same sheet list, same metric rows
+  const metricRows = [...APP_SRC.matchAll(/metric\('([^']+)'/g)].map((m) => m[1]);
+  assert.deepEqual(metricRows, ['הון בסיכון', 'שיא פריסת הון', 'סך הון שהושקע', 'סך תקבולים', 'רווח לפני מס', 'IRR (על הון מחויב כשלא הושקע הון)', 'MOIC', 'ROI', 'תשואה שנתית', 'משך (חודשים)']);
+  const sheets = [...APP_SRC.slice(APP_SRC.indexOf('function exportXLSX()')).matchAll(/name: '([^']+)'/g)].map((m) => m[1]);
+  assert.deepEqual(sheets.slice(0, 8), ['סיכום', 'עסקה', 'שווי נתמך', 'הנחות', 'תוצאות', 'מבחני לחץ', 'סיכון', 'תזרים ']);
+  assert.equal(sheets[sheets.length - 1], 'Metric Conventions');
+  // a left-to-right sheet only when asked; existing sheets stay right-to-left
+  const X = SRC('altaris/export.js');
+  assert.match(X, /rightToLeft="\$\{ltr \? 0 : 1\}"/);
+});
+t('the methodology module is pure data: no DOM, storage, network or calculation', () => {
+  const m = SRC('altaris/methodology.js').replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.ok(!/document\.|window\.|localStorage|fetch\(|XMLHttpRequest|Math\./.test(m.replace(/root\.AltarisMethodology/g, '')));
+  assert.ok(!/require\(/.test(m), 'the methodology does not import the engine');
 });
 
 console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

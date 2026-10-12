@@ -8,7 +8,7 @@
 <script>/* the shared PROPX theme preference (dark default; a stored "light" wins) — applied before first paint */
 try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentElement.dataset.theme="dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <title>ALTARIS · PROPX</title>
-<meta name="altaris-build" content="2026-10-12.ax-1">
+<meta name="altaris-build" content="2026-10-12.ax-2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 <link rel="stylesheet" href="/altaris/altaris.css">
@@ -63,6 +63,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
       </div>
       <div class="ax-head-tools">
         <button class="ax-btn" type="button" data-act="new">עסקה חדשה ריקה</button>
+        <button class="ax-btn" id="axMethodBtn" type="button" data-view="method" title="Metric Conventions — Calculation Basis &amp; Investment Definitions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M9 8h6"/></svg>מתודולוגיית מדדים</button>
         <button class="ax-btn" id="axSettingsBtn" type="button" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2"/></svg>הגדרות קרן</button>
       </div>
     </div>
@@ -87,12 +88,15 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
 
 <div class="ax-mbar" id="axMbar" hidden aria-label="סיכום חיתום"></div>
 <div class="ax-tip" id="axTip" role="tooltip" hidden></div>
+<div class="ax-pop-bd" id="axPopBd" hidden></div>
+<div class="ax-pop" id="axPop" role="dialog" tabindex="-1" hidden></div>
 <div id="ax-print"></div>
 <noscript><p style="padding:24px">ALTARIS דורש JavaScript.</p></noscript>
 
 <!-- read-only PROPX market snapshot (Bank of Israel rate, CBS index), then the module -->
 <script src="/data/market/latest.js" defer></script>
 <script src="/altaris/engine.js" defer></script>
+<script src="/altaris/methodology.js" defer></script>
 <script src="/altaris/charts.js" defer></script>
 <script src="/altaris/export.js" defer></script>
 <script src="/altaris/app.js" defer></script>

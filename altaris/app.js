@@ -6,7 +6,7 @@
  */
 (function () {
   'use strict';
-  const E = window.AltarisEngine, C = window.AxCharts, F = window.AXF, X = window.AxExport;
+  const E = window.AltarisEngine, C = window.AxCharts, F = window.AXF, X = window.AxExport, MD = window.AltarisMethodology;
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const esc = F.esc;
@@ -94,7 +94,7 @@
         { k: 'occupancy', l: 'תפוסה', t: 'pct', show: (i) => i.rentOn }, { k: 'collection', l: 'גבייה', t: 'pct', show: (i) => i.rentOn },
         { k: 'rentOpexPct', l: 'הוצאות השכרה', t: 'pct', show: (i) => i.rentOn },
       ] },
-      { g: 'מימון הרכישה', f: [
+      { g: 'מימון הרכישה', m: 'debt', f: [
         { k: 'debtMode', l: 'אופן קביעת החוב', t: 'sel', opts: 'debtMode' },
         { k: 'ltvPct', l: 'חוב כ-% מהמחיר (LTV)', t: 'pct', show: (i) => i.debtMode !== 'amount' },
         { k: 'debtAmount', l: 'סכום החוב', t: 'nis', show: (i) => i.debtMode === 'amount' },
@@ -102,7 +102,7 @@
         { k: 'loanTermMonths', l: 'תקופת ההלוואה', t: 'mo', ph: 'עד היציאה' },
         { k: 'interestMode', l: 'תשלום ריבית', t: 'sel', opts: 'interestMode' },
       ] },
-      { g: 'יציאה', f: [
+      { g: 'יציאה', m: 'exitValue', f: [
         { k: 'exitMode', l: 'בסיס שווי היציאה', t: 'sel', opts: 'exitMode' },
         { k: 'haircutPct', l: 'Haircut מול השווי הנתמך', t: 'pct', show: (i) => i.exitMode !== 'target' },
         { k: 'targetPrice', l: 'מחיר מכירה יעד', t: 'nis', show: (i) => i.exitMode === 'target' },
@@ -110,7 +110,7 @@
         { k: 'sellOther', l: 'עלויות מכירה אחרות', t: 'nis' },
         { k: 'exitPrimary', l: 'יציאה עיקרית', t: 'sel', opts: 'buyExit' }, { k: 'exitSecondary', l: 'יציאה משנית', t: 'sel', opts: 'buyExit' },
       ] },
-      { g: 'מסים — הנחות חיתום', tax: true, f: [
+      { g: 'מסים — הנחות חיתום', tax: true, m: 'taxes', f: [
         { k: 'vatPct', l: 'מע״מ על המכירה', t: 'pct', how: 'שיעור המע״מ הכלול במחיר המכירה; החלק המועבר = מחיר × שיעור ÷ (100 + שיעור).' },
         { k: 'profitTaxPct', l: 'מס חברות / רווח הון / שבח', t: 'pct', how: 'שיעור על הרווח לפני מס. מוצג כשורה נפרדת — התשואות המובילות הן לפני מס על הרווח.' },
         { k: 'otherTax', l: 'מס עסקה / מס אחר', t: 'nis' },
@@ -125,7 +125,7 @@
         { k: 'repayment', l: 'פירעון קרן', t: 'sel', opts: 'repayment' },
         { k: 'legal', l: 'עלויות משפטיות (ALTARIS)', t: 'nis' }, { k: 'monitoring', l: 'עלות מעקב', t: 'nis', u: '₪/ח׳' },
       ] },
-      { g: 'אופציית הארכה', f: [
+      { g: 'אופציית הארכה', m: 'extension', f: [
         { k: 'extMonths', l: 'תקופת הארכה', t: 'mo' }, { k: 'extRatePct', l: 'ריבית בהארכה', t: 'pct' }, { k: 'extFeePct', l: 'עמלת הארכה', t: 'pct' },
       ] },
       { g: 'בטוחות', f: [
@@ -141,7 +141,7 @@
     ],
     hybrid: [
       { g: 'המבנה', f: [{ k: 'structure', l: 'סוג המבנה', t: 'sel', opts: 'structure', wide: true }] },
-      { g: 'הון ותשואה חוזית', f: [
+      { g: 'הון ותשואה חוזית', m: 'committed', f: [
         { k: 'capital', l: 'הון מושקע', t: 'nis' }, { k: 'maxCommitment', l: 'התחייבות הון מקסימלית', t: 'nis' },
         { k: 'feePct', l: 'עמלת הסדר (על ההתחייבות)', t: 'pct' }, { k: 'couponPct', l: 'ריבית / קופון שוטף', t: 'pct' },
         { k: 'prefPct', l: 'תשואה מועדפת נצברת', t: 'pct' }, { k: 'termMonths', l: 'מועד טריגר / מימוש', t: 'mo' },
@@ -152,7 +152,7 @@
         { k: 'threshold', l: 'סף השתתפות (שווי)', t: 'nis', derived: true, how: 'ALTARIS משתתפת בשווי שמעל הסף. ברירת המחדל: המחיר המוצע (בסיס ההון).' },
         { k: 'realizationValue', l: 'שווי מימוש צפוי', t: 'nis', derived: true },
       ] },
-      { g: 'אופציה ו-Backstop', f: [
+      { g: 'אופציה ו-Backstop', m: 'contingent', f: [
         { k: 'optionOn', l: 'אופציית רכישה', t: 'bool' },
         { k: 'optionPrice', l: 'מחיר האופציה', t: 'nis', derived: true, show: (i) => i.optionOn },
         { k: 'optionSharePct', l: 'חלק המלאי באופציה', t: 'pct', show: (i) => i.optionOn },
@@ -190,17 +190,17 @@
     { k: 'notes', l: 'הערות', t: 'area', wide: true },
   ];
   const SETTINGS_FIELDS = [
-    { g: 'ספי השקעה', f: [
+    { g: 'ספי השקעה', m: 'hurdles', f: [
       { k: 'minIrr', l: 'IRR מינימלי', t: 'pct' }, { k: 'minMoic', l: 'MOIC מינימלי', t: 'num', u: 'x' },
       { k: 'minDiscount', l: 'הנחת כניסה מינימלית (BUY)', t: 'pct' }, { k: 'minCoverage', l: 'כיסוי בטוחות מינימלי', t: 'num', u: 'x' },
       { k: 'maxLtv', l: 'LTV מקסימלי', t: 'pct' }, { k: 'maxDuration', l: 'משך מקסימלי', t: 'mo' },
       { k: 'minMos', l: 'מרווח ביטחון מינימלי', t: 'pct' },
     ] },
-    { g: 'תקרות חשיפה (מגודל הקרן)', f: [
+    { g: 'תקרות חשיפה (מגודל הקרן)', m: 'hurdles', f: [
       { k: 'fundSize', l: 'גודל הקרן', t: 'nis' }, { k: 'maxDevExposure', l: 'חשיפה מקסימלית ליזם', t: 'pct' },
       { k: 'maxProjectExposure', l: 'חשיפה מקסימלית לפרויקט', t: 'pct' }, { k: 'maxGeoExposure', l: 'חשיפה מקסימלית ליישוב', t: 'pct' },
     ] },
-    { g: 'מהירות הון ודירוג מבנים', f: [
+    { g: 'מהירות הון ודירוג מבנים', m: 'signal', f: [
       { k: 'fundLifeYears', l: 'חיי הקרן', t: 'num', u: 'שנים' }, { k: 'redeployLagMonths', l: 'זמן עד השקעה חוזרת', t: 'mo' },
       { k: 'downsideWeight', l: 'משקל התרחיש השלילי בדירוג', t: 'pct', how: 'תשואה מותאמת-סיכון = (100% − משקל) × IRR בסיס + משקל × IRR בתרחיש השלילי. המבנה המועדף הוא בעל התשואה המותאמת הגבוהה ביותר מבין העומדים בכל הספים.' },
     ] },
@@ -211,7 +211,10 @@
   const S = {
     view: 'deal', strat: 'buy', deal: null, dealId: null, settings: store.get(KEY.settings, {}) || {},
     stress: null, R: null, dirty: false, deals: store.get(KEY.deals, {}) || {}, mkt: { status: 'idle' }, mbarOpen: false, cmpVer: {},
+    mlang: 'he', mAppendix: true, mfocus: null,
   };
+  const VIEWS = ['deal', 'compare', 'portfolio', 'saved', 'settings', 'method'];
+  const parseHash = () => { const [v, id] = location.hash.slice(1).split('/'); return { v, id: id ? decodeURIComponent(id) : null }; };
   const getP = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
   function setP(o, p, v) {
     const ks = p.split('.'); let a = o;
@@ -222,7 +225,20 @@
   const dealName = (d) => (d && ((d.info && d.info.name) || d.name)) || 'עסקה ללא שם';
 
   /* ------------------------------------------------------------ helpers */
-  const how = (text) => `<button type="button" class="ax-how" data-tip="${esc(text)}" aria-label="איך זה מחושב?">?</button>`;
+  /* level 1 — a subtle info mark. how(): a one-line tooltip for an input or a figure on this deal.
+     mi(): a metric from the methodology — opens the metric popover (level 2), whose link leads to
+     the Metric Conventions view (level 3); `live` adds how this deal's figure was computed. */
+  const INFO_I = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.3"/><path d="M8 7.3v3.9"/><circle class="d" cx="8" cy="4.9" r=".85"/></svg>';
+  const how = (text) => `<button type="button" class="ax-how" data-tip="${esc(text)}" aria-label="איך זה מחושב?">${INFO_I}</button>`;
+  const mi = (id, live) => {
+    const m = MD.byId[id]; if (!m) return live ? how(live) : '';
+    return `<button type="button" class="ax-how ax-mi" data-m="${id}"${live ? ` data-live="${esc(live)}"` : ''} aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(m.name.he)} — בסיס חישוב">${INFO_I}</button>`;
+  };
+  const infoOf = (o) => (o && o.m ? mi(o.m, o.how) : o && o.how ? how(o.how) : '');
+  const modelTag = () => '<span class="ax-tag mdl" title="ציון מודל — אינו הסתברות">MODEL</span>';
+  const clsTag = (c, L) => `<span class="ax-cls ${c}">${esc(MD.CLASSES[c][L || 'he'])}</span>`;
+  /* the origin of the supported value — PROPX-derived, a user input, or a user override */
+  const valueOrigin = (k, src) => (k === 'propx' || k === 'comparables' ? (src && src.auto === false ? 'override' : 'propx') : k === 'manual' ? 'override' : 'user');
   const fmtIn = (v, t) => {
     if (v == null || v === '') return '';
     const n = +v;
@@ -260,9 +276,9 @@
     o = o || {};
     const cls = ['ax-lr', o.key ? 'key' : '', o.sub ? 'sub' : '', o.tot ? 'tot' : ''].join(' ').trim();
     const vcls = ['v', o.neg ? 'neg' : '', value === '—' ? 'na' : ''].join(' ').trim();
-    return `<div class="${cls}"><span class="l">${esc(label)}</span><span class="${vcls}">${esc(value)}</span>${o.how ? how(o.how) : '<span></span>'}</div>`;
+    return `<div class="${cls}"><span class="l">${esc(label)}</span><span class="${vcls}">${esc(value)}</span>${o.how || o.m ? infoOf(o) : '<span></span>'}</div>`;
   };
-  const kpi = (label, value, sub, o) => `<div class="ax-kpi"><div class="k">${esc(label)}${o && o.how ? ' ' + how(o.how) : ''}</div><div class="v${o && o.neg ? ' neg' : ''}">${esc(value)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>`;
+  const kpi = (label, value, sub, o) => `<div class="ax-kpi"><div class="k">${esc(label)}${o && (o.how || o.m) ? ' ' + infoOf(o) : ''}</div><div class="v${o && o.neg ? ' neg' : ''}">${esc(value)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ''}</div>`;
   const needBox = (html) => `<div class="ax-need">${html}</div>`;
   /* the pixel width a chart gets: the main column (minus section padding), or half of it where .ax-res.two goes two-up */
   const CW = (half) => {
@@ -297,6 +313,85 @@
   }
   const hideTip = () => { const t = tipEl(); if (t) t.hidden = true; };
 
+  /* ------------------------------------------- metric popover (level 2) */
+  const mlang = () => (S.mlang === 'en' ? 'en' : 'he');
+  /* bidi isolation: in Hebrew text every Latin run (IRR, MOIC, LTV, XIRR, BUY, T0 …) is wrapped in
+     <bdi>; in English text every Hebrew run is. Split first, then escape each piece. */
+  const BIDI_RE = { he: /(?<![0-9A-Za-z.])[A-Za-z][A-Za-z0-9]*(?:[.\-+/][A-Za-z0-9]+)*(?: [A-Z][A-Za-z0-9]*(?:[.\-+/][A-Za-z0-9]+)*)*/g, en: /[\u0590-\u05FF][\u0590-\u05FF\u05F3\u05F4"'\-]*(?: [\u0590-\u05FF][\u0590-\u05FF\u05F3\u05F4"'\-]*)*/g };
+  function bidi(text, L) {
+    const s = String(text == null ? '' : text), re = BIDI_RE[L === 'en' ? 'en' : 'he'];
+    let out = '', i = 0;
+    for (const m of s.matchAll(re)) { out += esc(s.slice(i, m.index)) + '<bdi>' + esc(m[0]) + '</bdi>'; i = m.index + m[0].length; }
+    return out + esc(s.slice(i));
+  }
+  const POP = { trigger: null, pinned: false, t: 0 };
+  const popEl = () => $('#axPop');
+  const sheetMode = () => !!(window.matchMedia && matchMedia('(hover: none), (max-width: 640px)').matches);
+  const hurdleSpec = (k) => MD.byId.hurdles.hurdles.find((x) => x.k === k) || {};
+  const fmtHv = (h, v) => (!isNum(v) ? '—' : h.fmt === 'pct' ? F.pct(v) : h.fmt === 'x' ? F.x(v) : h.fmt === 'months' ? F.mo(v) : String(v));
+  function hurdlePopHTML(k, L) {
+    const s = S.R && S.R.strategies[k]; if (!s || !s.base.ok) return '';
+    const hs = s.hurdles, pass = hs.filter((h) => h.pass).length, en = L === 'en';
+    const name = (h) => (hurdleSpec(h.k).name ? hurdleSpec(h.k).name[L] : E.HURDLE_HE[h.k] || h.k);
+    const rows = hs.map((h) => {
+      const sp = hurdleSpec(h.k), op = sp.dir === 'max' ? '≤' : '≥';
+      return `<tr class="${h.pass ? 'ok' : 'fail'}"><td>${bidi(name(h), L)}</td><td class="n"><bdi dir="ltr">${esc(op + ' ' + fmtHv(h, h.limit))}</bdi></td><td class="n"><bdi dir="ltr">${esc(fmtHv(h, h.value))}</bdi></td><td class="r">${h.pass ? (en ? '✓ pass' : '✓ עובר') : (en ? '✗ fail' : '✗ נכשל')}</td></tr>`;
+    }).join('');
+    const fails = hs.filter((h) => !h.pass);
+    return `<div class="ax-pop-h"><b>${esc(SN[k])} · ${en ? 'Fund hurdles' : 'ספי קרן'} <bdi class="num">${pass}/${hs.length}</bdi></b><button type="button" class="ax-pop-x" data-pop-close aria-label="${en ? 'Close' : 'סגירה'}">×</button></div>
+      <p class="ax-pop-s">${fails.length ? (en ? `Not met (${fails.length}): ` : `לא מתקיים (${fails.length}): `) + fails.map((h) => bidi(name(h), L)).join(', ') : (en ? 'Every hurdle is met on the base scenario.' : 'כל הספים מתקיימים בתרחיש הבסיס.')}</p>
+      <div class="ax-pop-tbl"><table><thead><tr><th>${en ? 'Hurdle' : 'תנאי'}</th><th class="n">${en ? 'Threshold' : 'סף'}</th><th class="n">${en ? 'Actual' : 'בפועל'}</th><th>${en ? 'Result' : 'תוצאה'}</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="ax-pop-f"><span class="ax-muted">${en ? 'Thresholds: fund settings' : 'הספים: הגדרות הקרן'}</span><a href="#method/hurdles" data-mgo="hurdles">${en ? 'View calculation basis ›' : 'בסיס החישוב המלא ›'}</a></div>`;
+  }
+  function popHTML(trigger) {
+    const L = mlang(), en = L === 'en';
+    if (trigger.dataset.hurdles) return hurdlePopHTML(trigger.dataset.hurdles, L);
+    const m = MD.byId[trigger.dataset.m]; if (!m) return '';
+    const live = trigger.dataset.live;
+    return `<div class="ax-pop-h"><b>${bidi(MD.t(m.name, L), L)}</b>${m.id === 'riskScore' ? modelTag() : ''}<button type="button" class="ax-pop-x" data-pop-close aria-label="${en ? 'Close' : 'סגירה'}">×</button></div>
+      <p class="ax-pop-s">${bidi(MD.t(m.short, L), L)}</p>
+      ${live ? `<div class="ax-pop-live"><span class="k">${en ? 'This deal' : 'בעסקה זו'}</span><span class="t" dir="rtl" lang="he">${esc(live)}</span></div>` : ''}
+      <div class="ax-pop-f"><span></span><a href="#method/${m.id}" data-mgo="${m.id}">${en ? 'View calculation basis ›' : 'בסיס החישוב המלא ›'}</a></div>`;
+  }
+  function openPop(trigger, pin) {
+    const el = popEl(); if (!el) return;
+    clearTimeout(POP.t);
+    if (POP.trigger && POP.trigger !== trigger) POP.trigger.setAttribute('aria-expanded', 'false');
+    const html = popHTML(trigger); if (!html) return;
+    const L = mlang();
+    POP.trigger = trigger; POP.pinned = !!pin;
+    hideTip();
+    el.innerHTML = html; el.dir = L === 'en' ? 'ltr' : 'rtl'; el.lang = L;
+    el.setAttribute('aria-label', trigger.getAttribute('aria-label') || '');
+    const sheet = sheetMode();
+    el.classList.toggle('sheet', sheet); el.classList.toggle('wide', !!trigger.dataset.hurdles);
+    el.style.left = el.style.top = '';
+    el.hidden = false; trigger.setAttribute('aria-expanded', 'true');
+    const bd = $('#axPopBd'); if (bd) bd.hidden = !sheet;   // a phone: a bottom sheet over a scrim; tapping the scrim closes it
+    if (!sheet) placePop();
+    if (pin) el.focus({ preventScroll: true });
+  }
+  /* anchored next to its mark; follows the mark while the page scrolls, closes once the mark leaves the screen */
+  function placePop() {
+    const el = popEl(), t = POP.trigger; if (!el || el.hidden || !t || el.classList.contains('sheet')) return;
+    const r = t.getBoundingClientRect();
+    if (!t.isConnected || r.bottom < 0 || r.top > window.innerHeight) { closePop(false); return; }
+    const w = el.offsetWidth, h = el.offsetHeight;
+    let x = r.left + r.width / 2 - w / 2, y = r.bottom + 8;
+    if (y + h > window.innerHeight - 8) y = Math.max(8, r.top - h - 8);
+    x = Math.max(8, Math.min(window.innerWidth - w - 8, x));
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+  }
+  function closePop(back) {
+    const el = popEl(); clearTimeout(POP.t);
+    if (!el || el.hidden) return;
+    el.hidden = true;
+    const bd = $('#axPopBd'); if (bd) bd.hidden = true;
+    const t = POP.trigger; POP.trigger = null; POP.pinned = false;
+    if (t) { t.setAttribute('aria-expanded', 'false'); if (back && t.isConnected) t.focus({ preventScroll: true }); }
+  }
+  const popLater = () => { clearTimeout(POP.t); POP.t = setTimeout(() => { if (!POP.pinned) closePop(false); }, 220); };
+
   /* ------------------------------------------------------------- shell */
   function renderShell() {
     $$('#axTabs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === S.view)));
@@ -305,11 +400,13 @@
     $('#axLayout').classList.toggle('wide', S.view !== 'deal');
     $('#axSteps').hidden = S.view !== 'deal';
     $('#axSettingsBtn').classList.toggle('on', S.view === 'settings');
+    const mb = $('#axMethodBtn'); if (mb) mb.classList.toggle('on', S.view === 'method');
     document.body.classList.toggle('has-mbar', S.view === 'deal');
     $('#axMbar').hidden = S.view !== 'deal';
-    store.set(KEY.ui, { view: S.view, strat: S.strat });
+    store.set(KEY.ui, { view: S.view, strat: S.strat, mlang: S.mlang, mAppendix: S.mAppendix });
   }
   function renderView() {
+    closePop(false);
     renderShell();
     const main = $('#axMain');
     if (S.view === 'deal') main.innerHTML = viewDeal();
@@ -317,7 +414,9 @@
     else if (S.view === 'portfolio') main.innerHTML = '<div id="o-portfolio"></div>';
     else if (S.view === 'saved') main.innerHTML = '<div id="o-saved"></div>';
     else if (S.view === 'settings') main.innerHTML = viewSettings();
+    else if (S.view === 'method') main.innerHTML = viewMethod();
     recompute(true);
+    if (S.view === 'method') focusMethod();
   }
 
   /* ===================================================== view: new deal */
@@ -418,10 +517,10 @@
     }
     const spread = Fx.spread != null ? ` · פער בין מקורות בלתי תלויים: ${F.pct(Fx.spread, 0)}` : '';
     box.innerHTML = `<div class="ax-strip">
-      <div><div class="k">שווי נתמך ${how('השווי שנבחר במפורש לצורך חיתום: ' + VSRC[Fx.chosen].l + '.')}</div><div class="v">${F.m(Fx.smv)}</div><div class="s">${esc(VSRC[Fx.chosen].l)}</div></div>
+      <div><div class="k">שווי נתמך ${mi('supportedValue', 'השווי שנבחר במפורש לצורך חיתום: ' + VSRC[Fx.chosen].l + '.')}</div><div class="v">${F.m(Fx.smv)}</div><div class="s">${esc(VSRC[Fx.chosen].l)} ${clsTag(valueOrigin(Fx.chosen, V[Fx.chosen]))}</div></div>
       <div><div class="k">בסיס רכישה / הון ${how('המחיר המוצע הכולל: ' + (Fx.basisFrom === 'total' ? 'הוזן כמחיר כולל.' : Fx.basisFrom === 'units' ? 'סכום המחיר המוצע בשורות היחידות.' : 'לא הוזן.'))}</div><div class="v">${F.m(Fx.basis)}</div><div class="s">${Fx.basisFrom === 'units' ? 'סכום שורות היחידות' : Fx.basisFrom === 'total' ? 'מחיר כולל' : 'לא הוזן'}</div></div>
       <div><div class="k">הפרש</div><div class="v">${F.m(Fx.diff)}</div><div class="s">שווי נתמך − בסיס</div></div>
-      <div><div class="k">הנחת כניסה ${how('(שווי נתמך − בסיס) ÷ שווי נתמך')}</div><div class="v${Fx.discount < 0 ? ' neg' : ''}">${F.pct(Fx.discount)}</div><div class="s">${Fx.sqm ? F.int(Fx.smv / Fx.sqm) + ' ₪/מ״ר נתמך' : ''}${esc(spread)}</div></div></div>`;
+      <div><div class="k">הנחת כניסה ${mi('entryDiscount', '(שווי נתמך − בסיס) ÷ שווי נתמך')}</div><div class="v${Fx.discount < 0 ? ' neg' : ''}">${F.pct(Fx.discount)}</div><div class="s">${Fx.sqm ? F.int(Fx.smv / Fx.sqm) + ' ₪/מ״ר נתמך' : ''}${esc(spread)}</div></div></div>`;
     paintMarket();
   }
 
@@ -539,18 +638,30 @@
       <div id="o-stratin" style="margin-top:14px"></div>
       <div id="o-stratres"></div></section>`;
   }
+  /* how this structure's capital at risk was formed (the engine's own rule, read back for the popover) */
+  function capLive(k, s) {
+    const b = s.base; if (!b || !b.ok) return '';
+    if (k !== 'hybrid') return `שיא הפריסה המצטברת בתרחיש הבסיס: ${F.nis(b.peakCapital)}.`;
+    const i = s.inputs, extra = (i.backstopOn ? E.num(i.backstopPrice) || 0 : 0) + (i.optionOn ? E.num(i.optionPrice) || 0 : 0);
+    return `הגבוה מבין: התחייבות ${F.nis(b.commitment)} · הון + backstop + אופציה ${F.nis(b.capital + extra)} · שיא הפריסה ${F.nis(b.peakCapital)} = ${F.nis(E.capOf(b))}.`;
+  }
+  const irrLive = (k, b) => (b && b.ok ? (b.irr == null && b.irrCommit != null ? `לא הושקע הון בתרחיש הבסיס: (1 + רווח ÷ הון בסיכון)^(12 ÷ ${b.months}) − 1, על ההון המחויב.` : `XIRR על התזרים החודשי המתוארך של ${SN[k]} · ${b.months} חודשים.`) : '');
+  const moicLive = (b) => (b && b.ok ? (b.moic == null && b.moicCommit != null ? `1 + רווח ${F.nis(b.profit)} ÷ הון מחויב ${F.nis(E.capOf(b))}` : `תקבולים ${F.nis(b.distributions)} ÷ הון שהושקע ${F.nis(b.invested)}`) : '');
+  /* a card label keeps its info mark on the same line as its last word when a narrow card wraps it */
+  const cardLbl = (text, mark) => { const i = text.lastIndexOf(' '); return `<span class="ml">${i < 0 ? '' : esc(text.slice(0, i + 1))}<span class="nw">${esc(i < 0 ? text : text.slice(i + 1))}${mark}</span></span>`; };
   function paintCards() {
     const box = $('#o-cards'); if (!box) return;
     const R = S.R, sig = R.signal;
     box.innerHTML = E.STRATS.map((k) => {
       const s = R.strategies[k], b = s.base, ok = b && b.ok;
       const pass = ok ? s.hurdles.filter((h) => h.pass).length : 0, tot = ok ? s.hurdles.length : 0;
+      const fails = ok ? s.hurdles.filter((h) => !h.pass).map((h) => E.HURDLE_HE[h.k] || h.k) : [];
       const pref = sig.strategy === k && /^(STRONG|PREFER)/.test(sig.code);
-      return `<button type="button" class="ax-card" style="--c:${SC[k]}" data-strat="${k}" aria-pressed="${S.strat === k}">
+      return `<div class="ax-card${S.strat === k ? ' on' : ''}" style="--c:${SC[k]}" data-card="${k}">
+        <button type="button" class="ax-card-sel" data-strat="${k}" aria-pressed="${S.strat === k}"><span class="en">${SN[k]}</span><span class="he">${SH[k]}</span></button>
         ${pref ? '<span class="pick">מועדף</span>' : S.deal.selected === k ? '<span class="pick">לביצוע</span>' : ''}
-        <span class="en">${SN[k]}</span><span class="he">${SH[k]}</span>
-        <span class="m"><span>IRR<b class="num">${ok ? F.pct(E.irrOf(b)) : '—'}</b></span><span>הון בסיכון<b class="num">${ok ? F.m(E.capOf(b)) : '—'}</b></span><span>MOIC<b class="num">${ok ? F.x(E.moicOf(b)) : '—'}</b></span><span>ציון סיכון<b class="num">${ok && s.risk ? s.risk.overall : '—'}</b></span></span>
-        <span class="pass ${ok ? (pass === tot ? 'ok' : 'no') : ''}"><i></i>${ok ? `${pass}/${tot} ספי קרן` : 'חסרים נתונים'}</span></button>`;
+        <span class="m"><span>${cardLbl('IRR', mi('irr', irrLive(k, b)))}<b class="num">${ok ? F.pct(E.irrOf(b)) : '—'}</b></span><span>${cardLbl('הון בסיכון', mi('capitalAtRisk', capLive(k, s)))}<b class="num">${ok ? F.m(E.capOf(b)) : '—'}</b></span><span>${cardLbl('MOIC', mi('moic', moicLive(b)))}<b class="num">${ok ? F.x(E.moicOf(b)) : '—'}</b></span><span>${cardLbl('ציון סיכון', mi('riskScore'))}${modelTag()}<b class="num">${ok && s.risk ? s.risk.overall + '<small> / 100</small>' : '—'}</b></span></span>
+        ${ok ? `<button type="button" class="ax-hb ${pass === tot ? 'ok' : 'no'}" data-hurdles="${k}" aria-haspopup="dialog" aria-expanded="false" aria-label="ספי קרן ${SN[k]}: ${pass} מתוך ${tot} מתקיימים${fails.length ? ' · לא מתקיימים: ' + esc(fails.join(', ')) : ''} — פירוט"><i aria-hidden="true"></i><span class="t">ספי קרן <b class="num">${pass}/${tot}</b>${fails.length ? ` · לא עומד: ${esc(fails.join(', '))}` : ' · כולם מתקיימים'}</span></button>` : '<span class="pass"><i></i>חסרים נתונים</span>'}</div>`;
     }).join('') + `<button type="button" class="ax-card all" data-view-go="compare"><span class="en">COMPARE ALL</span><span class="he">השוואה בין כל החלופות</span><span class="sub">טבלת השוואה, אות מבנה והסבר</span></button>`;
   }
   function renderStratInputs() {
@@ -558,7 +669,7 @@
     const k = S.strat, s = S.R.strategies[k], inputs = s.inputs, def = new Set(s.defaulted), user = S.deal[k] || {};
     const groups = FIELDS[k].map((g) => {
       const fs = g.f.filter((sp) => !sp.show || sp.show(inputs));
-      let html = `<div class="ax-gt">${esc(g.g)}</div><div class="ax-fields">${fs.map((sp) => fieldHTML(sp, k + '.' + sp.k, user[sp.k] != null && user[sp.k] !== '' ? user[sp.k] : inputs[sp.k], def.has(sp.k) && sp.t !== 'text')).join('')}</div>`;
+      let html = `<div class="ax-gt">${esc(g.g)}${g.m ? mi(g.m) : ''}</div><div class="ax-fields">${fs.map((sp) => fieldHTML(sp, k + '.' + sp.k, user[sp.k] != null && user[sp.k] !== '' ? user[sp.k] : inputs[sp.k], def.has(sp.k) && sp.t !== 'text')).join('')}</div>`;
       if (k === 'buy' && g.f[0].k === 'price') html += `<p class="ax-muted" id="o-buyinfo" style="margin-top:4px"></p>`;
       if (k === 'buy' && g.f[0].k === 'debtMode') html += `<p class="ax-muted" id="o-buyequity" style="margin-top:4px"></p>`;
       if (g.tax) html += `<div class="ax-disc">הנחות המס הן לצורך ניתוח השקעה בלבד ויש לאשרן מול המבנה המשפטי הסופי. המנוע אינו מחשב מס לפי החוק.</div>`;
@@ -600,12 +711,12 @@
   function kpiStrip(k, s) {
     const b = s.base, d = s.downside && s.downside.ok ? s.downside : null;
     const cap = E.capOf(b), bi = E.irrOf(b), di = E.irrOf(d), onCommit = b.irr == null && b.irrCommit != null;
-    return `<div class="ax-kpis">${kpi('הון בסיכון', F.m(cap), cap > b.peakCapital + 1 ? `פריסה בבסיס ${F.m(b.peakCapital)}` : 'שיא החשיפה המצטברת', { how: 'שיא היתרה השלילית המצטברת של תזרים ALTARIS — ובמבנה משולב: הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.' })}
-      ${kpi('IRR בסיס', F.pct(bi), onCommit ? 'על ההון המחויב (לא הושקע הון)' : 'XIRR לפי תאריכים', { neg: bi < 0, how: onCommit ? 'בתרחיש זה לא הושקע הון (למשל backstop שלא הופעל): תשואה שנתית על ההון המחויב = (1 + רווח ÷ הון בסיכון)^(12 ÷ חודשים) − 1.' : 'שיעור התשואה הפנימי מהתזרים החודשי המתוארך (XIRR, בסיס 365 ימים), לפני מס על הרווח.' })}
-      ${kpi('IRR בתרחיש שלילי', d ? F.pct(di) : '—', d ? `רווח ${F.m(d.profit)}` : '', { neg: di < 0, how: 'אותו תזרים תחת הנחות התרחיש השלילי (שלב 4).' })}
-      ${kpi('MOIC', F.x(E.moicOf(b)), onCommit ? '1 + רווח ÷ הון מחויב' : 'תקבולים ÷ הון מושקע', { how: onCommit ? `1 + רווח ${F.nis(b.profit)} ÷ הון מחויב ${F.nis(cap)}` : `סך התקבולים ${F.nis(b.distributions)} ÷ סך ההון שהושקע ${F.nis(b.invested)} = ${F.x(b.moic)}` })}
-      ${kpi('רווח לפני מס', F.m(b.profit), `ROI ${F.pct(b.roi)}`, { neg: b.profit < 0, how: 'סכום כל תזרימי המזומנים של ALTARIS בתרחיש הבסיס.' })}
-      ${kpi('משך צפוי', F.mo(b.months), F.date(b.exitDate), { how: 'החודש של התזרים האחרון שאינו אפס; התאריך = מועד T0 + מספר החודשים.' })}</div>`;
+    return `<div class="ax-kpis">${kpi('הון בסיכון', F.m(cap), cap > b.peakCapital + 1 ? `פריסה בבסיס ${F.m(b.peakCapital)}` : 'שיא החשיפה המצטברת', { m: 'capitalAtRisk', how: 'שיא היתרה השלילית המצטברת של תזרים ALTARIS — ובמבנה משולב: הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.' })}
+      ${kpi('IRR בסיס', F.pct(bi), onCommit ? 'על ההון המחויב (לא הושקע הון)' : 'XIRR לפי תאריכים', { neg: bi < 0, m: 'irr', how: onCommit ? 'בתרחיש זה לא הושקע הון (למשל backstop שלא הופעל): תשואה שנתית על ההון המחויב = (1 + רווח ÷ הון בסיכון)^(12 ÷ חודשים) − 1.' : 'שיעור התשואה הפנימי מהתזרים החודשי המתוארך (XIRR, בסיס 365 ימים), לפני מס על הרווח.' })}
+      ${kpi('IRR בתרחיש שלילי', d ? F.pct(di) : '—', d ? `רווח ${F.m(d.profit)}` : '', { neg: di < 0, m: 'scenarios', how: 'אותו תזרים תחת הנחות התרחיש השלילי (שלב 4).' })}
+      ${kpi('MOIC', F.x(E.moicOf(b)), onCommit ? '1 + רווח ÷ הון מחויב' : 'תקבולים ÷ הון מושקע', { m: 'moic', how: onCommit ? `1 + רווח ${F.nis(b.profit)} ÷ הון מחויב ${F.nis(cap)}` : `סך התקבולים ${F.nis(b.distributions)} ÷ סך ההון שהושקע ${F.nis(b.invested)} = ${F.x(b.moic)}` })}
+      ${kpi('רווח לפני מס', F.m(b.profit), `ROI ${F.pct(b.roi)}`, { neg: b.profit < 0, m: 'profit', how: 'סכום כל תזרימי המזומנים של ALTARIS בתרחיש הבסיס.' })}
+      ${kpi('משך צפוי', F.mo(b.months), F.date(b.exitDate), { m: 'wal', how: 'החודש של התזרים האחרון שאינו אפס; התאריך = מועד T0 + מספר החודשים.' })}</div>`;
   }
   function paintStratRes() {
     const box = $('#o-stratres'); if (!box) return;
@@ -616,33 +727,33 @@
   function resBuy(s) {
     const b = s.base, Fx = S.R.facts, i = s.inputs, L = s.limits || {}, minIrr = S.R.settings.minIrr;
     const left = `<div><div class="ax-ledger">
-      ${lr('שווי נתמך', F.nis(Fx.smv), { how: `נבחר במפורש: ${VSRC[Fx.chosen].l}` })}
+      ${lr('שווי נתמך', F.nis(Fx.smv), { m: 'supportedValue', how: `נבחר במפורש: ${VSRC[Fx.chosen].l}` })}
       ${lr('מחיר רכישה', F.nis(b.price))}
-      ${lr('הנחה ברוטו', `${F.pct(1 - b.price / Fx.smv)} · ${F.nis(Fx.smv - b.price)}`, { how: '(שווי נתמך − מחיר רכישה) ÷ שווי נתמך' })}
+      ${lr('הנחה ברוטו', `${F.pct(1 - b.price / Fx.smv)} · ${F.nis(Fx.smv - b.price)}`, { m: 'entryDiscount', how: '(שווי נתמך − מחיר רכישה) ÷ שווי נתמך' })}
       ${lr('בסיס רכישה כולל', F.nis(b.price + b.tax + b.costs), { how: `מחיר ${F.nis(b.price)} + מס רכישה ${F.nis(b.tax)} + עלויות עסקה והשבחה ${F.nis(b.costs)}` })}
-      ${lr('חוב', `${F.nis(b.debt)}${b.debt ? ' · LTV ' + F.pct(b.ltv) : ''}`, { how: b.debtCapped ? 'סכום החוב שהוזן גבוה ממחיר הרכישה — החוב הוגבל למחיר (LTV עד 100%).' : null })}
-      ${lr('סך המזומן שהושקע', F.nis(b.invested), { how: 'סכום כל התזרימים השליליים: רכישה, עלויות, נשיאה חודשית ופירעון חוב מוקדם אם יש.' })}
+      ${lr('חוב', `${F.nis(b.debt)}${b.debt ? ' · LTV ' + F.pct(b.ltv) : ''}`, { m: 'debt', how: b.debtCapped ? 'סכום החוב שהוזן גבוה ממחיר הרכישה — החוב הוגבל למחיר (LTV עד 100%).' : null })}
+      ${lr('סך המזומן שהושקע', F.nis(b.invested), { m: 'invested', how: 'סכום כל התזרימים השליליים: רכישה, עלויות, נשיאה חודשית ופירעון חוב מוקדם אם יש.' })}
       ${lr('עלות החזקה כוללת', F.nis(b.holding), { sub: true, how: `${F.nis(b.holding / Math.max(1, b.months))} לחודש × ${b.months} חודשים` })}
       ${lr('עלות מימון', F.nis(b.financing), { sub: true, how: `ריבית ${F.nis(b.interest)} + עמלות ${F.nis(b.fee)}` })}
       ${lr('שכירות נטו בתקופה', F.nis(b.rentCarry), { sub: true, how: i.rentOn ? `שכירות × תפוסה ${i.occupancy}% × גבייה ${i.collection}% × (1 − הוצאות ${i.rentOpexPct}%) × ${b.months} חודשים` : 'לא נכללה' })}
-      ${lr('שווי יציאה צפוי', F.nis(b.exitGross), { how: i.exitMode === 'target' ? 'מחיר המכירה היעד שהוזן' : `שווי נתמך × (1 − haircut ${i.haircutPct}%)` })}
+      ${lr('שווי יציאה צפוי', F.nis(b.exitGross), { m: 'exitValue', how: i.exitMode === 'target' ? 'מחיר המכירה היעד שהוזן' : `שווי נתמך × (1 − haircut ${i.haircutPct}%)` })}
       ${lr('עלויות מכירה כוללות', F.nis(b.sellCosts + b.vat), { sub: true, how: `תיווך ${i.sellBrokeragePct}% + משפטיות ${i.sellLegalPct}% + אחרות ${F.nis(i.sellOther)}${b.vat ? ' + מע״מ ' + F.nis(b.vat) : ''}` })}
       ${lr('תמורה נטו', F.nis(b.netProceeds))}
       ${lr('רווח גולמי (יציאה − מחיר)', F.nis(b.exitGross - b.price), { how: 'לפני מס רכישה, עלויות, מימון והחזקה — לא רווח אמיתי.' })}
-      ${lr('רווח נקי לפני מס', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, how: 'סכום כל התזרימים = שווי נתמך − haircut − מחיר − מס רכישה − עלויות − מימון − החזקה + שכירות − עלויות מכירה.' })}
-      ${b.afterTax.profitTax > 0 ? lr('מס על הרווח (הנחה)', F.nis(-b.afterTax.profitTax), { sub: true }) + lr('רווח אחרי מס', F.nis(b.afterTax.profit), { neg: b.afterTax.profit < 0 }) + lr('IRR אחרי מס', F.pct(b.afterTax.irr)) : ''}
-      ${lr('ROI', F.pct(b.roi), { how: 'רווח ÷ סך ההון שהושקע' })}
+      ${lr('רווח נקי לפני מס', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, m: 'profit', how: 'סכום כל התזרימים = שווי נתמך − haircut − מחיר − מס רכישה − עלויות − מימון − החזקה + שכירות − עלויות מכירה.' })}
+      ${b.afterTax.profitTax > 0 ? lr('מס על הרווח (הנחה)', F.nis(-b.afterTax.profitTax), { sub: true }) + lr('רווח אחרי מס', F.nis(b.afterTax.profit), { neg: b.afterTax.profit < 0 }) + lr('IRR אחרי מס', F.pct(b.afterTax.irr), { m: 'taxes' }) : ''}
+      ${lr('ROI', F.pct(b.roi), { m: 'roi', how: 'רווח ÷ סך ההון שהושקע' })}
       ${lr('תשואה שנתית', F.pct(b.annualized), { how: `(1 + ROI)^(12 ÷ ${b.months}) − 1` })}
-      ${lr('IRR', F.pct(E.irrOf(b)), { key: true, neg: E.irrOf(b) < 0 })}${lr('MOIC', F.x(E.moicOf(b)), { key: true })}
+      ${lr('IRR', F.pct(E.irrOf(b)), { key: true, neg: E.irrOf(b) < 0, m: 'irr' })}${lr('MOIC', F.x(E.moicOf(b)), { key: true, m: 'moic' })}
     </div></div>`;
     const right = `<div><div class="ax-ledger">
       <div class="ax-lgt">נקודת איזון ומרווח ביטחון</div>
-      ${lr('מחיר מכירה לאיזון', F.nis(b.breakEvenExit), { key: true, how: 'שווי היציאה שבו הרווח לפני מס = 0, כשכל שאר ההנחות קבועות (הרווח לינארי במחיר המכירה).' })}
+      ${lr('מחיר מכירה לאיזון', F.nis(b.breakEvenExit), { key: true, m: 'breakEven', how: 'שווי היציאה שבו הרווח לפני מס = 0, כשכל שאר ההנחות קבועות (הרווח לינארי במחיר המכירה).' })}
       ${lr('מחיר למ״ר לאיזון', b.breakEvenPsm ? F.int(b.breakEvenPsm) + ' ₪' : '—', { how: 'מחיר המכירה לאיזון ÷ השטח הכולל' })}
       ${lr('מרווח ביטחון (מול היציאה הצפויה)', F.pct(b.marginOfSafety), { how: '(שווי יציאה צפוי − מחיר איזון) ÷ שווי יציאה צפוי' })}
-      ${lr('Haircut מקסימלי לפני הפסד', F.pct(b.maxHaircut), { key: true, neg: b.maxHaircut < 0, how: '1 − מחיר איזון ÷ שווי נתמך: כמה השווי יכול לרדת מהשווי הנתמך לפני הפסד.' })}
+      ${lr('Haircut מקסימלי לפני הפסד', F.pct(b.maxHaircut), { key: true, neg: b.maxHaircut < 0, m: 'mos', how: '1 − מחיר איזון ÷ שווי נתמך: כמה השווי יכול לרדת מהשווי הנתמך לפני הפסד.' })}
       ${lr('כרית ביטחון', F.nis(b.cushion), { neg: b.cushion < 0, how: 'שווי יציאה צפוי − מחיר איזון' })}
-      ${lr(`מחיר רכישה מקסימלי (IRR ${minIrr}%)`, F.nis(L.maxPrice), { key: true, how: `מחיר הרכישה הגבוה ביותר שעדיין עומד ברף ה-IRR של הקרן (${minIrr}%), כשכל שאר ההנחות קבועות. נמצא בחיפוש בינארי.` })}
+      ${lr(`מחיר רכישה מקסימלי (IRR ${minIrr}%)`, F.nis(L.maxPrice), { key: true, m: 'maxPrice', how: `מחיר הרכישה הגבוה ביותר שעדיין עומד ברף ה-IRR של הקרן (${minIrr}%), כשכל שאר ההנחות קבועות. נמצא בחיפוש בינארי.` })}
       ${lr('הנחה מינימלית נדרשת', F.pct(L.requiredDiscount), { how: '1 − מחיר רכישה מקסימלי ÷ שווי נתמך' })}
       ${lr('מחיר רכישה ברווח אפס', F.nis(L.zeroProfitPrice))}
       ${b.loanMaturesBeforeExit ? `<p class="ax-muted" style="color:var(--down);margin-top:6px">ההלוואה נפרעת בחודש ${b.loanTerm}, לפני היציאה בחודש ${b.months} — הקרן משולמת מההון העצמי.</p>` : ''}
@@ -671,26 +782,26 @@
       ${lr('הכנסות ריבית חוזיות', F.nis(b.interest), { how: `${i.ratePct}% לשנה על יתרת הקרן לאורך ${b.term} חודשים${i.interestMode === 'accrued' ? ' (נצברת ומשולמת בפירעון)' : ''}` })}
       ${lr('הכנסות עמלות', F.nis(b.feeIncome), { how: `העמדה ${F.nis(b.fee)} + פירעון ${F.nis(b.exitFee)}${b.extFee ? ' + הארכה ' + F.nis(b.extFee) : ''}` })}
       ${lr('עלויות ALTARIS', F.nis(-b.costs), { sub: true })}
-      ${lr('סך ההכנסה הצפויה', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, how: 'סכום כל התזרימים: ריבית + עמלות − עלויות − חוסר בפירעון אם יש.' })}
+      ${lr('סך ההכנסה הצפויה', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, m: 'profit', how: 'סכום כל התזרימים: ריבית + עמלות − עלויות − חוסר בפירעון אם יש.' })}
       ${lr('תשואה שנתית פשוטה', F.pct(b.simpleYield), { how: 'סך ההכנסה ÷ (יתרת קרן ממוצעת × שנים)' })}
-      ${lr('IRR', F.pct(E.irrOf(b)), { key: true })}${lr('MOIC', F.x(E.moicOf(b)), { key: true })}
-      ${lr('משך צפוי', `${F.mo(b.months)} · WAL ${F.mo(b.wal)}`, { how: 'משך = מועד התזרים האחרון; WAL = ממוצע משוקלל של מועדי החזר הקרן.' })}
+      ${lr('IRR', F.pct(E.irrOf(b)), { key: true, m: 'irr' })}${lr('MOIC', F.x(E.moicOf(b)), { key: true, m: 'moic' })}
+      ${lr('משך צפוי', `${F.mo(b.months)} · WAL ${F.mo(b.wal)}`, { m: 'wal', how: 'משך = מועד התזרים האחרון; WAL = ממוצע משוקלל של מועדי החזר הקרן.' })}
       ${lr('מועד פירעון חוזי', F.date(E.addMonths(S.R.facts.t0, b.term)))}
       ${lr('מקור פירעון', `${optLabel('finSource', i.sourcePrimary)} · משני: ${optLabel('finSource', i.sourceSecondary)}`)}
     </div></div>`;
     const right = `<div><div class="ax-ledger">
       <div class="ax-lgt">בטוחות והגנה</div>
-      ${lr('LTV', F.pct(b.ltv), { key: true, how: `(חוב קודם ${F.nis(b.priorLiens)} + הלוואה ${F.nis(b.amount)}) ÷ שווי בטוחות ${F.nis(b.collateral)}` })}
+      ${lr('LTV', F.pct(b.ltv), { key: true, m: 'ltv', how: `(חוב קודם ${F.nis(b.priorLiens)} + הלוואה ${F.nis(b.amount)}) ÷ שווי בטוחות ${F.nis(b.collateral)}` })}
       ${lr('LTC', F.pct(b.ltc), { how: 'מחושב רק כשהוזנה עלות פרויקט' })}
-      ${lr('כיסוי בטוחות (שמרני)', F.x(b.coverage), { key: true, how: `(שווי × (1 − ${F.pct(b.haircut, 0)}) − חוב קודם) ÷ חשיפה ${F.nis(b.exposure)}` })}
+      ${lr('כיסוי בטוחות (שמרני)', F.x(b.coverage), { key: true, m: 'coverage', how: `(שווי × (1 − ${F.pct(b.haircut, 0)}) − חוב קודם) ÷ חשיפה ${F.nis(b.exposure)}` })}
       ${lr('כיסוי ברוטו', F.x(b.coverageGross), { sub: true, how: 'שווי בטוחות ÷ (חוב קודם + חשיפה)' })}
-      ${lr('כרית הון', F.nis(b.equityCushion), { neg: b.equityCushion < 0, how: 'שווי בטוחות − חוב קודם − חשיפת ALTARIS' })}
+      ${lr('כרית הון', F.nis(b.equityCushion), { neg: b.equityCushion < 0, m: 'equityCushion', how: 'שווי בטוחות − חוב קודם − חשיפת ALTARIS' })}
       ${lr('הון עצמי של הלווה (הוזן)', F.nis(b.borrowerEquity), { sub: true })}
-      ${lr('שווי בטוחות לאיזון (קרן)', F.nis(b.breakEvenCollateral), { key: true, how: `(חוב קודם + קרן) ÷ ((1 − מקדם ביטחון) × (1 − עלויות מימוש ${i.enforcementCostPct}%))` })}
+      ${lr('שווי בטוחות לאיזון (קרן)', F.nis(b.breakEvenCollateral), { key: true, m: 'breakEven', how: `(חוב קודם + קרן) ÷ ((1 − מקדם ביטחון) × (1 − עלויות מימוש ${i.enforcementCostPct}%))` })}
       ${lr('ירידת שווי מקסימלית לפני פגיעה בקרן', F.pct(b.maxDecline), { key: true, neg: b.maxDecline < 0, how: '1 − שווי לאיזון ÷ שווי בטוחות' })}
-      <div class="ax-lgt">תרחיש הארכה (${F.mo(E.num(i.extMonths))} ב-${i.extRatePct}%)</div>
+      <div class="ax-lgt">תרחיש הארכה (${F.mo(E.num(i.extMonths))} ב-${i.extRatePct}%)${mi('extension')}</div>
       ${ext && ext.ok ? lr('IRR · MOIC', `${F.pct(ext.irr)} · ${F.x(ext.moic)}`) + lr('רווח · משך', `${F.m(ext.profit)} · ${F.mo(ext.months)}`) : lr('הארכה', '—')}
-      <div class="ax-lgt">תרחיש מימוש בטוחות</div>
+      <div class="ax-lgt">תרחיש מימוש בטוחות${mi('recovery')}</div>
       ${rec ? lr('כשל בחודש · גבייה בחודש', `${rec.defaultMonth} · ${rec.recoveryMonth}`) + lr('תביעה במועד הגבייה', F.nis(rec.claim), { how: 'הקרן והריבית שלא שולמו, צוברות ריבית חוזית עד הגבייה' }) + lr('תמורת מימוש', F.nis(rec.proceeds), { how: 'שווי בתרחיש × (1 − מקדם ביטחון) × (1 − עלויות מימוש) − חוב קודם' }) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : lr('תרחיש מימוש', '—')}
     </div></div>`;
     const income = C.waterfall([{ label: 'ריבית', v: b.interest - Math.max(0, 0) }, { label: 'עמלות', v: b.feeIncome }, { label: 'עלויות ALTARIS', v: -b.costs }, { label: 'חוסר בפירעון', v: -b.shortfall }].filter((x) => Math.abs(x.v) > 0.5)
@@ -702,25 +813,25 @@
     const b = s.base, i = s.inputs, be = s.breakEven || {}, rc = s.recoveryCase, rec = rc && rc.recovery;
     const left = `<div><div class="ax-ledger">
       ${lr('מבנה', optLabel('structure', i.structure))}
-      ${lr('הון מושקע', F.nis(b.capital), { key: true })}${lr('התחייבות מקסימלית', F.nis(b.commitment), { sub: true })}
-      ${lr('הון מקסימלי בסיכון', F.nis(b.maxAtRisk), { key: true, how: 'הגבוה מבין: ההתחייבות המקסימלית; ההון המושקע + מחיר ה-backstop + מחיר האופציה (אם קיימים); ושיא הפריסה בפועל.' })}
+      ${lr('הון מושקע', F.nis(b.capital), { key: true })}${lr('התחייבות מקסימלית', F.nis(b.commitment), { sub: true, m: 'committed' })}
+      ${lr('הון מקסימלי בסיכון', F.nis(b.maxAtRisk), { key: true, m: 'capitalAtRisk', how: 'הגבוה מבין: ההתחייבות המקסימלית; ההון המושקע + מחיר ה-backstop + מחיר האופציה (אם קיימים); ושיא הפריסה בפועל.' })}
       ${lr('תשואה חוזית', F.nis(b.contractual), { how: `קופונים ${F.nis(b.coupons)} + תשואה מועדפת ${F.nis(b.prefPaid)} + עמלות ${F.nis(b.fee)}` })}
       ${lr('השתתפות ברווח', F.nis(b.participation), { how: `${i.participationPct}% × (שווי מימוש ${F.nis(b.realization)} − סף ${F.nis(i.threshold)}), עד גובה התמורה שנותרה אחרי התביעה` })}
-      ${b.optionExercised || b.backstopPaid ? lr('אופציה / backstop נטו', F.nis(b.optionResale - b.optionPaid + b.backstopResale - b.backstopPaid)) : ''}
-      ${lr('תשואה משולבת (רווח)', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0 })}
-      ${lr(b.irr == null && b.irrCommit != null ? 'IRR על ההון המחויב' : 'IRR', F.pct(E.irrOf(b)), { key: true })}${lr('MOIC', F.x(E.moicOf(b)), { key: true })}
+      ${b.optionExercised || b.backstopPaid ? lr('אופציה / backstop נטו', F.nis(b.optionResale - b.optionPaid + b.backstopResale - b.backstopPaid), { m: 'contingent' }) : ''}
+      ${lr('תשואה משולבת (רווח)', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, m: 'profit' })}
+      ${lr(b.irr == null && b.irrCommit != null ? 'IRR על ההון המחויב' : 'IRR', F.pct(E.irrOf(b)), { key: true, m: 'irr' })}${lr('MOIC', F.x(E.moicOf(b)), { key: true, m: 'moic' })}
       ${lr('משך צפוי', F.mo(b.months))}${lr('שווי מימוש צפוי', F.nis(b.realization))}
       ${i.triggerNote ? lr('טריגרים', i.triggerNote) : ''}${i.exitConditions ? lr('תנאי יציאה', i.exitConditions) : ''}
     </div></div>`;
     const right = `<div><div class="ax-ledger">
       <div class="ax-lgt">בטוחות, איזון והגנה</div>
-      ${lr('LTV / נקודת כניסה', F.pct(b.ltv), { how: '(חוב קודם + הון מושקע + backstop) ÷ שווי בטוחות' })}
-      ${lr('כיסוי בטוחות (שמרני)', F.x(b.coverage), { key: true, how: `(שווי × (1 − ${i.haircutPct}%) − חוב קודם) ÷ (הון + תשואה מועדפת צבורה + backstop)` })}
-      ${lr('שווי מימוש לאיזון', F.nis(be.breakEvenValue), { key: true, how: 'שווי המימוש שבו הרווח של ALTARIS = 0 (חיפוש בינארי על שווי המימוש).' })}
+      ${lr('LTV / נקודת כניסה', F.pct(b.ltv), { m: 'ltv', how: '(חוב קודם + הון מושקע + backstop) ÷ שווי בטוחות' })}
+      ${lr('כיסוי בטוחות (שמרני)', F.x(b.coverage), { key: true, m: 'coverage', how: `(שווי × (1 − ${i.haircutPct}%) − חוב קודם) ÷ (הון + תשואה מועדפת צבורה + backstop)` })}
+      ${lr('שווי מימוש לאיזון', F.nis(be.breakEvenValue), { key: true, m: 'breakEven', how: 'שווי המימוש שבו הרווח של ALTARIS = 0 (חיפוש בינארי על שווי המימוש).' })}
       ${lr('ירידת שווי מקסימלית לפני הפסד', F.pct(be.maxDeclineBeforeLoss))}
       ${lr('שווי שבו נפגעת הקרן', F.nis(be.impairmentValue), { how: 'שווי המימוש הנמוך ביותר שבו הקרן מוחזרת במלואה.' })}
       ${lr('ירידת שווי מקסימלית לפני פגיעה בהון', F.pct(be.maxDeclineBeforeImpairment), { key: true })}
-      <div class="ax-lgt">גבייה בתרחיש השלילי</div>
+      <div class="ax-lgt">גבייה בתרחיש השלילי${mi('recovery')}</div>
       ${rec ? lr('תביעה · תמורה', `${F.m(rec.claim)} · ${F.m(rec.proceeds)}`) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : rc && rc.ok ? lr('רווח בתרחיש', F.nis(rc.profit), { neg: rc.profit < 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : lr('תרחיש', '—')}
     </div></div>`;
     const parts = [{ label: 'עמלות', v: b.fee }, { label: 'קופונים', v: b.coupons }, { label: 'תשואה מועדפת', v: b.prefPaid }, { label: 'השתתפות ברווח', v: b.participation },
@@ -759,8 +870,8 @@
       ${SCEN_ROWS.map((r) => `<tr><td>${esc(r.l)}</td><td class="ax-muted">${esc(r.who)}</td>${cell('downside', r)}<td class="base">כפי שהוזן</td>${cell('upside', r)}<td class="ax-muted">${esc(r.u)}</td></tr>`).join('')}
       </tbody></table></div>
       <div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="ax-btn" data-act="reset-scen">איפוס התרחישים לברירות המחדל</button></div>
-      <h3 class="ax-h3">תוצאות לפי תרחיש</h3><div id="o-scen"></div>
-      <h3 class="ax-h3">מבחני לחץ על תרחיש הבסיס <span class="ax-muted">— לחיצה מציגה את ההשפעה גם ב-ledger</span></h3>
+      <h3 class="ax-h3">תוצאות לפי תרחיש${mi('scenarios')}</h3><div id="o-scen"></div>
+      <h3 class="ax-h3">מבחני לחץ על תרחיש הבסיס${mi('stress')} <span class="ax-muted">— לחיצה מציגה את ההשפעה גם ב-ledger</span></h3>
       <div class="ax-press" id="o-press"></div><div id="o-stressgrid"></div>
       <div id="o-attr" style="margin-top:14px"></div></section>`;
   }
@@ -787,7 +898,7 @@
     const moved = a.steps.filter((x) => Math.abs(x.dIrr) >= 5e-4 || Math.abs(x.v) >= 1);   // an assumption with no effect is listed in the ledger, not drawn
     const items = [{ label: 'IRR בסיס', v: a.baseIrr, total: true }].concat(moved.map((x) => ({ label: ATTR_HE[x.k] || x.k, v: x.dIrr }))).concat([{ label: 'IRR בתרחיש השלילי', v: a.downsideIrr, total: true }]);
     at.innerHTML = `<div class="ax-res two">${C.waterfall(items, { title: `מפל התרחיש השלילי · ${SN[S.strat]}`, question: 'איזו הנחה אחראית לכמה מהירידה בתשואה?', fmt: (v) => F.pct(v), tick: (t) => F.pct(t, 0), w: CW(true) })}
-      <div><div class="ax-ledger"><div class="ax-lgt">השפעה על הרווח (₪)</div>${lr('רווח בסיס', F.nis(a.base), { key: true })}${a.steps.map((x) => lr(ATTR_HE[x.k] || x.k, Math.abs(x.v) < 1 && Math.abs(x.dIrr) < 5e-4 ? 'ללא השפעה' : `${F.signed(x.v)} · ${F.pp(x.dIrr)}`, { sub: true, neg: x.v < 0 })).join('')}${lr('רווח בתרחיש השלילי', F.nis(a.downside), { key: true, tot: true, neg: a.downside < 0 })}</div>
+      <div><div class="ax-ledger"><div class="ax-lgt">השפעה על הרווח (₪)${mi('attribution')}</div>${lr('רווח בסיס', F.nis(a.base), { key: true })}${a.steps.map((x) => lr(ATTR_HE[x.k] || x.k, Math.abs(x.v) < 1 && Math.abs(x.dIrr) < 5e-4 ? 'ללא השפעה' : `${F.signed(x.v)} · ${F.pp(x.dIrr)}`, { sub: true, neg: x.v < 0 })).join('')}${lr('רווח בתרחיש השלילי', F.nis(a.downside), { key: true, tot: true, neg: a.downside < 0 })}</div>
       <p class="ax-muted" style="margin-top:6px">ההנחות מופעלות אחת אחרי השנייה בסדר המוצג; כל שורה היא השינוי מהשלב הקודם. ב-FINANCE כשל עשוי להגדיל את הרווח בשקלים (ריבית לאורך המימוש) ובו בזמן להוריד את ה-IRR.</p></div></div>`;
   }
 
@@ -830,11 +941,11 @@
     if (!b.ok) { mos.innerHTML = needBox(`<b>חסרים נתונים:</b> ${esc(missingTxt(b.missing))}`); vel.innerHTML = tl.innerHTML = rk.innerHTML = ''; ic.innerHTML = icHTML(); return; }
     const md = mosData(k);
     const smv = md.markers.find((m) => m.k === 'smv');
-    mos.innerHTML = `<h3 class="ax-h3" style="margin-top:0">מרווח ביטחון · ${SN[k]}</h3><div class="ax-two">${C.ladder(md.markers, { smv: smv && smv.v, title: '', question: 'כמה השווי יכול לרדת לפני ש-ALTARIS מפסידה?', w: CW(true) })}
+    mos.innerHTML = `<h3 class="ax-h3" style="margin-top:0">מרווח ביטחון · ${SN[k]}${mi('mos')}</h3><div class="ax-two">${C.ladder(md.markers, { smv: smv && smv.v, title: '', question: 'כמה השווי יכול לרדת לפני ש-ALTARIS מפסידה?', w: CW(true) })}
       <div><div class="ax-ledger">${md.rows.map(([l, v], i) => lr(l, v, { key: i === 0 || i === 2 })).join('')}</div>
       <div class="ax-ledger" style="margin-top:10px"><div class="ax-lgt">כל המבנים · ירידת שווי מקסימלית לפני הפסד / פגיעה בקרן</div>${E.STRATS.map((x) => lr(SN[x], F.pct(R.strategies[x].mos))).join('')}</div></div></div>`;
     const v = s.velocity;
-    vel.innerHTML = v ? `<h3 class="ax-h3">מהירות הון · ${SN[k]} <span class="ax-muted">— ALTARIS ממחזרת הון, לא מחזיקה נכסים 5–10 שנים</span></h3>
+    vel.innerHTML = v ? `<h3 class="ax-h3">מהירות הון · ${SN[k]}${mi('velocity')} <span class="ax-muted">— ALTARIS ממחזרת הון, לא מחזיקה נכסים 5–10 שנים</span></h3>
       <div class="ax-two"><div><div class="ax-ledger">${lr('הון מושקע', F.nis(v.capital), { key: true })}${lr('משך צפוי', F.mo(v.months))}${lr('מועד החזרת ההון', F.date(v.returnDate))}
       ${lr('מחזורי הון בשנה', v.turnsPerYear.toFixed(2) + 'x', { how: '12 ÷ משך העסקה בחודשים' })}${lr('תשואה שנתית (IRR)', F.pct(v.irr))}
       ${lr(`סבבים בחיי הקרן (${R.settings.fundLifeYears} שנים)`, String(v.cycles), { how: `⌊(חיי הקרן ${v.lifeMonths} + השהיה ${v.lagMonths}) ÷ (משך ${v.months} + השהיה ${v.lagMonths})⌋` })}
@@ -856,12 +967,13 @@
     else evs = [ev(t0, 'T0 · השקעה', `${F.m(b.capital)}${b.commitment > b.capital ? ' · התחייבות ' + F.m(b.commitment) : ''}`, true), ev(E.addMonths(t0, 1), i.prefPct ? 'תשואה מועדפת נצברת' : 'קופון', i.prefPct ? `${i.prefPct}% לשנה, משולמת במימוש` : `${i.couponPct}% לשנה, שוטף`),
       ev(E.addMonths(t0, E.num(i.termMonths)), 'טריגר / מימוש', i.triggerNote || optLabel('finSource', i.sourcePrimary)), ev(b.exitDate, 'החזרת הון', `${F.m(b.distributions)} סך התקבולים${b.participation ? ' · השתתפות ' + F.m(b.participation) : ''}`), ev(E.addMonths(b.exitDate, lag), 'השקעה מחדש', `אחרי ${lag} חודשי השהיה`)];
     return `<h3 class="ax-h3">ציר זמן · ${SN[k]}</h3><div class="ax-tl">${evs.join('')}</div>
-      <div style="margin-top:12px">${C.cumulative(E.STRATS.filter((x) => R.strategies[x].base.ok).map((x) => ({ k: x, flows: R.strategies[x].base.flows })), { title: 'ציר הון מצטבר · כל המבנים', question: 'מתי ההון בשיא החשיפה, ומתי הוא חוזר?', w: CW(false) })}</div>`;
+      <h3 class="ax-h3">שיא פריסת ההון · ${SN[k]} ${F.m(b.peakCapital)}${mi('peakCapital')} <span class="ax-muted">— הנקודה הנמוכה בעקומה המצטברת</span></h3>
+      <div>${C.cumulative(E.STRATS.filter((x) => R.strategies[x].base.ok).map((x) => ({ k: x, flows: R.strategies[x].base.flows })), { title: 'ציר הון מצטבר · כל המבנים', question: 'מתי ההון בשיא החשיפה, ומתי הוא חוזר?', w: CW(false) })}</div>`;
   }
   function riskHTML(k) {
     const s = S.R.strategies[k], r = s.risk; if (!r) return '';
-    return `<h3 class="ax-h3">ציון סיכון · ${SN[k]} <span class="ax-muted">— רכיבים מוסברים, ללא קופסה שחורה</span></h3><div>${r.components.map((c) => `<div class="ax-rk"><span class="l">${esc(RISK_HE[c.k])}</span><span class="bar"><i style="width:${c.score}%"></i></span><span class="v">${c.score}</span><span class="w">${esc(c.why)}${c.weight !== 1 ? ` · משקל ${c.weight}` : ''}</span></div>`).join('')}
-      <div class="ax-rk tot"><span class="l">ציון כולל</span><span class="bar"><i style="width:${r.overall}%"></i></span><span class="v">${r.overall}</span><span class="w">ממוצע משוקלל של שמונת הרכיבים (המשקלות בהגדרות הקרן). 100 = הסיכון הנמוך ביותר.</span></div></div>`;
+    return `<h3 class="ax-h3">ציון סיכון · ${SN[k]}${mi('riskScore')}${modelTag()} <span class="ax-muted">— ציון מודל 0–100 מרכיבים מוסברים · גבוה = סיכון נמוך יותר · אינו הסתברות להפסד</span></h3><div>${r.components.map((c) => `<div class="ax-rk"><span class="l">${esc(RISK_HE[c.k])}</span><span class="bar"><i style="width:${c.score}%"></i></span><span class="v">${c.score}</span><span class="w">${esc(c.why)}${c.weight !== 1 ? ` · משקל ${c.weight}` : ''}</span></div>`).join('')}
+      <div class="ax-rk tot"><span class="l">ציון כולל</span><span class="bar"><i style="width:${r.overall}%"></i></span><span class="v">${r.overall}</span><span class="w">ממוצע משוקלל של שמונת הרכיבים (המשקלות בהגדרות הקרן). 100 = הסיכון הנמוך ביותר. ציון מודל יחסי — אינו הסתברות להפסד ואינו דירוג אשראי.</span></div></div>`;
   }
   function icData(R) {
     R = R || S.R;
@@ -884,14 +996,16 @@
     const D = icData(), R = S.R;
     const tag = (r) => (r[0] === 'אות השקעה' ? `${r[1]} · ${SIG_HE[r[1]] || ''}` : r[1]);
     const long = new Set(['עסקה', 'הסיכון העיקרי', 'ההגנה העיקרית', 'מיקום', 'אות השקעה']);
+    const IC_M = { 'שווי נתמך': 'supportedValue', 'הון נדרש': 'capitalAtRisk', 'משך צפוי': 'wal', 'IRR בסיס': 'irr', 'IRR בתרחיש שלילי': 'scenarios', 'MOIC': 'moic', 'מרווח ביטחון': 'mos', 'LTV · כיסוי': 'coverage' };
     return `<div class="ax-ic"><div class="ax-ic-h"><div><span class="w">ALTARIS INVESTMENT COMMITTEE SNAPSHOT</span><h3>${esc(dealName(S.deal))}</h3></div><span class="ax-muted num">${esc(F.date(TODAY))}${S.dealId && S.deals[S.dealId] ? ' · גרסה ' + S.deals[S.dealId].versions.length : ''}</span></div>
-      <div class="ax-ic-grid">${D.rows.filter((r) => !long.has(r[0])).map((r) => lr(r[0], tag(r), { key: r[0] === 'אות השקעה' || r[0] === 'IRR בסיס' })).join('')}</div>
+      <div class="ax-ic-grid">${D.rows.filter((r) => !long.has(r[0])).map((r) => lr(r[0], tag(r), { key: r[0] === 'אות השקעה' || r[0] === 'IRR בסיס', m: print ? null : IC_M[r[0]] })).join('')}</div>
       <div class="ax-ledger" style="border-top:1px solid var(--hairline);margin-top:6px">${D.rows.filter((r) => long.has(r[0])).map((r) => `<div class="ax-lr" style="grid-template-columns:120px minmax(0,1fr)"><span class="l">${esc(r[0])}</span><span style="text-align:start;font-size:12.5px${r[0] === 'אות השקעה' ? ';font-weight:800' : ''}">${esc(tag(r))}</span></div>`).join('')}</div>
       <div class="ax-ic-cols"><div><h4>WHY THIS DEAL · למה העסקה</h4><ul>${D.why.length ? D.why.map((w) => `<li>${esc(w)}</li>`).join('') : '<li class="ax-muted">אין עדיין נימוקים — השלימו את הנתונים.</li>'}</ul></div>
       <div><h4>KEY RISKS · סיכונים מרכזיים</h4><ul class="r">${D.risks.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div></div>
-      <div class="ax-signal ${SIG_CLASS[R.signal.code] || ''}" style="margin-top:12px"><div class="lbl">ALTARIS STRUCTURE SIGNAL</div><div class="code"><i></i>${esc(R.signal.code)}</div><ul>${R.signal.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>
+      <div class="ax-signal ${SIG_CLASS[R.signal.code] || ''}" style="margin-top:12px"><div class="lbl">ALTARIS STRUCTURE SIGNAL${print ? '' : mi('signal')}</div><div class="code"><i></i>${esc(R.signal.code)}</div><ul>${R.signal.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>
       <p class="ax-muted" style="margin-top:8px">הנחות המס הן לצורך ניתוח השקעה בלבד ויש לאשרן מול המבנה המשפטי הסופי. האות מבוסס על ספי הקרן שבהגדרות ועל התרחישים שהוזנו — אינו המלצה אוטומטית.</p>
-      ${print ? '' : `<div class="ax-exp"><button type="button" class="ax-btn pri" data-act="pdf-ic">PDF · סיכום ועדת השקעות</button><button type="button" class="ax-btn" data-act="pdf-full">PDF · חיתום מלא</button><button type="button" class="ax-btn" data-act="xlsx">Excel · חישובים והנחות</button><button type="button" class="ax-btn" data-act="csv">CSV</button><button type="button" class="ax-btn" data-act="json">קובץ עסקה (JSON)</button></div>`}</div>`;
+      ${print ? '' : `<p class="ax-mline">המדדים לפי מוסכמות החישוב של ALTARIS · <button type="button" class="ax-link" data-mgo="">${esc(MD.VERSION.label.he)} ›</button></p>`}
+      ${print ? '' : `<div class="ax-exp"><button type="button" class="ax-btn pri" data-act="pdf-ic">PDF · סיכום ועדת השקעות</button><button type="button" class="ax-btn" data-act="pdf-full">PDF · חיתום מלא</button><button type="button" class="ax-btn" data-act="xlsx">Excel · חישובים והנחות</button><button type="button" class="ax-btn" data-act="csv">CSV</button><button type="button" class="ax-btn" data-act="json">קובץ עסקה (JSON)</button><label class="ax-switch ax-appx"><input type="checkbox" data-act-check="appendix"${S.mAppendix !== false ? ' checked' : ''}> PDF כולל נספח מתודולוגיה</label></div>`}</div>`;
   }
 
   /* ===================================================== view: compare */
@@ -911,13 +1025,15 @@
       ['תלות ביציאה', (c) => `${{ high: 'גבוהה', medium: 'בינונית', low: 'נמוכה' }[c.exitDependencyLevel] || '—'} · ${F.pct(c.exitDependency, 0)}`, 'EXIT DEPENDENCY'],
       ['נזילות', (c) => ({ high: 'גבוהה', medium: 'בינונית', low: 'נמוכה' }[c.liquidity] || '—'), 'LIQUIDITY'],
       ['ציון סיכון', (c) => (c.risk != null ? c.risk + ' / 100' : '—'), 'RISK SCORE'],
-      ['ספי קרן', (c) => `${c.hurdlesPassed}/${c.hurdlesTotal}`, 'FUND HURDLES'],
+      ['ספי קרן', (c) => `${c.hurdlesPassed}/${c.hurdlesTotal} מתקיימים`, 'FUND HURDLES'],
     ];
     const HOWS = { 'הון נדרש': 'ההון ש-ALTARIS מסכנת: שיא הפריסה המצטברת בתרחיש הבסיס; במבנה משולב — הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.', 'IRR בסיס': 'XIRR על התזרים המתוארך. כשבתרחיש לא הושקע הון (backstop שלא הופעל) — תשואה שנתית על ההון המחויב.', 'מרווח ביטחון': 'BUY: ירידת שווי מקסימלית מהשווי הנתמך לפני הפסד. FINANCE: ירידת שווי בטוחות לפני פגיעה בקרן. HYBRID: ירידת שווי מימוש לפני פגיעה בהון.',
       'כיסוי בטוחות': 'FINANCE / HYBRID: (שווי × (1 − מקדם ביטחון) − שעבודים קודמים) ÷ חשיפה. BUY: ALTARIS בעלים — שווי נתמך ÷ בסיס כולל.',
       'תלות ביציאה': 'החלק מסך התקבולים שמגיע באירוע הנזילות האחרון. גבוהה ≥ 85% · בינונית ≥ 60%.', 'נזילות': 'לפי משך: עד 12 חודשים גבוהה · עד 24 בינונית · מעל נמוכה.',
       'מהירות הון': '12 ÷ משך בחודשים', 'הגנה בתרחיש שלילי': 'רווח (או הפסד) בתרחיש השלילי, ושיעור הגבייה כשיש מימוש בטוחות.' };
-    const table = `<div class="ax-tbl-wrap"><table class="ax-tbl data ax-mx"><thead><tr><th></th>${E.STRATS.map((k) => `<th class="n${pref === k ? ' hl' : ''}"><span class="st" style="--c:${SC[k]}">${SN[k]}</span><div class="ax-muted" style="font-weight:500">${SH[k]}${pref === k ? ' · מועדף' : ''}</div></th>`).join('')}</tr></thead><tbody>${rows.map(([l, f, en]) => `<tr><td>${esc(l)} <span class="ax-muted" style="font-size:10px;direction:ltr;unicode-bidi:isolate">${en}</span>${HOWS[l] ? ' ' + how(HOWS[l]) : ''}</td>${E.STRATS.map((k) => `<td class="n${pref === k ? ' hl' : ''}">${esc(col(k, f))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const CMP_M = { 'הון נדרש': 'capitalAtRisk', 'משך צפוי': 'wal', 'רווח צפוי': 'profit', 'IRR בסיס': 'irr', 'IRR בתרחיש שלילי': 'scenarios', 'IRR בתרחיש חיובי': 'scenarios', 'MOIC': 'moic', 'מרווח ביטחון': 'mos',
+      'כיסוי בטוחות': 'coverage', 'הגנה בתרחיש שלילי': 'recovery', 'מהירות הון': 'velocity', 'תלות ביציאה': 'exitDependency', 'נזילות': 'exitDependency', 'ציון סיכון': 'riskScore', 'ספי קרן': 'hurdles' };
+    const table = `<div class="ax-tbl-wrap"><table class="ax-tbl data ax-mx"><thead><tr><th></th>${E.STRATS.map((k) => `<th class="n${pref === k ? ' hl' : ''}"><span class="st" style="--c:${SC[k]}">${SN[k]}</span><div class="ax-muted" style="font-weight:500">${SH[k]}${pref === k ? ' · מועדף' : ''}</div></th>`).join('')}</tr></thead><tbody>${rows.map(([l, f, en]) => `<tr><td>${esc(l)} <span class="ax-muted" style="font-size:10px;direction:ltr;unicode-bidi:isolate">${en}</span>${l === 'ציון סיכון' ? ' ' + modelTag() : ''}${CMP_M[l] ? ' ' + mi(CMP_M[l], HOWS[l]) : HOWS[l] ? ' ' + how(HOWS[l]) : ''}</td>${E.STRATS.map((k) => `<td class="n${pref === k ? ' hl' : ''}">${esc(col(k, f))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     const hkeys = []; for (const k of E.STRATS) for (const h of R.strategies[k].hurdles) if (!hkeys.includes(h.k)) hkeys.push(h.k);
     const fmtH = (h, v) => (h.fmt === 'pct' ? F.pct(v) : h.fmt === 'x' ? F.x(v) : String(v));
     const hmx = `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>סף קרן</th>${E.STRATS.map((k) => `<th class="n">${SN[k]}</th>`).join('')}</tr></thead><tbody>${hkeys.map((hk) => `<tr><td>${esc(E.HURDLE_HE[hk])}${hk === 'duration' ? ' (חודשים)' : ''}</td>${E.STRATS.map((k) => { const h = R.strategies[k].hurdles.find((x) => x.k === hk); return h ? `<td class="n"><span class="${h.pass ? 'up' : 'down'}">${h.pass ? '✓' : '✗'}</span> ${esc(fmtH(h, h.value))} <span class="ax-muted">/ ${esc(fmtH(h, h.limit))}</span></td>` : '<td class="n ax-muted">לא חל</td>'; }).join('')}</tr>`).join('')}</tbody></table></div>`;
@@ -925,8 +1041,8 @@
     const cum = C.cumulative(E.STRATS.filter((k) => cmp[k].ok).map((k) => ({ k, flows: R.strategies[k].base.flows })), { title: 'ציר הון · מצב מזומן מצטבר', question: 'כמה הון כל מבנה דורש ולכמה זמן?', w: CW(true) });
     const fin = R.strategies.finance.base, hyb = R.strategies.hybrid.base;
     box.innerHTML = `<section class="ax-sec">${secHead('', 'השוואת מבנים · BUY מול FINANCE מול HYBRID', `${esc(dealName(S.deal))} · שווי נתמך ${F.m(Fx.smv)} · אותה עסקה, שלוש צורות הון. האות אינו קובע מבנה "נכון" — הוא מסביר איזה מבנה עדיף לפי ספי הקרן והתרחישים.`)}
-      <div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="lbl">ALTARIS STRUCTURE SIGNAL</div><div class="code"><i></i>${esc(sig.code)}<span class="ax-muted" style="font-weight:600;font-size:12px">${esc(SIG_HE[sig.code] || '')}</span></div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>
-      <h3 class="ax-h3">טבלת השוואה</h3>${table}<h3 class="ax-h3">ספי הקרן לפי מבנה</h3>${hmx}</section>
+      <div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="lbl">ALTARIS STRUCTURE SIGNAL${mi('signal')}</div><div class="code"><i></i>${esc(sig.code)}<span class="ax-muted" style="font-weight:600;font-size:12px">${esc(SIG_HE[sig.code] || '')}</span></div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>
+      <h3 class="ax-h3">טבלת השוואה</h3>${table}<h3 class="ax-h3">ספי הקרן לפי מבנה${mi('hurdles')} <span class="ax-muted">— ✓ מתקיים · ✗ לא מתקיים · ערך בפועל / סף</span></h3>${hmx}</section>
       <section class="ax-sec">${secHead('', 'תשואה, זמן והון')}<div class="ax-res two">${dumb}${cum}</div></section>
       <section class="ax-sec">${secHead('', 'כיסוי בטוחות · FINANCE ו-HYBRID')}<div class="ax-res two">${fin.ok ? collateralFlow(fin.collateral, fin.haircut, fin.priorLiens, fin.exposure, 'FINANCE · כיסוי בטוחות') : ''}${hyb.ok ? collateralFlow(hyb.collateral, R.strategies.hybrid.inputs.haircutPct / 100, hyb.priorLiens, hyb.exposure, 'HYBRID · כיסוי בטוחות') : ''}</div></section>`;
   }
@@ -947,8 +1063,8 @@
     if (!items.length) { box.innerHTML = `<section class="ax-sec">${secHead('', 'פורטפוליו')}<div class="ax-empty"><b>אין עדיין עסקאות בפורטפוליו</b><p>כל עסקה שנשמרת הופכת לשורה כאן, עם המבנה שנבחר לביצוע (או המבנה המועדף לפי האות). עסקאות בארכיון, שנדחו או שמומשו אינן נספרות בחשיפה.</p><button class="ax-btn pri" type="button" data-view-go="deal">לעסקה חדשה</button></div></section>`; return; }
     const P = E.portfolio(items, S.settings, { today: TODAY }), sm = P.summary, st = P.settings;
     const strat = (k) => sm.byStrategy.find((x) => x.key === k) || { capital: 0, share: 0 };
-    const kp = `<div class="ax-kpis">${kpi('הון מושקע כולל', F.m(sm.capital), sm.fundUse != null ? `${F.pct(sm.fundUse)} מהקרן` : '')}${kpi('שווי נתמך כולל', F.m(sm.smv), `${sm.deals} עסקאות`)}${kpi('IRR משוקלל', F.pct(sm.irr), 'לפי הון', { how: 'ממוצע IRR הבסיס של העסקאות, משוקלל בהון הנדרש' })}${kpi('MOIC משוקלל', F.x(sm.moic), 'לפי הון')}${kpi('משך משוקלל', F.mo(sm.months), 'לפי הון')}${kpi('היציאה הקרובה', sm.upcoming[0] ? F.date(sm.upcoming[0].exitDate) : '—', sm.upcoming[0] ? sm.upcoming[0].name : '')}</div>
-      <div class="ax-kpis" style="border-top:none">${E.STRATS.map((k) => kpi(`חשיפת ${SN[k]}`, F.m(strat(k).capital), F.pct(strat(k).share))).join('')}${kpi('ריכוזיות יזם', F.pct(sm.topDeveloperShare), sm.byDeveloper[0] ? sm.byDeveloper[0].key : '')}${kpi('ריכוזיות יישוב', F.pct(sm.topCityShare), sm.byCity[0] ? sm.byCity[0].key : '')}${kpi('נזילות צפויה · 3 / 6 / 12 ח׳', `${F.m(sm.liquidity.m3)}`, `6 ח׳ ${F.m(sm.liquidity.m6)} · 12 ח׳ ${F.m(sm.liquidity.m12)}`, { how: 'סך התקבולים החיוביים (קרן ורווח) המתוארכים בכל חלון מהיום' })}</div>`;
+    const kp = `<div class="ax-kpis">${kpi('הון מושקע כולל', F.m(sm.capital), sm.fundUse != null ? `${F.pct(sm.fundUse)} מהקרן` : '', { m: 'portfolio', how: 'סכום ההון בסיכון של העסקאות הפעילות, במבנה שנבחר לביצוע או במבנה המועדף.' })}${kpi('שווי נתמך כולל', F.m(sm.smv), `${sm.deals} עסקאות`)}${kpi('IRR משוקלל', F.pct(sm.irr), 'לפי הון', { m: 'portfolio', how: 'ממוצע IRR הבסיס של העסקאות, משוקלל בהון הנדרש' })}${kpi('MOIC משוקלל', F.x(sm.moic), 'לפי הון')}${kpi('משך משוקלל', F.mo(sm.months), 'לפי הון')}${kpi('היציאה הקרובה', sm.upcoming[0] ? F.date(sm.upcoming[0].exitDate) : '—', sm.upcoming[0] ? sm.upcoming[0].name : '')}</div>
+      <div class="ax-kpis" style="border-top:none">${E.STRATS.map((k) => kpi(`חשיפת ${SN[k]}`, F.m(strat(k).capital), F.pct(strat(k).share))).join('')}${kpi('ריכוזיות יזם', F.pct(sm.topDeveloperShare), sm.byDeveloper[0] ? sm.byDeveloper[0].key : '')}${kpi('ריכוזיות יישוב', F.pct(sm.topCityShare), sm.byCity[0] ? sm.byCity[0].key : '')}${kpi('נזילות צפויה · 3 / 6 / 12 ח׳', `${F.m(sm.liquidity.m3)}`, `6 ח׳ ${F.m(sm.liquidity.m6)} · 12 ח׳ ${F.m(sm.liquidity.m12)}`, { m: 'portfolio', how: 'סך התקבולים החיוביים (קרן ורווח) המתוארכים בכל חלון מהיום' })}</div>`;
     const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(r.name)}</button></td><td>${esc(r.developer || '—')}</td><td>${esc(r.project || '—')}</td><td>${r.strategy ? `<span class="st" style="--c:${SC[r.strategy]}">${SN[r.strategy]}</span>` : '—'}</td><td class="n">${F.m(r.capital)}</td><td class="n">${F.m(r.smv)}</td><td class="n">${F.pct(r.ltv)}</td><td class="n">${F.pct(r.irr)}</td><td class="n">${F.x(r.moic)}</td><td class="n">${F.mo(r.months)}</td><td class="n">${F.date(r.exitDate)}</td><td class="n">${r.risk ?? '—'}</td><td>${statusSelect(r.id)}</td></tr>`).join('');
     const bars = (list, limit, title) => C.shareBars(list.map((x) => ({ label: x.key === '—' ? 'לא הוזן' : x.key, v: x.capital, share: st.fundSize ? x.ofFund : x.share })), { limit: st.fundSize ? limit / 100 : null, title, question: st.fundSize ? 'שיעור מגודל הקרן מול התקרה שהוגדרה' : 'שיעור מההון בפורטפוליו', w: CW(true) });
     const cal = C.columns(sm.calendar.slice(0, 8).map((x) => ({ label: x.q, v: x.v })), { title: 'לוח החזרי הון', question: 'מתי צפוי ההון (קרן ורווח) לחזור לקרן?', periodLabel: 'רבעון', w: CW(true) });
@@ -1004,7 +1120,8 @@
     const label = (k) => PATH_HE[k] || PATH_HE[k.replace(/\[\d+\]/, '')] || k.replace(/^units\[(\d+)\]\./, 'יחידה $1 · ').replace(/^scen\./, 'תרחיש · ');
     const show = (v) => (v == null ? 'ברירת מחדל / ריק' : typeof v === 'number' ? (Number.isInteger(v) ? F.int(v) : String(v)) : typeof v === 'boolean' ? (v ? 'כן' : 'לא') : String(v));
     const ra = E.run(va.deal, S.settings, { today: TODAY }), rb = E.run(vb.deal, S.settings, { today: TODAY });
-    const out = [['אות מבנה', ra.signal.code, rb.signal.code], ['שווי נתמך', F.nis(ra.facts.smv), F.nis(rb.facts.smv)]]
+    const mver = (v) => (v.methodology === MD.VERSION.id ? `v${MD.VERSION.n}` : v.methodology || 'לא סומן (לפני v1)');
+    const out = [['מתודולוגיית מדדים בשמירה', mver(va), mver(vb)], ['אות מבנה', ra.signal.code, rb.signal.code], ['שווי נתמך', F.nis(ra.facts.smv), F.nis(rb.facts.smv)]]
       .concat(E.STRATS.flatMap((k) => [[`${SN[k]} · IRR`, F.pct(E.irrOf(ra.strategies[k].base)), F.pct(E.irrOf(rb.strategies[k].base))], [`${SN[k]} · הון בסיכון`, F.m(E.capOf(ra.strategies[k].base)), F.m(E.capOf(rb.strategies[k].base))], [`${SN[k]} · MOIC`, F.x(E.moicOf(ra.strategies[k].base)), F.x(E.moicOf(rb.strategies[k].base))]]));
     const sel = (key, val) => `<select class="ax-status" data-ver="${key}">${rec.versions.map((v) => `<option value="${v.n}"${v.n === val ? ' selected' : ''}>גרסה ${v.n} · ${esc(F.date(v.savedAt.slice(0, 10)))}</option>`).join('')}</select>`;
     return `<section class="ax-sec">${secHead('', `השוואת גרסאות · ${esc(dealName(vb.deal))}`, 'הנחות שהשתנו בין שתי גרסאות, והשפעתן על התוצאות (מחושב מחדש עם הגדרות הקרן הנוכחיות).', `<button class="ax-btn" type="button" data-act="cmp-close">סגירה</button>`)}
@@ -1016,11 +1133,90 @@
   /* ===================================================== view: settings */
   function viewSettings() {
     const st = E.settingsOf(S.settings);
-    const groups = SETTINGS_FIELDS.map((g) => `<div class="ax-gt">${esc(g.g)}</div><div class="ax-fields">${g.f.map((sp) => fieldHTML(sp, 'set.' + sp.k, st[sp.k], false).replace(/data-k="set\./g, 'data-set="')).join('')}</div>`).join('');
+    const groups = SETTINGS_FIELDS.map((g) => `<div class="ax-gt">${esc(g.g)}${g.m ? mi(g.m) : ''}</div><div class="ax-fields">${g.f.map((sp) => fieldHTML(sp, 'set.' + sp.k, st[sp.k], false).replace(/data-k="set\./g, 'data-set="')).join('')}</div>`).join('');
     const w = Object.keys(E.SETTINGS_DEF.weights).map((k) => fieldHTML({ k, l: RISK_HE[k], t: 'num' }, 'set.weights.' + k, st.weights[k], false).replace(/data-k="set\./g, 'data-set="')).join('');
     return `<section class="ax-sec">${secHead('', 'הגדרות קרן · ספי השקעה', 'הנהלת ALTARIS מגדירה את הספים; הערכים ההתחלתיים הם ברירות מחדל לשינוי, לא מדיניות. האות, ציון הריכוזיות והפורטפוליו משתמשים בהם מיד.', '<button class="ax-btn" type="button" data-act="settings-reset">איפוס לברירות המחדל</button>')}
-      ${groups}<div class="ax-gt">משקלות רכיבי ציון הסיכון</div><div class="ax-fields c3">${w}</div>
+      ${groups}<div class="ax-gt">משקלות רכיבי ציון הסיכון${mi('riskScore')}</div><div class="ax-fields c3">${w}</div>
       <p class="ax-muted" style="margin-top:10px">ההגדרות נשמרות בדפדפן זה (altaris:settings:v1). משקל 0 מוציא רכיב מהציון הכולל.</p></section>`;
+  }
+
+  /* ======================================= view: metric conventions (level 3) */
+  const MTXT = {
+    he: { h: 'מתודולוגיית מדדים', sub: 'בסיס חישוב והגדרות השקעה', intro: 'גיליון המוסכמות של ALTARIS: מה כל מדד מודד, על איזה בסיס הוא מחושב, היכן הוא משמש בכל מבנה ואיך לקרוא אותו. נכתב מתוך מימוש המנוע הנוכחי — המנוע הוא מקור האמת; הגיליון מתעד ואינו מחשב.',
+      eff: 'בתוקף מ-', eng: 'מנוע', toc: 'תוכן', cls: 'סיווג בסיס הנתונים', na: 'לא חל', same: 'כמו בבסיס החישוב', hurdles: 'הספים', comps: 'רכיבים',
+      hTbl: ['סף', 'מבחן', 'הגדרה', 'סף נוכחי', 'מבנים'], fund: 'רק כשגודל הקרן מוגדר', weight: 'משקל נוכחי', pdf: 'PDF · נספח מתודולוגיה', lang: 'שפת הגיליון',
+      appx: 'נספח מתודולוגיה — בסיס חישוב והגדרות השקעה', engWarn: 'המתודולוגיה נכתבה למנוע גרסה' },
+    en: { h: 'Metric Conventions', sub: 'Calculation Basis & Investment Definitions', intro: 'The ALTARIS conventions sheet: what each metric measures, the basis it is calculated on, where it is used in each structure and how to read it. Written from the current engine implementation — the engine is the source of truth; this sheet documents and computes nothing.',
+      eff: 'Effective', eng: 'Engine', toc: 'Contents', cls: 'Data basis classes', na: 'Not applicable', same: 'As in the calculation basis', hurdles: 'Hurdles', comps: 'Components',
+      hTbl: ['Hurdle', 'Test', 'Definition', 'Current threshold', 'Structures'], fund: 'only when a fund size is set', weight: 'current weight', pdf: 'PDF · methodology appendix', lang: 'Sheet language',
+      appx: 'Investment Metrics — Calculation Basis', engWarn: 'This methodology was written for engine version' },
+  };
+  const SET_FMT = { minMoic: 'x', minCoverage: 'x', maxDuration: 'mo' };
+  const setFmt = (key, v, L) => (!isNum(v) ? '—' : SET_FMT[key] === 'x' ? `${v}x` : SET_FMT[key] === 'mo' ? `${v} ${L === 'en' ? 'mo' : 'ח׳'}` : `${v}%`);
+  const mStructs = (list) => list.map((k) => SN[k]).join(' · ');
+  function methodEntry(m, L, print) {
+    const MT = MTXT[L], T = (v) => MD.t(v, L), B = (v) => bidi(T(v), L), st = E.settingsOf(S.settings);
+    const row = (f, html) => (html ? `<dt>${esc(typeof f === 'string' && MD.FIELDS[f] ? MD.t(MD.FIELDS[f], L) : f.label)}</dt><dd>${html}</dd>` : '');
+    const used = `<span class="ax-mu">${E.STRATS.map((k) => `<span class="ax-mst${m.usedIn.includes(k) ? '' : ' off'}" style="--c:${SC[k]}"${m.usedIn.includes(k) ? '' : ` title="${esc(MT.na)}"`}>${SN[k]}</span>`).join('')}</span>`;
+    const per = m.perStructure ? `<table class="ax-mtbl per"><tbody>${E.STRATS.map((k) => {
+      const on = m.usedIn.includes(k);
+      return `<tr${on ? '' : ' class="off"'}><th><span class="ax-mst" style="--c:${SC[k]}">${SN[k]}</span></th><td>${!on ? esc(MT.na) : m.perStructure[k] ? B(m.perStructure[k]) : esc(MT.same)}</td></tr>`;
+    }).join('')}</tbody></table>` : '';
+    const hurdles = m.hurdles ? `<div class="ax-mtbl-w"><table class="ax-mtbl hz"><thead><tr>${MT.hTbl.map((h, i) => `<th${i === 1 || i === 3 ? ' class="n"' : ''}>${esc(h)}</th>`).join('')}</tr></thead><tbody>${m.hurdles.map((h) => `<tr><td>${bidi(h.name[L], L)}</td><td class="n"><bdi dir="ltr">${h.dir === 'min' ? '≥' : '≤'}</bdi></td><td class="d">${bidi(T(h), L)}</td><td class="n"><bdi dir="ltr">${esc(setFmt(h.setting, st[h.setting], L))}</bdi></td><td>${esc(mStructs(h.usedIn))}${h.fund ? ` <span class="ax-muted">(${esc(MT.fund)})</span>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '';
+    const comps = m.components ? `<ul class="ax-mcomp">${m.components.map((c) => { const txt = T(c), i = txt.indexOf(' — '); const w = st.weights[c.k]; return `<li><b>${bidi(i > 0 ? txt.slice(0, i) : txt, L)}</b>${i > 0 ? ' — ' + bidi(txt.slice(i + 3), L) : ''} <span class="ax-muted">· ${esc(MT.weight)} <bdi>${esc(String(w))}</bdi></span></li>`; }).join('')}</ul>` : '';
+    return `<article class="ax-mm" id="${print ? 'p' : 'm'}-${m.id}"${print ? '' : ' tabindex="-1"'}>
+      <div class="ax-mm-h"><h4>${B(m.title)}${m.id === 'riskScore' ? ' ' + modelTag() : ''}</h4>${used}</div>
+      <p class="ax-mm-lead">${B(m.short)}</p>
+      <dl class="ax-mdl">${row('measures', B(m.measures))}${row('basis', B(m.basis))}${row('formula', m.formula ? `<code class="ax-fx" dir="ltr">${esc(m.formula)}</code>` : '')}${row('perStructure', per)}${row({ label: MT.hurdles }, hurdles)}${row({ label: MT.comps }, comps)}${row('interpretation', B(m.interpretation))}${row('convention', m.convention ? B(m.convention) : '')}${row('data', m.data.map((c) => clsTag(c, L)).join(' '))}</dl></article>`;
+  }
+  const methodClasses = (L) => `<dl class="ax-mcls">${Object.keys(MD.CLASSES).map((c) => `<div><dt>${clsTag(c, L)}</dt><dd>${bidi(MD.t(MD.CLASSES[c].d, L), L)}</dd></div>`).join('')}</dl>`;
+  const methodGroup = (g, L, print) => `<div class="ax-mg" id="${print ? 'p' : 'm'}-g-${g.id}"><h3 class="ax-mg-h"><span class="c">${g.code}</span>${esc(MD.t(g, L))}</h3>${MD.METRICS.filter((m) => m.group === g.id).map((m) => methodEntry(m, L, print)).join('')}</div>`;
+  const methodMeta = (L) => `<span class="ax-tag">${esc(MD.VERSION.id)}</span> ${esc(MD.VERSION.label[L])} · ${esc(MTXT[L].eff)} <bdi>${esc(F.date(MD.VERSION.effective))}</bdi> · ${esc(MTXT[L].eng)} v${E.VERSION}${E.VERSION !== MD.VERSION.engine.version ? ` <span class="ax-tag warn">${esc(MTXT[L].engWarn)} ${MD.VERSION.engine.version}</span>` : ''}`;
+  function viewMethod() {
+    const L = mlang(), MT = MTXT[L], dir = L === 'en' ? 'ltr' : 'rtl';
+    const toc = `<nav class="ax-mtoc" aria-label="${esc(MT.toc)}">${MD.GROUPS.map((g) => `<div><b><span class="c">${g.code}</span>${esc(MD.t(g, L))}</b><span class="ls">${MD.METRICS.filter((m) => m.group === g.id).map((m) => `<a href="#method/${m.id}" data-mgo="${m.id}">${bidi(MD.t(m.name, L), L)}</a>`).join('')}</span></div>`).join('')}</nav>`;
+    return `<section class="ax-sec ax-mv" dir="${dir}" lang="${L}"><div class="ax-mv-h"><div><div class="kick">ALTARIS · METRIC CONVENTIONS</div><h2>${esc(MT.h)}</h2><p class="sub">${esc(MT.sub)}</p></div>
+        <div class="tools"><div class="ax-seg" role="group" aria-label="${esc(MT.lang)}"><button type="button" data-mlang="he" lang="he" aria-pressed="${L === 'he'}">עברית</button><button type="button" data-mlang="en" lang="en" aria-pressed="${L === 'en'}">English</button></div><button type="button" class="ax-btn" data-act="pdf-method">${esc(MT.pdf)}</button></div></div>
+      <p class="ax-mv-meta">${methodMeta(L)}</p><p class="ax-mv-intro">${bidi(MT.intro, L)}</p>${toc}
+      <h3 class="ax-mg-h">${esc(MT.cls)}</h3>${methodClasses(L)}</section>
+      ${MD.GROUPS.map((g) => `<section class="ax-sec ax-mv" dir="${dir}" lang="${L}">${methodGroup(g, L, false)}</section>`).join('')}`;
+  }
+  /* the PDF appendix: the same sheet, after the report, in the sheet's language */
+  function methodPrintHTML() {
+    const L = mlang(), MT = MTXT[L];
+    return `<div class="ax-pp ax-mapx" dir="${L === 'en' ? 'ltr' : 'rtl'}" lang="${L}"><div class="ax-mapx-h"><span class="w">ALTARIS METRIC CONVENTIONS</span><h2>${esc(MT.appx)}</h2><p>${methodMeta(L)}</p><p>${bidi(MT.intro, L)}</p></div>
+      <h3 class="ax-mg-h">${esc(MT.cls)}</h3>${methodClasses(L)}${MD.GROUPS.map((g) => methodGroup(g, L, true)).join('')}</div>`;
+  }
+  const printFoot = () => `<p class="ax-pfoot" dir="ltr">${S.mAppendix !== false ? 'Metrics follow ALTARIS calculation conventions. See methodology appendix.' : 'Metrics follow ALTARIS calculation conventions.'} · ${esc(MD.VERSION.label.en)} (${esc(MD.VERSION.id)})</p>`;
+  /* the Excel sheet / CSV section: one row per metric, then the hurdle and risk-component tables */
+  function methodRows() {
+    const L = mlang(), MT = MTXT[L], T = (v) => MD.t(v, L), FL = (f) => MD.t(MD.FIELDS[f], L), st = E.settingsOf(S.settings), en = L === 'en';
+    const rows = [[{ v: 'ALTARIS Metric Conventions', b: true }, MD.t(MD.VERSION.label, L)], [en ? 'Methodology version' : 'גרסת מתודולוגיה', MD.VERSION.id], [MT.eff, MD.VERSION.effective], [en ? 'Engine version' : 'גרסת מנוע', E.VERSION],
+      [en ? 'Source of truth' : 'מקור האמת', en ? 'The current engine implementation (altaris/engine.js). This sheet documents the calculations; it computes nothing.' : 'מימוש המנוע הנוכחי (altaris/engine.js). הגיליון מתעד את החישובים ואינו מחשב.'], ['']];
+    rows.push([en ? 'Group' : 'קבוצה', en ? 'Metric' : 'מדד', en ? 'Definition' : 'הגדרה', FL('basis'), FL('formula'), en ? 'Structures' : 'מבנים', FL('data'), en ? 'Convention / notes' : 'מוסכמה / הערות', FL('interpretation')].map((c) => ({ v: c, b: true })));
+    for (const m of MD.METRICS) {
+      const g = MD.GROUPS.find((x) => x.id === m.group);
+      const per = m.perStructure ? ' ' + E.STRATS.filter((k) => m.perStructure[k]).map((k) => `${SN[k]}: ${T(m.perStructure[k])}`).join(' | ') : '';
+      rows.push([`${g.code} · ${T(g)}`, T(m.title), T(m.short), T(m.basis) + per, m.formula || '', mStructs(m.usedIn), m.data.map((c) => MD.CLASSES[c][L]).join(' · '), m.convention ? T(m.convention) : '', T(m.interpretation)]);
+    }
+    rows.push([''], [{ v: MD.t(MD.byId.hurdles.title, L), b: true }], MT.hTbl.map((c) => ({ v: c, b: true })));
+    for (const h of MD.byId.hurdles.hurdles) rows.push([h.name[L], h.dir === 'min' ? '≥' : '≤', T(h), setFmt(h.setting, st[h.setting], L), mStructs(h.usedIn) + (h.fund ? ` (${MT.fund})` : '')]);
+    rows.push([''], [{ v: MD.t(MD.byId.riskScore.title, L), b: true }], [en ? 'Component' : 'רכיב', FL('basis'), MT.weight].map((c) => ({ v: c, b: true })));
+    for (const c of MD.byId.riskScore.components) { const txt = T(c), i = txt.indexOf(' — '); rows.push([i > 0 ? txt.slice(0, i) : txt, i > 0 ? txt.slice(i + 3) : '', st.weights[c.k]]); }
+    rows.push([''], [{ v: MT.cls, b: true }]);
+    for (const c of Object.keys(MD.CLASSES)) rows.push([MD.CLASSES[c][L], T(MD.CLASSES[c].d)]);
+    return rows;
+  }
+  function goMethod(id) {
+    S.view = 'method'; S.mfocus = id || null; S.mbarOpen = false;
+    history.replaceState(null, '', '#method' + (id ? '/' + id : ''));
+    renderView();
+    if (!id) window.scrollTo(0, 0);
+  }
+  function focusMethod() {
+    const a = S.mfocus && document.getElementById('m-' + S.mfocus); if (!a) return;
+    a.scrollIntoView({ block: 'start' }); a.focus({ preventScroll: true });
+    a.classList.add('hl'); setTimeout(() => a.classList.remove('hl'), 1800);
   }
 
   /* ============================================ the five-questions ledger */
@@ -1033,23 +1229,23 @@
       <div class="ax-seg" role="group" aria-label="מבנה מוצג">${E.STRATS.map((x) => `<button type="button" data-strat="${x}" aria-pressed="${x === k}">${SN[x]}</button>`).join('')}</div>
       ${st ? `<div class="ax-stressnote">מבחן לחץ פעיל: ${esc(STRESS_HE[S.stress])} <button class="ax-link" type="button" data-stress="">ביטול</button></div>` : ''}</div>`;
     const delta = (v, v0, f) => (st && isNum(v) && isNum(v0) && Math.abs(v - v0) > 1e-9 ? `<div class="x">בסיס ${f(v0)}</div>` : '');
-    const q1 = `<div class="ax-q"><div class="qn"><b>1</b>מהו השווי הנתמך האמיתי?</div><div class="a"><span class="v num">${Fx.smv ? F.m(Fx.smv) : '—'}</span><span class="x">${Fx.chosen ? esc(VSRC[Fx.chosen].l) : 'לא נבחר שווי לחיתום'}</span></div>
+    const q1 = `<div class="ax-q"><div class="qn"><b>1</b>מהו השווי הנתמך האמיתי?${mi('supportedValue')}</div><div class="a"><span class="v num">${Fx.smv ? F.m(Fx.smv) : '—'}</span><span class="x">${Fx.chosen ? esc(VSRC[Fx.chosen].l) + ' ' + clsTag(valueOrigin(Fx.chosen, (S.deal.value || {})[Fx.chosen])) : 'לא נבחר שווי לחיתום'}</span></div>
       <div class="s">${Fx.smv ? `הנחת כניסה ${F.pct(Fx.discount)} · בסיס ${F.m(Fx.basis)}${Fx.sqm ? ' · ' + F.int(Fx.smv / Fx.sqm) + ' ₪/מ״ר' : ''}` : 'בחרו מקור שווי במפורש בשלב 2.'}</div></div>`;
     if (!b) {
       return head + q1 + `<div class="ax-q">${needBox(`<b>${SN[k]}:</b> חסרים ${esc(missingTxt(s.base.missing))}`)}</div>` + sigHTML(sig) + footHTML();
     }
-    const q2 = `<div class="ax-q"><div class="qn"><b>2</b>כמה הון ALTARIS מסכנת?</div><div class="a"><span class="v num">${F.m(E.capOf(b))}</span><span class="x">${SN[k]} · ${SH[k]}</span></div>
+    const q2 = `<div class="ax-q"><div class="qn"><b>2</b>כמה הון ALTARIS מסכנת?${mi('capitalAtRisk', capLive(k, s))}</div><div class="a"><span class="v num">${F.m(E.capOf(b))}</span><span class="x">${SN[k]} · ${SH[k]}</span></div>
       <div class="s">${k === 'buy' ? `חוב ${F.m(b.debt)}${b.debt ? ' · LTV ' + F.pct(b.ltv) : ''} · מחיר ${F.m(b.price)}` : k === 'finance' ? `LTV ${F.pct(b.ltv)} · כיסוי בטוחות ${F.x(b.coverage)}` : `הון בסיכון מקסימלי ${F.m(b.maxAtRisk)} · כיסוי ${F.x(b.coverage)}`}</div></div>`;
     const q3 = `<div class="ax-q"><div class="qn"><b>3</b>מה ALTARIS יכולה להרוויח?</div>
-      <div class="row"><div><div class="k">IRR</div><div class="v2 num${E.irrOf(b) < 0 ? ' neg' : ''}">${F.pct(E.irrOf(b))}</div>${delta(E.irrOf(b), E.irrOf(base), F.pct)}</div><div><div class="k">MOIC</div><div class="v2 num">${F.x(E.moicOf(b))}</div>${delta(E.moicOf(b), E.moicOf(base), F.x)}</div><div><div class="k">רווח</div><div class="v2 num${b.profit < 0 ? ' neg' : ''}">${F.m(b.profit)}</div>${delta(b.profit, base.profit, F.m)}</div></div>
+      <div class="row"><div><div class="k">IRR${mi('irr', irrLive(k, b))}</div><div class="v2 num${E.irrOf(b) < 0 ? ' neg' : ''}">${F.pct(E.irrOf(b))}</div>${delta(E.irrOf(b), E.irrOf(base), F.pct)}</div><div><div class="k">MOIC${mi('moic', moicLive(b))}</div><div class="v2 num">${F.x(E.moicOf(b))}</div>${delta(E.moicOf(b), E.moicOf(base), F.x)}</div><div><div class="k">רווח</div><div class="v2 num${b.profit < 0 ? ' neg' : ''}">${F.m(b.profit)}</div>${delta(b.profit, base.profit, F.m)}</div></div>
       <div class="s">משך ${F.mo(b.months)} · הון חוזר ${F.date(b.exitDate)} · לפני מס על הרווח</div></div>`;
     const q4 = `<div class="ax-q"><div class="qn"><b>4</b>מה קורה אם היציאה הצפויה לא מתרחשת?</div>
-      <div class="row"><div><div class="k">IRR שלילי</div><div class="v2 num${d && E.irrOf(d) < 0 ? ' neg' : ''}">${d ? F.pct(E.irrOf(d)) : '—'}</div></div><div><div class="k">רווח שלילי</div><div class="v2 num${d && d.profit < 0 ? ' neg' : ''}">${d ? F.m(d.profit) : '—'}</div></div><div><div class="k">מרווח ביטחון</div><div class="v2 num${s.mos < 0 ? ' neg' : ''}">${F.pct(s.mos)}</div></div></div>
+      <div class="row"><div><div class="k">IRR שלילי</div><div class="v2 num${d && E.irrOf(d) < 0 ? ' neg' : ''}">${d ? F.pct(E.irrOf(d)) : '—'}</div></div><div><div class="k">רווח שלילי</div><div class="v2 num${d && d.profit < 0 ? ' neg' : ''}">${d ? F.m(d.profit) : '—'}</div></div><div><div class="k">מרווח ביטחון${mi('mos')}</div><div class="v2 num${s.mos < 0 ? ' neg' : ''}">${F.pct(s.mos)}</div></div></div>
       <div class="s">${k === 'buy' ? `נקודת איזון ${F.m(base.breakEvenExit)} · השווי יכול לרדת ${F.pct(base.maxHaircut)} מהשווי הנתמך לפני הפסד` : d && d.recovery ? `כשל בחודש ${d.recovery.defaultMonth}, גבייה בחודש ${d.recovery.recoveryMonth}: ${F.pct(d.recovery.rate, 0)} מהתביעה${d.recovery.principalLoss > 0 ? ' · פגיעה בקרן ' + F.m(d.recovery.principalLoss) : ' · הקרן מוחזרת'}` : 'ירידת שווי מקסימלית לפני פגיעה בהון'}</div></div>`;
-    const risk = s.risk ? `<div class="ax-q"><div class="qn">ציון סיכון · ${SN[k]}</div><div class="ax-risk"><span class="v2 num" style="font-family:var(--f-display);font-weight:800;font-size:16px">${s.risk.overall}</span><span class="bar"><i style="width:${s.risk.overall}%"></i></span><span class="x ax-muted">/ 100</span></div></div>` : '';
+    const risk = s.risk ? `<div class="ax-q"><div class="qn">ציון סיכון · ${SN[k]}${mi('riskScore')}${modelTag()}</div><div class="ax-risk"><span class="v2 num" style="font-family:var(--f-display);font-weight:800;font-size:16px">${s.risk.overall}</span><span class="bar"><i style="width:${s.risk.overall}%"></i></span><span class="x ax-muted">/ 100 · גבוה = סיכון נמוך</span></div></div>` : '';
     return head + q1 + q2 + q3 + q4 + sigHTML(sig) + risk + footHTML();
   }
-  const sigHTML = (sig) => `<div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="qn" style="font-size:10.5px;font-weight:700;color:var(--ink-3)"><b style="font-family:var(--f-display);color:var(--brass)">5</b> BUY, FINANCE או HYBRID?</div><div class="code"><i></i>${esc(sig.code)}</div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul><button class="ax-link" type="button" data-view-go="compare">ההסבר המלא בהשוואת המבנים</button></div>`;
+  const sigHTML = (sig) => `<div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="qn" style="font-size:10.5px;font-weight:700;color:var(--ink-3)"><b style="font-family:var(--f-display);color:var(--brass)">5</b> BUY, FINANCE או HYBRID?${mi('signal')}</div><div class="code"><i></i>${esc(sig.code)}</div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul><button class="ax-link" type="button" data-view-go="compare">ההסבר המלא בהשוואת המבנים</button></div>`;
   const footHTML = () => `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="save">${S.dealId ? 'שמירת גרסה' : 'שמירת עסקה'}</button><button class="ax-btn" type="button" data-act="pdf-ic">PDF ועדה</button><span class="ax-muted" style="align-self:center">${S.dealId ? (S.dirty ? 'שינויים שלא נשמרו' : 'נשמר') : 'טיוטה — נשמרת אוטומטית בדפדפן'}</span></div>`;
   function paintLedger() {
     const a = $('#axAside');
@@ -1079,6 +1275,7 @@
     else if (S.view === 'portfolio') paintPortfolio();
     else if (S.view === 'saved') paintSaved();
     paintLedger();
+    if (POP.trigger && !POP.trigger.isConnected) closePop(false);
     store.set(KEY.draft, { deal: S.deal, dealId: S.dealId, dirty: S.dirty });
   }
   const markDirty = () => { S.dirty = true; };
@@ -1092,7 +1289,7 @@
     if (!rec) { const id = uid(); rec = S.deals[id] = { id, status: 'draft', archived: false, createdAt: now, versions: [] }; S.dealId = id; }
     const snap = clone(S.deal), last = rec.versions[rec.versions.length - 1];
     if (last && JSON.stringify(last.deal) === JSON.stringify(snap)) { toast('אין שינויים מאז הגרסה האחרונה'); return; }
-    rec.versions.push({ n: rec.versions.length + 1, savedAt: now, deal: snap, signal: S.R.signal.code, strategy: S.R.ic.strategy });
+    rec.versions.push({ n: rec.versions.length + 1, savedAt: now, deal: snap, signal: S.R.signal.code, strategy: S.R.ic.strategy, methodology: MD.VERSION.id });
     rec.updatedAt = now;
     persistDeals(); S.dirty = false;
     toast(`נשמר · גרסה ${rec.versions.length}`); renderShell(); recompute(false);
@@ -1114,7 +1311,7 @@
     const d = clone(rec.versions[rec.versions.length - 1].deal);
     d.info = d.info || {}; d.info.name = (d.info.name || 'עסקה') + ' (עותק)'; d.info.createdAt = TODAY;
     const nid = uid(), now = new Date().toISOString();
-    S.deals[nid] = { id: nid, status: 'draft', archived: false, createdAt: now, updatedAt: now, versions: [{ n: 1, savedAt: now, deal: d, signal: rec.versions[rec.versions.length - 1].signal }] };
+    S.deals[nid] = { id: nid, status: 'draft', archived: false, createdAt: now, updatedAt: now, versions: [{ n: 1, savedAt: now, deal: d, signal: rec.versions[rec.versions.length - 1].signal, methodology: MD.VERSION.id }] };
     persistDeals(); toast('העסקה שוכפלה'); recompute(false); renderShell();
   }
   function normalizeDeal(d) {
@@ -1193,7 +1390,8 @@
     const m = exportModel();
     const sections = [{ title: 'ALTARIS', rows: m.meta }, { title: 'סיכום ועדת השקעות', rows: m.summary }, { title: 'פרטי העסקה', rows: m.dealRows }, { title: 'יחידות', rows: m.unitRows },
       { title: 'שווי נתמך', rows: m.valRows }, { title: 'הנחות', rows: m.assum }, { title: 'תוצאות לפי תרחיש', rows: m.M }, { title: 'מדדים נוספים', rows: m.extra }, { title: 'מבחני לחץ', rows: m.stress }, { title: 'ציון סיכון', rows: m.risk }]
-      .concat(Object.entries(m.flows).map(([k, rows]) => ({ title: 'תזרים חודשי · ' + SN[k], rows })));
+      .concat(Object.entries(m.flows).map(([k, rows]) => ({ title: 'תזרים חודשי · ' + SN[k], rows })))
+      .concat([{ title: 'Metric Conventions', rows: methodRows() }]);
     X.download(fileBase() + '.csv', X.csv(sections), 'text/csv;charset=utf-8');
   }
   function exportXLSX() {
@@ -1202,28 +1400,31 @@
     const sheets = [{ name: 'סיכום', rows: m.summary.concat([['']], m.meta), widths: [34, 70] }, { name: 'עסקה', rows: B(m.dealRows).concat([['']], B(m.unitRows)), widths: [28, 22, 14, 16, 16] },
       { name: 'שווי נתמך', rows: B(m.valRows), widths: [30, 16, 30, 60, 8] }, { name: 'הנחות', rows: B(m.assum), widths: [16, 34, 18, 20] },
       { name: 'תוצאות', rows: B(m.M).concat([['']], B(m.extra)), widths: [30, 14, 14, 14, 14, 14, 14, 14, 14, 14] }, { name: 'מבחני לחץ', rows: B(m.stress), widths: [24, 12, 14, 12, 14, 12, 14] },
-      { name: 'סיכון', rows: B(m.risk), widths: [12, 16, 8, 90] }].concat(Object.entries(m.flows).map(([k, rows]) => ({ name: 'תזרים ' + SN[k], rows: B(rows), widths: [8, 12, 16, 16, 16] })));
+      { name: 'סיכון', rows: B(m.risk), widths: [12, 16, 8, 90] }].concat(Object.entries(m.flows).map(([k, rows]) => ({ name: 'תזרים ' + SN[k], rows: B(rows), widths: [8, 12, 16, 16, 16] })))
+      .concat([{ name: 'Metric Conventions', rows: methodRows(), widths: [22, 30, 60, 80, 44, 26, 24, 70, 50], ltr: mlang() === 'en' }]);
     X.download(fileBase() + '.xlsx', new Blob([X.xlsx(sheets)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
   }
-  function exportJSON() { X.download(fileBase() + '.altaris.json', JSON.stringify({ kind: 'altaris-deal', schema: 1, exportedAt: new Date().toISOString(), deal: S.deal, record: S.dealId ? S.deals[S.dealId] : null }, null, 1), 'application/json'); }
+  function exportJSON() { X.download(fileBase() + '.altaris.json', JSON.stringify({ kind: 'altaris-deal', schema: 1, methodology: MD.VERSION.id, exportedAt: new Date().toISOString(), deal: S.deal, record: S.dealId ? S.deals[S.dealId] : null }, null, 1), 'application/json'); }
   async function importJSON(file) {
     try {
       const o = JSON.parse(await file.text());
       if (!o || o.kind !== 'altaris-deal' || !o.deal || typeof o.deal !== 'object') throw new Error('not an ALTARIS deal file');
       const now = new Date().toISOString(), id = uid();
-      const versions = o.record && Array.isArray(o.record.versions) && o.record.versions.length ? o.record.versions.map((v, i) => ({ n: i + 1, savedAt: v.savedAt || now, deal: normalizeDeal(v.deal), signal: v.signal || null })) : [];
+      const versions = o.record && Array.isArray(o.record.versions) && o.record.versions.length ? o.record.versions.map((v, i) => ({ n: i + 1, savedAt: v.savedAt || now, deal: normalizeDeal(v.deal), signal: v.signal || null, methodology: typeof v.methodology === 'string' ? v.methodology : null })) : [];
       const working = normalizeDeal(o.deal), lastV = versions[versions.length - 1];
-      if (!lastV || JSON.stringify(lastV.deal) !== JSON.stringify(working)) versions.push({ n: versions.length + 1, savedAt: o.exportedAt || now, deal: working, note: 'עותק העבודה מהקובץ' });
+      if (!lastV || JSON.stringify(lastV.deal) !== JSON.stringify(working)) versions.push({ n: versions.length + 1, savedAt: o.exportedAt || now, deal: working, note: 'עותק העבודה מהקובץ', methodology: typeof o.methodology === 'string' ? o.methodology : null });
       S.deals[id] = { id, status: (o.record && o.record.status) || 'draft', archived: false, createdAt: now, updatedAt: now, versions };
       persistDeals(); toast('העסקה יובאה'); recompute(false); renderShell();
     } catch (e) { toast('הקובץ אינו קובץ עסקה של ALTARIS'); }
   }
-  function printIC() { X.printHTML(`<div class="ax-pp">${icHTML(true)}</div>`, fileBase() + '-IC'); }
+  const appendix = () => (S.mAppendix !== false ? methodPrintHTML() : '');
+  function printIC() { X.printHTML(`<div class="ax-pp">${icHTML(true)}${printFoot()}</div>${appendix()}`, fileBase() + '-IC'); }
+  function printMethod() { X.printHTML(methodPrintHTML(), 'ALTARIS-metric-conventions-' + MD.VERSION.id); }
   function printFull() {
     const R = S.R, keep = S.strat;
     const m = exportModel();
     const tbl = (rows) => `<table class="ax-tbl data"><thead><tr>${rows[0].map((c, i) => `<th${i ? ' class="n"' : ''}>${esc(c && typeof c === 'object' ? c.v : c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((r) => `<tr>${r.map((c, i) => { const v = c && typeof c === 'object' ? c.v : c; const f = c && typeof c === 'object' ? c.f : null; return `<td${i ? ' class="n"' : ''}>${esc(isNum(v) ? (f === 'pct' ? F.pct(v) : f === 'x' ? F.x(v) : f === 'n' ? String(v) : F.int(v)) : v == null ? '' : v)}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
-    let html = `<div class="ax-pp">${icHTML(true)}</div><div class="ax-pp"><section class="ax-sec"><h2>פרטי העסקה</h2>${tbl(m.dealRows)}<h3 class="ax-h3">יחידות</h3>${tbl(m.unitRows)}<h3 class="ax-h3">שווי נתמך</h3>${tbl(m.valRows)}</section></div>`;
+    let html = `<div class="ax-pp">${icHTML(true)}${printFoot()}</div><div class="ax-pp"><section class="ax-sec"><h2>פרטי העסקה</h2>${tbl(m.dealRows)}<h3 class="ax-h3">יחידות</h3>${tbl(m.unitRows)}<h3 class="ax-h3">שווי נתמך</h3>${tbl(m.valRows)}</section></div>`;
     for (const k of E.STRATS) {
       const s = R.strategies[k]; S.strat = k;
       html += `<div class="ax-pp"><section class="ax-sec"><h2>${SN[k]} · ${SH[k]}</h2>${s.base.ok ? `<div class="ax-res">${kpiStrip(k, s)}${k === 'buy' ? resBuy(s) : k === 'finance' ? resFin(s) : resHyb(s)}</div>` : needBox(missingTxt(s.base.missing))}</section></div>`;
@@ -1232,6 +1433,7 @@
     html += `<div class="ax-pp"><section class="ax-sec"><h2>הנחות</h2>${tbl(m.assum)}</section></div><div class="ax-pp"><section class="ax-sec"><h2>תרחישים ומבחני לחץ</h2>${tbl(m.M)}<h3 class="ax-h3">מבחני לחץ</h3>${tbl(m.stress)}<h3 class="ax-h3">מדדים נוספים</h3>${tbl(m.extra)}</section></div>
       <div class="ax-pp"><section class="ax-sec"><h2>ציון סיכון</h2>${tbl(m.risk)}</section></div>`;
     for (const [k, rows] of Object.entries(m.flows)) html += `<div class="ax-pp"><section class="ax-sec"><h2>תזרים חודשי · ${SN[k]}</h2>${tbl(rows)}</section></div>`;
+    html += appendix();
     X.printHTML(html, fileBase() + '-underwriting');
   }
 
@@ -1321,6 +1523,7 @@
     if (el.dataset.status) { const r = S.deals[el.dataset.status]; if (r) { r.status = el.value; persistDeals(); schedule(false); } return; }
     if (el.dataset.ver) { S.cmpVer[el.dataset.ver] = +el.value; paintSaved(); return; }
     if (el.dataset.actCheck === 'arch') { S.showArchived = el.checked; paintSaved(); return; }
+    if (el.dataset.actCheck === 'appendix') { S.mAppendix = el.checked; renderShell(); return; }
     if (el.dataset.actFile === 'import' && el.files && el.files[0]) { importJSON(el.files[0]); el.value = ''; }
   }
   function onBlur(e) {
@@ -1333,11 +1536,29 @@
     if (el.dataset && el.dataset.geo) setTimeout(() => { const p = $('#axGeoPop'); if (p && !p.contains(document.activeElement)) p.hidden = true; }, 160);
   }
   function onClick(e) {
-    const t = e.target.closest('button, a, [data-geo-i]'); if (!t) return;
+    if (e.target.id === 'axPopBd') { closePop(false); return; }
+    if (POP.trigger && !e.target.closest('#axPop, .ax-mi, [data-hurdles]')) closePop(false);
+    const t = e.target.closest('button, a, [data-geo-i]');
+    if (!t) {   // anywhere on a structure card (outside its buttons) selects that structure
+      const card = e.target.closest('.ax-card[data-card]');
+      if (card && card.dataset.card !== S.strat) { S.strat = card.dataset.card; recompute(true); }
+      return;
+    }
     if (t.dataset.geoI != null) { geoPick(+t.dataset.geoI); return; }
+    if (t.dataset.popClose != null) { closePop(true); return; }
+    if (t.classList.contains('ax-mi') || t.dataset.hurdles) {
+      e.preventDefault();
+      if (POP.trigger === t && POP.pinned) closePop(true); else openPop(t, true);
+      return;
+    }
+    if (t.dataset.mgo != null) { e.preventDefault(); closePop(false); goMethod(t.dataset.mgo); return; }
+    if (t.dataset.mlang) {
+      if (t.dataset.mlang !== S.mlang) { const y = window.scrollY; S.mlang = t.dataset.mlang; S.mfocus = null; renderView(); window.scrollTo(0, y); }
+      return;
+    }
     if (t.classList.contains('ax-how')) { e.preventDefault(); showTip(t); return; }
     if (t.dataset.view || t.dataset.viewGo) {
-      S.view = t.dataset.view || t.dataset.viewGo; S.mbarOpen = false;
+      S.view = t.dataset.view || t.dataset.viewGo; S.mbarOpen = false; S.mfocus = null;
       history.replaceState(null, '', '#' + S.view); renderView(); window.scrollTo(0, 0); return;
     }
     if (t.dataset.strat) { S.strat = t.dataset.strat; recompute(true); return; }
@@ -1369,6 +1590,7 @@
       case 'mbar': S.mbarOpen = !S.mbarOpen; paintLedger(); break;
       case 'pdf-ic': printIC(); break;
       case 'pdf-full': printFull(); break;
+      case 'pdf-method': printMethod(); break;
       case 'xlsx': exportXLSX(); break;
       case 'csv': exportCSV(); break;
       case 'json': exportJSON(); break;
@@ -1381,19 +1603,41 @@
     main.addEventListener('change', (e) => { if (e.target.matches('select, input[type=checkbox], input[type=radio], input[type=date], input[type=file]')) onInput(e); });
     main.addEventListener('focusout', onBlur);
     main.addEventListener('click', onClick);
-    main.addEventListener('pointerover', (e) => { const t = e.target.closest('[data-tip]'); if (t && !t.classList.contains('ax-how')) showTip(t); else if (t && t.classList.contains('ax-how') && e.pointerType === 'mouse') showTip(t); });
-    main.addEventListener('pointerout', (e) => { if (e.target.closest('[data-tip]')) hideTip(); });
+    main.addEventListener('pointerover', (e) => {
+      if (e.pointerType === 'mouse') {   // desktop: hovering a metric mark previews its popover; a click pins it
+        const m = e.target.closest('.ax-mi, [data-hurdles]');
+        if (m || e.target.closest('#axPop')) {
+          clearTimeout(POP.t);
+          if (m && !POP.pinned && POP.trigger !== m && !sheetMode()) POP.t = setTimeout(() => { if (!POP.pinned) openPop(m, false); }, 140);
+          return;
+        }
+      }
+      const t = e.target.closest('[data-tip]'); if (t && !t.classList.contains('ax-how')) showTip(t); else if (t && t.classList.contains('ax-how') && e.pointerType === 'mouse') showTip(t);
+    });
+    main.addEventListener('pointerout', (e) => {
+      if (e.target.closest('[data-tip]')) hideTip();
+      const m = e.target.closest('.ax-mi, [data-hurdles], #axPop');
+      if (m && e.pointerType === 'mouse' && !POP.pinned && !(e.relatedTarget && m.contains(e.relatedTarget))) popLater();
+    });
+    main.addEventListener('focusout', (e) => {   // tabbing out of a pinned popover closes it
+      const p = popEl();
+      if (p && !p.hidden && p.contains(e.target) && e.relatedTarget && !p.contains(e.relatedTarget) && e.relatedTarget !== POP.trigger) closePop(false);
+    });
     main.addEventListener('focusin', (e) => { const t = e.target.closest('[data-tip]'); if (t) showTip(t); });
     main.addEventListener('focusout', (e) => { if (e.target.closest('[data-tip]')) hideTip(); });
     main.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { hideTip(); const p = $('#axGeoPop'); if (p) p.hidden = true; }
+      if (e.key === 'Escape') { if (POP.trigger) { closePop(true); return; } hideTip(); const p = $('#axGeoPop'); if (p) p.hidden = true; }
       if (e.key === 'Enter' && e.target.dataset && e.target.dataset.geo) { const p = $('#axGeoPop'); if (p && !p.hidden && (p._matches || []).length) { e.preventDefault(); geoPick(0); } }
     });
-    window.addEventListener('scroll', hideTip, { passive: true });
+    window.addEventListener('scroll', () => { hideTip(); placePop(); }, { passive: true });
     let rw = window.innerWidth, rt = 0;   // charts are drawn at their pixel width: redraw when the width changes
-    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(window.innerWidth - rw) > 8) { rw = window.innerWidth; recompute(false); } }, 180); });
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(window.innerWidth - rw) > 8) { rw = window.innerWidth; closePop(false); recompute(false); } }, 180); });
     ['themeBtn', 'themeBtnRail'].forEach((i) => { const b = document.getElementById(i); if (b) b.addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark')); });
-    window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (['deal', 'compare', 'portfolio', 'saved', 'settings'].includes(h) && h !== S.view) { S.view = h; renderView(); } });
+    window.addEventListener('hashchange', () => {
+      const h = parseHash(); if (!VIEWS.includes(h.v)) return;
+      if (h.v === 'method') { if (S.view !== 'method' || h.id !== S.mfocus) goMethod(h.id); }
+      else if (h.v !== S.view) { S.view = h.v; S.mfocus = null; renderView(); }
+    });
   }
 
   /* ----------------------------------------------------------------- init */
@@ -1404,9 +1648,12 @@
     S.dealId = dr && dr.dealId && S.deals[dr.dealId] ? dr.dealId : null;
     S.dirty = !!(dr && dr.dirty);
     S.dealsRev = 0;
-    const h = location.hash.slice(1);
-    S.view = ['deal', 'compare', 'portfolio', 'saved', 'settings'].includes(h) ? h : (ui.view || 'deal');
+    const h = parseHash();
+    S.view = VIEWS.includes(h.v) ? h.v : VIEWS.includes(ui.view) ? ui.view : 'deal';
+    S.mfocus = S.view === 'method' && h.v === 'method' ? h.id : null;
     S.strat = E.STRATS.includes(ui.strat) ? ui.strat : 'buy';
+    S.mlang = ui.mlang === 'en' ? 'en' : 'he';
+    S.mAppendix = ui.mAppendix !== false;
     wire(); applyThemeIcon(); renderView();
     const on = $('.rail .ri.on');   // on the bottom rail (narrow screens) bring the active item into view
     if (on && window.innerWidth < 980) { const r = $('.rail'); r.scrollLeft = on.offsetLeft - r.clientWidth / 2 + on.offsetWidth / 2; }

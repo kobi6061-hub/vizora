@@ -1,0 +1,1688 @@
+{
+ "generatedWith": {
+  "engineVersion": 1,
+  "node": "v22.22.2",
+  "today": "2026-10-12",
+  "note": "Frozen outputs of altaris/engine.js before the metric-methodology layer; the methodology work must not change any of them.",
+  "format": "inputs + sha256(JSON.stringify(engine output)) + headline figures; produced from the full outputs frozen before the methodology layer"
+ },
+ "deals": {
+  "example": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "appraisal": {
+     "value": 17600000
+    },
+    "developer": {
+     "value": 19200000
+    },
+    "chosen": "units"
+   }
+  },
+  "levered": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "chosen": "units"
+   },
+   "buy": {
+    "ltvPct": 55,
+    "ratePct": 7.25,
+    "interestMode": "accrued",
+    "loanTermMonths": 12,
+    "mgmt": 3000,
+    "municipal": 2400,
+    "insurance": 900,
+    "rentOn": true,
+    "rent": 42000,
+    "capex": 250000,
+    "vatPct": 18,
+    "profitTaxPct": 23,
+    "exitMode": "target",
+    "targetPrice": 17000000
+   }
+  },
+  "credit": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "chosen": "units"
+   },
+   "finance": {
+    "amount": 9000000,
+    "ratePct": 12,
+    "graceMonths": 4,
+    "repayment": "amortizing",
+    "priorLiens": 1500000,
+    "projectCost": 14000000,
+    "borrowerEquity": 2500000,
+    "monitoring": 4000,
+    "legal": 60000
+   }
+  },
+  "backstop": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "chosen": "units"
+   },
+   "hybrid": {
+    "structure": "backstop",
+    "backstopPrice": 12000000
+   }
+  },
+  "option": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "chosen": "units"
+   },
+   "hybrid": {
+    "structure": "finance-option",
+    "optionPrice": 9500000,
+    "optionSharePct": 60,
+    "backstopOn": true,
+    "backstopPrice": 4000000
+   }
+  },
+  "pref": {
+   "info": {
+    "developer": "יזם לדוגמה בע״מ",
+    "project": "פרויקט לדוגמה",
+    "startDate": "2026-11-01",
+    "constructionStatus": "construction",
+    "completionDate": "2027-08-12",
+    "developerRating": "established",
+    "city": "חיפה"
+   },
+   "units": [
+    {
+     "label": "A-12",
+     "rooms": 4,
+     "sqm": 96,
+     "supported": 3000000,
+     "proposed": 2250000
+    },
+    {
+     "label": "A-14",
+     "rooms": 3,
+     "sqm": 82,
+     "supported": 2550000,
+     "proposed": 1950000
+    },
+    {
+     "label": "B-7",
+     "rooms": 5,
+     "sqm": 121,
+     "supported": 3700000,
+     "proposed": 2800000
+    },
+    {
+     "label": "B-9",
+     "rooms": 4,
+     "sqm": 101,
+     "supported": 3150000,
+     "proposed": 2380000
+    },
+    {
+     "label": "C-3",
+     "rooms": 3,
+     "sqm": 79,
+     "supported": 2450000,
+     "proposed": 1880000
+    },
+    {
+     "label": "C-5",
+     "rooms": 4,
+     "sqm": 98,
+     "supported": 3050000,
+     "proposed": 2300000
+    }
+   ],
+   "value": {
+    "chosen": "units"
+   },
+   "hybrid": {
+    "structure": "pref",
+    "salesSpreadMonths": 6
+   },
+   "scen": {
+    "downside": {
+     "valueShock": -25,
+     "delay": 9
+    }
+   }
+  }
+ },
+ "settings": [
+  {},
+  {
+   "minIrr": 12,
+   "fundSize": 60000000,
+   "weights": {
+    "entry": 2
+   }
+  }
+ ],
+ "runs": {
+  "example#0": {
+   "deal": "example",
+   "settings": 0,
+   "sha256": "ab1a03e73f7bf22494539f2dfed0feae6705dc340b070f3e05441ab000f2a26f",
+   "headline": {
+    "signal": "PREFER HYBRID",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 72,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 77,
+     "hurdles": "irr:0 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 75,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "example#1": {
+   "deal": "example",
+   "settings": 1,
+   "sha256": "741844d36c77e11060bf2d86b67c1cabb3d27fabd7c064ca4a0431aa69948614",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 67,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 69,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 68,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    }
+   }
+  },
+  "levered#0": {
+   "deal": "levered",
+   "settings": 0,
+   "sha256": "63195e5986f127210a99fdf47ff83ad1c593450df9536422f19d22c7bb202c37",
+   "headline": {
+    "signal": "PREFER HYBRID",
+    "buy": {
+     "base": {
+      "irr": -0.06791206295645362,
+      "irrCommit": null,
+      "moic": 0.9351599083555253,
+      "profit": -1009386.9211513121,
+      "atRisk": 15249517.382168263,
+      "peak": 15249517.382168263,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.14444555413827734,
+      "irrCommit": null,
+      "moic": 0.8002951463655869,
+      "profit": -3125686.377961755,
+      "atRisk": 15379360.52982616,
+      "peak": 15379360.52982616,
+      "months": 24
+     },
+     "upside": {
+      "irr": -0.029114450134263097,
+      "irrCommit": null,
+      "moic": 0.9789656334983174,
+      "profit": -326575.6568847429,
+      "atRisk": 15188648.470952544,
+      "peak": 15188648.470952544,
+      "months": 15
+     },
+     "mos": -0.017869574869635585,
+     "risk": 68,
+     "hurdles": "irr:0 moic:0 discount:1 duration:1 mos:0 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 77,
+     "hurdles": "irr:0 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 75,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "levered#1": {
+   "deal": "levered",
+   "settings": 1,
+   "sha256": "65926715f77798e02cbb56c2b6d2087067e07ceecca0f15fc0d92fbd980ed2f9",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": -0.06791206295645362,
+      "irrCommit": null,
+      "moic": 0.9351599083555253,
+      "profit": -1009386.9211513121,
+      "atRisk": 15249517.382168263,
+      "peak": 15249517.382168263,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.14444555413827734,
+      "irrCommit": null,
+      "moic": 0.8002951463655869,
+      "profit": -3125686.377961755,
+      "atRisk": 15379360.52982616,
+      "peak": 15379360.52982616,
+      "months": 24
+     },
+     "upside": {
+      "irr": -0.029114450134263097,
+      "irrCommit": null,
+      "moic": 0.9789656334983174,
+      "profit": -326575.6568847429,
+      "atRisk": 15188648.470952544,
+      "peak": 15188648.470952544,
+      "months": 15
+     },
+     "mos": -0.017869574869635585,
+     "risk": 64,
+     "hurdles": "irr:0 moic:0 discount:1 duration:1 mos:0 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 69,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 68,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    }
+   }
+  },
+  "credit#0": {
+   "deal": "credit",
+   "settings": 0,
+   "sha256": "da15892e7cd884874d5c322a32b6830433c5851524becc452b0388f5164833fc",
+   "headline": {
+    "signal": "PREFER HYBRID",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 72,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.1396780882704698,
+      "irrCommit": null,
+      "moic": 1.0974914413600267,
+      "profit": 871670.9771999996,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.13521687953507125,
+      "irrCommit": null,
+      "moic": 1.1032933200179227,
+      "profit": 923979.9789986927,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14350692505476173,
+      "irrCommit": null,
+      "moic": 1.0900579235544121,
+      "profit": 805207.8944999985,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 9
+     },
+     "mos": 0.2579479079431376,
+     "risk": 78,
+     "hurdles": "irr:0 moic:0 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 75,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "credit#1": {
+   "deal": "credit",
+   "settings": 1,
+   "sha256": "41e33510c4dbb55b6965cd8a4645e470b0f9ccb6e6ca0bffb36da49cca41d2ba",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 67,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.1396780882704698,
+      "irrCommit": null,
+      "moic": 1.0974914413600267,
+      "profit": 871670.9771999996,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.13521687953507125,
+      "irrCommit": null,
+      "moic": 1.1032933200179227,
+      "profit": 923979.9789986927,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14350692505476173,
+      "irrCommit": null,
+      "moic": 1.0900579235544121,
+      "profit": 805207.8944999985,
+      "atRisk": 8941000,
+      "peak": 8941000,
+      "months": 9
+     },
+     "mos": 0.2579479079431376,
+     "risk": 71,
+     "hurdles": "irr:1 moic:0 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.16048463789131814,
+      "irrCommit": null,
+      "moic": 1.2343343825917628,
+      "profit": 2479000,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.09991229866897254,
+      "irrCommit": null,
+      "moic": 1.293919237973113,
+      "profit": 3109342.2265937645,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.18806535056902998,
+      "irrCommit": null,
+      "moic": 1.2284122167711198,
+      "profit": 2416350,
+      "atRisk": 10740000,
+      "peak": 10578900,
+      "months": 15
+     },
+     "mos": 0.3814433295117523,
+     "risk": 68,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    }
+   }
+  },
+  "backstop#0": {
+   "deal": "backstop",
+   "settings": 0,
+   "sha256": "426943072d9f235eb454e24b925ca1ef4b1090ac77c5c9c1977da194e02edb6e",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 72,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 77,
+     "hurdles": "irr:0 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": null,
+      "irrCommit": 0.013289279402143528,
+      "moic": null,
+      "profit": 240000,
+      "atRisk": 12000000,
+      "peak": 0,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.8302371801490609,
+      "irrCommit": null,
+      "moic": 1.2083852083333333,
+      "profit": 1250311.25,
+      "atRisk": 12000000,
+      "peak": 5760000,
+      "months": 30
+     },
+     "upside": {
+      "irr": null,
+      "irrCommit": 0.015968253219547535,
+      "moic": null,
+      "profit": 240000,
+      "atRisk": 12000000,
+      "peak": 0,
+      "months": 15
+     },
+     "mos": 0.3016001824094551,
+     "risk": 65,
+     "hurdles": "irr:0 moic:0 ltv:1 coverage:0 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "backstop#1": {
+   "deal": "backstop",
+   "settings": 1,
+   "sha256": "139883ddd66f1fa8df7e03613768fc90a0b09e3f65039337459051802c9ff1a0",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 67,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 69,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": null,
+      "irrCommit": 0.013289279402143528,
+      "moic": null,
+      "profit": 240000,
+      "atRisk": 12000000,
+      "peak": 0,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.8302371801490609,
+      "irrCommit": null,
+      "moic": 1.2083852083333333,
+      "profit": 1250311.25,
+      "atRisk": 12000000,
+      "peak": 5760000,
+      "months": 30
+     },
+     "upside": {
+      "irr": null,
+      "irrCommit": 0.015968253219547535,
+      "moic": null,
+      "profit": 240000,
+      "atRisk": 12000000,
+      "peak": 0,
+      "months": 15
+     },
+     "mos": 0.3016001824094551,
+     "risk": 58,
+     "hurdles": "irr:0 moic:0 ltv:1 coverage:0 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    }
+   }
+  },
+  "option#0": {
+   "deal": "option",
+   "settings": 0,
+   "sha256": "653ef70ae43c3bb0e0d927b449aba4cf16365897daa4e335df7fd9d7925dd9f9",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 72,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 77,
+     "hurdles": "irr:0 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.10459552338693305,
+      "irrCommit": null,
+      "moic": 1.196589947618097,
+      "profit": 2067910,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 24
+     },
+     "downside": {
+      "irr": 0.1022509128565527,
+      "irrCommit": null,
+      "moic": 1.3012997772194588,
+      "profit": 3169342.2265937645,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.13340022551919373,
+      "irrCommit": null,
+      "moic": 1.2206604778066148,
+      "profit": 2321105.5,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 21
+     },
+     "mos": 0.04010443315628809,
+     "risk": 59,
+     "hurdles": "irr:0 moic:1 ltv:0 coverage:0 duration:1 mos:0 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "option#1": {
+   "deal": "option",
+   "settings": 1,
+   "sha256": "2e3669f12852a5f4c0682efaf36fc9099e657ba0bb2eae8eaf4d53108698748a",
+   "headline": {
+    "signal": "REVIEW",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.018755198656508487,
+      "irrCommit": null,
+      "moic": 0.9627914168807689,
+      "profit": -547435,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 24
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 67,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.12469656386674159,
+      "irrCommit": null,
+      "moic": 1.303595600676819,
+      "profit": 3211707.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 30
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 69,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.10459552338693305,
+      "irrCommit": null,
+      "moic": 1.196589947618097,
+      "profit": 2067910,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 24
+     },
+     "downside": {
+      "irr": 0.1022509128565527,
+      "irrCommit": null,
+      "moic": 1.3012997772194588,
+      "profit": 3169342.2265937645,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 36
+     },
+     "upside": {
+      "irr": 0.13340022551919373,
+      "irrCommit": null,
+      "moic": 1.2206604778066148,
+      "profit": 2321105.5,
+      "atRisk": 24240000,
+      "peak": 10518900,
+      "months": 21
+     },
+     "mos": 0.04010443315628809,
+     "risk": 52,
+     "hurdles": "irr:0 moic:1 ltv:0 coverage:0 duration:1 mos:0 devExposure:0 projectExposure:0 geoExposure:0"
+    }
+   }
+  },
+  "pref#0": {
+   "deal": "pref",
+   "settings": 0,
+   "sha256": "e03067033f2f10ed1bde1597372f6190d4c66c648ba962d10c15b394b4e93330",
+   "headline": {
+    "signal": "PREFER HYBRID",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.06977296985260156,
+      "irrCommit": null,
+      "moic": 0.8495218384242078,
+      "profit": -2213925,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 27
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 72,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.07914397409520149,
+      "irrCommit": null,
+      "moic": 1.202834179357022,
+      "profit": 2145762.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 33
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 77,
+     "hurdles": "irr:0 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.2735568541826271,
+      "irrCommit": null,
+      "moic": 1.3323432375638482,
+      "profit": 2050898.4275874468,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.15445468088864348,
+      "irrCommit": null,
+      "moic": 1.5959671812677887,
+      "profit": 3677728.374783056,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 39
+     },
+     "upside": {
+      "irr": 0.34451913612041885,
+      "irrCommit": null,
+      "moic": 1.3192080506834685,
+      "profit": 1969840.8609689511,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 15
+     },
+     "mos": 0.5681912793298445,
+     "risk": 76,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  },
+  "pref#1": {
+   "deal": "pref",
+   "settings": 1,
+   "sha256": "5e1ec3dc82d0cc5d73ca74819fc846fd7806b18d0c1a89274c4520d9b62ce615",
+   "headline": {
+    "signal": "PREFER HYBRID",
+    "buy": {
+     "base": {
+      "irr": 0.08669707633012876,
+      "irrCommit": null,
+      "moic": 1.1326957845656105,
+      "profit": 1952300,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 18
+     },
+     "downside": {
+      "irr": -0.06977296985260156,
+      "irrCommit": null,
+      "moic": 0.8495218384242078,
+      "profit": -2213925,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 27
+     },
+     "upside": {
+      "irr": 0.1485322677508804,
+      "irrCommit": null,
+      "moic": 1.1893305737938908,
+      "profit": 2785545,
+      "atRisk": 14712600,
+      "peak": 14712600,
+      "months": 15
+     },
+     "mos": 0.16129289704708705,
+     "risk": 67,
+     "hurdles": "irr:0 moic:1 discount:1 duration:1 mos:1 devExposure:0 projectExposure:0 geoExposure:1"
+    },
+    "finance": {
+     "base": {
+      "irr": 0.13895114537076003,
+      "irrCommit": null,
+      "moic": 1.131979695431472,
+      "profit": 1396200,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 12
+     },
+     "downside": {
+      "irr": 0.07914397409520149,
+      "irrCommit": null,
+      "moic": 1.202834179357022,
+      "profit": 2145762.5,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 33
+     },
+     "upside": {
+      "irr": 0.14698576404674246,
+      "irrCommit": null,
+      "moic": 1.1040609137055837,
+      "profit": 1100850,
+      "atRisk": 10578900,
+      "peak": 10578900,
+      "months": 9
+     },
+     "mos": 0.24098671726755216,
+     "risk": 69,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:0 geoExposure:1"
+    },
+    "hybrid": {
+     "base": {
+      "irr": 0.2735568541826271,
+      "irrCommit": null,
+      "moic": 1.3323432375638482,
+      "profit": 2050898.4275874468,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 18
+     },
+     "downside": {
+      "irr": 0.15445468088864348,
+      "irrCommit": null,
+      "moic": 1.5959671812677887,
+      "profit": 3677728.374783056,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 39
+     },
+     "upside": {
+      "irr": 0.34451913612041885,
+      "irrCommit": null,
+      "moic": 1.3192080506834685,
+      "profit": 1969840.8609689511,
+      "atRisk": 6265000,
+      "peak": 6171025,
+      "months": 15
+     },
+     "mos": 0.5681912793298445,
+     "risk": 74,
+     "hurdles": "irr:1 moic:1 ltv:1 coverage:1 duration:1 mos:1 devExposure:1 projectExposure:1 geoExposure:1"
+    }
+   }
+  }
+ },
+ "portfolio": {
+  "selected": [
+   "buy",
+   "finance",
+   "hybrid"
+  ],
+  "settings": 1,
+  "sha256": "d7dbb9485ff6c84f7be8aeb276fcc6dd0440faf088270d018352eda140458c89",
+  "summary": {
+   "capital": 67588000,
+   "irr": 0.13210064000061678,
+   "moic": 1.1671285087940617,
+   "months": 16.121755341184826
+  }
+ }
+}

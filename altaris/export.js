@@ -60,12 +60,12 @@
     if (v == null) return '';
     return `<c r="${ref}" t="inlineStr"${b ? ' s="1"' : ''}><is><t xml:space="preserve">${xesc(v)}</t></is></c>`;
   }
-  function sheetXml(rows, widths) {
+  function sheetXml(rows, widths, ltr) {
     const body = rows.map((r, i) => `<row r="${i + 1}">${(r || []).map((c, j) => cellXml(col(j) + (i + 1), c)).join('')}</row>`).join('');
     const cols = (widths || []).length ? `<cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols>` : '';
-    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView rightToLeft="1" workbookViewId="0"/></sheetViews>${cols}<sheetData>${body}</sheetData></worksheet>`;
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView rightToLeft="${ltr ? 0 : 1}" workbookViewId="0"/></sheetViews>${cols}<sheetData>${body}</sheetData></worksheet>`;
   }
-  /** sheets: [{name, rows, widths}] → Uint8Array (.xlsx) */
+  /** sheets: [{name, rows, widths, ltr}] → Uint8Array (.xlsx); a sheet is right-to-left unless ltr */
   function xlsx(sheets) {
     const safe = (n, i) => (String(n || 'Sheet' + (i + 1)).replace(/[[\]:*?/\\]/g, ' ').slice(0, 31) || 'Sheet' + (i + 1));
     const names = sheets.map((s, i) => safe(s.name, i));
@@ -75,7 +75,7 @@
       { name: 'xl/workbook.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${names.map((n, i) => `<sheet name="${xesc(n)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>` },
       { name: 'xl/_rels/workbook.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
       { name: 'xl/styles.xml', data: STYLES },
-    ].concat(sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: sheetXml(s.rows, s.widths) })));
+    ].concat(sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: sheetXml(s.rows, s.widths, s.ltr) })));
     return zip(files);
   }
 
