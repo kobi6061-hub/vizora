@@ -578,6 +578,24 @@ const UI_IDS = (() => {
   for (const blk of APP_SRC.matchAll(/const (?:CMP_M|IC_M) = \{([\s\S]*?)\};/g)) for (const m of blk[1].matchAll(/: '([A-Za-z]+)'/g)) ids.add(m[1]);
   return ids;
 })();
+t('documented details hold in the engine: VAT base, net proceeds, funded-HYBRID default path, default commitment, velocity floor', () => {
+  const lb = FXR['levered#0'].strategies.buy.base, i = FXR['levered#0'].strategies.buy.inputs;
+  near(lb.vat, lb.exitGross * i.vatPct / (100 + i.vatPct), 1e-6, 'VAT on the gross exit price');
+  assert.match(MD.byId.taxes.basis.en, /gross exit price × rate ÷ \(100 \+ rate\)/);
+  near(lb.netProceeds, lb.exitGross - lb.sellCosts - lb.vat, 1e-6, 'net proceeds exclude the debt');
+  assert.ok(lb.debtRepaid > 0 && /debt balance is then repaid from them/.test(MD.byId.exitValue.basis.en));
+  const od = FXR['option#0'].strategies.hybrid.downside;   // funded capital + backstop + option: the downside defaults
+  assert.ok(od.defaulted && od.backstopPaid === 0 && !od.optionExercised, 'a funded HYBRID downside takes the default path');
+  assert.match(MD.byId.contingent.interpretation.en, /structure with funded capital takes the default path \(no backstop call, no option exercise\)/);
+  const bd = FXR['backstop#0'].strategies.hybrid.downside;   // nothing funded: the backstop is called on the unsold share
+  assert.ok(!bd.defaulted && bd.backstopPaid > 0);
+  for (const [k, R] of Object.entries(FXR)) {
+    const h = R.strategies.hybrid, b = h.base; if (!b.ok) continue;
+    if (!h.inputs.backstopOn && !(FX.deals[FX.runs[k].deal].hybrid || {}).maxCommitment) assert.equal(b.commitment, b.capital, `${k}: without a backstop the default commitment is the capital`);
+    for (const s of A.STRATS) if (R.strategies[s].velocity) assert.ok(R.strategies[s].velocity.cycles >= 1);
+  }
+  assert.match(MD.byId.velocity.short.en, /max\(1, ⌊/);
+});
 t('every metric has an inline entry point in the page, and every entry point names a documented metric', () => {
   for (const id of UI_IDS) assert.ok(MD.byId[id], `the page references an undocumented metric "${id}"`);
   for (const m of MD.METRICS) assert.ok(UI_IDS.has(m.id), `${m.id} has no info mark in the page`);
