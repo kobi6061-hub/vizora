@@ -76,6 +76,13 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
   ranks eligible structures by a stated risk-adjusted return
   ((1 − w)·base IRR + w·downside IRR) and always says why.
 * Every default is labelled as an assumption until edited.
+* Capital at risk is the peak cumulative outflow; for HYBRID it is the larger of that, the maximum commitment, and
+  capital + backstop price + option price. When a scenario funds nothing (a backstop that is not called), IRR and MOIC
+  are stated on the committed capital and labelled so — never as a −100% loss.
+* Known limits of the maths: a series that changes sign more than once (fee in, inventory bought, inventory resold) can
+  have more than one IRR; the engine reports the root its bracketed search finds, while profit and MOIC are unambiguous.
+  In the FINANCE / HYBRID upside a negative delay means earlier repayment, so profit in shekels can be lower than the
+  base while IRR is higher.
 
 ## Design notes
 

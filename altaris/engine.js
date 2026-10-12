@@ -104,13 +104,13 @@
   /** the metrics every strategy shares, from its monthly series */
   function metricsOf(flows, t0) {
     const dated = flows.map((f) => ({ date: addMonths(t0, f.m), amount: f.amount }));
-    let invested = 0, distributions = 0, cum = 0, minCum = 0, last = 0, firstIn = null;
+    let invested = 0, distributions = 0, cum = 0, minCum = 0, firstIn = null;
     for (const f of flows) {
       if (f.amount < 0) invested -= f.amount; else distributions += f.amount;
       cum += f.amount; if (cum < minCum) minCum = cum;
-      if (Math.abs(f.amount) > 1e-9) last = f.m;
       if (f.amount > 0 && firstIn == null) firstIn = f.m;
     }
+    const last = flows.length ? flows[flows.length - 1].m : 0;   // every model ends its series at the final event (exit, repayment, recovery, resale)
     const profit = distributions - invested;
     let irr = xirr(dated);
     if (irr == null && invested > 0 && distributions <= 1e-9) irr = -1;   // nothing comes back: a total loss
@@ -144,11 +144,12 @@
     const basisFrom = priceTotal != null ? 'total' : allProposed ? 'units' : null;
     const V = deal.value || {};
     const psm = num(V.ppsqm && V.ppsqm.psm);
+    const derived = (o) => (o && o.auto !== false && num(o.psm) > 0 && sqm ? num(o.psm) * sqm : num(o && o.value));
     const sources = {
-      propx: num(V.propx && V.propx.value),
+      propx: derived(V.propx),
       appraisal: num(V.appraisal && V.appraisal.value),
       developer: num(V.developer && V.developer.value),
-      comparables: num(V.comparables && V.comparables.value),
+      comparables: derived(V.comparables),
       ppsqm: psm && sqm ? psm * sqm : null,
       units: rows.length > 0 && rows.every((u) => num(u.supported) > 0) ? supSum : null,
       manual: num(V.manual && V.manual.value),
@@ -305,7 +306,8 @@
     const acq = price * n0(i.legalPct) / 100 + n0(i.dd) + price * n0(i.brokeragePct) / 100 + n0(i.registration) + n0(i.otherAcq);
     const improve = n0(i.capex) + n0(i.renovation);
     const marketing = n0(i.marketing);
-    const debt = Math.max(0, i.debtMode === 'amount' ? n0(i.debtAmount) : price * n0(i.ltvPct) / 100);
+    const debtIn = Math.max(0, i.debtMode === 'amount' ? n0(i.debtAmount) : price * n0(i.ltvPct) / 100);
+    const debt = Math.min(debtIn, price);   // acquisition debt is capped at the purchase price (LTV ≤ 100%)
     const fee = debt * n0(i.feePct) / 100;
     const rate = Math.max(0, n0(i.ratePct) + n0(sc.rateAdd)) / 100 / 12;
     const term = Math.max(1, Math.round(n0(i.loanTermMonths) || H));
@@ -338,6 +340,7 @@
     if (bal) L.parts.debtRepay = (L.parts.debtRepay || 0) - bal;
     const repaidAtExit = bal; bal = 0;
     const M = metricsOf(flows, F.t0);
+    M.atRisk = M.peakCapital;
     const profitTax = Math.max(0, M.profit) * n0(i.profitTaxPct) / 100 + n0(i.otherTax);
     const after = flows.map((f) => ({ m: f.m, amount: f.amount - (f.m === H ? profitTax : 0) }));
     const MA = profitTax > 0 ? metricsOf(after, F.t0) : M;
@@ -365,7 +368,7 @@
       price, tax, acqCosts: acq, improvements: improve, marketing, costs, debt, fee, interest, financing,
       holding: opexTotal, rentCarry: rentTotal, exitGross, exitHaircut: F.smv - exitGross, sellCosts, vat,
       netProceeds: exitGross - sellCosts - vat, debtRepaid: repaidAtExit + earlyRepay, earlyRepay,
-      loanTerm: term, loanMaturesBeforeExit: debt > 0 && term < H,
+      loanTerm: term, loanMaturesBeforeExit: debt > 0 && term < H, debtCapped: debtIn > debt + 0.5,
       bridge, bridgeCheck: check,
       sourcesUses: {
         uses: [{ k: 'price', v: price }, { k: 'tax', v: tax }, { k: 'costs', v: costs }, { k: 'fee', v: fee }, { k: 'carry', v: carry }],
@@ -392,7 +395,7 @@
     if (missing.length) return { ok: false, strategy: 'finance', missing };
     const amount = +i.amount, T0 = Math.max(1, Math.round(+i.termMonths));
     const T = Math.max(1, T0 + Math.round(n0(sc.delay)));
-    const r = n0(i.ratePct) / 100 / 12, rExt = n0(i.extRatePct || i.ratePct) / 100 / 12;
+    const r = n0(i.ratePct) / 100 / 12, rExt = (num(i.extRatePct) ?? n0(i.ratePct)) / 100 / 12;
     const grace = clamp(Math.round(n0(i.graceMonths)), 0, T0);
     const fee = amount * n0(i.feePct) / 100, exitFee = amount * n0(i.exitFeePct) / 100;
     const prior = n0(i.priorLiens);
@@ -411,7 +414,7 @@
     for (let m = 1; m <= end; m++) {
       const p = {}; let a = 0;
       const rate = m > T0 ? rExt : r;
-      const it = (bal + (i.interestMode === 'accrued' || m <= grace ? acc : 0)) * rate;
+      const it = (bal + acc) * rate;   // capitalised (grace / accrued) interest is part of the claim and earns interest
       interest += it; balMonths += bal;
       const missed = def && m === D;
       if (i.interestMode === 'accrued' || m <= grace || missed) acc += it; else { a += it; p.interest = it; }
@@ -438,6 +441,7 @@
       walNum += Math.min(bal, paid) * (D + E);
     }
     const M = metricsOf(flows, F.t0);
+    M.atRisk = M.peakCapital;
     const exposure = amount + acc + exitFee;   // peak claim: principal + capitalized interest + exit fee
     const expBase = def ? recovery.claimAtDefault : exposure;
     const conservative = V * (1 - h);
@@ -506,9 +510,10 @@
     }
     const uRaw = sc.backstopUnsoldPct != null && sc.backstopUnsoldPct !== '' ? n0(sc.backstopUnsoldPct) : n0(i.backstopUnsoldPct);
     const u = i.backstopOn && !def ? clamp(uRaw / 100, 0, 1) : 0;
-    const bsPay = u * n0(i.backstopPrice), bsRecv = u * V * (1 - rsHc) * (1 - rsCost);
+    const remain = 1 - (optEx ? share : 0);   // inventory ALTARIS bought through the option is no longer the developer's to sell or backstop
+    const bsPay = u * n0(i.backstopPrice) * remain, bsRecv = u * V * remain * (1 - rsHc) * (1 - rsCost);
     /* the developer's realization, net of prior liens: the waterfall ALTARIS' claim is paid from */
-    const devSold = V * (1 - (optEx ? share : 0)) * (1 - u);
+    const devSold = V * remain * (1 - u);
     const N = Math.max(0, devSold * (1 - sale) + optPay + bsPay - prior);
     const k = clamp(Math.round(n0(i.salesSpreadMonths)), 0, T);
     const realize = k > 0 ? new Set(Array.from({ length: k }, (_, j) => T - k + 1 + j)) : new Set([T]);
@@ -555,7 +560,12 @@
     /* claim at the realization date on the contractual path (for coverage) */
     const claimT = capital * Math.pow(1 + pr, T0) + (i.backstopOn ? n0(i.backstopPrice) : 0);   // contractual claim + backstop obligation
     const conservative = Vcoll * (1 - h);
-    const maxAtRisk = Math.max(commit, capital + (i.backstopOn ? n0(i.backstopPrice) : 0));
+    const maxAtRisk = Math.max(commit, capital + (i.backstopOn ? n0(i.backstopPrice) : 0) + (i.optionOn ? n0(i.optionPrice) : 0), M.peakCapital);
+    M.atRisk = maxAtRisk;
+    /* nothing funded in this scenario (e.g. a backstop that is not called): IRR / MOIC on the capital committed instead */
+    const horizon = Math.max(1, M.months || T);
+    const irrCommit = M.invested <= 1e-9 && maxAtRisk > 0 ? Math.pow(Math.max(0, 1 + M.profit / maxAtRisk), 12 / horizon) - 1 : null;
+    const moicCommit = M.invested <= 1e-9 && maxAtRisk > 0 ? 1 + M.profit / maxAtRisk : null;
     return {
       ok: true, strategy: 'hybrid', scenario: sc.name || null, flows, months: M.months, ...M,
       structure: i.structure, capital, commitment: commit, fee, coupons, prefPaid, principalBack, participation,
@@ -563,7 +573,7 @@
       optionExercised: optEx, optionPaid: optPay, optionResale: optRecv, backstopPaid: bsPay, backstopResale: bsRecv,
       upside: participation + (optRecv - optPay) + (bsRecv - bsPay),
       realization: V, developerNet: N, shortfall, recovery, defaulted: def,
-      maxAtRisk, collateral: Vcoll, collateralStressed: Vc, conservative, priorLiens: prior,
+      maxAtRisk, irrCommit, moicCommit, collateral: Vcoll, collateralStressed: Vc, conservative, priorLiens: prior,
       exposure: claimT,
       coverage: claimT > 0 ? (conservative - prior) / claimT : null,
       ltv: Vcoll > 0 ? (prior + capital + (i.backstopOn ? n0(i.backstopPrice) : 0)) / Vcoll : null,
@@ -572,6 +582,11 @@
   }
 
   const MODEL = { buy: buyModel, finance: financeModel, hybrid: hybridModel };
+  /* the return and capital a result is judged on: IRR / MOIC on invested capital, or — when nothing is funded in that
+     scenario (a fee-only commitment) — on the capital committed; capital at risk = peak outflow, or the larger commitment */
+  const irrOf = (r) => (!r || !r.ok ? null : r.irr != null ? r.irr : r.irrCommit != null ? r.irrCommit : r.invested > 0 ? -1 : null);
+  const moicOf = (r) => (!r || !r.ok ? null : r.moic != null ? r.moic : r.moicCommit != null ? r.moicCommit : null);
+  const capOf = (r) => (!r || !r.ok ? null : r.atRisk != null ? r.atRisk : r.peakCapital);
 
   /* ------------------------------------------------------ solvers */
   function bisect(fn, lo, hi, target, iters = 80) {
@@ -629,8 +644,8 @@
     let cur = Object.assign({}, SCEN_DEF.base, { name: 'base' });
     const base = MODEL[kind](F, inputs, cur);
     if (!base.ok) return null;
-    const irrOf = (r) => (r.irr == null ? -1 : r.irr);
-    let prev = base.profit, prevIrr = irrOf(base);
+    const irrA = (r) => { const x = irrOf(r); return x == null ? -1 : x; };
+    let prev = base.profit, prevIrr = irrA(base);
     for (const keys of ATTR_STEPS[kind]) {
       const next = Object.assign({}, cur);
       let changed = false;
@@ -638,10 +653,10 @@
       if (!changed) continue;
       const r = MODEL[kind](F, inputs, next);
       if (!r.ok) continue;
-      steps.push({ k: keys[0], v: r.profit - prev, dIrr: irrOf(r) - prevIrr });
-      prev = r.profit; prevIrr = irrOf(r); cur = next;
+      steps.push({ k: keys[0], v: r.profit - prev, dIrr: irrA(r) - prevIrr });
+      prev = r.profit; prevIrr = irrA(r); cur = next;
     }
-    return { base: base.profit, baseIrr: irrOf(base), steps, downside: prev, downsideIrr: prevIrr };
+    return { base: base.profit, baseIrr: irrA(base), steps, downside: prev, downsideIrr: prevIrr };
   }
 
   /* -------------------------------------------------------- risk score */
@@ -724,7 +739,7 @@
     }
     /* 7 concentration */
     {
-      const ex = exposureOf(ctx, F, base.peakCapital, settings);
+      const ex = exposureOf(ctx, F, capOf(base), settings);
       const parts = [['developer', settings.maxDevExposure, 'יזם'], ['project', settings.maxProjectExposure, 'פרויקט'], ['city', settings.maxGeoExposure, 'יישוב']]
         .map(([k, lim, he]) => ({ k, he, use: ex[k], lim: lim / 100 }));
       let worst = 0; const why = [];
@@ -759,8 +774,9 @@
     const b = R.base; if (!b || !b.ok) return [];
     const H = [];
     const chk = (k, value, limit, pass, fmt) => H.push({ k, value, limit, pass: !!pass, fmt });
-    chk('irr', b.irr, settings.minIrr / 100, b.irr != null && b.irr >= settings.minIrr / 100, 'pct');
-    chk('moic', b.moic, settings.minMoic, b.moic != null && b.moic >= settings.minMoic, 'x');
+    const bi = irrOf(b), bm = moicOf(b);
+    chk('irr', bi, settings.minIrr / 100, bi != null && bi >= settings.minIrr / 100, 'pct');
+    chk('moic', bm, settings.minMoic, bm != null && bm >= settings.minMoic, 'x');
     if (kind === 'buy') { const disc = F.smv ? 1 - b.price / F.smv : null; chk('discount', disc, settings.minDiscount / 100, disc != null && disc >= settings.minDiscount / 100, 'pct'); }
     else {
       chk('ltv', b.ltv, settings.maxLtv / 100, b.ltv != null && b.ltv <= settings.maxLtv / 100, 'pct');
@@ -769,7 +785,7 @@
     chk('duration', b.months, settings.maxDuration, b.months <= settings.maxDuration, 'months');
     const mos = R.mos;
     chk('mos', mos, settings.minMos / 100, mos != null && mos >= settings.minMos / 100, 'pct');
-    const ex = exposureOf(ctx, F, b.peakCapital, settings);
+    const ex = exposureOf(ctx, F, capOf(b), settings);
     if (ex.fund) {
       chk('devExposure', ex.developer, settings.maxDevExposure / 100, ex.developer <= settings.maxDevExposure / 100, 'pct');
       chk('projectExposure', ex.project, settings.maxProjectExposure / 100, ex.project <= settings.maxProjectExposure / 100, 'pct');
@@ -787,11 +803,11 @@
     const w = clamp(n0(settings.downsideWeight), 0, 100) / 100;
     const rows = STRATS.filter((k) => S[k] && S[k].base && S[k].base.ok).map((k) => {
       const s = S[k], b = s.base, d = s.downside && s.downside.ok ? s.downside : null;
-      const dIrr = d ? (d.irr == null ? -1 : d.irr) : null;
-      const bIrr = b.irr == null ? -1 : b.irr;
+      const dIrr = d ? (irrOf(d) ?? -1) : null;
+      const bIrr = irrOf(b) ?? -1;
       const ra = dIrr == null ? bIrr : (1 - w) * bIrr + w * dIrr;
       const fails = s.hurdles.filter((h) => !h.pass);
-      return { k, ra, bIrr, dIrr, fails, risk: s.risk ? s.risk.overall : null, capital: b.peakCapital, profit: b.profit, coverage: b.coverage, months: b.months, dProfit: d ? d.profit : null };
+      return { k, ra, bIrr, dIrr, fails, risk: s.risk ? s.risk.overall : null, capital: capOf(b), profit: b.profit, coverage: b.coverage, months: b.months, dProfit: d ? d.profit : null };
     });
     if (!rows.length) return { code: 'INCOMPLETE', strategy: null, why: ['חסרים נתונים לחישוב: בחרו שווי לצורך חיתום והזינו את תנאי המבנה.'], ranking: [] };
     const eligible = rows.filter((r) => !r.fails.length).sort((a, b) => b.ra - a.ra || (b.risk || 0) - (a.risk || 0));
@@ -840,16 +856,16 @@
     const lifeM = Math.round(n0(settings.fundLifeYears) * 12), lag = Math.max(0, Math.round(n0(settings.redeployLagMonths)));
     const cycleM = b.months + lag;
     const cycles = lifeM > 0 ? Math.max(1, Math.floor((lifeM + lag) / cycleM)) : 1;
-    const cap = b.peakCapital;
+    const cap = capOf(b), moic = moicOf(b) ?? 1;
     const schedule = [];
     let value = cap;
     for (let n = 0; n < cycles; n++) {
       const start = n * cycleM, endM = start + b.months;
-      schedule.push({ n: n + 1, startMonth: start, endMonth: endM, deployed: value, returned: value * (b.moic || 0) });
-      value = value * (b.moic || 0);
+      schedule.push({ n: n + 1, startMonth: start, endMonth: endM, deployed: value, returned: value * moic });
+      value = value * moic;
     }
     return {
-      capital: cap, months: b.months, returnDate: b.exitDate, turnsPerYear: 12 / b.months, irr: b.irr,
+      capital: cap, months: b.months, returnDate: b.exitDate, turnsPerYear: 12 / b.months, irr: irrOf(b),
       cycles, cumulativeDeployed: sum(schedule.map((s) => s.deployed)), aumHeld: cap, endValue: value,
       cumulativeFlat: cap * cycles, schedule, lifeMonths: lifeM, lagMonths: lag,
     };
@@ -912,8 +928,9 @@
       const d = s.downside && s.downside.ok ? s.downside : null, u = s.upside && s.upside.ok ? s.upside : null;
       const exitDep = b.finalShare;
       return {
-        ok: true, capital: b.peakCapital, months: b.months, profit: b.profit, irr: b.irr, irrDown: d ? d.irr : null, irrUp: u ? u.irr : null,
-        moic: b.moic, mos: s.mos, coverage: k === 'buy' ? b.valueToBasis : b.coverage, coverageKind: k === 'buy' ? 'value-to-basis' : 'collateral',
+        ok: true, capital: capOf(b), peak: b.peakCapital, months: b.months, profit: b.profit, irr: irrOf(b), irrDown: irrOf(d), irrUp: irrOf(u),
+        irrBasis: b.irr == null && b.irrCommit != null ? 'commitment' : 'invested',
+        moic: moicOf(b), mos: s.mos, coverage: k === 'buy' ? b.valueToBasis : b.coverage, coverageKind: k === 'buy' ? 'value-to-basis' : 'collateral',
         downProfit: d ? d.profit : null, recoveryRate: d && d.recovery ? d.recovery.rate : null,
         turns: s.velocity ? s.velocity.turnsPerYear : null, exitDependency: exitDep,
         exitDependencyLevel: exitDep == null ? null : exitDep >= 0.85 ? 'high' : exitDep >= 0.6 ? 'medium' : 'low',
@@ -946,7 +963,7 @@
     if (k !== 'buy' && isNum(b.equityCushion) && b.equityCushion > 0) pos.push({ w: 0.6, t: `+ כרית הון של היזם ${nisM(b.equityCushion)} מתחת לחשיפת ALTARIS` });
     if (k !== 'buy' && isNum(b.coverage) && b.coverage >= settings.minCoverage) pos.push({ w: b.coverage / 2, t: `+ כיסוי בטוחות שמרני של ${mult(b.coverage)}` });
     if (b.months <= settings.maxDuration) pos.push({ w: 0.5, t: `+ משך הון צפוי של ${b.months} חודשים` });
-    if (b.irr != null && b.irr >= settings.minIrr / 100) pos.push({ w: 0.7, t: `+ IRR בסיס ${pct(b.irr)} מעל רף הקרן (${settings.minIrr}%)` });
+    if (irrOf(b) != null && irrOf(b) >= settings.minIrr / 100) pos.push({ w: 0.7, t: `+ IRR בסיס ${pct(irrOf(b))} מעל רף הקרן (${settings.minIrr}%)` });
     const inp = s.inputs;
     const exits = k === 'buy' ? [inp.exitPrimary, inp.exitSecondary] : [inp.sourcePrimary, inp.sourceSecondary];
     if (exits[0] && exits[1] && exits[0] !== exits[1]) pos.push({ w: 0.4, t: `+ שתי חלופות יציאה: ${SOURCE_HE[exits[0]] || exits[0]} / ${SOURCE_HE[exits[1]] || exits[1]}` });
@@ -956,7 +973,7 @@
     if (F.chosen === 'developer') risks.push('מחיר המחירון של היזם נבחר כשווי לצורך חיתום — אינו שווי שוק בלתי תלוי.');
     if (!F.sources.appraisal) risks.push('לא הוזנה שומה בלתי תלויה.');
     if (F.spread != null && F.spread > 0.1) risks.push(`פער של ${pct(F.spread, 0)} בין מקורות השווי.`);
-    if (d && d.profit < 0) risks.push(`הפסד של ${nisM(-d.profit)} בתרחיש השלילי (IRR ${pct(d.irr)}).`);
+    if (d && d.profit < 0) risks.push(`הפסד של ${nisM(-d.profit)} בתרחיש השלילי (IRR ${pct(irrOf(d))}).`);
     if (d && d.recovery && d.recovery.principalLoss > 0) risks.push(`פגיעה בקרן של ${nisM(d.recovery.principalLoss)} בתרחיש מימוש בטוחות.`);
     if (k === 'buy' && b.loanMaturesBeforeExit) risks.push('ההלוואה לרכישה נפרעת לפני מועד היציאה — נדרש מחזור או הון נוסף.');
     for (const h of s.hurdles.filter((x) => !x.pass)) risks.push(`${HURDLE_HE[h.k]}: ${fmtH(h, h.value)} מול סף ${fmtH(h, h.limit)}.`);
@@ -965,7 +982,10 @@
     if (!F.status) risks.push('סטטוס הבנייה לא הוזן.');
     if (F.developerRating === 'unassessed') risks.push('היזם טרם הוערך על ידי האנליסט.');
     if (k === 'buy' && inp.rentOn) risks.push('התשואה כוללת הכנסות שכירות — הנחה שיש לאמת.');
-    if (!(n0(inp.profitTaxPct) || n0(inp.vatPct) || n0(inp.otherTax))) risks.push('הנחות מס על הרווח לא הוזנו — התשואות לפני מס.');
+    if (k === 'buy' && !(n0(inp.profitTaxPct) || n0(inp.vatPct) || n0(inp.otherTax))) risks.push('הנחות מס על הרווח לא הוזנו — התשואות לפני מס.');
+    if (k === 'buy' && b.debtCapped) risks.push('סכום החוב שהוזן גבוה ממחיר הרכישה — החוב הוגבל למחיר.');
+    /* every memo names what the return depends on, and how that source fares in the downside */
+    if (exits[0]) risks.push(`התשואה תלויה ב${SOURCE_HE[exits[0]] || exits[0]}${d ? ` — בתרחיש השלילי: IRR ${pct(irrOf(d))}, רווח ${nisM(d.profit)}${d.recovery ? `, גבייה ${pct(d.recovery.rate, 0)} מהתביעה` : ''}` : ''}.`);
     const main = (s.risk && s.risk.components.slice().sort((a, b) => a.score - b.score)[0]) || null;
     const prot = (s.risk && s.risk.components.slice().sort((a, b) => b.score - a.score)[0]) || null;
     return {
@@ -986,17 +1006,20 @@
     ctx = ctx || {};
     const settings = settingsOf(userSettings);
     const live = (items || []).filter((x) => x && x.deal && !x.archived && x.status !== 'declined' && x.status !== 'exited');
-    const pre = live.map((x) => {
-      const r = run(x.deal, settings, { today: ctx.today });
-      const k = x.deal.selected && r.strategies[x.deal.selected].base.ok ? x.deal.selected : r.signal.strategy || r.ic.strategy;
-      return { x, r, k };
+    const pick = (x, r) => (x.deal.selected && r.strategies[x.deal.selected] && r.strategies[x.deal.selected].base.ok ? x.deal.selected : r.signal.strategy || r.ic.strategy);
+    /* pass 1: each deal's capital at risk on its own; pass 2: each deal judged with the others as its concentration context */
+    const first = live.map((x) => { const r = run(x.deal, settings, { today: ctx.today }); const k = pick(x, r); return { x, r, k }; });
+    const others = first.map(({ x, r, k }) => ({ id: x.id, developer: r.facts.developer, project: r.facts.project, city: r.facts.city, capital: k ? capOf(r.strategies[k].base) : 0 }));
+    const pre = first.map(({ x }) => {
+      const r = run(x.deal, settings, { today: ctx.today, portfolio: others.filter((o) => o.id !== x.id) });
+      return { x, r, k: pick(x, r) };
     });
     const rows = pre.map(({ x, r, k }) => {
       const s = k ? r.strategies[k] : null, b = s && s.base.ok ? s.base : null;
       return {
         id: x.id, name: x.deal.name || (x.deal.info && x.deal.info.name) || '—', status: x.status || 'draft',
         developer: r.facts.developer, project: r.facts.project, city: r.facts.city, strategy: k,
-        capital: b ? b.peakCapital : null, smv: r.facts.smv, ltv: b ? b.ltv : null, irr: b ? b.irr : null, moic: b ? b.moic : null,
+        capital: b ? capOf(b) : null, smv: r.facts.smv, ltv: b ? b.ltv : null, irr: b ? irrOf(b) : null, moic: b ? moicOf(b) : null,
         months: b ? b.months : null, exitDate: b ? b.exitDate : null, risk: s && s.risk ? s.risk.overall : null,
         signal: r.signal.code, flows: b ? b.dated : [],
       };
@@ -1040,7 +1063,7 @@
 
   return {
     VERSION, STRATS, LABEL, DEF, SCEN_DEF, SCEN_KEYS, STRESS, SETTINGS_DEF, HYB_PRESET, HYB_STRUCTURES, VALUE_SOURCES, SOURCE_HE, HURDLE_HE,
-    num, clamp, interp, xirr, addMonths, daysBetween, metricsOf,
+    num, clamp, interp, xirr, addMonths, daysBetween, metricsOf, irrOf, moicOf, capOf,
     facts, resolve, scenario, settingsOf,
     buyModel, financeModel, hybridModel, buyPriceLimits, hybridBreakEven, attribution,
     riskOf, hurdlesOf, signalOf, velocityOf, compareRows, icOf, run, portfolio,

@@ -31,6 +31,7 @@ const DEAL = () => ({
 const F0 = (deal) => A.facts(deal || DEAL(), TODAY);
 const inp = (kind, deal) => A.resolve(kind, deal || DEAL(), F0(deal)).inputs;
 const sumFlows = (r) => r.flows.reduce((s, f) => s + f.amount, 0);
+const APP_SRC = fs.readFileSync(path.join(ROOT, 'altaris/app.js'), 'utf8');
 
 console.log('altaris: primitives');
 t('XIRR matches the Excel reference and returns null without a sign change', () => {
@@ -239,6 +240,90 @@ t('capital velocity: cycles over the fund life, AUM held vs cumulative deployed'
   const v = R0.strategies.finance.velocity;
   assert.equal(v.cycles, Math.floor((60 + 2) / (12 + 2)));
   near(v.cumulativeFlat, v.capital * v.cycles, 0.01); near(v.turnsPerYear, 1, 1e-12);
+});
+
+console.log('altaris: review regressions');
+const base0 = (o) => Object.assign({}, A.SCEN_DEF.base, o || {});
+t('BUY debt is capped at the price, so IRR and profit never disagree in sign', () => {
+  const d = DEAL(); d.buy = { debtMode: 'amount', debtAmount: 6e6 };
+  const F = F0(d), i = A.resolve('buy', d, F).inputs;
+  for (const sc of [base0(), A.scenario(d, 'downside'), A.scenario(d, 'upside')]) {
+    const r = A.buyModel(F, i, sc);
+    assert.ok(r.flows[0].amount <= 0, 'month 0 is an outflow'); assert.equal(r.debt, 4200000); assert.ok(r.debtCapped);
+    assert.ok(Math.sign(r.profit) === Math.sign(r.irr) || Math.abs(r.profit) < 1, `profit ${r.profit} vs IRR ${r.irr}`);
+  }
+});
+t('FINANCE: interest capitalised in the grace period keeps earning interest', () => {
+  const d = DEAL(); d.finance = { amount: 3e6, ratePct: 12, termMonths: 12, graceMonths: 6, feePct: 0, exitFeePct: 0 };
+  const r = A.financeModel(F0(d), A.resolve('finance', d, F0(d)).inputs);
+  let acc = 0; for (let m = 1; m <= 6; m++) acc += (3e6 + acc) * 0.01;
+  near(r.interest, acc + 6 * (3e6 + acc) * 0.01, 0.01);
+  near(r.profit, r.interest, 0.01);
+});
+t('a default with nothing recovered still ends at the recovery month', () => {
+  const d = DEAL(); d.finance = { amount: 3e6, priorLiens: 6e6 };
+  const r = A.financeModel(F0(d), A.resolve('finance', d, F0(d)).inputs, base0({ default: true }));
+  assert.equal(r.recovery.recovered, 0); assert.equal(r.months, r.recovery.recoveryMonth);
+  near(r.distributions, r.interest - 3e6 * 0.11 / 12, 0.01, 'only the interest paid before the default comes back');
+  assert.ok(r.irr < -0.9, 'near-total loss');
+});
+t('an extension rate of 0% is applied as 0%', () => {
+  const d = DEAL(); d.finance = { amount: 3e6, ratePct: 12, termMonths: 12, extRatePct: 0, extMonths: 6, extFeePct: 0, exitFeePct: 0, feePct: 0 };
+  const F = F0(d), i = A.resolve('finance', d, F).inputs;
+  near(A.financeModel(F, i, base0({ delay: 6 })).interest, A.financeModel(F, i).interest, 0.01);
+});
+t('HYBRID: option and backstop never resell the same inventory twice', () => {
+  const d = DEAL(); d.hybrid = { structure: 'finance-option', capital: 3e6, optionPrice: 2.5e6, optionSharePct: 60, backstopOn: true, backstopPrice: 3e6, resaleHaircutPct: 0, resaleCostPct: 0 };
+  const F = F0(d), i = A.resolve('hybrid', d, F).inputs;
+  const r = A.hybridModel(F, i, base0({ backstopUnsoldPct: 50 }));
+  assert.ok(r.optionExercised);
+  near(r.optionResale, 5550000 * 0.6, 0.01); near(r.backstopResale, 5550000 * 0.4 * 0.5, 0.01);
+  near(r.backstopPaid, 3e6 * 0.4 * 0.5, 0.01);
+  assert.ok(r.optionResale + r.backstopResale <= 5550000 + 0.01, 'more inventory resold than exists');
+});
+t('HYBRID capital at risk includes the option price, the backstop and the actual peak', () => {
+  const d = DEAL(); d.hybrid = { structure: 'inventory-option' };
+  const F = F0(d), i = A.resolve('hybrid', d, F).inputs, r = A.hybridModel(F, i);
+  assert.ok(r.maxAtRisk >= r.peakCapital - 0.01 && r.maxAtRisk >= i.capital + i.optionPrice - 0.01, `${r.maxAtRisk} vs peak ${r.peakCapital}`);
+  assert.equal(A.capOf(r), r.maxAtRisk);
+});
+t('a fee-only backstop is measured on its commitment: no −100% IRR, exposure counts the commitment', () => {
+  const d = DEAL(); d.hybrid = { structure: 'backstop', backstopPrice: 4e6 };
+  const R = A.run(d, { fundSize: 1e7 }, { today: TODAY }), h = R.strategies.hybrid, b = h.base;
+  assert.equal(b.irr, null); assert.ok(b.irrCommit > 0 && A.irrOf(b) === b.irrCommit);
+  near(A.moicOf(b), 1 + b.profit / b.maxAtRisk, 1e-12);
+  assert.ok(R.signal.ranking.find((x) => x.k === 'hybrid').bIrr > 0, 'ranked as a loss');
+  near(h.hurdles.find((x) => x.k === 'devExposure').value, 4e6 / 1e7, 1e-9);
+  const P = A.portfolio([{ id: 'x', deal: Object.assign(d, { selected: 'hybrid' }), status: 'active' }], { fundSize: 1e7 }, { today: TODAY });
+  assert.equal(P.rows[0].capital, b.maxAtRisk);
+});
+t('PROPX-derived values follow the current area until the user overrides them', () => {
+  const d = DEAL(); d.value = { propx: { psm: 20000, auto: true, value: 1 }, comparables: { psm: 21000, auto: false, value: 3.3e6 }, chosen: 'propx' };
+  near(A.facts(d, TODAY).sources.propx, 20000 * 178, 1e-6);
+  d.units[0].sqm = 106;
+  near(A.facts(d, TODAY).sources.propx, 20000 * 188, 1e-6);
+  assert.equal(A.facts(d, TODAY).sources.comparables, 3.3e6, 'an edited value stays as edited');
+});
+t('portfolio rows are judged with the other deals as concentration context, like the deal page', () => {
+  const st = { minIrr: 5, minMoic: 1, minDiscount: 0, minMos: 0, minCoverage: 0, maxLtv: 100, fundSize: 3e7 };
+  const a = DEAL(), b = DEAL();
+  const P = A.portfolio([{ id: 'a', deal: a, status: 'active' }, { id: 'b', deal: b, status: 'active' }], st, { today: TODAY });
+  const other = P.rows.find((r) => r.id === 'b');
+  const page = A.run(a, st, { today: TODAY, portfolio: [{ id: 'b', developer: other.developer, project: other.project, city: other.city, capital: other.capital }] });
+  assert.equal(P.rows.find((r) => r.id === 'a').signal, page.signal.code);
+});
+t('the tax note is a BUY risk only; every memo names its exit dependency', () => {
+  const R = A.run(DEAL(), {}, { today: TODAY });
+  for (const k of ['finance', 'hybrid']) {
+    const ic = A.icOf(R.strategies, R.facts, R.signal, Object.assign(DEAL(), { selected: k }), R.settings);
+    assert.ok(!ic.risks.some((x) => x.includes('הנחות מס')), k + ' lists a tax note'); assert.ok(ic.risks.some((x) => x.startsWith('התשואה תלויה ב')));
+  }
+});
+t('page: the structure to execute survives reload / open / import; a late market reply never lands in another deal', () => {
+  assert.match(APP_SRC, /if \(k === 'selected'\) continue;/);
+  assert.match(APP_SRC, /if \(!E\.STRATS\.includes\(d\.selected\)\) d\.selected = null;/);
+  assert.match(APP_SRC, /const target = S\.deal;[\s\S]*?if \(S\.deal !== target\)/);
+  assert.match(APP_SRC, /note: 'עותק העבודה מהקובץ'/);
 });
 
 console.log('altaris: portfolio');
