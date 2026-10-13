@@ -1,0 +1,58 @@
+# PROPX · long-term rental — official source discovery (read-only).
+#
+# Runs scripts/rental-discover.js on a GitHub runner (the official hosts answer here, not from the Claude sandbox) and
+# prints what the official sources publish about long-term rental: the government rental company's web presence (its
+# robots.txt, sitemap and public CMS / feed endpoints — only paths robots.txt allows), data.gov.il datasets, and the CBS
+# rent series. Read-only: GET requests one at a time with an honest User-Agent; nothing is written or committed.
+
+name: Long-term rental — source discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'wiki | site (host) | get (URLs) | datagov (q|q) | cbs-index (regex) | cbs-series (regex)'
+        type: choice
+        options: [wiki, site, get, datagov, cbs-index, cbs-series]
+        default: wiki
+      arg:
+        description: 'site: host · get: space-separated URLs · datagov: queries separated by | · cbs-index / cbs-series: regex'
+        type: string
+        default: ''
+      match:
+        description: 'get: an extra allowed host (besides *.gov.il)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rental-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          ARG: ${{ inputs.arg }}
+          MATCH: ${{ inputs.match }}
+        run: |
+          case "$MODE" in
+            site)       node scripts/rental-discover.js --site "$ARG" ;;
+            get)        node scripts/rental-discover.js --get $ARG ${MATCH:+--allow "$MATCH"} ;;
+            datagov)    node scripts/rental-discover.js --datagov "$ARG" ;;
+            cbs-index)  node scripts/rental-discover.js --cbs-index "$ARG" ;;
+            cbs-series) node scripts/rental-discover.js --cbs-series "$ARG" ;;
+            *)          node scripts/rental-discover.js --wiki ;;
+          esac
