@@ -388,7 +388,8 @@ t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else',
   assert.ok(!/method\s*:/.test(APP), 'a request with an explicit method');
   assert.equal((APP.match(/\bfetch\(/g) || []).length, 1, 'fetch used outside getJSON');
   const urls = [...APP.matchAll(/getJSON\(\s*[`'"]([^`'"$?]+)/g)].map((m) => m[1]);
-  assert.deepEqual([...new Set(urls)].sort(), ['/api/geo/search', '/api/gov/transactions', '/api/housing', '/api/land']);
+  /* /api/intel: the developer & project registry (GET, read-only context — never written into an assumption) */
+  assert.deepEqual([...new Set(urls)].sort(), ['/api/geo/search', '/api/gov/transactions', '/api/housing', '/api/intel', '/api/land']);
   for (const [f, src] of ALL_AX) assert.ok(!/XMLHttpRequest|sendBeacon|navigator\.sendBeacon|new WebSocket/.test(src), f);
 });
 t('ALTARIS stores only its own keys (plus the shared theme preference) and never clears PROPX state', () => {

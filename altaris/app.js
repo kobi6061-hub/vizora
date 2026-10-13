@@ -542,6 +542,7 @@
     if (!Fx.smv) {
       const avail = E.VALUE_SOURCES.filter((k) => Fx.sources[k] > 0);
       box.innerHTML = `<div class="ax-strip"><div><div class="k">שווי נתמך</div><div class="v" style="color:var(--ink-3)">לא נבחר</div><div class="s">${avail.length ? 'בחרו מקור בעמודת הבחירה' : 'הזינו לפחות מקור שווי אחד'}</div></div><div><div class="k">בסיס רכישה / הון</div><div class="v">${F.m(Fx.basis)}</div></div><div><div class="k">הפרש</div><div class="v">—</div></div><div><div class="k">הנחת כניסה</div><div class="v">—</div></div></div>`;
+      paintMarket();   // the PROPX data block is one of the value sources: it must be reachable before a value is chosen
       return;
     }
     const spread = Fx.spread != null ? ` · פער בין מקורות בלתי תלויים: ${F.pct(Fx.spread, 0)}` : '';
@@ -603,12 +604,24 @@
       jobs.push(getJSON(`/api/housing?view=summary&city=${encodeURIComponent(info.cityCode)}&period=all`).then((d) => {
         const k = d.kpis || {}; out.housing = { lotteries: k.lotteries, projects: k.projects, units: k.unitsFirst, medianPricePerSqm: k.medianPricePerSqm, from: d.coverage && d.coverage.coveredFrom, to: d.coverage && d.coverage.coveredTo };
       }).catch((e) => { out.housingError = e.message; }));
+      /* the city's observed project pipeline (MoCH lottery projects + awarded ILA residential lots — never joined) and
+         the developers whose first observed activity here is recent — PROPX OBSERVED / DERIVED context, read-only */
+      jobs.push(getJSON(`/api/intel?view=projects&city=${encodeURIComponent(info.cityCode)}&sort=date&size=5`).then((d) => {
+        out.pipeline = { total: d.total, stageCounts: d.stageCounts || {}, recent: (d.rows || []).map((r) => ({ id: r.id, kind: r.kind, name: r.name || (r.tender ? `מכרז ${r.tender}` : null), developer: r.developerName || null,
+          units: r.kind === 'ila-awarded-lot' ? r.units : r.unitsFirstLottery, date: r.kind === 'ila-awarded-lot' ? r.decisionDate : r.lastLotteryDate, stage: r.stage })), basis: d.basis };
+      }).catch((e) => { out.pipelineError = e.message; }));
+      jobs.push(getJSON(`/api/intel?view=signals&city=${encodeURIComponent(info.cityCode)}&limit=5`).then((d) => {
+        out.entries = { total: d.total, rows: (d.rows || []).map((r) => ({ developer: r.developer, date: r.date, via: r.via })), definition: d.definition };
+      }).catch((e) => { out.entriesError = e.message; }));
     }
     if ((info.developer || '').trim()) {
-      jobs.push(getJSON(`/api/land?view=summary&winner=${encodeURIComponent(info.developer.trim())}&scope=all&limit=1`).then((d) => {
-        const w = (d.developers || []).find((x) => x.name === info.developer.trim());
-        out.devWins = w ? { lotsWon: w.lotsWon, tendersWon: w.tendersWon, units: w.unitsInLotsWon, lastWin: w.lastWin, cities: w.cities } : { none: true };
-      }).catch((e) => { out.devWinsError = e.message; }));
+      /* the developer registry: the name as entered, canonicalized (typographic variants only) — no similarity match */
+      jobs.push(getJSON(`/api/intel?view=developer&name=${encodeURIComponent(info.developer.trim())}`).then((d) => {
+        out.devIntel = { id: d.id, name: d.name, roles: d.roles || [], lots: d.tenders ? d.tenders.lots : 0, units: d.tenders ? d.tenders.residentialUnits : null, lastWin: d.tenders ? d.tenders.lastWin : null,
+          projects: d.lotteries ? d.lotteries.projects : 0, lotteryUnits: d.lotteries ? d.lotteries.unitsFirstLotteries : null, lastLottery: d.lotteries ? d.lotteries.lastLottery : null,
+          cities: (d.markets || []).length, construction: d.construction ? { buildings: d.construction.buildings, started: d.construction.started, completed: d.construction.completed, asOf: d.construction.asOf } : null,
+          possibleSame: (d.possibleSame || []).length, basis: d.basis };
+      }).catch((e) => { if (/HTTP 404/.test(e.message)) out.devIntel = { none: true }; else out.devIntelError = e.message; }));
     }
     await Promise.all(jobs);
     if (S.deal !== target) { S.mkt = { status: 'idle' }; toast('נתוני השוק נטענו לעסקה שכבר נסגרה — לא הוחלו'); return; }
@@ -639,6 +652,8 @@
     const boi = window.PROPX_MARKET && window.PROPX_MARKET.indicators || {};
     const facts = [];
     if (boi.boiRate && isNum(boi.boiRate.value)) facts.push(`<div class="ax-fact"><div class="k">ריבית בנק ישראל</div><div class="v num">${boi.boiRate.value}%</div><div class="s">מאז ${F.date(boi.boiRate.publishedAt)} · בנק ישראל <span class="ax-tag off">רשמי</span></div></div>`);
+    if (boi.cpi && isNum(boi.cpi.yoy) && boi.cpi.period) facts.push(`<div class="ax-fact"><div class="k">מדד המחירים לצרכן</div><div class="v num">${boi.cpi.yoy > 0 ? '+' : ''}${boi.cpi.yoy}%</div><div class="s">שינוי שנתי · ${pad2(boi.cpi.period.month)}/${boi.cpi.period.year}${boi.cpi.stale ? ' · לא עדכני' : ''} · למ״ס <span class="ax-tag off">רשמי</span></div></div>`);
+    if (boi.constructionInputsIndex && isNum(boi.constructionInputsIndex.yoy) && boi.constructionInputsIndex.period) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי תשומה בבנייה למגורים</div><div class="v num">${boi.constructionInputsIndex.yoy > 0 ? '+' : ''}${boi.constructionInputsIndex.yoy}%</div><div class="s">שינוי שנתי · ${pad2(boi.constructionInputsIndex.period.month)}/${boi.constructionInputsIndex.period.year}${boi.constructionInputsIndex.stale ? ' · לא עדכני' : ''} · למ״ס · נתון עבר, לא הנחת עלות <span class="ax-tag off">רשמי</span></div></div>`);
     if (boi.newHomesIndex && isNum(boi.newHomesIndex.yoy)) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי דירות חדשות</div><div class="v num">${boi.newHomesIndex.yoy > 0 ? '+' : ''}${boi.newHomesIndex.yoy}%</div><div class="s">שינוי שנתי · ${boi.newHomesIndex.period ? pad2(boi.newHomesIndex.period.month) + '/' + boi.newHomesIndex.period.year : ''} · למ״ס · ארצי <span class="ax-tag off">רשמי</span></div></div>`);
     let body = '';
     if (m) {
@@ -650,7 +665,19 @@
       if (m.land) facts.push(`<div class="ax-fact"><div class="k">קרקע ממשלתית במכרז · יחידות פתוחות</div><div class="v num">${F.int(m.land.unitsOpen)}</div><div class="s">${F.int(m.land.tenders)} מכרזים בהיקף נוכחי (מ-${F.date(m.land.currentFrom)}) · ${F.int(m.land.unitsResidential)} יח״ד שפורסמו · רמ״י · קרקע מדינה בלבד <span class="ax-tag off">רשמי</span></div></div>`);
       if (m.housing) facts.push(`<div class="ax-fact"><div class="k">דיור מסובסד · הגרלות</div><div class="v num">${F.int(m.housing.lotteries)}</div><div class="s">${F.int(m.housing.units)} דירות · ${F.int(m.housing.projects)} פרויקטים · ${F.date(m.housing.from)}–${F.date(m.housing.to)} · משרד הבינוי והשיכון <span class="ax-tag off">רשמי</span></div></div>`);
       if (m.devWins) facts.push(`<div class="ax-fact"><div class="k">זכיות היזם במכרזי רמ״י (שם זהה)</div><div class="v num">${m.devWins.none ? '0' : F.int(m.devWins.tendersWon)}</div><div class="s">${m.devWins.none ? 'לא נמצאה זכייה בשם זהה בדיוק' : `${F.int(m.devWins.lotsWon)} מגרשים · ${F.int(m.devWins.units)} יח״ד · אחרונה ${F.date(m.devWins.lastWin)}`} · OBSERVED PUBLIC TENDER WINS IN DETAIL-READ RECORDS — לא מאגר קרקעות</div></div>`);
-      const errs = [m.txError && `עסקאות: ${m.txError}`, m.landError && `קרקע: ${m.landError}`, m.housingError && `דיור: ${m.housingError}`, m.devWinsError && `זכיות יזם: ${m.devWinsError}`].filter(Boolean);
+      if (m.devIntel) {
+        const D = m.devIntel;
+        facts.push(D.none ? `<div class="ax-fact"><div class="k">היזם ברישום היזמים של PROPX</div><div class="v">—</div><div class="s">השם כפי שהוזן לא נמצא ברישום (שם משפטי זהה בלבד — ללא התאמה לפי דמיון). פעילות שנצפתה במקורות PROPX — לא רשימה מלאה.</div></div>`
+          : `<div class="ax-fact"><div class="k">היזם · פעילות שנצפתה ב-PROPX</div><div class="v num">${F.int(D.lots)} / ${F.int(D.projects)}</div><div class="s">מגרשים שנזכו (רמ״י${D.units != null ? ` · ${F.int(D.units)} יח״ד` : ''}${D.lastWin ? ` · אחרונה ${F.date(D.lastWin)}` : ''}) / פרויקטי הגרלה (משב״ש${D.lastLottery ? ` · אחרונה ${F.date(D.lastLottery)}` : ''}) · ${F.int(D.cities)} ערים${D.construction ? ` · ראיות בנייה: ${F.int(D.construction.buildings)} מבנים, ${F.int(D.construction.completed)} הושלמו (נכון ל-${F.date(D.construction.asOf)})` : ''}${D.possibleSame ? ` · ${F.int(D.possibleSame)} שמות דומים מקושרים ואינם ממוזגים` : ''} · יח״ד לפי מקור, לא מחוברות · לא מאגר קרקעות <span class="ax-tag der">נגזר</span></div></div>`);
+      }
+      if (m.pipeline) {
+        const P = m.pipeline, st = P.stageCounts || {};
+        const stH = { 'land-awarded': 'קרקע נזכתה', marketed: 'שווק', permitted: 'היתר', 'construction-started': 'בנייה החלה', completed: 'הושלם', occupied: 'אוכלס' };
+        facts.push(`<div class="ax-fact"><div class="k">פרויקטים ואתרים ביישוב · נצפו</div><div class="v num">${F.int(P.total)}</div><div class="s">${Object.entries(st).filter(([k]) => stH[k]).map(([k, n]) => `${stH[k]} ${F.int(n)}`).join(' · ') || '—'} · פרויקטי הגרלה ומגרשי מגורים שנזכו — לא כל הבנייה ביישוב, ללא צירוף בין המקורות <span class="ax-tag der">נגזר</span></div></div>`);
+      }
+      if (m.entries && m.entries.total) facts.push(`<div class="ax-fact"><div class="k">יזמים שנכנסו ליישוב · 24 חודשים</div><div class="v num">${F.int(m.entries.total)}</div><div class="s">${m.entries.rows.map((r) => `${esc(r.developer)} (${F.date(r.date)})`).join(' · ')} · פעילות ראשונה שנצפתה ביישוב, ליזם שפעל במקום אחר לפני כן <span class="ax-tag der">נגזר</span></div></div>`);
+      const errs = [m.txError && `עסקאות: ${m.txError}`, m.landError && `קרקע: ${m.landError}`, m.housingError && `דיור: ${m.housingError}`, m.devWinsError && `זכיות יזם: ${m.devWinsError}`,
+        m.devIntelError && `רישום יזמים: ${m.devIntelError}`, m.pipelineError && `פרויקטים: ${m.pipelineError}`, m.entriesError && `כניסות יזמים: ${m.entriesError}`].filter(Boolean);
       if (!m.cityCode) errs.push('ליישוב לא נבחר קוד רשמי — בחרו אותו מרשימת החיפוש כדי לקבל נתוני קרקע ודיור');
       body += `<div class="ax-facts">${facts.join('')}</div>`;
       if (tx) body += `<p class="ax-muted">${esc(viaTxt(tx))}${tx.snapshotAt ? ' · עותק המרשם מיום ' + esc(F.date(String(tx.snapshotAt).slice(0, 10))) : ''} · היקף: ${esc(tx.scope || '—')} · ${tx.nAll} רשומות מגורים נשלפו (${tx.more ? 'עמוד ראשון מתוך יותר' : 'כל הרשומות בהיקף'}) · נשלף ${esc(F.date(m.retrievedAt.slice(0, 10)))}. השווי המוערך הוא חציון — לא שומה.</p>`;
