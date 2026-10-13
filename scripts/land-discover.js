@@ -527,8 +527,25 @@ async function renewalXplanExtra() {
   }
 }
 
+/* every layer of the named services: fields (name · alias), record count and one record — to find where a plan number lives */
+async function arcgisLayers(services) {
+  for (const sv of services) {
+    try {
+      const m = await req(`${XPLAN}/${sv}?f=pjson`, { timeoutMs: 45000 });
+      for (const l of (m.json && m.json.layers || []).slice(0, 12)) {
+        const lm = await req(`${XPLAN}/${sv}/${l.id}?f=pjson`, { timeoutMs: 45000 }).catch((e) => ({ json: { error: e.message } }));
+        const c = await req(`${XPLAN}/${sv}/${l.id}/query?where=1%3D1&returnCountOnly=true&f=pjson`, { timeoutMs: 90000 }).catch(() => null);
+        const one = await req(`${XPLAN}/${sv}/${l.id}/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=pjson`, { timeoutMs: 90000 }).catch(() => null);
+        out({ kind: 'arcgisLayer', sv, layer: l.id + ':' + l.name, geometry: lm.json && lm.json.geometryType, count: c && c.json && c.json.count,
+          fields: (lm.json && lm.json.fields || []).map((f) => f.name + '·' + f.alias), sample: trim(one && one.json && one.json.features && one.json.features.map((f) => f.attributes), 1500), error: lm.json && lm.json.error });
+      }
+    } catch (e) { out({ kind: 'arcgisLayer', sv, error: e.message }); }
+  }
+}
+
 (async () => {
   const all = has('all');
+  if (has('arcgis-layers')) await arcgisLayers(String(argVal('arcgis-layers') || '').split('|').map((x) => x.trim()).filter(Boolean));
   if (has('renewal-xplan')) await renewalXplan();
   if (has('renewal-xplan-extra')) await renewalXplanExtra();
   if (has('rmi-codes')) await rmiCodes();
