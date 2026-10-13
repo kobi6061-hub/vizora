@@ -12,10 +12,10 @@ on:
       mode:
         description: 'get (print URLs) | walk (time-series catalog from a URL, regex match) | series (observations of series ids)'
         type: choice
-        options: [get, walk, series]
+        options: [get, walk, list, series]
         default: get
       arg:
-        description: 'get: space-separated URLs · walk: start URL · series: comma-separated series ids'
+        description: 'get: space-separated URLs · walk: start URL · list: path:44,10 level:4:44 … · series: comma-separated series ids'
         type: string
         default: 'https://apis.cbs.gov.il/series/catalog/level?id=1&format=json&download=false&lang=he'
       match:
@@ -50,5 +50,6 @@ jobs:
           case "$MODE" in
             walk)   node scripts/cbs-sales-discover.js --walk "$ARG" --match "${MATCH:-נמכר|מכיר|sold|sales}" ;;
             series) node scripts/cbs-sales-discover.js --series "$ARG" ${MATCH:+--from "$MATCH"} ;;
+            list)   node scripts/cbs-sales-discover.js --list $ARG ;;
             *)      node scripts/cbs-sales-discover.js --get $ARG ;;
           esac

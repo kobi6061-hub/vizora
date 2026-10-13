@@ -8,6 +8,7 @@
 //   node scripts/cbs-sales-discover.js --get <url> [<url> …]          status, type, size, shape and the first bytes
 //   node scripts/cbs-sales-discover.js --walk <url> --match <regex>   walk the time-series catalog from <url>,
 //                                                                      printing every node and the ones matching
+//   node scripts/cbs-sales-discover.js --list path:44,10 level:4:44                 every catalog node (all pages)
 //   node scripts/cbs-sales-discover.js --series <id,id,…> [--from MM-YYYY] [--to MM-YYYY]
 //                                                                      the observations of time series, with metadata
 
@@ -102,6 +103,22 @@ async function walk(startUrl, re, maxReq) {
     for (const u of many('--get')) report(await get(u), Number(opt('--chars', 2500)));
   } else if (args.includes('--walk')) {
     await walk(opt('--walk'), new RegExp(opt('--match', 'נמכר|מכיר|sold|sales'), 'i'), Number(opt('--max', 400)));
+  } else if (args.includes('--list')) {
+    /* every catalog node under a path (all pages), or every node of a level of a subject */
+    for (const a of many('--list')) {
+      const [kind, id, subject] = a.split(':');   // path:44,10  |  level:4:44
+      for (let page = 1; page <= 40; page++) {
+        const url = kind === 'level'
+          ? `${SERIES}/catalog/level?id=${id}&subject=${subject}&format=json&download=false&lang=he&Page=${page}&PageSize=100`
+          : `${SERIES}/catalog/path?id=${encodeURIComponent(id)}&format=json&download=false&lang=he&Page=${page}&PageSize=100`;
+        const res = await get(url);
+        if (res.status !== 200 || !res.json) { report(res, 300); break; }
+        const c = res.json.catalogs || {}, list = c.catalog || [];
+        if (page === 1) console.log(`\n=== ${a} · level ${c.level} · ${c.paging && c.paging.total_items} nodes`);
+        for (const o of list) console.log(`  ${(o.path || []).join(',')}  ${o.name}${o.pathDesc ? '  ⟨' + o.pathDesc + '⟩' : ''}`);
+        if (!c.paging || !c.paging.next_url) break;
+      }
+    }
   } else if (args.includes('--series')) {
     const ids = opt('--series');
     const from = opt('--from', '01-2018'), to = opt('--to', '12-2026');
