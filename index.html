@@ -1218,6 +1218,18 @@ details.ci-more>.in{padding:2px 13px 12px}
   .ci-polg{grid-template-columns:1fr}
   .ci-app3 .ci-in.sm{width:58px}
 }
+/* new-home tools (#nhTools in #calc) */
+.nh-card{margin-top:14px;padding:12px 15px 14px}
+.nh-head{margin-bottom:4px}
+.nh-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 4px}
+.nh-tabs button{font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;color:var(--ink-3);border:1px solid var(--hairline);background:var(--paper)}
+.nh-tabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.nh-intro{margin:4px 0 10px}
+.nh-calc{margin-top:0}
+.nh-sel{width:100%}
+.nh-rows{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--ink-2);margin:8px 0 2px}
+.nh-rows b{width:100%;font-size:11px;color:var(--ink-3)}
+.nh-send{margin-top:8px}
 /* developers & projects (#intel) · data & trust center (#trust) */
 .in-search{display:flex;gap:8px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--hairline)}
 .in-search input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink)}
@@ -1550,6 +1562,8 @@ details.ci-more>.in{padding:2px 13px 12px}
       <span class="note" data-i="calcNote">האם עסקה ספציפית עובדת? · כל קלט הוא הנחה שלכם · שדה ריק = אין תוצאה (—)</span>
     </div>
     <div class="calc" id="calcBody"></div>
+    <!-- new-home tools: total cost · deferred payment · indexation · bulk discount · land → end value · new vs second-hand -->
+    <div class="card nh-card" id="nhTools"></div>
   </section>
 
   <!-- Recent transactions -->
@@ -4541,6 +4555,302 @@ function initCalc(){
 /* @calc-ui:end */
 
 /* =====================================================================
+   NEW-HOME TOOLS — six calculators for buying from a developer. Same rules
+   as the deal calculator: every input is the user's own (or a cited STATIC
+   table they can override); an empty or invalid input leaves every result
+   that needs it UNAVAILABLE — nothing is defaulted, no index path, rate,
+   price or margin is assumed. Outputs are DERIVED from the inputs, or MODEL
+   where they project (the land → end-value bridge).
+   ===================================================================== */
+/* @newhome-engine:start — pure arithmetic; no DOM, no page data, no globals */
+/* purchase-tax brackets (מס רכישה) as the Israel Tax Authority publishes them for 16.01.2025–15.01.2028 —
+   STATIC: copied from the official simulator and checked on the date below; the user can override the tax */
+const NH_TAX={source:"https://www.gov.il/he/service/real_eatate_taxsimulator",directive:"הוראת ביצוע מיסוי מקרקעין 1/2025",
+  from:"2025-01-16",to:"2028-01-15",checked:"2026-10-13",
+  single:[[1978745,0],[2347040,3.5],[6055070,5],[20183565,8],[Infinity,10]],
+  additional:[[6055070,8],[Infinity,10]]};
+function nhPurchaseTax(price,kind,T){
+  const B=(T||NH_TAX)[kind];if(!B||!(price>=0))return null;
+  let lo=0,tax=0;const slices=[];
+  for(const[hi,rate]of B){const part=Math.max(0,Math.min(price,hi)-lo);if(part>0){slices.push({from:lo,to:Math.min(price,hi),rate,amount:part*rate/100});tax+=part*rate/100}lo=hi;if(price<=hi)break}
+  return{tax,slices};
+}
+const NH_IN={
+  cost:[{id:"price",u:"nis",min:1,max:1e10},{id:"buyer",u:"choice",ch:["single","additional","manual"]},{id:"taxManual",u:"nis",min:0,max:1e9},
+    {id:"legal",u:"pct",min:0,max:10},{id:"upgrades",u:"nis",min:0,max:1e9},{id:"closing",u:"nis",min:0,max:1e9},{id:"mortFees",u:"nis",min:0,max:1e9},
+    {id:"indexation",u:"nis",min:0,max:1e9},{id:"area",u:"sqm",min:1,max:10000}],
+  deferred:[{id:"offer",u:"nis",min:1,max:1e10},{id:"cash",u:"nis",min:1,max:1e10},{id:"up",u:"pct",min:0,max:100},{id:"mid",u:"pct",min:0,max:100},
+    {id:"midM",u:"mo",min:0,max:120,int:1},{id:"endM",u:"mo",min:1,max:120,int:1},{id:"disc",u:"pctYr",min:-5,max:30},{id:"linked",u:"pct",min:0,max:100},{id:"idx",u:"pctYr",min:-20,max:30}],
+  index:[{id:"price",u:"nis",min:1,max:1e10},{id:"linked",u:"pct",min:0,max:100},{id:"p1",u:"pct",min:0,max:100},{id:"m1",u:"mo",min:0,max:120,int:1},
+    {id:"p2",u:"pct",min:0,max:100},{id:"m2",u:"mo",min:0,max:120,int:1},{id:"p3",u:"pct",min:0,max:100},{id:"m3",u:"mo",min:0,max:120,int:1},{id:"idx",u:"pctYr",min:-20,max:30}],
+  bulk:[{id:"list",u:"nis",min:1,max:1e10},{id:"units",u:"n",min:1,max:100000,int:1},{id:"disc",u:"pct",min:0,max:90},{id:"market",u:"nis",min:1,max:1e10}],
+  bridge:[{id:"land",u:"nis",min:0,max:1e9},{id:"dev",u:"nis",min:0,max:1e9},{id:"sqm",u:"sqm",min:1,max:2000},{id:"build",u:"nisSqm",min:0,max:1e6},
+    {id:"soft",u:"pct",min:0,max:100},{id:"fin",u:"pct",min:0,max:100},{id:"sale",u:"nis",min:1,max:1e9},{id:"vat",u:"pct",min:0,max:50},{id:"target",u:"pct",min:0,max:90}],
+  compare:[{id:"buyer",u:"choice",ch:["single","additional"]},{id:"rent",u:"nisMo",min:0,max:1e6},
+    {id:"nPrice",u:"nis",min:1,max:1e10},{id:"nArea",u:"sqm",min:1,max:10000},{id:"nDelay",u:"mo",min:0,max:120,int:1},{id:"nIndex",u:"nis",min:0,max:1e9},{id:"nUpgrade",u:"nis",min:0,max:1e9},
+    {id:"sPrice",u:"nis",min:1,max:1e10},{id:"sArea",u:"sqm",min:1,max:10000},{id:"sDelay",u:"mo",min:0,max:120,int:1},{id:"sRenov",u:"nis",min:0,max:1e9}],
+};
+/* result → the inputs it is computed from (a choice-dependent need is added in nhRun) */
+const NH_NEED={
+  cost:{tax:["price","buyer"],legalNis:["price","legal"],total:["price","buyer","legal","upgrades","closing","mortFees","indexation"],
+    overPrice:["price","buyer","legal","upgrades","closing","mortFees","indexation"],pricePerSqm:["price","area"],totalPerSqm:["price","buyer","legal","upgrades","closing","mortFees","indexation","area"]},
+  deferred:{nominal:["offer","up","mid","midM","endM","linked","idx"],indexAdds:["offer","up","mid","midM","endM","linked","idx"],
+    pv:["offer","up","mid","midM","endM","linked","idx","disc"],pvSaving:["offer","up","mid","midM","endM","linked","idx","disc"],effDisc:["offer","up","mid","midM","endM","linked","idx","disc"],
+    vsCash:["offer","cash","up","mid","midM","endM","linked","idx","disc"],implied:["offer","cash","up","mid","midM","endM","linked","idx"]},
+  index:{total:["price","linked","p1","m1","p2","m2","p3","m3","idx"],pctOfPrice:["price","linked","p1","m1","p2","m2","p3","m3","idx"],finalPrice:["price","linked","p1","m1","p2","m2","p3","m3","idx"]},
+  bulk:{listTotal:["list","units"],paidTotal:["list","units","disc"],saving:["list","units","disc"],perUnit:["list","disc"],vsMarket:["list","disc","market"]},
+  bridge:{hard:["sqm","build"],cost:["land","dev","sqm","build","soft","fin"],net:["sale","vat"],margin:["land","dev","sqm","build","soft","fin","sale","vat"],
+    marginPct:["land","dev","sqm","build","soft","fin","sale","vat"],breakeven:["land","dev","sqm","build","soft","fin","vat"],residual:["dev","sqm","build","soft","fin","sale","vat","target"]},
+  compare:{nTax:["buyer","nPrice"],sTax:["buyer","sPrice"],nTotal:["buyer","nPrice","nIndex","nUpgrade"],sTotal:["buyer","sPrice","sRenov"],
+    nWait:["rent","nDelay"],sWait:["rent","sDelay"],nEff:["buyer","rent","nPrice","nDelay","nIndex","nUpgrade"],sEff:["buyer","rent","sPrice","sDelay","sRenov"],
+    nPerSqm:["buyer","rent","nPrice","nDelay","nIndex","nUpgrade","nArea"],sPerSqm:["buyer","rent","sPrice","sDelay","sRenov","sArea"],diff:["buyer","rent","nPrice","nDelay","nIndex","nUpgrade","sPrice","sDelay","sRenov"]},
+};
+function nhParse(spec,raw){
+  const v={},invalid=[];
+  for(const f of spec){
+    const x=raw?raw[f.id]:undefined;
+    if(x===undefined||x===null||String(x).trim()===""){v[f.id]=null;continue}
+    if(f.u==="choice"){if(f.ch.includes(String(x)))v[f.id]=String(x);else{v[f.id]=null;invalid.push(f.id)}continue}
+    const n=Number(String(x).replace(/[,\s₪%]/g,""));
+    if(!isFinite(n)||n<f.min||n>f.max||(f.int&&!Number.isInteger(n))){v[f.id]=null;invalid.push(f.id);continue}
+    v[f.id]=n;
+  }
+  return{v,invalid};
+}
+/* annual-rate growth over m months: (1+r)^(m/12) */
+const nhG=(rPct,m)=>Math.pow(1+rPct/100,m/12);
+/* the rate that makes the present value of the flows equal a target — bisection; "noRate" when no sign change */
+function nhSolveRate(flows,target){
+  const f=r=>flows.reduce((s,x)=>s+x.amount/Math.pow(1+r,x.m/12),0)-target;
+  let lo=-0.95,hi=5,flo=f(lo);if(flo*f(hi)>0)return"noRate";
+  for(let i=0;i<200;i++){const mid=(lo+hi)/2,fm=f(mid);if(flo*fm<=0)hi=mid;else{lo=mid;flo=fm}}
+  return(lo+hi)/2*100;
+}
+function nhRun(tool,raw,taxTable){
+  const spec=NH_IN[tool],need=NH_NEED[tool];if(!spec)return null;
+  const{v,invalid}=nhParse(spec,raw),out={},rows={};
+  const T=taxTable||NH_TAX;
+  const put=(k,fn,extra)=>{
+    const ids=need[k].concat(extra||[]);
+    const miss=ids.filter(i=>v[i]==null);
+    if(miss.length){out[k]={ok:false,missing:miss.filter(i=>!invalid.includes(i)),invalid:miss.filter(i=>invalid.includes(i))};return}
+    const r=fn();
+    out[k]=typeof r==="string"?{ok:false,missing:[],invalid:[],why:r}:isFinite(r)?{ok:true,v:r}:{ok:false,missing:[],invalid:[],why:"undef"};
+  };
+  if(tool==="cost"){
+    const manual=v.buyer==="manual",ex=manual?["taxManual"]:[];
+    const tax=()=>manual?v.taxManual:nhPurchaseTax(v.price,v.buyer,T).tax;
+    const total=()=>v.price+tax()+v.price*v.legal/100+v.upgrades+v.closing+v.mortFees+v.indexation;
+    put("tax",tax,ex);put("legalNis",()=>v.price*v.legal/100);put("total",total,ex);put("overPrice",()=>(total()/v.price-1)*100,ex);
+    put("pricePerSqm",()=>v.price/v.area);put("totalPerSqm",()=>total()/v.area,ex);
+    if(v.price!=null&&(v.buyer==="single"||v.buyer==="additional"))rows.slices=nhPurchaseTax(v.price,v.buyer,T).slices;
+    return{inputs:v,invalid,out,rows,taxBasis:manual?"user":v.buyer?"static":null};
+  }
+  if(tool==="deferred"){
+    const sched=()=>v.up+v.mid>100?"sched":v.midM>v.endM?"order":null;
+    const flows=()=>[{m:0,p:v.up},{m:v.midM,p:v.mid},{m:v.endM,p:100-v.up-v.mid}].filter(x=>x.p>0)
+      .map(x=>{const base=v.offer*x.p/100,amount=base*(1+v.linked/100*(nhG(v.idx,x.m)-1));return{m:x.m,pct:x.p,base,amount}});
+    const nominal=()=>sched()||flows().reduce((s,x)=>s+x.amount,0);
+    const pv=()=>sched()||flows().reduce((s,x)=>s+x.amount/nhG(v.disc,x.m),0);
+    put("nominal",nominal);put("indexAdds",()=>sched()||nominal()-v.offer);put("pv",pv);put("pvSaving",()=>sched()||v.offer-pv());
+    put("effDisc",()=>sched()||(1-pv()/v.offer)*100);put("vsCash",()=>sched()||v.cash-pv());
+    put("implied",()=>sched()||nhSolveRate(flows(),v.cash));
+    if(NH_NEED.deferred.nominal.every(i=>v[i]!=null)&&!sched())rows.flows=flows();
+    return{inputs:v,invalid,out,rows};
+  }
+  if(tool==="index"){
+    const pays=()=>[[v.p1,v.m1],[v.p2,v.m2],[v.p3,v.m3]].filter(([p])=>p>0).map(([p,m])=>{const base=v.price*p/100;return{pct:p,m,base,add:base*v.linked/100*(nhG(v.idx,m)-1)}});
+    const sum=()=>Math.abs(v.p1+v.p2+v.p3-100)>1e-9?"sum100":null;
+    const total=()=>sum()||pays().reduce((s,x)=>s+x.add,0);
+    put("total",total);put("pctOfPrice",()=>sum()||total()/v.price*100);put("finalPrice",()=>sum()||v.price+total());
+    if(NH_NEED.index.total.every(i=>v[i]!=null)&&!sum())rows.pays=pays();
+    return{inputs:v,invalid,out,rows};
+  }
+  if(tool==="bulk"){
+    put("listTotal",()=>v.list*v.units);put("paidTotal",()=>v.list*v.units*(1-v.disc/100));put("saving",()=>v.list*v.units*v.disc/100);
+    put("perUnit",()=>v.list*(1-v.disc/100));put("vsMarket",()=>(v.list*(1-v.disc/100)/v.market-1)*100);
+    return{inputs:v,invalid,out,rows};
+  }
+  if(tool==="bridge"){
+    const hard=()=>v.sqm*v.build,other=()=>v.dev+hard()*(1+v.soft/100);
+    const cost=()=>(v.land+other())*(1+v.fin/100),net=()=>v.sale/(1+v.vat/100);
+    put("hard",hard);put("cost",cost);put("net",net);put("margin",()=>net()-cost());put("marginPct",()=>(net()-cost())/net()*100);
+    put("breakeven",()=>cost()*(1+v.vat/100));put("residual",()=>net()*(1-v.target/100)/(1+v.fin/100)-other());
+    return{inputs:v,invalid,out,rows};
+  }
+  if(tool==="compare"){
+    const tx=p=>nhPurchaseTax(p,v.buyer,T).tax;
+    const nT=()=>v.nPrice+tx(v.nPrice)+v.nIndex+v.nUpgrade,sT=()=>v.sPrice+tx(v.sPrice)+v.sRenov;
+    const nE=()=>nT()+v.rent*v.nDelay,sE=()=>sT()+v.rent*v.sDelay;
+    put("nTax",()=>tx(v.nPrice));put("sTax",()=>tx(v.sPrice));put("nTotal",nT);put("sTotal",sT);put("nWait",()=>v.rent*v.nDelay);put("sWait",()=>v.rent*v.sDelay);
+    put("nEff",nE);put("sEff",sE);put("nPerSqm",()=>nE()/v.nArea);put("sPerSqm",()=>sE()/v.sArea);put("diff",()=>nE()-sE());
+    return{inputs:v,invalid,out,rows};
+  }
+  return null;
+}
+/* @newhome-engine:end */
+
+/* @newhome-ui:start */
+const NH_TOOLS=["cost","deferred","index","bulk","bridge","compare"];
+const NH_I18N={
+he:{title:"כלי דירה חדשה מקבלן",sub:"שישה מחשבונים לרכישה מקבלן · כל קלט הוא הנחה שלכם · שדה ריק = אין תוצאה (—)",
+  tab:{cost:"עלות רכישה כוללת",deferred:"תשלום נדחה (20/80)",index:"הצמדה למדד תשומות",bulk:"הנחת כמות",bridge:"קרקע ← ערך סופי",compare:"חדשה מול יד שנייה"},
+  intro:{cost:"מה באמת עולה הדירה: מחיר, מס רכישה, עו״ד, שדרוגים, הוצאות סגירה ומימון, והצמדה צפויה.",
+    deferred:"השוואת הצעת תשלום נדחה (למשל 20% עכשיו ו-80% במסירה) למחיר מזומן: ערך נוכחי, הנחה אפקטיבית והריבית הגלומה.",
+    index:"כמה עשויה להוסיף ההצמדה למדד תשומות הבנייה, לפי לוח התשלומים, החלק הצמוד וקצב שנתי שתבחרו.",
+    bulk:"רכישת כמה דירות מאותו יזם: סך מחיר מחירון, סך תשלום, חיסכון ומחיר ליחידה מול מחיר שוק שתזינו.",
+    bridge:"מודל: עלות קרקע ופיתוח ליח״ד + בנייה + עקיפות + מימון מול מחיר מכירה — מרווח, מחיר איזון וערך קרקע שיורי.",
+    compare:"השוואת דירה חדשה ליד שנייה: מחיר, מס רכישה, הצמדה/שדרוגים מול שיפוץ, ועלות ההמתנה (שכירות בחודשי המסירה/השיפוץ)."},
+  in:{price:"מחיר הדירה",buyer:"סוג הרוכש",taxManual:"מס רכישה (ידני)",legal:"שכ״ט עו״ד",upgrades:"שדרוגים ותוספות",closing:"הוצאות סגירה ורישום",mortFees:"עמלות משכנתא ושמאות",
+    indexation:"הצמדה צפויה",area:"שטח הדירה",offer:"מחיר ההצעה הנדחית",cash:"מחיר מזומן חלופי",up:"תשלום מיידי",mid:"תשלום ביניים",midM:"מועד תשלום הביניים",endM:"מועד התשלום האחרון",
+    disc:"שיעור היוון שנתי",linked:"חלק צמוד מכל תשלום נדחה",idx:"שינוי מדד שנתי צפוי",p1:"תשלום 1",m1:"מועד תשלום 1",p2:"תשלום 2",m2:"מועד תשלום 2",p3:"תשלום 3",m3:"מועד תשלום 3",
+    list:"מחיר מחירון ליחידה",units:"מספר יחידות",market:"מחיר שוק ליחידה (להשוואה)",land:"קרקע ליח״ד",dev:"הוצאות פיתוח ליח״ד",sqm:"שטח בנוי ליח״ד",build:"עלות בנייה למ״ר",
+    soft:"עלויות עקיפות (מהבנייה)",fin:"מימון (מסך העלות)",sale:"מחיר מכירה ליח״ד (כולל מע״מ)",vat:"מע״מ",target:"מרווח יעד (מההכנסה נטו)",
+    rent:"שכר דירה חודשי (משולם / מוותר)",nPrice:"חדשה — מחיר",nArea:"חדשה — שטח",nDelay:"חדשה — חודשים עד מסירה",nIndex:"חדשה — הצמדה צפויה",nUpgrade:"חדשה — שדרוגים",
+    sPrice:"יד שנייה — מחיר",sArea:"יד שנייה — שטח",sDelay:"יד שנייה — חודשי שיפוץ",sRenov:"יד שנייה — עלות שיפוץ"},
+  unit:{nis:"₪",pct:"%",pctYr:"% לשנה",mo:"חודשים",sqm:"מ״ר",n:"יח׳",nisSqm:"₪/מ״ר",nisMo:"₪ לחודש"},
+  ch:{"":"— בחרו —",single:"דירה יחידה",additional:"דירה נוספת",manual:"הזנה ידנית"},
+  out:{tax:"מס רכישה",legalNis:"שכ״ט עו״ד",total:"עלות רכישה כוללת",overPrice:"מעל מחיר הדירה",pricePerSqm:"מחיר למ״ר",totalPerSqm:"עלות כוללת למ״ר",
+    nominal:"סך התשלומים (כולל הצמדה)",indexAdds:"תוספת הצמדה",pv:"ערך נוכחי של ההצעה",pvSaving:"ערך הדחייה (מול תשלום מלא היום)",effDisc:"הנחה אפקטיבית",vsCash:"יתרון מול מחיר המזומן",implied:"ריבית גלומה מול מחיר המזומן",
+    total_i:"תוספת הצמדה צפויה",pctOfPrice:"כאחוז מהמחיר",finalPrice:"מחיר כולל הצמדה",
+    listTotal:"סך מחיר מחירון",paidTotal:"סך תשלום אחרי הנחה",saving:"חיסכון",perUnit:"מחיר ליחידה אחרי הנחה",vsMarket:"מול מחיר השוק",
+    hard:"עלות בנייה ליח״ד",cost:"עלות כוללת ליח״ד",net:"הכנסה נטו ליח״ד (ללא מע״מ)",margin:"מרווח ליח״ד",marginPct:"מרווח מההכנסה נטו",breakeven:"מחיר איזון (כולל מע״מ)",residual:"ערך קרקע שיורי ליח״ד (במרווח היעד)",
+    nTax:"חדשה — מס רכישה",sTax:"יד שנייה — מס רכישה",nTotal:"חדשה — עלות",sTotal:"יד שנייה — עלות",nWait:"חדשה — עלות ההמתנה",sWait:"יד שנייה — עלות ההמתנה",
+    nEff:"חדשה — עלות אפקטיבית",sEff:"יד שנייה — עלות אפקטיבית",nPerSqm:"חדשה — למ״ר",sPerSqm:"יד שנייה — למ״ר",diff:"הפרש (חדשה פחות יד שנייה)"},
+  why:{sched:"התשלום המיידי ותשלום הביניים עולים על 100%",order:"תשלום הביניים מאוחר מהתשלום האחרון",noRate:"אין ריבית שמשווה את התשלומים למחיר המזומן",sum100:"שלושת התשלומים צריכים להסתכם ל-100%",undef:"לא מוגדר"},
+  miss:l=>`חסר: ${l}`,bad:l=>`לא תקין: ${l}`,na:"—",
+  taxStatic:(f,to,c)=>`מדרגות רשות המסים ${f}–${to} (סטטי, נבדק ${c})`,taxSrc:"מקור",taxUser:"הוזן ידנית",slices:"פירוק מדרגות",
+  flows:"לוח התשלומים",fM:"חודש",fBase:"קרן",fAmt:"תשלום כולל הצמדה",pays:"פירוק לפי תשלום",pAdd:"תוספת",
+  modelNote:"מודל — לא תצפית. מע״מ על הקרקע לא צוין במקור; עלויות הבנייה, העקיפות, המימון ומחיר המכירה הם הנחות שלכם.",
+  idxNote:"מדד תשומות הבנייה הרשמי (הלמ״ס) עדיין אינו מסונכרן ב-PROPX — הקצב השנתי הוא הנחה שלכם. החלק הצמוד לפי החוזה שלכם.",
+  discNote:"שיעור ההיוון הוא הנחה שלכם (למשל ריבית המשכנתא או תשואת פיקדון) — ריבית בנק ישראל אינה מוזנת אוטומטית.",
+  boiRef:(v,d)=>`לעיון: ריבית בנק ישראל ${v} (נבדק ${d}) — אינה ריבית משכנתא`,
+  useCalc:"העברה למחשבון העסקה",usedCalc:"הועבר: מחיר, מס רכישה ועלויות נלוות כאחוזים",
+  compareNote:"אותן עלויות נלוות (עו״ד, סגירה, מימון) יש להוסיף לשני הצדדים; ההשוואה אינה מניחה עליית ערך או שכירות עתידית.",
+  reset:"איפוס",foot:"כל תוצאה נגזרת מהקלטים שהזנתם בלבד; אין ערכי ברירת מחדל ואין הנחת מדד, ריבית או עליית ערך."},
+en:{title:"New-home tools",sub:"Six calculators for buying from a developer · every input is your assumption · empty field = no result (—)",
+  tab:{cost:"Total acquisition cost",deferred:"Deferred payment (20/80)",index:"Construction-index linkage",bulk:"Bulk discount",bridge:"Land → end value",compare:"New vs second-hand"},
+  intro:{cost:"What the apartment really costs: price, purchase tax, legal, upgrades, closing and financing costs, expected indexation.",
+    deferred:"Compare a deferred-payment offer (e.g. 20% now, 80% at delivery) with a cash price: present value, effective discount and the implied rate.",
+    index:"How much the construction-inputs index linkage may add, given the payment schedule, the linked share and an annual rate you choose.",
+    bulk:"Buying several units from one developer: list total, paid total, saving and price per unit against a market price you enter.",
+    bridge:"Model: land and development per unit + construction + soft costs + financing against a sale price — margin, break-even price and residual land value.",
+    compare:"New vs second-hand: price, purchase tax, indexation/upgrades vs renovation, and the cost of waiting (rent during delivery / renovation months)."},
+  in:{price:"Apartment price",buyer:"Buyer type",taxManual:"Purchase tax (manual)",legal:"Legal fees",upgrades:"Upgrades & extras",closing:"Closing & registration",mortFees:"Mortgage & appraisal fees",
+    indexation:"Expected indexation",area:"Apartment area",offer:"Deferred-offer price",cash:"Alternative cash price",up:"Paid now",mid:"Interim payment",midM:"Interim payment month",endM:"Final payment month",
+    disc:"Annual discount rate",linked:"Linked share of each deferred payment",idx:"Expected annual index change",p1:"Payment 1",m1:"Payment 1 month",p2:"Payment 2",m2:"Payment 2 month",p3:"Payment 3",m3:"Payment 3 month",
+    list:"List price per unit",units:"Units",market:"Market price per unit (to compare)",land:"Land per unit",dev:"Development charges per unit",sqm:"Built area per unit",build:"Construction cost per m²",
+    soft:"Soft costs (of construction)",fin:"Financing (of total cost)",sale:"Sale price per unit (incl. VAT)",vat:"VAT",target:"Target margin (of net revenue)",
+    rent:"Monthly rent (paid / forgone)",nPrice:"New — price",nArea:"New — area",nDelay:"New — months to delivery",nIndex:"New — expected indexation",nUpgrade:"New — upgrades",
+    sPrice:"Second-hand — price",sArea:"Second-hand — area",sDelay:"Second-hand — renovation months",sRenov:"Second-hand — renovation cost"},
+  unit:{nis:"₪",pct:"%",pctYr:"%/yr",mo:"months",sqm:"m²",n:"units",nisSqm:"₪/m²",nisMo:"₪/mo"},
+  ch:{"":"— choose —",single:"Only apartment",additional:"Additional apartment",manual:"Enter manually"},
+  out:{tax:"Purchase tax",legalNis:"Legal fees",total:"Total acquisition cost",overPrice:"Above the price",pricePerSqm:"Price per m²",totalPerSqm:"Total cost per m²",
+    nominal:"Total paid (incl. indexation)",indexAdds:"Indexation added",pv:"Present value of the offer",pvSaving:"Value of deferral (vs paying in full today)",effDisc:"Effective discount",vsCash:"Advantage vs the cash price",implied:"Implied rate vs the cash price",
+    total_i:"Expected indexation",pctOfPrice:"As % of the price",finalPrice:"Price incl. indexation",
+    listTotal:"List total",paidTotal:"Paid after discount",saving:"Saving",perUnit:"Price per unit after discount",vsMarket:"Vs market price",
+    hard:"Construction per unit",cost:"Total cost per unit",net:"Net revenue per unit (excl. VAT)",margin:"Margin per unit",marginPct:"Margin of net revenue",breakeven:"Break-even price (incl. VAT)",residual:"Residual land value per unit (at target)",
+    nTax:"New — purchase tax",sTax:"Second-hand — purchase tax",nTotal:"New — cost",sTotal:"Second-hand — cost",nWait:"New — cost of waiting",sWait:"Second-hand — cost of waiting",
+    nEff:"New — effective cost",sEff:"Second-hand — effective cost",nPerSqm:"New — per m²",sPerSqm:"Second-hand — per m²",diff:"Difference (new minus second-hand)"},
+  why:{sched:"the payment now and the interim payment exceed 100%",order:"the interim payment is after the final one",noRate:"no rate equates the payments to the cash price",sum100:"the three payments must add up to 100%",undef:"undefined"},
+  miss:l=>`missing: ${l}`,bad:l=>`invalid: ${l}`,na:"—",
+  taxStatic:(f,to,c)=>`Tax Authority brackets ${f}–${to} (static, checked ${c})`,taxSrc:"source",taxUser:"entered manually",slices:"Bracket breakdown",
+  flows:"Payment schedule",fM:"Month",fBase:"Principal",fAmt:"Payment incl. indexation",pays:"By payment",pAdd:"Added",
+  modelNote:"Model — not an observation. VAT on land is not stated by the source; construction, soft costs, financing and the sale price are your assumptions.",
+  idxNote:"The official CBS construction-inputs index is not yet synced in PROPX — the annual rate is your assumption. The linked share follows your contract.",
+  discNote:"The discount rate is your assumption (e.g. your mortgage rate or a deposit yield) — the Bank of Israel rate is never filled in for you.",
+  boiRef:(v,d)=>`For reference: Bank of Israel rate ${v} (checked ${d}) — not a mortgage rate`,
+  useCalc:"Send to the deal calculator",usedCalc:"Sent: price, purchase tax and side costs as percentages",
+  compareNote:"Add the same side costs (legal, closing, financing) to both sides; the comparison assumes no appreciation and no future rent.",
+  reset:"Reset",foot:"Every result is derived from your inputs alone; there are no defaults and no assumed index, rate or appreciation."}};
+const NT=()=>NH_I18N[state.lang];
+const nhState={tool:"cost",v:{cost:{},deferred:{},index:{},bulk:{},bridge:{},compare:{}},sent:false};
+const NH_PCT=new Set(["overPrice","effDisc","implied","pctOfPrice","vsMarket","marginPct"]);
+const nhFmt=(k,x)=>NH_PCT.has(k)?(x<0?"−":"")+Math.abs(x).toFixed(2)+"%":(x<0?"−":"")+fmtNIS(Math.abs(x));
+const NH_MODEL=new Set(["bridge"]);
+function nhOutLabel(tool,k){const o=NT().out;return tool==="index"&&k==="total"?o.total_i:o[k]}
+function nhInputTag(tool,id,r){
+  const t=T(),x=nhState.v[tool][id];
+  if(x==null||String(x).trim()==="")return `<span class="vc na" title="${t.vcTip.na}">${t.vcName.na}</span>`;
+  if(r.invalid.includes(id))return `<span class="vc na" title="${t.calcBadTip}">${t.calcBadShort}</span>`;
+  return `<span class="vc usr" title="${t.vcTip.usr}">${t.vcName.usr}</span>`;
+}
+function nhOutputsHTML(tool,r){
+  const n=NT(),t=T(),lab=i=>n.in[i];
+  const cls=NH_MODEL.has(tool)?"mod":"der";
+  const tiles=Object.keys(NH_NEED[tool]).map(k=>{
+    const o=r.out[k];
+    if(o&&o.ok){const tag=k==="tax"&&r.taxBasis==="static"?vcTag("static"):vcTag(cls);
+      return `<div class="calc-o" data-nho="${k}"><span class="l">${nhOutLabel(tool,k)}</span><span class="v num${o.v<0?" down":""}">${nhFmt(k,o.v)}</span><span class="s">${tag}</span></div>`}
+    const why=o.why?n.why[o.why]||o.why:[o.invalid.length?n.bad(o.invalid.map(lab).join(", ")):"",o.missing.length?n.miss(o.missing.map(lab).join(", ")):""].filter(Boolean).join(" · ");
+    return `<div class="calc-o na" data-nho="${k}"><span class="l">${nhOutLabel(tool,k)}</span><span class="v">${n.na}</span><span class="s"><span class="vc na">${t.vcName.na}</span> ${calcEsc(why)}</span></div>`;
+  }).join("");
+  let extra="";
+  if(tool==="cost"){
+    const dd=x=>`<span class="num">${x.split("-").reverse().join(".")}</span>`;
+    if(r.taxBasis==="static")extra+=`<p class="calc-foot">${vcTag("static")} ${n.taxStatic(dd(NH_TAX.from),dd(NH_TAX.to),dd(NH_TAX.checked))} · ${calcEsc(NH_TAX.directive)} · <a href="${NH_TAX.source}" target="_blank" rel="noopener noreferrer">${n.taxSrc} ↗</a></p>`;
+    if(r.taxBasis==="user")extra+=`<p class="calc-foot">${vcTag("usr")} ${n.taxUser}</p>`;
+    if(r.rows.slices&&r.rows.slices.length)extra+=`<div class="nh-rows"><b>${n.slices}</b>${r.rows.slices.map(s=>`<span class="num">${fmtNIS(s.from)}–${fmtNIS(s.to)} · ${s.rate}% · ${fmtNIS(s.amount)}</span>`).join("")}</div>`;
+    if(r.out.total.ok)extra+=`<button type="button" class="calc-reset nh-send" data-nhsend>${n.useCalc}</button>${nhState.sent?`<span class="calc-foot"> ${n.usedCalc}</span>`:""}`;
+  }
+  if(tool==="deferred"){
+    if(r.rows.flows)extra+=`<div class="nh-rows"><b>${n.flows}</b>${r.rows.flows.map(f=>`<span class="num">${n.fM} ${f.m} · ${f.pct}% · ${fmtNIS(f.base)} → ${fmtNIS(f.amount)}</span>`).join("")}</div>`;
+    extra+=`<p class="calc-foot">${n.discNote}${MKT.boi?` ${vcTag("raw")} ${n.boiRef(MKT.boi.valTxt,MKT.boi.checkedDay)}`:""}</p>`;
+  }
+  if(tool==="index"){
+    if(r.rows.pays)extra+=`<div class="nh-rows"><b>${n.pays}</b>${r.rows.pays.map(p=>`<span class="num">${n.fM} ${p.m} · ${p.pct}% · ${fmtNIS(p.base)} · ${n.pAdd} ${fmtNIS(p.add)}</span>`).join("")}</div>`;
+    extra+=`<p class="calc-foot">${n.idxNote}</p>`;
+  }
+  if(tool==="bridge")extra+=`<p class="calc-foot">${vcTag("mod")} ${n.modelNote}</p>`;
+  if(tool==="compare")extra+=`<p class="calc-foot">${n.compareNote}</p>`;
+  return `<div class="calc-og"><div class="calc-os">${tiles}</div></div>${extra}<p class="calc-foot">${n.foot}</p>`;
+}
+function renderNewHome(){
+  const box=el("nhTools");if(!box)return;
+  const n=NT(),tool=nhState.tool,r=nhRun(tool,nhState.v[tool]);
+  const tabs=NH_TOOLS.map(k=>`<button type="button" data-nhtool="${k}" aria-pressed="${tool===k}">${n.tab[k]}</button>`).join("");
+  const field=f=>{
+    const val=nhState.v[tool][f.id]??"";
+    const ctl=f.u==="choice"?`<select class="ho-sel nh-sel" id="nh_${f.id}" data-nh="${f.id}">${["",...f.ch].map(c=>`<option value="${c}"${String(val)===c?" selected":""}>${n.ch[c]}</option>`).join("")}</select>`
+      :`<span class="inp"><input id="nh_${f.id}" data-nh="${f.id}" type="text" inputmode="decimal" dir="ltr" autocomplete="off" value="${calcEsc(val)}" aria-invalid="${r.invalid.includes(f.id)}"><span class="u">${n.unit[f.u]}</span></span>`;
+    return `<div class="calc-f"><label for="nh_${f.id}">${n.in[f.id]} <span id="nhTag_${f.id}">${nhInputTag(tool,f.id,r)}</span></label>${ctl}</div>`;
+  };
+  box.innerHTML=`<div class="ho-bh nh-head"><div><h3>${n.title}</h3><p class="ho-note">${n.sub}</p></div></div>
+    <div class="nh-tabs" role="group" aria-label="${calcEsc(n.title)}">${tabs}</div>
+    <p class="ho-note nh-intro">${n.intro[tool]}</p>
+    <div class="calc nh-calc"><div class="calc-in"><div class="calc-g">${NH_IN[tool].map(field).join("")}</div>
+      <button type="button" class="calc-reset" data-nhreset>${n.reset}</button></div>
+    <div class="calc-out" id="nhOut">${nhOutputsHTML(tool,r)}</div></div>`;
+}
+function nhUpdate(){
+  const tool=nhState.tool,r=nhRun(tool,nhState.v[tool]);
+  for(const f of NH_IN[tool]){const tg=el("nhTag_"+f.id);if(tg)tg.innerHTML=nhInputTag(tool,f.id,r);const i=el("nh_"+f.id);if(i&&i.tagName==="INPUT")i.setAttribute("aria-invalid",String(r.invalid.includes(f.id)))}
+  el("nhOut").innerHTML=nhOutputsHTML(tool,r);
+}
+function initNewHome(){
+  const box=el("nhTools");if(!box)return;
+  box.addEventListener("input",e=>{const id=e.target.dataset.nh;if(!id||e.target.tagName==="SELECT")return;nhState.v[nhState.tool][id]=e.target.value;nhState.sent=false;nhUpdate()});
+  box.addEventListener("change",e=>{const id=e.target.dataset.nh;if(!id||e.target.tagName!=="SELECT")return;nhState.v[nhState.tool][id]=e.target.value;nhState.sent=false;nhUpdate()});
+  box.addEventListener("click",e=>{
+    const b=e.target.closest("[data-nhtool],[data-nhreset],[data-nhsend]");if(!b)return;
+    if(b.dataset.nhtool){nhState.tool=b.dataset.nhtool;nhState.sent=false;renderNewHome();return}
+    if(b.dataset.nhreset!==undefined){nhState.v[nhState.tool]={};nhState.sent=false;renderNewHome();return}
+    if(b.dataset.nhsend!==undefined){
+      /* the deal calculator takes the price and its side costs as percentages of the price — your own inputs, sent as such */
+      const r=nhRun("cost",nhState.v.cost);if(!r||!r.out.total.ok)return;
+      const p=r.inputs.price,pct=x=>String(Math.round(x/p*100*1000)/1000);
+      calcState.v.price=String(p);calcState.v.tax=pct(r.out.tax.v);
+      calcState.v.fees=pct(r.out.legalNis.v+r.inputs.upgrades+r.inputs.closing+r.inputs.mortFees+r.inputs.indexation);
+      delete calcState.src.price;delete calcState.src.tax;delete calcState.src.fees;
+      renderCalc();nhState.sent=true;nhUpdate();
+      const c=el("calcBody");if(c)c.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  });
+}
+/* @newhome-ui:end */
+
+
+/* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
    "Where should I deploy my capital?" A MODEL over the PROPX board data
    (LOCATIONS — every input classed by vcOf: OFFICIAL · STATIC · DERIVED ·
@@ -6872,7 +7182,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();renderNewHome();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -6918,6 +7228,7 @@ initHousing();
 initLand();
 initIntel();
 initTrust();
+initNewHome();
 refresh(true);
 </script>
 </body><!-- doc-skeleton -->
