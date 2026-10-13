@@ -11,7 +11,7 @@
 //   node scripts/cbs-sales-discover.js --list path:44,10 level:4:44                 every catalog node (all pages)
 //   node scripts/cbs-sales-discover.js --series <id,id,…> [--from MM-YYYY] [--to MM-YYYY]
 //                                                                      the observations of time series, with metadata
-//   node scripts/cbs-sales-discover.js --links <url> [--match <regex>]  every link on a page (matching the regex)
+//   node scripts/cbs-sales-discover.js --links <url…> [--match <regex>] every link on the pages (matching the regex)
 //   node scripts/cbs-sales-discover.js --pdf <url> [--match <regex>]    the text of a PDF (pdftotext), matching lines
 
 'use strict';
@@ -122,15 +122,17 @@ async function walk(startUrl, re, maxReq) {
       }
     }
   } else if (args.includes('--links')) {
-    const res = await get(opt('--links'));
-    report(res, 200);
     const re = new RegExp(opt('--match', '.'), 'i');
-    const seen = new Set();
-    for (const m of String(res.text || '').matchAll(/href\s*=\s*["']([^"'#]+)["']/gi)) {
-      const h = m[1].replace(/&amp;/g, '&');
-      if (re.test(h) && !seen.has(h)) { seen.add(h); console.log('  ' + h); }
+    for (const u of many('--links')) {
+      const res = await get(u);
+      report(res, 120);
+      const seen = new Set();
+      for (const m of String(res.text || '').matchAll(/href\s*=\s*["']([^"'#]+)["']/gi)) {
+        const h = m[1].replace(/&amp;/g, '&');
+        if (re.test(h) && !seen.has(h)) { seen.add(h); console.log('  ' + h); }
+      }
+      console.log(`${seen.size} links`);
     }
-    console.log(`${seen.size} links`);
   } else if (args.includes('--pdf')) {
     /* official PDFs: is there a table, and by what geography? (pdftotext from poppler-utils, installed by the workflow) */
     const { execFileSync } = require('child_process');
