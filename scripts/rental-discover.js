@@ -25,7 +25,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let extraHost = null;
 const allowed = (u) => {
   let h; try { h = new URL(u).hostname; } catch { return false; }
-  return /(^|\.)gov\.il$/.test(h) || /(^|\.)wikipedia\.org$/.test(h) || (extraHost && (h === extraHost || h.endsWith('.' + extraHost)));
+  return /(^|\.)gov\.il$/.test(h) || /(^|\.)wikipedia\.org$/.test(h) || /(^|\.)wikidata\.org$/.test(h) || (extraHost && (h === extraHost || h.endsWith('.' + extraHost)));
 };
 
 async function get(url, accept = 'application/json, text/html;q=0.8, */*;q=0.5') {
@@ -38,7 +38,7 @@ async function get(url, accept = 'application/json, text/html;q=0.8, */*;q=0.5')
     const text = /json|text|xml|html|javascript/.test(type) || !type ? buf.toString('utf8').replace(/^﻿/, '') : null;
     let json = null; if (text) { try { json = JSON.parse(text); } catch { /* not json */ } }
     return { url, status: r.status, type, bytes: buf.length, ms: Date.now() - t0, text, json, finalUrl: r.url, lastModified: r.headers.get('last-modified') };
-  } catch (e) { return { url, status: 0, error: e.message, ms: Date.now() - t0 }; }
+  } catch (e) { const c = e.cause || {}; return { url, status: 0, error: `${e.message}${c.code ? ' · ' + c.code : ''}${c.message ? ' · ' + c.message : ''}`, ms: Date.now() - t0 }; }
 }
 const line = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 function report(res, n = 1200) {
@@ -69,9 +69,19 @@ function robotsRules(text) {
       const rev = await get(`${base}&prop=revisions&rvprop=content&rvslots=main&rvsection=0&titles=${encodeURIComponent(title)}`);
       const content = rev.json && rev.json.query && rev.json.query.pages && rev.json.query.pages[0] && rev.json.query.pages[0].revisions ? rev.json.query.pages[0].revisions[0].slots.main.content : '';
       console.log('   infobox lines:', (content.match(/^\|.*(אתר|website|URL|url).*$/gim) || []).join(' ¦ '));
+      const pp = await get(`${base}&prop=pageprops&titles=${encodeURIComponent(title)}`);
+      const q = pp.json && pp.json.query && pp.json.query.pages && pp.json.query.pages[0] && pp.json.query.pages[0].pageprops ? pp.json.query.pages[0].pageprops.wikibase_item : null;
+      if (q) {
+        const wd = await get(`https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=${q}&property=P856`);
+        console.log(`   wikidata ${q} official website (P856):`, wd.json && wd.json.claims && wd.json.claims.P856 ? wd.json.claims.P856.map((c) => c.mainsnak.datavalue && c.mainsnak.datavalue.value).join(' | ') : wd.error || '(none)');
+        const inst = await get(`https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=${q}&property=P576`);
+        console.log(`   wikidata ${q} dissolved (P576):`, inst.json && inst.json.claims && inst.json.claims.P576 ? JSON.stringify(inst.json.claims.P576.map((c) => c.mainsnak.datavalue && c.mainsnak.datavalue.value)) : '(none)');
+      }
+      console.log('   lead text:', line(content).slice(0, 1500));
     }
   } else if (args.includes('--site')) {
     const host = opt('--site'); extraHost = host.replace(/^www\./, '');
+    for (const u of [`https://${host}/`, `http://${host}/`, `https://${extraHost}/`, `http://${extraHost}/`]) report(await get(u, 'text/html'), 300);
     const root = `https://${host}`;
     const rb = await get(root + '/robots.txt', 'text/plain'); report(rb, 1500);
     const rules = rb.status === 200 ? robotsRules(rb.text) : [];
