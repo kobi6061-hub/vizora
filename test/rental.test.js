@@ -49,6 +49,28 @@ t('a stated part + sale above the stated total marks the parse inconsistent (sho
   const r = D.rentalTerms('הכולל 100 יח"ד לבניה רוויה, מתוכן 67 יח"ד למטרת השכרה לטווח ארוך למשך 25 שנים, ו-167 יח"ד למכירה');
   assert.equal(r.inconsistent, true);
 });
+t('the other explicit phrasings: parentheses, "מתוכם", units-then-sale, approximate totals, permanent rental', () => {
+  const a = D.rentalTerms('הכולל סה"כ 248 יח"ד למטרת השכרה לטווח ארוך (186 יח"ד) ולמכירה (62 יח"ד)');
+  assert.deepStrictEqual([a.totalUnits, a.rentalUnits, a.saleUnits, a.rentalBasis], [248, 186, 62, 'stated-part']);
+  const b = D.rentalTerms('הכולל סה"כ 315 יח"ד מתוכם 210 יח"ד למטרת השכרה לטווח ארוך ו-105 יח"ד למכירה');
+  assert.deepStrictEqual([b.totalUnits, b.rentalUnits, b.saleUnits], [315, 210, 105]);
+  const c = D.rentalTerms('הכולל 450 יח"ד – 338 יח"ד להשכרה למשך 20 שנים ו – 112 יח"ד למכירה מיידית');
+  assert.deepStrictEqual([c.rentalUnits, c.saleUnits, c.rentalYears], [338, 112, 20]);
+  const d = D.rentalTerms('מתחם מגורים לדיור להשכרה לטווח ארוך (כ-50 יח"ד*) במתחם TEST FIXTURE');
+  assert.equal(d.totalUnits, 50); assert.equal(d.totalApprox, true); assert.equal(d.rentalBasis, 'stated-all');
+  const e = D.rentalTerms('הכולל 234 יח"ד לבניה רוויה, מתוכן 117 יח"ד למטרת השכרה לצמיתות, ו-117 יח"ד למכירה מיידית');
+  assert.equal(e.rentalPermanent, true); assert.equal(e.rentalYears, null); assert.equal(e.rentalUnits, 117);
+});
+t('the rental period is never the lease term (חוזה חכירה … 98 שנים); a whole-project description is its own basis', () => {
+  const r = D.rentalTerms('הכולל 300 יח"ד ולניהול והפעלה של פרויקט "דירה להשכיר במתחם TEST FIXTURE" להשכרה למשך 15 שנים. מזמינות הצעות לחתימה על חוזה חכירה ישירה מהוון לתקופה של 98 שנים');
+  assert.equal(r.rentalYears, 15); assert.equal(r.rentalBasis, 'project-rental'); assert.equal(r.rentalUnits, 300);
+  const l = D.rentalTerms('הכולל 120 יח"ד. חוזה חכירה לתקופה של 98 שנים');
+  assert.equal(l.rentalYears, null); assert.equal(l.rentalUnits, null);
+});
+t('an "all rental" phrase beside units for sale is ambiguous → rental units stay null', () => {
+  const r = D.rentalTerms('(סה"כ 200 דירות) כפרויקט מגורים להשכרה למשך 20 שנים, 40 יח"ד למכירה');
+  assert.equal(r.rentalUnits, null); assert.equal(r.ambiguous, true); assert.equal(r.saleUnits, 40);
+});
 t('the tender number join key is the Authority\'s own: year × 10000 + number; malformed numbers are refused', () => {
   assert.equal(D.tenderNumberOf('מכרז מספר מר/161/2026').michrazId, 20260161);
   assert.equal(D.tenderNumberOf('מכרז 161/2026'), null);              /* no region prefix → not the printed tender number */
