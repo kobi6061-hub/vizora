@@ -52,5 +52,7 @@ jobs:
           probe "/api/land?view=summary" "302 307" login.html
           probe "/api/housing?view=status" "302 307" login.html
           probe "/api/gov/transactions?settlement=5000" "302 307" login.html
+          probe "/api/intel?view=status" "302 307" login.html
+          probe "/api/intel?view=sources" "302 307" login.html
           probe "/data/land/meta.json" "302 307 404" ""
           exit $fail
