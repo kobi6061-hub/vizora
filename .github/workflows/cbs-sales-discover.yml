@@ -56,7 +56,7 @@ jobs:
             series) node scripts/cbs-sales-discover.js --series "$ARG" ${MATCH:+--from "$MATCH"} ;;
             list)   node scripts/cbs-sales-discover.js --list $ARG ;;
             links)  node scripts/cbs-sales-discover.js --links $ARG ${MATCH:+--match "$MATCH"} ;;
-            pdf)    node scripts/cbs-sales-discover.js --pdf $ARG ${MATCH:+--match "$MATCH"} ;;
+            pdf)    node scripts/cbs-sales-discover.js --pdf $ARG ${MATCH:+--match "$MATCH"} --compact ;;
             probe)  node scripts/cbs-sales-discover.js --probe "$ARG" ${MATCH:+--dept "$MATCH"} ;;
             *)      node scripts/cbs-sales-discover.js --get $ARG ;;
           esac

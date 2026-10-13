@@ -159,7 +159,10 @@ async function walk(startUrl, re, maxReq) {
       const text = execFileSync('pdftotext', ['-layout', f, '-'], { maxBuffer: 64 << 20 }).toString('utf8');
       const lines = text.split('\n');
       console.log(`   ${lines.length} lines`);
-      lines.forEach((ln, i) => { if (re.test(ln)) console.log(`   ${String(i + 1).padStart(5)}| ${ln.replace(/\s+$/, '')}`); });
+      /* --compact: drop the bidi control marks pdftotext keeps and show column gaps as " | " */
+      const compact = args.includes('--compact');
+      const show = (ln) => compact ? ln.replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '').trim().replace(/\s{2,}/g, ' | ') : ln.replace(/\s+$/, '');
+      lines.forEach((ln, i) => { if (re.test(ln) && (!compact || show(ln))) console.log(`${compact ? '' : '   '}${String(i + 1).padStart(compact ? 3 : 5)}| ${show(ln)}`); });
     }
   } else if (args.includes('--probe')) {
     const [year, range] = opt('--probe').split(':');
