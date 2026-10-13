@@ -75,6 +75,17 @@
   and where they go); `scripts/supabase-verify.js` + `.github/workflows/supabase-verify.yml` verify it. Store of
   record: Supabase once configured; `data/housing/` is the bundled fallback (`freshness.store` says which served).
 
+- `lib/entities/` + `lib/trust/` + `api/intel.js` + `test/entities.test.js` = Developers & Projects (`#intel`, "יזמים
+  ופרויקטים") and the Data & Trust Center (`#trust` inside `#sources`): a deterministic registry over the stored ILA
+  tender records and MoCH lottery records, labelled OBSERVED PROPX ACTIVITY (never a land bank or total pipeline). One
+  developer = one canonical name (typographic variants only); no similarity merge — same-letters / cut-prefix names are
+  linked as "possibly the same", never combined; unmarked winners (private persons) counted, never listed. Projects keep
+  their own ids (`moch:<ProjectID>`, `ila:<MichrazID>:<lot>`) and are never joined across sources; units never added
+  across sources. One search routes tender / plan / parcel / developer / project / locality / street / address to its
+  entity (also in the command bar). `lib/trust/catalog.js` = every source with its latest check from the run logs in
+  one vocabulary (SUCCESS / UNCHANGED / PARTIAL / REFUSED / FAILED / SCHEMA_CHANGED / STALE / NO_RUN). See
+  `lib/entities/README.md`.
+
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,

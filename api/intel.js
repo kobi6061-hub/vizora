@@ -5,7 +5,7 @@
 // route (middleware.js). Nothing is fetched from a source here.
 //
 //   view=developers   one sorted page of developer entities — OBSERVED PROPX ACTIVITY (q, city, role, kind, period=all|recent, sort, order, page, size ≤ 100)
-//   view=developer    one entity (id=dev-…): activity per source, markets, sites, projects, construction evidence, aliases, possible same entities
+//   view=developer    one entity (id=dev-… or name=<the source string>): activity per source, markets, sites, projects, construction evidence, aliases, possible same entities
 //   view=projects     one sorted page of projects (kind=moch|ila, q, city, stage, developer, sort, order, page, size ≤ 100)
 //   view=project      one project (id=moch:<ProjectID> | ila:<MichrazID>:<lot>) with stage evidence and provenance
 //   view=signals      DEVELOPER MARKET ENTRY (derived; city, limit)
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     if (view === 'projects') return send(res, 200, Q.projects(p));
     if (view === 'signals') return send(res, 200, Q.signals(p));
     if (view === 'search') return send(res, 200, Q.search(p.q));
-    if (view === 'developer') { const out = Q.developer(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+    if (view === 'developer') { const out = Q.developer(p.id || (p.name ? Q.idOfName(p.name) : null)); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     if (view === 'project') { const out = Q.project(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     return send(res, 400, { error: 'unknown view' });
   } catch (e) {

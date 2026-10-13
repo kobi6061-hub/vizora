@@ -10,8 +10,8 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="12140ffb699ed1d5220dd4a6ec6532d85bc00a985ef9848cc9063104eec7b5be">
-<meta name="propx-build" content="2026-10-01.gh-1.1">
+<meta name="propx-source-sha256" content="eb15ac3d4c70f699611b004d6d031bb2da3a005f4c0c293b78a22013cbc486a2">
+<meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
 
@@ -1212,6 +1212,53 @@ details.ci-more>.in{padding:2px 13px 12px}
   .ci-polg{grid-template-columns:1fr}
   .ci-app3 .ci-in.sm{width:58px}
 }
+/* developers & projects (#intel) · data & trust center (#trust) */
+.in-search{display:flex;gap:8px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--hairline)}
+.in-search input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink)}
+.in-res{padding:8px 15px 10px;border-bottom:1px solid var(--hairline);display:grid;gap:5px}
+.in-hit{display:flex;gap:10px;align-items:baseline;text-align:start;padding:7px 10px;border:1px solid var(--hairline);border-radius:9px;background:var(--paper);width:100%;color:var(--ink)}
+.in-hit:hover,.in-hit:focus-visible{background:var(--accent-wash)}
+.in-hit .ty{font-size:10px;font-weight:800;color:var(--accent-deep);white-space:nowrap;min-width:54px}
+.in-hit .lb{font-weight:700;font-size:13px;min-width:0;overflow-wrap:anywhere}
+.in-hit .sb{font-size:11px;font-weight:500;color:var(--ink-3);margin-inline-start:6px}
+.in-kids{display:flex;flex-wrap:wrap;gap:4px;padding:5px 64px 2px 0}
+[dir="ltr"] .in-kids{padding:5px 0 2px 64px}
+.in-kid{font-size:11.5px;font-weight:700;color:var(--accent-deep);border:1px dashed var(--baseline);border-radius:99px;padding:2px 9px}
+.in-ps{font-size:10.5px;color:var(--brass);font-weight:800;margin-inline-start:4px}
+.in-city{width:150px}
+.ho-chip.in-r-ila{border-color:var(--accent);color:var(--accent-deep)}
+.ho-chip.in-r-moch{border-color:var(--brass);color:var(--brass)}
+.ho-chip.in-st-construction-started,.ho-chip.in-st-completed,.ho-chip.in-st-occupied{border-color:var(--up);color:var(--up)}
+.ho-chip.in-st-permitted{border-color:var(--accent);color:var(--accent-deep)}
+#inTbl td .nm{font-weight:700}
+#inTbl td .sub{margin-top:3px;display:flex;flex-wrap:wrap;gap:3px}
+.in-two th{text-align:start}
+.in-two td{text-align:end}
+.tc-card{margin-top:14px;padding:0}
+.tc-head{padding:12px 15px 6px;margin:0}
+.tc-head .tx-note{max-width:640px}
+#tcBody{padding:0 15px 14px}
+.tc-counts{font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:4px 0 10px}
+.tc-list{display:grid;gap:6px}
+.tc-row{border:1px solid var(--hairline);border-radius:10px;background:var(--paper)}
+.tc-row.off{opacity:.78}
+.tc-sum{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr) minmax(0,2fr) auto;gap:4px 12px;align-items:center;width:100%;text-align:start;padding:9px 11px;color:var(--ink)}
+.tc-sum:hover{background:var(--panel-2)}
+.tc-n b{display:block;font-size:12.5px}
+.tc-n .sub{display:block;font-size:11px;color:var(--ink-3);overflow-wrap:anywhere}
+.tc-v{font-size:11.5px;color:var(--ink-2);font-weight:700}
+.tc-d{font-size:11px;color:var(--ink-2);grid-column:span 1}
+.tc-d .k{color:var(--ink-3);font-weight:700;margin-inline-end:3px}
+.tc-det{padding:4px 11px 11px;border-top:1px solid var(--hairline)}
+.tc-det .ho-dl .v{font-size:12px;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
+.tc-st{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.03em;border:1px solid;border-radius:4px;padding:0 5px;white-space:nowrap}
+.tc-st.SUCCESS,.tc-st.UNCHANGED{color:var(--up);border-color:var(--up)}
+.tc-st.PARTIAL,.tc-st.STALE{color:var(--brass);border-color:var(--brass)}
+.tc-st.REFUSED,.tc-st.FAILED,.tc-st.SCHEMA_CHANGED{color:var(--down);border-color:var(--down)}
+.tc-st.NO_RUN{color:var(--ink-3);border-color:var(--baseline)}
+.tc-leg{margin-top:10px;font-size:12px}
+.tc-leg summary{cursor:pointer;font-weight:700;color:var(--ink-2)}
+@media(max-width:719px){.tc-sum{grid-template-columns:minmax(0,1fr) auto}.tc-v,.tc-c{grid-column:1/-1}.tc-d{grid-column:span 1}.in-city{width:120px}.in-kids{padding-inline-start:0}}
 
 /* offline build: no server session — hide logout controls, and the ALTARIS
    link (a server route, /altaris, that an offline file cannot open) */
@@ -1253,6 +1300,7 @@ details.ci-more>.in{padding:2px 13px 12px}
   <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
   <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
+  <a href="#intel" class="ri" data-sec="intel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.4 2.8-5.4 5.5-5.4s4.9 2 5.5 5.4"/><path d="M16 4.5h5M16 8.5h5M17.5 12.5h3.5"/></svg><span data-i="navIntel">יזמים</span></a>
   <a href="#land" class="ri" data-sec="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 12l9-7 9 7"/></svg><span data-i="navLand">קרקעות</span></a>
   <a href="/altaris" class="ri" id="railAltaris" title="ALTARIS — מנוע חיתום והקצאת הון" aria-label="ALTARIS — מנוע חיתום והקצאת הון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h6"/><path d="M9 12c3.2 0 4-6 8-6h4"/><path d="M9 12h12"/><path d="M9 12c3.2 0 4 6 8 6h4"/></svg><span>ALTARIS</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
@@ -1550,6 +1598,33 @@ details.ci-more>.in{padding:2px 13px 12px}
     </div>
   </section>
 
+  <!-- Developers & Projects — OBSERVED PROPX ACTIVITY (api/intel.js): a deterministic registry over the ILA tender
+       records and the MoCH lottery records. Names are never merged by similarity; projects are never joined across sources. -->
+  <section class="blk" id="intel">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrIn">L2 · ישויות · יזמים ופרויקטים</span>
+      <h2 data-i="inTitle">יזמים ופרויקטים</h2>
+      <p class="ho-sub" data-i="inSub">פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות</p></div>
+      <span class="tx-note ho-prov" id="inProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
+      <div class="in-res" id="inRes" hidden aria-live="polite"></div>
+      <div class="ho-bar" id="inBar"></div>
+      <div class="ho-cov" id="inCov" hidden></div>
+      <div class="ho-kpis" id="inKpis"></div>
+      <div class="ho-tblhead" id="inTblHead"></div>
+      <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
+      <div class="tbl-cards" id="inCards"></div>
+      <div class="ho-pager" id="inPager"></div>
+      <p class="tbl-foot" id="inFoot"></p>
+    </div>
+    <div class="ho-drawer" id="inDrawer" hidden>
+      <div class="ho-drawer-bg" data-inclose></div>
+      <aside class="ho-panel" id="inPanel" role="dialog" aria-modal="true" aria-labelledby="inDTitle" tabindex="-1"></aside>
+    </div>
+  </section>
+
   <!-- Land & Tender Intelligence — the Israel Land Authority's residential land tenders (api/land.js).
        A separate layer from Government Housing (subsidized lotteries) and from Transactions. -->
   <section class="blk" id="land">
@@ -1583,6 +1658,8 @@ details.ci-more>.in{padding:2px 13px 12px}
       <aside class="ho-panel" id="ldPanel" role="dialog" aria-modal="true" aria-labelledby="ldDTitle" tabindex="-1"></aside>
     </div>
   </section>
+
+
 
   <!-- Sources -->
   <!-- buyer's guide — general educational content, not advice -->
@@ -1643,6 +1720,11 @@ details.ci-more>.in{padding:2px 13px 12px}
         </div>
       </div>
     </details>
+    <!-- Data & Trust Center — every source, its latest check and its limits (api/intel.js?view=sources) -->
+    <div class="card tc-card" id="trust">
+      <div class="ho-bh tc-head"><h3 data-i="tcTitle">מרכז נתונים ואמון</h3><span class="tx-note" data-i="tcSub">כל מקור ש-PROPX קורא או בדק: מפרסם, סיווג, בדיקה אחרונה ותוצאתה, תצפית אחרונה, כיסוי ומגבלות — מתוך יומני הסנכרון עצמם</span></div>
+      <div id="tcBody"></div>
+    </div>
   </section>
 
 </main>
@@ -2130,7 +2212,7 @@ he:{
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
   navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
-  navLand:"קרקעות", lyrLd:"L1 · שוק · קרקעות ומכרזים", ldTitle:"קרקעות ומכרזים", ldSub:"מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות",
+  navLand:"קרקעות", navIntel:"יזמים", lyrIn:"L2 · ישויות · יזמים ופרויקטים", inTitle:"יזמים ופרויקטים", inSub:"פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות", tcTitle:"מרכז נתונים ואמון", tcSub:"כל מקור ש-PROPX קורא או בדק: מפרסם, סיווג, בדיקה אחרונה ותוצאתה, תצפית אחרונה, כיסוי ומגבלות — מתוך יומני הסנכרון עצמם", lyrLd:"L1 · שוק · קרקעות ומכרזים", ldTitle:"קרקעות ומכרזים", ldSub:"מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות",
   ldSrcName:"רשות מקרקעי ישראל · אתר המכרזים", ldProv:src=>`מקור: ${src} · רשומות מכרז רשמיות; ספירות וסכומים נגזרים`,
   ldPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים","5y":"5 שנים",all:"כל המכרזים במקור",custom:"טווח מותאם"}, ldPerL:"תקופה",
   ldScope:{current:"שוק נוכחי",all:"כל ההיסטוריה"}, ldScopeL:"היקף", ldScopeTip:{current:"מכרזים שעדיין בתהליך (פורסם / פתוח / נסגר / ממתין להגרלה / מוקפא) והחלטות — זכייה, ללא זוכה, ביטול — מ-24 החודשים האחרונים",all:"כל רשומות המקור מאז 2000"},
@@ -2623,7 +2705,7 @@ en:{
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
   navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
-  navLand:"Land", lyrLd:"L1 · Market · Land & tenders", ldTitle:"Land & Tender Intelligence", ldSub:"Israel Land Authority residential land tenders · planning · winners · costs — not subsidized-housing lotteries, not apartment sales",
+  navLand:"Land", navIntel:"Developers", lyrIn:"L2 · Entities · Developers & projects", inTitle:"Developers & Projects", inSub:"Activity observed in the official sources — ILA tender wins, MoCH lottery projects, construction evidence · one search for every entity", tcTitle:"Data & Trust Center", tcSub:"Every source PROPX reads or audited: publisher, class, the latest check and its outcome, latest observation, coverage and limits — from the sync logs themselves", lyrLd:"L1 · Market · Land & tenders", ldTitle:"Land & Tender Intelligence", ldSub:"Israel Land Authority residential land tenders · planning · winners · costs — not subsidized-housing lotteries, not apartment sales",
   ldSrcName:"Israel Land Authority · tender site", ldProv:src=>`Source: ${src} · official tender records; counts and sums derived`,
   ldPer:{"6m":"6 months","12m":"12 months","24m":"24 months","5y":"5 years",all:"All tenders in source",custom:"Custom range"}, ldPerL:"Period",
   ldScope:{current:"Current market",all:"Full history"}, ldScopeL:"Scope", ldScopeTip:{current:"Tenders still in play (published / open / closed / awaiting lottery / frozen) and decisions — award, no award, cancellation — of the last 24 months",all:"Every source record since 2000"},
@@ -3196,7 +3278,7 @@ const mapMetric=()=>MAP_METRICS.find(m=>m.id===state.mapMetric);
 /* =====================================================================
    6 · RENDERERS
    ===================================================================== */
-const PROPX_BUILD="2026-10-01.capital-restore";
+const PROPX_BUILD="2026-10-13.intel";
 window.PROPX_BUILD=PROPX_BUILD;
 function setStatics(){
   const t=T();
@@ -4010,7 +4092,7 @@ const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
 function txQueryFor(){
   if(state.geo){
     const g=state.geo;
-    return g.kind==="street"?{city:g.city,street:g.he,label:`${g.he} · ${g.city}`}
+    return g.kind==="street"?{city:g.city,street:g.he,house:g.house||undefined,label:`${g.he}${g.house?" "+g.house:""} · ${g.city}`}
                             :{city:g.he,label:g.he};
   }
   const l=LOC[state.locId];if(!l)return null;
@@ -5475,9 +5557,9 @@ function initSearch(){
     const cities=LOCATIONS.filter(l=>l.type==="city"&&match(l)).slice(0,7);
     const nbhds=LOCATIONS.filter(l=>(l.type==="nbhd"||l.type==="sub")&&match(l)).slice(0,9);
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
-    const geos=geoSug(q);
+    const geos=geoSug(q),ints=intelSug(q);
     results=[...cities,...nbhds,...dists];
-    if(results.length===0&&geos.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
+    if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
@@ -5487,6 +5569,9 @@ function initSearch(){
         `<button class="sp-item" data-geoi="${i}" role="option">
           <span>${g.he}${g.kind==="street"?` <small>· ${g.city}</small>`:g.moatza?` <small>· ${g.moatza}</small>`:""}</span>
           <span class="sp-tag">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}</span></button>`).join("");
+      if(ints.length)html+=`<div class="sp-group">${IT().tab.developers} · ${IT().tab.projects} · ${IT().ty.tender}</div>`+ints.map((h,i)=>
+        `<button class="sp-item" data-inti="${i}" role="option"><span><bdi>${inE(h.label)}</bdi>${inHitSub(h)?` <small>· ${inE(inHitSub(h))}</small>`:""}</span>
+          <span class="sp-tag">${inE(IT().ty[h.type]||h.type)}</span></button>`).join("");
       pop.innerHTML=html;
     }
     pop.classList.add("open");input.setAttribute("aria-expanded","true");
@@ -5495,6 +5580,9 @@ function initSearch(){
     }));
     pop.querySelectorAll("[data-geoi]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();openGeoView(geoLast.list[+b.dataset.geoi]);input.value="";close();
+    }));
+    pop.querySelectorAll("[data-inti]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();intelPick(intelLast.list[+b.dataset.inti],input);input.value="";close();
     }));
   };
   const item=l=>{
@@ -5514,6 +5602,7 @@ function initSearch(){
     }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
       const it=items[activeIdx];
       if(it.dataset.geoi!==undefined)openGeoView(geoLast.list[+it.dataset.geoi]);
+      else if(it.dataset.inti!==undefined)intelPick(intelLast.list[+it.dataset.inti],input);
       else selectLocation(it.dataset.go);
       input.value="";close();
     }else if(e.key==="Escape"){close()}
@@ -6260,6 +6349,516 @@ function initLand(){
 }
 
 /* =====================================================================
+   DEVELOPERS & PROJECTS — OBSERVED PROPX ACTIVITY (api/intel.js over the
+   stored ILA tender records and MoCH lottery records). One developer = one
+   canonical name from the official records (typographic variants only);
+   nothing is merged by similarity — a possible same entity is linked, never
+   combined. Projects keep their own official ids (MoCH ProjectID · ILA
+   tender lot) and are never joined across sources; units are reported per
+   source and never added. Not a land bank, not a total pipeline.
+   ===================================================================== */
+const IN_I18N={
+he:{
+  tabsL:"תצוגה",tab:{developers:"יזמים",projects:"פרויקטים ואתרים",entries:"כניסה לשווקים"},
+  perL:"תקופה",per:{all:"כל התקופה",recent:"24 חודשים"},perTip:{all:"כל הרשומות במקורות",recent:"הוכרע / הוגרל ב-24 החודשים שלפני תאריך הבנייה"},
+  kindL:"סוג",kindAll:"כל הסוגים",kindMoch:"פרויקטי הגרלה (משב״ש)",kindIla:"מגרשים שנזכו (רמ״י)",
+  sortL:"מיון",sort:{units:"יח״ד במגרשים שנזכו",lots:"מגרשים שנזכו",projects:"פרויקטי הגרלה",cities:"ערים",last:"פעילות אחרונה",name:"שם",date:"תאריך",unitsP:"יח״ד"},
+  filterPh:{developers:"סינון לפי שם יזם",projects:"סינון לפי שם · יזם · שכונה"},cityPh:"עיר (שם או סמל)",
+  searchPh:"חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר",searchL:"חיפוש ישויות",
+  searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
+  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",locality:"יישוב",street:"רחוב"},
+  kDevs:"יזמים ברישום",kDevsS:n=>`${n} מופיעים בשני המקורות (שם משפטי זהה)`,kSites:"מגרשי מגורים שנזכו",kSitesS:"מכרזי רמ״י · זוכה עם סימון צורה משפטית",
+  kProjects:"פרויקטי הגרלה",kProjectsS:(a,b)=>`משב״ש · הגרלות ${a}–${b}`,kUnmarked:"זוכים ללא סימון משפטי",kUnmarkedS:n=>`${n} מגרשים — בדרך כלל אנשים פרטיים; נספרים, לא מוצגים`,
+  basis:"פעילות שנצפתה במקורות PROPX — לא עתודת קרקע, לא צבר כולל ולא רשימת יזמים מלאה",
+  covF:{land:"מכרזים נבדקו",latest:"פרסום אחרון",housing:"הגרלות נבדקו",detail:"פירוט מכרזים נקרא"},
+  possibleN:(a,b)=>`${a} זוגות שם חתוך ו-${b} קבוצות כתיב (אותן אותיות, פיסוק שונה) מקושרים כ״ייתכן שזהה״ — לא ממוזגים`,
+  c:{name:"יזם",lots:"מגרשים שנזכו",units:"יח״ד במגרשים",land:"סכומי זכייה (תחרותי)",mproj:"פרויקטי הגרלה",munits:"יח״ד בהגרלה ראשונה",cities:"ערים",cons:"ראיית בנייה",last:"פעילות אחרונה",
+     kind:"סוג",pname:"פרויקט / מגרש",dev:"יזם",place:"עיר · שכונה",punits:"יח״ד",price:"מחיר",stage:"שלב מתועד",date:"תאריך",
+     edev:"יזם",ecity:"עיר",edate:"פעילות ראשונה בעיר",evia:"דרך",eearlier:"פעיל במקורות מאז"},
+  roles:{"ila-tender-winner":"זוכה במכרזי רמ״י","moch-lottery-developer":"יזם בהגרלות משב״ש"},
+  kinds:{company:"חברה",partnership:"שותפות",cooperative:"אגודה",nonprofit:"עמותה","public-body":"גוף ציבורי",unmarked:"ללא סימון משפטי"},
+  pkinds:{"moch-lottery-project":"פרויקט הגרלה","ila-awarded-lot":"מגרש שנזכה"},
+  stages:{"land-awarded":"קרקע נזכתה",marketed:"שווק בהגרלה",permitted:"היתר",  "construction-started":"בנייה החלה",completed:"הושלם",occupied:"אוכלס"},
+  via:{"ila-win":"זכייה במכרז","moch-lottery":"הגרלה",both:"מכרז והגרלה"},
+  joint:"מחרוזת של כמה צדדים",possible:"ייתכן שזהה",consN:(b,s,c)=>`${b} מבנים · ${s} החלו · ${c} הושלמו`,
+  tblT:{developers:n=>`${n} יזמים`,projects:n=>`${n} פרויקטים ואתרים`,entries:n=>`${n} כניסות לשווקים`},
+  tblS:{developers:"לחיצה פותחת פרופיל יזם",projects:"לחיצה פותחת את הפרויקט",entries:"נגזר: עיר שבה הפעילות הראשונה של יזם נצפתה ב-24 החודשים שלפני תאריך הבנייה, אצל יזם שפעל במקום אחר לפני כן"},
+  prev:"הקודם",next:"הבא",page:(a,b)=>`עמוד ${a} מתוך ${b}`,
+  loading:"טוען…",err:"הנתונים אינם זמינים כרגע — נסו שוב מאוחר יותר",offline:"זמין בגרסת השרת בלבד — הקובץ הלא-מקוון אינו מכיל את הרשומות",none:"אין רשומות התואמות לסינון",missing:"המקורות אינם מפרסמים ערך זה",
+  foot:"מקורות: רשות מקרקעי ישראל — אתר המכרזים · משרד הבינוי והשיכון — הגרלות דירה בהנחה ודיווחי התקדמות הבנייה (2024, ישן) · שמות כפי שפורסמו; ללא מיזוג לפי דמיון; יח״ד לפי מקור, לעולם לא מחוברות בין מקורות",
+  dClose:"סגירה",dDev:"פרופיל יזם",dProj:"פרויקט",dIds:"זהות ושמות",dCanon:"שם קנוני",dAliases:"גרסאות שם במקור",dCompany:"מספר חברה",dCompanyV:"לא מתפרסם במקורות אלה",dPossible:"ייתכן שזהה (לא ממוזג)",
+  ev:{"same-letters":"אותן אותיות, פיסוק/רווח שונה","strict-prefix":"השם חתוך במקור ומהווה תחילית של שם אחד בלבד"},
+  dIla:"מכרזי רמ״י — מגרשים שנזכו",dMoch:"הגרלות משב״ש",dCons:"ראיית בנייה (דיווחי התקדמות 2024 — ישן)",dMarkets:"שווקים (ערים)",dSites:"מגרשים שנזכו",dProjects:"פרויקטי הגרלה",dEntries:"כניסה לשווקים חדשים",dSrc:"מקורות",dMeth:"מתודולוגיה",
+  dAll:"כל התקופה",dRecent:"24 חודשים",kv:{lots:"מגרשים",tenders:"מכרזים",units:"יח״ד במגרשי מגורים",land:"סכומי זכייה תחרותיים",landLots:"מגרשים בתחרות מחיר",lpu:"קרקע ליח״ד",psm:"מגרשים בהצעת ₪/מ״ר",fixed:"הקצאה במחיר קבוע",first:"זכייה ראשונה",lastw:"זכייה אחרונה",
+     projects:"פרויקטים",lotteries:"הגרלות",ufirst:"יח״ד בהגרלות ראשונות",apps:"נרשמים בהגרלות ראשונות",firstl:"הגרלה ראשונה",lastl:"הגרלה אחרונה",
+     clots:"מגרשים עם ראיה",cbld:"מבנים",cunits:"יח״ד במבנים",cstart:"החלו",ccomp:"הושלמו",cfirst:"התחלה ראשונה",clast:"השלמה אחרונה",casof:"נכון ל"},
+  tracks:"מסלולים",noneYet:"אין רשומות",more:n=>`עוד ${n}`,
+  pDev:"יזם",pPlace:"מיקום",pProgram:"תכנית",pLots:"הגרלות",pUnits:"יח״ד בהגרלה הראשונה",pLatestU:"יח״ד בהגרלה האחרונה",pPsm:"מחיר למ״ר (מחיר התכנית)",pPsmNote:"מחיר התכנית הרשמי — אינו עסקת שוק",
+  pPermit:"היתר",pStage:"שלב בפרויקט",pDemand:"נרשמים ליח״ד (הגרלה ראשונה)",pEvidence:"ראיות שלב",pJoin:"צירופים",pProv:"מקור ומועדים",
+  lt:{date:"תאריך",type:"סוג",units:"יח״ד",apps:"נרשמים",winners:"זוכים",status:"סטטוס"},ltype:{first:"ראשונה",continuation:"המשך"},
+  sTender:"מכרז",sLot:"מגרש",sUnits:"יח״ד",sLand:"סכום זכייה",sLpu:"קרקע ליח״ד",sBid:"הצעה ₪/מ״ר",sPlans:"תכנית|מגרש",sParcels:"גוש/חלקה",sDecision:"החלטה",sOpenTender:"פתיחת המכרז",
+  srcUpd:"עודכן במקור",fetched:"נשלף",checked:"נבדק",
+  vatNote:"מע״מ: לא צוין במקור",basisShort:"פעילות שנצפתה במקורות PROPX",
+  lpuBasis:"קרקע ליח״ד = סכומי הזכייה ÷ יח״ד באותם מגרשים בתחרות מחיר שמפרסמים יח״ד",
+  stageBasis:"השלב המתקדם ביותר שיש לו ראיה ישירה במקורות PROPX; לשלב מוקדם יותר ייתכן שפשוט אין ראיה",
+  joinIla:"אין מפתח רשמי משותף עם רשומות ההגרלות של משרד הבינוי — לא צורף",joinMoch:"רשומת ההגרלה אינה נושאת מכרז, תכנית או גוש/חלקה — לא צורפה למגרש במכרז",
+  meth:["יזם = שם קנוני אחד מהרשומות הרשמיות (הבדלי הקלדה בלבד: מירכאות ורווחים); אין מיזוג לפי דמיון","שם משפטי זהה (עם סימון צורה משפטית) בשני מקורות הוא ישות אחת — רשם החברות אינו רושם שתי חברות באותו שם","שם חתוך או אותן אותיות בפיסוק שונה מקושרים כ״ייתכן שזהה״ ואינם ממוזגים","זוכים ללא סימון צורה משפטית (בדרך כלל אנשים פרטיים) נספרים ואינם מוצגים","יח״ד ברמ״י = קיבולת מגרשים שנזכו; יח״ד במשב״ש = יח״ד בהגרלה הראשונה — לעולם לא מחוברות בין מקורות","סכומי קרקע: מגרשים בתחרות מחיר בלבד; הצעות ₪/מ״ר והקצאות במחיר קבוע נספרות בנפרד","ראיית בנייה: דיווחי התקדמות של משרד הבינוי (2024, ישן) בצירוף גוש וחלקה מדויקים למגרש שנזכה בלבד","24 חודשים = הוכרע/הוגרל ב-24 החודשים שלפני תאריך הבנייה (שעון ישראל)"],
+  hitDev:(l,p,c)=>`${l} מגרשים · ${p} פרויקטי הגרלה · ${c} ערים`,hitN:n=>`${n} מכרזים`,showAll:n=>`הצגת כל ${n} התוצאות`,showLess:"פחות תוצאות",
+},
+en:{
+  tabsL:"View",tab:{developers:"Developers",projects:"Projects & sites",entries:"Market entries"},
+  perL:"Period",per:{all:"All time",recent:"24 months"},perTip:{all:"every record in the sources",recent:"decided / lotteried in the 24 months before the build date"},
+  kindL:"Kind",kindAll:"All kinds",kindMoch:"Lottery projects (MoCH)",kindIla:"Awarded lots (ILA)",
+  sortL:"Sort",sort:{units:"Units in lots won",lots:"Lots won",projects:"Lottery projects",cities:"Cities",last:"Latest activity",name:"Name",date:"Date",unitsP:"Units"},
+  filterPh:{developers:"Filter by developer name",projects:"Filter by name · developer · neighbourhood"},cityPh:"City (name or code)",
+  searchPh:"Search: developer · project · tender 158/2026 · plan · block/parcel · city · street and number",searchL:"Entity search",
+  searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchBasis:"a result routes to an entity — names match by string and are never merged",
+  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",locality:"Locality",street:"Street"},
+  kDevs:"Developers in the registry",kDevsS:n=>`${n} appear in both sources (identical legal name)`,kSites:"Residential lots won",kSitesS:"ILA tenders · winner with a legal-form marker",
+  kProjects:"Lottery projects",kProjectsS:(a,b)=>`MoCH · lotteries ${a}–${b}`,kUnmarked:"Winners without a legal form",kUnmarkedS:n=>`${n} lots — usually private persons; counted, not listed`,
+  basis:"Activity observed in PROPX's sources — not a land bank, not a total pipeline, not a complete developer list",
+  covF:{land:"Tenders checked",latest:"Latest publication",housing:"Lotteries checked",detail:"Tender detail read"},
+  possibleN:(a,b)=>`${a} cut-name pairs and ${b} spelling groups (same letters, different punctuation) are linked as "possibly the same" — never merged`,
+  c:{name:"Developer",lots:"Lots won",units:"Units in lots",land:"Winning sums (competitive)",mproj:"Lottery projects",munits:"Units, first lotteries",cities:"Cities",cons:"Construction evidence",last:"Latest activity",
+     kind:"Kind",pname:"Project / lot",dev:"Developer",place:"City · neighbourhood",punits:"Units",price:"Price",stage:"Evidenced stage",date:"Date",
+     edev:"Developer",ecity:"City",edate:"First activity in the city",evia:"Via",eearlier:"Active in the sources since"},
+  roles:{"ila-tender-winner":"ILA tender winner","moch-lottery-developer":"MoCH lottery developer"},
+  kinds:{company:"Company",partnership:"Partnership",cooperative:"Cooperative",nonprofit:"Non-profit","public-body":"Public body",unmarked:"No legal-form marker"},
+  pkinds:{"moch-lottery-project":"Lottery project","ila-awarded-lot":"Awarded lot"},
+  stages:{"land-awarded":"Land awarded",marketed:"Marketed (lottery)",permitted:"Permit","construction-started":"Construction started",completed:"Completed",occupied:"Occupied"},
+  via:{"ila-win":"Tender win","moch-lottery":"Lottery",both:"Tender & lottery"},
+  joint:"several parties in one string",possible:"possibly the same",consN:(b,s,c)=>`${b} buildings · ${s} started · ${c} completed`,
+  tblT:{developers:n=>`${n} developers`,projects:n=>`${n} projects & sites`,entries:n=>`${n} market entries`},
+  tblS:{developers:"Click to open a developer profile",projects:"Click to open the project",entries:"Derived: a city where a developer's first observed activity falls in the 24 months before the build date, for a developer active elsewhere before"},
+  prev:"Previous",next:"Next",page:(a,b)=>`Page ${a} of ${b}`,
+  loading:"Loading…",err:"The data is unavailable right now — try again later",offline:"Available on the server version only — the offline file carries no records",none:"No records match the filter",missing:"The sources do not publish this value",
+  foot:"Sources: Israel Land Authority — tender site · Ministry of Construction and Housing — discounted-housing lotteries and construction-progress reports (2024, stale) · names as published; no similarity merge; units per source, never added across sources",
+  dClose:"Close",dDev:"Developer profile",dProj:"Project",dIds:"Identity & names",dCanon:"Canonical name",dAliases:"Name variants in the source",dCompany:"Company number",dCompanyV:"not published by these sources",dPossible:"Possibly the same (not merged)",
+  ev:{"same-letters":"same letters, different punctuation / spacing","strict-prefix":"the name is cut by its source and is a prefix of exactly one other name"},
+  dIla:"ILA tenders — lots won",dMoch:"MoCH lotteries",dCons:"Construction evidence (progress reports 2024 — stale)",dMarkets:"Markets (cities)",dSites:"Lots won",dProjects:"Lottery projects",dEntries:"New-market entries",dSrc:"Sources",dMeth:"Methodology",
+  dAll:"All time",dRecent:"24 months",kv:{lots:"Lots",tenders:"Tenders",units:"Units in residential lots",land:"Competitive winning sums",landLots:"Lots in price competition",lpu:"Land per unit",psm:"Lots bid in ₪/m²",fixed:"Fixed-price allocations",first:"First win",lastw:"Latest win",
+     projects:"Projects",lotteries:"Lotteries",ufirst:"Units in first lotteries",apps:"Applicants in first lotteries",firstl:"First lottery",lastl:"Latest lottery",
+     clots:"Lots with evidence",cbld:"Buildings",cunits:"Units in buildings",cstart:"Started",ccomp:"Completed",cfirst:"First start",clast:"Latest completion",casof:"As of"},
+  tracks:"Tracks",noneYet:"No records",more:n=>`${n} more`,
+  pDev:"Developer",pPlace:"Location",pProgram:"Program",pLots:"Lotteries",pUnits:"Units in the first lottery",pLatestU:"Units in the latest lottery",pPsm:"Price per m² (program price)",pPsmNote:"the official program price — not a market sale",
+  pPermit:"Permit",pStage:"Project stage",pDemand:"Applicants per unit (first lottery)",pEvidence:"Stage evidence",pJoin:"Joins",pProv:"Source and dates",
+  lt:{date:"Date",type:"Type",units:"Units",apps:"Applicants",winners:"Winners",status:"Status"},ltype:{first:"First",continuation:"Continuation"},
+  sTender:"Tender",sLot:"Lot",sUnits:"Units",sLand:"Winning sum",sLpu:"Land per unit",sBid:"Bid ₪/m²",sPlans:"Plan|lot",sParcels:"Block/parcel",sDecision:"Decision",sOpenTender:"Open the tender",
+  srcUpd:"Updated at source",fetched:"Fetched",checked:"Checked",
+  vatNote:"VAT: not stated by the source",basisShort:"Observed PROPX activity",
+  lpuBasis:"land per unit = winning sums ÷ units over the same price-competition lots that publish units",
+  stageBasis:"the furthest stage with direct evidence in PROPX's sources; an earlier stage may simply lack evidence",
+  joinIla:"no shared official key with the MoCH lottery records — not joined",joinMoch:"the lottery record carries no tender, plan or parcel — not joined to a tender lot",
+  meth:["developer = one canonical name from the official records (typographic variants only: quotes, spacing); no similarity merge","an identical legal name (with a legal-form marker) in two sources is one entity — the Registrar of Companies does not register two companies under one name","a cut name or the same letters with different punctuation are linked as \"possibly the same\" and never merged","winners without a legal-form marker (usually private persons) are counted, never listed","ILA units = capacity of lots won; MoCH units = units in the first lottery — never added across sources","land sums: price-competition lots only; ₪/m² bids and fixed-price allocations are counted apart","construction evidence: MoCH progress reports (2024, stale) joined to an awarded lot by exact block and parcel only","24 months = decided / lotteried in the 24 months before the build date (Israel time)"],
+  hitDev:(l,p,c)=>`${l} lots · ${p} lottery projects · ${c} cities`,hitN:n=>`${n} tenders`,showAll:n=>`Show all ${n} results`,showLess:"Fewer results",
+}};
+const IT=()=>IN_I18N[state.lang];
+const inState={tab:"developers",period:"all",sort:"units",order:"desc",page:1,q:"",city:"",kind:"",
+  data:null,cov:null,status:"idle",err:null,req:0,started:false,
+  sq:"",sres:null,sbusy:false,sreq:0,sopen:null,
+  open:null,detail:null,detailErr:null,returnFocus:null};
+const inE=s=>calcEsc(s==null?"":s);
+const inDash=()=>`<span class="ho-na" title="${inE(IT().missing)}">—</span>`;
+const inN=v=>v==null?inDash():`<span class="num">${fmtInt(v)}</span>`;
+const inNIS=v=>v==null?inDash():`<span class="num">${fmtNIS(v)}</span>`;
+const inDate=d=>d?`<span class="num">${inE(String(d).slice(0,10).split("-").reverse().join("."))}</span>`:inDash();
+const inCity=r=>r&&(state.lang==="en"&&r.cityEn?inE(r.cityEn):r.city?inE(r.city):r.localityCode?`<span class="num">${inE(r.localityCode)}</span>`:inDash());
+const inOffline=()=>location.protocol==="file:"||!location.host;
+const inChip=(txt,cls)=>`<span class="ho-chip${cls?" "+cls:""}">${txt}</span>`;
+const inStage=s=>s?inChip(inE(IT().stages[s]||s),"in-st-"+inE(s)):inDash();
+async function inGet(q){
+  const r=await fetch("/api/intel?"+q,{credentials:"same-origin",headers:{Accept:"application/json"}});
+  if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;throw e}
+  return r.json();
+}
+function inLoad(){
+  inState.started=true;
+  const id=++inState.req;inState.status="loading";renderIntel();
+  const view=inState.tab==="entries"?"signals":inState.tab,p=new URLSearchParams({view});
+  if(view!=="signals"){p.set("page",String(inState.page));p.set("size","25");p.set("sort",inState.sort);p.set("order",inState.order);if(inState.q)p.set("q",inState.q)}
+  else p.set("limit","300");
+  if(view==="developers")p.set("period",inState.period);
+  if(view==="projects"&&inState.kind)p.set("kind",inState.kind);
+  if(inState.city)p.set("city",inState.city);
+  const cov=inState.cov?Promise.resolve(inState.cov):inGet("view=status");
+  Promise.all([inGet(p.toString()),cov]).then(([d,c])=>{if(id!==inState.req)return;inState.data=d;inState.cov=c;inState.status="ok";inState.err=null;renderIntel()})
+    .catch(e=>{if(id!==inState.req)return;inState.status="error";inState.err=e.message;renderIntel()});
+}
+function inBarHTML(){
+  const t=IT(),s=inState;
+  const tabs=["developers","projects","entries"].map(k=>`<button type="button" data-intab="${k}" aria-pressed="${s.tab===k}">${t.tab[k]}</button>`).join("");
+  const per=s.tab==="developers"?`<span class="ho-per" role="group" aria-label="${inE(t.perL)}">${["all","recent"].map(k=>`<button type="button" data-inper="${k}" aria-pressed="${s.period===k}" title="${inE(t.perTip[k])}">${t.per[k]}</button>`).join("")}</span>`:"";
+  const kind=s.tab==="projects"?`<select class="ho-sel" data-inkind aria-label="${inE(t.kindL)}">${[["",t.kindAll],["moch",t.kindMoch],["ila",t.kindIla]].map(([v,l])=>`<option value="${v}"${s.kind===v?" selected":""}>${l}</option>`).join("")}</select>`:"";
+  const sorts=s.tab==="developers"?["units","lots","projects","cities","last","name"]:s.tab==="projects"?["date","units","name"]:[];
+  const sort=sorts.length?`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${sorts.map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${k==="units"&&s.tab==="projects"?t.sort.unitsP:t.sort[k]}</option>`).join("")}</select>`:"";
+  const filt=s.tab!=="entries"?`<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(t.filterPh[s.tab])}" aria-label="${inE(t.filterPh[s.tab])}">`:"";
+  const city=`<input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`;
+  return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${per}${kind}${sort}${filt}${city}`;
+}
+function inCovHTML(C){
+  const t=IT(),F=(inState.data&&inState.data.freshness)||(inState.cov&&inState.cov.freshness)||{},L=F.land||{},H=F.housing||{},DC=L.detailCoverage||{};
+  const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
+  return `<div class="ho-facts">${fact(t.covF.land,inDate(L.checkedAt))}${fact(t.covF.latest,inDate(L.latestPublished))}${fact(t.covF.housing,inDate(H.checkedAt))}${fact(t.covF.detail,DC.total?`<span class="num">${fmtInt(DC.retrieved||0)}/${fmtInt(DC.total)}</span>`:"—")}</div>
+    <p class="ho-covs"><b>${t.basis}.</b> ${C?t.possibleN(fmtInt(C.possibleSamePrefixPairs||0),fmtInt(C.possibleSameLetterGroups||0)):""}</p>`;
+}
+function inKpisHTML(C){
+  const t=IT(),D=vcTag("der");
+  const tile=(l,v,s)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  if(!C)return "";
+  return [tile(t.kDevs,inN(C.developers),t.kDevsS(fmtInt(C.inBothSources||0))),tile(t.kSites,inN(C.projects.ilaSites),t.kSitesS),
+    tile(t.kProjects,inN(C.projects.mochProjects),t.kProjectsS(inDate(C.moch.lotteryDateFrom),inDate(C.moch.lotteryDateTo))),
+    tile(t.kUnmarked,inN(C.ila.unmarkedWinnerStrings),t.kUnmarkedS(fmtInt(C.ila.unmarkedLots||0)))].join("");
+}
+const inRoles=e=>(e.roles||[]).map(r=>inChip(inE(IT().roles[r]||r),r==="ila-tender-winner"?"in-r-ila":"in-r-moch")).join(" ");
+function inDevRow(r){
+  const t=IT(),T_=r.tenders||{},L=r.lotteries||{},K=r.construction;
+  return `<tr tabindex="0" data-indev="${inE(r.id)}">
+    <td class="w"><bdi class="nm">${inE(r.name)}</bdi><div class="sub">${inRoles(r)}${r.kind&&r.kind!=="company"?" "+inChip(inE(t.kinds[r.kind]||r.kind),"cont"):""}${r.possibleSame?` <span class="in-ps" title="${inE(t.dPossible)}">≈ ${fmtInt(r.possibleSame)}</span>`:""}</div></td>
+    <td class="num">${inN(T_.lots)}</td><td class="num">${inN(T_.residentialUnits)}</td><td class="num">${inNIS(T_.landTotalCompetitive)}</td>
+    <td class="num">${inN(L.projects)}</td><td class="num">${inN(L.unitsFirstLotteries)}</td><td class="num">${inN(r.cities)}</td>
+    <td class="w">${K?t.consN(`<span class="num">${fmtInt(K.buildings)}</span>`,`<span class="num">${fmtInt(K.started)}</span>`,`<span class="num">${fmtInt(K.completed)}</span>`):inDash()}</td>
+    <td class="num">${inDate(r.lastActivity)}</td></tr>`;
+}
+const inProjName=r=>r.kind==="ila-awarded-lot"?`${inE(IT().sTender)} <span class="num">${inE(r.tender||"")}</span> · ${inE(IT().sLot)} <span class="num">${inE(r.lotId||"")}</span>`:(r.name?`<bdi>${inE(r.name)}</bdi>`:inDash());
+const inProjPrice=r=>r.kind==="ila-awarded-lot"?(r.bidPerSqm!=null?`<span class="num">${fmtNIS(r.bidPerSqm)}/m²</span>`:r.landPerUnit!=null?`<span class="num">${fmtNIS(r.landPerUnit)}</span> <span class="ho-na">/${inE(IT().sUnits)}</span>`:inDash())
+  :(r.pricePerSqm!=null?`<span class="num">${fmtNIS(r.pricePerSqm)}/m²</span>`:inDash());
+function inProjRow(r){
+  const t=IT(),ila=r.kind==="ila-awarded-lot";
+  return `<tr tabindex="0" data-inproj="${inE(r.id)}">
+    <td>${inChip(inE(t.pkinds[r.kind]||r.kind),ila?"in-r-ila":"in-r-moch")}</td>
+    <td class="w">${inProjName(r)}<div class="sub">${ila?inE(ldTrackName(r.track)):inE(r.programHe||"")}</div></td>
+    <td class="w"><bdi>${inE(r.developerName||"")}</bdi></td>
+    <td class="w">${inCity(r)}<div class="sub">${r.neighborhood?inE(r.neighborhood):inDash()}</div></td>
+    <td class="num">${inN(ila?r.units:r.unitsFirstLottery)}</td><td class="num">${inProjPrice(r)}</td>
+    <td>${inStage(r.stage)}</td><td class="num">${inDate(ila?r.decisionDate:r.lastLotteryDate)}</td></tr>`;
+}
+function inEntryRow(r){
+  const t=IT();
+  return `<tr tabindex="0" data-indev="${inE(r.developerId)}"><td class="w"><bdi>${inE(r.developer)}</bdi></td><td class="w">${inCity(r)}</td><td class="num">${inDate(r.date)}</td><td>${inE(t.via[r.via]||r.via)}</td><td class="num">${inDate(r.earlierActivityFrom)}</td></tr>`;
+}
+function inTableHTML(d){
+  const t=IT(),C=t.c,th=k=>`<th>${C[k]}</th>`;
+  if(!d.rows||!d.rows.length)return "";
+  if(inState.tab==="developers")return `<thead><tr>${["name","lots","units","land","mproj","munits","cities","cons","last"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inDevRow).join("")}</tbody>`;
+  if(inState.tab==="projects")return `<thead><tr>${["kind","pname","dev","place","punits","price","stage","date"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inProjRow).join("")}</tbody>`;
+  return `<thead><tr>${["edev","ecity","edate","evia","eearlier"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inEntryRow).join("")}</tbody>`;
+}
+function inCardsHTML(d){
+  const t=IT();if(!d.rows)return "";
+  if(inState.tab==="developers")return d.rows.map(r=>`<div class="tcard" tabindex="0" data-indev="${inE(r.id)}"><div class="r1"><bdi><b>${inE(r.name)}</b></bdi></div>
+    <div class="r2">${inRoles(r)}</div><div class="r2"><span>${t.c.lots} ${inN(r.tenders.lots)}</span><span>${t.c.units} ${inN(r.tenders.residentialUnits)}</span><span>${t.c.mproj} ${inN(r.lotteries.projects)}</span></div>
+    <div class="r2" style="color:var(--ink-3)"><span>${t.c.cities} ${inN(r.cities)}</span><span>${t.c.last} ${inDate(r.lastActivity)}</span></div></div>`).join("");
+  if(inState.tab==="projects")return d.rows.map(r=>`<div class="tcard" tabindex="0" data-inproj="${inE(r.id)}"><div class="r1"><span>${inProjName(r)}</span>${inStage(r.stage)}</div>
+    <div class="r2" style="color:var(--ink-3)">${inCity(r)} · ${r.neighborhood?inE(r.neighborhood):inDash()}</div>
+    <div class="r2"><bdi>${inE(r.developerName||"")}</bdi></div><div class="r2"><span>${t.c.punits} ${inN(r.kind==="ila-awarded-lot"?r.units:r.unitsFirstLottery)}</span><span>${inProjPrice(r)}</span></div></div>`).join("");
+  return d.rows.map(r=>`<div class="tcard" tabindex="0" data-indev="${inE(r.developerId)}"><div class="r1"><bdi><b>${inE(r.developer)}</b></bdi>${inDate(r.date)}</div><div class="r2">${inCity(r)} · ${inE(t.via[r.via]||r.via)}</div></div>`).join("");
+}
+function renderIntel(){
+  const sec=el("intel");if(!sec)return;
+  const t=IT(),d=inState.data,st=inState.status,bar=el("inBar");
+  const a=document.activeElement,key=a&&bar.contains(a)?(a.dataset.inq!==undefined?"[data-inq]":a.dataset.incity!==undefined?"[data-incity]":null):null;
+  const typed=key?a.value:null,ss=key?a.selectionStart:null;
+  bar.innerHTML=inBarHTML();
+  if(key){const n=bar.querySelector(key);if(n){n.value=typed;n.focus();try{n.setSelectionRange(ss,ss)}catch(e){}}}
+  const sIn=el("inQ");if(sIn&&document.activeElement!==sIn&&sIn.placeholder!==t.searchPh){sIn.placeholder=t.searchPh;sIn.setAttribute("aria-label",t.searchL)}
+  renderInSearch();
+  el("inProv").innerHTML=`${vcTag("raw")}${vcTag("der")} ${inE(t.basis)}`;
+  const msg=st==="error"?(inOffline()?t.offline:t.err):(!d&&st==="loading")?t.loading:"";
+  const show=!!d&&st!=="error";
+  for(const id of["inKpis","inTblHead","inTbl","inCards","inPager"])el(id).hidden=!show;
+  const cov=el("inCov");
+  sec.setAttribute("aria-busy",String(st==="loading"));
+  if(!show){cov.hidden=!msg;cov.className="ho-msg";cov.textContent=msg;el("inFoot").textContent="";return}
+  const C=(inState.cov&&inState.cov.coverage)||d.coverage||null;
+  cov.className="ho-cov";cov.hidden=false;cov.innerHTML=inCovHTML(C);
+  el("inKpis").innerHTML=inKpisHTML(C);
+  const total=d.total!=null?d.total:(d.rows||[]).length;
+  el("inTblHead").innerHTML=`<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="entries"?"der":"raw")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
+  el("inTbl").innerHTML=inTableHTML(d)||`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
+  el("inCards").innerHTML=inCardsHTML(d);
+  const pages=d.pages||1;
+  el("inPager").hidden=pages<=1;
+  el("inPager").innerHTML=pages>1?`<button type="button" data-inpage="${d.page-1}"${d.page<=1?" disabled":""}>${t.prev}</button>
+    <span>${t.page(`<span class="num">${d.page}</span>`,`<span class="num">${pages}</span>`)}</span>
+    <button type="button" data-inpage="${d.page+1}"${d.page>=pages?" disabled":""}>${t.next}</button>`:"";
+  el("inFoot").textContent=t.foot;
+  if(inState.open)renderInDrawer();
+}
+/* ---------------- unified search (one query → routed entities) ---------------- */
+let inSTimer=null;
+function inSearch(q){
+  const qq=q.trim();inState.sq=qq;
+  clearTimeout(inSTimer);
+  if(qq.length<2){inState.sres=null;inState.sbusy=false;renderInSearch();return}
+  inState.sbusy=true;renderInSearch();
+  const id=++inState.sreq;
+  inSTimer=setTimeout(()=>{inGet("view=search&q="+encodeURIComponent(qq)).then(d=>{if(id!==inState.sreq)return;inState.sres=d.results||[];inState.sbusy=false;renderInSearch()})
+    .catch(()=>{if(id!==inState.sreq)return;inState.sres=[];inState.sbusy=false;inState.serr=true;renderInSearch()})},220);
+}
+function inHitSub(h){
+  const t=IT(),M=h.meta||{};
+  if(h.type==="tender")return [M.city,M.lifecycle&&T().ldLife[M.lifecycle]||M.lifecycle,M.publishedDate&&String(M.publishedDate).split("-").reverse().join(".")].filter(Boolean).join(" · ");
+  if(h.type==="developer")return t.hitDev(fmtInt(M.lots||0),fmtInt(M.projects||0),fmtInt(M.cities||0));
+  if(h.type==="plan"||h.type==="parcel")return t.hitN(fmtInt(M.tenders||0));
+  if(h.type==="project")return h.sub||"";
+  return "";
+}
+function inHitHTML(h,i){
+  const t=IT(),sb=inHitSub(h),sub=sb?`<span class="sb">${inE(sb)}</span>`:"";
+  const kids=(h.type==="plan"||h.type==="parcel")&&inState.sopen===i&&h.tenders?`<div class="in-kids">${h.tenders.map(x=>`<button type="button" class="in-kid" data-ldtender="${inE(x.id)}">${inE(t.ty.tender)} <span class="num">${inE(x.name||x.michrazId)}</span>${x.publishedDate?` · ${inDate(x.publishedDate)}`:""}</button>`).join("")}</div>`:"";
+  return `<div class="in-hitw"><button type="button" class="in-hit" data-inhit="${i}"><span class="ty">${inE(t.ty[h.type]||h.type)}</span><span class="lb"><bdi>${inE(h.label)}</bdi> ${sub}</span></button>${kids}</div>`;
+}
+function renderInSearch(){
+  const box=el("inRes");if(!box)return;
+  const t=IT();
+  if(!inState.sq||inState.sq.length<2){box.hidden=true;box.innerHTML="";return}
+  box.hidden=false;
+  if(inState.sbusy&&!inState.sres){box.innerHTML=`<p class="ho-note">${t.searching}</p>`;return}
+  const R=inState.sres||[];
+  const cap=inState.sall?R.length:10,more=R.length>10?`<button type="button" class="ho-more" data-insall>${inState.sall?t.showLess:t.showAll(fmtInt(R.length))}</button>`:"";
+  box.innerHTML=R.length?R.slice(0,cap).map(inHitHTML).join("")+more+`<p class="ho-note">${t.searchBasis}</p>`:`<p class="ho-note">${inOffline()?t.offline:t.searchNone}</p>`;
+}
+function inGoSection(id){const s=el(id);if(s)s.scrollIntoView({behavior:"smooth",block:"start"})}
+function inRoute(h,from){
+  if(!h)return;
+  if(h.type==="tender"){inGoSection("land");ldOpen(h.route.tender,from);return}
+  if(h.type==="developer"){inOpen("developer",h.id,from);return}
+  if(h.type==="project"){inOpen("project",h.id,from);return}
+  if((h.type==="address"||h.type==="street"||h.type==="locality")&&h.geo){
+    const g=Object.assign({},h.geo);if(h.type==="address")g.house=h.route.house;
+    openGeoView(g);if(h.type==="address")setTimeout(()=>inGoSection("txSection"),420);return}
+}
+/* ---------------- entity drawer (developer · project) ---------------- */
+async function inOpen(kind,id,from){
+  inState.open={kind,id};inState.detail=null;inState.detailErr=null;
+  if(from)inState.returnFocus=from;
+  el("inDrawer").hidden=false;document.body.style.overflow="hidden";
+  renderInDrawer();el("inPanel").focus();
+  try{const d=await inGet(`view=${kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
+  catch(e){if(!inState.open||inState.open.id!==id)return;inState.detailErr=e.message}
+  renderInDrawer();
+}
+function inClose(){
+  inState.open=null;inState.detail=null;
+  el("inDrawer").hidden=true;document.body.style.overflow="";
+  const f=inState.returnFocus;inState.returnFocus=null;
+  if(f&&document.contains(f))f.focus();
+}
+function renderInDrawer(){
+  const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
+  const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
+  if(!o)return;
+  if(!d){p.innerHTML=`<div class="ho-dh"><h3 id="inDTitle">${inState.detailErr?(inOffline()?t.offline:t.err):t.loading}</h3>${close}</div>`;return}
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
+  const O=vcTag("raw"),D=vcTag("der"),K=t.kv;
+  const srcList=(d.sources||[]).map(s=>`<li><b>${inE(state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher)}</b> — ${inE(s.name)} <span class="ho-chip">${inE(s.classification)}</span><div class="sub">${inE(s.role||"")}</div></li>`).join("");
+  const meth=`<ul class="ho-note ld-ul">${t.meth.map(m=>`<li>${inE(m)}</li>`).join("")}</ul>`;
+  if(o.kind==="developer"){
+    const A=d.tenders||{},AR=d.tendersRecent||{},M=d.lotteries||{},MR=d.lotteriesRecent||{},C=d.construction;
+    const two=(lab,a,b)=>`<tr><th>${lab}</th><td class="num">${a}</td><td class="num">${b}</td></tr>`;
+    const ila=`<table class="ho-dt in-two"><thead><tr><th></th><th>${t.dAll}</th><th>${t.dRecent}</th></tr></thead><tbody>
+      ${two(K.lots,inN(A.lots),inN(AR.lots))}${two(K.tenders,inN(A.tenders),inN(AR.tenders))}${two(K.units,inN(A.residentialUnits),inN(AR.residentialUnits))}
+      ${two(K.land,inNIS(A.landTotalCompetitive),inNIS(AR.landTotalCompetitive))}${two(K.landLots,inN(A.landLots),inN(AR.landLots))}${two(K.lpu,inNIS(A.landPerUnit),inNIS(AR.landPerUnit))}
+      ${two(K.psm,inN(A.perSqmLots),inN(AR.perSqmLots))}${two(K.fixed,inN(A.fixedPriceLots),inN(AR.fixedPriceLots))}${two(K.first,inDate(A.firstWin),inDate(AR.firstWin))}${two(K.lastw,inDate(A.lastWin),inDate(AR.lastWin))}</tbody></table>
+      <p class="ho-note">${inE(t.vatNote)} · ${inE(t.lpuBasis)}</p>${d.tracks&&Object.keys(d.tracks).length?`<p class="ho-note">${t.tracks}: ${Object.entries(d.tracks).map(([k,n])=>`${inE(T().ldTracks&&T().ldTracks[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · ")}</p>`:""}`;
+    const moch=`<table class="ho-dt in-two"><thead><tr><th></th><th>${t.dAll}</th><th>${t.dRecent}</th></tr></thead><tbody>
+      ${two(K.projects,inN(M.projects),inN(MR.projects))}${two(K.lotteries,inN(M.lotteries),inN(MR.lotteries))}${two(K.ufirst,inN(M.unitsFirstLotteries),inN(MR.unitsFirstLotteries))}
+      ${two(K.apps,inN(M.applicantsFirstLotteries),inN(MR.applicantsFirstLotteries))}${two(K.firstl,inDate(M.firstLottery),inDate(MR.firstLottery))}${two(K.lastl,inDate(M.lastLottery),inDate(MR.lastLottery))}</tbody></table>`;
+    const cons=C?`<div class="ho-dl">${kv(K.clots,inN(C.lots))}${kv(K.cbld,inN(C.buildings))}${kv(K.cunits,inN(C.units||null))}${kv(K.cstart,inN(C.started))}${kv(K.ccomp,inN(C.completed))}${kv(K.cfirst,inDate(C.firstStart))}${kv(K.clast,inDate(C.lastCompletion))}${kv(K.casof,inDate(C.asOf))}</div><p class="ho-note">${inE(C.join||"")}</p>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${K.first}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const sites=(d.sites||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.sTender}</th><th>${t.c.ecity}</th><th>${t.sUnits}</th><th>${t.sLand}</th><th>${t.c.stage}</th><th>${t.sDecision}</th></tr></thead><tbody>${d.sites.map(s=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(s.id)}"><span class="num">${inE(s.tender||"")}</span> · <span class="num">${inE(s.lotId)}</span></button></td><td>${inCity(s)}</td><td class="num">${inN(s.units)}</td><td class="num">${s.bidPerSqm!=null?`<span class="num">${fmtNIS(s.bidPerSqm)}/m²</span>`:inNIS(s.landPrice)}</td><td>${inStage(s.stage)}</td><td class="num">${inDate(s.decisionDate)}</td></tr>`).join("")}</tbody></table></div>${d.sitesTotal>d.sites.length?`<p class="ho-note">${t.more(fmtInt(d.sitesTotal-d.sites.length))}</p>`:""}`:`<p class="ho-note">${t.noneYet}</p>`;
+    const projs=(d.projects||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.pname}</th><th>${t.c.ecity}</th><th>${t.pUnits}</th><th>${t.pPsm}</th><th>${t.c.stage}</th><th>${t.lt.date}</th></tr></thead><tbody>${d.projects.map(x=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(x.id)}"><bdi>${inE(x.name||x.projectId)}</bdi></button></td><td>${inCity(x)}</td><td class="num">${inN(x.unitsFirstLottery)}</td><td class="num">${x.pricePerSqm!=null?`<span class="num">${fmtNIS(x.pricePerSqm)}</span>`:inDash()}</td><td>${inStage(x.stage)}</td><td class="num">${inDate(x.lastLotteryDate)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
+    const ent=(d.entries||[]).length?`<ul class="ho-note ld-ul">${d.entries.map(x=>`<li>${inCity(x)} · ${inDate(x.date)} · ${inE(t.via[x.via]||x.via)}</li>`).join("")}</ul>`:"";
+    p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.dDev} · ${inE(t.basisShort)}</span><h3 id="inDTitle"><bdi>${inE(d.name)}</bdi></h3>
+        <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}</div></div>${close}</div>
+      ${sec(t.dIds,O,`<div class="ho-dl">${kv(t.dCanon,`<bdi>${inE(d.canonical)}</bdi>`)}${kv(t.dCompany,inE(t.dCompanyV))}${kv(t.c.cities,inN((d.markets||[]).length))}${kv(t.c.last,inDate(d.lastActivity))}</div>
+        <p class="ho-note">${t.dAliases}: ${(d.aliases||[]).map(a=>`<bdi>${inE(a.name)}</bdi> <span class="num">(${fmtInt(a.occurrences)})</span>`).join(" · ")}</p>${ps?`<h4 class="ld-h4">${t.dPossible}</h4>${ps}`:""}`)}
+      ${(d.roles||[]).includes("ila-tender-winner")?sec(t.dIla,D,ila):""}
+      ${(d.roles||[]).includes("moch-lottery-developer")?sec(t.dMoch,D,moch):""}
+      ${sec(t.dCons,D,cons)}
+      ${sec(t.dMarkets,D,mk+(ent?`<h4 class="ld-h4">${t.dEntries}</h4>${ent}`:""))}
+      ${(d.sites||[]).length?sec(t.dSites,O,sites):""}
+      ${(d.projects||[]).length?sec(t.dProjects,O,projs):""}
+      ${sec(t.dSrc,"",`<ul class="ho-note ld-ul">${srcList}</ul>`)}
+      ${sec(t.dMeth,"",meth)}`;
+    return;
+  }
+  /* project */
+  const ila=d.kind==="ila-awarded-lot",S=d.stage||{evidence:[]};
+  const ev=`<ol class="ho-note ld-chain">${S.evidence.map(e=>`<li>${inStage(e.stage)} ${inDate(e.date)}${e.label?` · ${inE(e.label)}`:""}${e.partial?" · ⅟":""} <span class="ho-na">(${inE(e.source)}${e.asOf?` · ${inE(t.kv.casof)} ${inE(e.asOf)}`:""})</span></li>`).join("")}</ol><p class="ho-note">${inE(t.stageBasis)}</p>`;
+  const devs=(d.developers||[]).map(x=>`<button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>`).join(" · ")||`<bdi>${inE(d.developerName||"")}</bdi>`;
+  let body;
+  if(ila){
+    const Cn=d.construction;
+    body=`${sec(t.dProj,O,`<div class="ho-dl">${kv(t.sTender,`<button type="button" class="ld-link" data-ldtender="${inE(d.tenderId)}"><span class="num">${inE(d.tender||d.michrazId)}</span> ↗</button>`)}${kv(t.sLot,`<span class="num">${inE(d.lotId)}</span>`)}
+        ${kv(t.pDev,devs)}${kv(t.pPlace,`${inCity(d)}${d.neighborhood?` · ${inE(d.neighborhood)}`:""}`)}${kv(t.sUnits,inN(d.units))}${kv(t.sDecision,inDate(d.decisionDate))}
+        ${d.bidPerSqm!=null?kv(t.sBid,`<span class="num">${fmtNIS(d.bidPerSqm)}/m²</span>`):kv(t.sLand,inNIS(d.landPrice))+kv(t.sLpu,inNIS(d.landPerUnit))}</div><p class="ho-note">${inE(t.vatNote)}</p>`)}
+      ${sec(t.sPlans,O,`<p class="ho-note">${(d.planLots||[]).map(x=>`<span class="ho-chip num">${inE(x)}</span>`).join(" ")||inDash()}</p><p class="ho-note">${t.sParcels}: ${(d.parcels||[]).map(x=>`<span class="ho-chip num">${inE(x)}</span>`).join(" ")||inDash()}</p>`)}
+      ${Cn?sec(t.dCons,D,`<div class="ho-dl">${kv(t.kv.cbld,inN(Cn.buildings))}${kv(t.kv.cunits,inN(Cn.units))}${kv(t.kv.cstart,inN(Cn.started))}${kv(t.kv.ccomp,inN(Cn.completed))}${kv(t.kv.cfirst,inDate(Cn.firstStart))}${kv(t.kv.clast,inDate(Cn.lastCompletion))}${kv(t.kv.casof,inDate(Cn.asOf))}</div>`):""}`;
+  }else{
+    const lots=`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["date","type","units","apps","winners","status"].map(k=>`<th>${t.lt[k]}</th>`).join("")}</tr></thead><tbody>${(d.lotteries||[]).map(l=>`<tr><td class="num">${inDate(l.date)}</td><td>${inE(t.ltype[l.type]||l.type)}</td><td class="num">${inN(l.units)}</td><td class="num">${inN(l.applicants)}</td><td class="num">${inN(l.winners)}</td><td>${inE(l.status||"")}</td></tr>`).join("")}</tbody></table></div>`;
+    body=`${sec(t.dProj,O,`<div class="ho-dl">${kv(t.pDev,devs)}${kv(t.pPlace,`${inCity(d)}${d.neighborhood?` · ${inE(d.neighborhood)}`:""}`)}${kv(t.pProgram,inE(d.programHe||""))}
+        ${kv(t.pUnits,inN(d.unitsFirstLottery))}${kv(t.pLatestU,inN(d.unitsLatestOffered))}${kv(t.pPsm,d.pricePerSqm!=null?`<span class="num">${fmtNIS(d.pricePerSqm)}</span>`:inDash())}
+        ${kv(t.pPermit,inE(d.permitStatusHe||"—"))}${kv(t.pStage,inE(d.projectStatusHe||"—"))}</div><p class="ho-note">${inE(t.pPsmNote)}</p>`)}
+      ${sec(t.pLots+` (${fmtInt((d.lotteries||[]).length)})`,O,lots)}
+      ${sec(t.pDemand,D,`<p class="ho-note"><span class="num">${d.demand&&d.demand.applicantsPerUnit!=null?fmtInt(d.demand.applicantsPerUnit):"—"}</span> · ${inE(d.demand?d.demand.basis:"")}</p>`)}`;
+  }
+  const prov=d.provenance||{};
+  p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${inE(t.pkinds[d.kind]||d.kind)} · <span class="num">${inE(d.id)}</span></span>
+      <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}</div></div>${close}</div>
+    ${body}
+    ${sec(t.pEvidence,D,ev)}
+    ${sec(t.pJoin,"",`<p class="ho-note">${inE(ila?t.joinIla:t.joinMoch)}</p>`)}
+    ${sec(t.pProv,"",`<div class="ho-dl">${kv(t.srcUpd,inDate(prov.sourceUpdatedAt))}${kv(t.fetched,inDate(prov.fetchedAt||prov.detailFetchedAt))}</div><ul class="ho-note ld-ul">${srcList}</ul>`)}`;
+}
+function initIntel(){
+  const sec=el("intel");if(!sec)return;
+  const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
+  const onClick=e=>{
+    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
+    if(!b)return;
+    const d=b.dataset;
+    if(d.inclose!==undefined){inClose();return}
+    if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
+    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":"units";inState.order="desc";inState.q="";inLoad()}return}
+    if(d.inper){inState.period=d.inper;inState.page=1;inLoad();return}
+    if(d.inpage){inState.page=Math.max(1,+d.inpage);inLoad();el("inTblHead").scrollIntoView({block:"nearest"});return}
+    if(d.indev){inOpen("developer",d.indev,b.closest("#inPanel")?inState.returnFocus:b);return}
+    if(d.inproj){inOpen("project",d.inproj,b.closest("#inPanel")?inState.returnFocus:b);return}
+    if(d.ldtender){if(inState.open)inClose();inGoSection("land");ldOpen(d.ldtender,b);return}
+    if(d.inhit!==undefined){const h=(inState.sres||[])[+d.inhit];if(!h)return;
+      if((h.type==="plan"||h.type==="parcel")){inState.sopen=inState.sopen===+d.inhit?null:+d.inhit;renderInSearch();return}
+      inRoute(h,b);return}
+  };
+  sec.addEventListener("click",onClick);
+  if(drawer)drawer.addEventListener("click",onClick);
+  sec.addEventListener("change",e=>{
+    const x=e.target,d=x.dataset;
+    if(d.inkind!==undefined){inState.kind=x.value;inState.page=1;inLoad();return}
+    if(d.insort!==undefined){inState.sort=x.value;inState.order=x.value==="name"?"asc":"desc";inState.page=1;inLoad();return}
+  });
+  let qt;
+  sec.addEventListener("input",e=>{
+    const x=e.target,d=x.dataset;
+    if(x.id==="inQ"){inState.sopen=null;inState.sall=false;inSearch(x.value);return}
+    if(d.inq===undefined&&d.incity===undefined)return;
+    clearTimeout(qt);const v=x.value.trim(),k=d.inq!==undefined?"q":"city";
+    qt=setTimeout(()=>{if((inState[k]||"")===v)return;inState[k]=v;inState.page=1;inLoad()},350);
+  });
+  sec.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-indev],tr[data-inproj],.tcard[data-indev],.tcard[data-inproj]");if(r&&e.target===r){e.preventDefault();r.click()}}
+  });
+  document.addEventListener("keydown",e=>{
+    if(!inState.open)return;
+    if(e.key==="Escape"){inClose();return}
+    if(e.key==="Tab"){const p=el("inPanel"),q=[...p.querySelectorAll("button,[href],[tabindex]:not([tabindex='-1'])")].filter(x=>x.offsetParent!==null);
+      if(!q.length){e.preventDefault();p.focus();return}
+      const first=q[0],last=q[q.length-1];
+      if(e.shiftKey&&(document.activeElement===first||document.activeElement===p)){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+      else if(!p.contains(document.activeElement)){e.preventDefault();first.focus()}}
+  });
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!inState.started)inLoad()}},{rootMargin:"800px 0px"});
+    io.observe(sec);
+  }else inLoad();
+}
+/* the command bar: entities beside the places — a hit routes, never merges */
+let intelLast={q:"",list:[]},intelTimer=null;
+function intelSug(q){
+  const qq=q.trim();
+  if(qq.length<2)return[];
+  if(intelLast.q!==qq){
+    clearTimeout(intelTimer);
+    intelTimer=setTimeout(async()=>{
+      let list=[];
+      try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
+        list=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project"].includes(h.type)).slice(0,6)}
+      catch(e){/* offline/standalone: no entity layer */}
+      intelLast={q:qq,list};
+      const inp=el("searchInput");
+      if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
+    },190);
+    return[];
+  }
+  return intelLast.list;
+}
+function intelPick(h,from){
+  if(!h)return;
+  if(h.type==="plan"||h.type==="parcel"){inGoSection("intel");const i=el("inQ");if(i){i.value=h.type==="plan"?h.label.replace(/^תכנית\s*/,""):h.label;inState.sopen=0;inSearch(i.value)}return}
+  inRoute(h,from);
+}
+
+/* =====================================================================
+   DATA & TRUST CENTER — every source PROPX reads or audited, with the
+   latest check its own run logs record (api/intel.js?view=sources over
+   lib/trust/catalog.js). One vocabulary: SUCCESS · UNCHANGED · PARTIAL ·
+   REFUSED · FAILED · SCHEMA_CHANGED · STALE · NO_RUN. A source that is
+   unavailable never becomes 0 — its last valid data stays, dated.
+   ===================================================================== */
+const TC_I18N={
+he:{loading:"טוען את מצב המקורות…",err:"מצב המקורות אינו זמין כרגע",offline:"מרכז הנתונים זמין בגרסת השרת בלבד",
+  st:{SUCCESS:"תקין",UNCHANGED:"ללא שינוי",PARTIAL:"חלקי",REFUSED:"נדחה",FAILED:"נכשל",SCHEMA_CHANGED:"מבנה השתנה",STALE:"לא עדכני",NO_RUN:"ללא בדיקה מתוזמנת"},
+  vert:{land:"קרקעות",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
+  ch:{official:"ערוץ רשמי","independent-republication":"פרסום מחדש עצמאי",derived:"נגזר ב-PROPX"},
+  c:{src:"מקור",vert:"תחום",cls:"סיווג",state:"מצב",last:"בדיקה אחרונה",obs:"תצפית אחרונה",upd:"עדכון במקור"},
+  d:{used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן"},
+  legend:"מילון מצבים",principles:"עקרונות",count:n=>`${n} מקורות`},
+en:{loading:"Loading source status…",err:"Source status is unavailable right now",offline:"The data center is available on the server version only",
+  st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check"},
+  vert:{land:"Land",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
+  ch:{official:"Official channel","independent-republication":"Independent republication",derived:"Derived in PROPX"},
+  c:{src:"Source",vert:"Area",cls:"Class",state:"State",last:"Last check",obs:"Latest observation",upd:"Updated at source"},
+  d:{used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old"},
+  legend:"State vocabulary",principles:"Principles",count:n=>`${n} sources`}};
+const TT=()=>TC_I18N[state.lang];
+const tcState={data:null,status:"idle",started:false,open:null};
+const tcSt=s=>`<span class="tc-st ${inE(s)}" title="${inE(tcState.data&&tcState.data.vocabulary?tcState.data.vocabulary[s]||"":"")}">${inE(TT().st[s]||s)}</span>`;
+function tcLoad(){
+  tcState.started=true;tcState.status="loading";renderTrust();
+  inGet("view=sources").then(d=>{tcState.data=d;tcState.status="ok";renderTrust()}).catch(()=>{tcState.status="error";renderTrust()});
+}
+function renderTrust(){
+  const box=el("tcBody");if(!box)return;
+  const t=TT(),d=tcState.data;
+  if(!d){box.innerHTML=`<p class="ho-note">${tcState.status==="error"?(inOffline()?t.offline:t.err):t.loading}</p>`;return}
+  const counts=Object.entries(d.counts||{}).map(([k,n])=>`${tcSt(k)} <span class="num">${fmtInt(n)}</span>`).join(" ");
+  const row=(s,i)=>{const S=s.sync||{};const name=state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher;
+    const used=s.usedFor?(state.lang==="en"?s.usedFor.en:s.usedFor.he):"";
+    const det=tcState.open===i?`<div class="tc-det">
+      <div class="ho-dl">${[[t.d.used,inE(used)],[t.d.cadence,inE(s.cadence||"—")],[t.d.geo,inE(s.geography||"—")],[t.d.hist,inE(s.history||"—")],[t.d.lastGood,inDate(S.lastGoodAt)],[t.d.snap,inE(s.snapshots||"—")]]
+        .map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}</div>
+      ${S.recent&&S.recent.length?`<p class="ho-note">${t.d.recent}: ${S.recent.map(r=>`${tcSt(r.state)} ${inDate(r.at)}`).join(" · ")}</p>`:""}
+      ${S.lastError?`<p class="ho-note">${t.d.err}: <span class="num">${inE(S.lastError)}</span></p>`:""}
+      ${S.note?`<p class="ho-note">${inE(S.note)}</p>`:""}
+      ${s.sourceStale?`<p class="ho-note"><b>${t.d.stale}</b></p>`:""}
+      ${(s.limitations||[]).length?`<p class="ho-note"><b>${t.d.lim}:</b></p><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(x)}</li>`).join("")}</ul>`:""}
+      ${s.url?`<p class="ho-note">${t.d.url}: <a href="${inE(s.url)}" target="_blank" rel="noopener noreferrer"><span class="num">${inE(s.url)}</span></a></p>`:""}</div>`:"";
+    return `<div class="tc-row${s.inProduct===false?" off":""}"><button type="button" class="tc-sum" data-tcrow="${i}" aria-expanded="${tcState.open===i}">
+      <span class="tc-n"><b>${inE(name||"")}</b><span class="sub">${inE(s.name||"")}</span></span>
+      <span class="tc-v">${inE(t.vert[s.vertical]||s.vertical)}</span>
+      <span class="tc-c"><span class="ho-chip">${inE(s.classification||"")}</span>${s.channel&&s.channel!=="official"?` <span class="ho-chip cont">${inE(t.ch[s.channel]||s.channel)}</span>`:""}${s.inProduct===false?` <span class="ho-chip cont">${t.d.notRead}</span>`:""}</span>
+      <span class="tc-s">${tcSt(S.state||"NO_RUN")}</span>
+      <span class="tc-d"><span class="k">${t.c.last}</span> ${inDate(S.lastCheckAt)}</span>
+      <span class="tc-d"><span class="k">${t.c.obs}</span> ${s.latestObservation!=null?`<span class="num">${inE(s.latestObservation)}</span>`:inDash()}</span>
+      <span class="tc-d"><span class="k">${t.c.upd}</span> ${inDate(s.sourceUpdatedAt)}</span></button>${det}</div>`};
+  box.innerHTML=`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
+    <div class="tc-list">${d.sources.map(row).join("")}</div>
+    <details class="tc-leg"><summary>${t.legend} · ${t.principles}</summary><ul class="ho-note ld-ul">${Object.entries(d.vocabulary||{}).map(([k,v])=>`<li>${tcSt(k)} ${inE(v)}</li>`).join("")}</ul>
+      <ul class="ho-note ld-ul">${(d.principles||[]).map(x=>`<li>${inE(x)}</li>`).join("")}</ul></details>`;
+}
+function initTrust(){
+  const box=el("trust");if(!box)return;
+  box.addEventListener("click",e=>{const b=e.target.closest("[data-tcrow]");if(!b)return;const i=+b.dataset.tcrow;tcState.open=tcState.open===i?null:i;renderTrust()});
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!tcState.started)tcLoad()}},{rootMargin:"600px 0px"});
+    io.observe(box);
+  }else tcLoad();
+}
+
+/* =====================================================================
    7 · ORCHESTRATION
    ===================================================================== */
 function refresh(withSkeleton){
@@ -6272,7 +6871,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -6316,5 +6915,7 @@ initCmd();
 initMapZoom();
 initHousing();
 initLand();
+initIntel();
+initTrust();
 refresh(true);
 </script>
