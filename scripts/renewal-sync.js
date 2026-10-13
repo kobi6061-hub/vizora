@@ -54,7 +54,8 @@ const argVal = (f) => { const i = process.argv.indexOf('--' + f); return i > -1 
       byStage, stages: STAGES };
     Object.assign(run, { status: 'ok', fetched: src.rows.length, sourceUpdatedAt: src.sourceUpdatedAt, snapshotHash: hash, contentChanged, normalizerVersion: NORMALIZER_VERSION,
       rejected: rejected.length, rejectedSample: rejected.slice(0, 5), ...stats, historyEvents: history.length, finishedAt: new Date().toISOString() });
-    summary = `Urban renewal: ${live.length} declared complexes · ${stats.inserted} new · ${stats.updated} changed · ${history.length} history events · source updated ${String(src.sourceUpdatedAt || '—').slice(0, 10)}`;
+    const declared = live.filter((r) => r.declaration === 'declared').length;
+    summary = `Urban renewal: ${live.length} complexes (${declared} declared) · ${stats.inserted} new · ${stats.updated} changed · ${history.length} history events · source updated ${String(src.sourceUpdatedAt || '—').slice(0, 10)}`;
     if (!has('dry-run')) {
       const raw = contentChanged ? store.snapshotRaw(src.rows, hash, fetchedAt, { sourceUpdatedAt: src.sourceUpdatedAt, endpoint: src.endpoint }) : null;
       run.rawSnapshot = raw;

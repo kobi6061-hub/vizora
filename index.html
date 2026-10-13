@@ -1249,6 +1249,8 @@ details.ci-more>.in{padding:2px 13px 12px}
 .in-pl-r{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
 .in-pl-c{border:1px solid var(--hairline);border-radius:9px;padding:6px 8px;display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--ink-2)}
 .in-pl-s b{color:var(--ink)}
+.in-pl-c{min-width:0}
+#intel .ho-chip,#inPanel .ho-chip{white-space:normal;max-width:100%}
 .in-search{display:flex;gap:8px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--hairline)}
 .in-search input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink)}
 .in-res{padding:8px 15px 10px;border-bottom:1px solid var(--hairline);display:grid;gap:5px}
@@ -6747,14 +6749,24 @@ function initLand(){
    ===================================================================== */
 const IN_I18N={
 he:{
-  tabsL:"תצוגה",tab:{developers:"יזמים",projects:"פרויקטים ואתרים",entries:"כניסה לשווקים"},
+  tabsL:"תצוגה",tab:{developers:"יזמים",projects:"פרויקטים ואתרים",entries:"כניסה לשווקים",renewal:"התחדשות עירונית"},
+  rn:{stages:{"declared":"ללא סטטוס","planning-initial":"תכנון ראשוני","planning-statutory":"תכנון סטטוטורי","approved":"תכנית מאושרת לפני מימוש","approved-in-implementation":"תכנית מאושרת במימוש","approved-after-licensing":"מאושרת — אחרי רישוי","unknown":"סטטוס לא מזוהה"},
+    decl:{declared:"הוכרז",["not-yet-declared"]:"טרם הוכרז",["not-stated"]:"לא צוין"},declL:"הכרזה",allDecl:"כל מצבי ההכרזה",stageL:"סטטוס",allStages:"כל הסטטוסים",
+    sort:{declared:"תאריך הכרזה",proposed:"יח״ד מוצעות",city:"יישוב",name:"שם"},ph:"סינון לפי שם מתחם · תכנית · מספר",
+    kC:"מתחמים",kE:"יח״ד קיימות",kA:"תוספת יח״ד (כפי שפורסמה)",kP:"יח״ד מוצעות",of:(a,b)=>`סכום על ${a} מתוך ${b} מתחמים שמפרסמים`,
+    c:{name:"מתחם",city:"יישוב",track:"מסלול",decl:"הכרזה",status:"סטטוס (משב״ש)",ex:"קיימות",add:"תוספת",prop:"מוצעות",date:"הוכרז",plan:"תכנית",year:"שנת תוקף"},
+    tblT:n=>`${n} מתחמי התחדשות עירונית`,tblS:"לחיצה פותחת את המתחם",strip:"מתחמים לפי סטטוס משב״ש",stripS:"מספר · יח״ד מוצעות (סכום על המתחמים שמפרסמים) — מתחם מוכרז אינו בנייה",
+    basis:"מתחמי ההתחדשות העירונית של משרד הבינוי והשיכון — מוכרזים, טרם הוכרזו או ללא ציון, כפי שכל שורה אומרת; לא כל פרויקטי ההתחדשות (תמ״א 38 אינה מתחם)",
+    note:"הסטטוס הוא של משב״ש, כלשונו; מתחם מוכרז אינו בנייה. עמודת התוספת אינה בהכרח תוספת נטו — בחלק מהשורות היא אינה שווה למוצעות פחות קיימות.",
+    addUp:{true:"קיימות + תוספת = מוצעות",false:"קיימות + תוספת ≠ מוצעות (כפי שפורסם)",null:"—"},
+    d:{ids:"זהות המתחם",units:"יחידות דיור (כפי שפורסמו)",plan:"תכנון ורישוי",links:"קישורים",hist:"היסטוריה",prov:"מקור",num:"מספר מתחם",exec:"בביצוע (כפי שפורסם)",permits:"סך היתרים (כפי שפורסם)",site:"אתר",map:"מפה",none:"אין שינויים מתועדים עדיין",src:"נשלף",upd:"עודכן במקור",raw:"ערך מקורי"}},
   perL:"תקופה",per:{all:"כל התקופה",recent:"24 חודשים"},perTip:{all:"כל הרשומות במקורות",recent:"הוכרע / הוגרל ב-24 החודשים שלפני תאריך הבנייה"},
   kindL:"סוג",kindAll:"כל הסוגים",kindMoch:"פרויקטי הגרלה (משב״ש)",kindIla:"מגרשים שנזכו (רמ״י)",
   sortL:"מיון",sort:{units:"יח״ד במגרשים שנזכו",lots:"מגרשים שנזכו",projects:"פרויקטי הגרלה",cities:"ערים",last:"פעילות אחרונה",name:"שם",date:"תאריך",unitsP:"יח״ד"},
   filterPh:{developers:"סינון לפי שם יזם",projects:"סינון לפי שם · יזם · שכונה"},cityPh:"עיר (שם או סמל)",
   searchPh:"חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר",searchL:"חיפוש ישויות",
   searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
-  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",locality:"יישוב",street:"רחוב"},
+  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב"},
   kDevs:"יזמים ברישום",kDevsS:n=>`${n} מופיעים בשני המקורות (שם משפטי זהה)`,kSites:"מגרשי מגורים שנזכו",kSitesS:"מכרזי רמ״י · זוכה עם סימון צורה משפטית",
   kProjects:"פרויקטי הגרלה",kProjectsS:(a,b)=>`משב״ש · הגרלות ${a}–${b}`,kUnmarked:"זוכים ללא סימון משפטי",kUnmarkedS:n=>`${n} מגרשים — בדרך כלל אנשים פרטיים; נספרים, לא מוצגים`,
   basis:"פעילות שנצפתה במקורות PROPX — לא עתודת קרקע, לא צבר כולל ולא רשימת יזמים מלאה",
@@ -6795,14 +6807,24 @@ he:{
   hitDev:(l,p,c)=>`${l} מגרשים · ${p} פרויקטי הגרלה · ${c} ערים`,hitN:n=>`${n} מכרזים`,showAll:n=>`הצגת כל ${n} התוצאות`,showLess:"פחות תוצאות",
 },
 en:{
-  tabsL:"View",tab:{developers:"Developers",projects:"Projects & sites",entries:"Market entries"},
+  tabsL:"View",tab:{developers:"Developers",projects:"Projects & sites",entries:"Market entries",renewal:"Urban renewal"},
+  rn:{stages:{"declared":"No status","planning-initial":"Initial planning","planning-statutory":"Statutory planning","approved":"Approved plan, before implementation","approved-in-implementation":"Approved plan, in implementation","approved-after-licensing":"Approved — after licensing","unknown":"Unrecognized status"},
+    decl:{declared:"Declared",["not-yet-declared"]:"Not yet declared",["not-stated"]:"Not stated"},declL:"Declaration",allDecl:"Any declaration state",stageL:"Status",allStages:"All statuses",
+    sort:{declared:"Declaration date",proposed:"Proposed units",city:"Locality",name:"Name"},ph:"Filter by complex name · plan · number",
+    kC:"Complexes",kE:"Existing units",kA:"Additional units (as published)",kP:"Proposed units",of:(a,b)=>`sum over ${a} of ${b} complexes that publish it`,
+    c:{name:"Complex",city:"Locality",track:"Track",decl:"Declaration",status:"Status (MoCH)",ex:"Existing",add:"Additional",prop:"Proposed",date:"Declared",plan:"Plan",year:"Approval year"},
+    tblT:n=>`${n} urban-renewal complexes`,tblS:"Click to open the complex",strip:"Complexes by MoCH status",stripS:"count · proposed units (summed over the complexes that publish them) — a declared complex is not construction",
+    basis:"The Ministry of Construction and Housing's urban-renewal complexes — declared, not yet declared or not stated, as each row says; not every renewal project (TAMA 38 is not a complex)",
+    note:"The status is the Ministry's, verbatim; a declared complex is not construction. The additional column is not necessarily net new units — in part of the rows it differs from proposed minus existing.",
+    addUp:{true:"existing + additional = proposed",false:"existing + additional ≠ proposed (as published)",null:"—"},
+    d:{ids:"The complex",units:"Housing units (as published)",plan:"Planning & licensing",links:"Links",hist:"History",prov:"Source",num:"Complex number",exec:"In execution (as published)",permits:"Permits total (as published)",site:"Site",map:"Map",none:"No recorded changes yet",src:"Fetched",upd:"Updated at source",raw:"Raw value"}},
   perL:"Period",per:{all:"All time",recent:"24 months"},perTip:{all:"every record in the sources",recent:"decided / lotteried in the 24 months before the build date"},
   kindL:"Kind",kindAll:"All kinds",kindMoch:"Lottery projects (MoCH)",kindIla:"Awarded lots (ILA)",
   sortL:"Sort",sort:{units:"Units in lots won",lots:"Lots won",projects:"Lottery projects",cities:"Cities",last:"Latest activity",name:"Name",date:"Date",unitsP:"Units"},
   filterPh:{developers:"Filter by developer name",projects:"Filter by name · developer · neighbourhood"},cityPh:"City (name or code)",
   searchPh:"Search: developer · project · tender 158/2026 · plan · block/parcel · city · street and number",searchL:"Entity search",
   searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchBasis:"a result routes to an entity — names match by string and are never merged",
-  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",locality:"Locality",street:"Street"},
+  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street"},
   kDevs:"Developers in the registry",kDevsS:n=>`${n} appear in both sources (identical legal name)`,kSites:"Residential lots won",kSitesS:"ILA tenders · winner with a legal-form marker",
   kProjects:"Lottery projects",kProjectsS:(a,b)=>`MoCH · lotteries ${a}–${b}`,kUnmarked:"Winners without a legal form",kUnmarkedS:n=>`${n} lots — usually private persons; counted, not listed`,
   basis:"Activity observed in PROPX's sources — not a land bank, not a total pipeline, not a complete developer list",
@@ -6865,20 +6887,26 @@ function inLoad(){
   inState.started=true;
   const id=++inState.req;inState.status="loading";renderIntel();
   const view=inState.tab==="entries"?"signals":inState.tab,p=new URLSearchParams({view});
+  if(view==="renewal"){if(inState.stage)p.set("stage",inState.stage);if(inState.decl)p.set("declaration",inState.decl)}
   if(view!=="signals"){p.set("page",String(inState.page));p.set("size","25");p.set("sort",inState.sort);p.set("order",inState.order);if(inState.q)p.set("q",inState.q)}
   else p.set("limit","300");
   if(view==="developers")p.set("period",inState.period);
   if(view==="projects"&&inState.kind)p.set("kind",inState.kind);
   if(inState.city)p.set("city",inState.city);
   const cov=inState.cov?Promise.resolve(inState.cov):inGet("view=status");
-  Promise.all([inGet(p.toString()),cov]).then(([d,c])=>{if(id!==inState.req)return;inState.data=d;inState.cov=c;inState.status="ok";inState.err=null;renderIntel()})
+  Promise.all([inGet(p.toString()),cov]).then(([d,c])=>{if(id!==inState.req)return;if(view==="renewal")d=Object.assign({},d.page,{renewal:d.summary});inState.data=d;inState.cov=c;inState.status="ok";inState.err=null;renderIntel()})
     .catch(e=>{if(id!==inState.req)return;inState.status="error";inState.err=e.message;renderIntel()});
 }
 function inBarHTML(){
   const t=IT(),s=inState;
-  const tabs=["developers","projects","entries"].map(k=>`<button type="button" data-intab="${k}" aria-pressed="${s.tab===k}">${t.tab[k]}</button>`).join("");
+  const tabs=["developers","projects","entries","renewal"].map(k=>`<button type="button" data-intab="${k}" aria-pressed="${s.tab===k}">${t.tab[k]}</button>`).join("");
   const per=s.tab==="developers"?`<span class="ho-per" role="group" aria-label="${inE(t.perL)}">${["all","recent"].map(k=>`<button type="button" data-inper="${k}" aria-pressed="${s.period===k}" title="${inE(t.perTip[k])}">${t.per[k]}</button>`).join("")}</span>`:"";
   const kind=s.tab==="projects"?`<select class="ho-sel" data-inkind aria-label="${inE(t.kindL)}">${[["",t.kindAll],["moch",t.kindMoch],["ila",t.kindIla]].map(([v,l])=>`<option value="${v}"${s.kind===v?" selected":""}>${l}</option>`).join("")}</select>`:"";
+  if(s.tab==="renewal"){const R=t.rn;
+    const stSel=`<select class="ho-sel" data-instage aria-label="${inE(R.stageL)}"><option value="">${R.allStages}</option>${Object.keys(R.stages).map(k=>`<option value="${k}"${s.stage===k?" selected":""}>${inE(R.stages[k])}</option>`).join("")}</select>`;
+    const dSel=`<select class="ho-sel" data-indecl aria-label="${inE(R.declL)}"><option value="">${R.allDecl}</option>${Object.keys(R.decl).map(k=>`<option value="${k}"${s.decl===k?" selected":""}>${inE(R.decl[k])}</option>`).join("")}</select>`;
+    const so=`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${Object.keys(R.sort).map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${R.sort[k]}</option>`).join("")}</select>`;
+    return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${so}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
   const sorts=s.tab==="developers"?["units","lots","projects","cities","last","name"]:s.tab==="projects"?["date","units","name"]:[];
   const sort=sorts.length?`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${sorts.map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${k==="units"&&s.tab==="projects"?t.sort.unitsP:t.sort[k]}</option>`).join("")}</select>`:"";
   const filt=s.tab!=="entries"?`<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(t.filterPh[s.tab])}" aria-label="${inE(t.filterPh[s.tab])}">`:"";
@@ -6959,6 +6987,7 @@ function renderIntel(){
   const cov=el("inCov");
   sec.setAttribute("aria-busy",String(st==="loading"));
   if(!show){cov.hidden=!msg;cov.className="ho-msg";cov.textContent=msg;el("inFoot").textContent="";return}
+  if(inState.tab==="renewal"){renderRenewal(d);if(inState.open)renderInDrawer();return}
   const C=(inState.cov&&inState.cov.coverage)||d.coverage||null;
   cov.className="ho-cov";cov.hidden=false;cov.innerHTML=inCovHTML(C);
   el("inKpis").innerHTML=inKpisHTML(C);
@@ -6995,7 +7024,7 @@ function inHitSub(h){
   if(h.type==="tender")return [M.city,M.lifecycle&&T().ldLife[M.lifecycle]||M.lifecycle,M.publishedDate&&String(M.publishedDate).split("-").reverse().join(".")].filter(Boolean).join(" · ");
   if(h.type==="developer")return t.hitDev(fmtInt(M.lots||0),fmtInt(M.projects||0),fmtInt(M.cities||0));
   if(h.type==="plan"||h.type==="parcel")return t.hitN(fmtInt(M.tenders||0));
-  if(h.type==="project")return h.sub||"";
+  if(h.type==="project"||h.type==="renewal")return h.sub||"";
   return "";
 }
 function inHitHTML(h,i){
@@ -7019,6 +7048,7 @@ function inRoute(h,from){
   if(h.type==="tender"){inGoSection("land");ldOpen(h.route.tender,from);return}
   if(h.type==="developer"){inOpen("developer",h.id,from);return}
   if(h.type==="project"){inOpen("project",h.id,from);return}
+  if(h.type==="renewal"){inOpen("renewal",h.id,from);return}
   if((h.type==="address"||h.type==="street"||h.type==="locality")&&h.geo){
     const g=Object.assign({},h.geo);if(h.type==="address")g.house=h.route.house;
     openGeoView(g);if(h.type==="address")setTimeout(()=>inGoSection("txSection"),420);return}
@@ -7029,7 +7059,7 @@ async function inOpen(kind,id,from){
   if(from)inState.returnFocus=from;
   el("inDrawer").hidden=false;document.body.style.overflow="hidden";
   renderInDrawer();el("inPanel").focus();
-  try{const d=await inGet(`view=${kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
+  try{const d=await inGet(`view=${kind==="renewal"?"renewalComplex":kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
   catch(e){if(!inState.open||inState.open.id!==id)return;inState.detailErr=e.message}
   renderInDrawer();
 }
@@ -7049,6 +7079,7 @@ function renderInDrawer(){
   const O=vcTag("raw"),D=vcTag("der"),K=t.kv;
   const srcList=(d.sources||[]).map(s=>`<li><b>${inE(state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher)}</b> — ${inE(s.name)} <span class="ho-chip">${inE(s.classification)}</span><div class="sub">${inE(s.role||"")}</div></li>`).join("");
   const meth=`<ul class="ho-note ld-ul">${t.meth.map(m=>`<li>${inE(m)}</li>`).join("")}</ul>`;
+  if(o.kind==="renewal"){p.innerHTML=renewalDrawerHTML(d,close);return}
   if(o.kind==="developer"){
     const A=d.tenders||{},AR=d.tendersRecent||{},M=d.lotteries||{},MR=d.lotteriesRecent||{},C=d.construction;
     const two=(lab,a,b)=>`<tr><th>${lab}</th><td class="num">${a}</td><td class="num">${b}</td></tr>`;
@@ -7112,12 +7143,13 @@ function initIntel(){
   const sec=el("intel");if(!sec)return;
   const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const onClick=e=>{
-    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
+    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
     if(!b)return;
     const d=b.dataset;
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
-    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":"units";inState.order="desc";inState.q="";inLoad()}return}
+    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":d.intab==="renewal"?"declared":"units";inState.order="desc";inState.q="";inState.stage="";inState.decl="";inLoad()}return}
+    if(d.inrn){inOpen("renewal",d.inrn,b.closest("#inPanel")?inState.returnFocus:b);return}
     if(d.inper){inState.period=d.inper;inState.page=1;inLoad();return}
     if(d.inpage){inState.page=Math.max(1,+d.inpage);inLoad();el("inTblHead").scrollIntoView({block:"nearest"});return}
     if(d.indev){inOpen("developer",d.indev,b.closest("#inPanel")?inState.returnFocus:b);return}
@@ -7132,6 +7164,8 @@ function initIntel(){
   sec.addEventListener("change",e=>{
     const x=e.target,d=x.dataset;
     if(d.inkind!==undefined){inState.kind=x.value;inState.page=1;inLoad();return}
+    if(d.instage!==undefined){inState.stage=x.value;inState.page=1;inLoad();return}
+    if(d.indecl!==undefined){inState.decl=x.value;inState.page=1;inLoad();return}
     if(d.insort!==undefined){inState.sort=x.value;inState.order=x.value==="name"?"asc":"desc";inState.page=1;inLoad();return}
   });
   let qt;
@@ -7143,7 +7177,7 @@ function initIntel(){
     qt=setTimeout(()=>{if((inState[k]||"")===v)return;inState[k]=v;inState.page=1;inLoad()},350);
   });
   sec.addEventListener("keydown",e=>{
-    if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-indev],tr[data-inproj],.tcard[data-indev],.tcard[data-inproj]");if(r&&e.target===r){e.preventDefault();r.click()}}
+    if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-indev],tr[data-inproj],tr[data-inrn],.tcard[data-indev],.tcard[data-inproj],.tcard[data-inrn]");if(r&&e.target===r){e.preventDefault();r.click()}}
   });
   document.addEventListener("keydown",e=>{
     if(!inState.open)return;
@@ -7160,6 +7194,45 @@ function initIntel(){
     io.observe(sec);
   }else inLoad();
 }
+/* ---------------- urban renewal (MoCH complexes) ---------------- */
+function renderRenewal(d){
+  const t=IT(),R=t.rn,S=d.renewal||{},K=S.kpis||{},F=S.freshness||{};
+  const cov=el("inCov");cov.className="ho-cov";cov.hidden=false;
+  const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
+  cov.innerHTML=`<div class="ho-facts">${fact(R.d.src,inDate(F.checkedAt))}${fact(R.d.upd,inDate(F.sourceUpdatedAt))}${fact(R.c.date,F.coverage?`${inDate(F.coverage.declarationFrom)}–${inDate(F.coverage.declarationTo)}`:"—")}</div><p class="ho-covs"><b>${R.basis}.</b> ${R.note}</p>`;
+  const D=vcTag("der"),tile=(l,v,sub)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  const sumT=x=>x&&x.sum!=null?inN(x.sum):inDash(),ofT=x=>x&&K.complexes!=null?R.of(fmtInt(x.of),fmtInt(K.complexes)):"";
+  el("inKpis").innerHTML=tile(R.kC,inN(K.complexes),S.declaration?Object.entries(S.declaration).map(([k,n])=>`${inE(R.decl[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · "):"")
+    +tile(R.kE,sumT(K.existingUnits),ofT(K.existingUnits))+tile(R.kA,sumT(K.additionalUnits),ofT(K.additionalUnits))+tile(R.kP,sumT(K.proposedUnits),ofT(K.proposedUnits));
+  const strip=(S.stages||[]).length?`<div class="in-pl"><div class="in-pl-h"><b>${R.strip}</b> ${vcTag("raw")} <span class="tx-note">${R.stripS}</span></div><div class="in-pl-r">${S.stages.map(x=>`<div class="in-pl-c"><span class="ho-chip in-st-${inE(x.stage)}">${inE(R.stages[x.stage]||x.stage)}</span><span class="in-pl-s"><b class="num">${fmtInt(x.complexes)}</b>${x.proposedUnits&&x.proposedUnits.sum!=null?` · <span class="num">${fmtInt(x.proposedUnits.sum)}</span> ${R.c.prop}`:""}</span></div>`).join("")}</div></div>`:"";
+  el("inTblHead").innerHTML=`${strip}<h3>${R.tblT(d.total!=null?fmtInt(d.total):"—")} ${vcTag("raw")}</h3><span class="tx-note">${R.tblS}</span>`;
+  const st=r=>`<span class="ho-chip in-st-${inE(r.stage)}" title="${inE(r.statusHe||"")}">${inE(R.stages[r.stage]||r.stage)}</span>`;
+  el("inTbl").innerHTML=d.rows&&d.rows.length?`<thead><tr>${["name","city","track","decl","status","ex","add","prop","date","plan"].map(k=>`<th>${R.c[k]}</th>`).join("")}</tr></thead><tbody>${d.rows.map(r=>`<tr tabindex="0" data-inrn="${inE(r.id)}">
+    <td class="w"><bdi class="nm">${inE(r.name||"")}</bdi><div class="sub"><span class="num">${inE(r.complexId)}</span></div></td><td class="w">${inE(r.city||"")}</td><td>${r.track?inE(r.track):inDash()}</td>
+    <td>${inE(R.decl[r.declaration]||"—")}</td><td class="w">${st(r)}</td><td class="num">${inN(r.existingUnits)}</td><td class="num">${inN(r.additionalUnits)}</td><td class="num">${inN(r.proposedUnits)}</td>
+    <td class="num">${inDate(r.declarationDate)}</td><td class="num">${r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash()}</td></tr>`).join("")}</tbody>`:`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
+  el("inCards").innerHTML=(d.rows||[]).map(r=>`<div class="tcard" tabindex="0" data-inrn="${inE(r.id)}"><div class="r1"><bdi><b>${inE(r.name||"")}</b></bdi>${inDate(r.declarationDate)}</div>
+    <div class="r2" style="color:var(--ink-3)">${inE(r.city||"")} · ${inE(R.decl[r.declaration]||"—")}</div><div class="r2">${st(r)}</div>
+    <div class="r2"><span>${R.c.ex} ${inN(r.existingUnits)}</span><span>${R.c.prop} ${inN(r.proposedUnits)}</span></div></div>`).join("");
+  const pages=d.pages||1;el("inPager").hidden=pages<=1;
+  el("inPager").innerHTML=pages>1?`<button type="button" data-inpage="${d.page-1}"${d.page<=1?" disabled":""}>${t.prev}</button><span>${t.page(`<span class="num">${d.page}</span>`,`<span class="num">${pages}</span>`)}</span><button type="button" data-inpage="${d.page+1}"${d.page>=pages?" disabled":""}>${t.next}</button>`:"";
+  el("inFoot").textContent=`${S.source?S.source.authority+" — "+S.source.dataset+" / "+S.source.resource:""}`;
+}
+function renewalDrawerHTML(d,close){
+  const t=IT(),R=t.rn,r=d.record||{},P=r.provenance||{};
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
+  const link=u=>u&&/^https?:\/\//i.test(u)?`<a href="${inE(u)}" target="_blank" rel="noopener noreferrer">↗</a>`:inDash();
+  const hist=(d.history||[]).map(h=>`<li>${inE(h.field)}: ${inE(h.from==null?"—":String(h.from))} → ${inE(h.to==null?"—":String(h.to))} · ${inDate(h.observedAt)}</li>`).join("");
+  return `<div class="ho-dh"><div><span class="lyr">${t.tab.renewal} · <span class="num">${inE(r.complexId)}</span></span><h3 id="inDTitle"><bdi>${inE(r.name||"")}</bdi> · ${inE(r.city||"")}</h3>
+      <div class="sub"><span class="ho-chip in-st-${inE(r.stage)}">${inE(R.stages[r.stage]||r.stage)}</span> ${inE(R.decl[r.declaration]||"")}</div></div>${close}</div>
+    ${sec(R.d.ids,vcTag("raw"),`<div class="ho-dl">${kv(R.d.num,`<span class="num">${inE(r.complexId)}</span>`)}${kv(R.c.city,`${inE(r.city||"")} <span class="num">${inE(r.localityCode||"")}</span>`)}${kv(R.c.track,r.track?inE(r.track):inDash())}${kv(R.c.decl,`${inE(R.decl[r.declaration]||"—")}${r.declarationDate?` · ${inDate(r.declarationDate)}`:r.declarationRaw?` · ${R.d.raw}: ${inE(r.declarationRaw)}`:""}`)}${kv(R.c.status,`<bdi>${inE(r.statusHe||"—")}</bdi>`)}</div>`)}
+    ${sec(R.d.units,vcTag("raw"),`<div class="ho-dl">${kv(R.c.ex,inN(r.existingUnits))}${kv(R.c.add,inN(r.additionalUnits))}${kv(R.c.prop,inN(r.proposedUnits))}</div><p class="ho-note">${inE(R.addUp[String(r.unitsAddUp)])} · ${R.note}</p>`)}
+    ${sec(R.d.plan,vcTag("raw"),`<div class="ho-dl">${kv(R.c.plan,r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash())}${kv(R.c.year,r.approvalYear?`<span class="num">${r.approvalYear}</span>`:r.approvalYearRaw?inE(r.approvalYearRaw):inDash())}${kv(R.d.exec,r.executionRaw?inE(r.executionRaw):inDash())}${kv(R.d.permits,r.permitsRaw?inE(r.permitsRaw):inDash())}</div>`)}
+    ${sec(R.d.links,"",`<div class="ho-dl">${kv(R.d.site,link(r.links&&r.links.site))}${kv(R.d.map,link(r.links&&r.links.map))}</div>`)}
+    ${sec(R.d.hist,"",hist?`<ul class="ho-note ld-ul">${hist}</ul>`:`<p class="ho-note">${R.d.none}</p>`)}
+    ${sec(R.d.prov,"",`<div class="ho-dl">${kv(R.d.upd,inDate(P.sourceUpdatedAt))}${kv(R.d.src,inDate(P.fetchedAt))}</div><p class="ho-note">${inE(d.source?d.source.authority+" — "+d.source.dataset+" / "+d.source.resource:"")} · <a href="${inE(d.source?d.source.page:"")}" target="_blank" rel="noopener noreferrer">data.gov.il ↗</a></p>`)}`;
+}
 /* the command bar: entities beside the places — a hit routes, never merges */
 let intelLast={q:"",list:[]},intelTimer=null;
 function intelSug(q){
@@ -7170,7 +7243,7 @@ function intelSug(q){
     intelTimer=setTimeout(async()=>{
       let list=[];
       try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        list=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project"].includes(h.type)).slice(0,6)}
+        list=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal"].includes(h.type)).slice(0,6)}
       catch(e){/* offline/standalone: no entity layer */}
       intelLast={q:qq,list};
       const inp=el("searchInput");
@@ -7196,14 +7269,14 @@ function intelPick(h,from){
 const TC_I18N={
 he:{loading:"טוען את מצב המקורות…",err:"מצב המקורות אינו זמין כרגע",offline:"מרכז הנתונים זמין בגרסת השרת בלבד",
   st:{SUCCESS:"תקין",UNCHANGED:"ללא שינוי",PARTIAL:"חלקי",REFUSED:"נדחה",FAILED:"נכשל",SCHEMA_CHANGED:"מבנה השתנה",STALE:"לא עדכני",NO_RUN:"ללא בדיקה מתוזמנת"},
-  vert:{land:"קרקעות",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
+  vert:{land:"קרקעות",renewal:"התחדשות עירונית",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
   ch:{official:"ערוץ רשמי","independent-republication":"פרסום מחדש עצמאי",derived:"נגזר ב-PROPX"},
   c:{src:"מקור",vert:"תחום",cls:"סיווג",state:"מצב",last:"בדיקה אחרונה",obs:"תצפית אחרונה",upd:"עדכון במקור"},
   d:{used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן"},
   legend:"מילון מצבים",principles:"עקרונות",count:n=>`${n} מקורות`},
 en:{loading:"Loading source status…",err:"Source status is unavailable right now",offline:"The data center is available on the server version only",
   st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check"},
-  vert:{land:"Land",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
+  vert:{land:"Land",renewal:"Urban renewal",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
   ch:{official:"Official channel","independent-republication":"Independent republication",derived:"Derived in PROPX"},
   c:{src:"Source",vert:"Area",cls:"Class",state:"State",last:"Last check",obs:"Latest observation",upd:"Updated at source"},
   d:{used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old"},

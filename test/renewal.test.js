@@ -112,4 +112,23 @@ t('no credential or store address in the renewal modules or workflow', () => {
   }
 });
 
+console.log('renewal: page + trust');
+t('the page shows renewal as its own tab: raw MoCH values, "—" for missing, only http(s) links, never a merge into developers', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const fn = (name) => { const i = html.indexOf('function ' + name + '('); assert.ok(i > -1, name); return html.slice(i, html.indexOf('\nfunction ', i + 10)); };
+  assert.match(html, /renewal:"התחדשות עירונית"/); assert.match(html, /renewal:"Urban renewal"/);
+  const list = fn('renderRenewal'), drawer = fn('renewalDrawerHTML');
+  for (const k of ['existingUnits', 'additionalUnits', 'proposedUnits']) assert.match(list, new RegExp('inN\\(r\\.' + k + '\\)'), k + ' renders "—" when the row has none');
+  assert.doesNotMatch(list + drawer, /\|\|\s*0\b/, 'a missing figure is never rendered as 0');
+  assert.match(drawer, /\/\^https\?:\\\/\\\/\/i\.test\(u\)/, 'only http(s) links leave the page');
+  assert.match(list, /vcTag\("der"\)/, 'the summed KPIs are labelled DERIVED');
+  assert.doesNotMatch(list + drawer, /developer|יזם/i, 'a renewal complex is never attributed to a developer');
+});
+t('the Trust Center lists the renewal source with its sync state and limitations', () => {
+  const { catalog } = require('../lib/trust/catalog');
+  const c = catalog(), s = c.sources.find((x) => x.vertical === 'renewal');
+  assert.ok(s, 'renewal source present'); assert.equal(s.id, 'datagov:moch:urban-renewal-complexes');
+  assert.ok(s.limitations.some((l) => /not construction/.test(l))); assert.ok(s.sync && s.sync.state, 'sync state reported');
+});
+
 console.log(`\nrenewal: ${passed} passed`);
