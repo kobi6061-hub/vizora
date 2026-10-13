@@ -17,6 +17,9 @@
 //   node scripts/land-discover.js --xplan          Planning Administration ArcGIS (xplan) services and plan layers
 //   node scripts/land-discover.js --xplan-plan 'a|b'  exact plan-number lookups in the blue-lines layer, every attribute
 //   node scripts/land-discover.js --moch           MoCH development / infrastructure tender datasets (data.gov.il)
+//   node scripts/land-discover.js --supply         data.gov.il: urban renewal, building permits, construction starts / completions,
+//                                                  rental supply — every matching datastore resource profiled (fields, counts, date
+//                                                  ranges, status / stage distributions), for the supply & renewal layers (13.10.2026)
 //   node scripts/land-discover.js --all
 //
 // Nothing is written anywhere. Every request carries an honest User-Agent and
@@ -253,6 +256,51 @@ async function datagov() {
   }
 }
 
+/* supply & renewal: what data.gov.il publishes on urban renewal, permits, starts, completions and rental supply —
+   each tabular resource profiled over up to 5,000 rows (never dumped): fields, fill, distributions of the columns that
+   look like a stage / status / year / locality, date ranges. Read-only; sequential. */
+async function supply() {
+  const seen = new Map();
+  const queries = ['התחדשות עירונית', 'פינוי בינוי', 'פינוי-בינוי', 'תמ"א 38', 'מתחמי התחדשות', 'מתחמים מוכרזים', 'הרשות הממשלתית להתחדשות עירונית',
+    'היתרי בנייה', 'היתרי בניה', 'התחלות בנייה', 'התחלות בניה', 'גמר בנייה', 'גמר בניה', 'טופס 4', 'דירות בבנייה', 'יחידות דיור בבנייה',
+    'דיור להשכרה', 'דירה להשכיר', 'urban renewal', 'building permits', 'construction starts', 'housing starts', 'dwellings completed'];
+  for (const q of queries) {
+    try {
+      const r = await ck('package_search', { q, rows: 40 });
+      for (const p of r.results) if (!seen.has(p.name)) seen.set(p.name, { q, p });
+      out({ kind: 'search', q, count: r.count, hits: r.results.map((p) => `${p.name} | ${trim(p.title, 70)} | ${p.organization ? p.organization.name : '-'}`) });
+    } catch (e) { out({ kind: 'search', q, error: e.message }); }
+    await sleep(250);
+  }
+  try {
+    const orgs = await ck('organization_list', { all_fields: true, limit: 1000 });
+    out({ kind: 'orgs', matches: orgs.filter((o) => /התחדשות|renewal|בינוי|שיכון|תכנון|planning|הלשכה המרכזית|cbs|statistic/i.test(o.title + ' ' + o.name)).map((o) => ({ name: o.name, title: o.title, n: o.package_count })) });
+  } catch (e) { out({ kind: 'orgs', error: e.message }); }
+  const relevant = [...seen.values()].filter(({ p }) => /התחדש|פינוי|בינוי|תמ"?א|היתר|התחל|גמר|טופס|בניי|בניה|השכר|renewal|permit|construction|start|complet|rent/i.test(p.title + ' ' + (p.notes || '')));
+  out({ kind: 'relevant', n: relevant.length, names: relevant.map(({ p }) => p.name) });
+  const stageLike = (k) => /סטטוס|status|שלב|stage|מצב|סוג|type|שנה|year|ישוב|יישוב|city|locality|מחוז|district|מסלול|track/i.test(k);
+  for (const { p } of relevant.slice(0, 40)) {
+    const resources = [];
+    for (const res of p.resources || []) {
+      const row = { id: res.id, name: trim(res.name, 90), format: res.format, ds: res.datastore_active, lm: res.last_modified, created: res.created, url: trim(res.url, 160) };
+      if (res.datastore_active) {
+        try {
+          const d = await ck('datastore_search', { resource_id: res.id, limit: 5000 });
+          row.total = d.total; row.fields = d.fields.map((f) => f.id + ':' + f.type).slice(0, 80);
+          row.profile = profile(d.records, 80);
+          row.dist = Object.fromEntries(d.fields.map((f) => f.id).filter(stageLike).slice(0, 12).map((k) => [k, dist(d.records, k, 15)]));
+          row.dates = Object.fromEntries(d.fields.filter((f) => /date|timestamp/i.test(f.type) || /תאריך|date/i.test(f.id)).slice(0, 6).map((f) => [f.id, dateRange(d.records, f.id)]));
+          row.sample = trim(d.records.slice(0, 2), 900);
+        } catch (e) { row.error = trim(e.message, 160); }
+        await sleep(250);
+      }
+      resources.push(row);
+    }
+    out({ kind: 'package', name: p.name, title: p.title, org: p.organization && p.organization.title, modified: p.metadata_modified, frequency: p.frequency || null,
+      notes: trim(p.notes, 500), resources });
+  }
+}
+
 /* whole-table profile of the datastore resources the vertical would depend on: fill rates, code / status
    distributions, year ranges, join-key coverage between the MoCH tender table and its bids table */
 const LT_RESOURCES = {
@@ -383,6 +431,7 @@ async function xplan() {
     const by = {}; for (const x of rows) (by[x.TableID + ' ' + x.TableName] = by[x.TableID + ' ' + x.TableName] || []).push([x.Code, x.Value, x.MichrazPail, x.Status, x.Group]);
     out({ kind: 'rmiTables', status: r.status, n: rows.length, tables: by }); }
   if (has('datagov-profile')) await datagovProfile();
+  if (has('supply')) await supply();
   if (has('rmi-full')) await rmiFull(String(argVal('rmi-full') || '').split(',').map((x) => x.trim()).filter(Boolean));
   if (has('rmi-detail')) await rmiDetails(String(argVal('rmi-detail') || '').split(',').map((x) => x.trim()).filter(Boolean).map((id) => ({ id, label: 'asked' })));
   if (all || has('rmi')) await rmi();
