@@ -214,7 +214,7 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
   const CHAPTER_C = { chapterId: 'c', subject: [{ subjectId: 50, subjectName: 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', code: null }] };
   const OPT_ROUTES = [['catalog/catalog', CAT2], ['catalog/chapter?id=aa&', CHAPTER_AA], ['catalog/chapter?id=a&', CHAPTER_A2], ['catalog/chapter?id=c&', CHAPTER_C],
     ['catalog/chapter?id=d&', { chapterId: 'd', subject: [] }], ['catalog/chapter?id=e&', { chapterId: 'e', subject: [] }],
-    ['subject?id=38&', SUBJECT(38, 'שכר דירה', [[990410, 'שכר דירה'], [990411, 'שכר דירה - חוזים חדשים'], [990412, 'שכר דירה - מחוז ירושלים']])],
+    ['subject?id=38&', SUBJECT(38, 'שכר דירה', [[990410, 'שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי'], [990411, 'שכר דירה - חוזים חדשים'], [990412, 'שכר דירה - מחוז ירושלים'], [990413, 'תחזוקת הדירה']])],
     ['subject?id=50&', SUBJECT(50, 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', [[990210, 'מדד תשומות הבנייה למגורים - עבודה'], [990220, 'מדד תשומות הבנייה למגורים - חומרים']])],
     ...CBS_ROUTES.slice(3)];
   await t('the overall construction-inputs index, the general CPI and plain rent are picked by name — never a component, region or new-contract variant', async () => {
