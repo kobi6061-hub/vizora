@@ -66,6 +66,12 @@ function merge(prev, incoming, at, history) {
   for (const b of badParts) console.log('  FAILED', b);
   if (has('dry-run')) {
     for (const x of dev.slice(0, 40)) console.log(`  ${x.tender ? x.tender.raw : '—'} · ${x.status ? x.status.name : '—'} · total ${x.terms.totalUnits ?? '—'} · rental ${x.terms.rentalUnits ?? '—'} (${x.terms.rentalBasis || '—'}) · sale ${x.terms.saleUnits ?? '—'} · years ${x.terms.rentalYears ?? '—'}${x.terms.discountedText ? ' · discounted: ' + x.terms.discountedText.slice(0, 120) : ''} · ${x.title.slice(0, 80)}`);
+    /* the notices whose rental share is not in a recognised pattern: the words around "השכרה", to review the patterns */
+    const raw = new Map((parts.michraz.ok ? parts.michraz.items : []).map((x) => [x.id, D.plain(x.content && x.content.rendered).replace(/\s+/g, ' ')]));
+    for (const x of dev.filter((y) => y.terms.rentalUnits == null || y.terms.rentalYears == null).slice(0, 45)) {
+      const tx = raw.get(x.wpId) || '', i = tx.search(/השכר|שכירות/);
+      console.log(`  UNPARSED ${x.tender ? x.tender.raw : x.wpId}: ${i < 0 ? '(no rental words) ' + tx.slice(0, 160) : tx.slice(Math.max(0, i - 160), i + 200)}`);
+    }
     for (const [tax, v] of Object.entries(R.terms)) console.log(`  terms ${tax}:`, v.ok ? v.terms.map((t) => `${t.name}(${t.slug})=${t.count}`).join(' · ') : v.error);
     for (const x of (planning || []).slice(0, 50)) console.log(`  planning ${x.title} · ${x.status ? x.status.name : '—'} · ${x.modified}`);
     if (parts.projects.ok) console.log('  project pages:', parts.projects.pages.slice(0, 60).map((x) => x.slug).join(' | '));
