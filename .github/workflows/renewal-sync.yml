@@ -3,6 +3,8 @@
 # scripts/renewal-sync.js reads every row of the official resource (paged, complete read or fail), keeps the
 # Ministry's status verbatim beside a mapped stage, upserts on the complex number (never deletes), appends every
 # change to data/renewal/history.jsonl and a raw snapshot when the content changed, and commits data/renewal/.
+# scripts/renewal-planning-sync.js then looks every complex's plan up EXACTLY in the Planning Administration's xplan layer
+# (plan number, then the Mavat main-plan id in MoCH's own link) and writes data/renewal/planning*.json + plan-geometry.json.
 # Nothing outside data/renewal/ is touched. A failed source keeps the stored complexes and turns the run red.
 
 name: Daily urban-renewal sync
@@ -27,7 +29,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     env:
       DRY_RUN: ${{ inputs.dry_run == true }}
     steps:
@@ -43,6 +45,12 @@ jobs:
           set +e
           if [ "$DRY_RUN" = "true" ]; then node scripts/renewal-sync.js --dry-run; else node scripts/renewal-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
           echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Look up every complex's plan in xplan (exact plan number / Mavat id)
+        id: planning
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then node scripts/renewal-planning-sync.js --dry-run; else node scripts/renewal-planning-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
       - name: Commit
         if: env.DRY_RUN != 'true'
         run: |
@@ -57,8 +65,8 @@ jobs:
           done
           echo 'Push failed after 3 attempts.' >&2
           exit 1
-      - name: Fail the run if the source failed
-        if: steps.sync.outputs.code != '0'
+      - name: Fail the run if a source failed
+        if: steps.sync.outputs.code != '0' || steps.planning.outputs.code != '0'
         run: |
-          echo "renewal-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          echo "renewal-sync exited with ${{ steps.sync.outputs.code }}, renewal-planning-sync with ${{ steps.planning.outputs.code }} — see the steps above." >&2
           exit 1
