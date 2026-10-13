@@ -407,8 +407,72 @@ async function xplan() {
   }
 }
 
+/* ───────────────────────── urban renewal × xplan (read-only) ─────────────────────────
+   Every plan number the MoCH renewal complexes print, looked up EXACTLY in the xplan blue-lines layer: how many exist,
+   duplicates per number, whether the Mavat id in MoCH's site link equals the layer's ids, the status / station vocabulary,
+   field aliases and the geometry size. Diagnostics for misses (a LIKE on the number's core) are printed, never joined. */
+async function renewalXplan() {
+  const L = `${XPLAN}/PlanningPublic/Xplan/MapServer/1`;
+  const rows = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'data', 'renewal', 'complexes.json'), 'utf8'));
+  try { const r = await req(`${L}?f=pjson`, { timeoutMs: 60000 }); out({ kind: 'layerMeta', geometry: r.json.geometryType, maxRecordCount: r.json.maxRecordCount, sr: r.json.extent && r.json.extent.spatialReference,
+    fields: (r.json.fields || []).map((f) => [f.name, f.alias, f.type, f.domain ? trim(f.domain, 300) : null]), capabilities: r.json.capabilities, advanced: trim(r.json.advancedQueryCapabilities, 400) }); }
+  catch (e) { out({ kind: 'layerMeta', error: e.message }); }
+  for (const g of ['station_desc', 'internet_short_status', 'entity_subtype_desc', 'station_desc,internet_short_status']) {
+    try {
+      const stats = encodeURIComponent(JSON.stringify([{ statisticType: 'count', onStatisticField: 'pl_id', outStatisticFieldName: 'n' }]));
+      const r = await req(`${L}/query?where=1%3D1&groupByFieldsForStatistics=${encodeURIComponent(g)}&outStatistics=${stats}&f=pjson`, { timeoutMs: 90000 });
+      out({ kind: 'vocabulary', by: g, error: r.json && r.json.error, values: (r.json && r.json.features || []).map((f) => f.attributes).sort((a, b) => b.n - a.n).slice(0, 80) });
+    } catch (e) { out({ kind: 'vocabulary', by: g, error: e.message }); }
+  }
+  const withPlan = rows.filter((r) => r.planNumber);
+  const mavatId = (r) => { const m = r.links && r.links.site && /mavat\.iplan\.gov\.il\/SV\d\/\d+\/(\d+)\//.exec(r.links.site); return m ? Number(m[1]) : null; };
+  const found = new Map(); let asked = 0, failed = 0;
+  for (let i = 0; i < withPlan.length; i += 25) {
+    const slice = withPlan.slice(i, i + 25).map((r) => r.planNumber);
+    const where = 'pl_number IN (' + slice.map((n) => `'${n.replace(/'/g, "''")}'`).join(',') + ')';
+    try {
+      const r = await req(`${L}/query?where=${encodeURIComponent(where)}&outFields=*&returnGeometry=false&f=pjson`, { timeoutMs: 90000 });
+      if (r.json && r.json.error) throw new Error(trim(r.json.error, 200));
+      for (const f of (r.json && r.json.features) || []) { const k = f.attributes.pl_number; if (!found.has(k)) found.set(k, []); found.get(k).push(f.attributes); }
+      asked += slice.length;
+    } catch (e) { failed++; out({ kind: 'batchError', i, error: e.message }); }
+  }
+  const hits = withPlan.filter((r) => found.has(r.planNumber)), misses = withPlan.filter((r) => !found.has(r.planNumber));
+  const dup = [...found].filter(([, v]) => v.length > 1);
+  const idAgree = { plId: 0, mpId: 0, urlId: 0, none: 0, noLink: 0 };
+  for (const r of hits) { const id = mavatId(r), a = found.get(r.planNumber)[0]; if (!id) { idAgree.noLink++; continue; }
+    const urlId = a.pl_url && /SV\d\/\d+\/(\d+)/.exec(a.pl_url); if (a.pl_id === id) idAgree.plId++; else if (a.mp_id === id) idAgree.mpId++; else if (urlId && Number(urlId[1]) === id) idAgree.urlId++; else idAgree.none++; }
+  out({ kind: 'exactSummary', complexes: rows.length, withPlan: withPlan.length, asked, failedBatches: failed, hits: hits.length, misses: misses.length, numbersWithSeveralFeatures: dup.length,
+    severalExamples: dup.slice(0, 5).map(([k, v]) => ({ k, rows: v.map((a) => ({ pl_id: a.pl_id, mp_id: a.mp_id, station: a.station_desc, status: a.internet_short_status, units: a.pq_authorised_quantity_120, upd: a.last_update_date })) })), idAgree });
+  const disagree = hits.filter((r) => { const id = mavatId(r), a = found.get(r.planNumber)[0]; const u = a.pl_url && /SV\d\/\d+\/(\d+)/.exec(a.pl_url); return id && a.pl_id !== id && a.mp_id !== id && !(u && Number(u[1]) === id); });
+  out({ kind: 'idDisagree', n: disagree.length, ex: disagree.slice(0, 8).map((r) => ({ c: r.complexId, plan: r.planNumber, link: r.links.site, xp: found.get(r.planNumber).map((a) => [a.pl_id, a.mp_id, a.pl_url]) })) });
+  const allHit = [].concat(...[...found.values()]);
+  out({ kind: 'hitProfile', profile: profile(allHit, 120), station: dist(allHit, 'station_desc', 40), status: dist(allHit, 'internet_short_status', 40), subtype: dist(allHit, 'entity_subtype_desc', 20) });
+  for (const fmt of [/^\d{3}-\d{7}$/, /^[\u0590-\u05FF]+\/\d+$/, /\//]) { const r = hits.find((x) => fmt.test(x.planNumber)); if (r) out({ kind: 'hitExample', complex: r.complexId, moch: { plan: r.planNumber, units: [r.existingUnits, r.additionalUnits, r.proposedUnits], approvalYear: r.approvalYear, link: r.links.site }, xplan: found.get(r.planNumber) }); }
+  out({ kind: 'missList', n: misses.length, sample: misses.slice(0, 60).map((r) => [r.complexId, r.planNumber, mavatId(r), r.city]) });
+  for (const r of misses.slice(0, 25)) {
+    const core = (r.planNumber.match(/\d{3,}/g) || []).sort((a, b) => b.length - a.length)[0];
+    const id = mavatId(r); const q = [];
+    if (core) q.push(['like', `pl_number LIKE '%${core}%'`]);
+    if (id) q.push(['byId', `pl_id = ${id} OR mp_id = ${id}`]);
+    for (const [label, where] of q) {
+      try { const x = await req(`${L}/query?where=${encodeURIComponent(where)}&outFields=pl_number,pl_id,mp_id,pl_name,jurstiction_area_name,station_desc&returnGeometry=false&resultRecordCount=6&f=pjson`, { timeoutMs: 60000 });
+        out({ kind: 'missDiag', complex: r.complexId, plan: r.planNumber, city: r.city, label, rows: ((x.json && x.json.features) || []).map((f) => f.attributes), error: x.json && x.json.error }); }
+      catch (e) { out({ kind: 'missDiag', complex: r.complexId, label, error: e.message }); }
+    }
+  }
+  for (const r of hits.slice(0, 3)) {
+    try { const x = await req(`${L}/query?where=${encodeURIComponent(`pl_number='${r.planNumber.replace(/'/g, "''")}'`)}&outFields=pl_number&returnGeometry=true&outSR=4326&maxAllowableOffset=0.00005&geometryPrecision=5&f=pjson`, { timeoutMs: 60000 });
+      const g = x.json && x.json.features && x.json.features[0] && x.json.features[0].geometry; out({ kind: 'geometry', plan: r.planNumber, rings: g && g.rings ? g.rings.length : null, points: g && g.rings ? g.rings.reduce((s, ring) => s + ring.length, 0) : null, bytes: g ? JSON.stringify(g).length : null, sr: x.json && x.json.spatialReference }); }
+    catch (e) { out({ kind: 'geometry', plan: r.planNumber, error: e.message }); }
+  }
+  try { const t0 = Date.now(); const x = await req(`${L}/query?where=1%3D1&returnCountOnly=true&f=pjson`, { timeoutMs: 60000 }); out({ kind: 'layerCount', count: x.json && x.json.count, ms: Date.now() - t0 }); } catch (e) { out({ kind: 'layerCount', error: e.message }); }
+  try { const x = await req(`${XPLAN}/PlanningPublic/Xplan/MapServer?f=pjson`, { timeoutMs: 60000 }); out({ kind: 'service', layers: (x.json.layers || []).map((l) => l.id + ':' + l.name), tables: (x.json.tables || []).map((l) => l.id + ':' + l.name) }); } catch (e) { out({ kind: 'service', error: e.message }); }
+}
+
 (async () => {
   const all = has('all');
+  if (has('renewal-xplan')) await renewalXplan();
   if (has('rmi-codes')) await rmiCodes();
   if (has('xplan-plan')) {
     // exact plan-number lookups in the blue-lines layer, with every attribute (so the quantity codes can be read off known plans)
