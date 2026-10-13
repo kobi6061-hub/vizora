@@ -12,14 +12,14 @@ on:
       mode:
         description: 'get (print URLs) | walk (time-series catalog from a URL, regex match) | series (observations of series ids)'
         type: choice
-        options: [get, walk, list, series]
+        options: [get, walk, list, series, links, pdf]
         default: get
       arg:
         description: 'get: space-separated URLs · walk: start URL · list: path:44,10 level:4:44 … · series: comma-separated series ids'
         type: string
         default: 'https://apis.cbs.gov.il/series/catalog/level?id=1&format=json&download=false&lang=he'
       match:
-        description: 'walk: regex for node names · series: from MM-YYYY'
+        description: 'walk/links/pdf: regex · series: from MM-YYYY'
         type: string
         default: ''
 
@@ -41,6 +41,10 @@ jobs:
         with:
           node-version: '22'
 
+      - name: PDF text tool
+        if: inputs.mode == 'pdf'
+        run: sudo apt-get install -y -q poppler-utils >/dev/null
+
       - name: Discover (read-only)
         env:
           MODE: ${{ inputs.mode }}
@@ -51,5 +55,7 @@ jobs:
             walk)   node scripts/cbs-sales-discover.js --walk "$ARG" --match "${MATCH:-נמכר|מכיר|sold|sales}" ;;
             series) node scripts/cbs-sales-discover.js --series "$ARG" ${MATCH:+--from "$MATCH"} ;;
             list)   node scripts/cbs-sales-discover.js --list $ARG ;;
+            links)  node scripts/cbs-sales-discover.js --links "$ARG" ${MATCH:+--match "$MATCH"} ;;
+            pdf)    node scripts/cbs-sales-discover.js --pdf $ARG ${MATCH:+--match "$MATCH"} ;;
             *)      node scripts/cbs-sales-discover.js --get $ARG ;;
           esac

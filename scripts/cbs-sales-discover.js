@@ -11,6 +11,8 @@
 //   node scripts/cbs-sales-discover.js --list path:44,10 level:4:44                 every catalog node (all pages)
 //   node scripts/cbs-sales-discover.js --series <id,id,…> [--from MM-YYYY] [--to MM-YYYY]
 //                                                                      the observations of time series, with metadata
+//   node scripts/cbs-sales-discover.js --links <url> [--match <regex>]  every link on a page (matching the regex)
+//   node scripts/cbs-sales-discover.js --pdf <url> [--match <regex>]    the text of a PDF (pdftotext), matching lines
 
 'use strict';
 
@@ -118,6 +120,34 @@ async function walk(startUrl, re, maxReq) {
         for (const o of list) console.log(`  ${(o.path || []).join(',')}  ${o.name}${o.pathDesc ? '  ⟨' + o.pathDesc + '⟩' : ''}`);
         if (!c.paging || !c.paging.next_url) break;
       }
+    }
+  } else if (args.includes('--links')) {
+    const res = await get(opt('--links'));
+    report(res, 200);
+    const re = new RegExp(opt('--match', '.'), 'i');
+    const seen = new Set();
+    for (const m of String(res.text || '').matchAll(/href\s*=\s*["']([^"'#]+)["']/gi)) {
+      const h = m[1].replace(/&amp;/g, '&');
+      if (re.test(h) && !seen.has(h)) { seen.add(h); console.log('  ' + h); }
+    }
+    console.log(`${seen.size} links`);
+  } else if (args.includes('--pdf')) {
+    /* official PDFs: is there a table, and by what geography? (pdftotext from poppler-utils, installed by the workflow) */
+    const { execFileSync } = require('child_process');
+    const fs = require('fs'), os = require('os'), path = require('path');
+    const re = new RegExp(opt('--match', '.'), 'i');
+    for (const u of many('--pdf')) {
+      if (!ALLOWED.test(u)) throw new Error('not a cbs.gov.il URL: ' + u);
+      const r = await fetch(u, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(TIMEOUT) });
+      const buf = Buffer.from(await r.arrayBuffer());
+      console.log(`\n=== ${u}\n   HTTP ${r.status} · ${r.headers.get('content-type')} · ${buf.length} bytes · last-modified ${r.headers.get('last-modified')}`);
+      if (r.status !== 200 || !/pdf/.test(r.headers.get('content-type') || '')) continue;
+      const f = path.join(os.tmpdir(), 'cbs-' + Date.now() + '.pdf');
+      fs.writeFileSync(f, buf);
+      const text = execFileSync('pdftotext', ['-layout', f, '-'], { maxBuffer: 64 << 20 }).toString('utf8');
+      const lines = text.split('\n');
+      console.log(`   ${lines.length} lines`);
+      lines.forEach((ln, i) => { if (re.test(ln)) console.log(`   ${String(i + 1).padStart(5)}| ${ln.replace(/\s+$/, '')}`); });
     }
   } else if (args.includes('--series')) {
     const ids = opt('--series');
