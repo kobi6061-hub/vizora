@@ -8,28 +8,28 @@
   "cadence": "continuous — the site is the Authority's operational tender system; UpdateDate per tender"
  },
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
- "snapshotHash": "aaf4f9eb6d3edc5eea7f34759db5887b42589dee3ca8c2a5e073c2bbbb8db7f5",
- "snapshotFetchedAt": "2026-10-12T10:49:19.214Z",
- "checkedAt": "2026-10-12T10:49:19.214Z",
+ "snapshotHash": "9d270877a37ada71a105faa66da697de80cf00db69a2a125ad793b836a89013f",
+ "snapshotFetchedAt": "2026-10-13T10:36:02.272Z",
+ "checkedAt": "2026-10-13T10:36:02.272Z",
  "normalizerVersion": 5,
- "rows": 10643,
- "records": 10643,
- "inLatestSource": 10643,
+ "rows": 10645,
+ "records": 10645,
+ "inLatestSource": 10645,
  "notInLatestSource": 0,
  "detailCoverage": {
-  "listed": 10643,
-  "retrieved": 10640,
-  "unavailable": 3,
+  "listed": 10645,
+  "retrieved": 10645,
+  "unavailable": 0,
   "refused": 0,
   "pending": 0,
-  "checked": 10643,
+  "checked": 10645,
   "pct": 100,
   "retrievedPct": 100,
   "byYear": [
    {
     "year": "2026",
-    "listed": 217,
-    "retrieved": 217,
+    "listed": 219,
+    "retrieved": 219,
     "unavailable": 0,
     "refused": 0,
     "pending": 0,
@@ -65,8 +65,8 @@
    {
     "year": "2022",
     "listed": 490,
-    "retrieved": 487,
-    "unavailable": 3,
+    "retrieved": 490,
+    "unavailable": 0,
     "refused": 0,
     "pending": 0,
     "complete": true
@@ -303,48 +303,47 @@
   "state": "complete"
  },
  "detail": {
-  "withDetail": 10640,
+  "withDetail": 10645,
   "withGeometry": 24,
-  "oldestDetailFetchedAt": "2026-10-04T23:13:22.470Z",
-  "newestDetailFetchedAt": "2026-10-12T10:58:01.591Z",
-  "activeWithDetail": 439,
-  "active": 439,
-  "detailUnavailable": 3,
+  "oldestDetailFetchedAt": "2026-10-04T23:23:40.026Z",
+  "newestDetailFetchedAt": "2026-10-13T10:48:49.695Z",
+  "activeWithDetail": 441,
+  "active": 441,
+  "detailUnavailable": 0,
   "budget": {
-   "detail": 0,
-   "map": 0,
-   "minutes": 40,
+   "detail": 2500,
+   "map": 400,
+   "minutes": 60,
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 0
+  "lastRunFetched": 1122
  },
  "byLifecycle": {
-  "open": 277,
-  "closed": 636,
-  "awarded": 6521,
-  "decided-no-award": 2459,
+  "open": 271,
+  "closed": 633,
+  "awarded": 6523,
+  "decided-no-award": 2463,
   "cancelled": 563,
-  "published": 162,
-  "frozen": 22,
-  "decided": 3
+  "published": 170,
+  "frozen": 22
  },
  "byTrack": {
   "open-market": 5145,
   "commercial-other": 2950,
-  "mixed-use": 175,
-  "residential-lottery": 985,
+  "mixed-use": 176,
+  "residential-lottery": 986,
   "subsidized": 850,
   "special-population": 367,
   "rental": 171
  },
  "coverage": {
   "publishedFrom": "2000-01-08",
-  "publishedTo": "2026-10-08",
+  "publishedTo": "2026-10-13",
   "closeFrom": "2000-03-05",
   "closeTo": "2027-03-29",
   "committeeFrom": "2000-03-07",
-  "committeeTo": "2026-10-07"
+  "committeeTo": "2026-10-12"
  },
  "plans": {
   "xplan": 444,
@@ -355,9 +354,35 @@
  },
  "construction": {
   "tendersWithLinks": 134,
-  "source": null
+  "source": {
+   "rows": 10371,
+   "joinableParcels": 1242,
+   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
+  }
  },
- "joins": {},
- "historyEvents": 93630,
- "lastRun": "land-20261013T001334Z"
+ "joins": {
+  "xplan": {
+   "asked": 0,
+   "requests": 0,
+   "found": 0,
+   "complete": true,
+   "known": 444,
+   "errors": []
+  },
+  "inventory": {
+   "rows": 1112,
+   "sourceUpdatedAt": "2022-02-17T10:59:42.023Z"
+  },
+  "construction": {
+   "rows": 10371,
+   "joinableParcels": 1242,
+   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
+  },
+  "developmentCosts": {
+   "rows": 1454,
+   "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
+  }
+ },
+ "historyEvents": 93747,
+ "lastRun": "land-20261013T103542Z"
 }
