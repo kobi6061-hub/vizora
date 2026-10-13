@@ -244,6 +244,24 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
     assert.equal(s3.indicators.cpi.stale, true, 'held but not attempted: kept, marked stale');
   });
 
+  console.log('official history and district indices (the price-trend card)');
+  await t('each series keeps its official history (up to 25 points, oldest first) beside the latest point', async () => {
+    const pts = []; for (let i = 0; i < 30; i++) { const y = 2024 + Math.floor((i + 2) / 12), m = ((i + 2) % 12) + 1; pts.push([y, m, 100 + i, 0.1, i - 10]); }
+    const r = await fetchCbsIndex('newHomesIndex', { code: '90050', name: 'מדד מחירי דירות חדשות' }, { fetchImpl: fakeFetch([['price?id=90050&', series(90050, 'x', pts)]]), now: new Date('2026-10-01T00:00:00Z') });
+    assert.equal(r.history.length, 25); assert.deepEqual(r.history[24], { y: r.period.year, m: r.period.month, v: r.level, yoy: r.yoy });
+    assert.ok(r.history.every((h, i) => i === 0 || h.y * 12 + h.m > r.history[i - 1].y * 12 + r.history[i - 1].m), 'oldest first, no duplicates');
+  });
+  await t('district indices: every series of the "by district" subject is read; a failing district is listed with its error, never dropped', async () => {
+    const { fetchCbsDistricts } = require('../lib/market/sources');
+    const d = await discoverCbsSeries({ fetchImpl: fakeFetch(ROUTES) });
+    assert.deepEqual(d.picks.districts.map((x) => x.code), ['90020', '90030']);
+    const J = series(90020, 'מדד מחירי דירות - מחוז ירושלים', [[2026, 7, 110.2, 0.3, 1.1], [2026, 6, 109.9, 0.1, 0.8]]);
+    const r = await fetchCbsDistricts(d.picks.districts, { fetchImpl: fakeFetch([['price?id=90020&', J]]), now: NOW });
+    assert.equal(r.districts.length, 2); assert.equal(r.districts[0].yoy, 1.1); assert.match(r.districts[1].error, /HTTP 404/);
+    assert.deepEqual(r.period, { year: 2026, month: 7 }); assert.equal(r.scope, 'all dwellings, by CBS district');
+    await assert.rejects(fetchCbsDistricts([], { fetchImpl: fakeFetch([]), now: NOW }), /subject not found/);
+  });
+
   console.log('CLI end to end (stubbed network)');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mkt-cli-'));
   const stub = path.join(tmp, 'routes.json');

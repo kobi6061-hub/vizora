@@ -21,7 +21,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { fetchBoiRate, discoverCbsSeries, fetchCbsIndex, OPTIONAL_SERIES } = require('../lib/market/sources');
+const { fetchBoiRate, discoverCbsSeries, fetchCbsIndex, fetchCbsDistricts, OPTIONAL_SERIES } = require('../lib/market/sources');
 const { mergeSnapshot, dataPayload, toJs, EMPTY } = require('../lib/market/snapshot');
 const { FileStore } = require('../lib/gov/store');
 
@@ -60,9 +60,10 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
     /* optional monthly series (construction inputs, CPI, rent): recorded and shown when they fail, never fatal */
     const opt = await Promise.all(OPTIONAL_SERIES.map((k) => settle(fetchCbsIndex(k, disc.data.picks[k], { fetchImpl, now, debug: has('dry-run') }))));
     OPTIONAL_SERIES.forEach((k, i) => { results[k] = opt[i]; });
+    results.dwellingsByDistrict = await settle(fetchCbsDistricts(disc.data.picks.districts, { fetchImpl, now }));
   } else {
     results.newHomesIndex = results.dwellingsIndex = { ok: false, error: disc.error };
-    for (const k of OPTIONAL_SERIES) results[k] = { ok: false, error: disc.error };
+    for (const k of [...OPTIONAL_SERIES, 'dwellingsByDistrict']) results[k] = { ok: false, error: disc.error };
   }
 
   const snap = mergeSnapshot(prev, results, now);
@@ -84,6 +85,10 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
         (v.stale ? ` · STALE (${v.lastError})` : '')
       : `unavailable · ${results[k].error}`);
   }
+
+  { const v = I.dwellingsByDistrict;
+    line('dwellingsByDistrict', v ? `${per(v.period)} · ` + v.districts.map((d) => d.error ? `${d.name} ✗` : `${d.name} ${fmtPct(d.yoy)}`).join(' · ') + (v.stale ? ` · STALE (${v.lastError})` : '')
+      : `unavailable (optional) · ${results.dwellingsByDistrict && results.dwellingsByDistrict.error}`); }
 
   if (has('discover') && disc.ok) {
     console.log('\nCBS response shapes:');

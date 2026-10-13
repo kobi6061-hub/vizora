@@ -1218,6 +1218,19 @@ details.ci-more>.in{padding:2px 13px 12px}
   .ci-polg{grid-template-columns:1fr}
   .ci-app3 .ci-in.sm{width:58px}
 }
+/* official price trend (#trendNA when the snapshot carries history) */
+.ot-legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12px;color:var(--ink-2);margin:2px 0 6px}
+.ot-k{display:inline-block;width:14px;height:3px;border-radius:2px;margin-inline-start:6px}
+.ot-k.nh{background:var(--accent)}.ot-k.dw{background:var(--brass)}
+.ot-s{color:var(--ink-3)}
+.ot-wrap{direction:ltr}
+.ot-svg{width:100%;height:auto;display:block;max-height:230px}
+.ot-svg .ax{stroke:var(--hairline)}
+.ot-svg text{font-size:10px;fill:var(--ink-3);font-family:inherit}
+.ot-svg .ot-nh{fill:none;stroke:var(--accent);stroke-width:2}
+.ot-svg .ot-dw{fill:none;stroke:var(--brass);stroke-width:2;stroke-dasharray:5 3}
+.ot-svg .ot-nh-d{fill:var(--accent)}
+.ot-dist{margin-top:4px}
 /* new-home tools (#nhTools in #calc) */
 .nh-card{margin-top:14px;padding:12px 15px 14px}
 .nh-head{margin-bottom:4px}
@@ -4853,6 +4866,60 @@ function initNewHome(){
 }
 /* @newhome-ui:end */
 
+/* =====================================================================
+   OFFICIAL PRICE TREND — the CBS dwelling-price indices as the daily market
+   sync stores them (window.PROPX_MARKET: newHomesIndex / dwellingsIndex with
+   their official history, dwellingsByDistrict). National and district series
+   only — never a city, neighbourhood or project series; local history stays
+   "—". Each point is a two-month window dated by its first month. Nothing is
+   interpolated or extended; districts keep the CBS order (no ranking).
+   ===================================================================== */
+const OT_I18N={
+he:{title:"מגמת מחירים — מדדים רשמיים",nh:"דירות חדשות (ארצי)",dw:"כל הדירות (ארצי)",yoy:"שינוי שנתי",
+  dist:"כל הדירות לפי מחוז — חלון אחרון",distName:"מחוז",distYoy:"שינוי שנתי",distWin:"חלון",
+  note:"מדדי הלמ״ס הארציים והמחוזיים — לא סדרה עירונית, שכונתית או של פרויקט; היסטוריית מחירים מקומית טרם נאספה (—). כל נקודה היא חלון דו-חודשי המתוארך לפי חודשו הראשון.",
+  src:(a,b,c)=>`הלמ״ס · סדרות ${a} ו-${b} · נבדק ${c}`,stale:"לא עדכני",err:"לא נקרא"},
+en:{title:"Price trend — official indices",nh:"New homes (national)",dw:"All dwellings (national)",yoy:"year on year",
+  dist:"All dwellings by district — latest window",distName:"District",distYoy:"Year on year",distWin:"Window",
+  note:"CBS national and district indices — not a city, neighbourhood or project series; local price history has not been collected (—). Each point is a two-month window dated by its first month.",
+  src:(a,b,c)=>`CBS · series ${a} and ${b} · checked ${c}`,stale:"stale",err:"not read"}};
+function otHistory(ind){
+  if(!ind||!Array.isArray(ind.history))return null;
+  const h=ind.history.filter(p=>p&&Number.isInteger(p.y)&&Number.isInteger(p.m)&&typeof p.yoy==="number"&&isFinite(p.yoy)&&Math.abs(p.yoy)<=40);
+  return h.length>=6?h:null;
+}
+function otLineSVG(a,b){
+  const W=560,H=190,P={l:34,r:10,t:12,b:24};
+  const keys=[...new Set([...a,...b].map(p=>p.y*12+p.m-1))].sort((x,y)=>x-y);
+  const xs=k=>P.l+(keys.length<2?0:(keys.indexOf(k)/(keys.length-1))*(W-P.l-P.r));
+  const vals=[...a,...b].map(p=>p.yoy),lo=Math.min(0,...vals),hi=Math.max(0,...vals),pad=(hi-lo)*.1||1;
+  const ys=v=>P.t+(1-(v-(lo-pad))/((hi+pad)-(lo-pad)))*(H-P.t-P.b);
+  const path=s=>s.map((p,i)=>`${i?"L":"M"}${xs(p.y*12+p.m-1).toFixed(1)},${ys(p.yoy).toFixed(1)}`).join("");
+  const lab=k=>`${(k%12)+1}/${Math.floor(k/12)}`;
+  return `<svg class="ot-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${calcEsc(OT_I18N[state.lang].title)}">
+    <line class="ax" x1="${P.l}" x2="${W-P.r}" y1="${ys(0).toFixed(1)}" y2="${ys(0).toFixed(1)}"/>
+    <text x="${P.l-4}" y="${(ys(hi)+4).toFixed(1)}" text-anchor="end">${hi.toFixed(1)}%</text><text x="${P.l-4}" y="${(ys(lo)+4).toFixed(1)}" text-anchor="end">${lo.toFixed(1)}%</text>
+    <text x="${P.l}" y="${H-6}">${lab(keys[0])}</text><text x="${W-P.r}" y="${H-6}" text-anchor="end">${lab(keys[keys.length-1])}</text>
+    <path class="ot-dw" d="${path(b)}"/><path class="ot-nh" d="${path(a)}"/>
+    ${a.map(p=>`<circle class="ot-nh-d" cx="${xs(p.y*12+p.m-1).toFixed(1)}" cy="${ys(p.yoy).toFixed(1)}" r="2.2"><title>${p.m}/${p.y} · ${p.yoy}%</title></circle>`).join("")}</svg>`;
+}
+function renderOfficialTrend(){
+  const card=el("trendNA");if(!card)return;
+  const S=window.PROPX_MARKET,I=(S&&S.schema===1&&S.indicators)||{},t=OT_I18N[state.lang];
+  const nh=otHistory(I.newHomesIndex),dw=otHistory(I.dwellingsIndex);
+  if(!nh||!dw){card.classList.add("na-card");return}      /* the static NA text stays */
+  card.classList.remove("na-card");
+  const last=s=>s[s.length-1],pct=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+"%";
+  const D=I.dwellingsByDistrict,dist=D&&Array.isArray(D.districts)?D.districts:[];
+  const distRows=dist.map(d=>`<tr><td>${calcEsc(d.name)}</td><td class="num">${typeof d.yoy==="number"?pct(d.yoy):`<span class="ho-na">${t.err}</span>`}</td><td class="num">${d.period?`${d.period.month}/${d.period.year}`:"—"}</td></tr>`).join("");
+  const chk=String(I.newHomesIndex.checkedAt||"").slice(0,10).split("-").reverse().join(".");
+  card.innerHTML=`<div class="chart-tools"><h2 style="font-size:15.5px">${t.title}</h2>${vcTag("raw")}${I.newHomesIndex.stale||I.dwellingsIndex.stale?` <span class="vc na">${t.stale}</span>`:""}</div>
+    <div class="ot-legend"><span class="ot-k nh"></span>${t.nh} <b class="num">${pct(last(nh).yoy)}</b><span class="ot-k dw"></span>${t.dw} <b class="num">${pct(last(dw).yoy)}</b> <span class="ot-s">· ${t.yoy}</span></div>
+    <div class="ot-wrap">${otLineSVG(nh,dw)}</div>
+    ${distRows?`<h4 class="ld-h4">${t.dist} ${vcTag("raw")}${D.stale?` <span class="vc na">${t.stale}</span>`:""}</h4><table class="ho-gt ot-dist"><thead><tr><th>${t.distName}</th><th>${t.distYoy}</th><th>${t.distWin}</th></tr></thead><tbody>${distRows}</tbody></table>`:""}
+    <p class="ho-note">${t.note}</p><p class="ho-note">${t.src(calcEsc(I.newHomesIndex.series&&I.newHomesIndex.series.code||"—"),calcEsc(I.dwellingsIndex.series&&I.dwellingsIndex.series.code||"—"),chk)}</p>`;
+}
+
 
 /* =====================================================================
    CAPITAL INTELLIGENCE — investment engine + UI
@@ -7186,7 +7253,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();renderNewHome();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();renderNewHome();renderOfficialTrend();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
