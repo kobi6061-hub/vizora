@@ -1,6 +1,6 @@
 {
- "at": "2026-10-13T01:08:29.776Z",
- "hash": "b0074cf44b335b717634c818fda70b80a13e6246",
+ "at": "2026-10-13T01:34:13.943Z",
+ "hash": "937e6f29fc28cf1bf63fe58ccdfea48bdc612b89",
  "payload": {
   "boiRate": {
    "value": 3.25,
@@ -16,6 +16,7 @@
   },
   "newHomesIndex": {
    "yoy": -0.8,
+   "yoyBasis": "published",
    "mom": 0.5,
    "level": 541.2,
    "base": "2017 אוקטובר",
@@ -189,6 +190,7 @@
   },
   "dwellingsIndex": {
    "yoy": -1.2,
+   "yoyBasis": "published",
    "mom": 0.2,
    "level": 594.8,
    "base": "1993 ממוצע",
@@ -362,6 +364,7 @@
   },
   "constructionInputsIndex": {
    "yoy": 3.5,
+   "yoyBasis": "published",
    "mom": 0.4,
    "level": 103.9,
    "base": "2025 יולי",
@@ -535,6 +538,7 @@
   },
   "cpi": {
    "yoy": 1.5,
+   "yoyBasis": "published",
    "mom": 0.7,
    "level": 105.8,
    "base": "2024 ממוצע",
@@ -708,6 +712,7 @@
   },
   "rentIndex": {
    "yoy": 3.1,
+   "yoyBasis": "published",
    "mom": 0.4,
    "level": 107.1,
    "base": "2024 ממוצע",
@@ -885,6 +890,7 @@
      "code": "60000",
      "name": "ירושלים",
      "yoy": 1.1,
+     "yoyBasis": "computed",
      "mom": -0.4,
      "level": 576.2,
      "period": {
@@ -976,6 +982,7 @@
      "code": "60100",
      "name": "צפון",
      "yoy": 1,
+     "yoyBasis": "computed",
      "mom": -0.1,
      "level": 664.7,
      "period": {
@@ -1067,6 +1074,7 @@
      "code": "60200",
      "name": "חיפה",
      "yoy": -2.4,
+     "yoyBasis": "computed",
      "mom": -0.3,
      "level": 625.8,
      "period": {
@@ -1158,6 +1166,7 @@
      "code": "60300",
      "name": "מרכז",
      "yoy": -3.2,
+     "yoyBasis": "computed",
      "mom": 0.3,
      "level": 584.5,
      "period": {
@@ -1249,6 +1258,7 @@
      "code": "60400",
      "name": "תל אביב",
      "yoy": -0.9,
+     "yoyBasis": "computed",
      "mom": 0.7,
      "level": 563.2,
      "period": {
@@ -1340,6 +1350,7 @@
      "code": "60500",
      "name": "דרום",
      "yoy": -0.6,
+     "yoyBasis": "computed",
      "mom": 0.1,
      "level": 575.1,
      "period": {

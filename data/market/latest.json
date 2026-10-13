@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "syncedAt": "2026-10-13T01:08:23.276Z",
+ "syncedAt": "2026-10-13T01:34:06.799Z",
  "ok": true,
  "indicators": {
   "boiRate": {
@@ -14,11 +14,12 @@
     "dataset": "PublicApi/GetInterest",
     "url": "https://www.boi.org.il/PublicApi/GetInterest"
    },
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "newHomesIndex": {
    "yoy": -0.8,
+   "yoyBasis": "published",
    "mom": 0.5,
    "level": 541.2,
    "base": "2017 אוקטובר",
@@ -189,11 +190,12 @@
      "yoy": -0.8
     }
    ],
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "dwellingsIndex": {
    "yoy": -1.2,
+   "yoyBasis": "published",
    "mom": 0.2,
    "level": 594.8,
    "base": "1993 ממוצע",
@@ -364,11 +366,12 @@
      "yoy": -1.2
     }
    ],
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "constructionInputsIndex": {
    "yoy": 3.5,
+   "yoyBasis": "published",
    "mom": 0.4,
    "level": 103.9,
    "base": "2025 יולי",
@@ -539,11 +542,12 @@
      "yoy": 3.5
     }
    ],
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "cpi": {
    "yoy": 1.5,
+   "yoyBasis": "published",
    "mom": 0.7,
    "level": 105.8,
    "base": "2024 ממוצע",
@@ -714,11 +718,12 @@
      "yoy": 1.5
     }
    ],
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "rentIndex": {
    "yoy": 3.1,
+   "yoyBasis": "published",
    "mom": 0.4,
    "level": 107.1,
    "base": "2024 ממוצע",
@@ -889,7 +894,7 @@
      "yoy": 3.1
     }
    ],
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   },
   "dwellingsByDistrict": {
@@ -898,6 +903,7 @@
      "code": "60000",
      "name": "ירושלים",
      "yoy": 1.1,
+     "yoyBasis": "computed",
      "mom": -0.4,
      "level": 576.2,
      "period": {
@@ -989,6 +995,7 @@
      "code": "60100",
      "name": "צפון",
      "yoy": 1,
+     "yoyBasis": "computed",
      "mom": -0.1,
      "level": 664.7,
      "period": {
@@ -1080,6 +1087,7 @@
      "code": "60200",
      "name": "חיפה",
      "yoy": -2.4,
+     "yoyBasis": "computed",
      "mom": -0.3,
      "level": 625.8,
      "period": {
@@ -1171,6 +1179,7 @@
      "code": "60300",
      "name": "מרכז",
      "yoy": -3.2,
+     "yoyBasis": "computed",
      "mom": 0.3,
      "level": 584.5,
      "period": {
@@ -1262,6 +1271,7 @@
      "code": "60400",
      "name": "תל אביב",
      "yoy": -0.9,
+     "yoyBasis": "computed",
      "mom": 0.7,
      "level": 563.2,
      "period": {
@@ -1353,6 +1363,7 @@
      "code": "60500",
      "name": "דרום",
      "yoy": -0.6,
+     "yoyBasis": "computed",
      "mom": 0.1,
      "level": 575.1,
      "period": {
@@ -1453,7 +1464,7 @@
     "dataset": "מדד מחירי דירות לפי מחוזות",
     "url": "https://api.cbs.gov.il/index/data/price?id=60000&format=json&download=false&lang=he&last=27"
    },
-   "checkedAt": "2026-10-13T01:08:23.276Z",
+   "checkedAt": "2026-10-13T01:34:06.799Z",
    "stale": false
   }
  },
