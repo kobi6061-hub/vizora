@@ -34,6 +34,18 @@
   research numbers in `LOCATIONS.base.tx` stay capital-MODEL inputs only); RAW · DERIVED · DISPLAY evidence behind "מקור
   הנתון"; observed deals carry their period and date range, are "new" only as far as the source flags it (the register:
   by build year), and fewer than 10 is a small sample; a static statement older than 90 days is marked stale.
+- `lib/cbs-sales/` + `scripts/cbs-sales-sync.js` + `.github/workflows/cbs-sales-sync.yml` + `data/cbs-sales/` + `test/cbs-sales.test.js`
+  = official new-home sales (audit 13.10.2026): the CBS time-series API (44,10,2,1 new dwellings sold, monthly, 2016→) for the
+  country and its 7 districts ONLY — keyed by the CBS code the API returns (5069–5076), never a name; append-only ledger with
+  every revision, raw responses per content hash, T3/T6/T12/YTD/prior YTD/pace/momentum (DERIVED, periods named), source-aware
+  freshness (CURRENT / EXPECTED_REPORTING_LAG / STALE), national-vs-districts reconciliation; national inventory + months of
+  supply. Synced every working day; `data/cbs-sales/` is bot-written. CBS publishes NO machine-readable city series (city figures
+  exist only in the media-release PDF "לוח ב": rolling 3-month windows, >150 sales, names not codes) — not ingested; the board's
+  country/district rows read the series (`cbsGeo` / `txShown`), every city and neighbourhood shows "—" except the labelled Tel
+  Aviv-Yafo transcription (`TX_BASIS`, release 252/2026). Inventory (`invShown`): national from the series, cited figures from
+  release 283/2026 (end-July 2026), else "—"; never split by a filter. The capital model reads no sales pace (liquidity, months of
+  supply, pressure and leverage are MISSING). `scripts/cbs-sales-discover.js` + `.github/workflows/cbs-sales-discover.yml` =
+  read-only discovery (catalogue, series, release PDFs). See `lib/cbs-sales/README.md`.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index; optional monthly
   CBS series found by name: construction inputs 200010, CPI 120010, CPI rent component 120460 — a failure there is

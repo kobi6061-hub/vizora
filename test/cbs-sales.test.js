@@ -252,4 +252,33 @@ t('the stored payload, when present, is valid and derived from the stored ledger
   assert.ok(js.includes('window.PROPX_CBS_SALES=') && !/<\//.test(js));
 });
 
+console.log('Trust Center');
+t('the CBS series is in the Trust Center with owner, name, latest observation, update date, PROPX check, cadence, coverage, limitations, state', () => {
+  const TC = require('../lib/trust/catalog');
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'trust-cbs-'));
+  fs.mkdirSync(path.join(dir, 'cbs-sales'));
+  const p = buildPayload(ledgerFor(ALL), { at: '2026-10-13T12:00:00Z', status: 'SUCCESS', checkedAt: '2026-10-13T12:00:00Z' }, null);
+  fs.writeFileSync(path.join(dir, 'cbs-sales', 'latest.json'), JSON.stringify(p));
+  fs.writeFileSync(path.join(dir, 'cbs-sales', 'runs.jsonl'), JSON.stringify({ id: 'cbs-sales:a', startedAt: '2026-10-13T12:00:00Z', finishedAt: '2026-10-13T12:00:20Z', status: 'success', contentChanged: true }) + '\n');
+  const c = TC.catalog({ dataDir: dir, now: Date.parse('2026-10-13T13:00:00Z') });
+  const x = c.sources.find((s) => s.id === 'cbs:new-home-sales');
+  assert.ok(x && x.inProduct !== false);
+  assert.strictEqual(x.publisherEn, 'Central Bureau of Statistics');
+  assert.ok(/new dwellings sold/.test(x.name) && x.latestObservation === '2026-07' && x.sourceUpdatedAt === '2026-09-02');
+  assert.strictEqual(x.sync.state, 'SUCCESS'); assert.strictEqual(x.sync.lastCheckAt, '2026-10-13T12:00:20Z');
+  assert.ok(/monthly/.test(x.cadence) && /working day/.test(x.cadence));
+  assert.deepStrictEqual(x.coverage, { geographies: 8, months: 31, cities: 0 });
+  assert.ok(x.limitations.some((l) => /never shown or allocated as a city/.test(l)));
+  assert.strictEqual(x.freshness.state, 'EXPECTED_REPORTING_LAG');
+  const pdf = c.sources.find((s) => s.id === 'cbs:new-home-sales-by-city-pdf');
+  assert.ok(pdf && pdf.inProduct === false && pdf.classification === 'NOT_MACHINE_READABLE');
+  /* a failed run keeps the last valid data and says so; a long silence is STALE */
+  fs.appendFileSync(path.join(dir, 'cbs-sales', 'runs.jsonl'), JSON.stringify({ id: 'cbs-sales:b', startedAt: '2026-10-14T12:00:00Z', finishedAt: '2026-10-14T12:00:20Z', status: 'failed', error: 'HTTP 503 from https://apis.cbs.gov.il/…' }) + '\n');
+  const f = TC.catalog({ dataDir: dir, now: Date.parse('2026-10-14T13:00:00Z') }).sources.find((s) => s.id === 'cbs:new-home-sales');
+  assert.strictEqual(f.sync.runState, 'FAILED'); assert.strictEqual(f.latestObservation, '2026-07', 'the last valid data stays');
+  const st = TC.catalog({ dataDir: dir, now: Date.parse('2026-10-20T13:00:00Z') }).sources.find((s) => s.id === 'cbs:new-home-sales');
+  assert.strictEqual(st.sync.state, 'STALE');
+});
+
 console.log(`\n${passed} passed${process.exitCode ? ' — FAILURES above' : ''}`);

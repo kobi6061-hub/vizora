@@ -1,11 +1,11 @@
-// PROPX · sales-metric truth gates (audit 13.10.2026) — offline.
+// PROPX · sales-metric and inventory truth gates (audits 13.10.2026) — offline.
 // `node test/sales-metrics.test.js`
 //
-// Every sales figure on the board says what it is: an OBSERVED count (exact count, date range, source), a
-// DERIVED figure (source population + formula + period) or a MODEL rate (never shown as a plain count). The
-// board's annual new-home sales figure is shown only where its basis is written down (TX_BASIS); everywhere
-// else, and under any filter, it is "—". Observed deals call a row "new" only as far as the source supports,
-// and mark small samples. These gates run the page's own code (index.html) — not a copy of it.
+// Every sales and inventory figure on the board says what it is and what it rests on. New-home sales: the country and
+// its districts from the official CBS monthly series (data/cbs-sales — OFFICIAL, the months named), Tel Aviv-Yafo
+// from one documented release transcription (MODEL rate, never a plain count); every other place, and any filtered
+// view, shows "—". Unsold inventory: the national CBS series, or a cited release figure with its month; else "—";
+// never split by a filter. These gates run the page's own code (index.html) — not a copy of it.
 
 'use strict';
 
@@ -16,6 +16,7 @@ const vm = require('node:vm');
 
 const ROOT = path.join(__dirname, '..');
 const INDEX = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const PAYLOAD_JS = fs.readFileSync(path.join(ROOT, 'data', 'cbs-sales', 'latest.js'), 'utf8');
 let passed = 0;
 const t = (name, fn) => {
   try { fn(); passed++; console.log('  ✓', name); } catch (e) { console.error('  ✗', name, '\n   ', e.stack.split('\n').slice(0, 3).join('\n    ')); process.exitCode = 1; }
@@ -35,141 +36,241 @@ const block = (anchor) => {
 };
 const line = (re) => { const m = re.exec(INDEX); assert.ok(m, 'missing ' + re); return m[0]; };
 const fnBody = (name) => block('function ' + name + '(');
+const cbsBlock = () => { const i = INDEX.indexOf('const CBS=(()=>{'); return INDEX.slice(i, INDEX.indexOf('})();', i) + 5); };
 
-/* the page's data + the display gate, run as the page runs them */
+/* the page's data + the display gates, run as the page runs them */
 const SRC = [
   block('const LOCATIONS = [') + ';',
-  'const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));',
+  'const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));const heName=l=>state.lang==="he"?l.he:l.en;',
   block('const STATIC_SRC={') + ';',
   line(/const isStatic=\(l,f\)=>\{[^\n]*\n/),
   line(/const M_ROOMS=\{[^\n]*\n/), line(/const M_TYPE=\{[^\n]*\n/), line(/const M_AREA=\{[^\n]*\n/), line(/const M_COND=\{[^\n]*\n/),
   line(/function filtersActive\(\)\{[^\n]*\n/),
   'const nf=new Intl.NumberFormat("he-IL");const fmtInt=n=>nf.format(Math.round(n));',
+  cbsBlock() + ';', line(/const cbsGeo=l=>[^\n]*\n/), line(/const cbsInv=\(\)=>[^\n]*\n/),
   block('const TX_BASIS={') + ';',
-  line(/const ltr=x=>[^\n]*\n/), line(/const txShownVal=[^\n]*\n/), fnBody('txShown'), fnBody('txEvidence'), fnBody('metricsOf'),
+  line(/const ltr=x=>[^\n]*\n/), line(/const txShownVal=[^\n]*\n/), line(/const FRESH_TXT=[^\n]*\n/),
+  fnBody('cbsDates'), fnBody('txShown'), fnBody('cbsIntel'), fnBody('txEvidence'), fnBody('invShown'), fnBody('msShown'), fnBody('metricsOf'),
   line(/const STALE_DAYS=[^\n]*\n/), line(/const staleSince=[^\n]*\n/), line(/const BLT4_ASOF=[^\n]*\n/),
   line(/const TX_SMALL_N=[^\n]*\n/),
-  ';({LOCATIONS,LOC,STATIC_SRC,TX_BASIS,txShown,txEvidence,metricsOf,staleSince,BLT4_ASOF,TX_SMALL_N,STALE_DAYS})',
+  ';({LOCATIONS,LOC,STATIC_SRC,TX_BASIS,CBS,cbsGeo,txShown,txEvidence,invShown,msShown,cbsIntel,cbsDates,metricsOf,staleSince,BLT4_ASOF,TX_SMALL_N,STALE_DAYS})',
 ].join('\n');
-const ctx = { state: { lang: 'he', filters: { rooms: 'all', type: 'all', area: 'all', cond: 'all' } }, Date, Intl };
-const P = vm.runInNewContext(SRC, ctx);
-const setF = (f) => Object.assign(ctx.state.filters, { rooms: 'all', type: 'all', area: 'all', cond: 'all' }, f || {});
+const mkCtx = (withPayload) => {
+  const ctx = { state: { lang: 'he', filters: { rooms: 'all', type: 'all', area: 'all', cond: 'all' } }, Date, Intl, window: {} };
+  if (withPayload) vm.runInNewContext(PAYLOAD_JS, ctx);
+  return { ctx, P: vm.runInNewContext(SRC, ctx) };
+};
+const { ctx, P } = mkCtx(true);
+const { ctx: ctx0, P: P0 } = mkCtx(false);       /* the board without the CBS payload (offline fallback) */
+const PAY = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'cbs-sales', 'latest.json'), 'utf8'));
+const setF = (f, c = ctx) => Object.assign(c.state.filters, { rooms: 'all', type: 'all', area: 'all', cond: 'all' }, f || {});
 const plain = (x) => String(x).replace(/[\u2066-\u2069]/g, '');   // the left-to-right isolates are display-only
 const he = (fn) => { ctx.state.lang = 'he'; return fn(); };
 const en = (fn) => { ctx.state.lang = 'en'; try { return fn(); } finally { ctx.state.lang = 'he'; } };
+const CBS_IDS = ['il', 'd-jm', 'd-north', 'd-haifa', 'd-center', 'd-ta', 'd-south'];
 
 console.log('sales metrics — the board figure');
 t('the page compiles (every inline script)', () => {
   for (const m of INDEX.matchAll(/<script>([\s\S]*?)<\/script>/g)) new vm.Script(m[1]);
 });
-t('a sales figure is shown only where its basis is written down (TX_BASIS); every other place shows —', () => {
+t('a sales figure is shown only for the official CBS geographies and the documented Tel Aviv exception; every other place shows —', () => {
   setF();
   const shown = P.LOCATIONS.filter((l) => P.txShown(l).show).map((l) => l.id).sort();
-  assert.deepEqual(shown, Object.keys(P.TX_BASIS).sort());
-  assert.deepEqual(shown, ['il', 'tlv'], 'national (2025 total) and Tel Aviv (annualised CBS half-year) only');
+  assert.deepEqual(shown, [...CBS_IDS, 'tlv'].sort());
   for (const l of P.LOCATIONS) {
     const x = P.txShown(l);
     if (!x.show) { assert.equal(x.cls, 'na'); assert.ok(x.why && x.why.length > 10, l.id + ' must say why it is missing'); }
   }
 });
-t('every shown sales figure carries a period, a source and a value class', () => {
+t('exact geography: each CBS row is the place itself by its CBS code — no city, neighbourhood or name join reads the series', () => {
+  const codes = { il: 5069, 'd-jm': 5070, 'd-north': 5071, 'd-haifa': 5072, 'd-center': 5073, 'd-ta': 5074, 'd-south': 5075 };
+  for (const [id, code] of Object.entries(codes)) assert.equal(P.cbsGeo(P.LOC[id]).cbs, code, id);
+  for (const l of P.LOCATIONS.filter((x) => x.type === 'city' || x.type === 'nbhd' || x.type === 'sub')) assert.equal(P.cbsGeo(l), null, l.id + ' reads the CBS series');
+  assert.ok(!P.LOCATIONS.some((l) => l.id === 'jsr'), 'Judea & Samaria has no board row — read, never mapped onto another row');
+});
+t('the official figure is the CBS 12-month total: OFFICIAL, an exact count, its months named, its series and dates stated', () => {
   setF();
-  for (const id of Object.keys(P.TX_BASIS)) {
-    for (const run of [he, en]) {
-      const x = run(() => P.txShown(P.LOC[id]));
-      assert.ok(x.per && /20\d\d/.test(x.per), id + ' period must name its year: ' + x.per);
-      assert.ok(x.src && x.src.length > 10, id + ' source');
-      assert.ok(['static', 'der', 'mod'].includes(x.cls), id + ' class ' + x.cls);
-    }
+  for (const id of CBS_IDS) {
+    const g = PAY.geos[id], x = he(() => P.txShown(P.LOC[id])), xe = en(() => P.txShown(P.LOC[id]));
+    assert.equal(x.cls, 'raw'); assert.equal(x.v, g.metrics.t12.value);
+    assert.equal(plain(x.text), new Intl.NumberFormat('he-IL').format(g.metrics.t12.value), id + ' an official count carries no "~"');
+    assert.equal(x.per, `12 חודשים · ${g.metrics.t12.label.he}`); assert.equal(xe.per, `12 months · ${g.metrics.t12.label.en}`);
+    assert.match(x.src, new RegExp(`סדרה ${g.seriesId}`));
+    const months = g.monthly.slice(-12).map(([, v]) => v).reduce((a, b) => a + b, 0);
+    assert.equal(months, g.metrics.t12.value, id + ' T12 = the sum of the 12 published months');
   }
 });
-t('a MODEL rate never renders as a plain count: "~N לשנה" with the formula in its period', () => {
+t('national 34,000 audited: CBS 2025 = 33,833 (same population) — the board shows the fresher CBS 12 months; offline falls back to the cited 2025 figure', () => {
+  assert.equal(PAY.reconciliation.year.year, '2025');
+  assert.equal(PAY.reconciliation.year.taxAuthority, 34000);
+  assert.ok(Math.abs(PAY.reconciliation.year.cbsAnnual - 34000) / 34000 < 0.01, 'the populations match within 1%');
+  assert.equal(PAY.geos.il.metrics.lastYear.annual, PAY.geos.il.metrics.lastYear.sumOfMonths, 'the published year = the sum of its months');
+  setF(undefined, ctx0);
+  const shown0 = P0.LOCATIONS.filter((l) => P0.txShown(l).show).map((l) => l.id).sort();
+  assert.deepEqual(shown0, ['il', 'tlv'], 'without the payload: the cited national figure and Tel Aviv');
+  const n0 = P0.txShown(P0.LOC.il);
+  assert.equal(n0.cls, 'static'); assert.equal(n0.v, 34000); assert.match(n0.per, /2025/);
+});
+t('national reconciliation: the national 12 months vs the sum of the 7 districts — the residual is CBS\'s unknown district, not forced', () => {
+  const R = PAY.reconciliation;
+  assert.ok(R.t12 && R.t12.residual === R.t12.national - R.t12.districtSum);
+  const sum = ['d-jm', 'd-north', 'd-haifa', 'd-center', 'd-ta', 'd-south', 'jsr'].reduce((a, k) => a + PAY.geos[k].metrics.t12.value, 0);
+  assert.equal(sum, R.t12.districtSum);
+  assert.equal(R.t12.national, PAY.geos.il.metrics.t12.value);
+  const e = P.txEvidence(P.LOC.il);
+  assert.match(plain(e.model), /התאמה: 2025 — למ״ס 33,833 · רשות המסים \/ הכלכלן הראשי 34,000/);
+  assert.match(plain(e.model), /= מחוז לא ידוע \(לא נכפה איזון\)/);
+});
+t('Tel Aviv: the one transcribed city figure — release 252/2026 Table B (820 + 1,236), a MODEL rate "~N לשנה" with its formula', () => {
   setF();
-  for (const l of P.LOCATIONS) {
-    const x = P.txShown(l);
-    if (!x.show) continue;
-    assert.match(plain(x.text), /^~[\d,]+/, l.id + ' must read as an approximation: ' + x.text);
-    if (x.cls === 'mod') {
-      assert.match(plain(x.text), /לשנה$/, l.id + ' a model rate is per year: ' + x.text);
-      assert.match(plain(x.per), /^אומדן: [\d,]+ × 12 ÷ \d+ · .*20\d\d$/, l.id + ' the annualisation is stated: ' + x.per);
-      assert.match(plain(en(() => P.txShown(l)).text), /a year$/);
-    }
-  }
+  const x = P.txShown(P.LOC.tlv);
+  assert.equal(x.cls, 'mod'); assert.equal(P.TX_BASIS.tlv.n, 820 + 1236);
+  assert.match(plain(x.text), /^~[\d,]+ לשנה$/); assert.match(plain(en(() => P.txShown(P.LOC.tlv)).text), /a year$/);
+  assert.match(plain(x.per), /^אומדן: 2,056 × 12 ÷ 6 · ינואר–יוני 2026$/);
+  assert.match(P.TX_BASIS.tlv.src.he, /הודעה לתקשורת 252\/2026 \(13\.08\.2026\), לוח ב: ינואר–מרץ 820 \+ אפריל–יוני 1,236/);
+  assert.match(P.TX_BASIS.tlv.src.he, /לא מתעדכן אוטומטית/);
+  assert.equal(P.cbsGeo(P.LOC.tlv), null, 'Tel Aviv-Yafo is a city, not the Tel Aviv District series');
+  assert.notEqual(P.txShown(P.LOC.tlv).v, P.txShown(P.LOC['d-ta']).v);
+  assert.ok(!/Dec-25–Feb-26 842|1,137 per CBS releases/.test(INDEX), 'the stale note on Tel Aviv\'s basis is gone');
 });
 t('the annualisation is correct: stored pace = count × 12 ÷ months (to the nearest hundred)', () => {
   for (const [id, B] of Object.entries(P.TX_BASIS)) {
     const annual = B.n * 12 / B.months;
     assert.equal(Math.round(annual / 100) * 100, P.LOC[id].base.tx, `${id}: ${B.n} × 12 ÷ ${B.months} = ${annual} vs stored ${P.LOC[id].base.tx}`);
-    if (B.months < 12) assert.equal(B.cls, 'mod', id + ' an annualised part-year is an estimate (MODEL)');
-    else assert.ok(['static', 'der'].includes(B.cls), id + ' a full-year count is not a model');
+    if (B.months < 12) assert.equal(B.cls, 'mod'); else assert.ok(['static', 'der'].includes(B.cls));
   }
   assert.match(plain(P.txEvidence(P.LOC.tlv).der), /^2,056 × 12 ÷ 6 = 4,112 → 4,100$/);
+  /* the CBS annualised pace: YTD × 12 ÷ months — a rate, labelled as derived, never the headline count */
+  const M = PAY.geos.il.metrics;
+  assert.equal(M.pace.value, Math.round(M.ytd.value * 12 / M.ytd.months));
+  assert.match(plain(P.cbsIntel(P.cbsGeo(P.LOC.il), 'he').join(' ')), /קצב שנתי: ~[\d,]+ לשנה — שנתון מ.* · נגזר, קצב ולא ספירה/);
 });
-t('OBSERVED / STATIC values come from the cited record — the national figure equals its citation', () => {
-  assert.equal(P.TX_BASIS.il.n, P.STATIC_SRC.v.il.tx);
-  assert.equal(P.LOC.il.base.tx, P.STATIC_SRC.v.il.tx);
-  assert.equal(P.TX_BASIS.il.cls, 'static');
-  assert.match(P.STATIC_SRC.cite.tx.per.he, /2025/);
+t('YTD and prior-year YTD cover the same months; momentum, volatility and acceleration are derived with their windows', () => {
+  for (const id of CBS_IDS) {
+    const M = PAY.geos[id].metrics, mon = Object.fromEntries(PAY.geos[id].monthly);
+    const [y, m] = M.latest.split('-').map(Number);
+    let ytd = 0, prev = 0;
+    for (let k = 1; k <= m; k++) { ytd += mon[`${y}-${String(k).padStart(2, '0')}`]; prev += mon[`${y - 1}-${String(k).padStart(2, '0')}`]; }
+    assert.equal(M.ytd.value, ytd, id + ' YTD'); assert.equal(M.prevYtd.value, prev, id + ' prior-year YTD');
+    assert.equal(M.ytd.from.slice(5), '01'); assert.equal(M.prevYtd.to, `${y - 1}-${String(m).padStart(2, '0')}`);
+  }
+  const intel = plain(P.cbsIntel(P.cbsGeo(P.LOC['d-ta']), 'he').join(' | '));
+  assert.match(intel, /מתחילת השנה: [\d,]+ \(ינואר–\S+ 2026\) מול [\d,]+ \(ינואר–\S+ 2025\)/);
+  assert.match(intel, /מומנטום: 3 חודשים [+-][\d.]+% \(מול /);
+  assert.match(intel, /תנודתיות חודשית \d+% \(12 חודשים\) · נגזר/);
 });
-t('no place receives another geography\'s count; no national value is presented as city-level', () => {
+t('low sample: a geography under 30 sales in 3 months keeps its count and loses every trend signal', () => {
+  const G = JSON.parse(JSON.stringify(P.cbsGeo(P.LOC['d-jm'])));
+  G.metrics.small = true; G.metrics.momentum.m3 = { ok: false }; G.metrics.ytdChange = { ok: false };
+  const out = plain(P.cbsIntel(G, 'he').join(' | '));
+  assert.match(out, /מדגם קטן — פחות מ-30 מכירות ב-3 חודשים: ללא אותות מגמה/);
+  assert.ok(!/מומנטום/.test(out));
+  assert.match(out, /חודש אחרון: [\d,]+ /, 'the count stays');
+});
+t('freshness: observation period, source update and PROPX check are separate; a normal publication delay is not stale', () => {
+  const d = plain(P.cbsDates('he')), de = plain(P.cbsDates('en'));
+  assert.match(d, /^עודכן במקור \d\d\.\d\d\.\d{4} · נבדק ב-PROPX \d\d\.\d\d\.\d{4} · (עדכני|פיגור דיווח צפוי|ישן)/);
+  assert.match(de, /^source updated \d\d\.\d\d\.\d{4} · PROPX check \d\d\.\d\d\.\d{4} · (current|expected reporting lag|stale)/);
+  assert.equal(P.CBS.updateDay, PAY.sourceUpdate.split('-').reverse().join('.'));
+  assert.ok(['CURRENT', 'EXPECTED_REPORTING_LAG', 'STALE'].includes(PAY.freshness.state));
+  if (PAY.freshness.state === 'EXPECTED_REPORTING_LAG') assert.match(d, /\(נתוני \S+ \d{4} טרם פורסמו\)/);
+});
+t('no place receives another geography\'s count; the geo panel reads each anchor\'s own gate', () => {
   setF();
-  for (const [id, B] of Object.entries(P.TX_BASIS)) {
-    const l = P.LOC[id];
-    if (l.type === 'country') assert.equal(B.geo.he, 'ארצי');
-    else assert.equal(B.geo.he, l.he, id + ' basis geography must be the place itself');
-  }
-  for (const l of P.LOCATIONS.filter((x) => x.type !== 'country')) {
-    const x = P.txShown(l);
-    if (x.show) assert.notEqual(x.v, P.LOC.il.base.tx, l.id + ' shows the national figure');
-    if (x.show) assert.ok(P.TX_BASIS[l.id], l.id + ' shows a figure without its own basis');
-  }
-  /* the geo panel reads the anchor's own gate and names its level */
+  const nat = P.txShown(P.LOC.il).v;
+  for (const l of P.LOCATIONS.filter((x) => x.type !== 'country')) { const x = P.txShown(l); if (x.show) assert.notEqual(x.v, nat, l.id + ' shows the national figure'); }
   const g = fnBody('renderGeoView');
-  assert.match(g, /const tx=txShown\(a\)/);
-  assert.ok(!/fmtInt\(m\.tx\)/.test(g), 'the geo panel must not print the raw pace');
-  assert.match(g, /ms\?t\.msFormula\(tx\.B\.per\[he\?"he":"en"\]\):tx\.why/, 'months of supply names the sales period it divides by');
-  assert.match(INDEX, /msFormula:p=>`מודל: מלאי סוף יוני 2026 ÷ קצב המכירות החודשי \(לפי \$\{p\}\)`/);
+  assert.match(g, /const tx=txShown\(a\),inv=invShown\(a\),ms=msShown\(a\);/);
+  assert.ok(!/fmtInt\(m\.tx\)|fmtInt\(m\.listings\)/.test(g), 'the geo panel prints a raw model value');
+  assert.match(g, /\[t\.geoMMs,ms\.show\?ms\.text:"—","ms",ms\.cls,ms\.show\?ms\.per:ms\.why\]/);
 });
-t('a filter never splits sales: no figure, no floor of 3, metricsOf().tx is null', () => {
+t('a filter never splits sales or inventory: no figure, no floor of 3 or 2, metricsOf() gives null', () => {
   const R = Object.keys(vm.runInNewContext('(' + line(/const M_ROOMS=(\{[^\n]*\});/).replace(/^const M_ROOMS=/, '').replace(/;\s*$/, '') + ')'));
   let n = 0;
   for (const l of P.LOCATIONS) for (const f of [{ rooms: '6' }, { type: 'ph' }, { cond: 'ready' }, { area: '60' }, { rooms: R[2], type: 'garden' }]) {
     setF(f);
-    const x = P.txShown(l);
-    assert.equal(x.show, false, `${l.id} ${JSON.stringify(f)}`); assert.ok(x.filtered);
-    assert.equal(P.metricsOf(l.id).tx, null);
+    for (const x of [P.txShown(l), P.invShown(l), P.msShown(l)]) { assert.equal(x.show, false, `${l.id} ${JSON.stringify(f)}`); assert.equal(x.cls, 'na'); }
+    assert.ok(P.txShown(l).filtered && P.invShown(l).filtered);
+    assert.match(P.invShown(l).why, /אין מקור שמפצל מלאי לפי חדרים, סוג, שטח או מצב/);
+    assert.equal(P.metricsOf(l.id).tx, null); assert.equal(P.metricsOf(l.id).listings, null);
     n++;
   }
   setF();
   assert.ok(n >= 500);
   assert.ok(!/Math\.max\(3,/.test(INDEX), 'the floor of 3 is gone');
-  assert.equal(P.metricsOf('ofakim').tx, P.LOC.ofakim.base.tx, 'unfiltered, metricsOf keeps the model input for the capital model');
+  assert.ok(!/Math\.max\(2,Math\.round\(b\.listings/.test(INDEX) && !/b\.listings\*share/.test(INDEX), 'the inventory demo share / floor of 2 is gone');
+  assert.equal(P.metricsOf('ofakim').listings, P.LOC.ofakim.base.listings, 'unfiltered, metricsOf keeps the stored value (shown only through invShown)');
 });
-t('missing renders — on every board surface, and each surface goes through the gate', () => {
+t('no neighbourhood inference: no neighbourhood or sub-area shows sales, inventory or months of supply', () => {
+  setF();
+  for (const l of P.LOCATIONS.filter((x) => x.type === 'nbhd' || x.type === 'sub')) {
+    for (const x of [P.txShown(l), P.invShown(l), P.msShown(l)]) assert.equal(x.show, false, l.id);
+  }
+});
+t('missing renders — on every board surface, and each surface goes through its gate', () => {
   setF();
   const kpi = fnBody('renderKPIs');
-  assert.match(kpi, /\(x=>x\.show\?\{k:"tx"[^]*?:\{k:"tx",l:t\.tx,na:x\.why\}\)\(txShown\(l\)\)/);
+  assert.match(kpi, /\(x=>x\.show\?\{k:"tx",l:t\.tx,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per\}:\{k:"tx",l:t\.tx,na:x\.why\}\)\(txShown\(l\)\)/);
+  assert.match(kpi, /\(x=>x\.show\?\{k:"listings",l:t\.listings,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per\}:\{k:"listings",l:t\.listings,na:x\.why\}\)\(invShown\(l\)\)/);
   assert.match(kpi, /c\.na\?`<span class="na-v">\$\{t\.naShort\}<\/span>`/);
   assert.match(INDEX, /naShort:"—"/);
-  assert.match(fnBody('renderProfile'), /\$\{x\.show\?x\.text:"—"\}[^]*\(txShown\(l\)\)/);
-  assert.match(fnBody('renderTable'), /\(x=>x\.show\?x\.text:"—"\)\(txShown\(r\.loc\)\)/);
+  const prof = fnBody('renderProfile');
+  assert.match(prof, /\$\{x\.show\?x\.text:"—"\}[^]*\(txShown\(l\)\)/);
+  assert.match(prof, /\$\{x\.show\?x\.text:"—"\}[^]*\(invShown\(l\)\)/);
+  assert.match(prof, /r\.f==="tx"\|\|r\.f==="listings"\?\(x=>[^]*\(r\.f==="tx"\?txShown\(l\):invShown\(l\)\)/);
+  assert.match(fnBody('renderTable'), /\(state\.mode==="sale"\?txShown\(r\.loc\):invShown\(r\.loc\)\)/);
   assert.match(INDEX, /\{f:"tx",label:\(\)=>T\(\)\.thTx,get:\(m,id\)=>\{const x=txShown\(LOC\[id\]\);return x\.show\?x\.v:null\}/);
   assert.match(fnBody('renderMap'), /\$\{x\.show\?x\.text:"—"\}[^]*\(txShown\(ll\)\)/);
-  assert.match(fnBody('renderConfidence'), /f==="tx"\?txShown\(l\)\.cls:vcOf\(l,f\)/);
-  assert.match(fnBody('renderProfile'), /r\.f==="tx"\?\(x=>[^]*\(txShown\(l\)\)/);
-  for (const bad of [/fmtInt\(m\.tx\)/, /fmtInt\(lm\.tx\)/, /fmtInt\(state\.mode==="sale"\?r\.m\.tx/]) assert.ok(!bad.test(INDEX), 'raw pace printed: ' + bad);
+  assert.match(fnBody('renderConfidence'), /f==="tx"\?txShown\(l\)\.cls:f==="listings"\?invShown\(l\)\.cls:vcOf\(l,f\)/);
+  for (const bad of [/fmtInt\(m\.tx\)/, /fmtInt\(lm\.tx\)/, /fmtInt\(state\.mode==="sale"\?r\.m\.tx/, /fmtInt\(m\.listings\)/, /fmtInt\(r\.m\.listings\)/]) assert.ok(!bad.test(INDEX), 'raw value printed: ' + bad);
 });
 t('the evidence view (RAW · DERIVED · DISPLAY) states what the figure rests on', () => {
   setF();
   const o = P.txEvidence(P.LOC.ofakim);
   assert.match(o.raw, /0 תצפיות/); assert.equal(o.der, '—'); assert.match(o.disp, /^— \(/);
-  assert.match(o.model, /קלט מודל ההון בלבד: 800 לשנה — מחקר ידני 30\.08\.2026/);
-  const n = P.txEvidence(P.LOC.il);
-  assert.match(n.raw, /^34,000 מכירות דירות חדשות מקבלן · שנת 2025 · רשות המסים \/ הכלכלן הראשי/);
-  assert.equal(n.model, '');
+  assert.match(o.model, /מחקר ידני 30\.08\.2026 \(800 לשנה\) — ללא מקור או נוסחה שמורים; אינו מוצג ואינו נקרא במודל ההון/);
+  const n = P.txEvidence(P.LOC['d-south']);
+  assert.ok(n.official);
+  assert.match(n.raw, /^למ״ס — .* · מחוז הדרום \(קוד 5075\) · סדרה \d+ · https:\/\/apis\.cbs\.gov\.il\/series\/data\/path\?id=44,10,2,1,5075 · 12 חודשים כפי שפורסמו: (\d{4}-\d\d [\d,]+ · ){12}עודכן במקור/);
+  assert.match(n.der, /חודש אחרון: .* \| 3 חודשים: .* \| מתחילת השנה: /);
   setF({ type: 'garden' });
   assert.match(P.txEvidence(P.LOC.florentin).disp, /אין מקור שמפצל מכירות/);
   setF();
+});
+
+console.log('inventory — source, observation date, geography, population, class');
+t('every shown inventory figure states its source, month, geography, population and class', () => {
+  setF();
+  const shown = P.LOCATIONS.filter((l) => P.invShown(l).show).map((l) => l.id).sort();
+  assert.deepEqual(shown, ['beer-yaakov', 'd-center', 'd-ta', 'il', 'jerusalem', 'kiryat-gat', 'lod', 'netivot', 'ofakim', 'raanana', 'ramat-hasharon', 'tlv']);
+  for (const id of shown) for (const run of [he, en]) {
+    const x = run(() => P.invShown(P.LOC[id]));
+    assert.ok(/20\d\d/.test(x.per), id + ' month: ' + x.per);
+    assert.ok(x.src && x.geo && x.pop, id + ' source / geography / population');
+    assert.ok(['raw', 'static'].includes(x.cls), id + ' class ' + x.cls);
+  }
+  const n = P.invShown(P.LOC.il);
+  assert.equal(n.cls, 'raw'); assert.equal(n.v, PAY.inventory.latest.value); assert.equal(n.per, `סוף ${PAY.inventory.latest.label.he}`);
+  const tl = P.invShown(P.LOC.tlv);
+  assert.deepEqual([tl.cls, tl.v, tl.per], ['static', 9720, 'סוף יולי 2026']);
+  assert.match(tl.src, /הודעה לתקשורת 283\/2026 \(10\.09\.2026\)/);
+  for (const id of ['kiryat-ono', 'kiryat-ata', 'elad', 'kiryat-bialik', 'holon']) {
+    const x = P.invShown(P.LOC[id]);
+    assert.equal(x.show, false, id + ' no figure in the cited release'); assert.match(x.why, /אין נתון מלאי רשמי/);
+  }
+  const n0 = P0.invShown(P0.LOC.il);
+  assert.deepEqual([n0.cls, n0.v, n0.per], ['static', 84990, 'סוף יולי 2026'], 'offline: the cited end-July figure');
+});
+t('months of supply: CBS\'s own national measure; elsewhere inventory ÷ sales with both periods named', () => {
+  setF();
+  const m = P.msShown(P.LOC.il);
+  assert.equal(m.cls, 'raw'); assert.equal(plain(m.text), PAY.monthsSupply.latest.value.toFixed(1));
+  assert.match(m.per, /ממוצע על סמך נתוני מגמה/);
+  const d = P.msShown(P.LOC['d-ta']);
+  assert.equal(d.cls, 'der'); assert.match(plain(d.per), /^מלאי סוף יולי 2026 ÷ \(מכירות \S+ 2025–\S+ 2026 ÷ 12\)$/);
+  const tl = P.msShown(P.LOC.tlv);
+  assert.equal(tl.cls, 'mod', 'Tel Aviv\'s sales are a MODEL rate — so is its months of supply');
+  assert.equal(P.msShown(P.LOC['d-jm']).show, false, 'no district inventory published → no months of supply');
 });
 
 console.log('sales metrics — labels, periods, staleness');
@@ -190,7 +291,7 @@ t('a stale static statement is marked stale and loses its trend arrow', () => {
 t('the sources panel no longer calls the deals register "developer sales"', () => {
   assert.ok(!/srcB1b:"מכירות קבלנים שנחתמו/.test(INDEX));
   assert.match(INDEX, /srcB1b:"עסקאות שנחתמו ודווחו למאגר רשות המסים — כל השוק \(חדשות ויד שנייה\); המאגר אינו מסמן מכירה מקבלן"/);
-  assert.match(INDEX, /בשאר המחוזות, הערים והשכונות אין ב-PROPX מקור מכירות — מוצג —/);
+  assert.match(INDEX, /הלמ״ס אינה מפרסמת סדרת מכירות לפי עיר בפורמט קריא למכונה — בשאר הערים והשכונות מוצג —/);
 });
 
 console.log('sales metrics — observed deals');

@@ -46,6 +46,13 @@ snap = (ROOT / "data" / "market" / "latest.js").read_text(encoding="utf-8")
 assert "<" not in snap.split("*/", 1)[-1], "snapshot must not contain raw '<'"
 s = s.replace(TAG, "<script>\n" + snap + "</script>", 1)
 
+# the same for the official CBS new-home sales snapshot (data/cbs-sales/latest.js, written by the CBS sync)
+TAG2 = '<script src="/data/cbs-sales/latest.js"></script>'
+assert s.count(TAG2) == 1
+snap2 = (ROOT / "data" / "cbs-sales" / "latest.js").read_text(encoding="utf-8")
+assert "<" not in snap2.split("*/", 1)[-1], "CBS snapshot must not contain raw '<'"
+s = s.replace(TAG2, "<script>\n" + snap2 + "</script>", 1)
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

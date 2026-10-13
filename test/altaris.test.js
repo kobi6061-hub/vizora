@@ -967,4 +967,25 @@ t('exports of a case (and of a working copy) are marked illustrative on every pa
   assert.match(APP, /const illusKind = \(\) => \(isCase\(S\.deal\) \? 'case' : fromCase\(S\.deal\) \? 'copy' : null\);/);
 });
 
+console.log('PROPX official new-home sales context (read-only)');
+t('ALTARIS reads the CBS sales series as context only — national and the deal\'s district by code, never a city figure, never an assumption', () => {
+  const html = SRC('altaris/index.html');
+  assert.ok(html.includes('<script src="/data/cbs-sales/latest.js" defer></script>'));
+  const i = APP.indexOf('function cbsSalesFacts('), body = APP.slice(i, APP.indexOf('\n  }\n', i) + 4);
+  assert.ok(i > 0 && /window\.PROPX_CBS_SALES/.test(body));
+  assert.ok(!/S\.deal\.|\.value\s*=|V\.|assum/.test(body), 'the context writes into the deal');
+  assert.ok(!/cbs|PROPX_CBS/i.test(SRC('altaris/engine.js')), 'the engine reads the sales context');
+  assert.match(APP, /if \(m\.district\) info\.district = m\.district; else delete info\.district;/, 'the district comes from the registry pick, by code');
+  /* run it on the synced payload */
+  const payload = require('node:vm').runInNewContext(fs.readFileSync(path.join(ROOT, 'data/cbs-sales/latest.js'), 'utf8') + ';window.PROPX_CBS_SALES', { window: {} });
+  const fn = require('node:vm').runInNewContext(`(()=>{const esc=x=>String(x);const F={int:n=>new Intl.NumberFormat('he-IL').format(Math.round(n)),date:x=>x};${APP.slice(APP.indexOf('  const CBS_DISTRICT'), APP.indexOf('function cbsSalesFacts('))}${body};return cbsSalesFacts})()`, { window: { PROPX_CBS_SALES: payload }, Intl });
+  const south = fn({ city: 'אופקים', cityCode: '31', district: 'd-south' }).join('');
+  assert.match(south, /מכירות דירות חדשות · ארצי/); assert.match(south, /מחוז הדרום \(רמת מחוז — לא נתון היישוב\)/);
+  assert.match(south, /12 חודשים · \S+ 2025–\S+ 2026 · למ״ס <span class="ax-tag off">רשמי<\/span>/);
+  assert.match(south, /<span class="ax-tag der">נגזר<\/span> · עודכן במקור \d\d\.\d\d\.\d{4}/);
+  const noDist = fn({ city: 'עיר כלשהי' }).join('');
+  assert.match(noDist, /הלמ״ס מפרסמת מכירות לפי ארץ ומחוז בלבד — אין סדרה רשמית ליישוב/);
+  assert.strictEqual(require('node:vm').runInNewContext(`(()=>{const esc=x=>x;const F={};${APP.slice(APP.indexOf('  const CBS_DISTRICT'), APP.indexOf('function cbsSalesFacts('))}${body};return cbsSalesFacts({city:'x'}).length})()`, { window: {} }), 0, 'no payload → no context, nothing invented');
+});
+
 console.log(`\n${passed} passed${process.exitCode ? ', SOME FAILED' : ', all green'}`);

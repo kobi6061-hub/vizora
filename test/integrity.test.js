@@ -122,7 +122,11 @@ t('OFFICIAL only from the live snapshot (stored provenance), never from a flag',
   const vc = fnBody(INDEX, 'vcOf');
   const raw = vc.split('\n').filter((l) => l.includes('"raw"'));
   assert.ok(raw.length >= 1, 'no RAW path at all');
-  for (const l of raw) assert.ok(/MKT\.\w+/.test(l), 'RAW returned without the live snapshot: ' + l.trim());
+  /* stored provenance = a synced snapshot: the market indicators (MKT) or the CBS new-home sales series (cbsGeo / cbsInv) */
+  for (const l of raw) assert.ok(/MKT\.\w+|cbsGeo\(l\)|l\.id==="il"&&cbsInv\(\)/.test(l), 'RAW returned without the live snapshot: ' + l.trim());
+  const cbs = INDEX.slice(INDEX.indexOf('const CBS=(()=>{'), INDEX.indexOf('const cbsInv='));
+  assert.match(cbs, /const s=window\.PROPX_CBS_SALES;\s*if\(!s\|\|s\.schema!==1\|\|!s\.geos\)return null;/, 'the CBS snapshot is read only from the synced payload, validated');
+  assert.match(cbs, /const cbsGeo=l=>\(CBS&&l&&CBS\.geos\[l\.id\]\)\|\|null;/);
   for (const fn of ['vcOf', 'vcPer']) {
     assert.ok(!/\bl\.o\b|\.o\|\||includes\("[tl]"\)/.test(fnBody(INDEX, fn)), fn + ' reads the historical o-flags');
   }
@@ -142,7 +146,13 @@ t('every STATIC label sits on the exact figure it cites', () => {
       n++;
     }
   }
-  assert.ok(n >= 17, 'STATIC_SRC lost entries (' + n + ')');
+  assert.ok(n >= 14, 'STATIC_SRC lost entries (' + n + ')');
+  /* inventory citations: exactly the figures CBS media release 283/2026 publishes for end-July 2026 (audit 13.10.2026) */
+  const inv = Object.fromEntries(Object.entries(v).filter(([, x]) => 'listings' in x).map(([id, x]) => [id, x.listings]));
+  assert.deepStrictEqual(inv, { il: 84990, 'd-center': 20990, 'd-ta': 26170, jerusalem: 10100, tlv: 9720, raanana: 1470, lod: 3060,
+    'kiryat-gat': 2410, 'beer-yaakov': 1530, 'ramat-hasharon': 1500, netivot: 1210, ofakim: 1180 });
+  assert.match(literalAfter(INDEX, 'const STATIC_SRC={'), /listings:\{per:\{he:"סוף יולי 2026",en:"end-July 2026"\},\s*src:\{he:"למ״ס · הודעה לתקשורת 283\/2026 \(10\.09\.2026\)/);
+  assert.ok(!/סוף יוני 2026|end-June 2026/.test(INDEX.replace(/\/\*[\s\S]*?\*\//g, '')), 'an inventory figure is still dated end-June 2026');
   assert.ok(/const isStatic=\(l,f\)=>\{[^}]*l\.base\[f\]===s\[f\]/.test(INDEX), 'STATIC label no longer requires value equality');
 });
 t('the "official · observed" deals badge is never shown over fixture rows', () => {

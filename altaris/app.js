@@ -646,6 +646,28 @@
         basis: `חציון ${tx.compsN} עסקאות דומות (חדרים ושטח ±20%) · ${when} · ${viaTxt(tx)}` };
     }
   }
+  /* Official new-home sales — the CBS monthly series PROPX syncs (data/cbs-sales): national, and the deal's DISTRICT
+     when its locality was picked from the registry (CBS district by code). Read-only context: never written into a
+     deal assumption, never shown as the city's own figure (CBS publishes no machine-readable city series). */
+  const CBS_DISTRICT = { 'd-jm': 'd-jm', 'd-north': 'd-north', 'd-haifa': 'd-haifa', 'd-center': 'd-center', 'd-ta': 'd-ta', 'd-south': 'd-south', 'js-area': 'jsr' };
+  function cbsSalesFacts(info) {
+    const s = window.PROPX_CBS_SALES;
+    if (!s || s.schema !== 1 || !s.geos || !s.geos.il || !s.geos.il.metrics || !s.geos.il.metrics.ok) return [];
+    const FR = { CURRENT: 'עדכני', EXPECTED_REPORTING_LAG: 'פיגור דיווח צפוי', STALE: 'ישן' };
+    const d = (x) => (x ? x.split('-').reverse().join('.') : '—');
+    const dates = `עודכן במקור ${d(s.sourceUpdate)} · נבדק ב-PROPX ${s.checkedAt ? F.date(s.checkedAt.slice(0, 10)) : '—'} · ${FR[s.freshness && s.freshness.state] || '—'}`;
+    const pc = (x) => (x && x.ok && x.pct != null ? `${x.pct > 0 ? '+' : ''}${x.pct.toFixed(1)}%` : '—');
+    const card = (g, scope) => {
+      const M = g.metrics;
+      return `<div class="ax-fact"><div class="k">מכירות דירות חדשות · ${esc(scope)}</div><div class="v num">${F.int(M.t12.value)}</div><div class="s">12 חודשים · ${esc(M.t12.label.he)} · למ״ס <span class="ax-tag off">רשמי</span>${M.ytd.ok && M.prevYtd.ok ? ` · מתחילת השנה ${F.int(M.ytd.value)} (${esc(M.ytd.label.he)}) מול ${F.int(M.prevYtd.value)}: ${pc(M.ytdChange)}` : ''}${M.small ? ' · מדגם קטן — ללא אות מגמה' : ` · מומנטום 3 חודשים ${pc(M.momentum.m3)}`}${M.pace && M.pace.ok ? ` · קצב שנתי ~${F.int(M.pace.value)}` : ''} <span class="ax-tag der">נגזר</span> · ${esc(dates)}</div></div>`;
+    };
+    const out = [card(s.geos.il, 'ארצי')];
+    const k = CBS_DISTRICT[info && info.district];
+    const g = k && s.geos[k];
+    if (g && g.metrics && g.metrics.ok) out.push(card(g, `${g.name.he} (רמת מחוז — לא נתון היישוב)`));
+    else if (info && info.city) out.push(`<div class="ax-fact"><div class="k">מכירות דירות חדשות · ${esc(info.city)}</div><div class="v">—</div><div class="s">הלמ״ס מפרסמת מכירות לפי ארץ ומחוז בלבד — אין סדרה רשמית ליישוב${k ? '' : '; בחרו את היישוב מרשימת החיפוש כדי לראות את המחוז שלו'} <span class="ax-tag">חסר</span></div></div>`);
+    return out;
+  }
   function paintMarket() {
     const box = $('#o-mkt'); if (!box) return;
     const m = S.deal.market, info = S.deal.info || {};
@@ -656,6 +678,7 @@
     if (boi.cpi && isNum(boi.cpi.yoy) && boi.cpi.period) facts.push(`<div class="ax-fact"><div class="k">מדד המחירים לצרכן</div><div class="v num">${boi.cpi.yoy > 0 ? '+' : ''}${boi.cpi.yoy}%</div><div class="s">שינוי שנתי · ${pad2(boi.cpi.period.month)}/${boi.cpi.period.year}${boi.cpi.stale ? ' · לא עדכני' : ''} · למ״ס <span class="ax-tag off">רשמי</span></div></div>`);
     if (boi.constructionInputsIndex && isNum(boi.constructionInputsIndex.yoy) && boi.constructionInputsIndex.period) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי תשומה בבנייה למגורים</div><div class="v num">${boi.constructionInputsIndex.yoy > 0 ? '+' : ''}${boi.constructionInputsIndex.yoy}%</div><div class="s">שינוי שנתי · ${pad2(boi.constructionInputsIndex.period.month)}/${boi.constructionInputsIndex.period.year}${boi.constructionInputsIndex.stale ? ' · לא עדכני' : ''} · למ״ס · נתון עבר, לא הנחת עלות <span class="ax-tag off">רשמי</span></div></div>`);
     if (boi.newHomesIndex && isNum(boi.newHomesIndex.yoy)) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי דירות חדשות</div><div class="v num">${boi.newHomesIndex.yoy > 0 ? '+' : ''}${boi.newHomesIndex.yoy}%</div><div class="s">שינוי שנתי · ${boi.newHomesIndex.period ? pad2(boi.newHomesIndex.period.month) + '/' + boi.newHomesIndex.period.year : ''} · למ״ס · ארצי <span class="ax-tag off">רשמי</span></div></div>`);
+    facts.push(...cbsSalesFacts(info));
     let body = '';
     if (m) {
       const tx = m.tx;
@@ -1551,6 +1574,8 @@
     const info = S.deal.info;
     if (m.kind === 'locality') { info.city = m.he; info.cityCode = String(m.code); delete info.street; }
     else { info.city = m.city; info.cityCode = String(m.cityCode); info.street = m.he; if (!info.address) info.address = m.he; if (m.neighborhood && !info.neighborhood) info.neighborhood = m.neighborhood; }
+    /* the official CBS district of the locality (from its CBS sub-district code in the registry) — context only */
+    if (m.district) info.district = m.district; else delete info.district;
     pop.hidden = true; markDirty();
     renderView();
   }

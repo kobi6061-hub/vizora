@@ -91,7 +91,40 @@ t('data basis is the value classes of the unfiltered inputs (vcOf), not a statis
   const ofakim = M.LOC.ofakim;
   assert.ok(ofakim.e && /t/.test(ofakim.o || ''), 'fixture assumption: Ofakim is an estimate row with an o-flag');
   assert.equal(M.ciBasis(ofakim).cls.price, 'mod');
-  assert.equal(M.ciBasis(ofakim).cls.tx, 'mod');
+  /* sales pace (audit 13.10.2026): CBS publishes no machine-readable city series — MISSING for every capital area */
+  for (const l of M.ciUniverse()) assert.equal(M.ciBasis(l).cls.tx, 'na', l.id + ' sales pace must be missing, never the research pace');
+});
+t('Capital does not silently use the unsourced sales pace: changing every LOCATIONS.base.tx moves nothing', () => {
+  const snap = () => {
+    M.reset();
+    const out = [];
+    for (const h of HORIZONS) for (const s of STRATS) {
+      Object.assign(ci, { h, strat: s });
+      const rk = M.ciRank(h, s);
+      out.push(rk.map((r) => `${r.id}:${r.ev.score}`).join());
+      for (const r of rk.slice(0, 12)) { const I = M.ciInvest(r.id); out.push(`${I.best}|${I.target}|${I.unitsCap}|${I.sHold}|${I.sResale}|${I.sBulk}`); }
+      const P = M.ciPortfolio(h, s);
+      out.push(P.pos.map((p) => `${p.id}×${p.units}`).join() + '|' + P.used + '|' + JSON.stringify(P.irr));
+    }
+    return out.join('\n');
+  };
+  const before = snap();
+  const saved = M.LOCATIONS.map((l) => l.base.tx);
+  try {
+    M.LOCATIONS.forEach((l, i) => { l.base.tx = (i % 7 + 1) * 977; });
+    assert.equal(snap(), before, 'a capital output changed with the research pace');
+  } finally { M.LOCATIONS.forEach((l, i) => { l.base.tx = saved[i]; }); M.reset(); }
+  const eng = block('/* @ci-engine:start', '/* @ci-engine:end */');
+  assert.ok(!/\.tx\b|\bf\.ms\b|sorted\.ms|capTx/.test(eng), 'the capital engine reads a sales pace or months of supply');
+  const ev = M.ciEval('beer-sheva', '5', 'bal');
+  assert.strictEqual(ev.sub.lq, null); assert.strictEqual(ev.lqLvl, 'na');
+  const I = M.ciInvest('beer-sheva');
+  assert.deepStrictEqual([I.prs, I.lev, I.levScore], [null, null, null], 'pressure / leverage need months of supply — missing');
+  assert.deepStrictEqual([I.sResale, I.sBulk], [null, null], 'resale / bulk rest on the missing pace — not scored, never re-weighted onto what is left');
+  assert.ok(Number.isFinite(I.sHold) && I.best === 'A');
+  assert.strictEqual(I.unitsCap, Math.max(1, Math.round(M.LOC['beer-sheva'].base.listings * M.CI_INV.capInv / 100 * M.CI_INV.capMul)));
+  assert.ok(!('capTx' in M.CI_INV) && !('capTx' in M.CI_LIM), 'the sales-based capacity rule is gone');
+  for (const f of [ev.risk.flags]) assert.ok(!f.includes('thin') && !f.includes('supply'));
 });
 
 console.log('model — ranking');
