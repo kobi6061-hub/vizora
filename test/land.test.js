@@ -395,6 +395,17 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const st = Q.status({ dataDir: dir });
     assert.equal(st.freshness.store, 'git'); assert.ok(st.sources.some((x) => x.id === 'datagov:rmi:planning-inventory' && x.classification === 'STALE'));
   });
+  await t('developer land per unit: numerator and denominator from the same lots (a won lot without units is left out of both)', () => {
+    const dir = tmp(), s = new FileLandStore(dir);
+    const a = row({ StatusMichraz: 5, KodYeshuv: 5000 });
+    const rec = N.normalizeTender({ row: a, detail: detail(a, { Tik: [lot({ ...WIN, SchumZchiya: 12000000, Kibolet: 60 }), lot({ ...WIN, SchumZchiya: 30000000, Kibolet: null })] }) }, CTX).record;
+    s.write({ records: mergeRecords([], [rec], { fetchedAt: CTX.fetchedAt, syncRunId: 'r' }).records, meta: { checkedAt: CTX.fetchedAt, snapshotHash: 'b'.repeat(64), coverage: { publishedFrom: '2026-07-09', publishedTo: '2026-07-09' } }, run: { id: 'r' } });
+    const Q = require('../lib/land/query');
+    const S = Q.summary(Q.parseFilters(new URLSearchParams('period=all&scope=all'), new Date('2026-10-04T12:00:00Z')).filters, { dataDir: dir });
+    const d = S.developers[0];
+    assert.equal(d.landTotalCompetitive, 42000000, 'the total keeps every priced lot'); assert.equal(d.landLots, 2);
+    assert.equal(d.landPerUnit, 200000, 'per unit: 12,000,000 ÷ 60 — never 42,000,000 ÷ 60');
+  });
   await t('a tender with a locality the registry cannot place is reported as without position — never a guessed pin', () => {
     const dir = tmp(), s = new FileLandStore(dir);
     const a = row({ KodYeshuv: 99001 });
