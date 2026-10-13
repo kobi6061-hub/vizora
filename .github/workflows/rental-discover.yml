@@ -13,14 +13,14 @@ on:
       mode:
         description: 'wiki | site (host) | get (URLs) | datagov (q|q) | cbs-index (regex) | cbs-series (regex)'
         type: choice
-        options: [wiki, site, get, datagov, cbs-index, cbs-series]
+        options: [wiki, site, wp, get, datagov, cbs-index, cbs-series]
         default: wiki
       arg:
         description: 'site: host · get: space-separated URLs · datagov: queries separated by | · cbs-index / cbs-series: regex'
         type: string
         default: ''
       match:
-        description: 'get: an extra allowed host (besides *.gov.il)'
+        description: 'get: an extra allowed host (besides *.gov.il) · wp: comma-separated content types'
         type: string
         default: ''
 
@@ -50,6 +50,7 @@ jobs:
         run: |
           case "$MODE" in
             site)       node scripts/rental-discover.js --site "$ARG" ;;
+            wp)         node scripts/rental-discover.js --wp "$ARG" ${MATCH:+--types "$MATCH"} ;;
             get)        node scripts/rental-discover.js --get $ARG ${MATCH:+--allow "$MATCH"} ;;
             datagov)    node scripts/rental-discover.js --datagov "$ARG" ;;
             cbs-index)  node scripts/rental-discover.js --cbs-index "$ARG" ;;

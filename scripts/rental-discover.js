@@ -13,6 +13,8 @@
 //   --cbs-index <regex>        the CBS price-index catalogue (chapters → subjects → series) — names matching, with codes
 //                              and the latest observation of each match
 //   --cbs-series <regex>       the CBS time-series catalogue (subjects → branches) — names matching, with paths
+//   --wp <host> [--types a,b]  a WordPress site's public REST API (robots.txt checked): content types, taxonomies, each custom
+//                              type's first page — totals, field names, sample items
 
 'use strict';
 
@@ -107,6 +109,42 @@ function robotsRules(text) {
       const r = await get(root + p); report(r, 1500); await sleep(500);
       if (r.json && p === '/wp-json/' && r.json.routes) console.log('   routes:', Object.keys(r.json.routes).slice(0, 120).join(' '));
     }
+  } else if (args.includes('--wp')) {
+    /* a WordPress site's public REST API: content types, taxonomies, the first page of each custom type (field names,
+       totals from X-WP-Total), one item in full — GET only, robots.txt checked first */
+    const host = opt('--wp'); extraHost = host.replace(/^www\./, '');
+    const root = `https://${host}`;
+    const rb = await get(root + '/robots.txt', 'text/plain');
+    const rules = rb.status === 200 ? robotsRules(rb.text) : [];
+    if (rules.some((r) => '/wp-json/'.startsWith(r))) { console.log('robots.txt disallows /wp-json/ — stopping'); return; }
+    const types = await get(root + '/wp-json/wp/v2/types');
+    const T = types.json || {};
+    for (const [slug, t] of Object.entries(T)) console.log(`type ${slug} · ${t.name} · rest_base ${t.rest_base} · taxonomies ${(t.taxonomies || []).join(',')}`);
+    const tax = await get(root + '/wp-json/wp/v2/taxonomies');
+    for (const [slug, t] of Object.entries(tax.json || {})) console.log(`taxonomy ${slug} · ${t.name} · rest_base ${t.rest_base} · types ${(t.types || []).join(',')}`);
+    const want = (opt('--types', '') || '').split(',').filter(Boolean);
+    for (const [slug, t] of Object.entries(T)) {
+      if (['post', 'page', 'attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_global_styles', 'wp_font_family', 'wp_font_face', 'elementor_library', 'e-landing-page'].includes(slug)) continue;
+      if (want.length && !want.includes(slug)) continue;
+      const u = `${root}/wp-json/${t.rest_namespace || 'wp/v2'}/${t.rest_base}?per_page=100`;
+      const r = await fetch(u, { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(TIMEOUT) }).catch((e) => ({ error: e.message }));
+      if (r.error) { console.log(`\n=== ${u}\n   ERROR ${r.error}`); continue; }
+      const total = r.headers.get('x-wp-total'), pages = r.headers.get('x-wp-totalpages');
+      let j = null; try { j = await r.json(); } catch { /* not json */ }
+      console.log(`\n=== ${u}\n   HTTP ${r.status} · X-WP-Total ${total} · pages ${pages} · items here ${Array.isArray(j) ? j.length : '—'}`);
+      if (Array.isArray(j) && j.length) {
+        const keys = new Set(); for (const it of j) Object.keys(it).forEach((k) => keys.add(k));
+        console.log('   keys:', [...keys].join(' '));
+        const metaKeys = new Set(); for (const it of j) for (const k of ['meta', 'acf', 'jet_engine', 'jetengine']) if (it[k] && typeof it[k] === 'object') Object.keys(it[k]).forEach((x) => metaKeys.add(k + '.' + x));
+        console.log('   meta keys:', [...metaKeys].join(' ') || '(none)');
+        for (const it of j.slice(0, Number(opt('--n', 2)))) {
+          const slim = { ...it }; delete slim._links; delete slim.yoast_head; delete slim.yoast_head_json; if (slim.content) slim.content = line(String(slim.content.rendered || '').replace(/<[^>]+>/g, ' ')).slice(0, 700); if (slim.excerpt) slim.excerpt = line(String(slim.excerpt.rendered || '').replace(/<[^>]+>/g, ' ')).slice(0, 200);
+          console.log('   item:', JSON.stringify(slim).slice(0, 3500));
+        }
+        console.log('   titles:', j.map((it) => line(it.title && it.title.rendered)).join(' ¦ ').slice(0, 3000));
+      }
+      await sleep(600);
+    }
   } else if (args.includes('--get')) {
     const hosts = opt('--allow'); if (hosts) extraHost = hosts;
     for (const u of many('--get')) { report(await get(u), Number(opt('--chars', 2500))); await sleep(400); }
@@ -127,17 +165,19 @@ function robotsRules(text) {
     const nodes = (j, pre) => { const out = []; const walk = (v) => { if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') { const id = v[pre + 'Id'] ?? v[pre + 'ID'] ?? v.id; const name = v[pre + 'Name'] ?? v.name; if (id != null && name) out.push({ id, name, mainCode: v.mainCode }); Object.values(v).forEach(walk); } }; walk(j); return out; };
     const chapters = [...new Map(nodes(cat.json, 'chapter').map((c) => [c.id, c])).values()];
     console.log(`${chapters.length} chapters`);
+    const expand = (opt('--expand', 'a,aa') || '').split(',');
     for (const ch of chapters) {
       console.log(`chapter ${ch.id} ${ch.name}${ch.mainCode ? ' · main ' + ch.mainCode : ''}`);
       const c = await get(`${B}/catalog/chapter?id=${encodeURIComponent(ch.id)}&lang=he&format=json&download=false`); await sleep(250);
       for (const s of [...new Map(nodes(c.json, 'subject').map((x) => [x.id, x])).values()]) {
-        const hit = re.test(s.name) || re.test(ch.name);
-        if (!hit) continue;
-        console.log(`  ★ subject ${s.id} ${s.name}`);
+        console.log(`  subject ${s.id} ${s.name}`);
+        if (!expand.includes(String(ch.id)) && !re.test(s.name)) continue;
         const sj = await get(`${B}/catalog/subject?id=${encodeURIComponent(s.id)}&lang=he&format=json&download=false`); await sleep(250);
         const codes = []; const walk = (v) => { if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') { const code = v.code ?? v.Code ?? v.indexCode; const name = v.name ?? v.Name ?? v.indexName; if (code != null && name) codes.push({ code, name }); Object.values(v).forEach(walk); } };
         walk(sj.json);
-        for (const x of codes.slice(0, 60)) {
+        const hits = ch.id === 'aa' ? codes : codes.filter((x) => re.test(x.name));
+        console.log(`    ${codes.length} codes, ${hits.length} matching`);
+        for (const x of hits.slice(0, 60)) {
           const d = await get(`${B}/data/price?id=${encodeURIComponent(x.code)}&format=json&download=false&lang=he&last=2`); await sleep(250);
           console.log(`     ${x.code} ${x.name} → ${d.status} ${d.text ? line(d.text).slice(0, 300) : d.error || ''}`);
         }
