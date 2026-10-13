@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="b6f1a6f9672544d28fa561ef52fc51e5e27978c44fcfe735fb9e96b31463c41d">
+<meta name="propx-source-sha256" content="3b1005cd9f903ee9f5e82fba78a5d8b9d67be55916971b7d61b2dedc9b889e53">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -6815,7 +6815,7 @@ he:{
       upd:"עדכון אחרון ב-XPlan",sinceUpd:v=>`לפני ${v} שנים`,stale:"תכנון לא פעיל — לא מאושרת / נדחתה, ולא עודכנה יותר מ-3 שנים",noEv:"מאושרת — אין בעמודות משב״ש (בביצוע / היתרים / סטטוס) ראיה להיתר או ביצוע; אינה הוכחה שלא נבנה",
       delta:"הפרש יח״ד (XPlan אחרי התכנית − משב״ש מוצעות)",boundary:"קו כחול (גבול התכנית)",centroid:"מרכז",genz:"מוכלל ~5 מ׳",
       shared:"תכנית משותפת למתחמים נוספים — יח״ד התכנית נספרות פעם אחת",diag:"מדוע לא חובר",
-      rs:{num:n=>`מספר התכנית ${n} אינו בשכבת XPlan`,noNum:"משב״ש לא פרסם מספר תכנית",id:n=>`מזהה מבא״ת ${n} אינו בשכבה`,noId:"אין קישור מבא״ת",amb:"המפתחות מצביעים על יותר מתכנית אחת — PROPX אינו בוחר",nc:"טרם נבדק בשכבה (בקשה שנכשלה או ממתינה) — לעולם לא \"לא נמצא\"",
+      rs:{num:n=>`מספר התכנית ${n} אינו בשכבת XPlan`,noNum:"משב״ש לא פרסם מספר תכנית",id:n=>`מזהה מבא״ת ${n} אינו בשכבה`,noId:"אין קישור מבא״ת",amb:"המפתחות מצביעים על יותר מתכנית אחת — PROPX אינו בוחר",diff:(a,b)=>`מספר התכנית שמשב״ש מפרסם (${a}) והתכנית שבקישור המבא״ת שלו (${b}) הן תכניות שונות — PROPX אינו בוחר`,nc:"טרם נבדק בשכבה (בקשה שנכשלה או ממתינה) — לעולם לא \"לא נמצא\"",
         fmt:{local:"המספר בפורמט מקומי ישן — השכבה מכילה תכניות שמנוהלות מקוונת",vatmal:"מספר של הוועדה לדיור מועדף (ותמ״ל) שהשכבה המקוונת אינה מכילה",national:""}},diagK:{reason:"סיבה",num:"מספר תכנית (משב״ש)",id:"מזהה מבא״ת בקישור",cand:"תכניות מועמדות"},
       phist:"היסטוריית התכנית (כפי שנצפתה ב-PROPX)",pnone:"אין שינויים מתועדים עדיין",prov:"מקור התכנון",fetched:"נשלף מ-XPlan",lastUp:"עדכון אחרון במקור",
       notSynced:"שכבת XPlan טרם נקראה — כל המתחמים \"טרם נבדקו\"",fields:"שם השדה במקור"},
@@ -6904,7 +6904,7 @@ en:{
       upd:"Last update in XPlan",sinceUpd:v=>`${v} years ago`,stale:"Stale planning — not approved / rejected and not updated for more than 3 years",noEv:"Approved — MoCH's columns (execution / permits / status) show no permit or execution evidence; not proof that nothing was built",
       delta:"Unit gap (XPlan after the plan − MoCH proposed)",boundary:"Blue line (plan boundary)",centroid:"Centroid",genz:"generalized ~5 m",
       shared:"Plan shared with other complexes — its units count once",diag:"Why it is not joined",
-      rs:{num:n=>`plan number ${n} is not in the XPlan layer`,noNum:"MoCH publishes no plan number",id:n=>`Mavat id ${n} is not in the layer`,noId:"no Mavat link",amb:"the keys point at more than one plan — PROPX does not pick one",nc:"not yet looked up in the layer (a failed or pending request) — never \"not found\"",
+      rs:{num:n=>`plan number ${n} is not in the XPlan layer`,noNum:"MoCH publishes no plan number",id:n=>`Mavat id ${n} is not in the layer`,noId:"no Mavat link",amb:"the keys point at more than one plan — PROPX does not pick one",diff:(a,b)=>`the plan number MoCH prints (${a}) and the plan its Mavat link names (${b}) are different plans — PROPX does not pick one`,nc:"not yet looked up in the layer (a failed or pending request) — never \"not found\"",
         fmt:{local:"the number is in an old local format — the layer holds plans managed online",vatmal:"a number of the national committee for preferred housing (VATMAL) the online layer does not hold",national:""}},diagK:{reason:"Reason",num:"Plan number (MoCH)",id:"Mavat id in the link",cand:"Candidate plans"},
       phist:"Plan history (as observed by PROPX)",pnone:"No recorded changes yet",prov:"Planning source",fetched:"Fetched from XPlan",lastUp:"Last update at the source",
       notSynced:"The XPlan layer has not been read yet — every complex is \"not checked\"",fields:"source field"},
@@ -7375,7 +7375,7 @@ function renewalDrawerHTML(d,close){
       <p class="ho-note">${L.prov}: ${inE(G.source?G.source.authority+" — "+G.source.dataset:"")} · ${L.fetched} ${inDate(X.provenance&&X.provenance.fetchedAt)} · ${L.lastUp} ${inDate(X.lastUpdate)}</p></section>`;
   }else{
     const DG=M.diagnostics||{},RS=L.rs;
-    const why=M.status==="ambiguous"?RS.amb:M.status==="not-checked"?(G.freshness&&!G.freshness.synced?L.notSynced:RS.nc):M.status==="no-identifier"?`${RS.noNum} · ${RS.noId}`
+    const why=M.status==="ambiguous"?(M.planNumberDiffers?RS.diff(M.planNumberDiffers.moch,M.planNumberDiffers.xplan):RS.amb):M.status==="not-checked"?(G.freshness&&!G.freshness.synced?L.notSynced:RS.nc):M.status==="no-identifier"?`${RS.noNum} · ${RS.noId}`
       :[DG.planNumber?RS.num(DG.planNumber):RS.noNum,DG.mavatId!=null?RS.id(DG.mavatId):RS.noId,RS.fmt[DG.format]||""].filter(Boolean).join(" · ");
     plan=sec(L.sec,"",`<div class="rn-ph"><span class="ho-na rn-ms">${inE(L.match[M.status]||M.status||"—")}</span></div><div class="ho-dl">${kv(L.diagK.reason,`<span class="rn-why">${inE(why)}</span>`)}${kv(L.diagK.num,DG.planNumber?`<bdi>${inE(DG.planNumber)}</bdi>`:inDash())}${kv(L.diagK.id,DG.mavatId!=null?`<span class="num">${inE(DG.mavatId)}</span>`:inDash())}${M.candidates?kv(L.diagK.cand,M.candidates.map(c=>`<span class="num">${inE(c)}</span>`).join(" · ")):""}</div><p class="ho-note">${L.s}</p>`);
   }
