@@ -1,0 +1,78 @@
+{
+ "source": {
+  "id": "dira-lehaskir:wp",
+  "owner": "דירה להשכיר – החברה הממשלתית לדיור ולהשכרה בע\"מ",
+  "ownerEn": "Dira Lehaskir — the Government Company for Housing and Rental",
+  "site": "https://www.renten.co.il",
+  "api": "https://www.renten.co.il/wp-json/wp/v2",
+  "classification": "CMS_PUBLIC_API",
+  "robots": "User-agent: * · Disallow: (empty) — every path allowed (read 13.10.2026)",
+  "verified": {
+   "at": "2026-10-13",
+   "michraz": 230,
+   "planning": 45,
+   "runs": {
+    "site": "38473430920",
+    "restApi": "38474108973"
+   }
+  }
+ },
+ "fetchedAt": "2026-10-13T22:17:25.080Z",
+ "snapshot": "86a64aceb18ecad0",
+ "taxonomies": {
+  "tax_status_et": [
+   {
+    "id": 24,
+    "name": "סגור",
+    "slug": "close",
+    "count": 120
+   },
+   {
+    "id": 20,
+    "name": "פתוח",
+    "slug": "open",
+    "count": 23
+   }
+  ],
+  "statuss": [
+   {
+    "id": 37,
+    "name": "בהליך סטטוטורי",
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "count": 14
+   },
+   {
+    "id": 38,
+    "name": "בהליך תכנון",
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "count": 9
+   },
+   {
+    "id": 36,
+    "name": "תכנית מאושרת",
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "count": 22
+   }
+  ],
+  "tax_status": [
+   {
+    "id": 19,
+    "name": "בבניה (הרשמה כשישה חודשים לפני האכלוס)",
+    "slug": "%d7%91%d7%94%d7%a7%d7%9e%d7%94",
+    "count": 59
+   },
+   {
+    "id": 17,
+    "name": "דירות זמינות",
+    "slug": "%d7%91%d7%a9%d7%99%d7%95%d7%95%d7%a7",
+    "count": 6
+   },
+   {
+    "id": 18,
+    "name": "מאוכלס",
+    "slug": "%d7%9e%d7%90%d7%95%d7%9b%d7%9c%d7%a1",
+    "count": 26
+   }
+  ]
+ }
+}

@@ -1,0 +1,969 @@
+{
+ "source": {
+  "id": "dira-lehaskir:wp",
+  "owner": "דירה להשכיר – החברה הממשלתית לדיור ולהשכרה בע\"מ",
+  "ownerEn": "Dira Lehaskir — the Government Company for Housing and Rental",
+  "site": "https://www.renten.co.il",
+  "api": "https://www.renten.co.il/wp-json/wp/v2",
+  "classification": "CMS_PUBLIC_API",
+  "robots": "User-agent: * · Disallow: (empty) — every path allowed (read 13.10.2026)",
+  "verified": {
+   "at": "2026-10-13",
+   "michraz": 230,
+   "planning": 45,
+   "runs": {
+    "site": "38473430920",
+    "restApi": "38474108973"
+   }
+  }
+ },
+ "fetchedAt": "2026-10-13T22:17:25.080Z",
+ "snapshot": "86a64aceb18ecad0",
+ "records": [
+  {
+   "id": "dira:planning:14676",
+   "wpId": 14676,
+   "title": "התחדשות תל גיבורים, חולון",
+   "site": "התחדשות תל גיבורים",
+   "placeText": "חולון",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%aa%d7%97%d7%93%d7%a9%d7%95%d7%aa-%d7%aa%d7%9c-%d7%92%d7%99%d7%91%d7%95%d7%a8%d7%99%d7%9d/",
+   "published": "2026-10-12",
+   "modified": "2026-10-12",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11154",
+   "wpId": 11154,
+   "title": "אבא אבן מגרשים צפוניים, הרצליה",
+   "site": "אבא אבן מגרשים צפוניים",
+   "placeText": "הרצליה",
+   "link": "https://www.renten.co.il/planning/%d7%90%d7%91%d7%90-%d7%90%d7%91%d7%9f-%d7%9e%d7%92%d7%a8%d7%a9%d7%99%d7%9d-%d7%a6%d7%a4%d7%95%d7%a0%d7%99%d7%99%d7%9d-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-04-06",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11153",
+   "wpId": 11153,
+   "title": "מטרו בן גוריון, הרצליה",
+   "site": "מטרו בן גוריון",
+   "placeText": "הרצליה",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%91%d7%9f-%d7%92%d7%95%d7%a8%d7%99%d7%95%d7%9f-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-11",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11151",
+   "wpId": 11151,
+   "title": "מטרו גולדה מאיר, חולון",
+   "site": "מטרו גולדה מאיר",
+   "placeText": "חולון",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%92%d7%95%d7%9c%d7%93%d7%94-%d7%9e%d7%90%d7%99%d7%a8-%d7%97%d7%95%d7%9c%d7%95/",
+   "published": "2025-02-25",
+   "modified": "2025-04-06",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11150",
+   "wpId": 11150,
+   "title": "תע\"ש מזרח, הוד השרון",
+   "site": "תע\"ש מזרח",
+   "placeText": "הוד השרון",
+   "link": "https://www.renten.co.il/planning/%d7%aa%d7%a2%d7%a9-%d7%9e%d7%96%d7%a8%d7%97-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11149",
+   "wpId": 11149,
+   "title": "שביל התפוזים, הוד השרון",
+   "site": "שביל התפוזים",
+   "placeText": "הוד השרון",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%91%d7%99%d7%9c-%d7%94%d7%aa%d7%a4%d7%95%d7%96%d7%99%d7%9d-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11148",
+   "wpId": 11148,
+   "title": "אנ\"מ צפוני, ראשון לציון",
+   "site": "אנ\"מ צפוני",
+   "placeText": "ראשון לציון",
+   "link": "https://www.renten.co.il/planning/%d7%90%d7%a0%d7%9e-%d7%a6%d7%a4%d7%95%d7%a0%d7%99-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11147",
+   "wpId": 11147,
+   "title": "יד לבנים, דאלית אל כרמל",
+   "site": "יד לבנים",
+   "placeText": "דאלית אל כרמל",
+   "link": "https://www.renten.co.il/planning/%d7%99%d7%93-%d7%9c%d7%91%d7%a0%d7%99%d7%9d-%d7%93%d7%90%d7%9c%d7%99%d7%aa-%d7%90%d7%9c-%d7%9b%d7%a8%d7%9e%d7%9c/",
+   "published": "2025-02-25",
+   "modified": "2026-10-11",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11146",
+   "wpId": 11146,
+   "title": "בית אריה – עופרים",
+   "site": "בית אריה – עופרים",
+   "placeText": null,
+   "link": "https://www.renten.co.il/planning/%d7%a2%d7%95%d7%a4%d7%a8%d7%99%d7%9d-%d7%91%d7%99%d7%aa-%d7%90%d7%a8%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-11",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11145",
+   "wpId": 11145,
+   "title": "מתחם 8, גדרה",
+   "site": "מתחם 8",
+   "placeText": "גדרה",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-8-%d7%92%d7%93%d7%a8%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11144",
+   "wpId": 11144,
+   "title": "המייסדים, נס ציונה",
+   "site": "המייסדים",
+   "placeText": "נס ציונה",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%9e%d7%99%d7%99%d7%a1%d7%93%d7%99%d7%9d-%d7%a0%d7%a1-%d7%a6%d7%99%d7%95%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11143",
+   "wpId": 11143,
+   "title": "רמת אליהו, ראשון לציון",
+   "site": "רמת אליהו",
+   "placeText": "ראשון לציון",
+   "link": "https://www.renten.co.il/planning/%d7%a8%d7%9e%d7%aa-%d7%90%d7%9c%d7%99%d7%94%d7%95-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2025-04-08",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11142",
+   "wpId": 11142,
+   "title": "שביב, רעננה",
+   "site": "שביב",
+   "placeText": "רעננה",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%91%d7%99%d7%91-%d7%a8%d7%a2%d7%a0%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-01-21",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11141",
+   "wpId": 11141,
+   "title": "בן יהודה צפון, כפר סבא",
+   "site": "בן יהודה צפון",
+   "placeText": "כפר סבא",
+   "link": "https://www.renten.co.il/planning/%d7%91%d7%9f-%d7%99%d7%94%d7%95%d7%93%d7%94-%d7%a6%d7%a4%d7%95%d7%9f-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11140",
+   "wpId": 11140,
+   "title": "נוף ירקון מתחם מרכז, הוד השרון",
+   "site": "נוף ירקון מתחם מרכז",
+   "placeText": "הוד השרון",
+   "link": "https://www.renten.co.il/planning/%d7%a0%d7%95%d7%a3-%d7%99%d7%a8%d7%a7%d7%95%d7%9f-%d7%9e%d7%aa%d7%97%d7%9d-%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11139",
+   "wpId": 11139,
+   "title": "רובע דרום מערב, מתחם 1, הרצליה",
+   "site": "רובע דרום מערב",
+   "placeText": "מתחם 1, הרצליה",
+   "link": "https://www.renten.co.il/planning/%d7%90%d7%91%d7%90-%d7%90%d7%91%d7%9f-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-12",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11138",
+   "wpId": 11138,
+   "title": "מטרו הרצועה השלישית, גבעת שמואל",
+   "site": "מטרו הרצועה השלישית",
+   "placeText": "גבעת שמואל",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%94%d7%a8%d7%a6%d7%95%d7%a2%d7%94-%d7%94%d7%a9%d7%9c%d7%99%d7%a9%d7%99%d7%aa-%d7%92%d7%91%d7%a2%d7%aa-%d7%a9%d7%9e%d7%95%d7%90%d7%9c/",
+   "published": "2025-02-25",
+   "modified": "2026-01-21",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11137",
+   "wpId": 11137,
+   "title": "תחנת מטרו בנות חיל, ראשון לציון",
+   "site": "תחנת מטרו בנות חיל",
+   "placeText": "ראשון לציון",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%91%d7%a0%d7%95%d7%aa-%d7%97%d7%99%d7%9c-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2026-01-20",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11136",
+   "wpId": 11136,
+   "title": "מתחם המכללה, כרמיאל",
+   "site": "מתחם המכללה",
+   "placeText": "כרמיאל",
+   "link": "https://www.renten.co.il/planning/%d7%9c%d7%99%d7%93-%d7%94%d7%9e%d7%9b%d7%9c%d7%9c%d7%94-%d7%9b%d7%a8%d7%9e%d7%99%d7%90%d7%9c/",
+   "published": "2025-02-25",
+   "modified": "2026-10-13",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11135",
+   "wpId": 11135,
+   "title": "מתחם הצעירים, ג'לג'וליה",
+   "site": "מתחם הצעירים",
+   "placeText": "ג'לג'וליה",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%a6%d7%a2%d7%99%d7%a8%d7%99%d7%9d-%d7%92%d7%9c%d7%92%d7%95%d7%9c%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11134",
+   "wpId": 11134,
+   "title": "ח-500, חולון",
+   "site": "ח-500",
+   "placeText": "חולון",
+   "link": "https://www.renten.co.il/planning/%d7%97-500-%d7%97%d7%95%d7%9c%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2025-04-03",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11133",
+   "wpId": 11133,
+   "title": "מתחם מזרחי, ג'סר א-זרקא",
+   "site": "מתחם מזרחי",
+   "placeText": "ג'סר א-זרקא",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-%d7%9e%d7%96%d7%a8%d7%97%d7%99-%d7%92%d7%a1%d7%a8-%d7%90-%d7%96%d7%a8%d7%a7%d7%90/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11132",
+   "wpId": 11132,
+   "title": "שכונת רזיאל, הרצליה",
+   "site": "שכונת רזיאל",
+   "placeText": "הרצליה",
+   "link": "https://www.renten.co.il/planning/%d7%a8%d7%91%d7%99-%d7%a2%d7%a7%d7%99%d7%91%d7%90-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-12",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11131",
+   "wpId": 11131,
+   "title": "מע\"ר, נס ציונה",
+   "site": "מע\"ר",
+   "placeText": "נס ציונה",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%a2%d7%a8-%d7%a0%d7%a1-%d7%a6%d7%99%d7%95%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-11",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11130",
+   "wpId": 11130,
+   "title": "יובלים, קרית שמונה",
+   "site": "יובלים",
+   "placeText": "קרית שמונה",
+   "link": "https://www.renten.co.il/planning/%d7%99%d7%95%d7%91%d7%9c%d7%99%d7%9d-%d7%a7%d7%a8%d7%99%d7%aa-%d7%a9%d7%9e%d7%95%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-12",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11129",
+   "wpId": 11129,
+   "title": "מטרו תל גיבורים, חולון",
+   "site": "מטרו תל גיבורים",
+   "placeText": "חולון",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%aa%d7%9c-%d7%92%d7%99%d7%91%d7%95%d7%a8%d7%99%d7%9d-%d7%97%d7%95%d7%9c%d7%95%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2026-10-13",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11127",
+   "wpId": 11127,
+   "title": "חרודי, נס ציונה",
+   "site": "חרודי",
+   "placeText": "נס ציונה",
+   "link": "https://www.renten.co.il/planning/%d7%97%d7%a8%d7%95%d7%93%d7%99-%d7%a0%d7%a1-%d7%a6%d7%99%d7%95%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-04-03",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
+    "name": "בהליך סטטוטורי"
+   },
+   "statusIds": [
+    37
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11126",
+   "wpId": 11126,
+   "title": "כפר יונה מערב, כפר יונה",
+   "site": "כפר יונה מערב",
+   "placeText": "כפר יונה",
+   "link": "https://www.renten.co.il/planning/%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94-%d7%9e%d7%a2%d7%a8%d7%91-%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-04-09",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11125",
+   "wpId": 11125,
+   "title": "מתחמים דרומיים, גדרה",
+   "site": "מתחמים דרומיים",
+   "placeText": "גדרה",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9e%d7%99%d7%9d-%d7%93%d7%a8%d7%95%d7%9e%d7%99%d7%99%d7%9d-%d7%92%d7%93%d7%a8%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11124",
+   "wpId": 11124,
+   "title": "מתחם 7, גדרה",
+   "site": "מתחם 7",
+   "placeText": "גדרה",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-7-%d7%92%d7%93%d7%a8%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-12",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11123",
+   "wpId": 11123,
+   "title": "מתחם העירייה, נשר",
+   "site": "מתחם העירייה",
+   "placeText": "נשר",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%a9%d7%9c%d7%95%d7%9d-%d7%94%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%94-%d7%a0%d7%a9%d7%a8/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11122",
+   "wpId": 11122,
+   "title": "מתחם העירייה, טירת הכרמל",
+   "site": "מתחם העירייה",
+   "placeText": "טירת הכרמל",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%94-%d7%98%d7%99%d7%a8%d7%aa-%d7%94%d7%9b%d7%a8%d7%9e%d7%9c/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11121",
+   "wpId": 11121,
+   "title": "שיכון הרופאים תל השומר, רמת גן",
+   "site": "שיכון הרופאים תל השומר",
+   "placeText": "רמת גן",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%99%d7%9b%d7%95%d7%9f-%d7%94%d7%a8%d7%95%d7%a4%d7%90%d7%99%d7%9d-%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11120",
+   "wpId": 11120,
+   "title": "בין הגבעות, בית שמש",
+   "site": "בין הגבעות",
+   "placeText": "בית שמש",
+   "link": "https://www.renten.co.il/planning/%d7%91%d7%99%d7%9f-%d7%94%d7%92%d7%91%d7%a2%d7%95%d7%aa-%d7%91%d7%99%d7%aa-%d7%a9%d7%9e%d7%a9/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11119",
+   "wpId": 11119,
+   "title": "רחובות מזרח, רחובות",
+   "site": "רחובות מזרח",
+   "placeText": "רחובות",
+   "link": "https://www.renten.co.il/planning/%d7%a8%d7%97%d7%95%d7%91%d7%95%d7%aa-%d7%9e%d7%96%d7%a8%d7%97-%d7%a8%d7%97%d7%95%d7%91%d7%95%d7%aa/",
+   "published": "2025-02-25",
+   "modified": "2025-03-13",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11118",
+   "wpId": 11118,
+   "title": "שוק גולדמן נווה רבין מערב, אור יהודה",
+   "site": "שוק גולדמן נווה רבין מערב",
+   "placeText": "אור יהודה",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%95%d7%a7-%d7%92%d7%95%d7%9c%d7%93%d7%9e%d7%9f-%d7%a0%d7%95%d7%95%d7%94-%d7%a8%d7%91%d7%99%d7%9f-%d7%9e%d7%a2%d7%a8%d7%91-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2026-10-13",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11117",
+   "wpId": 11117,
+   "title": "שבעת הנוטרים, אזור",
+   "site": "שבעת הנוטרים",
+   "placeText": "אזור",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%91%d7%a2%d7%aa-%d7%94%d7%a0%d7%95%d7%98%d7%a8%d7%99%d7%9d-%d7%90%d7%96%d7%95%d7%a8/",
+   "published": "2025-02-25",
+   "modified": "2025-03-13",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11116",
+   "wpId": 11116,
+   "title": "בן שמן ובית הקשתות, לוד",
+   "site": "בן שמן ובית הקשתות",
+   "placeText": "לוד",
+   "link": "https://www.renten.co.il/planning/%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%95%d7%91%d7%99%d7%aa-%d7%94%d7%a7%d7%a9%d7%aa%d7%95%d7%aa-%d7%9c%d7%95%d7%93/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11115",
+   "wpId": 11115,
+   "title": "הרובע המערבי (ניר צבי), לוד",
+   "site": "הרובע המערבי (ניר צבי)",
+   "placeText": "לוד",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%9e%d7%a2%d7%a8%d7%91%d7%99-%d7%a0%d7%99%d7%a8-%d7%a6%d7%91%d7%99-%d7%9c%d7%95%d7%93/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11114",
+   "wpId": 11114,
+   "title": "המשתלה, תל אביב",
+   "site": "המשתלה",
+   "placeText": "תל אביב",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%9e%d7%a9%d7%aa%d7%9c%d7%94-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11113",
+   "wpId": 11113,
+   "title": "הדסה הקטנה, ירושלים",
+   "site": "הדסה הקטנה",
+   "placeText": "ירושלים",
+   "link": "https://www.renten.co.il/planning/%d7%94%d7%93%d7%a1%d7%94-%d7%94%d7%a7%d7%98%d7%a0%d7%94-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11112",
+   "wpId": 11112,
+   "title": "גן יבנה מערב",
+   "site": "גן יבנה מערב",
+   "placeText": null,
+   "link": "https://www.renten.co.il/planning/%d7%92%d7%9f-%d7%99%d7%91%d7%a0%d7%94/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11111",
+   "wpId": 11111,
+   "title": "שוהם כ\"א",
+   "site": "שוהם כ\"א",
+   "placeText": null,
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%95%d7%94%d7%9d/",
+   "published": "2025-02-25",
+   "modified": "2025-03-03",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11110",
+   "wpId": 11110,
+   "title": "משולש הבורסה, רמת גן",
+   "site": "משולש הבורסה",
+   "placeText": "רמת גן",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%a9%d7%95%d7%9c%d7%a9-%d7%94%d7%91%d7%95%d7%a8%d7%a1%d7%94-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:11106",
+   "wpId": 11106,
+   "title": "שחמון 11, אילת",
+   "site": "שחמון 11",
+   "placeText": "אילת",
+   "link": "https://www.renten.co.il/planning/%d7%a9%d7%97%d7%9e%d7%95%d7%9f-11-%d7%90%d7%99%d7%9c%d7%aa/",
+   "published": "2025-02-25",
+   "modified": "2025-03-04",
+   "status": {
+    "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
+    "name": "תכנית מאושרת"
+   },
+   "statusIds": [
+    36
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-13T22:17:25.080Z",
+   "lastSeenAt": "2026-10-13T22:17:25.080Z",
+   "inLatestSource": true
+  }
+ ]
+}

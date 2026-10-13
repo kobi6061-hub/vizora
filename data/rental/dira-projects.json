@@ -1,0 +1,490 @@
+{
+ "source": {
+  "id": "dira-lehaskir:wp",
+  "owner": "דירה להשכיר – החברה הממשלתית לדיור ולהשכרה בע\"מ",
+  "ownerEn": "Dira Lehaskir — the Government Company for Housing and Rental",
+  "site": "https://www.renten.co.il",
+  "api": "https://www.renten.co.il/wp-json/wp/v2",
+  "classification": "CMS_PUBLIC_API",
+  "robots": "User-agent: * · Disallow: (empty) — every path allowed (read 13.10.2026)",
+  "verified": {
+   "at": "2026-10-13",
+   "michraz": 230,
+   "planning": 45,
+   "runs": {
+    "site": "38473430920",
+    "restApi": "38474108973"
+   }
+  }
+ },
+ "fetchedAt": "2026-10-13T22:17:25.080Z",
+ "snapshot": "86a64aceb18ecad0",
+ "classification": "OFFICIAL_PAGE_ONLY",
+ "pages": [
+  {
+   "url": "https://www.renten.co.il/project/",
+   "lastmod": "2026-09-14",
+   "slug": "project"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%91%d7%99%d7%aa-%d7%91%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
+   "lastmod": "2025-02-02",
+   "slug": "בית בפארק אור יהודה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%90%d7%91%d7%99%d7%91-%d7%a9%d7%9c%d7%99-%d7%a8%d7%9e%d7%aa-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
+   "lastmod": "2025-02-02",
+   "slug": "אביב שלי רמת השרון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%91%d7%99%d7%aa-%d7%91%d7%9e%d7%95%d7%a9%d7%91%d7%94-%d7%92%d7%9f-%d7%99%d7%91%d7%a0%d7%94/",
+   "lastmod": "2025-02-02",
+   "slug": "בית במושבה גן יבנה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%a7%d7%a4%d7%95%d7%aa-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "lastmod": "2025-02-02",
+   "slug": "הרקפות ראשון לציון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%9e%d7%aa-%d7%a8%d7%91%d7%99%d7%9f-%d7%90%d7%b3-%d7%9b%d7%a8%d7%9e%d7%99%d7%90%d7%9c/",
+   "lastmod": "2025-02-02",
+   "slug": "רמת רבין א׳ כרמיאל"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%91%d7%95%d7%90%d7%95%d7%aa-%d7%93%d7%a8%d7%95%d7%9e%d7%99%d7%99%d7%9d-%d7%97%d7%99%d7%a4%d7%94/",
+   "lastmod": "2025-02-02",
+   "slug": "מבואות דרומיים חיפה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%a6%d7%a4%d7%94-%d7%90%d7%a4%d7%a7-%d7%9e%d7%aa%d7%97%d7%9d-%d7%99%d7%92%d7%b3-%d7%91%d7%90%d7%a8-%d7%99%d7%a2%d7%a7%d7%91/",
+   "lastmod": "2025-02-02",
+   "slug": "מצפה אפק מתחם יג׳ באר יעקב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%90%d7%a9-%d7%94%d7%a2%d7%99%d7%9f-%d7%9e%d7%aa%d7%97%d7%9d-e/",
+   "lastmod": "2025-02-02",
+   "slug": "ראש העין מתחם e"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%92%d7%a0%d7%99-%d7%90%d7%96%d7%a8-%d7%90-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-02-02",
+   "slug": "גני אזר א רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%92%d7%a0%d7%99-%d7%90%d7%96%d7%a8-%d7%91-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-02-02",
+   "slug": "גני אזר ב רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%a6%d7%a4%d7%94-%d7%90%d7%a4%d7%a7-%d7%9e%d7%aa%d7%97%d7%9d-%d7%99%d7%91%d7%b3-%d7%91%d7%90%d7%a8-%d7%99%d7%a2%d7%a7%d7%91/",
+   "lastmod": "2025-02-02",
+   "slug": "מצפה אפק מתחם יב׳ באר יעקב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%9e%d7%aa%d7%97%d7%9d-%d7%93%d7%b3-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-02-02",
+   "slug": "תל השומר מתחם ד׳ רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9b%d7%a8%d7%9e%d7%99%d7%90%d7%9c%d7%94-%d7%9b%d7%a8%d7%9e%d7%99%d7%90%d7%9c/",
+   "lastmod": "2025-02-02",
+   "slug": "כרמיאלה כרמיאל"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%97%d7%9c%d7%95%d7%9e%d7%95%d7%aa-%d7%90%d7%a8%d7%a0%d7%95%d7%a0%d7%94-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2025-02-02",
+   "slug": "חלומות ארנונה ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%91%d7%99%d7%95%d7%a0%d7%99-%d7%a9%d7%95%d7%94%d7%9d-%d7%a9%d7%95%d7%94%d7%9d/",
+   "lastmod": "2025-02-02",
+   "slug": "סביוני שוהם שוהם"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%93%d7%a8%d7%99%d7%9d-%d7%a9%d7%95%d7%94%d7%9d/",
+   "lastmod": "2025-02-02",
+   "slug": "הדרים שוהם"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%92%d7%93%d7%a0%d7%a2-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-02-02",
+   "slug": "הגדנע תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%91%d7%99%d7%95%d7%a0%d7%99-%d7%92%d7%9c%d7%99%d7%9c-%d7%99%d7%9d-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "lastmod": "2025-02-02",
+   "slug": "סביוני גליל ים הרצליה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%9e%d7%a9%d7%aa%d7%9c%d7%94-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-02-02",
+   "slug": "המשתלה תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%94%d7%99%d7%95%d7%91%d7%9c-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2025-02-02",
+   "slug": "קריית היובל ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%95%d7%94-%d7%93%d7%95%d7%a8%d7%95%d7%9f-%d7%a8%d7%9e%d7%9c%d7%94/",
+   "lastmod": "2025-02-04",
+   "slug": "נווה דורון רמלה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%90%d7%95%d7%aa-%d7%a4%d7%a8%d7%a1-%d7%97%d7%99%d7%a4%d7%94/",
+   "lastmod": "2025-02-13",
+   "slug": "נאות פרס חיפה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%9b%d7%95%d7%a0%d7%aa-%d7%a9%d7%93%d7%95%d7%aa-%d7%91-%d7%91%d7%a0%d7%99-%d7%a2%d7%99%d7%a9/",
+   "lastmod": "2025-03-03",
+   "slug": "שכונת שדות ב בני עיש"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%9b%d7%95%d7%a0%d7%aa-%d7%a9%d7%93%d7%95%d7%aa-%d7%91%d7%a0%d7%99-%d7%a2%d7%99%d7%a9/",
+   "lastmod": "2025-03-03",
+   "slug": "שכונת שדות בני עיש"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%95%d7%9c-%d7%94%d7%aa%d7%91%d7%95%d7%a8-%d7%91-%d7%a0%d7%95%d7%a3-%d7%94%d7%92%d7%9c%d7%99%d7%9c/",
+   "lastmod": "2025-03-03",
+   "slug": "מול התבור ב נוף הגליל"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%9e%d7%a8%d7%9b%d7%96-%d7%a8%d7%95%d7%91%d7%a2-%d7%90-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-03-03",
+   "slug": "שדה דב מרכז רובע א תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%9e%d7%a8%d7%9b%d7%96-%d7%a8%d7%95%d7%91%d7%a2-%d7%91-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-03-03",
+   "slug": "שדה דב מרכז רובע ב תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%a0%d7%98%d7%9f-%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94-%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94/",
+   "lastmod": "2025-04-01",
+   "slug": "רנטן כפר יונה כפר יונה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%99%d7%99%d7%9c%d7%95%d7%9f-%d7%90-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
+   "lastmod": "2025-04-08",
+   "slug": "פארק איילון א אור יהודה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%97%d7%95%d7%a8%d7%a9%d7%aa-%d7%a0%d7%97-%d7%90%d7%95%d7%a4%d7%a7%d7%99%d7%9d/",
+   "lastmod": "2025-04-08",
+   "slug": "חורשת נח אופקים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%9e%d7%aa%d7%97%d7%9d-%d7%90-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-04-08",
+   "slug": "תל השומר מתחם א רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%9e%d7%aa%d7%97%d7%9d-%d7%91-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-04-08",
+   "slug": "שדה דב מתחם ב תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a6%d7%95%d7%9e%d7%aa-%d7%a4%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2025-04-08",
+   "slug": "צומת פת ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%95%d7%9c-%d7%94%d7%aa%d7%91%d7%95%d7%a8-%d7%a0%d7%95%d7%a3-%d7%94%d7%92%d7%9c%d7%99%d7%9c/",
+   "lastmod": "2025-04-08",
+   "slug": "מול התבור נוף הגליל"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%9e%d7%aa%d7%97%d7%9d-%d7%92-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-04-08",
+   "slug": "תל השומר מתחם ג רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%9e%d7%aa%d7%97%d7%9d-%d7%91-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-04-09",
+   "slug": "תל השומר מתחם ב רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%a2%d7%a9-%d7%94%d7%a9%d7%9c%d7%95%d7%9d-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-04-09",
+   "slug": "תעש השלום תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7-%d7%a6%d7%a4%d7%95%d7%9f-%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7/",
+   "lastmod": "2025-04-09",
+   "slug": "בני ברק צפון בני ברק"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%9e%d7%aa-%d7%94%d7%a9%d7%a8%d7%95%d7%9f-%d7%9e%d7%a2%d7%a8%d7%91-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "lastmod": "2025-04-09",
+   "slug": "רמת השרון מערב הרצליה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%91%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2025-04-09",
+   "slug": "נופי בן שמן ב׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%92-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2025-04-09",
+   "slug": "סירקין ג פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%90-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2025-04-09",
+   "slug": "סירקין א פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%95-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2025-04-09",
+   "slug": "הרובע הבינלאומי ו לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%a6%d7%a4%d7%95%d7%9f-%d7%a8%d7%95%d7%91%d7%a2-%d7%90-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-04-09",
+   "slug": "שדה דב צפון רובע א תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%a6%d7%a4%d7%95%d7%9f-%d7%a8%d7%95%d7%91%d7%a2-%d7%91-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-04-09",
+   "slug": "שדה דב צפון רובע ב תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%92%d7%91%d7%a2%d7%aa-%d7%a8%d7%9d-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2025-04-09",
+   "slug": "גבעת רם ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%9e%d7%a9%d7%aa%d7%9c%d7%94-%d7%91-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2025-04-09",
+   "slug": "המשתלה ב תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%90%d7%92%d7%9e%d7%99%d7%9d-%d7%9e%d7%aa%d7%97%d7%9d-%d7%91-%d7%90%d7%a9%d7%a7%d7%9c%d7%95%d7%9f/",
+   "lastmod": "2025-05-29",
+   "slug": "אגמים מתחם ב אשקלון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%a9%d7%95%d7%9c%d7%a9-%d7%94%d7%91%d7%95%d7%a8%d7%a1%d7%94-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2025-09-01",
+   "slug": "משולש הבורסה רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%a6%d7%a2%d7%99%d7%a8%d7%99%d7%9d-%d7%90%d7%a9%d7%93%d7%95%d7%93-2/",
+   "lastmod": "2025-09-01",
+   "slug": "מתחם הצעירים אשדוד 2"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%90%d7%92%d7%9e%d7%99%d7%9d-%d7%9e%d7%96%d7%a8%d7%97-%d7%90-%d7%90%d7%a9%d7%a7%d7%9c%d7%95%d7%9f/",
+   "lastmod": "2025-10-20",
+   "slug": "אגמים מזרח א אשקלון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%a9%d7%a7%d7%a4%d7%99%d7%99%d7%9d-%d7%93%d7%a8%d7%95%d7%9d-%d7%91%d7%99%d7%aa-%d7%a9%d7%9e%d7%a9/",
+   "lastmod": "2025-10-20",
+   "slug": "משקפיים דרום בית שמש"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%9c%d7%9b%d7%99%d7%a9-%d7%91-%d7%90%d7%a9%d7%93%d7%95%d7%93/",
+   "lastmod": "2025-10-20",
+   "slug": "קריית לכיש ב אשדוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2025-10-22",
+   "slug": "נופי בן שמן לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%92%d7%99%d7%91%d7%95%d7%a8%d7%99%d7%9d-%d7%97%d7%95%d7%9c%d7%95%d7%9f/",
+   "lastmod": "2025-12-07",
+   "slug": "תל גיבורים חולון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%95%d7%a8%d7%93%d7%95%d7%aa-%d7%9e%d7%9c%d7%97%d7%94-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2025-12-07",
+   "slug": "מורדות מלחה ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%97%d7%9e%d7%95%d7%9f-%d7%90%d7%99%d7%9c%d7%aa/",
+   "lastmod": "2026-02-16",
+   "slug": "שחמון אילת"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%99%d7%99%d7%9c%d7%95%d7%9f-%d7%92-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
+   "lastmod": "2026-02-16",
+   "slug": "פארק איילון ג אור יהודה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9b%d7%a8%d7%9e%d7%99-%d7%92%d7%aa-%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%92%d7%aa/",
+   "lastmod": "2026-02-16",
+   "slug": "כרמי גת קריית גת"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%90%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-02-16",
+   "slug": "הרובע הבינלאומי מתחם א׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%91-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2026-02-16",
+   "slug": "סירקין ב פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%92%d7%93%d7%9c-%d7%94%d7%a2%d7%9e%d7%a7/",
+   "lastmod": "2026-02-16",
+   "slug": "מגדל העמק"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%93%d7%94-%d7%93%d7%91-%d7%9e%d7%aa%d7%97%d7%9d-%d7%90-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2026-02-16",
+   "slug": "שדה דב מתחם א תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-02-16",
+   "slug": "הרובע הבינלאומי מתחם ה׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%91%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-02-16",
+   "slug": "הרובע הבינלאומי מתחם ב׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%a6%d7%95%d7%a2%d7%aa-%d7%94%d7%a0%d7%95%d7%a4%d7%a9-%d7%a8%d7%9e%d7%aa-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
+   "lastmod": "2026-02-16",
+   "slug": "רצועת הנופש רמת השרון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%9c%d7%9b%d7%99%d7%a9-%d7%90-%d7%90%d7%a9%d7%93%d7%95%d7%93/",
+   "lastmod": "2026-04-19",
+   "slug": "קריית לכיש א אשדוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%95%d7%a8%d7%93%d7%95%d7%aa-%d7%90%d7%a8%d7%a0%d7%95%d7%a0%d7%94-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2026-04-19",
+   "slug": "מורדות ארנונה ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%a2%d7%a8-%d7%94%d7%92%d7%99%d7%90-%d7%99%d7%a7%d7%a0%d7%a2%d7%9d/",
+   "lastmod": "2026-04-19",
+   "slug": "שער הגיא יקנעם"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%a0%d7%98%d7%9f-%d7%a0%d7%95%d7%95%d7%94-%d7%a9%d7%90%d7%a0%d7%9f-%d7%97%d7%99%d7%a4%d7%94/",
+   "lastmod": "2026-05-04",
+   "slug": "רנטן נווה שאנן חיפה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%a0%d7%98%d7%9f-%d7%9c%d7%91-%d7%a0%d7%94%d7%a8%d7%99%d7%94/",
+   "lastmod": "2026-05-04",
+   "slug": "רנטן לב נהריה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%90%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-07-16",
+   "slug": "נופי בן שמן א׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%98%d7%95%d7%a4-%d7%92%d7%9c%d7%99%d7%9c-%d7%a0%d7%95%d7%a3-%d7%94%d7%92%d7%9c%d7%99%d7%9c/",
+   "lastmod": "2026-07-16",
+   "slug": "טופ גליל נוף הגליל"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%9b%d7%9c%d7%a0%d7%99%d7%95%d7%aa-%d7%a9%d7%93%d7%a8%d7%95%d7%aa/",
+   "lastmod": "2026-07-16",
+   "slug": "הכלניות שדרות"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%aa%d7%97%d7%9d-%d7%99%d7%91-%d7%91%d7%90%d7%a8-%d7%99%d7%a2%d7%a7%d7%91-4/",
+   "lastmod": "2026-07-28",
+   "slug": "מתחם יב באר יעקב 4"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%9e%d7%a1%d7%9c%d7%95%d7%9c-%d7%90-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
+   "lastmod": "2026-08-03",
+   "slug": "קריית מסלול א הרצליה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%97%d7%a6%d7%91%d7%99%d7%9d-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "lastmod": "2026-08-11",
+   "slug": "חצבים ראשון לציון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%a6%d7%a2%d7%99%d7%a8%d7%99%d7%9d-%d7%90%d7%a9%d7%93%d7%95%d7%93/",
+   "lastmod": "2026-08-11",
+   "slug": "מתחם הצעירים אשדוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%92%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-08-16",
+   "slug": "הרובע הבינלאומי מתחם ג׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%93%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-08-16",
+   "slug": "הרובע הבינלאומי מתחם ד׳ לוד"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%9e%d7%9b%d7%91%d7%99-%d7%a8%d7%9e%d7%9c%d7%94-%d7%a8%d7%9e%d7%9c%d7%94/",
+   "lastmod": "2026-08-16",
+   "slug": "מכבי רמלה רמלה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%90%d7%95%d7%aa-%d7%90%d7%99%d7%9c%d7%a0%d7%94-%d7%91%d7%99%d7%aa-%d7%a9%d7%9e%d7%a9/",
+   "lastmod": "2026-08-16",
+   "slug": "נאות אילנה בית שמש"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a2%d7%99%d7%a8-%d7%94%d7%99%d7%99%d7%9f-%d7%90%d7%a9%d7%a7%d7%9c%d7%95%d7%9f/",
+   "lastmod": "2026-08-16",
+   "slug": "עיר היין אשקלון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%9b%d7%a1%d7%99%d7%9d/",
+   "lastmod": "2026-08-16",
+   "slug": "רכסים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%92%d7%aa-%d7%a6%d7%a4%d7%95%d7%9f-%d7%a7%d7%a8%d7%99%d7%99%d7%aa-%d7%92%d7%aa/",
+   "lastmod": "2026-08-16",
+   "slug": "קריית גת צפון קריית גת"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%91%d7%a8%d7%95%d7%a0%d7%a4%d7%9e%d7%9f-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d/",
+   "lastmod": "2026-08-16",
+   "slug": "ברונפמן ירושלים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%99%d7%9b%d7%95%d7%9f-%d7%94%d7%a8%d7%95%d7%a4%d7%90%d7%99%d7%9d-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
+   "lastmod": "2026-08-16",
+   "slug": "שיכון הרופאים רמת גן"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%99%d7%91%d7%a0%d7%94-%d7%9e%d7%96%d7%a8%d7%97-%d7%99%d7%91%d7%a0%d7%94/",
+   "lastmod": "2026-08-16",
+   "slug": "יבנה מזרח יבנה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a6%d7%99%d7%a4%d7%95%d7%a8-%d7%9e%d7%93%d7%91%d7%a8-%d7%9e%d7%a2%d7%9c%d7%94-%d7%90%d7%93%d7%95%d7%9e%d7%99%d7%9d/",
+   "lastmod": "2026-08-16",
+   "slug": "ציפור מדבר מעלה אדומים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%91%d7%99%d7%9f-%d7%94%d7%92%d7%91%d7%a2%d7%95%d7%aa-%d7%91%d7%99%d7%aa-%d7%a9%d7%9e%d7%a9/",
+   "lastmod": "2026-08-16",
+   "slug": "בין הגבעות בית שמש"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a7%d7%93%d7%9e%d7%aa-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
+   "lastmod": "2026-08-25",
+   "slug": "קדמת ראשון ראשון לציון"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%99%d7%99%d7%9c%d7%95%d7%9f-%d7%91-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
+   "lastmod": "2026-09-14",
+   "slug": "פארק איילון ב אור יהודה"
+  }
+ ]
+}
