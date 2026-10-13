@@ -94,7 +94,11 @@
   declaration state per row (declared / not yet declared / not stated); units as published (additional ≠ net in every
   row). Served by `GET /api/intel?view=renewal|renewalComplex` and shown as the "התחדשות עירונית" tab of `#intel`. A
   declared complex is not construction and is never attributed to a developer; `data/renewal/` is bot-written (see
-  `lib/renewal/README.md`).
+  `lib/renewal/README.md`). `lib/renewal/planning*.js` + `scripts/renewal-planning-sync.js` + `test/renewal-planning.test.js`
+  = the exact XPlan join (Planning Administration online-plans layer): plan number, then the Mavat main-plan id in MoCH's
+  own link (= `mp_id`); contradicting keys → ambiguous; never by name or geometry; stage from the layer's own status
+  strings only (approval ≠ permit ≠ construction); MoCH and XPlan values side by side with every disagreement flagged;
+  `data/renewal/planning*.json` + `plan-geometry.json`; shown as the tab's planning strip and the drawer's PLANNING STATUS.
 
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —

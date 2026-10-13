@@ -35,3 +35,42 @@ project (TAMA 38 building permits are not complexes) and not a developer record.
 
 `data/renewal/complexes.json` · `meta.json` · `history.jsonl` · `sync-runs.jsonl` · `raw/` (one snapshot per content
 hash). Run locally: `node scripts/renewal-sync.js --dry-run`; offline suite: `node test/renewal.test.js`.
+
+## Planning — the exact XPlan join (`planning.js`, `planning-source.js`, `planning-store.js`)
+
+**Source.** The Planning Administration's xplan service, layer 1 "קוים כחולים-תכניות מקוונות" (`ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/Xplan/MapServer/1`,
+~37.6k plans managed online). Read daily on the runner by `scripts/renewal-planning-sync.js`, right after the complexes
+(`renewal-sync.yml`), by POST (a GET with a batch of Hebrew numbers overran the server's URL limit).
+
+**Join — exact keys only, in order.**
+
+1. The plan number MoCH prints = the layer's `pl_number`, whitespace removed on both sides (the layer writes `תמל/ 2022`
+   where MoCH writes `תמל/2022`; both spellings are asked). Nothing else is normalized.
+2. The Mavat main-plan id in MoCH's own site link = the layer's `mp_id`. Discovery (Actions run 38384097282): 687 of 687
+   complexes found by number carry a link whose id equals `mp_id`. Alone, the id joins only when MoCH prints no plan
+   number or the linked plan's number equals the printed one.
+3. Block / parcel: the layer publishes none — no parcel corroboration.
+4. Geometry: MoCH publishes no complex geometry; a spatial relation alone is never a join (kept as a diagnostic).
+
+Two keys naming different plans (number vs link, or one number naming several plans) → **ambiguous**, never a pick. A key
+asked and absent → **not found** (with a reason: local pre-online number, VATMAL number, national number, no link).
+A key never asked successfully → **not checked** (never "not found").
+
+**Stage** — from the layer's own strings only: the station (`station_desc`) → PREPARATION · SUBMITTED · PRE_DEPOSIT ·
+DEPOSITED · OBJECTIONS · APPROVAL_PROCESS · APPROVED; EFFECTIVE only when the station is approval and the latest event
+(`internet_short_status`) is the approval's publication; REJECTED on a rejection event; anything else OTHER / UNKNOWN,
+shown verbatim. The layer publishes no "cancelled" status; no stage says permit, construction start or completion.
+
+**Units.** `pq_authorised_quantity_120` is the approved state the plan starts from (equals MoCH's existing units in 615
+of 761 joined complexes); `quantity_delta_120` is the change the plan makes (equals MoCH's additional units in 500 of
+767). Their sum ("after the plan") is DERIVED. MoCH and XPlan values sit side by side; each pair says whether they differ.
+
+**Derived (labelled).** Maturity (stage ordinal 1–8), declaration → approval years (or "approved N years before the
+declaration"), deposit → approval years, unit gap, years since the layer's last update, stale planning (not approved /
+rejected and not updated > 3 years), approved without MoCH permit / execution evidence (MoCH's own columns — not proof
+that nothing was built). Sums over plans count each plan once, however many complexes reference it.
+
+**Files** (bot-written): `planning.json` (meta incl. the join summary, lookups asked, plans one per line),
+`plan-geometry.json` (boundaries, WGS84, generalized ~5 m), `planning-history.jsonl`, `planning-runs.jsonl`. Upsert on
+`mp_id`; a plan leaves only when its own lookup succeeded without it; nothing deleted. Offline suite:
+`node test/renewal-planning.test.js`.

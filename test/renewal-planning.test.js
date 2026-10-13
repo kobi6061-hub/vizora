@@ -70,13 +70,15 @@ const data = (plans, { planKeys, mavatIds } = {}) => ({ meta: { checkedAt: FETCH
     const sel = P.matchComplex(complex({ planNumber: '999-9990004', links: { site: mavat(99999005) } }), I);
     assert.equal(sel.status, 'exact'); assert.equal(sel.mpId, 99999005); assert.deepEqual(sel.evidence, ['plan-number', 'mavat-id']);
   });
-  await t('two keys pointing at different plans are AMBIGUOUS; the Mavat id alone joins and states that the numbers differ', () => {
+  await t('two keys pointing at different plans are AMBIGUOUS; the Mavat id alone joins only when MoCH prints no other number', () => {
     const a = plan({ pl_number: '999-9990006', mp_id: 99999006 }), b = plan({ pl_number: '999-9990007', mp_id: 99999007 });
     const I = P.indexOf(data([a, b]));
     const m = P.matchComplex(complex({ planNumber: '999-9990006', links: { site: mavat(99999007) } }), I);
     assert.equal(m.status, 'ambiguous'); assert.match(m.reason, /different plans/);
-    const byId = P.matchComplex(complex({ planNumber: 'גב/9', links: { site: mavat(99999007) } }), P.indexOf(data([b], { planKeys: ['גב/9', '999-9990007'] })));
-    assert.equal(byId.status, 'exact'); assert.deepEqual(byId.evidence, ['mavat-id']); assert.deepEqual(byId.planNumberDiffers, { moch: 'גב/9', xplan: '999-9990007' });
+    const conflict = P.matchComplex(complex({ planNumber: 'גב/9', links: { site: mavat(99999007) } }), P.indexOf(data([b], { planKeys: ['גב/9', '999-9990007'] })));
+    assert.equal(conflict.status, 'ambiguous', 'MoCH\'s printed number and its link name different plans'); assert.deepEqual(conflict.planNumberDiffers, { moch: 'גב/9', xplan: '999-9990007' });
+    const byId = P.matchComplex(complex({ planNumber: null, links: { site: mavat(99999007) } }), P.indexOf(data([b])));
+    assert.equal(byId.status, 'exact'); assert.deepEqual(byId.evidence, ['mavat-id'], 'no printed number: the link\'s id alone joins');
   });
   await t('not checked is never "not found": a number no successful lookup asked stays unresolved', () => {
     const I = P.indexOf({ plans: [], lookups: { planKeys: [], mavatIds: [] } });
@@ -188,7 +190,7 @@ const data = (plans, { planKeys, mavatIds } = {}) => ({ meta: { checkedAt: FETCH
       const geo = q.get('returnGeometry') === 'true';
       return { ok: true, status: 200, text: async () => JSON.stringify({ features: feats.map((a) => (geo ? { attributes: { mp_id: a.mp_id }, geometry: { rings: [[[34.8, 32], [34.81, 32], [34.81, 32.01], [34.8, 32]]] } } : { attributes: a })) }) };
     };
-    const cs = [complex({ planNumber: 'תמל/9001' }), complex({ planNumber: 'גב/77', links: { site: mavat(99999021) } })];
+    const cs = [complex({ planNumber: 'תמל/9001' }), complex({ planNumber: null, links: { site: mavat(99999021) } })];
     const got = await fetchPlanning(cs, { fetchImpl, fetchedAt: FETCHED });
     assert.deepEqual(got.plans.map((p) => p.mpId).sort(), [99999020, 99999021]); assert.equal(got.complete, true); assert.ok(got.geometry[99999020]);
     const J = P.joinAll(cs, { plans: got.plans, lookups: { planKeys: got.askedKeys, mavatIds: got.askedIds } }, { today: '2026-10-13' });
