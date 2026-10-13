@@ -79,10 +79,13 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
   ((1 − w)·base IRR + w·downside IRR) and always says why.
 * Every default is labelled as an assumption until edited.
 * Capital at risk is the peak cumulative outflow; for HYBRID it is the larger of that, the maximum commitment, and
-  capital + backstop price + option price. When a scenario funds nothing (a backstop that is not called), IRR and MOIC
-  are stated on the committed capital and labelled so — never as a −100% loss.
+  capital + backstop price + option price. When a scenario funds no capital (a backstop that is not called — legal and
+  monitoring costs are not capital), IRR and MOIC are stated on the committed capital and labelled so — never as a
+  −100% loss; when capital is funded but the flows have no IRR (NPV positive at every rate), the IRR is stated on the
+  committed capital and labelled so.
 * Known limits of the maths: a series that changes sign more than once (fee in, inventory bought, inventory resold) can
-  have more than one IRR; the engine reports the root its bracketed search finds, while profit and MOIC are unambiguous.
+  have more than one IRR; the engine solves every root on a grid over ln(1 + r) and reports the one nearest 0%, while
+  profit and MOIC are unambiguous.
   In the FINANCE / HYBRID upside a negative delay means earlier repayment, so profit in shekels can be lower than the
   base while IRR is higher.
 
@@ -105,11 +108,24 @@ written from the engine as implemented; the engine stays the source of truth and
 * **Exports.** IC and full PDFs keep their pages and add a one-line footer; an optional methodology appendix
   ("ALTARIS Metric Conventions") follows the report (checkbox next to the export buttons, on by default). Excel gains a
   last sheet "Metric Conventions" and CSV a last section — the existing sheets are unchanged. JSON exports and every
-  saved version carry the methodology id (`altaris-metric-methodology-v1`); versions saved before it read "not stamped".
+  saved version carry the methodology id (now `altaris-metric-methodology-v2`; versions saved under v1 keep showing
+  `altaris-metric-methodology-v1`); versions saved before it read "not stamped".
 * **Versioning.** `VERSION.engine` pins the engine version and the sha256 of `altaris/engine.js`; a test fails when the
   engine changes until the methodology is reviewed and re-stamped. `test/fixtures/altaris-baseline.json` freezes the
   engine outputs of six deals × two fund settings and a portfolio (sha256 of each full result + headline figures);
   the tests prove they are reproduced bit for bit.
+* **v2 (13.10.2026, engine 2).** After the independent engine review: IRR picks the root nearest 0% on ln(1 + r) when a
+  series has several (never a −100% stand-in for a profitable deal) and has no upper search cap; HYBRID is measured on
+  committed capital whenever it funds no capital (legal / monitoring costs are not capital) or its funded flows have no
+  IRR — `irrBasisOf(result)` names the basis and the page labels it; the default month (when not set) is the first
+  principal payment due (bullet maturity, amortizing first instalment, HYBRID window start) and HYBRID keeps payments
+  made before it; the FINANCE extension fee is on the principal outstanding at maturity, a repaid loan is not extended,
+  the extension-rate default is the contract rate + 2 pp; the full-claim break-even uses the claim at recovery; WAL is
+  over the principal repaid; the HYBRID option is exercised when it raises profit and option / backstop prices reach the
+  waterfall when paid; a participation without a threshold is a missing input; BUY sources & uses include a loan repaid
+  from equity; stresses, solvers, the extension case and the attribution start from the deal's own base scenario; the
+  portfolio concentration context repeats until stable and unnamed developers / localities are not one counterparty.
+  `MD.CHANGES` lists the same in both languages; the baseline fixture was regenerated (its `generatedWith.note` says so).
 
 ## Investment cases (illustrative, synthetic)
 

@@ -326,6 +326,171 @@ t('page: the structure to execute survives reload / open / import; a late market
   assert.match(APP_SRC, /note: 'עותק העבודה מהקובץ'/);
 });
 
+/* ------------------------------------------------------------------------------------------------
+ * The independent engine review of 13.10.2026 (engine v2 · methodology v2): one gate per confirmed
+ * finding, built from the reviewer's own reproductions, plus the follow-on corrections.
+ * ---------------------------------------------------------------------------------------------- */
+console.log('altaris: engine review 13.10.2026');
+const CASES_V2 = require('../altaris/cases.js').CASES;
+const caseDeal = (id) => JSON.parse(JSON.stringify(CASES_V2.find((c) => c.id === id).deal));
+const npvAt = (r, rate) => { const d0 = r.dated[0].date; return r.dated.reduce((s, f) => s + f.amount / Math.pow(1 + rate, A.daysBetween(d0, f.date) / 365), 0); };
+const scenAll = (deal) => [A.scenario(deal, 'base'), A.scenario(deal, 'downside'), A.scenario(deal, 'upside')]
+  .concat(A.STRESS.map((s) => Object.assign({}, A.SCEN_DEF.base, s, { name: s.id, collateralShock: s.valueShock != null ? s.valueShock : null })));
+t('#1 IRR: a profitable series ending in small negative months reports the root nearest 0%, never a −100% stand-in', () => {
+  const d = caseDeal('hagefen-renewal'); d.hybrid.salesSpreadMonths = 12;
+  const b = A.run(d, {}, { today: TODAY }).strategies.hybrid.base;
+  near(b.profit, 3039124, 1); near(b.irr, 0.1178, 5e-4); assert.equal(A.irrBasisOf(b), 'xirr');
+  near(npvAt(b, b.irr), 0, 1e-6 * b.invested, 'NPV at the reported IRR');
+  near(A.xirr([{ date: '2025-01-01', amount: -100 }, { date: '2026-01-01', amount: 230 }, { date: '2027-01-01', amount: -132 }]), 0.1, 1e-9, 'textbook two-root series');
+  /* the reviewer's sweep: the five cases × every sales spread × base, downside, upside and 8 stresses (385 results) */
+  let n = 0;
+  for (const c of CASES_V2) for (const k of [0, 3, 6, 9, 12, 15, 18]) {
+    const dd = JSON.parse(JSON.stringify(c.deal)); dd.hybrid.salesSpreadMonths = k;
+    const F = A.facts(dd, TODAY), i = A.resolve('hybrid', dd, F).inputs;
+    for (const sc of scenAll(dd)) {
+      const r = A.hybridModel(F, i, sc); n++;
+      if (Math.abs(r.profit) > 1) assert.equal(Math.sign(A.irrOf(r)), Math.sign(r.profit), `${c.id} spread ${k} ${sc.name}: IRR ${A.irrOf(r)} vs profit ${r.profit}`);
+      if (A.irrBasisOf(r) === 'xirr' && r.irr > -0.9999) near(npvAt(r, r.irr), 0, 1e-6 * Math.max(1, r.invested), `${c.id} spread ${k} ${sc.name} NPV`);
+    }
+  }
+  assert.equal(n, 385);
+});
+t('#2 a backstop-only structure with legal and monitoring costs is measured on its commitment, not on those costs', () => {
+  const d = caseDeal('ganei-hapark');
+  d.hybrid = { structure: 'backstop', backstopPrice: 20500000, backstopUnsoldPct: 0, termMonths: 24, legal: 80000, monitoring: 3500, haircutPct: 20, priorLiens: 12000000 };
+  const b = A.run(d, {}, { today: TODAY }).strategies.hybrid.base;
+  near(b.profit, 246000, 0.01); assert.equal(b.funded, 0); assert.equal(b.irr, null); assert.equal(b.moic, null);
+  assert.equal(A.irrBasisOf(b), 'commitment');
+  near(A.irrOf(b), Math.pow(1 + 246000 / 20500000, 12 / 24) - 1, 1e-12); near(A.moicOf(b), 1 + 246000 / 20500000, 1e-12);
+  d.hybrid.legal = 500000; d.hybrid.monitoring = 0;   // legal above the ₪410,000 fee: a small loss
+  const l = A.run(d, {}, { today: TODAY }).strategies.hybrid.base;
+  assert.ok(l.profit < 0 && A.irrOf(l) < 0 && A.irrOf(l) > -0.01, `a small loss on the commitment, not −100%: ${A.irrOf(l)}`);
+  near(A.irrOf(l), Math.pow(1 + l.profit / 20500000, 12 / 24) - 1, 1e-12);
+});
+t('#3 a called backstop whose fee came first has no IRR: shown on committed capital, never −100%', () => {
+  const d = caseDeal('park-18'); d.hybrid = { structure: 'backstop', monitoring: 0, legal: 0, backstopUnsoldPct: 20 };
+  const R = A.run(d, {}, { today: TODAY }), b = R.strategies.hybrid.base;
+  near(b.profit, 1546451, 1); assert.ok(b.funded > 0); assert.equal(b.irr, null);
+  for (let r = -0.99; r < 100; r = r < 1 ? r + 0.01 : r * 1.1) assert.ok(npvAt(b, r) > 0, 'NPV positive at every rate');
+  assert.equal(A.irrBasisOf(b), 'commitment-no-irr');
+  near(A.irrOf(b), Math.pow(1 + b.profit / b.maxAtRisk, 12 / b.months) - 1, 1e-12); assert.ok(A.irrOf(b) > 0);
+  near(A.moicOf(b), b.distributions / b.invested, 1e-12, 'capital was invested: MOIC stays on it');
+  assert.ok(R.signal.ranking.find((x) => x.k === 'hybrid').bIrr > 0);
+});
+t('#4 amortizing FINANCE: no extension fee on repaid principal, a delay never raises the IRR, the default hits the first instalment', () => {
+  const d = caseDeal('hanassi-42'); d.finance.repayment = 'amortizing';
+  const s = A.run(d, {}, { today: TODAY }).strategies.finance, i = s.inputs;
+  assert.equal(s.extension.extFee, 0); assert.equal(s.stress.d6.extFee, 0);
+  assert.ok(A.irrOf(s.extension) <= A.irrOf(s.base) + 1e-9 && A.irrOf(s.stress.d12) <= A.irrOf(s.stress.d6) + 1e-9, 'a delay is not a windfall');
+  const rec = s.downside.recovery;
+  assert.equal(rec.defaultMonth, i.graceMonths + 1); assert.ok(rec.claimAtDefault >= i.amount, 'the whole principal is at risk');
+  /* bullet loans keep the fee on the full principal and the default at the scenario's maturity */
+  const bd = caseDeal('hanassi-42'), bs = A.run(bd, {}, { today: TODAY }).strategies.finance;
+  near(bs.extension.extFee, bs.inputs.amount * bs.inputs.extFeePct / 100, 1e-6);
+  assert.equal(bs.downside.recovery.defaultMonth, bs.inputs.termMonths + A.scenario(bd, 'downside').delay);
+  /* a loan fully repaid at maturity (nothing capitalised, no exit fee) is not lengthened by a delay */
+  const z = DEAL(); z.finance = { amount: 1.2e6, ratePct: 12, termMonths: 12, repayment: 'amortizing', exitFeePct: 0, extFeePct: 1, monitoring: 1000 };
+  const F = F0(z), zi = A.resolve('finance', z, F).inputs, z0 = A.financeModel(F, zi), z6 = A.financeModel(F, zi, base0({ delay: 6 }));
+  assert.equal(z6.months, 12); assert.equal(z6.extFee, 0); near(z6.profit, z0.profit, 1e-6); assert.equal(z6.irr, z0.irr);
+});
+t('#5 HYBRID default: by default at the start of the realization window; payments before an explicit default are kept', () => {
+  const d = { info: { startDate: '2026-11-01' }, value: { chosen: 'manual', manual: { value: 20e6 } },
+    hybrid: { structure: 'secured-upside', capital: 8e6, couponPct: 9, termMonths: 18, salesSpreadMonths: 9, participationPct: 0, priorLiens: 0, saleCostPct: 3 } };
+  const F = A.facts(d, TODAY), i = A.resolve('hybrid', d, F).inputs;
+  const r0 = A.hybridModel(F, i, base0({ default: true }));
+  assert.equal(r0.recovery.defaultMonth, 10); assert.equal(r0.principalBack, 0); near(r0.recovery.claimAtDefault, 8e6 * (1 + 0.09 / 12), 1e-6);
+  const r11 = A.hybridModel(F, i, base0({ default: true, defaultMonth: 11 }));
+  const perMonth = 20e6 * 0.97 / 9;
+  near(r11.principalBack, perMonth, 1e-6, 'the window month before the default paid'); near(r11.recovery.collateralLeft, 8 / 9, 1e-12);
+  near(r11.recovery.proceeds, 20e6 * 8 / 9 * (1 - i.haircutPct / 100) * (1 - i.enforcementCostPct / 100), 1e-6, 'sold units are no longer collateral');
+  const r15 = A.hybridModel(F, i, base0({ default: true, defaultMonth: 15 }));
+  near(r15.principalBack, 8e6, 1e-6); assert.ok(r15.recovery.claimAtDefault < 1, 'repaid in full before the default');
+});
+t('#6 a participation without a threshold is a missing input, never 0', () => {
+  const R = A.run({ finance: { amount: 5e6, collateralValue: 1e7 }, hybrid: { capital: 5e6, realizationValue: 1e7, participationPct: 20 } }, {}, { today: TODAY });
+  assert.equal(R.strategies.hybrid.base.ok, false); assert.ok(R.strategies.hybrid.base.missing.includes('hybrid.threshold'));
+  assert.ok(APP_SRC.includes("'hybrid.threshold':"), 'the page names the missing input');
+  const R0 = A.run({ finance: { amount: 5e6, collateralValue: 1e7 }, hybrid: { capital: 5e6, realizationValue: 1e7, participationPct: 0 } }, {}, { today: TODAY });
+  assert.ok(R0.strategies.hybrid.base.ok, 'no participation → no threshold needed');
+});
+t('#7 very large IRRs are found (no −100% for a one-month 17x), and the max-price solver works for a one-month exit', () => {
+  const d = { info: { startDate: '2026-11-01' }, value: { chosen: 'manual', manual: { value: 10e6 } }, buy: { price: 500000, exitMonth: 1 } };
+  const s = A.run(d, {}, { today: TODAY }).strategies.buy;
+  assert.ok(s.base.irr > 1e12 && A.irrBasisOf(s.base) === 'xirr'); near(Math.pow(1 + s.base.irr, 30 / 365), s.base.moic, 1e-7 * s.base.moic);
+  assert.ok(s.limits.maxPrice > 0); near(A.buyModel(A.facts(d, TODAY), Object.assign({}, s.inputs, { price: s.limits.maxPrice })).irr, 0.15, 1e-4);
+  const day = A.xirr([{ date: '2026-01-01', amount: -100 }, { date: '2026-01-02', amount: 200 }]);
+  near(day, Math.pow(2, 365) - 1, 1e-6 * Math.pow(2, 365));
+});
+t('#8 FINANCE full-claim break-even: at that collateral value a default recovers the whole claim', () => {
+  for (const id of ['hanassi-42', 'park-18']) {
+    const d = caseDeal(id), s = A.run(d, {}, { today: TODAY }).strategies.finance, F = A.facts(d, TODAY);
+    const at = A.financeModel(F, Object.assign({}, s.inputs, { collateralValue: s.base.breakEvenCollateralFull }), base0({ default: true }));
+    near(at.recovery.recovered, at.recovery.claim, 1e-6 * at.recovery.claim, id); near(at.recovery.rate, 1, 1e-9, id);
+  }
+});
+t('#9 the extension rate left empty defaults to the contract rate + 2 pp (labelled default)', () => {
+  const R = A.run({ value: { chosen: 'manual', manual: { value: 3e7 } }, finance: { amount: 1e7, ratePct: 18 } }, {}, { today: TODAY }).strategies.finance;
+  assert.equal(R.inputs.extRatePct, 20); assert.ok(R.defaulted.includes('extRatePct'));
+  assert.equal(A.resolve('finance', DEAL(), F0()).inputs.extRatePct, 13, 'the default contract rate (11%) keeps the 13% extension default');
+});
+t('#10 the HYBRID option is exercised only when it raises profit, so profit never falls as value rises across the decision', () => {
+  const mk = (v) => ({ info: { startDate: '2026-11-01' }, value: { chosen: 'manual', manual: { value: 20e6 } },
+    hybrid: { structure: 'finance-option', capital: 10e6, couponPct: 9, optionPrice: 4.4e6, optionSharePct: 25, priorLiens: 8.8e6, termMonths: 18, realizationValue: v, collateralValue: 20e6 } });
+  const at = (v) => { const d = mk(v), F = A.facts(d, TODAY); return A.hybridModel(F, A.resolve('hybrid', d, F).inputs); };
+  let prev = -Infinity;
+  for (let v = 17e6; v <= 23e6; v += 25000) { const r = at(v); assert.ok(r.profit >= prev - 1e-6, `profit fell at ${v}: ${r.profit} < ${prev}`); prev = r.profit; }
+  const r = at(19481281), d = mk(19481281); d.hybrid.optionOn = false;
+  const no = A.hybridModel(A.facts(d, TODAY), A.resolve('hybrid', d, A.facts(d, TODAY)).inputs);
+  assert.ok(r.profit >= no.profit - 1e-6, `${r.profit} vs not exercising ${no.profit}`);
+});
+t('HYBRID: the option / backstop price ALTARIS pays reaches the waterfall only when it is paid (the realization date)', () => {
+  const d = caseDeal('coastal-portfolio-i'), F = A.facts(d, TODAY), i = A.resolve('hybrid', d, F).inputs;
+  const r = A.hybridModel(F, i), T = i.termMonths;
+  assert.ok(r.optionExercised);
+  const before = r.flows.filter((f) => f.m < T).reduce((s, f) => s + (f.parts.claim || 0), 0);
+  assert.ok(before <= r.developerNet - r.optionPaid - r.backstopPaid + 1e-6, 'repaid early with ALTARIS’ own money');
+});
+t('BUY sources & uses include a loan repaid from equity before the exit', () => {
+  const d = DEAL(); d.buy = { ltvPct: 60, loanTermMonths: 6, exitMonth: 18 };
+  const b = A.run(d, {}, { today: TODAY }).strategies.buy.base, su = b.sourcesUses;
+  assert.ok(b.earlyRepay > 0); assert.equal(su.uses.find((u) => u.k === 'earlyRepay').v, b.earlyRepay);
+  near(su.uses.reduce((s, u) => s + u.v, 0), su.total, 1e-6); near(su.sources.reduce((s, u) => s + u.v, 0), su.total, 1e-6);
+  assert.ok(APP_SRC.includes("earlyRepay: '"), 'the page labels the use');
+});
+t('WAL is taken over the principal repaid — no WAL when nothing is recovered', () => {
+  const d = DEAL(); d.finance = { amount: 3e6, priorLiens: 6e6 };
+  assert.equal(A.financeModel(F0(d), A.resolve('finance', d, F0(d)).inputs, base0({ default: true })).wal, null);
+});
+t('an imported "false" / "true" default flag is read as a boolean', () => {
+  assert.equal(A.scenario({ scen: { downside: { default: 'false' } } }, 'downside').default, false);
+  assert.equal(A.scenario({ scen: { base: { default: 'true' } } }, 'base').default, true);
+});
+t('stresses, solvers, the extension case and the attribution start from the deal’s own base scenario', () => {
+  const d = DEAL(); d.scen = { base: { delay: 3 } };
+  const R = A.run(d, {}, { today: TODAY }), b = R.strategies.buy;
+  assert.equal(b.base.months, 21); assert.equal(b.stress.d6.months, 27); assert.equal(b.stress.v10.months, 21);
+  assert.equal(R.strategies.finance.extension.termEffective, R.strategies.finance.inputs.termMonths + 3 + R.strategies.finance.inputs.extMonths);
+  assert.equal(b.attribution.base, b.base.profit);
+});
+t('portfolio: deals without a developer / locality are not one counterparty; the concentration context is stable', () => {
+  const a = DEAL(), c = DEAL(); a.info.developer = ''; c.info.developer = ''; a.info.city = ''; c.info.city = '';
+  const P = A.portfolio([{ id: 'a', deal: a, status: 'active' }, { id: 'c', deal: c, status: 'active' }], { fundSize: 1e8 }, { today: TODAY });
+  assert.equal(P.summary.byDeveloper.length, 0); assert.equal(P.summary.topDeveloperShare, null);
+  near(P.summary.unnamed.developer, P.summary.capital, 1e-6); near(P.summary.unnamed.city, P.summary.capital, 1e-6);
+});
+t('every result names its IRR basis, and irrOf follows it', () => {
+  for (const c of CASES_V2) {
+    const R = A.run(JSON.parse(JSON.stringify(c.deal)), {}, { today: TODAY });
+    for (const k of A.STRATS) for (const sc of ['base', 'downside', 'upside']) {
+      const r = R.strategies[k][sc]; if (!r || !r.ok) continue;
+      const basis = A.irrBasisOf(r);
+      assert.ok(['xirr', 'commitment', 'commitment-no-irr', 'no-irr', 'below-range', 'total-loss'].includes(basis), basis);
+      if (basis === 'xirr') assert.equal(A.irrOf(r), r.irr);
+      assert.equal(R.compare[k].irrBasis, A.irrBasisOf(R.strategies[k].base));
+    }
+  }
+});
+
 console.log('altaris: portfolio');
 t('capital-weighted IRR, exposures and expected liquidity', () => {
   const a = DEAL(), b = DEAL(); b.info = Object.assign({}, b.info, { developer: 'יזם אחר', city: 'באר שבע' }); b.selected = 'finance'; a.selected = 'buy';
@@ -452,8 +617,10 @@ t('ZERO numeric drift: every frozen engine output (6 deals × 2 fund settings + 
   assert.equal(sha256(JSON.stringify(P)), FX.portfolio.sha256, 'the portfolio output changed');
 });
 t('the methodology is versioned and pinned to this engine revision (an engine change fails here until the methodology is reviewed)', () => {
-  assert.equal(MD.VERSION.id, 'altaris-metric-methodology-v1');
-  assert.equal(MD.VERSION.label.en, 'ALTARIS Metric Methodology v1');
+  assert.equal(MD.VERSION.id, 'altaris-metric-methodology-v2');
+  assert.equal(MD.VERSION.label.en, 'ALTARIS Metric Methodology v2');
+  assert.equal(MD.VERSION.previous, 'altaris-metric-methodology-v1');
+  assert.ok(Object.isFrozen(MD.CHANGES) && MD.CHANGES.length >= 8 && MD.CHANGES.every(bi), 'what changed from v1, in both languages');
   assert.ok(Object.isFrozen(MD.VERSION));
   assert.equal(MD.VERSION.engine.version, A.VERSION);
   assert.equal(MD.VERSION.engine.sha256, sha256(fs.readFileSync(path.join(ROOT, 'altaris/engine.js'))), 'altaris/engine.js changed since the methodology was written');
@@ -636,9 +803,9 @@ t('exports: the IC page is unchanged plus a one-line footer; the appendix is opt
   assert.match(APP_SRC, /\.concat\(\[\{ title: 'Metric Conventions', rows: methodRows\(\) \}\]\)/);
   assert.match(APP_SRC, /kind: 'altaris-deal', schema: 1, methodology: MD\.VERSION\.id,/);
   assert.match(APP_SRC, /strategy: S\.R\.ic\.strategy, methodology: MD\.VERSION\.id \}\);/);
-  // the existing calculation sheets are untouched: same sheet list, same metric rows
+  // the calculation sheets: same sheet list, same metric rows (v2: the IRR row names both committed-capital cases and is followed by its basis)
   const metricRows = [...APP_SRC.matchAll(/metric\('([^']+)'/g)].map((m) => m[1]);
-  assert.deepEqual(metricRows, ['הון בסיכון', 'שיא פריסת הון', 'סך הון שהושקע', 'סך תקבולים', 'רווח לפני מס', 'IRR (על הון מחויב כשלא הושקע הון)', 'MOIC', 'ROI', 'תשואה שנתית', 'משך (חודשים)']);
+  assert.deepEqual(metricRows, ['הון בסיכון', 'שיא פריסת הון', 'סך הון שהושקע', 'סך תקבולים', 'רווח לפני מס', 'IRR (על ההון המחויב כשלא הועמד הון או שלתזרים אין IRR)', 'בסיס ה-IRR', 'MOIC', 'ROI', 'תשואה שנתית', 'משך (חודשים)']);
   const sheets = [...APP_SRC.slice(APP_SRC.indexOf('function exportXLSX()')).matchAll(/name: '([^']+)'/g)].map((m) => m[1]);
   assert.deepEqual(sheets.slice(0, 8), ['סיכום', 'עסקה', 'שווי נתמך', 'הנחות', 'תוצאות', 'מבחני לחץ', 'סיכון', 'תזרים ']);
   assert.equal(sheets[sheets.length - 1], 'Metric Conventions');

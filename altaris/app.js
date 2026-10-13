@@ -300,6 +300,7 @@
     smv: 'שווי לצורך חיתום (שלב 2)', 'buy.price': 'מחיר רכישה', 'buy.exitMonth': 'תקופת החזקה', 'buy.targetPrice': 'מחיר מכירה יעד',
     'finance.amount': 'סכום ההלוואה', 'finance.collateralValue': 'שווי הבטוחות', 'finance.termMonths': 'תקופת ההלוואה',
     'hybrid.realizationValue': 'שווי מימוש צפוי', 'hybrid.termMonths': 'מועד הטריגר', 'hybrid.capital': 'הון מושקע', 'hybrid.optionPrice': 'מחיר האופציה', 'hybrid.backstopPrice': 'מחיר ה-backstop',
+    'hybrid.threshold': 'סף ההשתתפות (שווי)',
   };
   const missingTxt = (m) => (m || []).map((k) => MISSING_HE[k] || k).join(' · ');
 
@@ -701,7 +702,16 @@
     const i = s.inputs, extra = (i.backstopOn ? E.num(i.backstopPrice) || 0 : 0) + (i.optionOn ? E.num(i.optionPrice) || 0 : 0);
     return `הגבוה מבין: התחייבות ${F.nis(b.commitment)} · הון + backstop + אופציה ${F.nis(b.capital + extra)} · שיא הפריסה ${F.nis(b.peakCapital)} = ${F.nis(E.capOf(b))}.`;
   }
-  const irrLive = (k, b) => (b && b.ok ? (b.irr == null && b.irrCommit != null ? `לא הושקע הון בתרחיש הבסיס: (1 + רווח ÷ הון בסיכון)^(12 ÷ ${b.months}) − 1, על ההון המחויב.` : `XIRR על התזרים החודשי המתוארך של ${SN[k]} · ${b.months} חודשים.`) : '');
+  /* how the IRR shown was obtained — the engine names the basis (E.irrBasisOf) */
+  const IRR_NOTE = {
+    commitment: { tag: 'על ההון המחויב (לא הועמד הון)', how: (m) => `לא הועמד הון בתרחיש (למשל backstop שלא הופעל — עלויות משפטיות ומעקב אינן הון): (1 + רווח ÷ הון בסיכון)^(12 ÷ ${m}) − 1, על ההון המחויב.` },
+    'commitment-no-irr': { tag: 'על ההון המחויב (לתזרים אין IRR)', how: (m) => `לתזרים אין IRR — הערך הנוכחי חיובי בכל שיעור (למשל עמלה שהתקבלה לפני הפעלת backstop): (1 + רווח ÷ הון בסיכון)^(12 ÷ ${m}) − 1, על ההון המחויב.` },
+    'no-irr': { tag: 'על ההון בסיכון (לתזרים אין IRR)', how: (m) => `לתזרים אין IRR — הערך הנוכחי חיובי בכל שיעור: (1 + רווח ÷ הון בסיכון)^(12 ÷ ${m}) − 1.` },
+    'below-range': { tag: 'הפסד מתחת ל-‎−99.99%', how: () => 'הפסד שה-IRR שלו נמוך מ-‎−99.99% (או שהערך הנוכחי שלו שלילי בכל שיעור): מוצג ‎−100%.' },
+    'total-loss': { tag: 'אין תקבולים', how: () => 'אין תקבולים כלל: ‎−100%.' },
+  };
+  const irrNote = (b) => (b && b.ok ? IRR_NOTE[E.irrBasisOf(b)] || null : null);
+  const irrLive = (k, b) => (b && b.ok ? (irrNote(b) ? irrNote(b).how(b.months) : `XIRR על התזרים החודשי המתוארך של ${SN[k]} · ${b.months} חודשים.`) : '');
   const moicLive = (b) => (b && b.ok ? (b.moic == null && b.moicCommit != null ? `1 + רווח ${F.nis(b.profit)} ÷ הון מחויב ${F.nis(E.capOf(b))}` : `תקבולים ${F.nis(b.distributions)} ÷ הון שהושקע ${F.nis(b.invested)}`) : '');
   /* a card label keeps its info mark on the same line as its last word when a narrow card wraps it */
   const cardLbl = (text, mark) => { const i = text.lastIndexOf(' '); return `<span class="ml">${i < 0 ? '' : esc(text.slice(0, i + 1))}<span class="nw">${esc(i < 0 ? text : text.slice(i + 1))}${mark}</span></span>`; };
@@ -762,13 +772,13 @@
 
   const BRIDGE_HE = { smv: 'שווי נתמך', haircut: 'Haircut ביציאה (מול השווי הנתמך)', exit: 'שווי יציאה צפוי', price: 'מחיר רכישה', tax: 'מס רכישה', costs: 'עלויות עסקה והשבחה',
     financing: 'מימון — ריבית ועמלות', holding: 'עלויות החזקה', rent: 'שכירות נטו', exitCosts: 'עלויות מכירה ומע״מ', profit: 'רווח חיתום לפני מס', profitTax: 'מס על הרווח', profitAfterTax: 'רווח אחרי מס' };
-  const SU_HE = { price: 'מחיר רכישה', tax: 'מס רכישה', costs: 'עלויות עסקה', fee: 'עמלות חוב', carry: 'נשיאה (ריבית ותפעול נטו)', debt: 'חוב', equity: 'הון עצמי' };
+  const SU_HE = { price: 'מחיר רכישה', tax: 'מס רכישה', costs: 'עלויות עסקה', fee: 'עמלות חוב', carry: 'נשיאה (ריבית ותפעול נטו)', earlyRepay: 'פירעון הלוואה מההון לפני היציאה', debt: 'חוב', equity: 'הון עצמי' };
 
   function kpiStrip(k, s) {
     const b = s.base, d = s.downside && s.downside.ok ? s.downside : null;
-    const cap = E.capOf(b), bi = E.irrOf(b), di = E.irrOf(d), onCommit = b.irr == null && b.irrCommit != null;
+    const cap = E.capOf(b), bi = E.irrOf(b), di = E.irrOf(d), onCommit = b.moic == null && b.moicCommit != null, note = irrNote(b);
     return `<div class="ax-kpis">${kpi('הון בסיכון', F.m(cap), cap > b.peakCapital + 1 ? `פריסה בבסיס ${F.m(b.peakCapital)}` : 'שיא החשיפה המצטברת', { m: 'capitalAtRisk', how: 'שיא היתרה השלילית המצטברת של תזרים ALTARIS — ובמבנה משולב: הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.' })}
-      ${kpi('IRR בסיס', F.pct(bi), onCommit ? 'על ההון המחויב (לא הושקע הון)' : 'XIRR לפי תאריכים', { neg: bi < 0, m: 'irr', how: onCommit ? 'בתרחיש זה לא הושקע הון (למשל backstop שלא הופעל): תשואה שנתית על ההון המחויב = (1 + רווח ÷ הון בסיכון)^(12 ÷ חודשים) − 1.' : 'שיעור התשואה הפנימי מהתזרים החודשי המתוארך (XIRR, בסיס 365 ימים), לפני מס על הרווח.' })}
+      ${kpi('IRR בסיס', F.pct(bi), note ? note.tag : 'XIRR לפי תאריכים', { neg: bi < 0, m: 'irr', how: note ? note.how('חודשים') : 'שיעור התשואה הפנימי מהתזרים החודשי המתוארך (XIRR, בסיס 365 ימים), לפני מס על הרווח.' })}
       ${kpi('IRR בתרחיש שלילי', d ? F.pct(di) : '—', d ? `רווח ${F.m(d.profit)}` : '', { neg: di < 0, m: 'scenarios', how: 'אותו תזרים תחת הנחות התרחיש השלילי (שלב 4).' })}
       ${kpi('MOIC', F.x(E.moicOf(b)), onCommit ? '1 + רווח ÷ הון מחויב' : 'תקבולים ÷ הון מושקע', { m: 'moic', how: onCommit ? `1 + רווח ${F.nis(b.profit)} ÷ הון מחויב ${F.nis(cap)}` : `סך התקבולים ${F.nis(b.distributions)} ÷ סך ההון שהושקע ${F.nis(b.invested)} = ${F.x(b.moic)}` })}
       ${kpi('רווח לפני מס', F.m(b.profit), `ROI ${F.pct(b.roi)}`, { neg: b.profit < 0, m: 'profit', how: 'סכום כל תזרימי המזומנים של ALTARIS בתרחיש הבסיס.' })}
@@ -856,9 +866,9 @@
       ${lr('שווי בטוחות לאיזון (קרן)', F.nis(b.breakEvenCollateral), { key: true, m: 'breakEven', how: `(חוב קודם + קרן) ÷ ((1 − מקדם ביטחון) × (1 − עלויות מימוש ${i.enforcementCostPct}%))` })}
       ${lr('ירידת שווי מקסימלית לפני פגיעה בקרן', F.pct(b.maxDecline), { key: true, neg: b.maxDecline < 0, how: '1 − שווי לאיזון ÷ שווי בטוחות' })}
       <div class="ax-lgt">תרחיש הארכה (${F.mo(E.num(i.extMonths))} ב-${i.extRatePct}%)${mi('extension')}</div>
-      ${ext && ext.ok ? lr('IRR · MOIC', `${F.pct(ext.irr)} · ${F.x(ext.moic)}`) + lr('רווח · משך', `${F.m(ext.profit)} · ${F.mo(ext.months)}`) : lr('הארכה', '—')}
+      ${ext && ext.ok ? lr('IRR · MOIC', `${F.pct(E.irrOf(ext))} · ${F.x(E.moicOf(ext))}`) + lr('רווח · משך', `${F.m(ext.profit)} · ${F.mo(ext.months)}`) : lr('הארכה', '—')}
       <div class="ax-lgt">תרחיש מימוש בטוחות${mi('recovery')}</div>
-      ${rec ? lr('כשל בחודש · גבייה בחודש', `${rec.defaultMonth} · ${rec.recoveryMonth}`) + lr('תביעה במועד הגבייה', F.nis(rec.claim), { how: 'הקרן והריבית שלא שולמו, צוברות ריבית חוזית עד הגבייה' }) + lr('תמורת מימוש', F.nis(rec.proceeds), { how: 'שווי בתרחיש × (1 − מקדם ביטחון) × (1 − עלויות מימוש) − חוב קודם' }) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : lr('תרחיש מימוש', '—')}
+      ${rec ? lr('כשל בחודש · גבייה בחודש', `${rec.defaultMonth} · ${rec.recoveryMonth}`) + lr('תביעה במועד הגבייה', F.nis(rec.claim), { how: 'הקרן והריבית שלא שולמו, צוברות ריבית חוזית עד הגבייה' }) + lr('תמורת מימוש', F.nis(rec.proceeds), { how: 'שווי בתרחיש × (1 − מקדם ביטחון) × (1 − עלויות מימוש) − חוב קודם' }) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(E.irrOf(rc)), { neg: E.irrOf(rc) < 0 }) : lr('תרחיש מימוש', '—')}
     </div></div>`;
     const income = C.waterfall([{ label: 'ריבית', v: b.interest - Math.max(0, 0) }, { label: 'עמלות', v: b.feeIncome }, { label: 'עלויות ALTARIS', v: -b.costs }, { label: 'חוסר בפירעון', v: -b.shortfall }].filter((x) => Math.abs(x.v) > 0.5)
       .concat(Math.abs(b.profit - (b.interest + b.feeIncome - b.costs - b.shortfall)) > 1 ? [{ label: 'ריבית בתקופת מימוש', v: b.profit - (b.interest + b.feeIncome - b.costs - b.shortfall) }] : []).concat([{ label: 'סך ההכנסה', v: b.profit, total: true }]),
@@ -875,7 +885,7 @@
       ${lr('השתתפות ברווח', F.nis(b.participation), { how: `${i.participationPct}% × (שווי מימוש ${F.nis(b.realization)} − סף ${F.nis(i.threshold)}), עד גובה התמורה שנותרה אחרי התביעה` })}
       ${b.optionExercised || b.backstopPaid ? lr('אופציה / backstop נטו', F.nis(b.optionResale - b.optionPaid + b.backstopResale - b.backstopPaid), { m: 'contingent' }) : ''}
       ${lr('תשואה משולבת (רווח)', F.nis(b.profit), { key: true, tot: true, neg: b.profit < 0, m: 'profit' })}
-      ${lr(b.irr == null && b.irrCommit != null ? 'IRR על ההון המחויב' : 'IRR', F.pct(E.irrOf(b)), { key: true, m: 'irr' })}${lr('MOIC', F.x(E.moicOf(b)), { key: true, m: 'moic' })}
+      ${lr(irrNote(b) && b.irrCommit != null ? 'IRR על ההון המחויב' : 'IRR', F.pct(E.irrOf(b)), { key: true, m: 'irr', how: irrNote(b) ? irrNote(b).how(b.months) : undefined })}${lr('MOIC', F.x(E.moicOf(b)), { key: true, m: 'moic' })}
       ${lr('משך צפוי', F.mo(b.months))}${lr('שווי מימוש צפוי', F.nis(b.realization))}
       ${i.triggerNote ? lr('טריגרים', i.triggerNote, { txt: true }) : ''}${i.exitConditions ? lr('תנאי יציאה', i.exitConditions, { txt: true }) : ''}
     </div></div>`;
@@ -888,7 +898,7 @@
       ${lr('שווי שבו נפגעת הקרן', F.nis(be.impairmentValue), { how: 'שווי המימוש הנמוך ביותר שבו הקרן מוחזרת במלואה.' })}
       ${lr('ירידת שווי מקסימלית לפני פגיעה בהון', F.pct(be.maxDeclineBeforeImpairment), { key: true })}
       <div class="ax-lgt">גבייה בתרחיש השלילי${mi('recovery')}</div>
-      ${rec ? lr('תביעה · תמורה', `${F.m(rec.claim)} · ${F.m(rec.proceeds)}`) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : rc && rc.ok ? lr('רווח בתרחיש', F.nis(rc.profit), { neg: rc.profit < 0 }) + lr('IRR בתרחיש', F.pct(rc.irr), { neg: rc.irr < 0 }) : lr('תרחיש', '—')}
+      ${rec ? lr('תביעה · תמורה', `${F.m(rec.claim)} · ${F.m(rec.proceeds)}`) + lr('שיעור גבייה', F.pct(rec.rate), { key: true }) + lr('פגיעה בקרן', F.nis(rec.principalLoss), { neg: rec.principalLoss > 0 }) + lr('IRR בתרחיש', F.pct(E.irrOf(rc)), { neg: E.irrOf(rc) < 0 }) : rc && rc.ok ? lr('רווח בתרחיש', F.nis(rc.profit), { neg: rc.profit < 0 }) + lr('IRR בתרחיש', F.pct(E.irrOf(rc)), { neg: E.irrOf(rc) < 0 }) : lr('תרחיש', '—')}
     </div></div>`;
     const parts = [{ label: 'עמלות', v: b.fee }, { label: 'קופונים', v: b.coupons }, { label: 'תשואה מועדפת', v: b.prefPaid }, { label: 'השתתפות ברווח', v: b.participation },
       { label: 'אופציה / backstop נטו', v: b.optionResale - b.optionPaid + b.backstopResale - b.backstopPaid }, { label: 'חוסר בפירעון', v: -b.shortfall }].filter((x) => Math.abs(x.v) > 0.5);
@@ -908,7 +918,7 @@
     { k: 'opexChg', l: 'שינוי בעלויות התפעול', u: '%', who: 'BUY' },
     { k: 'collateralShock', l: 'שינוי בשווי הבטוחות', u: '%', who: 'FINANCE · HYBRID', ph: '= שווי' },
     { k: 'default', l: 'כשל הלווה ומימוש בטוחות', u: '', who: 'FINANCE · HYBRID', bool: true },
-    { k: 'defaultMonth', l: 'חודש הכשל', u: 'ח׳', who: 'FINANCE · HYBRID', ph: 'בפירעון' },
+    { k: 'defaultMonth', l: 'חודש הכשל', u: 'ח׳', who: 'FINANCE · HYBRID', ph: 'בתשלום הקרן הראשון' },
     { k: 'enforcementMonths', l: 'משך מימוש', u: 'ח׳', who: 'FINANCE · HYBRID', ph: 'מההנחות' },
     { k: 'enforcementCostPct', l: 'עלויות מימוש', u: '%', who: 'FINANCE · HYBRID', ph: 'מההנחות' },
     { k: 'backstopUnsoldPct', l: 'מלאי לא מכור (backstop)', u: '%', who: 'HYBRID', ph: 'מההנחות' },
@@ -1083,7 +1093,7 @@
       ['ציון סיכון', (c) => (c.risk != null ? c.risk + ' / 100' : '—'), 'RISK SCORE'],
       ['ספי קרן', (c) => `${c.hurdlesPassed}/${c.hurdlesTotal} מתקיימים`, 'FUND HURDLES'],
     ];
-    const HOWS = { 'הון נדרש': 'ההון ש-ALTARIS מסכנת: שיא הפריסה המצטברת בתרחיש הבסיס; במבנה משולב — הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.', 'IRR בסיס': 'XIRR על התזרים המתוארך. כשבתרחיש לא הושקע הון (backstop שלא הופעל) — תשואה שנתית על ההון המחויב.', 'מרווח ביטחון': 'BUY: ירידת שווי מקסימלית מהשווי הנתמך לפני הפסד. FINANCE: ירידת שווי בטוחות לפני פגיעה בקרן. HYBRID: ירידת שווי מימוש לפני פגיעה בהון.',
+    const HOWS = { 'הון נדרש': 'ההון ש-ALTARIS מסכנת: שיא הפריסה המצטברת בתרחיש הבסיס; במבנה משולב — הגבוה מבין השיא, ההתחייבות המקסימלית, וההון + backstop + מחיר האופציה.', 'IRR בסיס': 'XIRR על התזרים המתוארך. כשבתרחיש לא הועמד הון (backstop שלא הופעל), או שלתזרים אין IRR — תשואה שנתית על ההון המחויב.', 'מרווח ביטחון': 'BUY: ירידת שווי מקסימלית מהשווי הנתמך לפני הפסד. FINANCE: ירידת שווי בטוחות לפני פגיעה בקרן. HYBRID: ירידת שווי מימוש לפני פגיעה בהון.',
       'כיסוי בטוחות': 'FINANCE / HYBRID: (שווי × (1 − מקדם ביטחון) − שעבודים קודמים) ÷ חשיפה. BUY: ALTARIS בעלים — שווי נתמך ÷ בסיס כולל.',
       'תלות ביציאה': 'החלק מסך התקבולים שמגיע באירוע הנזילות האחרון. גבוהה ≥ 85% · בינונית ≥ 60%.', 'נזילות': 'לפי משך: עד 12 חודשים גבוהה · עד 24 בינונית · מעל נמוכה.',
       'מהירות הון': '12 ÷ משך בחודשים', 'הגנה בתרחיש שלילי': 'רווח (או הפסד) בתרחיש השלילי, ושיעור הגבייה כשיש מימוש בטוחות.' };
@@ -1436,7 +1446,7 @@
     const M = [['מדד', 'BUY · שלילי', 'BUY · בסיס', 'BUY · חיובי', 'FINANCE · שלילי', 'FINANCE · בסיס', 'FINANCE · חיובי', 'HYBRID · שלילי', 'HYBRID · בסיס', 'HYBRID · חיובי']];
     const metric = (l, f, fmt) => M.push([l].concat(E.STRATS.flatMap((k) => ['downside', 'base', 'upside'].map((sc) => { const r = R.strategies[k][sc]; const v = r && r.ok ? f(r) : null; return v == null ? '' : fmt ? { v, f: fmt } : v; }))));
     metric('הון בסיכון', (r) => E.capOf(r)); metric('שיא פריסת הון', (r) => r.peakCapital); metric('סך הון שהושקע', (r) => r.invested); metric('סך תקבולים', (r) => r.distributions); metric('רווח לפני מס', (r) => r.profit);
-    metric('IRR (על הון מחויב כשלא הושקע הון)', (r) => E.irrOf(r), 'pct'); metric('MOIC', (r) => E.moicOf(r), 'x'); metric('ROI', (r) => r.roi, 'pct'); metric('תשואה שנתית', (r) => r.annualized, 'pct'); metric('משך (חודשים)', (r) => r.months, 'n');
+    metric('IRR (על ההון המחויב כשלא הועמד הון או שלתזרים אין IRR)', (r) => E.irrOf(r), 'pct'); metric('בסיס ה-IRR', (r) => E.irrBasisOf(r)); metric('MOIC', (r) => E.moicOf(r), 'x'); metric('ROI', (r) => r.roi, 'pct'); metric('תשואה שנתית', (r) => r.annualized, 'pct'); metric('משך (חודשים)', (r) => r.months, 'n');
     const extra = [['מדד', 'BUY', 'FINANCE', 'HYBRID'],
       ['מרווח ביטחון', ...E.STRATS.map((k) => ({ v: R.strategies[k].mos, f: 'pct' }))],
       ['ציון סיכון', ...E.STRATS.map((k) => (R.strategies[k].risk ? R.strategies[k].risk.overall : ''))],

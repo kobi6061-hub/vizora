@@ -113,7 +113,8 @@
   are one rail link in `index.html` (hidden in the offline build), the rewrite and dev-server parity; it reads PROPX data
   GET-only (geo search, transactions, land, housing, market snapshot) and keeps deals / fund settings in the browser
   (`altaris:*` keys) — there is no server-side ALTARIS store yet (see `altaris/README.md`).
-  `altaris/methodology.js` = the versioned metric conventions (ALTARIS Metric Methodology v1): pure bilingual data that
+  `altaris/methodology.js` = the versioned metric conventions (ALTARIS Metric Methodology v2, engine 2 — after the 13.10.2026
+  independent engine review; `CHANGES` lists what moved from v1): pure bilingual data that
   documents the engine (never computes), pinned to the engine's sha256; the page's ⓘ marks → popover → "Metric
   Conventions" view (`#method`), the optional PDF appendix and the Excel "Metric Conventions" sheet all read it.
   `test/fixtures/altaris-baseline.json` freezes engine outputs (zero-drift gate in `test/altaris.test.js`).

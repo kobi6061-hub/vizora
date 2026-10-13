@@ -23,7 +23,7 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const VERSION = 1;
+  const VERSION = 2;   // 2: the independent review of 13.10.2026 (IRR root selection, committed-capital basis, default month, option rule)
   const STRATS = ['buy', 'finance', 'hybrid'];
   const LABEL = {
     buy: { en: 'BUY', he: 'רכישה' },
@@ -74,9 +74,17 @@
 
   /**
    * XIRR over dated flows [{date:'YYYY-MM-DD', amount}] — the annual rate r with
-   * Σ amount / (1+r)^(days/365) = 0. Newton steps inside a sign-change bracket
-   * (bisection whenever Newton leaves it). null when there is no sign change.
+   * Σ amount / (1+r)^(days/365) = 0, searched over r > −99.99%.
+   *   - one sign change in the series (in date order) → exactly one root: Newton steps inside a
+   *     sign-change bracket (bisection whenever Newton leaves it); the bracket widens until it holds
+   *     the root, however short and profitable the series;
+   *   - several sign changes → NPV can have several roots: NPV is scanned on a grid over ln(1+r),
+   *     every bracket is solved, and the root nearest 0% on that scale is reported (a late run of
+   *     small negative months must not turn a profitable series into a root near −100%).
+   * null when there is no root: no sign change in the series, a root below −99.99%, or NPV keeping
+   * one sign at every rate (metricsOf / irrOf label what is shown instead).
    */
+  const XIRR_LO = -0.9999;
   function xirr(flows) {
     const pts = flows.filter((f) => isNum(f.amount) && Math.abs(f.amount) > 1e-9 && parseISO(f.date) != null);
     if (!pts.some((f) => f.amount > 0) || !pts.some((f) => f.amount < 0)) return null;
@@ -85,20 +93,53 @@
     const scale = Math.max(...pts.map((f) => Math.abs(f.amount)));
     const f = (r) => { let s = 0; for (let i = 0; i < pts.length; i++) s += pts[i].amount / Math.pow(1 + r, ts[i]); return s; };
     const df = (r) => { let s = 0; for (let i = 0; i < pts.length; i++) s -= ts[i] * pts[i].amount / Math.pow(1 + r, ts[i] + 1); return s; };
-    let lo = -0.9999, hi = 1, flo = f(lo), fhi = f(hi);
+    /* Newton inside [lo, hi] (f(lo) and f(hi) of opposite sign) */
+    const solve = (lo, hi, flo) => {
+      let r = 0.1 > lo && 0.1 < hi ? 0.1 : (lo + hi) / 2;
+      for (let i = 0; i < 300; i++) {
+        const v = f(r);
+        if (Math.abs(v) < 1e-9 * scale) return r;
+        if ((v > 0) === (flo > 0)) { lo = r; flo = v; } else { hi = r; }
+        let nr = r - v / df(r);
+        if (!isNum(nr) || nr <= lo || nr >= hi) nr = hi - lo > 10 ? Math.expm1((Math.log1p(lo) + Math.log1p(hi)) / 2) : (lo + hi) / 2;   // a very wide bracket halves on ln(1+r)
+        if (Math.abs(nr - r) < 1e-13) return nr;
+        r = nr;
+      }
+      return r;
+    };
+    const order = ts.map((t, i) => i).sort((a, b) => ts[a] - ts[b]);
+    let changes = 0;
+    for (let j = 1; j < order.length; j++) if ((pts[order[j]].amount > 0) !== (pts[order[j - 1]].amount > 0)) changes++;
+    let lo = XIRR_LO, hi = 1, flo = f(lo), fhi = f(hi);
     for (let k = 0; flo * fhi > 0 && k < 40; k++) { hi = hi * 2 + 1; fhi = f(hi); }
-    if (!(flo * fhi <= 0)) return null;
-    let r = 0.1 > lo && 0.1 < hi ? 0.1 : (lo + hi) / 2;
-    for (let i = 0; i < 300; i++) {
-      const v = f(r);
-      if (Math.abs(v) < 1e-9 * scale) return r;
-      if ((v > 0) === (flo > 0)) { lo = r; flo = v; } else { hi = r; }
-      let nr = r - v / df(r);
-      if (!isNum(nr) || nr <= lo || nr >= hi) nr = (lo + hi) / 2;
-      if (Math.abs(nr - r) < 1e-13) return nr;
-      r = nr;
+    if (changes === 1) {
+      for (let k = 0; flo * fhi > 0 && k < 300 && isNum(fhi); k++) { hi = hi * 10; fhi = f(hi); }   // a very short, very profitable series
+      return flo * fhi <= 0 ? solve(lo, hi, flo) : null;
     }
-    return r;
+    const first = flo * fhi <= 0 ? solve(lo, hi, flo) : null;
+    /* several sign changes: NPV's sign on a grid over x = ln(1+r), scaled so no term overflows */
+    const tMax = Math.max(...ts);
+    const g = (x) => { let s = 0; for (let i = 0; i < pts.length; i++) s += pts[i].amount * Math.exp(x < 0 ? x * (tMax - ts[i]) : -x * ts[i]); return s; };
+    const grid = [0];
+    for (let x = 0.002; x < 60; x *= 1.06) grid.push(x);
+    for (let x = 0.002, lx = Math.log1p(XIRR_LO); x < -lx; x *= 1.06) grid.unshift(-x);
+    grid.unshift(Math.log1p(XIRR_LO));
+    let best = null;
+    for (let j = 1; j < grid.length; j++) {
+      let a = grid[j - 1], b = grid[j], ga = g(a), gb = g(b);
+      if (ga === 0) { if (best == null || Math.abs(a) < Math.abs(best[0])) best = [a, a]; continue; }
+      if (ga * gb > 0) continue;
+      const near = Math.min(Math.abs(a), Math.abs(b));
+      if (best != null && near >= Math.min(Math.abs(best[0]), Math.abs(best[1]))) continue;
+      best = [a, b];
+    }
+    if (!best) return first;
+    let [a, b] = best;
+    if (first != null && Math.log1p(first) >= a - 1e-12 && Math.log1p(first) <= b + 1e-12) return first;   // the bracketed search already found this root
+    const ra = Math.expm1(a), rb = Math.expm1(b), fa = f(ra);
+    if (isNum(fa) && isNum(f(rb)) && fa * f(rb) <= 0 && a !== b) return solve(ra, rb, fa);
+    for (let i = 0; i < 200 && b - a > 1e-15; i++) { const m = (a + b) / 2; if ((g(m) > 0) === (g(a) > 0)) a = m; else b = m; }
+    return Math.expm1((a + b) / 2);
   }
 
   /** the metrics every strategy shares, from its monthly series */
@@ -209,7 +250,7 @@
       borrowerEquity: () => null, projectCost: () => null,
       ratePct: () => 11, interestMode: () => 'current', feePct: () => 1.5, exitFeePct: () => 0.5,
       termMonths: () => 12, graceMonths: () => 0, repayment: () => 'bullet',
-      extMonths: () => 6, extRatePct: () => 13, extFeePct: () => 0.5,
+      extMonths: () => 6, extRatePct: (F, i) => (isNum(i.ratePct) ? i.ratePct : 11) + 2, extFeePct: () => 0.5,
       legal: () => 0, monitoring: () => 0, saleCostPct: () => 3,
       enforcementMonths: () => 12, enforcementCostPct: () => 7,
       sourcePrimary: () => 'apartment-sales', sourceSecondary: () => 'bank-refinancing',
@@ -280,7 +321,7 @@
   function scenario(deal, name) {
     const s = Object.assign({}, SCEN_DEF[name] || SCEN_DEF.base);
     const user = (deal && deal.scen && deal.scen[name]) || {};
-    for (const k of SCEN_KEYS) if (user[k] !== undefined && user[k] !== null && user[k] !== '') s[k] = user[k];
+    for (const k of SCEN_KEYS) if (user[k] !== undefined && user[k] !== null && user[k] !== '') s[k] = k === 'default' ? user[k] === true || user[k] === 'true' || user[k] === 1 : user[k];
     s.name = name;
     return s;
   }
@@ -358,7 +399,7 @@
     if (profitTax > 0) bridge.push({ k: 'profitTax', v: -profitTax }, { k: 'profitAfterTax', v: M.profit - profitTax, total: true });
     const check = F.smv - (F.smv - exitGross) - price - tax - costs - financing - opexTotal + rentTotal - (sellCosts + vat);
     const carry = Math.max(0, interestPaid + opexTotal - rentTotal);
-    const usesTotal = price + tax + costs + fee + carry;
+    const usesTotal = price + tax + costs + fee + carry + earlyRepay;   // a loan maturing before the exit is repaid from equity
     const slope = 1 - sellPct - vatShare;
     const breakEvenExit = slope > 0 ? exitGross - M.profit / slope : null;
     const allIn = price + tax + costs + financing + opexTotal - rentTotal;
@@ -371,7 +412,7 @@
       loanTerm: term, loanMaturesBeforeExit: debt > 0 && term < H, debtCapped: debtIn > debt + 0.5,
       bridge, bridgeCheck: check,
       sourcesUses: {
-        uses: [{ k: 'price', v: price }, { k: 'tax', v: tax }, { k: 'costs', v: costs }, { k: 'fee', v: fee }, { k: 'carry', v: carry }],
+        uses: [{ k: 'price', v: price }, { k: 'tax', v: tax }, { k: 'costs', v: costs }, { k: 'fee', v: fee }, { k: 'carry', v: carry }].concat(earlyRepay > 0 ? [{ k: 'earlyRepay', v: earlyRepay }] : []),
         sources: [{ k: 'debt', v: Math.min(debt, usesTotal) }, { k: 'equity', v: Math.max(0, usesTotal - debt) }],
         total: usesTotal,
       },
@@ -386,7 +427,7 @@
   }
 
   /* ============================================================= FINANCE */
-  function financeModel(F, i, sc) {
+  function financeModel(F, i, sc, inner) {
     sc = sc || SCEN_DEF.base;
     const missing = [];
     if (!(num(i.amount) > 0)) missing.push('finance.amount');
@@ -394,8 +435,8 @@
     if (!(num(i.termMonths) >= 1)) missing.push('finance.termMonths');
     if (missing.length) return { ok: false, strategy: 'finance', missing };
     const amount = +i.amount, T0 = Math.max(1, Math.round(+i.termMonths));
-    const T = Math.max(1, T0 + Math.round(n0(sc.delay)));
-    const r = n0(i.ratePct) / 100 / 12, rExt = (num(i.extRatePct) ?? n0(i.ratePct)) / 100 / 12;
+    let T = Math.max(1, T0 + Math.round(n0(sc.delay)));
+    const r = n0(i.ratePct) / 100 / 12, rExt = (num(i.extRatePct) ?? n0(i.ratePct) + 2) / 100 / 12;
     const grace = clamp(Math.round(n0(i.graceMonths)), 0, T0);
     const fee = amount * n0(i.feePct) / 100, exitFee = amount * n0(i.exitFeePct) / 100;
     const prior = n0(i.priorLiens);
@@ -407,20 +448,24 @@
     const E = Math.max(0, Math.round(sc.enforcementMonths != null && sc.enforcementMonths !== '' ? n0(sc.enforcementMonths) : n0(i.enforcementMonths)));
     const inst = i.repayment === 'amortizing' ? amount / Math.max(1, T0 - grace) : 0;
     const def = !!sc.default;
-    const D = def ? clamp(Math.round(sc.defaultMonth != null && sc.defaultMonth !== '' ? n0(sc.defaultMonth) : T), 1, T) : null;
+    /* default month (when not set): the first month a principal payment falls due — a bullet loan's maturity in the
+       scenario (term + delay), an amortizing loan's first instalment */
+    const D = def ? clamp(Math.round(sc.defaultMonth != null && sc.defaultMonth !== '' ? n0(sc.defaultMonth) : inst ? grace + 1 : T), 1, T) : null;
     const flows = [{ m: 0, amount: -amount + fee - n0(i.legal), parts: { advance: -amount, fee, legal: -n0(i.legal) } }];
-    let bal = amount, acc = 0, interest = 0, extFee = 0, balMonths = 0, walNum = 0;
-    const end = def ? D : T;
+    let bal = amount, acc = 0, interest = 0, extFee = 0, balMonths = 0, walNum = 0, repaid = 0;
+    let end = def ? D : T;
     for (let m = 1; m <= end; m++) {
+      if (!def && m === T0 + 1 && bal + acc + exitFee <= 1e-9) { T = end = T0; break; }   // fully repaid at maturity: nothing left to delay
       const p = {}; let a = 0;
       const rate = m > T0 ? rExt : r;
       const it = (bal + acc) * rate;   // capitalised (grace / accrued) interest is part of the claim and earns interest
       interest += it; balMonths += bal;
       const missed = def && m === D;
       if (i.interestMode === 'accrued' || m <= grace || missed) acc += it; else { a += it; p.interest = it; }
-      if (!missed && inst && m > grace && m <= T0 && bal > 0) { const x = Math.min(inst, bal); a += x; p.principal = x; bal -= x; walNum += x * m; }
+      if (!missed && inst && m > grace && m <= T0 && bal > 0) { const x = Math.min(inst, bal); a += x; p.principal = x; bal -= x; walNum += x * m; repaid += x; }
       if (n0(i.monitoring)) { a -= n0(i.monitoring); p.monitoring = -n0(i.monitoring); }
-      if (!def && m === T0 + 1 && T > T0 && n0(i.extMonths) > 0) { extFee = amount * n0(i.extFeePct) / 100; a += extFee; p.extFee = extFee; }
+      /* the extension fee is charged on the principal still outstanding at maturity (all of it for a bullet loan) */
+      if (!def && m === T0 + 1 && T > T0 && n0(i.extMonths) > 0 && bal > 0) { extFee = bal * n0(i.extFeePct) / 100; a += extFee; p.extFee = extFee; }
       flows.push({ m, amount: a, parts: p });
     }
     let paid = 0, claim, shortfall = 0, recovery = null, proceeds;
@@ -429,7 +474,7 @@
       proceeds = Math.max(0, Vc * (1 - n0(i.saleCostPct) / 100) - prior);
       paid = Math.min(claim, proceeds); shortfall = claim - paid;
       const L = flows[T]; L.amount += paid; L.parts.repayment = paid;
-      walNum += Math.min(bal, paid) * T;
+      walNum += Math.min(bal, paid) * T; repaid += Math.min(bal, paid);
     } else {
       const claimD = bal + acc + exitFee;
       claim = claimD * Math.pow(1 + r, E);                // the claim keeps accruing at the contract rate until recovery
@@ -438,7 +483,7 @@
       for (let m = D + 1; m <= D + E; m++) flows.push({ m, amount: 0, parts: {} });
       const L = flows[D + E]; L.amount += paid; L.parts.recovery = paid;
       recovery = { defaultMonth: D, recoveryMonth: D + E, claimAtDefault: claimD, claim, proceeds, recovered: paid, rate: claim > 0 ? paid / claim : null, loss: shortfall, principalLoss: Math.max(0, bal - paid) };
-      walNum += Math.min(bal, paid) * (D + E);
+      walNum += Math.min(bal, paid) * (D + E); repaid += Math.min(bal, paid);
     }
     const M = metricsOf(flows, F.t0);
     M.atRisk = M.peakCapital;
@@ -447,14 +492,17 @@
     const conservative = V * (1 - h);
     const den = (1 - h) * (1 - eCost);
     const beP = den > 0 ? (prior + amount) / den : null;
-    const beFull = den > 0 ? (prior + expBase) / den : null;
+    /* full claim = the claim a default carries at recovery (unpaid interest of the default month and the enforcement accrual
+       included) — on this scenario's default path, or on the default path a default in this scenario would take */
+    const claimRec = def ? recovery.claim : inner ? null : (financeModel(F, i, Object.assign({}, sc, { default: true }), true).recovery || {}).claim;
+    const beFull = den > 0 && claimRec != null ? (prior + claimRec) / den : null;
     return {
       ok: true, strategy: 'finance', scenario: sc.name || null, flows, months: M.months, ...M,
       amount, term: T0, termEffective: T, fee, exitFee, extFee, interest, feeIncome: fee + exitFee + extFee,
       costs: n0(i.legal) + n0(i.monitoring) * end,
       income: M.profit,
       simpleYield: balMonths > 0 ? M.profit / (balMonths / 12) : null,
-      wal: amount > 0 ? walNum / amount : null,
+      wal: repaid > 0 ? walNum / repaid : null,   // principal-weighted over the principal actually repaid; none repaid → no WAL
       claim, paid, shortfall, proceeds, recovery, defaulted: def,
       collateral: V, collateralStressed: Vc, haircut: h, conservative, priorLiens: prior, exposure: expBase,
       ltv: V > 0 ? (prior + amount) / V : null,
@@ -475,11 +523,13 @@
   }
 
   /* ============================================================== HYBRID */
-  function hybridModel(F, i, sc) {
+  /* ex: the option decision when it is being compared (true / false); undefined = decide here */
+  function hybridModel(F, i, sc, ex) {
     sc = sc || SCEN_DEF.base;
     const missing = [];
     const capital = n0(i.capital);
     if (!(num(i.realizationValue) > 0)) missing.push('hybrid.realizationValue');
+    if (n0(i.participationPct) > 0 && num(i.threshold) == null) missing.push('hybrid.threshold');   // participation above an unknown threshold is not 0
     if (!(num(i.termMonths) >= 1)) missing.push('hybrid.termMonths');
     if (!(capital > 0 || i.backstopOn || i.optionOn)) missing.push('hybrid.capital');
     if (i.optionOn && !(num(i.optionPrice) > 0)) missing.push('hybrid.optionPrice');
@@ -498,25 +548,33 @@
     const fee = commit * n0(i.feePct) / 100;
     const cpn = n0(i.couponPct) / 100 / 12, pr = n0(i.prefPct) / 100 / 12;
     const def = !!sc.default && capital > 0;
-    const D = def ? clamp(Math.round(sc.defaultMonth != null && sc.defaultMonth !== '' ? n0(sc.defaultMonth) : T), 1, T) : null;
+    /* realization window: the last k months up to the realization date */
+    const k = clamp(Math.round(n0(i.salesSpreadMonths)), 0, T);
+    const realize = k > 0 ? new Set(Array.from({ length: k }, (_, j) => T - k + 1 + j)) : new Set([T]);
+    /* default month (when not set): the first month a repayment from realization falls due — the start of the window */
+    const D = def ? clamp(Math.round(sc.defaultMonth != null && sc.defaultMonth !== '' ? n0(sc.defaultMonth) : T - Math.max(1, k) + 1), 1, T) : null;
     const sale = n0(i.saleCostPct) / 100, rsCost = n0(i.resaleCostPct) / 100, rsHc = n0(i.resaleHaircutPct) / 100;
     const RS = Math.max(0, Math.round(n0(i.resaleMonths)));
-    /* option / backstop: decided at the realization date on the scenario's value */
+    /* option / backstop: decided at the realization date on the scenario's value. The option is exercised when doing so
+       raises ALTARIS' profit: the price ALTARIS pays enters the developer's waterfall, and the share it buys leaves it. */
     const share = i.optionOn ? clamp(n0(i.optionSharePct) / 100, 0, 1) : 0;
     let optEx = false, optPay = 0, optRecv = 0;
     if (!def && i.optionOn && n0(i.optionPrice) > 0) {
-      const resale = V * share * (1 - rsHc) * (1 - rsCost);
-      if (resale > n0(i.optionPrice)) { optEx = true; optPay = n0(i.optionPrice); optRecv = resale; }
+      if (ex === undefined) {
+        const yes = hybridModel(F, i, sc, true), no = hybridModel(F, i, sc, false);
+        return yes.profit > no.profit ? yes : no;
+      }
+      if (ex) { optEx = true; optPay = n0(i.optionPrice); optRecv = V * share * (1 - rsHc) * (1 - rsCost); }
     }
     const uRaw = sc.backstopUnsoldPct != null && sc.backstopUnsoldPct !== '' ? n0(sc.backstopUnsoldPct) : n0(i.backstopUnsoldPct);
     const u = i.backstopOn && !def ? clamp(uRaw / 100, 0, 1) : 0;
     const remain = 1 - (optEx ? share : 0);   // inventory ALTARIS bought through the option is no longer the developer's to sell or backstop
     const bsPay = u * n0(i.backstopPrice) * remain, bsRecv = u * V * remain * (1 - rsHc) * (1 - rsCost);
-    /* the developer's realization, net of prior liens: the waterfall ALTARIS' claim is paid from */
+    /* the developer's realization, net of prior liens: the waterfall ALTARIS' claim is paid from. Sales proceeds arrive
+       evenly over the window; the option / backstop price ALTARIS pays arrives in the month it is paid (the realization date). */
     const devSold = V * remain * (1 - u);
+    const salesNet = Math.max(0, devSold * (1 - sale) - prior);
     const N = Math.max(0, devSold * (1 - sale) + optPay + bsPay - prior);
-    const k = clamp(Math.round(n0(i.salesSpreadMonths)), 0, T);
-    const realize = k > 0 ? new Set(Array.from({ length: k }, (_, j) => T - k + 1 + j)) : new Set([T]);
     const flows = [{ m: 0, amount: -capital + fee - n0(i.legal), parts: { capital: -capital, fee, legal: -n0(i.legal) } }];
     let bal = capital, pa = 0, coupons = 0, prefPaid = 0, principalBack = 0, pool = 0, participation = 0;
     const end = def ? D : T;
@@ -526,8 +584,8 @@
       pa += (bal + pa) * pr;
       if (bal > 0 && cpn) { const c = bal * cpn; if (missed) pa += c; else { a += c; p.coupon = c; coupons += c; } }
       if (n0(i.monitoring)) { a -= n0(i.monitoring); p.monitoring = -n0(i.monitoring); }
-      if (!def && realize.has(m)) {
-        let avail = N / realize.size;
+      if (realize.has(m) && (!def || m < D)) {   // on default, payments stop in the default month
+        let avail = salesNet / realize.size + (m === T ? N - salesNet : 0);
         const x = Math.min(avail, pa); pa -= x; prefPaid += x; avail -= x;
         const y = Math.min(avail, bal); bal -= y; principalBack += y; avail -= y;
         pool += avail; a += x + y; if (x + y) p.claim = x + y;
@@ -549,11 +607,15 @@
     if (def) {
       const claimD = bal + pa;
       const claim = claimD * Math.pow(1 + cpn + pr, E);
-      const proceeds = Math.max(0, Vc * (1 - h) * (1 - eCost) - prior);
+      /* units sold in the window before the default are no longer collateral; the prior liens they repaid are gone too */
+      const left = [...realize].filter((m) => m >= D).length / realize.size;
+      const salesGross = devSold * (1 - sale);
+      const priorLeft = salesGross >= prior ? prior * left : prior - (1 - left) * salesGross;
+      const proceeds = Math.max(0, Vc * left * (1 - h) * (1 - eCost) - priorLeft);
       const rec = Math.min(claim, proceeds);
       for (let m = D + 1; m <= D + E; m++) flows.push({ m, amount: 0, parts: {} });
       const L = flows[D + E]; L.amount += rec; L.parts.recovery = rec;
-      recovery = { defaultMonth: D, recoveryMonth: D + E, claimAtDefault: claimD, claim, proceeds, recovered: rec, rate: claim > 0 ? rec / claim : null, loss: claim - rec, principalLoss: Math.max(0, capital - rec) };
+      recovery = { defaultMonth: D, recoveryMonth: D + E, claimAtDefault: claimD, claim, proceeds, recovered: rec, rate: claim > 0 ? rec / claim : null, loss: claim - rec, principalLoss: Math.max(0, bal - rec), collateralLeft: left };
       shortfall = claim - rec;
     }
     const M = metricsOf(flows, F.t0);
@@ -562,10 +624,18 @@
     const conservative = Vcoll * (1 - h);
     const maxAtRisk = Math.max(commit, capital + (i.backstopOn ? n0(i.backstopPrice) : 0) + (i.optionOn ? n0(i.optionPrice) : 0), M.peakCapital);
     M.atRisk = maxAtRisk;
-    /* nothing funded in this scenario (e.g. a backstop that is not called): IRR / MOIC on the capital committed instead */
+    /* the return on the capital committed instead of on the flows:
+       - nothing funded in this scenario (a backstop that is not called — legal and monitoring costs are not capital):
+         IRR and MOIC on the commitment;
+       - capital funded but the flows have no IRR (a fee received before the capital goes out, then repaid with a profit:
+         NPV is positive at every rate): IRR on the commitment, MOIC on the capital invested. */
+    const funded = capital + optPay + bsPay;
     const horizon = Math.max(1, M.months || T);
-    const irrCommit = M.invested <= 1e-9 && maxAtRisk > 0 ? Math.pow(Math.max(0, 1 + M.profit / maxAtRisk), 12 / horizon) - 1 : null;
-    const moicCommit = M.invested <= 1e-9 && maxAtRisk > 0 ? 1 + M.profit / maxAtRisk : null;
+    const noIrr = M.irr == null && M.invested > 0 && M.profit > 0;
+    const onCommit = maxAtRisk > 0 && (funded <= 1e-9 || noIrr);
+    const irrCommit = onCommit ? Math.pow(Math.max(0, 1 + M.profit / maxAtRisk), 12 / horizon) - 1 : null;
+    const moicCommit = onCommit && funded <= 1e-9 ? 1 + M.profit / maxAtRisk : null;
+    if (funded <= 1e-9) { M.irr = null; M.moic = null; M.roi = null; M.annualized = null; }
     return {
       ok: true, strategy: 'hybrid', scenario: sc.name || null, flows, months: M.months, ...M,
       structure: i.structure, capital, commitment: commit, fee, coupons, prefPaid, principalBack, participation,
@@ -573,7 +643,7 @@
       optionExercised: optEx, optionPaid: optPay, optionResale: optRecv, backstopPaid: bsPay, backstopResale: bsRecv,
       upside: participation + (optRecv - optPay) + (bsRecv - bsPay),
       realization: V, developerNet: N, shortfall, recovery, defaulted: def,
-      maxAtRisk, irrCommit, moicCommit, collateral: Vcoll, collateralStressed: Vc, conservative, priorLiens: prior,
+      maxAtRisk, irrCommit, moicCommit, irrBasis: onCommit ? (funded <= 1e-9 ? 'commitment' : 'commitment-no-irr') : null, funded, collateral: Vcoll, collateralStressed: Vc, conservative, priorLiens: prior,
       exposure: claimT,
       coverage: claimT > 0 ? (conservative - prior) / claimT : null,
       ltv: Vcoll > 0 ? (prior + capital + (i.backstopOn ? n0(i.backstopPrice) : 0)) / Vcoll : null,
@@ -581,10 +651,30 @@
     };
   }
 
-  const MODEL = { buy: buyModel, finance: financeModel, hybrid: hybridModel };
+  const MODEL = { buy: (F, i, sc) => buyModel(F, i, sc), finance: (F, i, sc) => financeModel(F, i, sc), hybrid: (F, i, sc) => hybridModel(F, i, sc) };
   /* the return and capital a result is judged on: IRR / MOIC on invested capital, or — when nothing is funded in that
-     scenario (a fee-only commitment) — on the capital committed; capital at risk = peak outflow, or the larger commitment */
-  const irrOf = (r) => (!r || !r.ok ? null : r.irr != null ? r.irr : r.irrCommit != null ? r.irrCommit : r.invested > 0 ? -1 : null);
+     scenario (a fee-only commitment), or the funded flows have no IRR — on the capital committed; capital at risk = peak
+     outflow, or the larger commitment. irrBasisOf names the basis:
+       xirr               the cash-flow IRR
+       commitment         HYBRID, nothing funded: (1 + profit ÷ capital at risk)^(12 ÷ months) − 1
+       commitment-no-irr  HYBRID, funded, but NPV is positive at every rate: the same formula
+       no-irr             any other profitable series without an IRR: the same formula on capital at risk
+       total-loss         nothing comes back: −100%
+       below-range        a loss whose IRR lies below −99.99% (or NPV negative at every rate): −100% */
+  function irrBasisOf(r) {
+    if (!r || !r.ok) return null;
+    if (r.irr != null) return r.irr === -1 && !(r.distributions > 1e-9) ? 'total-loss' : 'xirr';
+    if (r.irrCommit != null) return r.irrBasis || 'commitment';
+    if (!(r.invested > 0)) return null;
+    return r.profit > 0 && capOf(r) > 0 && r.months > 0 ? 'no-irr' : 'below-range';
+  }
+  function irrOf(r) {
+    const b = irrBasisOf(r);
+    if (b === 'xirr' || b === 'total-loss') return r.irr;
+    if (b === 'commitment' || b === 'commitment-no-irr') return r.irrCommit;
+    if (b === 'no-irr') return Math.pow(1 + r.profit / capOf(r), 12 / r.months) - 1;
+    return b === 'below-range' ? -1 : null;
+  }
   const moicOf = (r) => (!r || !r.ok ? null : r.moic != null ? r.moic : r.moicCommit != null ? r.moicCommit : null);
   const capOf = (r) => (!r || !r.ok ? null : r.atRisk != null ? r.atRisk : r.peakCapital);
 
@@ -601,24 +691,24 @@
     return (lo + hi) / 2;
   }
   /** BUY: the highest purchase price that still meets the IRR hurdle, and the price at zero profit */
-  function buyPriceLimits(F, i, minIrr) {
+  function buyPriceLimits(F, i, minIrr, base) {
     if (!(F.smv > 0) || !(num(i.price) > 0)) return { maxPrice: null, zeroProfitPrice: null };
     const at = (p) => {
       const j = Object.assign({}, i, { price: p });
       if (j.debtMode === 'amount') j.debtAmount = Math.min(n0(i.debtAmount), p);
-      return buyModel(F, j, SCEN_DEF.base);
+      return buyModel(F, j, base || SCEN_DEF.base);
     };
-    const irrAt = (p) => { const r = at(p); return r.ok ? (r.irr == null ? -1 : r.irr) : NaN; };
+    const irrAt = (p) => { const r = at(p); return r.ok ? irrOf(r) ?? -1 : NaN; };   // the IRR the hurdle tests
     const lo = F.smv * 0.05, hi = F.smv * 2;
     const maxPrice = bisect(irrAt, lo, hi, minIrr / 100);
     const zeroProfitPrice = bisect((p) => { const r = at(p); return r.ok ? r.profit : NaN; }, lo, hi, 0);
     return { maxPrice, zeroProfitPrice, requiredDiscount: maxPrice != null ? 1 - maxPrice / F.smv : null };
   }
   /** HYBRID: the realization value at which ALTARIS' profit is zero, and where its capital is first impaired */
-  function hybridBreakEven(F, i, unsold) {
+  function hybridBreakEven(F, i, unsold, base) {
     const V0 = num(i.realizationValue);
     if (!(V0 > 0)) return { breakEvenValue: null, impairmentValue: null };
-    const sc = Object.assign({}, SCEN_DEF.base, { backstopUnsoldPct: i.backstopOn ? unsold : null });
+    const sc = Object.assign({}, base || SCEN_DEF.base, { backstopUnsoldPct: i.backstopOn ? unsold : null });
     const at = (v) => hybridModel(F, Object.assign({}, i, { realizationValue: v, collateralValue: n0(i.collateralValue || V0) }), sc);
     const pf = (v) => { const r = at(v); return r.ok ? r.profit : NaN; };
     const be = pf(1) >= 0 ? 0 : bisect(pf, 1, V0 * 3, 0);
@@ -639,9 +729,9 @@
     finance: [['collateralShock', 'valueShock'], ['delay'], ['default', 'defaultMonth', 'enforcementMonths', 'enforcementCostPct']],
     hybrid: [['valueShock', 'collateralShock'], ['delay'], ['backstopUnsoldPct'], ['default', 'defaultMonth', 'enforcementMonths', 'enforcementCostPct']],
   };
-  function attribution(kind, F, inputs, down) {
+  function attribution(kind, F, inputs, down, start) {
     const steps = [];
-    let cur = Object.assign({}, SCEN_DEF.base, { name: 'base' });
+    let cur = Object.assign({}, start || SCEN_DEF.base, { name: 'base' });
     const base = MODEL[kind](F, inputs, cur);
     if (!base.ok) return null;
     const irrA = (r) => { const x = irrOf(r); return x == null ? -1 : x; };
@@ -875,31 +965,35 @@
   function runStrategy(kind, deal, F, settings, ctx) {
     const { inputs, defaulted } = resolve(kind, deal, F);
     const model = MODEL[kind];
-    const base = model(F, inputs, scenario(deal, 'base'));
+    /* the deal's own base scenario (as entered) is the starting point of every derived result: stresses add to it */
+    const B = scenario(deal, 'base');
+    const base = model(F, inputs, B);
     const out = { kind, inputs, defaulted, base };
     if (!base.ok) return out;
     out.downside = model(F, inputs, scenario(deal, 'downside'));
     out.upside = model(F, inputs, scenario(deal, 'upside'));
     out.stress = {};
     for (const s of STRESS) {
-      const sc = Object.assign({}, SCEN_DEF.base, s, { name: s.id, collateralShock: s.valueShock != null ? s.valueShock : null });
+      const sc = Object.assign({}, B, { name: s.id });
+      for (const k of ['valueShock', 'delay', 'rateAdd']) if (s[k] != null) sc[k] = n0(B[k]) + s[k];
+      if (s.valueShock != null) sc.collateralShock = sc.valueShock;
       out.stress[s.id] = model(F, inputs, sc);
     }
     if (kind === 'buy') {
-      out.limits = buyPriceLimits(F, inputs, settings.minIrr);
+      out.limits = buyPriceLimits(F, inputs, settings.minIrr, B);
       out.mos = base.maxHaircut;
     } else if (kind === 'finance') {
-      out.extension = model(F, inputs, Object.assign({}, SCEN_DEF.base, { name: 'extension', delay: n0(inputs.extMonths) }));
+      out.extension = model(F, inputs, Object.assign({}, B, { name: 'extension', delay: n0(B.delay) + n0(inputs.extMonths) }));
       out.recoveryCase = out.downside && out.downside.defaulted ? out.downside
         : model(F, inputs, Object.assign({}, scenario(deal, 'downside'), { default: true, name: 'recovery' }));
       out.mos = base.maxDecline;
     } else {
-      out.breakEven = hybridBreakEven(F, inputs, scenario(deal, 'downside').backstopUnsoldPct);
+      out.breakEven = hybridBreakEven(F, inputs, scenario(deal, 'downside').backstopUnsoldPct, B);
       out.recoveryCase = out.downside && out.downside.defaulted ? out.downside
         : model(F, inputs, Object.assign({}, scenario(deal, 'downside'), { default: true, name: 'recovery' }));
       out.mos = out.breakEven.maxDeclineBeforeImpairment ?? out.breakEven.maxDeclineBeforeLoss;
     }
-    out.attribution = attribution(kind, F, inputs, scenario(deal, 'downside'));
+    out.attribution = attribution(kind, F, inputs, scenario(deal, 'downside'), B);
     out.velocity = velocityOf(base, settings);
     return out;
   }
@@ -929,7 +1023,7 @@
       const exitDep = b.finalShare;
       return {
         ok: true, capital: capOf(b), peak: b.peakCapital, months: b.months, profit: b.profit, irr: irrOf(b), irrDown: irrOf(d), irrUp: irrOf(u),
-        irrBasis: b.irr == null && b.irrCommit != null ? 'commitment' : 'invested',
+        irrBasis: irrBasisOf(b),
         moic: moicOf(b), mos: s.mos, coverage: k === 'buy' ? b.valueToBasis : b.coverage, coverageKind: k === 'buy' ? 'value-to-basis' : 'collateral',
         downProfit: d ? d.profit : null, recoveryRate: d && d.recovery ? d.recovery.rate : null,
         turns: s.velocity ? s.velocity.turnsPerYear : null, exitDependency: exitDep,
@@ -1007,13 +1101,21 @@
     const settings = settingsOf(userSettings);
     const live = (items || []).filter((x) => x && x.deal && !x.archived && x.status !== 'declined' && x.status !== 'exited');
     const pick = (x, r) => (x.deal.selected && r.strategies[x.deal.selected] && r.strategies[x.deal.selected].base.ok ? x.deal.selected : r.signal.strategy || r.ic.strategy);
-    /* pass 1: each deal's capital at risk on its own; pass 2: each deal judged with the others as its concentration context */
-    const first = live.map((x) => { const r = run(x.deal, settings, { today: ctx.today }); const k = pick(x, r); return { x, r, k }; });
-    const others = first.map(({ x, r, k }) => ({ id: x.id, developer: r.facts.developer, project: r.facts.project, city: r.facts.city, capital: k ? capOf(r.strategies[k].base) : 0 }));
-    const pre = first.map(({ x }) => {
-      const r = run(x.deal, settings, { today: ctx.today, portfolio: others.filter((o) => o.id !== x.id) });
-      return { x, r, k: pick(x, r) };
-    });
+    /* pass 1: each deal's capital at risk on its own; then each deal judged with the others as its concentration context —
+       repeated while a deal's structure or capital still changes under that context (at most 5 passes), so no deal is
+       judged against capital the others no longer hold */
+    const capIn = ({ r, k }) => (k ? capOf(r.strategies[k].base) : 0);
+    let pre = live.map((x) => { const r = run(x.deal, settings, { today: ctx.today }); const k = pick(x, r); return { x, r, k }; });
+    for (let pass = 0; pass < 5; pass++) {
+      const others = pre.map((p) => ({ id: p.x.id, developer: p.r.facts.developer, project: p.r.facts.project, city: p.r.facts.city, capital: capIn(p) }));
+      const next = pre.map(({ x }) => {
+        const r = run(x.deal, settings, { today: ctx.today, portfolio: others.filter((o) => o.id !== x.id) });
+        return { x, r, k: pick(x, r) };
+      });
+      const stable = next.every((n, j) => n.k === pre[j].k && capIn(n) === capIn(pre[j]));
+      pre = next;
+      if (stable) break;
+    }
     const rows = pre.map(({ x, r, k }) => {
       const s = k ? r.strategies[k] : null, b = s && s.base.ok ? s.base : null;
       return {
@@ -1027,9 +1129,10 @@
     const ok = rows.filter((r) => isNum(r.capital) && r.capital > 0);
     const cap = sum(ok.map((r) => r.capital));
     const wavg = (f) => { const v = ok.filter((r) => isNum(r[f])); const c = sum(v.map((r) => r.capital)); return c > 0 ? sum(v.map((r) => r[f] * r.capital)) / c : null; };
+    /* deals without a developer / city name are not one counterparty: they stay out of the concentration lists */
     const by = (f) => {
       const m = new Map();
-      for (const r of ok) { const key = r[f] || '—'; m.set(key, (m.get(key) || 0) + r.capital); }
+      for (const r of ok) { const key = r[f]; if (key) m.set(key, (m.get(key) || 0) + r.capital); }
       return [...m.entries()].map(([key, v]) => ({ key, capital: v, share: cap > 0 ? v / cap : null, ofFund: settings.fundSize ? v / settings.fundSize : null })).sort((a, b) => b.capital - a.capital);
     };
     const today = ctx.today || iso(Date.now());
@@ -1052,6 +1155,7 @@
         byStrategy: by('strategy'), byDeveloper: by('developer'), byCity: by('city'),
         topDeveloperShare: by('developer')[0] ? by('developer')[0].share : null,
         topCityShare: by('city')[0] ? by('city')[0].share : null,
+        unnamed: { developer: sum(ok.filter((r) => !r.developer).map((r) => r.capital)), city: sum(ok.filter((r) => !r.city).map((r) => r.capital)) },
         upcoming: ok.filter((r) => r.exitDate && r.exitDate >= today).sort((a, b) => (a.exitDate < b.exitDate ? -1 : 1)).slice(0, 6)
           .map((r) => ({ id: r.id, name: r.name, exitDate: r.exitDate, strategy: r.strategy, capital: r.capital })),
         liquidity: { m3: within(3), m6: within(6), m12: within(12) },
@@ -1063,7 +1167,7 @@
 
   return {
     VERSION, STRATS, LABEL, DEF, SCEN_DEF, SCEN_KEYS, STRESS, SETTINGS_DEF, HYB_PRESET, HYB_STRUCTURES, VALUE_SOURCES, SOURCE_HE, HURDLE_HE,
-    num, clamp, interp, xirr, addMonths, daysBetween, metricsOf, irrOf, moicOf, capOf,
+    num, clamp, interp, xirr, addMonths, daysBetween, metricsOf, irrOf, irrBasisOf, moicOf, capOf,
     facts, resolve, scenario, settingsOf,
     buyModel, financeModel, hybridModel, buyPriceLimits, hybridBreakEven, attribution,
     riskOf, hurdlesOf, signalOf, velocityOf, compareRows, icOf, run, portfolio,

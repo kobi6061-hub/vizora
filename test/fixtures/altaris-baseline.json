@@ -1,10 +1,10 @@
 {
  "generatedWith": {
-  "engineVersion": 1,
+  "engineVersion": 2,
   "node": "v22.22.2",
   "today": "2026-10-12",
-  "note": "Frozen outputs of altaris/engine.js before the metric-methodology layer; the methodology work must not change any of them.",
-  "format": "inputs + sha256(JSON.stringify(engine output)) + headline figures; produced from the full outputs frozen before the methodology layer"
+  "note": "Frozen outputs of altaris/engine.js v2 — regenerated 13.10.2026 after the independent engine review (methodology v2; the v1 outputs are in git history). Every difference from v1 is an intended v2 convention: see altaris/methodology.js CHANGES.",
+  "format": "inputs + sha256(JSON.stringify(engine output)) + headline figures; produced from the full outputs of the engine named in engineVersion"
  },
  "deals": {
   "example": {
@@ -424,7 +424,7 @@
   "example#0": {
    "deal": "example",
    "settings": 0,
-   "sha256": "ab1a03e73f7bf22494539f2dfed0feae6705dc340b070f3e05441ab000f2a26f",
+   "sha256": "3d87cdfe40af82ceca88992feb78e927a365500f4f152307a61555f796354683",
    "headline": {
     "signal": "PREFER HYBRID",
     "buy": {
@@ -528,7 +528,7 @@
   "example#1": {
    "deal": "example",
    "settings": 1,
-   "sha256": "741844d36c77e11060bf2d86b67c1cabb3d27fabd7c064ca4a0431aa69948614",
+   "sha256": "c0c73fa8af2834f50d7148f788d5c85e5bcf828cbdfabe5154cd5b6acda8482a",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -632,7 +632,7 @@
   "levered#0": {
    "deal": "levered",
    "settings": 0,
-   "sha256": "63195e5986f127210a99fdf47ff83ad1c593450df9536422f19d22c7bb202c37",
+   "sha256": "7fa141c53b47c2ce857e02c68e5452f3dc048342add98dcc545531b3cc8510d1",
    "headline": {
     "signal": "PREFER HYBRID",
     "buy": {
@@ -736,7 +736,7 @@
   "levered#1": {
    "deal": "levered",
    "settings": 1,
-   "sha256": "65926715f77798e02cbb56c2b6d2087067e07ceecca0f15fc0d92fbd980ed2f9",
+   "sha256": "5dd3f3d3fab10a7dc27c06c8d3d8fc7e624c78ecd736e24c96f7b8e3ee9246a3",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -840,7 +840,7 @@
   "credit#0": {
    "deal": "credit",
    "settings": 0,
-   "sha256": "da15892e7cd884874d5c322a32b6830433c5851524becc452b0388f5164833fc",
+   "sha256": "8c54b9d8e48979bb734808ac1561fa0b51a2192919ea33287bbb4848c4ceefc4",
    "headline": {
     "signal": "PREFER HYBRID",
     "buy": {
@@ -886,13 +886,13 @@
       "months": 12
      },
      "downside": {
-      "irr": 0.13521687953507125,
+      "irr": 0.12192460875242143,
       "irrCommit": null,
-      "moic": 1.1032933200179227,
-      "profit": 923979.9789986927,
-      "atRisk": 8941000,
-      "peak": 8941000,
-      "months": 30
+      "moic": 1.1769097261039687,
+      "profit": 1582457.5,
+      "atRisk": 8945000,
+      "peak": 8945000,
+      "months": 17
      },
      "upside": {
       "irr": 0.14350692505476173,
@@ -944,7 +944,7 @@
   "credit#1": {
    "deal": "credit",
    "settings": 1,
-   "sha256": "41e33510c4dbb55b6965cd8a4645e470b0f9ccb6e6ca0bffb36da49cca41d2ba",
+   "sha256": "1f89fab12f4e571d2098839613603339d11e89c97ae73e3e288633d18885fc99",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -990,13 +990,13 @@
       "months": 12
      },
      "downside": {
-      "irr": 0.13521687953507125,
+      "irr": 0.12192460875242143,
       "irrCommit": null,
-      "moic": 1.1032933200179227,
-      "profit": 923979.9789986927,
-      "atRisk": 8941000,
-      "peak": 8941000,
-      "months": 30
+      "moic": 1.1769097261039687,
+      "profit": 1582457.5,
+      "atRisk": 8945000,
+      "peak": 8945000,
+      "months": 17
      },
      "upside": {
       "irr": 0.14350692505476173,
@@ -1048,7 +1048,7 @@
   "backstop#0": {
    "deal": "backstop",
    "settings": 0,
-   "sha256": "426943072d9f235eb454e24b925ca1ef4b1090ac77c5c9c1977da194e02edb6e",
+   "sha256": "10301886b8e43198b147814bcec44ee408c198f99a0a394a7c64eb012625ac0f",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -1152,7 +1152,7 @@
   "backstop#1": {
    "deal": "backstop",
    "settings": 1,
-   "sha256": "139883ddd66f1fa8df7e03613768fc90a0b09e3f65039337459051802c9ff1a0",
+   "sha256": "a1c171de1fcfec1c84b050ee2bc84f867a444d6d4217e3ae9f0d00cb74f28cd4",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -1256,7 +1256,7 @@
   "option#0": {
    "deal": "option",
    "settings": 0,
-   "sha256": "653ef70ae43c3bb0e0d927b449aba4cf16365897daa4e335df7fd9d7925dd9f9",
+   "sha256": "0a6c6c23edfbbf1733d479ec32839a088daced3cb400f59fdf517eb31cfb0fc5",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -1351,7 +1351,7 @@
       "peak": 10518900,
       "months": 21
      },
-     "mos": 0.04010443315628809,
+     "mos": -0.006738424166710333,
      "risk": 59,
      "hurdles": "irr:0 moic:1 ltv:0 coverage:0 duration:1 mos:0 devExposure:1 projectExposure:1 geoExposure:1"
     }
@@ -1360,7 +1360,7 @@
   "option#1": {
    "deal": "option",
    "settings": 1,
-   "sha256": "2e3669f12852a5f4c0682efaf36fc9099e657ba0bb2eae8eaf4d53108698748a",
+   "sha256": "00e968c7c91303318fd8a8381fe500fea2dfc3b6a930dd1a3d947bc9b739c712",
    "headline": {
     "signal": "REVIEW",
     "buy": {
@@ -1455,7 +1455,7 @@
       "peak": 10518900,
       "months": 21
      },
-     "mos": 0.04010443315628809,
+     "mos": -0.006738424166710333,
      "risk": 52,
      "hurdles": "irr:0 moic:1 ltv:0 coverage:0 duration:1 mos:0 devExposure:0 projectExposure:0 geoExposure:0"
     }
@@ -1464,7 +1464,7 @@
   "pref#0": {
    "deal": "pref",
    "settings": 0,
-   "sha256": "e03067033f2f10ed1bde1597372f6190d4c66c648ba962d10c15b394b4e93330",
+   "sha256": "d7fddec3216918595f82d94ac626eb2267fbdea0279413fcca4bcb2bebf5b4a4",
    "headline": {
     "signal": "PREFER HYBRID",
     "buy": {
@@ -1542,13 +1542,13 @@
       "months": 18
      },
      "downside": {
-      "irr": 0.15445468088864348,
+      "irr": 0.15535480978369315,
       "irrCommit": null,
-      "moic": 1.5959671812677887,
-      "profit": 3677728.374783056,
+      "moic": 1.5060408539762273,
+      "profit": 3122790.7609086484,
       "atRisk": 6265000,
       "peak": 6171025,
-      "months": 39
+      "months": 34
      },
      "upside": {
       "irr": 0.34451913612041885,
@@ -1568,7 +1568,7 @@
   "pref#1": {
    "deal": "pref",
    "settings": 1,
-   "sha256": "5e1ec3dc82d0cc5d73ca74819fc846fd7806b18d0c1a89274c4520d9b62ce615",
+   "sha256": "05eb82ab93f29fedcd2a161ad9ae3d9fddf9c6796f34508171535f6f35d9ae95",
    "headline": {
     "signal": "PREFER HYBRID",
     "buy": {
@@ -1646,13 +1646,13 @@
       "months": 18
      },
      "downside": {
-      "irr": 0.15445468088864348,
+      "irr": 0.15535480978369315,
       "irrCommit": null,
-      "moic": 1.5959671812677887,
-      "profit": 3677728.374783056,
+      "moic": 1.5060408539762273,
+      "profit": 3122790.7609086484,
       "atRisk": 6265000,
       "peak": 6171025,
-      "months": 39
+      "months": 34
      },
      "upside": {
       "irr": 0.34451913612041885,
@@ -1677,7 +1677,7 @@
    "hybrid"
   ],
   "settings": 1,
-  "sha256": "d7dbb9485ff6c84f7be8aeb276fcc6dd0440faf088270d018352eda140458c89",
+  "sha256": "2ed609efd1ab17c7b7fb83936b00db2e676ee9d17922a29652b3abf65e4a6fd3",
   "summary": {
    "capital": 67588000,
    "irr": 0.13210064000061678,
