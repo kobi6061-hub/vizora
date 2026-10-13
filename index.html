@@ -4882,7 +4882,8 @@ he:{title:"מגמת מחירים — מדדים רשמיים",nh:"דירות ח�
 en:{title:"Price trend — official indices",nh:"New homes (national)",dw:"All dwellings (national)",yoy:"year on year",
   dist:"All dwellings by district — latest window",distName:"District",distYoy:"Year on year",distWin:"Window",
   note:"CBS national and district indices — not a city, neighbourhood or project series; local price history has not been collected (—). Each point is a two-month window dated by its first month.",
-  src:(a,b,c)=>`CBS · series ${a} and ${b} · checked ${c}`,stale:"stale",err:"not read"}};
+  src:(a,b,c)=>`CBS · series ${a} and ${b} · checked ${c}`,stale:"stale",err:"not read",
+  gloss:{"ירושלים":"Jerusalem","צפון":"North","חיפה":"Haifa","מרכז":"Center","תל אביב":"Tel Aviv","דרום":"South"}}};
 function otHistory(ind){
   if(!ind||!Array.isArray(ind.history))return null;
   const h=ind.history.filter(p=>p&&Number.isInteger(p.y)&&Number.isInteger(p.m)&&typeof p.yoy==="number"&&isFinite(p.yoy)&&Math.abs(p.yoy)<=40);
@@ -4911,7 +4912,7 @@ function renderOfficialTrend(){
   card.classList.remove("na-card");
   const last=s=>s[s.length-1],pct=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+"%";
   const D=I.dwellingsByDistrict,dist=D&&Array.isArray(D.districts)?D.districts:[];
-  const distRows=dist.map(d=>`<tr><td>${calcEsc(d.name)}</td><td class="num">${typeof d.yoy==="number"?pct(d.yoy):`<span class="ho-na">${t.err}</span>`}</td><td class="num">${d.period?`${d.period.month}/${d.period.year}`:"—"}</td></tr>`).join("");
+  const distRows=dist.map(d=>`<tr><td>${t.gloss&&t.gloss[d.name]?`<span title="${calcEsc(d.name)}">${t.gloss[d.name]}</span>`:calcEsc(d.name)}</td><td class="num">${typeof d.yoy==="number"?pct(d.yoy):`<span class="ho-na">${t.err}</span>`}</td><td class="num">${d.period?`${d.period.month}/${d.period.year}`:"—"}</td></tr>`).join("");
   const chk=String(I.newHomesIndex.checkedAt||"").slice(0,10).split("-").reverse().join(".");
   card.innerHTML=`<div class="chart-tools"><h2 style="font-size:15.5px">${t.title}</h2>${vcTag("raw")}${I.newHomesIndex.stale||I.dwellingsIndex.stale?` <span class="vc na">${t.stale}</span>`:""}</div>
     <div class="ot-legend"><span class="ot-k nh"></span>${t.nh} <b class="num">${pct(last(nh).yoy)}</b><span class="ot-k dw"></span>${t.dw} <b class="num">${pct(last(dw).yoy)}</b> <span class="ot-s">· ${t.yoy}</span></div>
