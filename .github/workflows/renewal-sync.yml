@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: '22'
       - name: Offline test suite (must pass before any data is written)
-        run: node test/renewal.test.js
+        run: node test/renewal.test.js && node test/renewal-planning.test.js
       - name: Fetch the declared complexes
         id: sync
         run: |

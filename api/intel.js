@@ -12,8 +12,12 @@
 //   view=search       q → routed results (tender / plan / parcel / address / developer / project / locality / street)
 //   view=status       registry coverage, freshness, methodology
 //   view=sources      the Data & Trust Center catalogue (lib/trust/catalog.js)
-//   view=renewal      declared urban-renewal complexes (MoCH): summary + one page (city, stage, track, q, sort, page, size)
-//   view=renewalComplex  one complex (id=renewal:<complex number>) with its history
+//   view=renewal      urban-renewal complexes (MoCH) + their exact XPlan planning join: summary (incl. planning coverage, pipeline by
+//                     XPlan stage, cities, MoCH ↔ XPlan discrepancies, DERIVED counts) + one page (city, stage, track, declaration, q,
+//                     pstage=<XPlan stage>|none, match=exact|ambiguous|not-found|no-identifier|not-checked, flag=discrepancy|stale|no-evidence|shared,
+//                     sort=declared|proposed|city|name|maturity, page, size)
+//   view=renewalComplex  one complex (id=renewal:<complex number>) with its history and its planning: match + diagnostics, the XPlan plan,
+//                     MoCH ↔ XPlan pairs, DERIVED metrics, complexes on the same plan, the plan boundary, the plan's observed history
 
 'use strict';
 
