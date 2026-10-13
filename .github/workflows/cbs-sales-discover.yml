@@ -43,7 +43,7 @@ jobs:
 
       - name: PDF text tool
         if: inputs.mode == 'pdf'
-        run: sudo apt-get install -y -q poppler-utils >/dev/null
+        run: sudo apt-get update -q >/dev/null && sudo apt-get install -y -q poppler-utils >/dev/null
 
       - name: Discover (read-only)
         env:
