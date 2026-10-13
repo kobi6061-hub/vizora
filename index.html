@@ -3404,6 +3404,20 @@ function setTheme(mode){
   links.forEach(a=>{const sec=document.getElementById(a.dataset.sec);if(sec)io.observe(sec)});
   links.forEach(a=>a.addEventListener("click",()=>{
     links.forEach(x=>x.classList.remove("on"));a.classList.add("on");
+    /* sections above the target load lazily and grow while the smooth scroll passes them, so the jump used to stop short
+       of its target (Land: ~1,600px short before 13.10.2026). Once the scroll stops moving, re-anchor the target at its
+       scroll margin until the layout settles — at most ~4 s; the user's own wheel / touch / key cancels it. */
+    const sec=document.getElementById(a.dataset.sec);if(!sec)return;
+    let stop=false;const cancel=()=>{stop=true};
+    ["wheel","touchstart","keydown"].forEach(t=>window.addEventListener(t,cancel,{once:true,passive:true}));
+    const margin=parseFloat(getComputedStyle(sec).scrollMarginTop)||0,t0=performance.now();let last=null,stable=0;
+    const tick=()=>{
+      if(stop)return;
+      const top=sec.getBoundingClientRect().top,moving=last!==null&&Math.abs(top-last)>1;last=top;
+      if(!moving){if(Math.abs(top-margin)>8){window.scrollTo({top:window.scrollY+top-margin,behavior:"auto"});stable=0;last=null}else stable++}
+      if(stable<24&&performance.now()-t0<4000)requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }));
   window.addEventListener("scroll",()=>{
     if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-6){
