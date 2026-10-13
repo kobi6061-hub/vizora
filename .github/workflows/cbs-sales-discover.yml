@@ -1,0 +1,54 @@
+# PROPX · CBS new-home sales — official source discovery (read-only).
+#
+# Runs scripts/cbs-sales-discover.js on a GitHub runner (the CBS hosts answer here, not from the Claude sandbox) and
+# prints what the Central Bureau of Statistics publishes about new-dwelling sales: the time-series catalog, the series
+# and their observations. Read-only: GET requests to cbs.gov.il hosts only; nothing is written or committed.
+
+name: CBS new-home sales — source discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'get (print URLs) | walk (time-series catalog from a URL, regex match) | series (observations of series ids)'
+        type: choice
+        options: [get, walk, series]
+        default: get
+      arg:
+        description: 'get: space-separated URLs · walk: start URL · series: comma-separated series ids'
+        type: string
+        default: 'https://apis.cbs.gov.il/series/catalog/level?id=1&format=json&download=false&lang=he'
+      match:
+        description: 'walk: regex for node names · series: from MM-YYYY'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cbs-sales-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          ARG: ${{ inputs.arg }}
+          MATCH: ${{ inputs.match }}
+        run: |
+          case "$MODE" in
+            walk)   node scripts/cbs-sales-discover.js --walk "$ARG" --match "${MATCH:-נמכר|מכיר|sold|sales}" ;;
+            series) node scripts/cbs-sales-discover.js --series "$ARG" ${MATCH:+--from "$MATCH"} ;;
+            *)      node scripts/cbs-sales-discover.js --get $ARG ;;
+          esac
