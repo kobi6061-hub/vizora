@@ -51,6 +51,11 @@
   every figure FULL LIST / PARTIAL DETAIL / DERIVED SUBSET); `lib/land/lineage.js` links re-tenders only through the
   Authority's lot file id (TikID) and counts the unique pipeline once per lot; the page defaults to the CURRENT market
   (`scope=current`). Not subsidized-housing lotteries, not transactions (see `lib/land/README.md`). `scripts/land-discover.js` + `.github/workflows/land-discover.yml` = read-only discovery.
+- `lib/planning/xplan-units.js` + `lib/planning/README.md` + `test/xplan-units.test.js` = the ONE definition of the XPlan
+  housing-unit pair (audit 13.10.2026): `pq_authorised_quantity_120` = units authorised BEFORE the plan
+  (`existingAuthorisedUnits`), `quantity_delta_120` = the plan's change (`planUnitDelta`), units after the plan = their sum
+  (DERIVED, `unitsAfterPlan`); raw values kept; never "approved units". Land (read model only — stored records and their
+  Supabase copy unchanged) and renewal read units only through it.
 - `lib/gov/providers/overDeals.js` + `test/republished.test.js` = the deals source in use since 02.10.2026 (owner's
   decision): the Tax Authority register as republished by גרסאות לעם (over.org.il) — not a government channel, labelled so
   on the page (never "official source"); a copy dated by `scraped_at`; address only via the parcel crosswalk; partial sales

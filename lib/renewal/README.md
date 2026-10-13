@@ -61,9 +61,12 @@ DEPOSITED · OBJECTIONS · APPROVAL_PROCESS · APPROVED; EFFECTIVE only when the
 (`internet_short_status`) is the approval's publication; REJECTED on a rejection event; anything else OTHER / UNKNOWN,
 shown verbatim. The layer publishes no "cancelled" status; no stage says permit, construction start or completion.
 
-**Units.** `pq_authorised_quantity_120` is the approved state the plan starts from (equals MoCH's existing units in 615
-of 761 joined complexes); `quantity_delta_120` is the change the plan makes (equals MoCH's additional units in 500 of
-767). Their sum ("after the plan") is DERIVED. MoCH and XPlan values sit side by side; each pair says whether they differ.
+**Units** (one definition: `lib/planning/xplan-units.js`, see `lib/planning/README.md`). `existingAuthorisedUnits` =
+`pq_authorised_quantity_120`, the units authorised before the plan (equals MoCH's existing units in 615 of 760 joined
+complexes); `planUnitDelta` = `quantity_delta_120`, the change the plan makes (equals MoCH's additional units in 500 of
+767); `unitsAfterPlan` = their sum, DERIVED. The raw pair is kept in `raw`. Records stored before 13.10.2026 named them
+`unitsApprovedState` / `unitsChange` (same values; renamed on read and on the next sync, no history event). MoCH and XPlan
+values sit side by side; each pair says whether they differ.
 
 **Derived (labelled).** Maturity (stage ordinal 1–8), declaration → approval years (or "approved N years before the
 declaration"), deposit → approval years, unit gap, years since the layer's last update, stale planning (not approved /

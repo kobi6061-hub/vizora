@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="3b1005cd9f903ee9f5e82fba78a5d8b9d67be55916971b7d61b2dedc9b889e53">
+<meta name="propx-source-sha256" content="f147fce1e833309ecd7070e7b706097a0ddf0169600485c651f7fc68f61fd632">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2320,7 +2320,8 @@ he:{
   ldPipeFunnel:"משפך המכרזים", ldPipeStage:{published:"פורסם",open:"פתוח",closed:"נסגר",decided:"נדון — פירוט טרם נקרא",awarded:"הוכרזו זוכים",cancelled:"בוטל",construction:"ראיית בנייה (גוש/חלקה)"},
   ldPipePlanStatus:{found:"נמצאו",'not-found':"לא נמצאו",'not-checked':"טרם נבדקו"}, ldNoPos:n=>`${n} מכרזים ללא מיקום ידוע (יישוב שאינו במרשם)`,
   ldPipeNote:"כל שלב הוא קוד הסטטוס של רמ״י. חוזה, היתר והתחלת בנייה אינם מפורסמים במקורות אלה; ראיית בנייה רק מצירוף גוש/חלקה מדויק לדיווחי משרד הבינוי (מתוארכים).",
-  ldPipePlansN:n=>`${n} תוכניות`, ldPipeUnits:"יח״ד מאושרות בתוכניות", ldPipePot:"יח״ד פוטנציאליות לשיווק", ldPipeStages:"לפי שלב תכנוני",
+  ldPipePlansN:n=>`${n} תוכניות`, ldPU:{before:"יח״ד מאושרות לפני התוכנית",delta:"תוספת יח״ד בתוכנית",after:"סה״כ יח״ד לאחר התוכנית",
+    note:"סכום על התוכניות שהמכרזים מפנים אליהן, כל תוכנית פעם אחת — יחידות התוכניות, לא של המכרזים (שטח תוכנית רחב בדרך כלל מהמגרשים). לפני התוכנית = <bdi class='num'>pq_authorised_quantity_120</bdi> (מצב מאושר); תוספת = <bdi class='num'>quantity_delta_120</bdi> (יכולה להיות 0 או שלילית); לאחר התוכנית = סכומם (נגזר)."}, ldPipePot:"יח״ד פוטנציאליות לשיווק", ldPipeStages:"לפי שלב תכנוני",
   ldMore:n=>`הצגת כל ${n}`, ldLess:"פחות",
   ldTblT:n=>`${n} מכרזים`, ldTblTNone:"מכרזים: —", ldTblS:"לחיצה על שורה פותחת את פרטי המכרז, המגרשים והזוכים",
   ldC:{date:"פורסם",tender:"מכרז",place:"יישוב · שכונה",track:"מסלול · סוג",purpose:"ייעוד",units:"יח״ד",lots:"מגרשים",winner:"זוכה",land:"סה״כ קרקע / ₪ למ״ר",lpu:"קרקע/יח״ד",close:"סגירה",committee:"ועדה"},
@@ -2336,7 +2337,7 @@ he:{
   ldDNamed:"שם ללא סכום מפורסם — לא נרשם כזכייה", ldDAlloc:"הקצאה — מחיר קבוע, סכום לא פורסם", ldDPerUnitScope:{'all-priced-lots':"כל המגרשים שהוכרז בהם זוכה",'lots-with-units-only':"רק מגרשים שפורסמו בהם יח״ד",'no-units-published':"לא פורסמו יח״ד — אין חישוב ליח״ד"},
   ldDEcon:"כלכלה — נגזר", ldDE:{basis:"בסיס",vat:"מע״מ",aw:"מגרשים שהוכרז בהם זוכה",units:"יח״ד במגרשים אלה",total:"סה״כ הצעות זוכות",lpu:"קרקע ליח״ד",dpu:"פיתוח ליח״ד",tpu:"בסיס כולל ליח״ד",prem:"פרמיה מעל המינימום",app:"מול השומה",bids:"הצעות שהתקבלו",psm:"₪ למ״ר (טווח)",ceil:"מחיר מרבי למ״ר"},
   ldDEconNote:"מונה ומכנה מאותם מגרשים בלבד. ₪ למ״ר (מחיר למשתכן) אינו מחולק ליח״ד. מע״מ: לא צוין במקור.",
-  ldDPlans:"תוכניות", ldDP:{plan:"תוכנית",join:"צירוף",station:"שלב סטטוטורי",units:"יח״ד מאושרות",date:"אישור",pot:"פוטנציאל לשיווק (רמ״י, ישן)",link:"מינהל התכנון"},
+  ldDPlans:"תוכניות", ldDP:{plan:"תוכנית",join:"צירוף",station:"שלב סטטוטורי",before:"יח״ד מאושרות לפני התוכנית",delta:"תוספת יח״ד בתוכנית",after:"סה״כ יח״ד לאחר התוכנית",date:"אישור",pot:"פוטנציאל לשיווק (רמ״י, ישן)",link:"מינהל התכנון"},
   ldDPlanExact:"מספר תוכנית מדויק", ldDPlanNo:"לא נמצאה בשכבת מינהל התכנון", ldDPlanPending:"טרם נבדק מול מינהל התכנון", ldDPlanLink:"קישור באתר רמ״י (לא מספר תוכנית)", ldDPlansNone:"המכרז אינו מציין מספרי תוכנית.",
   ldDParcels:"גוש / חלקה", ldDConst:"בנייה — ראיה בלבד", ldDConstNone:"אין צירוף גוש/חלקה מדויק לדיווחי התקדמות בנייה של משרד הבינוי (מתוארכים 2024). חוזה, היתר והתחלת בנייה אינם מפורסמים במקורות אלה — לא מוסקים.",
   ldDLin:"מכרזים חוזרים / שיווק מחדש — לפי מזהה מגרש", ldDLinFrom:"קודם:", ldDLinTo:"ממשיך:", ldDLinNone:"לא נמצא מכרז אחר ששיווק את אותם מגרשים (מזהה תיק של רמ״י).", ldDLinNoDetail:"פירוט המגרשים טרם נקרא — לא ניתן לבדוק קשר למכרזים אחרים.",
@@ -2813,7 +2814,8 @@ en:{
   ldPipeFunnel:"Tender funnel", ldPipeStage:{published:"Published",open:"Open",closed:"Closed",decided:"Decided — detail not read",awarded:"Awarded",cancelled:"Cancelled",construction:"Construction evidence (block/parcel)"},
   ldPipePlanStatus:{found:"found",'not-found':"not found",'not-checked':"not checked yet"}, ldNoPos:n=>`${n} tenders without a known position (locality not in the registry)`,
   ldPipeNote:"Each stage is the ILA's status code. Contract, permit and construction start are not published by these sources; construction evidence only via an exact block/parcel join to MoCH progress reports (dated).",
-  ldPipePlansN:n=>`${n} plans`, ldPipeUnits:"Approved units in plans", ldPipePot:"Potential units for marketing", ldPipeStages:"By planning stage",
+  ldPipePlansN:n=>`${n} plans`, ldPU:{before:"Previously Authorized Units",delta:"Plan Unit Delta",after:"Units After Plan",
+    note:"Summed over the plans the tenders reference, each plan once — the plans' units, not the tenders' (a plan's area is usually wider than the lots). Previously authorized = pq_authorised_quantity_120 (the approved state); delta = quantity_delta_120 (may be 0 or negative); after the plan = their sum (derived)."}, ldPipePot:"Potential units for marketing", ldPipeStages:"By planning stage",
   ldMore:n=>`Show all ${n}`, ldLess:"Less",
   ldTblT:n=>`${n} tenders`, ldTblTNone:"Tenders: —", ldTblS:"Click a row for the tender's lots, bids and winners",
   ldC:{date:"Published",tender:"Tender",place:"Locality · neighborhood",track:"Track · type",purpose:"Purpose",units:"Units",lots:"Lots",winner:"Winner",land:"Land total / ₪ per m²",lpu:"Land/unit",close:"Close",committee:"Committee"},
@@ -2829,7 +2831,7 @@ en:{
   ldDNamed:"Name without a published sum — not recorded as an award", ldDAlloc:"Allocation — fixed price, sum not published", ldDPerUnitScope:{'all-priced-lots':"all awarded lots",'lots-with-units-only':"lots with published units only",'no-units-published':"no units published — no per-unit figure"},
   ldDEcon:"Economics — derived", ldDE:{basis:"Basis",vat:"VAT",aw:"Lots with a recorded winner",units:"Units in those lots",total:"Σ winning sums",lpu:"Land per unit",dpu:"Development per unit",tpu:"Total basis per unit",prem:"Premium over minimum",app:"vs appraisal",bids:"Bids received",psm:"₪/m² (range)",ceil:"Ceiling ₪/m²"},
   ldDEconNote:"Numerator and denominator from the same lots only. ₪/m² (Mechir LaMishtaken) is never divided into units. VAT: not stated by the source.",
-  ldDPlans:"Plans", ldDP:{plan:"Plan",join:"Join",station:"Statutory station",units:"Approved units",date:"Approval",pot:"Marketing potential (ILA, stale)",link:"Planning Administration"},
+  ldDPlans:"Plans", ldDP:{plan:"Plan",join:"Join",station:"Statutory station",before:"Previously Authorized Units",delta:"Plan Unit Delta",after:"Units After Plan",date:"Approval",pot:"Marketing potential (ILA, stale)",link:"Planning Administration"},
   ldDPlanExact:"Exact plan number", ldDPlanNo:"Not found in the Planning Administration layer", ldDPlanPending:"Not checked against the Planning Administration yet", ldDPlanLink:"ILA site link (not a plan number)", ldDPlansNone:"The tender names no plan numbers.",
   ldDParcels:"Block / parcel", ldDConst:"Construction — evidence only", ldDConstNone:"No exact block/parcel join to the MoCH construction-progress reports (dated 2024). Contract, permit and construction start are not published by these sources — not inferred.",
   ldDLin:"Re-tenders / re-marketing — by lot id", ldDLinFrom:"Earlier:", ldDLinTo:"Later:", ldDLinNone:"No other tender marketed the same lots (ILA lot file id).", ldDLinNoDetail:"Lot detail not read yet — links to other tenders cannot be checked.",
@@ -6540,14 +6542,14 @@ function ldDevsHTML(S){
 }
 function ldPipeHTML(P){
   const t=T();if(!P)return"";
-  const I=P.inventory||{},R=P.referencedPlans||{},F=P.funnel||{};
+  const I=P.inventory||{},R=P.referencedPlans||{},F=P.funnel||{},RU=R.units||{};
   const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const stages=(I.byStage||[]).slice(0,5).map(s=>`<li>${ldTx(s.stage)}: <span class="num">${fmtInt(s.plans)}</span> · <span class="num">${fmtInt(s.potentialUnits)}</span></li>`).join("");
   const funnel=["published","open","closed","decided","awarded","cancelled"].map(k=>kv(t.ldPipeStage[k],ldN(k==="decided"?F.decidedWithoutDetail:F[k])));
   const ps=R.planNumbers||{},psTxt=Object.keys(ps).length?` · ${Object.entries(ps).filter(([,n])=>n).map(([k,n])=>`${fmtInt(n)} ${t.ldPipePlanStatus[k]||k}`).join(" · ")}`:"";
   return `<div class="ho-bh"><h3>${t.ldPipeT} ${vcTag("der")}</h3></div>
     <h4 class="ld-h4">${t.ldPipeFunnel}</h4><div class="ho-dl">${funnel.join("")}${kv(t.ldPipeStage.construction,ldN(F.withConstructionLink))}</div>
-    <h4 class="ld-h4">${t.ldPipePlans} <span class="ld-note">${ldE(t.ldPipePlansS)}</span></h4><div class="ho-dl">${kv(t.ldPipePlansN(fmtInt(R.count||0))+psTxt,"")}${kv(t.ldPipeUnits,ldN(R.approvedUnits))}</div>
+    <h4 class="ld-h4">${t.ldPipePlans} <span class="ld-note">${ldE(t.ldPipePlansS)}</span></h4><div class="ho-dl">${kv(t.ldPipePlansN(fmtInt(R.count||0))+psTxt,"")}${kv(t.ldPU.before+" "+vcTag("raw"),ldN(RU.existingAuthorisedUnits))}${kv(t.ldPU.delta+" "+vcTag("raw"),ldN(RU.planUnitDelta))}${kv(t.ldPU.after+" "+vcTag("der"),ldN(RU.unitsAfterPlan))}</div><p class="ho-note">${t.ldPU.note}</p>
     <h4 class="ld-h4">${t.ldPipeInv} <span class="ld-note">${ldE(t.ldPipeInvS(I.asOf?String(I.asOf).slice(0,10).split("-").reverse().join("."):"—"))}</span></h4>
     <div class="ho-dl">${kv(t.ldPipePlansN(fmtInt(I.plans||0)),"")}${kv(t.ldPipePot,ldN(I.potentialUnits))}</div>${stages?`<p class="ho-note">${t.ldPipeStages}:</p><ul class="ho-note ld-ul">${stages}</ul>`:""}
     <p class="ho-note">${t.ldPipeNote}</p>`;
@@ -6678,10 +6680,10 @@ function renderLdDrawer(){
     ${E.basis==="price-per-sqm-bid"?kv(t.ldDE.psm,E.pricePerSqmMin!=null?`<span class="num">${fmtNIS(E.pricePerSqmMin)}–${fmtNIS(E.pricePerSqmMax)}</span>`:ldDash())+kv(t.ldDE.ceil,E.ceilingPerSqmMin!=null?`<span class="num">${fmtNIS(E.ceilingPerSqmMin)}–${fmtNIS(E.ceilingPerSqmMax)}</span>`:ldDash())
     :kv(t.ldDE.units,ldN(E.awardedUnits))+kv(t.ldDE.total,ldNIS(E.awardedLandTotal))+kv(t.ldDE.lpu,ldNIS(E.landPerUnit))+kv(t.ldDE.dpu,ldNIS(E.developmentPerUnit))+kv(t.ldDE.tpu,ldNIS(E.totalBasisPerUnit))+kv(t.ldDE.prem,ldPct(E.premiumVsMinimum))+kv(t.ldDE.app,ldPct(E.premiumVsAppraisal))}
     ${kv(t.ldDE.bids,ldN(E.bidsReceived))}</div><p class="ho-note">${t.ldDEconNote}${E.perUnitScope?` ${t.ldDPerUnitScope[E.perUnitScope]||""}.`:""}</p>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
-  const plans=(d.plans||[]).length?`<table class="ho-dt"><thead><tr>${["plan","join","station","units","date","pot","link"].map(k=>`<th>${t.ldDP[k]}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory;
+  const plans=(d.plans||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["plan","join","station","before","delta","after","date","pot","link"].map(k=>`<th>${t.ldDP[k]}${k==="after"?" "+vcTag("der"):""}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory,U=pl.units||{};
     return`<tr><td class="num">${ldE(pl.plan)}</td><td>${pl.via==="lot"?(x?`<span class="ho-chip">${t.ldDPlanExact}</span>`:pl.xplanStatus==="not-found"?`<span class="ho-na">${t.ldDPlanNo}</span>`:`<span class="ho-na">${t.ldDPlanPending}</span>`):`<span class="ho-na">${t.ldDPlanLink}</span>`}</td>
-      <td>${x?ldTx(x.station):ldDash()}</td><td class="num">${x?ldN(x.approvedUnits):ldDash()}</td><td class="num">${x?ldDate(x.approvalDate):ldDash()}</td><td class="num">${inv?`${fmtInt(inv.potentialUnits)} <span class="ho-na">(${ldE(String(inv.asOf||"").slice(0,4))})</span>`:ldDash()}</td>
-      <td>${x&&x.url?`<a href="${ldE(x.url)}" target="_blank" rel="noopener">↗</a>`:ldDash()}</td></tr>`}).join("")}</tbody></table>`:`<p class="ho-note">${t.ldDPlansNone}</p>`;
+      <td>${x?ldTx(x.station):ldDash()}</td><td class="num">${x?ldN(U.existingAuthorisedUnits):ldDash()}</td><td class="num">${x&&U.planUnitDelta!=null?`<span class="num">${U.planUnitDelta>0?"+":""}${fmtInt(U.planUnitDelta)}</span>`:ldDash()}</td><td class="num">${x?ldN(U.unitsAfterPlan):ldDash()}</td><td class="num">${x?ldDate(x.approvalDate):ldDash()}</td><td class="num">${inv?`${fmtInt(inv.potentialUnits)} <span class="ho-na">(${ldE(String(inv.asOf||"").slice(0,4))})</span>`:ldDash()}</td>
+      <td>${x&&x.url?`<a href="${ldE(x.url)}" target="_blank" rel="noopener">↗</a>`:ldDash()}</td></tr>`}).join("")}</tbody></table></div><p class="ho-note">${t.ldPU.note}</p>`:`<p class="ho-note">${t.ldDPlansNone}</p>`;
   const parcels=(r.parcels||[]).map(x=>`<span class="ho-chip num">${ldE(x.block)}/${ldE(x.parcel||"—")}</span>`).join(" ");
   const C=r.construction||{},CH=d.construction||{chain:[]};
   const cons=CH.chain&&CH.chain.length?`<ol class="ho-note ld-chain">${CH.chain.map(l=>`<li><span class="num">${ldE(r.name)}</span> → ${t.ldDChParcel} <span class="num">${ldE(l.parcel)}</span> → ${t.ldDChRecord} <span class="num">${ldE(String(l.record.id||""))}</span> (${ldE(l.record.locality||"")}${l.record.site?` · ${ldE(l.record.site)}`:""}${l.record.building?` · ${t.ldDChBuilding} ${ldE(l.record.building)}`:""}${l.record.units?` · ${fmtInt(l.record.units)} ${t.ldC.units}`:""}) → ${l.latestStage?`${ldE(t.ldDStage[l.latestStage[0]]||l.latestStage[0])} ${ldDate(l.latestStage[1])}`:"—"} → ${t.ldDChSource} ${ldDate(l.asOf)}</li>`).join("")}</ol><p class="ho-note">${t.ldDChNote}</p>`
@@ -6794,26 +6796,26 @@ he:{
       ev:{"plan-number":"מספר תכנית","mavat-id":"מזהה מבא״ת"},
       matchL:"חיבור XPlan",allMatch:"כל מצבי החיבור",pstageL:"שלב תכנוני (XPlan)",allP:"כל השלבים (XPlan)",noneP:"ללא תכנית מחוברת",flagL:"סימון",allFlags:"כל המתחמים",
       flags:{discrepancy:"פער משב״ש ↔ XPlan",stale:"תכנון לא פעיל",["no-evidence"]:"מאושרת ללא ראיית היתר/ביצוע",shared:"תכנית משותפת"},
-      kM:"חוברו ל-XPlan",kMs:(a,b)=>`${a} מתוך ${b} · דו-משמעי / לא נמצא / ללא מזהה / טרם נבדק בפירוט למטה`,kU:"יח״ד אחרי התכניות (XPlan)",kUs:n=>`מצב מאושר + שינוי, ${n} תכניות, כל תכנית פעם אחת`,
+      kM:"חוברו ל-XPlan",kMs:(a,b)=>`${a} מתוך ${b} · דו-משמעי / לא נמצא / ללא מזהה / טרם נבדק בפירוט למטה`,kU:"סה״כ יח״ד לאחר התוכניות (XPlan)",kUs:n=>`מאושרות לפני התוכנית + תוספת, ${n} תכניות, כל תכנית פעם אחת`,
       cov:(a,b,r)=>`${a} מתוך ${b} מתחמים חוברו במדויק (${r}%)`,amb:"דו-משמעיים",nf:"לא נמצאו",ni:"ללא מזהה",nc:"טרם נבדקו",
       unitsCov:(a,b)=>`יח״ד מוצעות (משב״ש) במתחמים שחוברו: ${a} מתוך ${b}`,chk:"XPlan נבדק",partial:"קריאה חלקית",
       why:{"local-format-number-not-online":"מספר בפורמט מקומי ישן — לא בשכבת התכניות המקוונות","vatmal-number-not-in-layer":"מספר ותמ״ל שאינו בשכבה","national-number-not-in-layer":"מספר ארצי שאינו בשכבה","no-plan-number-link-not-in-layer":"ללא מספר; המזהה אינו בשכבה","no-plan-number-no-link":"ללא מספר וללא קישור","not-checked":"טרם נבדק"},
-      pipeT:"מתחמים לפי שלב תכנוני ב-XPlan",pipeS:"מתחמים · יח״ד אחרי התכנית (כל תכנית פעם אחת) · לחיצה מסננת — אישור תכנית אינו היתר ואינו בנייה",
-      cityT:"ערים — צבר ההתחדשות, משב״ש מול XPlan",cityC:{city:"יישוב",cx:"מתחמים",ex:"חוברו",prop:"מוצעות (משב״ש)",ap:"תכניות מאושרות/בתוקף",apu:"יח״ד אחרי תכניות מאושרות (XPlan)"},
+      pipeT:"מתחמים לפי שלב תכנוני ב-XPlan",pipeS:"מתחמים · סה״כ יח״ד לאחר התוכנית (כל תכנית פעם אחת) · לחיצה מסננת — אישור תכנית אינו היתר ואינו בנייה",
+      cityT:"ערים — צבר ההתחדשות, משב״ש מול XPlan",cityC:{city:"יישוב",cx:"מתחמים",ex:"חוברו",prop:"מוצעות (משב״ש)",ap:"תכניות מאושרות/בתוקף",apu:"סה״כ יח״ד לאחר תוכניות מאושרות (XPlan)"},
       best:"כיסוי החיבור הגבוה ביותר",worst:"כיסוי החיבור הנמוך ביותר",minC:n=>`ערים עם ${n} מתחמים ומעלה`,
       derT:"נגזר מהחיבור",medDA:(v,n)=>`חציון הכרזה → אישור: ${v} שנים (${n} מתחמים)`,medPA:(v,n)=>`חציון הפקדה → אישור: ${v} שנים (${n})`,
       staleN:n=>`${n} מתחמים בתכנון לא פעיל`,noEvN:n=>`${n} מאושרים ללא ראיית היתר/ביצוע בעמודות משב״ש`,beforeN:n=>`${n} תכניות אושרו לפני ההכרזה`,
       discT:"פערים בין המקורות (שני הערכים מוצגים, ללא הכרעה)",
-      disc:{"existingUnits~unitsApprovedState":"קיימות ↔ מצב מאושר","additionalUnits~unitsChange":"תוספת ↔ שינוי","proposedUnits~unitsAfterPlan":"מוצעות ↔ אחרי התכנית","approvalYear":"שנת אישור","stage":"מאושרת לפי משב״ש ↔ לפי XPlan","planNumber":"מספר תכנית"},
-      discN:(a,b)=>`${a} מתוך ${b}`,col:"XPlan",uAfter:"יח״ד אחרי התכנית",
+      disc:{"existingUnits~existingAuthorisedUnits":"קיימות ↔ יח״ד מאושרות לפני התוכנית","additionalUnits~planUnitDelta":"תוספת ↔ תוספת יח״ד בתוכנית","proposedUnits~unitsAfterPlan":"מוצעות ↔ סה״כ יח״ד לאחר התוכנית","approvalYear":"שנת אישור","stage":"מאושרת לפי משב״ש ↔ לפי XPlan","planNumber":"מספר תכנית"},
+      discN:(a,b)=>`${a} מתוך ${b}`,col:"XPlan",uAfter:"סה״כ יח״ד לאחר התוכנית",
       sec:"מצב תכנוני (XPlan)",plan:"תכנית",name:"שם התכנית",kind:"סוג תכנית",power:"סמכות להיתרים",district:"מחוז",juris:"תחום שיפוט",committee:"ועדה",area:"שטח (דונם)",landUse:"ייעודי קרקע",
       station:"תחנה · אירוע אחרון (כלשונם)",evid:"מפתח החיבור",mavat:"מבא״ת ↗",
-      unitsT:"יחידות דיור — משב״ש מול XPlan",uh:{moch:"משב״ש",xp:"XPlan"},urow:{ex:"קיימות ↔ מצב מאושר (לפני התכנית)",add:"תוספת ↔ שינוי שהתכנית קובעת",prop:"מוצעות ↔ אחרי התכנית (סכום, נגזר)"},differs:"פער",
+      unitsT:"יחידות דיור — משב״ש מול XPlan",uh:{moch:"משב״ש",xp:"XPlan"},urow:{ex:"קיימות ↔ יח״ד מאושרות לפני התוכנית",add:"תוספת ↔ תוספת יח״ד בתוכנית",prop:"מוצעות ↔ סה״כ יח״ד לאחר התוכנית (נגזר)"},differs:"פער",
       datesT:"תאריכים (XPlan)",dates:{receivedDate:"קבלת תכנית",thresholdDate:"עמידה בתנאי סף",depositHearingDate:"דיון בהפקדה",depositDate:"תאריך אחרון להפקדה",newspaperDate:"פרסום בעיתונים",objectionsDeadline:"מועד אחרון להתנגדויות",approvalHearingDate:"דיון באישור",approvalHandlingStart:"תחילת טיפול באישור",approvalHandlingEnd:"סיום טיפול באישור",gazetteDate:"פרסום ברשומות"},
       tlT:"ציר זמן",tl:{decl:"הכרזה (משב״ש)",dep:"הפקדה",depH:"דיון בהפקדה",app:"דיון באישור",eff:"בתוקף — פרסום ברשומות"},
       mat:(a,b)=>`בשלות תכנונית ${a}/${b}`,yDA:"הכרזה → אישור",yPA:"הפקדה → אישור",yrs:v=>`${v} שנים`,before:v=>`התכנית אושרה ${v} שנים לפני ההכרזה`,
       upd:"עדכון אחרון ב-XPlan",sinceUpd:v=>`לפני ${v} שנים`,stale:"תכנון לא פעיל — לא מאושרת / נדחתה, ולא עודכנה יותר מ-3 שנים",noEv:"מאושרת — אין בעמודות משב״ש (בביצוע / היתרים / סטטוס) ראיה להיתר או ביצוע; אינה הוכחה שלא נבנה",
-      delta:"הפרש יח״ד (XPlan אחרי התכנית − משב״ש מוצעות)",boundary:"קו כחול (גבול התכנית)",centroid:"מרכז",genz:"מוכלל ~5 מ׳",
+      delta:"הפרש יח״ד (XPlan סה״כ לאחר התוכנית − משב״ש מוצעות)",boundary:"קו כחול (גבול התכנית)",centroid:"מרכז",genz:"מוכלל ~5 מ׳",
       shared:"תכנית משותפת למתחמים נוספים — יח״ד התכנית נספרות פעם אחת",diag:"מדוע לא חובר",
       rs:{num:n=>`מספר התכנית ${n} אינו בשכבת XPlan`,noNum:"משב״ש לא פרסם מספר תכנית",id:n=>`מזהה מבא״ת ${n} אינו בשכבה`,noId:"אין קישור מבא״ת",amb:"המפתחות מצביעים על יותר מתכנית אחת — PROPX אינו בוחר",diff:(a,b)=>`מספר התכנית שמשב״ש מפרסם (${a}) והתכנית שבקישור המבא״ת שלו (${b}) הן תכניות שונות — PROPX אינו בוחר`,nc:"טרם נבדק בשכבה (בקשה שנכשלה או ממתינה) — לעולם לא \"לא נמצא\"",
         fmt:{local:"המספר בפורמט מקומי ישן — השכבה מכילה תכניות שמנוהלות מקוונת",vatmal:"מספר של הוועדה לדיור מועדף (ותמ״ל) שהשכבה המקוונת אינה מכילה",national:""}},diagK:{reason:"סיבה",num:"מספר תכנית (משב״ש)",id:"מזהה מבא״ת בקישור",cand:"תכניות מועמדות"},
@@ -6883,26 +6885,26 @@ en:{
       ev:{"plan-number":"plan number","mavat-id":"Mavat id"},
       matchL:"XPlan join",allMatch:"All join states",pstageL:"Planning stage (XPlan)",allP:"All stages (XPlan)",noneP:"No joined plan",flagL:"Flag",allFlags:"All complexes",
       flags:{discrepancy:"MoCH ↔ XPlan gap",stale:"Stale planning",["no-evidence"]:"Approved, no permit/execution evidence",shared:"Shared plan"},
-      kM:"Joined to XPlan",kMs:(a,b)=>`${a} of ${b} · ambiguous / not found / no identifier / not checked below`,kU:"Units after the plans (XPlan)",kUs:n=>`approved state + change, ${n} plans, each counted once`,
+      kM:"Joined to XPlan",kMs:(a,b)=>`${a} of ${b} · ambiguous / not found / no identifier / not checked below`,kU:"Units After Plan (XPlan)",kUs:n=>`previously authorized + plan delta, ${n} plans, each counted once`,
       cov:(a,b,r)=>`${a} of ${b} complexes joined exactly (${r}%)`,amb:"ambiguous",nf:"not found",ni:"no identifier",nc:"not checked",
       unitsCov:(a,b)=>`MoCH proposed units in joined complexes: ${a} of ${b}`,chk:"XPlan checked",partial:"partial read",
       why:{"local-format-number-not-online":"old local-format number — not in the online-plans layer","vatmal-number-not-in-layer":"VATMAL number not in the layer","national-number-not-in-layer":"national number not in the layer","no-plan-number-link-not-in-layer":"no number; the id is not in the layer","no-plan-number-no-link":"no number and no link","not-checked":"not checked yet"},
       pipeT:"Complexes by XPlan planning stage",pipeS:"complexes · units after the plan (each plan once) · click to filter — a plan's approval is not a permit or construction",
-      cityT:"Cities — renewal pipeline, MoCH vs XPlan",cityC:{city:"Locality",cx:"Complexes",ex:"Joined",prop:"Proposed (MoCH)",ap:"Approved/in-force plans",apu:"Units after approved plans (XPlan)"},
+      cityT:"Cities — renewal pipeline, MoCH vs XPlan",cityC:{city:"Locality",cx:"Complexes",ex:"Joined",prop:"Proposed (MoCH)",ap:"Approved/in-force plans",apu:"Units After Plan — approved plans (XPlan)"},
       best:"Best join coverage",worst:"Lowest join coverage",minC:n=>`cities with ${n}+ complexes`,
       derT:"Derived from the join",medDA:(v,n)=>`median declaration → approval: ${v} years (${n} complexes)`,medPA:(v,n)=>`median deposit → approval: ${v} years (${n})`,
       staleN:n=>`${n} complexes with stale planning`,noEvN:n=>`${n} approved with no permit/execution evidence in MoCH's columns`,beforeN:n=>`${n} plans approved before the declaration`,
       discT:"Gaps between the sources (both values shown, never resolved)",
-      disc:{"existingUnits~unitsApprovedState":"existing ↔ approved state","additionalUnits~unitsChange":"additional ↔ change","proposedUnits~unitsAfterPlan":"proposed ↔ after the plan","approvalYear":"approval year","stage":"approved per MoCH ↔ per XPlan","planNumber":"plan number"},
-      discN:(a,b)=>`${a} of ${b}`,col:"XPlan",uAfter:"units after the plan",
+      disc:{"existingUnits~existingAuthorisedUnits":"existing ↔ previously authorized units","additionalUnits~planUnitDelta":"additional ↔ plan unit delta","proposedUnits~unitsAfterPlan":"proposed ↔ units after plan","approvalYear":"approval year","stage":"approved per MoCH ↔ per XPlan","planNumber":"plan number"},
+      discN:(a,b)=>`${a} of ${b}`,col:"XPlan",uAfter:"units after plan",
       sec:"Planning status (XPlan)",plan:"Plan",name:"Plan name",kind:"Plan type",power:"Permit power",district:"District",juris:"Jurisdiction",committee:"Committee",area:"Area (dunam)",landUse:"Land uses",
       station:"Station · latest event (verbatim)",evid:"Join key",mavat:"Mavat ↗",
-      unitsT:"Housing units — MoCH vs XPlan",uh:{moch:"MoCH",xp:"XPlan"},urow:{ex:"existing ↔ approved state (before the plan)",add:"additional ↔ change set by the plan",prop:"proposed ↔ after the plan (sum, derived)"},differs:"gap",
+      unitsT:"Housing units — MoCH vs XPlan",uh:{moch:"MoCH",xp:"XPlan"},urow:{ex:"existing ↔ Previously Authorized Units",add:"additional ↔ Plan Unit Delta",prop:"proposed ↔ Units After Plan (derived)"},differs:"gap",
       datesT:"Dates (XPlan)",dates:{receivedDate:"Plan received",thresholdDate:"Threshold met",depositHearingDate:"Deposit hearing",depositDate:"Last deposit date",newspaperDate:"Newspaper notice",objectionsDeadline:"Objections deadline",approvalHearingDate:"Approval hearing",approvalHandlingStart:"Approval handling start",approvalHandlingEnd:"Approval handling end",gazetteDate:"Official Gazette publication"},
       tlT:"Timeline",tl:{decl:"Declaration (MoCH)",dep:"Deposit",depH:"Deposit hearing",app:"Approval hearing",eff:"In force — Gazette publication"},
       mat:(a,b)=>`planning maturity ${a}/${b}`,yDA:"Declaration → approval",yPA:"Deposit → approval",yrs:v=>`${v} years`,before:v=>`the plan was approved ${v} years before the declaration`,
       upd:"Last update in XPlan",sinceUpd:v=>`${v} years ago`,stale:"Stale planning — not approved / rejected and not updated for more than 3 years",noEv:"Approved — MoCH's columns (execution / permits / status) show no permit or execution evidence; not proof that nothing was built",
-      delta:"Unit gap (XPlan after the plan − MoCH proposed)",boundary:"Blue line (plan boundary)",centroid:"Centroid",genz:"generalized ~5 m",
+      delta:"Unit gap (XPlan Units After Plan − MoCH proposed)",boundary:"Blue line (plan boundary)",centroid:"Centroid",genz:"generalized ~5 m",
       shared:"Plan shared with other complexes — its units count once",diag:"Why it is not joined",
       rs:{num:n=>`plan number ${n} is not in the XPlan layer`,noNum:"MoCH publishes no plan number",id:n=>`Mavat id ${n} is not in the layer`,noId:"no Mavat link",amb:"the keys point at more than one plan — PROPX does not pick one",diff:(a,b)=>`the plan number MoCH prints (${a}) and the plan its Mavat link names (${b}) are different plans — PROPX does not pick one`,nc:"not yet looked up in the layer (a failed or pending request) — never \"not found\"",
         fmt:{local:"the number is in an old local format — the layer holds plans managed online",vatmal:"a number of the national committee for preferred housing (VATMAL) the online layer does not hold",national:""}},diagK:{reason:"Reason",num:"Plan number (MoCH)",id:"Mavat id in the link",cand:"Candidate plans"},
@@ -7363,7 +7365,7 @@ function renewalDrawerHTML(d,close){
         ${kv(L.name,`<bdi>${inE(X.name||"—")}</bdi>`)}${kv(L.kind,inE(X.kind||"—"))}${kv(L.power,inE(X.permitPower||"—"))}${kv(L.district,inE(X.district||"—"))}${kv(L.juris,inE(X.jurisdiction||X.locality||"—"))}${kv(L.committee,inE(X.committee||"—"))}${kv(L.area,X.areaDunam!=null?`<span class="num">${X.areaDunam}</span>`:inDash())}${kv(L.upd,inDate(X.lastUpdate))}</div>
       ${X.landUse?`<p class="ho-note">${L.landUse}: ${inE(X.landUse)}</p>`:""}
       <h5 class="rn-h5">${L.unitsT}</h5><div class="ld-scroll"><table class="ho-dt rn-cmp"><thead><tr><th></th><th>${L.uh.moch} ${O}</th><th>${L.uh.xp} ${O}</th><th></th></tr></thead><tbody>
-        ${urow(L.urow.ex,"existingUnits~unitsApprovedState")}${urow(L.urow.add,"additionalUnits~unitsChange")}${urow(L.urow.prop+" "+D,"proposedUnits~unitsAfterPlan")}</tbody></table></div>
+        ${urow(L.urow.ex,"existingUnits~existingAuthorisedUnits")}${urow(L.urow.add,"additionalUnits~planUnitDelta")}${urow(L.urow.prop+" "+D,"proposedUnits~unitsAfterPlan")}</tbody></table></div>
       ${other.length?`<p class="ho-note"><span class="rn-neq">≠</span> ${other.map(c=>`${inE(L.disc[c.field]||c.field)}: ${L.uh.moch} <bdi>${inE(c.moch==null?"—":String(c.moch))}</bdi> · ${L.uh.xp} <bdi>${inE(c.xplan==null?"—":String(c.xplan))}</bdi>`).join(" — ")}</p>`:""}
       ${tl.length?`<h5 class="rn-h5">${L.tlT}</h5><ol class="rn-tl">${tl.map(([lab,v])=>`<li><span class="rn-tl-l">${lab}</span>${inDate(v)}</li>`).join("")}</ol>`:""}
       ${dates?`<h5 class="rn-h5">${L.datesT} ${O}</h5><div class="ho-dl">${dates}</div>`:""}
@@ -7428,14 +7430,14 @@ he:{loading:"טוען את מצב המקורות…",err:"מצב המקורות 
   vert:{land:"קרקעות",renewal:"התחדשות עירונית",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
   ch:{official:"ערוץ רשמי","independent-republication":"פרסום מחדש עצמאי",derived:"נגזר ב-PROPX"},
   c:{src:"מקור",vert:"תחום",cls:"סיווג",state:"מצב",last:"בדיקה אחרונה",obs:"תצפית אחרונה",upd:"עדכון במקור"},
-  d:{used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן"},
+  d:{method:"מתודולוגיה — שדות המקור והחישוב",used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן"},
   legend:"מילון מצבים",principles:"עקרונות",count:n=>`${n} מקורות`},
 en:{loading:"Loading source status…",err:"Source status is unavailable right now",offline:"The data center is available on the server version only",
   st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check"},
   vert:{land:"Land",renewal:"Urban renewal",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
   ch:{official:"Official channel","independent-republication":"Independent republication",derived:"Derived in PROPX"},
   c:{src:"Source",vert:"Area",cls:"Class",state:"State",last:"Last check",obs:"Latest observation",upd:"Updated at source"},
-  d:{used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old"},
+  d:{method:"Methodology — source fields and derivation",used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old"},
   legend:"State vocabulary",principles:"Principles",count:n=>`${n} sources`}};
 const TT=()=>TC_I18N[state.lang];
 const tcState={data:null,status:"idle",started:false,open:null};
@@ -7459,6 +7461,7 @@ function renderTrust(){
       ${S.note?`<p class="ho-note">${inE(S.note)}</p>`:""}
       ${s.sourceStale?`<p class="ho-note"><b>${t.d.stale}</b></p>`:""}
       ${(s.limitations||[]).length?`<p class="ho-note"><b>${t.d.lim}:</b></p><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(x)}</li>`).join("")}</ul>`:""}
+      ${(s.methodology||[]).length?`<details class="tc-meth"><summary class="ho-note"><b>${t.d.method}</b></summary><ul class="ho-note ld-ul">${s.methodology.map(x=>`<li>${inE(x)}</li>`).join("")}</ul></details>`:""}
       ${s.url?`<p class="ho-note">${t.d.url}: <a href="${inE(s.url)}" target="_blank" rel="noopener noreferrer"><span class="num">${inE(s.url)}</span></a></p>`:""}</div>`:"";
     return `<div class="tc-row${s.inProduct===false?" off":""}"><button type="button" class="tc-sum" data-tcrow="${i}" aria-expanded="${tcState.open===i}">
       <span class="tc-n"><b>${inE(name||"")}</b><span class="sub">${inE(s.name||"")}</span></span>

@@ -104,7 +104,7 @@ const data = (plans, { planKeys, mavatIds } = {}) => ({ meta: { checkedAt: FETCH
     const before = JSON.stringify(c), J = P.joinAll([c], data([p]), { today: '2026-10-13' }), j = J.byComplex.get(c.id);
     const pair = (f) => j.compare.find((d) => d.field === f);
     assert.deepEqual([pair('proposedUnits~unitsAfterPlan').moch, pair('proposedUnits~unitsAfterPlan').xplan, pair('proposedUnits~unitsAfterPlan').differs], [300, 260, true]);
-    assert.equal(pair('existingUnits~unitsApprovedState').differs, false); assert.equal(pair('additionalUnits~unitsChange').differs, true);
+    assert.equal(pair('existingUnits~existingAuthorisedUnits').differs, false); assert.equal(pair('additionalUnits~planUnitDelta').differs, true);
     assert.equal(j.derived.unitDeltaVsMoch, -40); assert.equal(JSON.stringify(c), before, 'MoCH values are never overwritten');
     assert.equal(J.discrepancies.differs['proposedUnits~unitsAfterPlan'], 1);
   });
