@@ -11,7 +11,7 @@
  "snapshotHash": "aaf4f9eb6d3edc5eea7f34759db5887b42589dee3ca8c2a5e073c2bbbb8db7f5",
  "snapshotFetchedAt": "2026-10-12T10:49:19.214Z",
  "checkedAt": "2026-10-12T10:49:19.214Z",
- "normalizerVersion": 4,
+ "normalizerVersion": 5,
  "rows": 10643,
  "records": 10643,
  "inLatestSource": 10643,
@@ -311,19 +311,19 @@
   "active": 439,
   "detailUnavailable": 3,
   "budget": {
-   "detail": 2500,
-   "map": 400,
-   "minutes": 60,
+   "detail": 0,
+   "map": 0,
+   "minutes": 40,
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 1160
+  "lastRunFetched": 0
  },
  "byLifecycle": {
   "open": 277,
   "closed": 636,
-  "awarded": 6576,
-  "decided-no-award": 2404,
+  "awarded": 6521,
+  "decided-no-award": 2459,
   "cancelled": 563,
   "published": 162,
   "frozen": 22,
@@ -355,35 +355,9 @@
  },
  "construction": {
   "tendersWithLinks": 134,
-  "source": {
-   "rows": 10371,
-   "joinableParcels": 1242,
-   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
-  }
+  "source": null
  },
- "joins": {
-  "xplan": {
-   "asked": 0,
-   "requests": 0,
-   "found": 0,
-   "complete": true,
-   "known": 444,
-   "errors": []
-  },
-  "inventory": {
-   "rows": 1112,
-   "sourceUpdatedAt": "2022-02-17T10:59:42.023Z"
-  },
-  "construction": {
-   "rows": 10371,
-   "joinableParcels": 1242,
-   "sourceUpdatedAt": "2024-03-01T01:15:14.851Z"
-  },
-  "developmentCosts": {
-   "rows": 1454,
-   "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
-  }
- },
- "historyEvents": 93112,
- "lastRun": "land-20261012T104903Z"
+ "joins": {},
+ "historyEvents": 93630,
+ "lastRun": "land-20261013T001334Z"
 }

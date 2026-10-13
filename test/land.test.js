@@ -94,6 +94,31 @@ const WIN = { ShemZoche: 'TEST FIXTURE זוכה בע"מ ', SchumZchiya: 12000000
     const c = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: 'TEST FIXTURE זוכה', SchumZchiya: null, mpHatzaaotMitcham: [{ HatzaaID: 9, HatzaaSum: 777, HatzaaDescription: 1 }] })] }), null);
     assert.equal(c.lots[0].winner.amount, 777); assert.equal(c.lots[0].winner.evidence, 'winner-name+winning-bid');
   });
+  await t('the notes found on stored lots (district lot selection, cancelled, no lot chosen, tied bids) are notes, never winners — also when carried forward', () => {
+    const lottery = row({ StatusMichraz: 5, KodSugMichraz: 3 });                       // a fixed-price allocation: a bare name would be an allottee
+    const notes = ['בחירת מגרש תערך במחוז', 'בחירת מגרש תערך במרחב', 'מכרז בוטל', 'המכרז בוטל עקב מיעוט משתתפים', 'לא נבחר מגרש', 'הצעות לא תקינות', 'לא נקבע זוכה'];
+    for (const note of notes) {
+      const r = norm(lottery, detail(lottery, { SugTacharut: null, Tik: [lot({ ShemZoche: note, SchumZchiya: null })] }), null);
+      assert.equal(r.priceBasis, 'fixed-price-allocation'); assert.equal(r.lots[0].winner, undefined, note); assert.equal(r.lots[0].sourceNote, note);
+      assert.equal(r.winners.length, 0); assert.equal(r.lifecycle, 'decided-no-award', note);
+    }
+    const r5 = row({ StatusMichraz: 5 });
+    for (const note of ['הצעות זהות', 'הצעות זהות, הגרלה תערך במחוז']) {                // a tie carries the tied sum but names no one
+      const r = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: note, SchumZchiya: 3200000 })] }), null);
+      assert.equal(r.lots[0].winner, undefined); assert.equal(r.lifecycle, 'decided-no-award'); assert.equal(r.economics.awardedLandTotal, null);
+    }
+    /* a named party next to a note stays a party (the name is the source's) */
+    const named = norm(r5, detail(r5, { Tik: [lot({ ShemZoche: 'TEST FIXTURE זוכה 2 הצעות זהות - תערך הגרלה', SchumZchiya: 500000 })] }), null);
+    assert.equal(named.lifecycle, 'awarded');
+    /* a lot stored by an earlier normalizer with the note as its winner is re-derived on the next run, without a new detail read */
+    const first = norm(lottery, detail(lottery, { SugTacharut: null, Tik: [lot({ ShemZoche: 'TEST FIXTURE מקצה', SchumZchiya: null }), lot()] }), null);
+    assert.equal(first.lifecycle, 'awarded');
+    const stale = { ...first, lots: first.lots.map((l, i) => (i === 0 ? { ...l, winner: { name: 'בחירת מגרש תערך במחוז', amount: null, evidence: 'winner-name (fixed-price allocation, sum not published)' } } : l)) };
+    const later = norm(lottery, null, null, stale);
+    assert.equal(later.lots[0].winner, undefined); assert.equal(later.lots[0].sourceNote, 'בחירת מגרש תערך במחוז');
+    assert.equal(later.winners.length, 0); assert.equal(later.lifecycle, 'decided-no-award');
+    assert.equal(N.NORMALIZER_VERSION, 5);
+  });
   await t('multi-lot tenders: lots keep their own winners (one per lot, different names); partial awards are "some-lots"', () => {
     const r5 = row({ StatusMichraz: 5 });
     const d = detail(r5, { Tik: [lot(WIN), lot({ ...WIN, ShemZoche: 'TEST FIXTURE זוכה ב', SchumZchiya: 8000000, Kibolet: 50 }), lot({ ShemZoche: ' אין הצעות למתחם זה', SchumZchiya: 0 })] });
