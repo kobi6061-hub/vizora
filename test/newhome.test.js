@@ -79,6 +79,10 @@ t('deferred payment: present value, effective discount and the implied rate agai
   near(ok(idx, 'indexAdds'), 2400000 * 0.5 * (Math.pow(1.04, 2.5) - 1), 1e-6, 'half the deferred payment linked');
   assert.equal(E.nhRun('deferred', { ...base, disc: '5', up: '60', mid: '50', midM: '10' }).out.pv.why, 'sched');
   assert.equal(E.nhRun('deferred', { ...base, disc: '5', mid: '10', midM: '40' }).out.pv.why, 'order');
+  const noMid = E.nhRun('deferred', { ...base, disc: '5', midM: '' });
+  assert.ok(noMid.out.pv.ok, 'no interim payment: its month is not required'); near(ok(noMid, 'pv'), ok(r, 'pv'), 1e-9, 'same result');
+  assert.ok(E.nhRun('deferred', { ...base, disc: '5', midM: '40' }).out.pv.ok, 'a zero interim payment never trips the order check');
+  assert.deepEqual(E.nhRun('deferred', { ...base, disc: '5', mid: '10', midM: '' }).out.pv.missing, ['midM'], 'a real interim payment still needs its month');
   assert.equal(E.nhRun('deferred', { ...base, cash: '1' }).out.implied.why, 'noRate');
   assert.equal(E.nhRun('deferred', { ...base }).out.pv.ok, false, 'no discount rate: no present value');
   assert.ok(E.nhRun('deferred', { ...base }).out.implied.ok, 'the implied rate needs no discount rate');

@@ -258,8 +258,27 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
     const J = series(90020, 'מדד מחירי דירות - מחוז ירושלים', [[2026, 7, 110.2, 0.3, 1.1], [2026, 6, 109.9, 0.1, 0.8]]);
     const r = await fetchCbsDistricts(d.picks.districts, { fetchImpl: fakeFetch([['price?id=90020&', J]]), now: NOW });
     assert.equal(r.districts.length, 2); assert.equal(r.districts[0].yoy, 1.1); assert.match(r.districts[1].error, /HTTP 404/);
+    assert.equal(r.districts[0].yoyBasis, 'published', 'the CBS percentYear');
     assert.deepEqual(r.period, { year: 2026, month: 7 }); assert.equal(r.scope, 'all dwellings, by CBS district');
     await assert.rejects(fetchCbsDistricts([], { fetchImpl: fakeFetch([]), now: NOW }), /subject not found/);
+    const pts = []; for (let i = 0; i < 14; i++) { const k = 2025 * 12 + 5 + i; pts.push([Math.floor(k / 12), (k % 12) + 1, 100 + i, null, null]); }
+    const c = await fetchCbsDistricts([{ code: '90020', name: 'x' }], { fetchImpl: fakeFetch([['price?id=90020&', series(90020, 'x', pts)]]), now: new Date('2026-09-01T00:00:00Z') });
+    assert.equal(c.districts[0].yoyBasis, 'computed', 'no CBS percentYear: PROPX computed it from the levels — the page tags it DERIVED');
+  });
+  await t('a district that fails keeps its last good value (stale, with the error and the good-read time); the run reports it partial', () => {
+    const at1 = '2026-10-01T05:00:00Z', at2 = '2026-10-13T05:00:00Z';
+    const ok = (code, yoy) => ({ code, name: 'D' + code, yoy, yoyBasis: 'computed', period: { year: 2026, month: 7 } });
+    const base = { boiRate: { ok: true, data: { value: 4 } }, newHomesIndex: { ok: true, data: { yoy: 1, period: { year: 2026, month: 7 } } }, dwellingsIndex: { ok: true, data: { yoy: 1, period: { year: 2026, month: 7 } } } };
+    const s1 = mergeSnapshot(null, { ...base, dwellingsByDistrict: { ok: true, data: { districts: [ok('1', 2.1), ok('2', -1.4)], period: { year: 2026, month: 7 } } } }, at1);
+    assert.equal(s1.indicators.dwellingsByDistrict.partial, undefined);
+    const s2 = mergeSnapshot(s1, { ...base, dwellingsByDistrict: { ok: true, data: { districts: [ok('1', 2.3), { code: '2', name: 'D2', error: 'HTTP 500' }], period: { year: 2026, month: 7 } } } }, at2);
+    const D = s2.indicators.dwellingsByDistrict, d2 = D.districts.find((x) => x.code === '2');
+    assert.equal(d2.yoy, -1.4, 'the last good value is kept'); assert.equal(d2.stale, true); assert.equal(d2.lastError, 'HTTP 500'); assert.equal(d2.lastGoodAt, at1);
+    assert.equal(D.partial, true); assert.deepEqual(D.failedDistricts, ['D2']);
+    assert.ok(s2.failures.some((f) => f.key === 'dwellingsByDistrict' && f.partial), 'the run reports the partial read');
+    assert.equal(s2.ok, true, 'an optional indicator never fails the run');
+    const s3 = mergeSnapshot(s2, { ...base, dwellingsByDistrict: { ok: true, data: { districts: [ok('1', 2.3), ok('2', -1.2)], period: { year: 2026, month: 7 } } } }, at2);
+    assert.equal(s3.indicators.dwellingsByDistrict.partial, undefined); assert.equal(s3.indicators.dwellingsByDistrict.districts[1].stale, undefined);
   });
 
   console.log('CLI end to end (stubbed network)');

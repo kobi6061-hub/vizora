@@ -28,6 +28,12 @@ name like the others and dated monthly (`periodKind: 'monthly'`, their own stale
 `failures` with `optional: true` and a held value is kept and marked stale — but the run stays "ok" and the daily job
 does not turn red for them. A series never held is absent, never 0.
 
+District indices (`dwellingsByDistrict`, all dwellings by CBS district) are merged one district at a time: a district
+that fails keeps its last good value marked `stale` with `lastError` / `lastGoodAt`, the indicator carries
+`partial: true` + `failedDistricts`, and the run lists a `partial` failure. Every y/y carries `yoyBasis`:
+`published` (the CBS percentYear) or `computed` (PROPX's level ÷ level 12 months earlier) — the page tags a computed
+district y/y DERIVED, never official.
+
 ## Rules the code enforces
 
 - **Official endpoints only** — the purity gate in `test/market.test.js` fails the

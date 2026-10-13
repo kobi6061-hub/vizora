@@ -64,6 +64,11 @@ function fixtureDirs(tenders, lotteries) {
     assert.equal(k('TEST FIXTURE שותפות מוגבלת'), 'partnership'); assert.equal(k('קיבוץ TEST'), 'cooperative'); assert.equal(k('TEST FIXTURE (ע"ר)'), 'nonprofit');
     assert.equal(k('עיריית TEST'), 'public-body');
     assert.equal(k('כהן משה'), 'unmarked'); assert.equal(k('בעמי שמואל'), 'unmarked', 'a marker inside a word is not a marker');
+    assert.equal(k('עירית TEST FIXTURE'), 'unmarked', 'עירית is also a first name — only עיריית marks a municipality');
+    assert.equal(k('TEST FIXTURE ייזום ובניה בע""מ'), 'company', 'a CSV-doubled quote is still the marker'); assert.equal(N.canonicalName('X בע""מ'), 'X בע"מ');
+    assert.equal(k('TEST FIXTURE (1994)בע"מ'), 'company'); assert.equal(k('TEST י.ק.בע"מ'), 'company'); assert.equal(k('TEST FIXTURE (י.ש )בעמ'), 'company');
+    assert.equal(k('TEST FIXTURE חברה לבניה בערבון מוגבל'), 'company'); assert.equal(k('עמותת TEST FIXTURE'), 'nonprofit');
+    assert.equal(k('י.ש.מ TEST'), 'unmarked', 'initials are not a partnership marker');
     assert.equal(N.looksCut('רמי שבירו הנדסה בניה והשקעות ב'), true); assert.equal(N.looksCut('X בע"מ'), false);
     assert.equal(N.lettersKey('י.ח. דמרי - בניה בע"מ'), N.lettersKey('י.ח.דמרי בניה בעמ'));
   });
@@ -99,11 +104,11 @@ function fixtureDirs(tenders, lotteries) {
   await t('units stay per source and are never added; land totals are competitive bids only', () => {
     const co = 'TEST FIXTURE יזם בע"מ';
     const R = build([tender({ winners: [win(co, { amount: 12000000, units: 60 })] }), tender({ priceBasis: 'price-per-sqm-bid', winners: [win(co, { amount: 9500, units: 80 })] }),
-      tender({ track: 'commercial-other', winners: [win(co, { units: null })] })], [lottery({ developer: co, unitsInLottery: 140 })]);
+      tender({ track: 'commercial-other', winners: [win(co, { units: null })] }), tender({ track: 'commercial-other', winners: [win(co, { amount: 50000000, units: 40 })] })], [lottery({ developer: co, unitsInLottery: 140 })]);
     const d = devNamed(R, co);
     assert.equal(d.tenders.residentialUnits, 140); assert.equal(d.lotteries.unitsFirstLotteries, 140);
-    assert.equal(d.tenders.landTotalCompetitive, 12000000 + 10000000, 'every competitive lot with a sum; the ₪/m² bid is not a land sum'); assert.equal(d.tenders.landLots, 2); assert.equal(d.tenders.perSqmLots, 1);
-    assert.equal(d.tenders.landPerUnit, 200000, 'per unit: numerator and denominator from the same lots (the lot without units is left out of both)');
+    assert.equal(d.tenders.landTotalCompetitive, 12000000 + 10000000 + 50000000, 'every competitive lot with a sum; the ₪/m² bid is not a land sum'); assert.equal(d.tenders.landLots, 3); assert.equal(d.tenders.perSqmLots, 1);
+    assert.equal(d.tenders.landPerUnit, 200000, 'per unit: residential lots only, numerator and denominator from the same lots (the lot without units and the commercial lot are left out of both)');
     assert.equal(Object.keys(d).some((k) => /total.*units|units.*total/i.test(k)), false, 'no cross-source unit total');
   });
   await t('construction evidence attaches to the lot it was joined to, never to the other lots of the tender', () => {
@@ -207,6 +212,20 @@ function fixtureDirs(tenders, lotteries) {
     assert.equal(s.lastRunId, 'a'); assert.equal(s.state, 'SUCCESS'); assert.equal(s.checksRecorded, 1);
     assert.equal(TC.runSummary(runs, { staleAfterHours: 50, now: now + 3 * 864e5 }).state, 'STALE');
     assert.equal(TC.runSummary([{ id: 'r', status: 'refused', retrievalMethod: 'live-api', finishedAt: '2026-10-12T10:00:00Z' }], { staleAfterHours: 50, now }).state, 'REFUSED', 'never answered: the refusal, not "stale"');
+    for (const stop of ['budget', 'request-cap', 'time']) assert.equal(TC.stateOfRun({ status: 'ok', detailStopped: stop }), 'PARTIAL', 'a budget / cap / deadline is PARTIAL: ' + stop);
+    assert.equal(TC.stateOfRun({ status: 'ok', windowCheck: 'partial' }), 'PARTIAL', 'a window the sweep did not prove complete');
+    assert.equal(TC.stateOfRun({ status: 'ok', gaps: [{ area: 'x' }] }), 'PARTIAL');
+    const withSkips = [...runs, { id: 'c', status: 'skipped', retrievalMethod: 'live-api', finishedAt: '2026-10-12T11:00:00Z' }, { id: 'd', status: 'running', retrievalMethod: 'live-api', startedAt: '2026-10-12T12:00:00Z' }];
+    const sk = TC.runSummary(withSkips, { staleAfterHours: 50, now });
+    assert.equal(sk.state, 'SUCCESS', 'a skipped or in-progress row is not a failed check'); assert.equal(sk.checksRecorded, 1);
+  });
+  await t('a stale market indicator shows STALE after its last good read, dated by its failed attempt', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'trust-mkt-'));
+    fs.mkdirSync(path.join(dir, 'market'));
+    fs.writeFileSync(path.join(dir, 'market', 'latest.json'), JSON.stringify({ schema: 1, syncedAt: '2026-10-13T05:00:00Z', ok: true, failures: [{ key: 'cpi', error: 'HTTP 500', optional: true }], indicators: {
+      cpi: { level: 100, period: { year: 2026, month: 8 }, series: { code: '120010', name: 'TEST' }, checkedAt: '2026-09-01T05:00:00Z', stale: true, lastError: 'HTTP 500', lastAttemptAt: '2026-10-13T05:00:00Z' } } }));
+    const c = TC.catalog({ dataDir: dir, now: Date.parse('2026-10-13T06:00:00Z') }), cpi = c.sources.find((x) => x.id === 'cbs:cpi');
+    assert.equal(cpi.sync.state, 'STALE'); assert.equal(cpi.sync.lastGoodAt, '2026-09-01T05:00:00Z'); assert.equal(cpi.sync.lastCheckAt, '2026-10-13T05:00:00Z');
   });
   await t('the catalogue over the committed data: every source classified, unavailable never 0, the republication never official', () => {
     const c = TC.catalog();

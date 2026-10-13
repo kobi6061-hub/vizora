@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="515a014af00a6b2da0957e6494fbc763d012a65da9f0d271918172dba8f87be6">
+<meta name="propx-source-sha256" content="da27d92f19a49705fb9f0c426d6c51b8827bf6c2783eadb1277d0488fa556a73">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -4666,7 +4666,8 @@ function nhRun(tool,raw,taxTable){
     return{inputs:v,invalid,out,rows,taxBasis:manual?"user":v.buyer?"static":null};
   }
   if(tool==="deferred"){
-    const sched=()=>v.up+v.mid>100?"sched":v.midM>v.endM?"order":null;
+    if(v.mid===0&&v.midM==null)v.midM=0;                 /* no interim payment → its month is moot, never "missing" */
+    const sched=()=>v.up+v.mid>100?"sched":v.mid>0&&v.midM>v.endM?"order":null;
     const flows=()=>[{m:0,p:v.up},{m:v.midM,p:v.mid},{m:v.endM,p:100-v.up-v.mid}].filter(x=>x.p>0)
       .map(x=>{const base=v.offer*x.p/100,amount=base*(1+v.linked/100*(nhG(v.idx,x.m)-1));return{m:x.m,pct:x.p,base,amount}});
     const nominal=()=>sched()||flows().reduce((s,x)=>s+x.amount,0);
@@ -4741,7 +4742,7 @@ he:{title:"כלי דירה חדשה מקבלן",sub:"שישה מחשבונים �
   taxStatic:(f,to,c)=>`מדרגות רשות המסים ${f}–${to} (סטטי, נבדק ${c})`,taxSrc:"מקור",taxUser:"הוזן ידנית",slices:"פירוק מדרגות",
   flows:"לוח התשלומים",fM:"חודש",fBase:"קרן",fAmt:"תשלום כולל הצמדה",pays:"פירוק לפי תשלום",pAdd:"תוספת",
   modelNote:"מודל — לא תצפית. מע״מ על הקרקע לא צוין במקור; עלויות הבנייה, העקיפות, המימון ומחיר המכירה הם הנחות שלכם.",
-  idxNote:"מדד תשומות הבנייה הרשמי (הלמ״ס) עדיין אינו מסונכרן ב-PROPX — הקצב השנתי הוא הנחה שלכם. החלק הצמוד לפי החוזה שלכם.",
+  idxNote:"מדד תשומות הבנייה הרשמי (הלמ״ס) לא נקרא בסנכרון השוק — הקצב השנתי הוא הנחה שלכם. החלק הצמוד לפי החוזה שלכם.",idxStale:"לא עדכני",
   idxRef:(y,p,c)=>`לעיון: מדד תשומות הבנייה למגורים (הלמ״ס) — שינוי שנתי ${y} (${p}, נבדק ${c}). נתון עבר — אינו תחזית ואינו מוזן כהנחה.`,
   discNote:"שיעור ההיוון הוא הנחה שלכם (למשל ריבית המשכנתא או תשואת פיקדון) — ריבית בנק ישראל אינה מוזנת אוטומטית.",
   boiRef:(v,d)=>`לעיון: ריבית בנק ישראל ${v} (נבדק ${d}) — אינה ריבית משכנתא`,
@@ -4777,7 +4778,7 @@ en:{title:"New-home tools",sub:"Six calculators for buying from a developer · e
   taxStatic:(f,to,c)=>`Tax Authority brackets ${f}–${to} (static, checked ${c})`,taxSrc:"source",taxUser:"entered manually",slices:"Bracket breakdown",
   flows:"Payment schedule",fM:"Month",fBase:"Principal",fAmt:"Payment incl. indexation",pays:"By payment",pAdd:"Added",
   modelNote:"Model — not an observation. VAT on land is not stated by the source; construction, soft costs, financing and the sale price are your assumptions.",
-  idxNote:"The official CBS construction-inputs index is not yet synced in PROPX — the annual rate is your assumption. The linked share follows your contract.",
+  idxNote:"The official CBS construction-inputs index has not been read by the market sync — the annual rate is your assumption. The linked share follows your contract.",idxStale:"stale",
   idxRef:(y,p,c)=>`For reference: CBS residential construction-inputs index — ${y} year on year (${p}, checked ${c}). Past data — not a forecast, never filled in as your assumption.`,
   discNote:"The discount rate is your assumption (e.g. your mortgage rate or a deposit yield) — the Bank of Israel rate is never filled in for you.",
   boiRef:(v,d)=>`For reference: Bank of Israel rate ${v} (checked ${d}) — not a mortgage rate`,
@@ -4821,7 +4822,7 @@ function nhOutputsHTML(tool,r){
   if(tool==="index"){
     if(r.rows.pays)extra+=`<div class="nh-rows"><b>${n.pays}</b>${r.rows.pays.map(p=>`<span class="num">${n.fM} ${p.m} · ${p.pct}% · ${fmtNIS(p.base)} · ${n.pAdd} ${fmtNIS(p.add)}</span>`).join("")}</div>`;
     const ci=window.PROPX_MARKET&&window.PROPX_MARKET.indicators&&window.PROPX_MARKET.indicators.constructionInputsIndex;
-    extra+=ci&&typeof ci.yoy==="number"&&ci.period&&ci.checkedAt?`<p class="calc-foot">${vcTag("raw")}${ci.stale?` <span class="vc na">${T().vcName.na}</span>`:""} ${n.idxRef(`<span class="num">${(ci.yoy>0?"+":"")+ci.yoy.toFixed(1)}%</span>`,`<span class="num">${ci.period.month}/${ci.period.year}</span>`,`<span class="num">${String(ci.checkedAt).slice(0,10).split("-").reverse().join(".")}</span>`)}</p>`
+    extra+=ci&&typeof ci.yoy==="number"&&ci.period&&ci.checkedAt?`<p class="calc-foot">${vcTag("raw")}${ci.stale?` <span class="vc na" title="${calcEsc(ci.lastError||"")}">${n.idxStale}</span>`:""} ${n.idxRef(`<span class="num">${(ci.yoy>0?"+":"")+ci.yoy.toFixed(1)}%</span>`,`<span class="num">${ci.period.month}/${ci.period.year}</span>`,`<span class="num">${String(ci.checkedAt).slice(0,10).split("-").reverse().join(".")}</span>`)}</p>`
       :`<p class="calc-foot">${n.idxNote}</p>`;
   }
   if(tool==="bridge")extra+=`<p class="calc-foot">${vcTag("mod")} ${n.modelNote}</p>`;
@@ -4884,11 +4885,13 @@ const OT_I18N={
 he:{title:"מגמת מחירים — מדדים רשמיים",nh:"דירות חדשות (ארצי)",dw:"כל הדירות (ארצי)",yoy:"שינוי שנתי",
   dist:"כל הדירות לפי מחוז — חלון אחרון",distName:"מחוז",distYoy:"שינוי שנתי",distWin:"חלון",
   note:"מדדי הלמ״ס הארציים והמחוזיים — לא סדרה עירונית, שכונתית או של פרויקט; היסטוריית מחירים מקומית טרם נאספה (—). כל נקודה היא חלון דו-חודשי המתוארך לפי חודשו הראשון.",
-  src:(a,b,c)=>`הלמ״ס · סדרות ${a} ו-${b} · נבדק ${c}`,stale:"לא עדכני",err:"לא נקרא"},
+  src:(a,b,c)=>`הלמ״ס · סדרות ${a} ו-${b} · נבדק ${c}`,stale:"לא עדכני",err:"לא נקרא",
+  distCalc:"השינוי השנתי במחוזות מחושב ב-PROPX מרמות המדד של הלמ״ס (רמה ÷ רמה 12 חודשים קודם) — הלמ״ס אינה מפרסמת אותו בסדרות אלה; נגזר, לא רשמי."},
 en:{title:"Price trend — official indices",nh:"New homes (national)",dw:"All dwellings (national)",yoy:"year on year",
   dist:"All dwellings by district — latest window",distName:"District",distYoy:"Year on year",distWin:"Window",
   note:"CBS national and district indices — not a city, neighbourhood or project series; local price history has not been collected (—). Each point is a two-month window dated by its first month.",
   src:(a,b,c)=>`CBS · series ${a} and ${b} · checked ${c}`,stale:"stale",err:"not read",
+  distCalc:"The district year-on-year change is computed by PROPX from the CBS index levels (level ÷ level 12 months earlier) — the CBS does not publish it for these series; derived, not official.",
   gloss:{"ירושלים":"Jerusalem","צפון":"North","חיפה":"Haifa","מרכז":"Center","תל אביב":"Tel Aviv","דרום":"South"}}};
 function otHistory(ind){
   if(!ind||!Array.isArray(ind.history))return null;
@@ -4918,12 +4921,15 @@ function renderOfficialTrend(){
   card.classList.remove("na-card");
   const last=s=>s[s.length-1],pct=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+"%";
   const D=I.dwellingsByDistrict,dist=D&&Array.isArray(D.districts)?D.districts:[];
-  const distRows=dist.map(d=>`<tr><td>${t.gloss&&t.gloss[d.name]?`<span title="${calcEsc(d.name)}">${t.gloss[d.name]}</span>`:calcEsc(d.name)}</td><td class="num">${typeof d.yoy==="number"?pct(d.yoy):`<span class="ho-na">${t.err}</span>`}</td><td class="num">${d.period?`${d.period.month}/${d.period.year}`:"—"}</td></tr>`).join("");
+  /* a district y/y is OFFICIAL only when the CBS published it (percentYear); otherwise PROPX computed it from two index levels — DERIVED */
+  const distPub=d=>d.yoyBasis?d.yoyBasis==="published":!!(Array.isArray(d.history)&&d.history.length&&typeof d.history[d.history.length-1].yoy==="number");
+  const distAll=dist.filter(d=>typeof d.yoy==="number"),distTag=distAll.length&&distAll.every(distPub)?vcTag("raw"):vcTag("der");
+  const distRows=dist.map(d=>`<tr><td>${t.gloss&&t.gloss[d.name]?`<span title="${calcEsc(d.name)}">${t.gloss[d.name]}</span>`:calcEsc(d.name)}</td><td class="num">${typeof d.yoy==="number"?pct(d.yoy)+(d.stale?` <span class="vc na" title="${calcEsc(d.lastError||"")}">${t.stale}</span>`:""):`<span class="ho-na">${t.err}</span>`}</td><td class="num">${d.period?`${d.period.month}/${d.period.year}`:"—"}</td></tr>`).join("");
   const chk=String(I.newHomesIndex.checkedAt||"").slice(0,10).split("-").reverse().join(".");
   card.innerHTML=`<div class="chart-tools"><h2 style="font-size:15.5px">${t.title}</h2>${vcTag("raw")}${I.newHomesIndex.stale||I.dwellingsIndex.stale?` <span class="vc na">${t.stale}</span>`:""}</div>
     <div class="ot-legend"><span class="ot-k nh"></span>${t.nh} <b class="num">${pct(last(nh).yoy)}</b><span class="ot-k dw"></span>${t.dw} <b class="num">${pct(last(dw).yoy)}</b> <span class="ot-s">· ${t.yoy}</span></div>
     <div class="ot-wrap">${otLineSVG(nh,dw)}</div>
-    ${distRows?`<h4 class="ld-h4">${t.dist} ${vcTag("raw")}${D.stale?` <span class="vc na">${t.stale}</span>`:""}</h4><table class="ho-gt ot-dist"><thead><tr><th>${t.distName}</th><th>${t.distYoy}</th><th>${t.distWin}</th></tr></thead><tbody>${distRows}</tbody></table>`:""}
+    ${distRows?`<h4 class="ld-h4">${t.dist} ${distTag}${D.stale?` <span class="vc na">${t.stale}</span>`:""}</h4><table class="ho-gt ot-dist"><thead><tr><th>${t.distName}</th><th>${t.distYoy}</th><th>${t.distWin}</th></tr></thead><tbody>${distRows}</tbody></table>${distAll.some(d=>!distPub(d))?`<p class="ho-note">${t.distCalc}</p>`:""}`:""}
     <p class="ho-note">${t.note}</p><p class="ho-note">${t.src(calcEsc(I.newHomesIndex.series&&I.newHomesIndex.series.code||"—"),calcEsc(I.dwellingsIndex.series&&I.dwellingsIndex.series.code||"—"),chk)}</p>`;
 }
 
@@ -6764,7 +6770,7 @@ he:{
   sortL:"מיון",sort:{units:"יח״ד במגרשים שנזכו",lots:"מגרשים שנזכו",projects:"פרויקטי הגרלה",cities:"ערים",last:"פעילות אחרונה",name:"שם",date:"תאריך",unitsP:"יח״ד"},
   filterPh:{developers:"סינון לפי שם יזם",projects:"סינון לפי שם · יזם · שכונה"},cityPh:"עיר (שם או סמל)",
   searchPh:"חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר",searchL:"חיפוש ישויות",
-  searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
+  searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchErr:"החיפוש אינו זמין כרגע (השרת לא ענה) — זו אינה תוצאה ריקה; נסו שוב",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
   ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב"},
   kDevs:"יזמים ברישום",kDevsS:n=>`${n} מופיעים בשני המקורות (שם משפטי זהה)`,kSites:"מגרשי מגורים שנזכו",kSitesS:"מכרזי רמ״י · זוכה עם סימון צורה משפטית",
   kProjects:"פרויקטי הגרלה",kProjectsS:(a,b)=>`משב״ש · הגרלות ${a}–${b}`,kUnmarked:"זוכים ללא סימון משפטי",kUnmarkedS:n=>`${n} מגרשים — בדרך כלל אנשים פרטיים; נספרים, לא מוצגים`,
@@ -6822,7 +6828,7 @@ en:{
   sortL:"Sort",sort:{units:"Units in lots won",lots:"Lots won",projects:"Lottery projects",cities:"Cities",last:"Latest activity",name:"Name",date:"Date",unitsP:"Units"},
   filterPh:{developers:"Filter by developer name",projects:"Filter by name · developer · neighbourhood"},cityPh:"City (name or code)",
   searchPh:"Search: developer · project · tender 158/2026 · plan · block/parcel · city · street and number",searchL:"Entity search",
-  searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchBasis:"a result routes to an entity — names match by string and are never merged",
+  searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchErr:"Search is unavailable right now (the server did not answer) — this is not an empty result; try again",searchBasis:"a result routes to an entity — names match by string and are never merged",
   ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street"},
   kDevs:"Developers in the registry",kDevsS:n=>`${n} appear in both sources (identical legal name)`,kSites:"Residential lots won",kSitesS:"ILA tenders · winner with a legal-form marker",
   kProjects:"Lottery projects",kProjectsS:(a,b)=>`MoCH · lotteries ${a}–${b}`,kUnmarked:"Winners without a legal form",kUnmarkedS:n=>`${n} lots — usually private persons; counted, not listed`,
@@ -6892,7 +6898,7 @@ function inLoad(){
   if(view==="developers")p.set("period",inState.period);
   if(view==="projects"&&inState.kind)p.set("kind",inState.kind);
   if(inState.city)p.set("city",inState.city);
-  const cov=inState.cov?Promise.resolve(inState.cov):inGet("view=status");
+  const cov=inState.cov?Promise.resolve(inState.cov):inGet("view=status").catch(()=>null);   /* the coverage strip is optional: its failure never blanks the data */
   Promise.all([inGet(p.toString()),cov]).then(([d,c])=>{if(id!==inState.req)return;if(view==="renewal")d=Object.assign({},d.page,{renewal:d.summary});inState.data=d;inState.cov=c;inState.status="ok";inState.err=null;renderIntel()})
     .catch(e=>{if(id!==inState.req)return;inState.status="error";inState.err=e.message;renderIntel()});
 }
@@ -6915,7 +6921,7 @@ function inBarHTML(){
 function inCovHTML(C){
   const t=IT(),F=(inState.data&&inState.data.freshness)||(inState.cov&&inState.cov.freshness)||{},L=F.land||{},H=F.housing||{},DC=L.detailCoverage||{};
   const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
-  return `<div class="ho-facts">${fact(t.covF.land,inDate(L.checkedAt))}${fact(t.covF.latest,inDate(L.latestPublished))}${fact(t.covF.housing,inDate(H.checkedAt))}${fact(t.covF.detail,DC.total?`<span class="num">${fmtInt(DC.retrieved||0)}/${fmtInt(DC.total)}</span>`:"—")}</div>
+  return `<div class="ho-facts">${fact(t.covF.land,inDate(L.checkedAt))}${fact(t.covF.latest,inDate(L.latestPublished))}${fact(t.covF.housing,inDate(H.checkedAt))}${fact(t.covF.detail,DC.total&&DC.retrieved!=null?`<span class="num">${fmtInt(DC.retrieved)}/${fmtInt(DC.total)}</span>`:"—")}</div>
     <p class="ho-covs"><b>${t.basis}.</b> ${C?t.possibleN(fmtInt(C.possibleSamePrefixPairs||0),fmtInt(C.possibleSameLetterGroups||0)):""}</p>`;
 }
 function inKpisHTML(C){
@@ -6996,7 +7002,7 @@ function renderIntel(){
   PL.sort((a,b)=>ORD.indexOf(a[0])-ORD.indexOf(b[0]));
   const plCell=(x,lab)=>x?`<span class="in-pl-s">${lab} <b class="num">${fmtInt(x.n)}</b>${x.unitsKnown?` · <span class="num">${fmtInt(x.units)}</span> ${t.c.punits}`:""}</span>`:"";
   const pipe=PL.length?`<div class="in-pl"><div class="in-pl-h"><b>${t.pipeT}</b> ${vcTag("der")} <span class="tx-note">${t.pipeS}</span></div><div class="in-pl-r">${PL.map(([k,v])=>`<div class="in-pl-c">${inStage(k)}${plCell(v.ila,t.pipeIla)}${plCell(v.moch,t.pipeMoch)}</div>`).join("")}</div></div>`:"";
-  el("inTblHead").innerHTML=`${pipe}<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="entries"?"der":"raw")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
+  el("inTblHead").innerHTML=`${pipe}<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="projects"?"raw":"der")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
   el("inTbl").innerHTML=inTableHTML(d)||`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
   el("inCards").innerHTML=inCardsHTML(d);
   const pages=d.pages||1;
@@ -7015,7 +7021,7 @@ function inSearch(q){
   if(qq.length<2){inState.sres=null;inState.sbusy=false;renderInSearch();return}
   inState.sbusy=true;renderInSearch();
   const id=++inState.sreq;
-  inSTimer=setTimeout(()=>{inGet("view=search&q="+encodeURIComponent(qq)).then(d=>{if(id!==inState.sreq)return;inState.sres=d.results||[];inState.sbusy=false;renderInSearch()})
+  inSTimer=setTimeout(()=>{inGet("view=search&q="+encodeURIComponent(qq)).then(d=>{if(id!==inState.sreq)return;inState.sres=d.results||[];inState.sbusy=false;inState.serr=false;renderInSearch()})
     .catch(()=>{if(id!==inState.sreq)return;inState.sres=[];inState.sbusy=false;inState.serr=true;renderInSearch()})},220);
 }
 function inHitSub(h){
@@ -7039,7 +7045,7 @@ function renderInSearch(){
   if(inState.sbusy&&!inState.sres){box.innerHTML=`<p class="ho-note">${t.searching}</p>`;return}
   const R=inState.sres||[];
   const cap=inState.sall?R.length:10,more=R.length>10?`<button type="button" class="ho-more" data-insall>${inState.sall?t.showLess:t.showAll(fmtInt(R.length))}</button>`:"";
-  box.innerHTML=R.length?R.slice(0,cap).map(inHitHTML).join("")+more+`<p class="ho-note">${t.searchBasis}</p>`:`<p class="ho-note">${inOffline()?t.offline:t.searchNone}</p>`;
+  box.innerHTML=R.length?R.slice(0,cap).map(inHitHTML).join("")+more+`<p class="ho-note">${t.searchBasis}</p>`:`<p class="ho-note">${inOffline()?t.offline:inState.serr?t.searchErr:t.searchNone}</p>`;
 }
 function inGoSection(id){const s=el(id);if(s)s.scrollIntoView({behavior:"smooth",block:"start"})}
 function inRoute(h,from){
@@ -7091,7 +7097,7 @@ function renderInDrawer(){
       ${two(K.projects,inN(M.projects),inN(MR.projects))}${two(K.lotteries,inN(M.lotteries),inN(MR.lotteries))}${two(K.ufirst,inN(M.unitsFirstLotteries),inN(MR.unitsFirstLotteries))}
       ${two(K.apps,inN(M.applicantsFirstLotteries),inN(MR.applicantsFirstLotteries))}${two(K.firstl,inDate(M.firstLottery),inDate(MR.firstLottery))}${two(K.lastl,inDate(M.lastLottery),inDate(MR.lastLottery))}</tbody></table>`;
     const cons=C?`<div class="ho-dl">${kv(K.clots,inN(C.lots))}${kv(K.cbld,inN(C.buildings))}${kv(K.cunits,inN(C.units||null))}${kv(K.cstart,inN(C.started))}${kv(K.ccomp,inN(C.completed))}${kv(K.cfirst,inDate(C.firstStart))}${kv(K.clast,inDate(C.lastCompletion))}${kv(K.casof,inDate(C.asOf))}</div><p class="ho-note">${inE(C.join||"")}</p>`:`<p class="ho-note">${t.noneYet}</p>`;
-    const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${K.first}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${t.c.edate}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
     const sites=(d.sites||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.sTender}</th><th>${t.c.ecity}</th><th>${t.sUnits}</th><th>${t.sLand}</th><th>${t.c.stage}</th><th>${t.sDecision}</th></tr></thead><tbody>${d.sites.map(s=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(s.id)}"><span class="num">${inE(s.tender||"")}</span> · <span class="num">${inE(s.lotId)}</span></button></td><td>${inCity(s)}</td><td class="num">${inN(s.units)}</td><td class="num">${s.bidPerSqm!=null?`<span class="num">${fmtNIS(s.bidPerSqm)}/m²</span>`:inNIS(s.landPrice)}</td><td>${inStage(s.stage)}</td><td class="num">${inDate(s.decisionDate)}</td></tr>`).join("")}</tbody></table></div>${d.sitesTotal>d.sites.length?`<p class="ho-note">${t.more(fmtInt(d.sitesTotal-d.sites.length))}</p>`:""}`:`<p class="ho-note">${t.noneYet}</p>`;
     const projs=(d.projects||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.pname}</th><th>${t.c.ecity}</th><th>${t.pUnits}</th><th>${t.pPsm}</th><th>${t.c.stage}</th><th>${t.lt.date}</th></tr></thead><tbody>${d.projects.map(x=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(x.id)}"><bdi>${inE(x.name||x.projectId)}</bdi></button></td><td>${inCity(x)}</td><td class="num">${inN(x.unitsFirstLottery)}</td><td class="num">${x.pricePerSqm!=null?`<span class="num">${fmtNIS(x.pricePerSqm)}</span>`:inDash()}</td><td>${inStage(x.stage)}</td><td class="num">${inDate(x.lastLotteryDate)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
     const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
