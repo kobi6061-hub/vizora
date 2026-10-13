@@ -1,0 +1,123 @@
+{
+ "at": "2026-10-13T01:04:35.572Z",
+ "hash": "f41b46ddb441ba6718c51b27f63d6c31d0f2614c",
+ "payload": {
+  "boiRate": {
+   "value": 3.25,
+   "unit": "%",
+   "nextDecision": "2026-10-21",
+   "publishedAt": "2026-09-01",
+   "source": {
+    "authority": "בנק ישראל",
+    "authorityEn": "Bank of Israel",
+    "dataset": "PublicApi/GetInterest",
+    "url": "https://www.boi.org.il/PublicApi/GetInterest"
+   }
+  },
+  "newHomesIndex": {
+   "yoy": -0.8,
+   "mom": 0.5,
+   "level": 541.2,
+   "base": "2017 אוקטובר",
+   "period": {
+    "year": 2026,
+    "month": 6
+   },
+   "periodKind": "bimonthly-first-month",
+   "series": {
+    "code": "70000",
+    "name": "מדד מחירי דירות חדשות"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מדד מחירי דירות חדשות",
+    "url": "https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "dwellingsIndex": {
+   "yoy": -1.2,
+   "mom": 0.2,
+   "level": 594.8,
+   "base": "1993 ממוצע",
+   "period": {
+    "year": 2026,
+    "month": 6
+   },
+   "periodKind": "bimonthly-first-month",
+   "series": {
+    "code": "40010",
+    "name": "מחירי דירות"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מחירי דירות",
+    "url": "https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "constructionInputsIndex": {
+   "yoy": 3.5,
+   "mom": 0.4,
+   "level": 103.9,
+   "base": "2025 יולי",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "200010",
+    "name": "מדד מחירי תשומה בבנייה למגורים"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מדד מחירי תשומה בבנייה למגורים",
+    "url": "https://api.cbs.gov.il/index/data/price?id=200010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "cpi": {
+   "yoy": 1.5,
+   "mom": 0.7,
+   "level": 105.8,
+   "base": "2024 ממוצע",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "120010",
+    "name": "מדד המחירים לצרכן - כללי"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מדד המחירים לצרכן - כללי",
+    "url": "https://api.cbs.gov.il/index/data/price?id=120010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "rentIndex": {
+   "yoy": 3.1,
+   "mom": 0.4,
+   "level": 107.1,
+   "base": "2024 ממוצע",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "120460",
+    "name": "שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי",
+    "url": "https://api.cbs.gov.il/index/data/price?id=120460&format=json&download=false&lang=he&last=15"
+   }
+  }
+ }
+}

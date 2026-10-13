@@ -1,6 +1,6 @@
 {
- "at": "2026-10-01T08:03:05.957Z",
- "hash": "f46f5e1c0854b00def119d963838238365cd76d3",
+ "at": "2026-10-13T01:04:35.572Z",
+ "hash": "f41b46ddb441ba6718c51b27f63d6c31d0f2614c",
  "payload": {
   "boiRate": {
    "value": 3.25,
@@ -54,6 +54,69 @@
     "authorityEn": "Central Bureau of Statistics",
     "dataset": "מחירי דירות",
     "url": "https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "constructionInputsIndex": {
+   "yoy": 3.5,
+   "mom": 0.4,
+   "level": 103.9,
+   "base": "2025 יולי",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "200010",
+    "name": "מדד מחירי תשומה בבנייה למגורים"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מדד מחירי תשומה בבנייה למגורים",
+    "url": "https://api.cbs.gov.il/index/data/price?id=200010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "cpi": {
+   "yoy": 1.5,
+   "mom": 0.7,
+   "level": 105.8,
+   "base": "2024 ממוצע",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "120010",
+    "name": "מדד המחירים לצרכן - כללי"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "מדד המחירים לצרכן - כללי",
+    "url": "https://api.cbs.gov.il/index/data/price?id=120010&format=json&download=false&lang=he&last=15"
+   }
+  },
+  "rentIndex": {
+   "yoy": 3.1,
+   "mom": 0.4,
+   "level": 107.1,
+   "base": "2024 ממוצע",
+   "period": {
+    "year": 2026,
+    "month": 8
+   },
+   "periodKind": "monthly",
+   "series": {
+    "code": "120460",
+    "name": "שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי"
+   },
+   "source": {
+    "authority": "הלשכה המרכזית לסטטיסטיקה",
+    "authorityEn": "Central Bureau of Statistics",
+    "dataset": "שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי",
+    "url": "https://api.cbs.gov.il/index/data/price?id=120460&format=json&download=false&lang=he&last=15"
    }
   }
  }
