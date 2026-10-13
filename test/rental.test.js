@@ -71,6 +71,14 @@ t('an "all rental" phrase beside units for sale is ambiguous → rental units st
   const r = D.rentalTerms('(סה"כ 200 דירות) כפרויקט מגורים להשכרה למשך 20 שנים, 40 יח"ד למכירה');
   assert.equal(r.rentalUnits, null); assert.equal(r.ambiguous, true); assert.equal(r.saleUnits, 40);
 });
+t('a population-reserved rental is kept apart; several per-compound figures are never collapsed into one', () => {
+  const a = D.rentalTerms('הכולל 1,189 יח"ד לבניה רוויה, מתוכן 399 יח"ד למטרת השכרה לטווח ארוך למשך 20 שנה, 600 יח"ד להשכרה לסגל רפואי ו-190 יח"ד למכירה מיידית. 600 יח"ד במגרשים TEST תיועדנה להשכרה לסגל רפואי, בהנחה של 30% בשכה"ד.');
+  assert.deepStrictEqual([a.totalUnits, a.rentalUnits, a.saleUnits], [1189, 399, 190]);
+  assert.equal(a.specialRental[0].units, 600); assert.match(a.discountedText, /בהנחה של 30%/);
+  const b = D.rentalTerms('הכוללים 484 יח"ד. מתחם א\' יכלול 352 יח"ד, שמתוכן 286 יח"ד להשכרה ארוכת טווח לתקופה של 15 שנה, ומתחם ב\' יכלול 132 יח"ד להשכרה ארוכת טווח לתקופה של 15 שנה. %50 מהדירות להשכרה בכל מתחם תיועדנה לדיור בשכר דירה מפוקח לזכאים.');
+  assert.equal(b.rentalUnits, null); assert.equal(b.ambiguous, 'multiple-statements'); assert.deepStrictEqual(b.rentalStatements, [286, 132]);
+  assert.equal(b.discountedShare, 50); assert.equal(b.rentalYears, 15);
+});
 t('the tender number join key is the Authority\'s own: year × 10000 + number; malformed numbers are refused', () => {
   assert.equal(D.tenderNumberOf('מכרז מספר מר/161/2026').michrazId, 20260161);
   assert.equal(D.tenderNumberOf('מכרז 161/2026'), null);              /* no region prefix → not the printed tender number */
