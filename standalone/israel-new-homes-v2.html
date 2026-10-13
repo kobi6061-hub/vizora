@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="a4586cb0298aeb13c7e65ae9665e5577a5d4290ff4d581bf9562a2cd8878ac0a">
+<meta name="propx-source-sha256" content="5d6bc9bbca2fbbc60ca273cd8a34addecf9a787a2bf65ba10bb6817c16221f99">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2142,7 +2142,7 @@ he:{
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
-  msFormula:"מודל: מלאי סוף יוני 2026 ÷ (מכירות ÷ 12)", evTitle:"מכירות — ראיות (RAW · DERIVED · DISPLAY)",
+  msFormula:p=>`מודל: מלאי סוף יוני 2026 ÷ קצב המכירות החודשי (לפי ${p})`, evTitle:"מכירות — ראיות (RAW · DERIVED · DISPLAY)",
   perInvEst:"מעוגן לסך הארצי",
   naShort:"—", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
   provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · חסר",
@@ -2637,7 +2637,7 @@ en:{
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
-  msFormula:"model: end-June 2026 inventory ÷ (sales ÷ 12)", evTitle:"Sales — evidence (RAW · DERIVED · DISPLAY)",
+  msFormula:p=>`model: end-June 2026 inventory ÷ the monthly sales pace (from ${p})`, evTitle:"Sales — evidence (RAW · DERIVED · DISPLAY)",
   perInvEst:"anchored to the national total",
   naShort:"—", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
   provNote:"Every value is classed: official · static · derived · modelled · missing",
@@ -6026,7 +6026,7 @@ function renderGeoView(){
     [t.geoMYoy,fmtPct(m.yoy),"yoy"],
     [t.geoMTx,tx.show?tx.text:"—","tx",tx.cls,tx.show?tx.per:tx.why],
     [t.geoMInv,fmtInt(m.listings),"listings"],
-    [t.geoMMs,ms?("~"+Math.round(ms)):"—","ms",ms?"mod":"na",ms?t.msFormula:tx.why],
+    [t.geoMMs,ms?("~"+Math.round(ms)):"—","ms",ms?"mod":"na",ms?t.msFormula(tx.B.per[he?"he":"en"]):tx.why],
   ];
   el("geoBody").innerHTML=`
     <div class="geo-cov">

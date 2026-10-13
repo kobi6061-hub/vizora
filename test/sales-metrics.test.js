@@ -127,6 +127,8 @@ t('no place receives another geography\'s count; no national value is presented 
   const g = fnBody('renderGeoView');
   assert.match(g, /const tx=txShown\(a\)/);
   assert.ok(!/fmtInt\(m\.tx\)/.test(g), 'the geo panel must not print the raw pace');
+  assert.match(g, /ms\?t\.msFormula\(tx\.B\.per\[he\?"he":"en"\]\):tx\.why/, 'months of supply names the sales period it divides by');
+  assert.match(INDEX, /msFormula:p=>`מודל: מלאי סוף יוני 2026 ÷ קצב המכירות החודשי \(לפי \$\{p\}\)`/);
 });
 t('a filter never splits sales: no figure, no floor of 3, metricsOf().tx is null', () => {
   const R = Object.keys(vm.runInNewContext('(' + line(/const M_ROOMS=(\{[^\n]*\});/).replace(/^const M_ROOMS=/, '').replace(/;\s*$/, '') + ')'));
