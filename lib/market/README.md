@@ -19,6 +19,14 @@ GitHub Actions (daily 03:17 UTC, .github/workflows/market-sync.yml)
 | `boiRate` | Bank of Israel public API (`currentInterest`, `nextInterestDate`) | tape tile, national insight |
 | `newHomesIndex` | CBS new-homes price index (series 70000) — y/y over a two-month window, dated by its first month | tape tile, national annual change (KPI), insights, provenance panel |
 | `dwellingsIndex` | CBS dwelling-price index, all dwellings (series 40010) | stored for history; not displayed yet |
+| `constructionInputsIndex` *(optional)* | CBS "מדד מחירי תשומה בבנייה למגורים" (series 200010) — monthly, y/y | reference line in the new-home indexation tool; ALTARIS context; Trust Center |
+| `cpi` *(optional)* | CBS "מדד המחירים לצרכן - כללי" (series 120010) — monthly, y/y | ALTARIS context; Trust Center |
+| `rentIndex` *(optional)* | CBS CPI component "שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי" (series 120460) — an index, not a rent level | Trust Center |
+
+Optional series (added 13.10.2026, verified by the workflow's own dry run / `--discover` the same night) are found by
+name like the others and dated monthly (`periodKind: 'monthly'`, their own staleness limit). A failure is recorded in
+`failures` with `optional: true` and a held value is kept and marked stale — but the run stays "ok" and the daily job
+does not turn red for them. A series never held is absent, never 0.
 
 ## Rules the code enforces
 

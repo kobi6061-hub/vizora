@@ -29,8 +29,9 @@
   independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
   appreciation.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
-  `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index)
-  feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand
+  `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index; optional monthly
+  CBS series found by name: construction inputs 200010, CPI 120010, CPI rent component 120460 — a failure there is
+  recorded, never fatal) feeding the market tape; `data/market/` is written by the scheduled workflow, not by hand
   (see `lib/market/README.md`).
 
 - `lib/housing/` + `api/housing.js` + `data/housing/` + `scripts/housing-sync.js` + `test/housing.test.js`
