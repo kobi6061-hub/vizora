@@ -179,6 +179,14 @@ function fixtureDirs(tenders, lotteries) {
     const src = JSON.parse((await call('/api/intel?view=sources')).body); assert.ok(src.sources.length >= 10);
   });
 
+  await t('vercel.json: every includeFiles fits the platform schema (≤ 256 characters) and the intel bundle names its data', () => {
+    const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    for (const [k, f] of Object.entries(v.functions)) if (f.includeFiles) assert.ok(f.includeFiles.length <= 256, `${k}: includeFiles is ${f.includeFiles.length} characters — Vercel rejects the whole deployment`);
+    const inc = v.functions['api/intel.js'].includeFiles;
+    for (const need of ['data/land/tenders.json', 'data/land/meta.json', 'data/housing/', 'data/market/latest.json', 'data/transactions/sync-runs.jsonl', 'data/geo/']) assert.ok(inc.includes(need), need);
+    assert.ok(!/lots-|raw/.test(inc), 'the lot shards and raw snapshots are not bundled');
+  });
+
   console.log('trust: run states, staleness, catalogue');
   await t('the run-state vocabulary: success, unchanged, partial, refused, failed, schema change; replays and store entries are not checks', () => {
     assert.equal(TC.stateOfRun(null), 'NO_RUN');
