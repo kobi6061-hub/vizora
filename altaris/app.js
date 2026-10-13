@@ -639,7 +639,7 @@
     const when = `${F.date(tx.from)}–${F.date(tx.to)}`;
     if (psm && (!V.propx || V.propx.auto !== false)) {
       V.propx = { value: Fx.sqm ? Math.round(psm * Fx.sqm) : null, auto: true, psm: Math.round(psm), note: (V.propx && V.propx.note) || '',
-        basis: `חציון ${useNew ? tx.newN + ' עסקאות מגורים חדשות' : tx.n + ' עסקאות מגורים'} ב${m.street ? m.street + ', ' : ''}${m.city} · ${when} · ${viaTxt(tx)} · נשלף ${F.date(m.retrievedAt.slice(0, 10))}` };
+        basis: `חציון ${useNew ? tx.newN + ' עסקאות מגורים חדשות לפי שנת בנייה' : tx.n + ' עסקאות מגורים'} ב${m.street ? m.street + ', ' : ''}${m.city} · ${when} · ${viaTxt(tx)} · נשלף ${F.date(m.retrievedAt.slice(0, 10))}` };
     }
     if (tx.compsN >= 5 && tx.compsMedian && (!V.comparables || V.comparables.auto !== false)) {
       V.comparables = { value: Fx.sqm ? Math.round(tx.compsMedian * Fx.sqm) : null, auto: true, psm: Math.round(tx.compsMedian), note: (V.comparables && V.comparables.note) || '',
@@ -1332,7 +1332,7 @@
   let raf = 0;
   function schedule(full) { if (full) { cancelAnimationFrame(raf); raf = 0; recompute(true); return; } if (raf) return; raf = requestAnimationFrame(() => { raf = 0; recompute(false); }); }
   function recompute(full) {
-    const ctx = { today: TODAY, portfolio: isCase(S.deal) ? [] : portfolioCtx(), marketDepth: S.deal.market && S.deal.market.tx ? { deals: S.deal.market.tx.n } : null };
+    const ctx = { today: TODAY, portfolio: isCase(S.deal) ? [] : portfolioCtx(), marketDepth: S.deal.market && S.deal.market.tx ? { deals: S.deal.market.tx.n, from: S.deal.market.tx.from, to: S.deal.market.tx.to } : null };
     S.R = E.run(S.deal, S.settings, ctx);
     if (S.view === 'deal') {
       if (full) renderStratInputs();

@@ -28,6 +28,12 @@
 - `test/calculator.test.js` = the deal calculator (`#calc`, `calcEngine`, `calcIrr`): visible,
   independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
   appreciation.
+- `test/sales-metrics.test.js` = the sales-metric truth gates (audit 13.10.2026): the board's new-home sales figure
+  (`txShown`) is shown only where `TX_BASIS` writes down its basis — national 2025 total (STATIC) and Tel Aviv (CBS H1-2026
+  count × 12 ÷ 6, MODEL, rendered "~N לשנה" with the formula); every other place and any filtered view shows — (the
+  research numbers in `LOCATIONS.base.tx` stay capital-MODEL inputs only); RAW · DERIVED · DISPLAY evidence behind "מקור
+  הנתון"; observed deals carry their period and date range, are "new" only as far as the source flags it (the register:
+  by build year), and fewer than 10 is a small sample; a static statement older than 90 days is marked stale.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index; optional monthly
   CBS series found by name: construction inputs 200010, CPI 120010, CPI rent component 120460 — a failure there is

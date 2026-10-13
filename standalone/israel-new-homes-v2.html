@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="352f27685f16ade17aadf00ba28cc3905a3e2a69f79c9784f98acfb89311a532">
+<meta name="propx-source-sha256" content="a4586cb0298aeb13c7e65ae9665e5577a5d4290ff4d581bf9562a2cd8878ac0a">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -417,6 +417,8 @@ section.blk{padding-block:22px}
 .pr b{color:var(--ink);font-size:11px}
 .pr span{color:var(--ink-2)}
 .pr-foot{font-size:10.5px;color:var(--ink-3);border-top:1px solid var(--hairline);padding-top:6px}
+.pr-ev{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-2);border-top:1px solid var(--hairline);padding-top:6px;overflow-wrap:anywhere}
+.pr-ev b{font-size:11px;color:var(--ink)}.pr-ev i{font-style:normal;font-weight:800;font-size:9.5px;letter-spacing:.04em;color:var(--ink-3);margin-inline-end:5px}
 @media(max-width:560px){.pr{grid-template-columns:1fr;gap:1px}}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
 @media(min-width:520px){.stats{grid-template-columns:repeat(3,1fr)}}
@@ -504,7 +506,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .tx-sum{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 15px;border-bottom:1px solid var(--hairline);font-size:12px}
 .tx-sum div{display:flex;flex-direction:column;gap:1px}
 .tx-sum .l{font-size:10.5px;color:var(--ink-3);font-weight:600}
-.tx-sum .v{font-size:14.5px;font-weight:800}
+.tx-sum .v{font-size:14.5px;font-weight:800}.tx-sum .v .weak{opacity:.55}
 .tx-scope{padding:10px 15px;font-size:12.5px;color:var(--ink-2);border-bottom:1px solid var(--hairline);line-height:1.5}
 .tx-more{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--hairline)}.tx-more-err{font-size:12px;color:var(--down)}
 .tx-scope b{color:var(--brass)}
@@ -2120,6 +2122,11 @@ const LOC = Object.fromEntries(LOCATIONS.map(l=>[l.id,l]));
 /* =====================================================================
    2 · i18n
    ===================================================================== */
+/* a hand-transcribed (STATIC) statement older than 90 days is marked stale where it is shown — a past trend is
+   never presented as the current one (sales-metric audit 13.10.2026) */
+const STALE_DAYS=90;
+const staleSince=iso=>(Date.now()-Date.parse(iso))/864e5>STALE_DAYS;
+const BLT4_ASOF="2026-05-31";   /* the Chief Economist's May-2026 note on new-home sales */
 const I18N={
 he:{
   brand:"PROPX", slogan:"מידע הוא הנכס הראשון", calBadge:"דירות חדשות מקבלן בלבד",
@@ -2128,14 +2135,14 @@ he:{
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
   kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"דירות חדשות מקבלן · תמונת מצב אמצע 2026 · בכל כרטיס: סיווג ותקופה", kpiNoteRent:"שכ״ד: ממוצעי למ״ס (ארצי רבעון א׳ 2026, ערים 2025) + פרמיית דירה חדשה 8% — מודל",
-  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות מקבלן", y3:"שינוי ב-3 שנים",
+  avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות דירות חדשות", y3:"שינוי ב-3 שנים",
   avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
   est:"אומדן", perMonth:"לחודש", perYear:"לשנה", yoyLbl:"שינוי שנתי",
   vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"חסר",usr:"הנחת משתמש"},
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
-  perTxH1:"אומדן: מחצית א׳ 2026 בקצב שנתי", perTxEst:"קצב שנתי משוער",
+  msFormula:"מודל: מלאי סוף יוני 2026 ÷ (מכירות ÷ 12)", evTitle:"מכירות — ראיות (RAW · DERIVED · DISPLAY)",
   perInvEst:"מעוגן לסך הארצי",
   naShort:"—", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
   provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · חסר",
@@ -2149,7 +2156,7 @@ he:{
   svrBuy:"מחיר רכישה ממוצע",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
   svrYears:"שנות שכירות", svrFormula:(p,r,y)=>`אם נכס באזור עולה <b class="num">${p}</b> והשכירות הממוצעת היא <b class="num">${r}</b> לחודש — התשואה הברוטו המשוערת היא <b class="num">${y}</b>.`,
   tblNbhd:"שכונות באזור", tblCities:"ערים באזור", tblDistricts:"מחוזות בישראל",
-  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי שנתי",thTx:"מכירות/שנה",thListings:"מלאי",
+  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי שנתי",thTx:"מכירות דירות חדשות",thListings:"מלאי",
   areas:"אזורים", filtered:"מסונן",
   fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"שלב בנייה",
   rAll:"הכל",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -2194,8 +2201,8 @@ he:{
   calcFoot:"חישוב אריתמטי בלבד מההנחות שהזנתם — אינו תחזית ואינו ייעוץ השקעות. המחשבון אינו משתמש בציוני השקעה, בדירוגים או בעקומת מחירים, ואינו מניח עליית ערך או עליית שכר דירה. ריבית משתנה, מס רכישה מדורג והצמדות אינם מחושבים — הזינו הנחות שמבטאות אותם.", basisNote:"רשמי · סטטי · נגזר · מודל · חסר",
   basisNA:"חציון מחיר ושכ״ד · היסטוריית מחירים מקומית · ציוני השקעה ודירוגי הון (מוסתרים עד שתיאסף היסטוריית מחירים רשמית)",
   basisTx:"עסקאות: נשלפות בזמן אמת ממאגר רשות המסים (טבלת העסקאות), עם היקף המדגם והכיסוי של כל שליפה.",
-  txPace:"קצב מכירות שנתי",
-  tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות/שנה ומלאי — סטטי היכן שצוטט פרסום, אחרת מודל; שינוי שנתי — נגזר, מאי–יוני 2026.",
+  txPace:"מכירות דירות חדשות",
+  tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות דירות חדשות — רק ארצי (2025, סטטי) ותל אביב (אומדן ממחצית א׳ 2026); בכל אזור אחר ותחת מסננים — חסר (—); מלאי — סטטי היכן שצוטט פרסום, אחרת מודל; שינוי שנתי — נגזר, מאי–יוני 2026.",
   rankFoot:"הדירוג מוצג רק כשכל ערך מדורג הוא נתון רשמי שמקורו נשמר במערכת.",
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
@@ -2208,14 +2215,14 @@ he:{
   geoStreetsN:n=>`${fmtInt(n)} רחובות רשומים`,
   geoDistBasis:"עוגן מיקום: מרכז היישוב לפי המרשם הרשמי",
   geoMPrice:"מחיר דירה חדשה", geoMSqm:"₪ למ״ר", geoMRent:"שכ״ד חודשי", geoMYoy:"שינוי שנתי",
-  geoMTx:"קצב מכירות שנתי", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
+  geoMTx:"מכירות דירות חדשות", geoMInv:"מלאי לא-מכור", geoMMs:"חודשי היצע",
   txTitle:"עסקאות אחרונות שדווחו באזור",
   txOfficialBadge:"מקור רשמי · רשות המסים (דרך GovMap) · נתון נצפה",
   txLatestInSrc:d=>`עסקה אחרונה במקור: ${d}`, txSynced:d=>`סנכרון אחרון: ${d}`,
-  txTabAll:"הכול", txTabNew:"דירות חדשות", txTabSec:"יד שנייה", txTabUnk:"לא מסווג",
+  txTabAll:"הכול", txTabNew:"דירות חדשות", txTabNewProb:"חדשות (לפי שנת בנייה)", txTabSec:"יד שנייה", txTabUnk:"לא מסווג",
   txP12:"12 חודשים", txP24:"24 חודשים", txP36:"3 שנים", txP60:"5 שנים", txPAll:"כל התקופה",
   txMapToggle:"הצג עסקאות על המפה", txModeFixture:"מצב אימות מקומי — נתוני בדיקה",
-  txSumN:"עסקאות", txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
+  txSumN:"עסקאות", txSumNObs:p=>`עסקאות שנצפו · ${p}`, txSumRange:"טווח תאריכים בתצוגה", txSmallTag:"מדגם קטן", txSmall:n=>`מדגם קטן — החציון מבוסס על ${n} עסקאות בלבד: בפחות מ-10 תצפיות רווח הסמך (95%) של החציון, בלי הנחת התפלגות, משתרע כמעט על כל המדגם; קראו את החציון כתצפית, לא כמגמה`, txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
   txThin:n=>`רק ${n} עסקאות — מדגם לא מספיק לחציון מהימן; הנתונים מוצגים כתצפיות בודדות`,
   txScopeBuilding:(d,n)=>`מדגם סביב הכתובת: <b>${n}</b> עסקאות מבניינים ברדיוס 60 מ׳ מ-${d}; עסקאות באותו מבנה מסומנות`,
   txScopeStreet:(d,n)=>`מדגם סביב הרחוב: <b>${n}</b> עסקאות מבניינים ברדיוס 120 מ׳ מנקודת הייחוס של ${d} — עשוי לכלול רחובות סמוכים; הרחוב של כל עסקה מופיע בשורה`,
@@ -2257,12 +2264,12 @@ he:{
   srcATitle:"בסיס הכיול — דירות חדשות מקבלן בלבד",
   srcAText:"כל ערכי הלוח מתייחסים לדירות חדשות מקבלן בלבד (ללא יד שנייה), ומקורבים לפרסומים הרשמיים נכון לאמצע 2026:",
   srcA1:MKT.nh?`שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: ${MKT.nh.yoy<0?"ירידה של ":MKT.nh.yoy>0?"עלייה של ":"ללא שינוי"}${MKT.nh.yoy?Math.abs(MKT.nh.yoy).toFixed(1)+"%":""} (${MKT.nh.periodHe} מול שנה קודמת · סנכרון יומי); שינוי אזורי — נגזר, מאי–יוני 2026`:"שינוי שנתי ארצי — מדד מחירי הדירות החדשות של הלמ״ס: 2.0%- (מאי–יוני 2026 מול שנה קודמת)", srcA2:"מחירים — ממוצעי הלמ״ס לפי עיר ומחוז (רבעונים א׳–ב׳ 2026) בתוספת פרמיית דירה חדשה של כ-12% (הטווח המקובל: 10%–15%) — אומדן",
-  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026)",
+  srcA3:"מלאי שטרם נמכר — למ״ס: 84,280 דירות ארצית (סוף יוני 2026, ~26 חודשי היצע); תל אביב 9,549; רעננה 1,580; מחוז ת״א 25,320; מחוז המרכז 20,620", srcA4:"מכירות — קצב שנתי: ארצית כ-34,000 דירות חדשות (2025; 37.5% מכלל העסקאות, כשליש בסבסוד ממשלתי); תל אביב ~4,100 — אומדן מודל: מחצית א׳ 2026 של הלמ״ס (כ-2,056 מכירות) בקצב שנתי; הנתון 1,236 הוא רבעון בודד (ב׳/2026). בשאר המחוזות, הערים והשכונות אין ב-PROPX מקור מכירות — מוצג —",
   srcA5:"שינוי אזורי (הפרש המדדים 2.6-) ונתוני שכונות — אומדנים נגזרים; פרמיית השכירות לדירה חדשה (8%+) — הנחת מודל",
   srcADemo:"העוגנים הארציים, המחוזיים והעירוניים מכוילים לפרסומים הרשמיים; רזולוציות מתחת לעיר הן אומדנים מסומנים — לא סטטיסטיקה רשמית ברמת שורה. כל ערך מסווג (רשמי · נגזר · מודל · חסר) עם התקופה שהוא מתאר. היסטוריית מחירים מקומית, חציונים, מדדי ודאות לפי מספר עסקאות וציוני השקעה אינם מוצגים עד שייאספו נתונים רשמיים התומכים בהם. טבלת העסקאות מציגה רק רשומות שפורסמו במאגר העסקאות של רשות המסים — דרך GovMap, או דרך הפרסום העצמאי של גרסאות לעם כפי שמצוין בסקשן עצמו.", srcA6:"עסקאות — רשומות מאגר העסקאות של רשות המסים: דרך GovMap כשהוא עונה; כרגע דרך הפרסום העצמאי של גרסאות לעם (over.org.il) — עותק מתוארך של המאגר, לא ערוץ ממשלתי (תאריך העותק מוצג בסקשן העסקאות); נשלף לפי האזור והתקופה שנבחרו",
   srcA7:"קרקעות ומכרזים — רשומות מכרזי המקרקעין של רשות מקרקעי ישראל (אתר המכרזים): רשימה יומית, פירוט מגרשים/זוכים בתקציב יומי; שלבים לפי קוד הסטטוס של רמ״י; תוכניות בצירוף מספר תוכנית מדויק (מינהל התכנון; מלאי תכנוני רמ״י 2022 — קרקעות מדינה בלבד); ראיית בנייה רק בצירוף גוש/חלקה לדיווחי משרד הבינוי (2024); מע״מ לא צוין במקור",
   srcBTitle:"סוגי נתונים — לעולם לא מעורבבים ללא סימון",
-  srcB1a:"מכירות בפועל",srcB1b:"מכירות קבלנים שנחתמו ודווחו (רשות המסים / הכלכלן הראשי)",
+  srcB1a:"עסקאות בפועל",srcB1b:"עסקאות שנחתמו ודווחו למאגר רשות המסים — כל השוק (חדשות ויד שנייה); המאגר אינו מסמן מכירה מקבלן",
   srcB2a:"מחירים מבוקשים",srcB2b:"מחירי פרסום במודעות — אינם מחירי סגירה",
   srcB3a:"אומדנים",srcB3b:"חישובים סטטיסטיים כגון תשואה ברוטו משוערת",
   srcB4a:"מדדים רשמיים",srcB4b:"מדדי מחירי דיור של הלמ״ס",
@@ -2442,7 +2449,8 @@ he:{
   blt1k:"מדד הדירות החדשות", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`שינוי שנתי · למ״ס, ${MKT.nh.periodHe}`:"סטטי · שינוי שנתי · למ״ס, מאי–יוני 2026",
   blt2k:"מלאי שטרם נמכר", blt2s:"סטטי · למ״ס, סוף יוני 2026 · כ-26 חודשי היצע",
   blt3k:"מכירות קבלנים 2025", blt3s:"סטטי · סיכום 2025 · 37.5% מהעסקאות",
-  blt4k:"מגמת מאי 2026", blt4v:"התאוששות ↗", blt4s:"סטטי · הכלכלן הראשי · חזרת מבצעי המימון",
+  blt4k:"מגמת מכירות · מאי 2026", blt4v:"התאוששות ↗", blt4s:"סטטי · הכלכלן הראשי · חזרת מבצעי המימון",
+  blt4vStale:"התאוששות", blt4sStale:"ישן — לא עודכן מאז מאי 2026 · סטטי · הכלכלן הראשי · חזרת מבצעי המימון",
   gdTitle:"מדריך מהיר לרוכש דירה מקבלן", gdNote:"מידע כללי בלבד — אינו ייעוץ משפטי, מיסויי או פיננסי",
   gd1a:"בדיקת הפרויקט והליווי", gd1b:"ודאו היתר בנייה בתוקף ושהפרויקט בליווי בנקאי סגור, ושלמו אך ורק בשוברים לחשבון הליווי.",
   gd2a:"ערבות חוק מכר", gd2b:"כל תשלום מעבר ל-7% מהמחיר חייב בבטוחה — ערבות בנקאית או פוליסת ביטוח — לפי חוק המכר (דירות).",
@@ -2583,7 +2591,7 @@ he:{
   ciNotElig:(s,n,m)=>`לא כשיר להקצאה · בסיס נתונים <span class="num">${s}/${n}</span> — המדיניות דורשת לפחות <span class="num">${m}/${n}</span>`,
   ciNotFit:e=>`לא כשיר להקצאה · הון עצמי ליחידה <span class="num">${e}</span> גבוה מההון לפריסה`,
   ciIrrDef:l=>`הגדרה: IRR ${l>0?"ממונף":"ללא מינוף"} אמיתי לפני מס, ממנוע מחשבון העסקה — תזרימים שנתיים: הון עצמי (כולל מס רכישה ועלויות) בשנה 0; שכירות נטו אחרי אי-תפוסה, תפעול ותחזוקה, עם הנחת צמיחת השכירות (ברירת מחדל: השינוי השנתי האחרון של האזור), פחות החזרי משכנתא; ובשנת האופק — מכירה לפי מחיר הלוח ועליית הערך שהנחתם, פחות עלויות מכירה ויתרת חוב. לא כולל מס שבח ומס הכנסה.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותן רשומות שבסקשן העסקאות): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} דירות חדשות בחציון ${mNew} (פער מול מחיר הלוח: ${gap}) — נתון נצפה, אינו משנה את הציון`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`השוואה לנתוני עסקאות נצפים (אותן רשומות שבסקשן העסקאות): ${n} עסקאות ב${scope} · חציון ₪/מ״ר ${mAll} · מתוכן ${nNew} חדשות לפי שנת בנייה (המאגר אינו מסמן מכירה מקבלן) בחציון ${mNew} (פער מול מחיר הלוח: ${gap}) — נתון נצפה, אינו משנה את הציון`,
   ciCompThin:"מדגם קטן — לא לגזור מסקנת מחיר",
   ciCoverT:"כיסוי נתונים", ciCoverMiss:"חסר",
   cvTx:"עסקאות", cvRent:"שכירות", cvInv:"מלאי", cvPlan:"תכנון", cvProj:"מלאי פרויקטים",
@@ -2622,14 +2630,14 @@ en:{
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Areas",navCompare:"Compare",
   kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"New homes from developers · mid-2026 snapshot · class and period on every card", kpiNoteRent:"Rent: CBS averages (national Q1 2026, cities 2025) + 8% new-build premium — modelled",
-  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"Sales", y3:"3-year change",
+  avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"New-home sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
   est:"estimate", perMonth:"per month", perYear:"per year", yoyLbl:"Annual change",
   vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Missing",usr:"User assumption"},
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
-  perTxH1:"estimate: H1 2026 annualized", perTxEst:"estimated annual pace",
+  msFormula:"model: end-June 2026 inventory ÷ (sales ÷ 12)", evTitle:"Sales — evidence (RAW · DERIVED · DISPLAY)",
   perInvEst:"anchored to the national total",
   naShort:"—", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
   provNote:"Every value is classed: official · static · derived · modelled · missing",
@@ -2643,7 +2651,7 @@ en:{
   svrBuy:"Avg purchase price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
   svrYears:"years of rent", svrFormula:(p,r,y)=>`If a property here costs <b class="num">${p}</b> and average rent is <b class="num">${r}</b> a month — the estimated gross yield is <b class="num">${y}</b>.`,
   tblNbhd:"Neighborhoods in this area", tblCities:"Cities in this area", tblDistricts:"Districts of Israel",
-  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"Annual change",thTx:"Sales/yr",thListings:"Inventory",
+  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"Annual change",thTx:"New-home sales",thListings:"Inventory",
   areas:"areas", filtered:"Filtered",
   fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Stage",
   rAll:"All",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -2688,8 +2696,8 @@ en:{
   calcFoot:"Arithmetic on your assumptions only — not a forecast and not investment advice. The calculator uses no investment scores, rankings or price curve, and assumes no appreciation or rent growth. Variable rates, tiered purchase tax and indexation are not modelled — enter assumptions that reflect them.", basisNote:"official · static · derived · modelled · missing",
   basisNA:"Median price and rent · local price history · investment scores and capital rankings (hidden until official price history is collected)",
   basisTx:"Transactions: pulled live from the Tax Authority registry (transactions table), with each pull's sample scope and coverage.",
-  txPace:"Annual sales pace",
-  tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; sales/yr and inventory are static where a publication is cited, otherwise modelled; annual change is derived, May–Jun 2026.",
+  txPace:"New-home sales",
+  tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; new-home sales are shown only nationally (2025, static) and for Tel Aviv (an estimate from H1 2026) — every other area and any filtered view shows — (missing); inventory is static where a publication is cited, otherwise modelled; annual change is derived, May–Jun 2026.",
   rankFoot:"A ranking is shown only when every ranked value is official, with its source stored in the system.",
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
@@ -2702,14 +2710,14 @@ en:{
   geoStreetsN:n=>`${fmtInt(n)} registered streets`,
   geoDistBasis:"Location anchor: locality centroid per the official registry",
   geoMPrice:"New-home price", geoMSqm:"₪ per m²", geoMRent:"Monthly rent", geoMYoy:"Annual change",
-  geoMTx:"Annual sales pace", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
+  geoMTx:"New-home sales", geoMInv:"Unsold inventory", geoMMs:"Months of supply",
   txTitle:"Latest reported transactions in this area",
   txOfficialBadge:"Official source · Israel Tax Authority (via GovMap) · observed data",
   txLatestInSrc:d=>`Latest transaction in source: ${d}`, txSynced:d=>`Last sync: ${d}`,
-  txTabAll:"All", txTabNew:"New homes", txTabSec:"Second-hand", txTabUnk:"Unclassified",
+  txTabAll:"All", txTabNew:"New homes", txTabNewProb:"New (by build year)", txTabSec:"Second-hand", txTabUnk:"Unclassified",
   txP12:"12 months", txP24:"24 months", txP36:"3 years", txP60:"5 years", txPAll:"All available",
   txMapToggle:"Show sold deals on map", txModeFixture:"local verification mode — test data",
-  txSumN:"Transactions", txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
+  txSumN:"Transactions", txSumNObs:p=>`Observed deals · ${p}`, txSumRange:"Date range shown", txSmallTag:"small sample", txSmall:n=>`Small sample — the median rests on only ${n} deals: below 10 observations the distribution-free 95% interval of the median spans almost the whole sample; read the median as an observation, not a trend`, txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
   txThin:n=>`Only ${n} transactions — insufficient sample for a reliable median; shown as individual observations`,
   txScopeBuilding:(d,n)=>`Address-area sample: <b>${n}</b> deals from buildings within 60 m of ${d}; same-building deals are marked`,
   txScopeStreet:(d,n)=>`Street-area sample: <b>${n}</b> deals from buildings within 120 m of the ${d} reference point — may include adjacent streets; each row shows its own street`,
@@ -2751,12 +2759,12 @@ en:{
   srcATitle:"Calibration basis — new developer homes only",
   srcAText:"Every value on this board covers new homes from developers only (no second-hand), approximated from official publications as of mid-2026:",
   srcA1:MKT.nh?`National annual change — CBS new-homes price index: ${MKT.nh.yoyTxt.replace("-","−")} (${MKT.nh.periodEn} vs. a year earlier · daily sync); regional change — derived, May–Jun 2026`:"National annual change — CBS new-homes price index: −2.0% (May–Jun 2026 vs. a year earlier)", srcA2:"Prices — CBS city & district averages (Q1–Q2 2026) plus a ~12% new-build premium (published range 10–15%) — estimate",
-  srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026)",
+  srcA3:"Unsold inventory — CBS: 84,280 homes nationally (end-June 2026, ~26 months of supply); Tel Aviv 9,549; Ra'anana 1,580; TLV district 25,320; Center district 20,620", srcA4:"Sales — annual pace: ≈34,000 new homes nationally (2025; 37.5% of all deals, ~a third subsidized) — static; Tel Aviv ≈4,100 annualizes the CBS H1-2026 count of ≈2,056 — a model estimate (1,236 is a single quarter, Q2-2026). Other districts, cities and neighbourhoods have no sales source in PROPX — shown as —",
   srcA5:"Regional change (−2.6pp index gap), new-home rents (+8%) and neighborhood rows — derived estimates",
   srcADemo:"National, district and city anchors are calibrated to the official publications; sub-city resolutions are labeled estimates — not row-level official statistics. Every value is classed (official · derived · modelled · missing) with the period it describes. Local price history, medians, sample-size confidence and investment scores are withheld until official data supports them. The reported-deals table shows actually-published transactions, each row with its source.", srcA6:"Transactions — Israel Tax Authority deal-register records: via GovMap when it answers; currently via the independent republication by גרסאות לעם (over.org.il) — a dated copy of the register, not a government channel (the copy date is shown in the deals section); retrieved for the selected area and period",
   srcA7:"Land & tenders — Israel Land Authority tender records (tender site): daily list, lot/winner detail on a daily budget; stages follow the ILA status code; plans joined by exact plan number (Planning Administration; ILA planning inventory 2022 — state land only); construction evidence only via block/parcel joins to MoCH reports (2024); VAT not stated by the source",
   srcBTitle:"Data types — never mixed without labeling",
-  srcB1a:"Closed sales",srcB1b:"Signed, reported developer sales (Tax Authority / Chief Economist)",
+  srcB1a:"Closed deals",srcB1b:"Signed deals reported to the Tax Authority register — the whole market (new and resale); the register does not mark a developer sale",
   srcB2a:"Asking prices",srcB2b:"Listing prices — not closing prices",
   srcB3a:"Estimates",srcB3b:"Statistical calculations such as estimated gross yield",
   srcB4a:"Official indices",srcB4b:"CBS housing price indices",
@@ -2943,7 +2951,8 @@ en:{
   blt1k:"New-homes price index", blt1v:MKT.nh?MKT.nh.yoyTxt:"-2.0%", blt1s:MKT.nh?`Annual change · CBS, ${MKT.nh.periodEn}`:"Static · annual change · CBS, May–Jun 2026",
   blt2k:"Unsold inventory", blt2s:"Static · CBS, end-June 2026 · ≈26 months of supply",
   blt3k:"Developer sales, 2025", blt3s:"Static · 2025 summary · 37.5% of all deals",
-  blt4k:"May 2026 trend", blt4v:"Recovery ↗", blt4s:"Static · Chief Economist · financing deals returned",
+  blt4k:"Sales trend · May 2026", blt4v:"Recovery ↗", blt4s:"Static · Chief Economist · financing deals returned",
+  blt4vStale:"Recovery", blt4sStale:"Stale — not updated since May 2026 · Static · Chief Economist · financing deals returned",
   gdTitle:"Quick guide to buying from a developer", gdNote:"General information only — not legal, tax or financial advice",
   gd1a:"Check the project & its financing", gd1b:"Confirm a valid building permit and closed bank financing, and pay only with vouchers into the escrow account.",
   gd2a:"Sale-Law guarantee", gd2b:"Any payment beyond 7% of the price must be secured — a bank guarantee or insurance policy — under the Sale (Apartments) Law.",
@@ -3084,7 +3093,7 @@ en:{
   ciNotElig:(s,n,m)=>`Not eligible for allocation · data basis <span class="num">${s}/${n}</span> — policy requires at least <span class="num">${m}/${n}</span>`,
   ciNotFit:e=>`Not eligible for allocation · equity per unit <span class="num">${e}</span> exceeds the deployable equity`,
   ciIrrDef:l=>`Definition: a true ${l>0?"levered":"unlevered"} pre-tax IRR from the deal calculator's engine — yearly cash flows: equity (incl. purchase tax and costs) in year 0; net rent after vacancy, opex and upkeep, growing at the rent-growth assumption (default: the area's last 1-year change), less mortgage payments; and in the horizon year a sale at the board price grown at your appreciation assumption, less sale costs and the remaining debt. Excludes capital-gains and income tax.`,
-  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (the same records as the deals section): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new-build at median ${mNew} (gap vs the board price: ${gap}) — observed data; it does not alter the score`,
+  ciComp:(n,mAll,mNew,nNew,scope,gap)=>`Observed transaction comparables (the same records as the deals section): ${n} deals in ${scope} · median ₪/m² ${mAll} · of which ${nNew} new by build year (the register does not mark a developer sale) at median ${mNew} (gap vs the board price: ${gap}) — observed data; it does not alter the score`,
   ciCompThin:"small sample — not a price conclusion",
   ciCoverT:"Data coverage", ciCoverMiss:"missing",
   cvTx:"Transactions", cvRent:"Rent", cvInv:"Inventory", cvPlan:"Planning", cvProj:"Project inventory",
@@ -3171,7 +3180,7 @@ function metricsOf(id){
   const sqm=Math.round(b.sqm*sMul/50)*50;
   const rent=Math.round(b.rent*pMul*0.92/10)*10 + (f.rooms==="all"&&f.type==="all"&&f.area==="all"&&f.cond==="all"?Math.round(b.rent*0.08/10)*10:0);
   const area=b.price/b.sqm;
-  const tx=Math.max(3,Math.round(b.tx*share));
+  const tx=filtersActive()?null:b.tx;   /* sales are never split by a filter (see TX_BASIS) */
   const listings=Math.max(2,Math.round(b.listings*share));
   return{
     price, sqm,
@@ -3199,7 +3208,7 @@ const STATIC_SRC={
   /* field → the citation (publisher · period) */
   cite:{
     yoy:{per:{he:"מאי–יוני 2026",en:"May–Jun 2026"},src:{he:"למ״ס · מדד מחירי הדירות החדשות",en:"CBS · new-homes price index"}},
-    tx:{per:{he:"קצב שנתי · 2025",en:"annual pace · 2025"},src:{he:"רשות המסים / הכלכלן הראשי · סיכום 2025",en:"Tax Authority / Chief Economist · 2025 summary"}},
+    tx:{per:{he:"שנת 2025",en:"calendar 2025"},src:{he:"רשות המסים / הכלכלן הראשי · סיכום 2025",en:"Tax Authority / Chief Economist · 2025 summary"}},
     listings:{per:{he:"למ״ס · סוף יוני 2026",en:"CBS · end-June 2026"},src:{he:"למ״ס · דירות חדשות שטרם נמכרו",en:"CBS · unsold new homes"}},
   },
   /* place → field → the cited figure; the label applies only while the
@@ -3214,7 +3223,48 @@ const STATIC_SRC={
   },
 };
 const isStatic=(l,f)=>{const s=STATIC_SRC.v[l.id];return!!s&&f in s&&l.base[f]===s[f]};
-const TX_H1_2026={tlv:1};   /* Tel Aviv's pace annualises an H1-2026 count — an estimate (see LOCATIONS) */
+/* ---------- the board's sales figure (audit 13.10.2026) ----------
+   LOCATIONS.base.tx is an ANNUAL PACE of new-home sales. PROPX stores no city-level sales record, so the board
+   SHOWS a sales figure only where its basis is written down here — the count, its period, its source and, for an
+   estimate, the annualisation formula:
+     · national — the 2025 total, transcribed from the Tax Authority / Chief Economist 2025 summary (STATIC);
+     · Tel Aviv-Yafo — a CBS half-year count annualised (MODEL: n × 12 ÷ months).
+   Every other district, city and neighbourhood shows "—": its number is research from 30.08.2026 with no stored
+   source or formula; it stays an input of the labelled capital MODEL only. A filter never splits sales — no source
+   divides them by rooms, type, area or construction stage — so a filtered board shows "—" too (the old demo shares
+   produced figures like 7, and a floor of 3 that no record supported). Gate: test/integrity.test.js. */
+const TX_BASIS={
+  il:{cls:"static",n:34000,months:12,per:{he:"שנת 2025",en:"calendar 2025"},
+    src:{he:"רשות המסים / הכלכלן הראשי · סיכום 2025 (הועתק ידנית מהפרסום)",en:"Tax Authority / Chief Economist · 2025 summary (transcribed from the publication)"},
+    geo:{he:"ארצי",en:"national"},what:{he:"מכירות דירות חדשות מקבלן",en:"new-home sales by developers"}},
+  tlv:{cls:"mod",n:2056,months:6,per:{he:"ינואר–יוני 2026",en:"Jan–Jun 2026"},
+    src:{he:"למ״ס · מכירות דירות חדשות, מחצית א׳ 2026 (הועתק ידנית מההודעות)",en:"CBS · new-home sales, H1 2026 (transcribed from the releases)"},
+    geo:{he:"תל אביב-יפו",en:"Tel Aviv-Yafo"},what:{he:"מכירות דירות חדשות",en:"new-home sales"}},
+};
+const ltr=x=>"\u2066"+x+"\u2069";   /* a left-to-right island in right-to-left text: "~4,100", "2,056 × 12 ÷ 6" */
+/* "~4,100 לשנה" reads number-first in Hebrew even inside a left-to-right number box */
+const txShownVal=(v,est)=>state.lang==="he"?(est?"\u2067"+ltr("~"+fmtInt(v))+" לשנה\u2069":ltr("~"+fmtInt(v))):"~"+fmtInt(v)+(est?" a year":"");
+function txShown(l){
+  const L=state.lang==="he"?"he":"en",he=L==="he",B=TX_BASIS[l.id];
+  if(filtersActive())return{show:false,cls:"na",why:he?"אין מקור שמפצל מכירות לפי חדרים, סוג, שטח או מצב":"no source splits sales by rooms, type, area or stage",filtered:true};
+  if(!B)return{show:false,cls:"na",why:he?"אין ב-PROPX נתון מכירות מוכח לאזור זה":"PROPX holds no provable sales figure for this area"};
+  const est=B.months<12,v=l.base.tx;
+  return{show:true,cls:B.cls,v,est,B,
+    text:txShownVal(v,est),
+    per:est?(he?`אומדן: ${ltr(`${fmtInt(B.n)} × 12 ÷ ${B.months}`)} · ${B.per.he}`:`estimate: ${fmtInt(B.n)} × 12 ÷ ${B.months} · ${B.per.en}`):B.per[L],
+    src:B.src[L]};
+}
+/* RAW · DERIVED · DISPLAY — the evidence behind the board's sales figure (behind "מקור הנתון") */
+function txEvidence(l){
+  const he=state.lang==="he",L=he?"he":"en",x=txShown(l),B=TX_BASIS[l.id];
+  const raw=B?`${fmtInt(B.n)} ${B.what[L]} · ${B.per[L]} · ${B.src[L]} · ${B.geo[L]}`
+    :(he?"אין רשומות מכירה לאזור זה ב-PROPX (0 תצפיות)":"no sales records for this area in PROPX (0 observations)");
+  const der=!B?"—":B.months<12?ltr(`${fmtInt(B.n)} × 12 ÷ ${B.months} = ${fmtInt(B.n*12/B.months)} → ${fmtInt(l.base.tx)}`):(he?"אין — הערך כפי שפורסם":"none — the value as published");
+  const disp=x.show?`${x.text} · ${x.per}`:`— (${x.why})`;
+  const model=!B&&l.base.tx!=null?(he?`קלט מודל ההון בלבד: ${fmtInt(l.base.tx)} לשנה — מחקר ידני 30.08.2026, ללא מקור או נוסחה שמורים`
+    :`capital-model input only: ${fmtInt(l.base.tx)} a year — manual research 30.08.2026, no stored source or formula`):"";
+  return{raw,der,disp,model};
+}
 function vcOf(l,field,base){   /* base: the unfiltered board value (the capital model reads l.base) */
   const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=!base&&filtersActive();
   switch(field){
@@ -3238,7 +3288,7 @@ function vcPer(l,field,base){
     case "price":case "sqm":return t.perPrice;
     case "rent":case "rentPsm":case "yield":case "ptr":return t.perRent;
     case "rentYoy":return l.type==="country"||l.type==="district"?t.perRentQ1:t.perRentCity;
-    case "tx":return TX_H1_2026[l.id]?t.perTxH1:t.perTxEst;
+    case "tx":{const x=txShown(l);return x.show?x.per:x.why}
     case "listings":return t.perInvEst;
   }
   return "";
@@ -3347,8 +3397,9 @@ function setStatics(){
   document.title="PROPX";
   const bs=el("buildStamp");if(bs)bs.textContent="build "+PROPX_BUILD;
   const nv=el("tpNhV");if(nv&&MKT.nh)nv.className="tp-v num "+(MKT.nh.yoy<0?"dn":MKT.nh.yoy>0?"up":"");
+  const stale4=staleSince(BLT4_ASOF);   /* a past trend is never shown as the current one */
   document.querySelectorAll("[data-i]").forEach(node=>{
-    const key=node.dataset.i;
+    const key=stale4&&(node.dataset.i==="blt4v"||node.dataset.i==="blt4s")?node.dataset.i+"Stale":node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
   });
   document.querySelectorAll("[data-ia]").forEach(node=>{
@@ -3458,7 +3509,7 @@ function renderKPIs(skeleton){
     {k:"median",l:t.medPrice,na:t.naMedianWhy},
     {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null},
     {k:"yoy",l:t.yoyLbl,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy")},
-    {k:"tx",l:t.tx,v:m.tx,f:fmtInt,vc:vcOf(l,"tx"),s:vcPer(l,"tx")},
+    (x=>x.show?{k:"tx",l:t.tx,v:x.v,f:v=>txShownVal(v,x.est),vc:x.cls,s:x.per}:{k:"tx",l:t.tx,na:x.why})(txShown(l)),
     {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3")},
   ]:[
     {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,vc:vcOf(l,"rent"),d:m.rentYoy,dl:dl("rentYoy")},
@@ -3748,7 +3799,7 @@ function renderMap(keepVB){
         <div class="mt-kv"><span>${mm.label()}</span><b class="num">${mm.fmt(mm.get(lm,node.dataset.loc))}</b></div>
         <div class="mt-kv"><span>${T().psm}</span><b class="num">${fmtNIS(lm.sqm)}</b></div>
         <div class="mt-kv"><span>${T().yoyLbl}</span><b class="num ${deltaCls(lm.yoy)}">${fmtPct(lm.yoy)}</b></div>
-        <div class="mt-kv"><span>${T().txPace} · ${T().vcName[vcOf(ll,"tx")]}</span><b class="num">${fmtInt(lm.tx)}</b></div>
+        ${(x=>`<div class="mt-kv"><span>${T().txPace} · ${T().vcName[x.cls]}</span><b class="num">${x.show?x.text:"—"}</b></div>`)(txShown(ll))}
         <div class="mt-hint">${T().mapHint}</div>`;
       const r=holder.getBoundingClientRect();
       let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
@@ -3818,7 +3869,7 @@ function renderProfile(){
       ${stat(t.psm,fmtNIS(m.sqm),"sqm")}
       ${stat(sale?t.avgRent:t.avgPrice,fmtNIS(sale?m.rent:m.price),sale?"rent":"price",sale?t.perMonth:"")}
       ${stat(t.svrYield,m.grossYield.toFixed(1)+"%","yield")}
-      ${stat(t.tx,fmtInt(m.tx),"tx",vcPer(l,"tx"))}
+      ${(x=>`<div class="stat"><div class="l">${t.tx}</div><div class="v num">${x.show?x.text:"—"}</div><div class="s">${vcTag(x.cls)} ${x.show?x.per:x.why}</div></div>`)(txShown(l))}
       ${stat(t.listings,fmtInt(m.listings),"listings",vcPer(l,"listings"))}
       <div class="stat"><div class="l">${t.y3}</div><div class="v">${deltaHTML(m.y3,true)}</div><div class="s">${vcTag(vcOf(l,"y3"))} ${vcPer(l,"y3")}</div></div>
     </div>
@@ -3827,7 +3878,9 @@ function renderProfile(){
       <span class="prov-note">${t.provNote}</span>
     </div>
     <div class="prov-pop" id="provPop" hidden>
-      ${t.prov.rows.map(r=>`<div class="pr"><b>${r.n}</b><span>${r.s}</span>${vcTag(r.f?vcOf(l,r.f):"na")}</div>`).join("")}
+      ${t.prov.rows.map(r=>r.f==="tx"?(x=>`<div class="pr"><b>${r.n}</b><span>${x.show?x.src:x.why}</span>${vcTag(x.cls)}</div>`)(txShown(l))
+        :`<div class="pr"><b>${r.n}</b><span>${r.s}</span>${vcTag(r.f?vcOf(l,r.f):"na")}</div>`).join("")}
+      ${(e=>`<div class="pr-ev"><b>${t.evTitle}</b><span><i>RAW</i> ${e.raw}</span><span><i>DERIVED</i> ${e.der}</span><span><i>DISPLAY</i> ${e.disp}</span>${e.model?`<span><i>MODEL</i> ${e.model}</span>`:""}</div>`)(txEvidence(l))}
       <div class="pr-foot">${t.prov.foot}</div>
     </div>`;
   const pb=el("provBtn"),pp=el("provPop");
@@ -3938,7 +3991,7 @@ function renderTable(){
         <td class="num">${fmtNIS(r.m.rent)}</td>
         <td class="num">${r.m.grossYield.toFixed(1)}%</td>
         <td>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</td>
-        <td class="num">${fmtInt(state.mode==="sale"?r.m.tx:r.m.listings)}</td>
+        <td class="num">${state.mode==="sale"?(x=>x.show?x.text:"—")(txShown(r.loc)):fmtInt(r.m.listings)}</td>
       </tr>`).join("")}</tbody>`;
   el("tbl").querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{
     const k=b.dataset.sort;
@@ -4021,7 +4074,7 @@ const CMP_METRICS=[
   {f:"yield",label:()=>T().thYield,get:m=>m.grossYield,fmt:v=>v.toFixed(1)+"%",best:"max"},
   {f:"yoy",label:()=>T().thYoy,get:m=>m.yoy,fmt:v=>fmtPct(v),best:"max"},
   {f:"y3",label:()=>T().y3,get:m=>m.y3,fmt:v=>fmtPct(v),best:"max"},
-  {f:"tx",label:()=>T().thTx,get:m=>m.tx,fmt:fmtInt,best:"max"},
+  {f:"tx",label:()=>T().thTx,get:(m,id)=>{const x=txShown(LOC[id]);return x.show?x.v:null},fmt:v=>v==null?"—":"~"+fmtInt(v),best:"max"},
 ];
 function cmpLabel(id){const l=LOC[id];const c=cityOf(l);
   return c&&c.id!==l.id?`${heName(c)} — ${heName(l)}`:heName(l)}
@@ -4064,15 +4117,15 @@ function renderCompare(){
   }
   const items=state.compare.map((id,i)=>({id,color:CMP_COLORS[i],m:metricsOf(id)}));
   el("cmpBody").innerHTML=CMP_METRICS.map(cm=>{
-    const vals=items.map(it=>cm.get(it.m));
-    const vmax=Math.max(...vals.map(Math.abs))||1;
+    const vals=items.map(it=>cm.get(it.m,it.id));
+    const vmax=Math.max(...vals.map(v=>Math.abs(v||0)))||1;
     const bestV=rankable(cm.f,items.map(it=>LOC[it.id]))?Math.max(...vals):null;   /* ★ only over RAW values */
     return `<div class="cmp-metric">
       <div class="l">${cm.label()}</div>
       <div class="cmp-bars">${items.map((it,i)=>`
         <div class="cmp-bar ${bestV!=null&&vals[i]===bestV?"best":""}">
           <span class="who">${cmpLabel(it.id)}</span>
-          <span class="tr"><i style="width:${Math.max(4,Math.abs(vals[i])/vmax*100)}%;background:${it.color}"></i></span>
+          <span class="tr"><i style="width:${vals[i]==null?0:Math.max(4,Math.abs(vals[i])/vmax*100)}%;background:${it.color}"></i></span>
           <span class="vl num">${cm.fmt(vals[i])}</span>
         </div>`).join("")}</div>
     </div>`;
@@ -4133,11 +4186,11 @@ function renderConfidence(){
   const F=state.mode==="sale"
     ?[["price",t.avgPrice],["sqm",t.psm],["yoy",t.yoyLbl],["y3",t.y3],["tx",t.tx],["listings",t.listings]]
     :[["rent",t.avgRent],["rentPsm",t.rpsm],["rentYoy",t.yoyLbl],["yield",t.grossYield],["listings",t.listings]];
-  const by={raw:[],static:[],der:[],mod:[]};
-  for(const[f,lb]of F)by[vcOf(l,f)].push(`${lb} <span class="bs-p">(${vcPer(l,f)})</span>`);
+  const by={raw:[],static:[],der:[],mod:[],na:[]};
+  for(const[f,lb]of F)by[f==="tx"?txShown(l).cls:vcOf(l,f)].push(`${lb} <span class="bs-p">(${vcPer(l,f)})</span>`);
   const row=(c,items)=>items.length?`<div class="bs-row">${vcTag(c)}<span>${items.join(" · ")}</span></div>`:"";
   el("confCard").innerHTML=row("raw",by.raw)+row("static",by.static)+row("der",by.der)+row("mod",by.mod)+
-    `<div class="bs-row">${vcTag("na")}<span>${t.basisNA}</span></div>`+
+    `<div class="bs-row">${vcTag("na")}<span>${by.na.concat(t.basisNA).join(" · ")}</span></div>`+
     `<div class="conf-note">${t.basisTx}</div>`;
 }
 
@@ -4267,6 +4320,11 @@ function txFiltered(){
     :txState.tab==="unknown"?rows.filter(t=>t.newness==="unknown")
     :rows;
 }
+/* small-sample rule for observed deals: fewer than 10 → "small sample", medians de-emphasised, no trend read.
+   Why 10: a median's distribution-free 95% interval (order statistics, Binomial(n, ½)) does not exist below n = 6,
+   spans the whole sample at n = 6–8 and runs from the 2nd to the 2nd-last observation at n = 9–11 — below 10 a median
+   says little beyond the sample's range. No confidence level is claimed above it either. */
+const TX_SMALL_N=10;
 function renderTx(){
   const t=T(),he=state.lang==="he";
   const sec=el("txSection");if(!sec)return;
@@ -4279,11 +4337,12 @@ function renderTx(){
   const tabBtn=(k,lbl,n)=>`<button data-txtab="${k}" aria-pressed="${txState.tab===k}">${lbl}${n!=null?` <span class="num">${n}</span>`:""}</button>`;
   const R=txResidential();
   const nNew=R.filter(x=>x.newness==="confirmed_new"||x.newness==="probable_new").length;
+  const nConf=R.filter(x=>x.newness==="confirmed_new").length;   /* the register has no developer flag: "new" is then by build year */
   const nSec=R.filter(x=>x.newness==="second_hand").length;
   const nUnk=R.filter(x=>x.newness==="unknown").length;
   const nOther=txNonResidential().length;
   el("txBar").innerHTML=`
-    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",t.txTabNew,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}${nOther?tabBtn("other",t.txTabOther,nOther):""}</span>
+    <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",nNew&&nConf===nNew?t.txTabNew:t.txTabNewProb,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}${nOther?tabBtn("other",t.txTabOther,nOther):""}</span>
     <select class="tx-sel" id="txMonths">${[[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]]
       .map(([v,l])=>`<option value="${v}"${txState.months===v?" selected":""}>${l}</option>`).join("")}</select>
     <button class="tx-sel" id="txMapBtn" aria-pressed="${txState.mapOn}">${t.txMapToggle}</button>
@@ -4342,19 +4401,21 @@ function renderTx(){
   const priced=statRows.filter(r=>!r.partialSale); /* a share of a property is never priced as a whole home */
   const prices=priced.map(r=>r.price).filter(Boolean);
   const psms=priced.map(txPsm).filter(Boolean);
-  const latest=statRows.map(r=>r.date).filter(Boolean).sort().pop();
+  const dates=statRows.map(r=>r.date).filter(Boolean).sort(),latest=dates[dates.length-1],first=dates[0];
+  const perLbl=([[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]].find(([v])=>v===txState.months)||[0,""])[1];
+  const small=prices.length<TX_SMALL_N,wk=small?' class="weak"':"";
   el("txSum").hidden=!prices.length;
   if(prices.length)el("txSum").innerHTML=[
-    [t.txSumN,fmtInt(statRows.length)],
-    [t.txSumMed,fmtNIS(txMedian(prices))],
-    [t.txSumMedPsm,psms.length?fmtNIS(txMedian(psms)):dash],
+    [t.txSumNObs(perLbl),fmtInt(statRows.length)+(small?` <span class="tx-chip">${t.txSmallTag}</span>`:"")],
+    [t.txSumRange,first?`${first.split("-").reverse().join(".")}–${latest.split("-").reverse().join(".")}`:dash],
+    [t.txSumMed,`<span${wk}>${fmtNIS(txMedian(prices))}</span>`],
+    [t.txSumMedPsm,psms.length?`<span${wk}>${fmtNIS(txMedian(psms))}</span>`:dash],
     /* one register row can be a whole building: over those rows only medians are shown */
     [t.txSumAvgPsm,viaRepub?`<span title="${calcEsc(t.txAvgNA)}">${dash}</span>`:psms.length?fmtNIS(Math.round(psms.reduce((a,b)=>a+b,0)/psms.length)):dash],
-    [t.txSumLatest,latest?latest.split("-").reverse().join("."):dash],
   ].map(([l,v])=>`<div><span class="l">${l}</span><span class="v num">${v}</span></div>`).join("");
   const thin=prices.length>0&&prices.length<3;
   const streetLevel=sc&&(sc.level==="street"||sc.level==="building");
-  el("txWarn").hidden=!thin;
+  el("txWarn").hidden=!(prices.length>0&&small);
   const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
   const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
   el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
@@ -4362,6 +4423,7 @@ function renderTx(){
   if(thin)el("txWarn").textContent=streetLevel
     ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
     : t.txThin(prices.length);
+  else if(small&&prices.length)el("txWarn").textContent=t.txSmall(prices.length);
 
   /* states: loading / technical error / matching gap / genuine zero */
   const st=txState.status;
@@ -5954,7 +6016,7 @@ function renderGeoView(){
   const lvl=anchor==="il"?t.geoResNat:a.type==="district"?t.geoResDist:t.geoResCity;
   const aName=heName(a);
   const m=metricsOf(anchor);
-  const ms=m.listings&&m.tx?m.listings/(m.tx/12):null;
+  const tx=txShown(a),ms=tx.show&&m.listings?m.listings/(tx.v/12):null;
   el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${g.city}`:g.he;
   const res=(k)=>`<span class="r">${lvl}${k?` · ${k}`:""}</span>`;
   const rows=[
@@ -5962,9 +6024,9 @@ function renderGeoView(){
     [t.geoMSqm,fmtNIS(m.sqm),"sqm"],
     [t.geoMRent,fmtNIS(m.rent),"rent"],
     [t.geoMYoy,fmtPct(m.yoy),"yoy"],
-    [t.geoMTx,fmtInt(m.tx),"tx"],
+    [t.geoMTx,tx.show?tx.text:"—","tx",tx.cls,tx.show?tx.per:tx.why],
     [t.geoMInv,fmtInt(m.listings),"listings"],
-    [t.geoMMs,ms?("~"+Math.round(ms)):"—","ms"],
+    [t.geoMMs,ms?("~"+Math.round(ms)):"—","ms",ms?"mod":"na",ms?t.msFormula:tx.why],
   ];
   el("geoBody").innerHTML=`
     <div class="geo-cov">
@@ -5973,8 +6035,8 @@ function renderGeoView(){
       ${g.streetsCount?`<span class="geo-chip num">${t.geoStreetsN(g.streetsCount)}</span>`:""}
     </div>
     <p class="gv-note">${t.geoNoDirect(lvl,aName)}</p>
-    <div class="gv-grid">${rows.map(([lb,v,f])=>`
-      <div class="gv-m"><span class="l">${lb} ${vcTag(vcOf(a,f))}</span><span class="v num">${v}</span>${res(vcPer(a,f))}</div>`).join("")}</div>
+    <div class="gv-grid">${rows.map(([lb,v,f,cls,per])=>`
+      <div class="gv-m"><span class="l">${lb} ${vcTag(cls||vcOf(a,f))}</span><span class="v num">${v}</span>${res(per!=null?per:vcPer(a,f))}</div>`).join("")}</div>
     <p class="gv-note" style="margin-bottom:0">${t.geoDistBasis}</p>
     <p class="gv-src">${t.geoSrc(g.id)}</p>`;
 }

@@ -22,7 +22,7 @@
     label: { he: 'מתודולוגיית מדדים ALTARIS · גרסה 2', en: 'ALTARIS Metric Methodology v2' },
     effective: '2026-10-13',
     previous: 'altaris-metric-methodology-v1',
-    engine: { version: 2, sha256: '59b380eb74274034ac81b48235596d4b477ad263f4cdcfa26c508b577d9863c2' },
+    engine: { version: 2, sha256: 'a9bc60b8957b34198bf32ef2a9e6f861a67797579dfc70c41ef86a00c74e03ff' },
   });
 
   /* what changed from the previous version (v1 → v2, after the independent engine review of 13.10.2026) */

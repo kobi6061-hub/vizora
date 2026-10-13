@@ -802,9 +802,12 @@
       else if (F.unitsCount > 30) { s -= 10; why.push('מעל 30 יחידות (קצב ספיגה): −10'); }
       const depth = ctx && ctx.marketDepth;
       if (depth && isNum(depth.deals)) {
-        if (depth.deals >= 150) { s += 5; why.push(`${depth.deals} עסקאות מגורים בדגימת PROPX: +5`); }
-        else if (depth.deals < 30) { s -= 10; why.push(`רק ${depth.deals} עסקאות מגורים בדגימת PROPX: −10`); }
-        else why.push(`${depth.deals} עסקאות מגורים בדגימת PROPX: 0`);
+        /* an observed count always carries its period */
+        const dmy = (d) => String(d).slice(0, 10).split('-').reverse().join('.');
+        const per = depth.from && depth.to ? ` (${dmy(depth.from)}–${dmy(depth.to)})` : '';
+        if (depth.deals >= 150) { s += 5; why.push(`${depth.deals} עסקאות מגורים בדגימת PROPX${per}: +5`); }
+        else if (depth.deals < 30) { s -= 10; why.push(`רק ${depth.deals} עסקאות מגורים בדגימת PROPX${per}: −10`); }
+        else why.push(`${depth.deals} עסקאות מגורים בדגימת PROPX${per}: 0`);
       } else why.push('עומק שוק מקומי לא נבדק: 0');
       if (kind !== 'buy') {
         const inp = R.inputs || {};
