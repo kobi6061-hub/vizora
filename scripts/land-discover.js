@@ -543,8 +543,81 @@ async function arcgisLayers(services) {
   }
 }
 
+/* ───────────────────────── XPlan housing-unit field semantics (read-only) ─────────────────────────
+   Every plan of the online-plans layer, quantity fields only (paged by objectid, POST): the structure of the code-110 triple
+   (approved · change · proposed) that the layer publishes in full, the code-120 distribution by plan type and station, and the
+   plans' own objectives text as VALIDATION ONLY (a number written in the text is compared with the fields, never used as a value).
+   Then the Mavat plan page API for a few plans (public, no auth) — recorded as refused if it refuses. */
+async function xplanSemantics() {
+  const L = `${XPLAN}/PlanningPublic/Xplan/MapServer/1`;
+  try { const r = await req(`${L}?f=pjson`, { timeoutMs: 60000 }); out({ kind: 'meta', description: trim(r.json.description, 800), copyright: trim(r.json.copyrightText, 300),
+    fields: (r.json.fields || []).filter((f) => /^(pq_|quantity_)/.test(f.name)).map((f) => [f.name, f.alias, f.type, f.domain ? trim(f.domain, 300) : null]) }); }
+  catch (e) { out({ kind: 'meta', error: e.message }); }
+  const F = 'objectid,pl_number,mp_id,entity_subtype_desc,station_desc,internet_short_status,pq_authorised_quantity_120,quantity_delta_120,pq_authorised_quantity_110,quantity_delta_110,pq_detailed_plan_110,pq_authorised_quantity_105,quantity_delta_105,pq_detailed_plan_105,pq_implementation_105,quantity_delta_125,pl_objectives';
+  const rows = []; let last = -1, pages = 0;
+  for (;;) {
+    const body = new URLSearchParams({ where: `objectid > ${last}`, outFields: F, orderByFields: 'objectid', resultRecordCount: '1000', returnGeometry: 'false', f: 'pjson' });
+    let j = null;
+    for (let a = 0; a < 3 && !j; a++) { try { const r = await fetch(L + '/query', { method: 'POST', body: body.toString(), signal: AbortSignal.timeout(120000), headers: { 'User-Agent': UA, Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' } }); j = await r.json(); if (j.error) { out({ kind: 'pageError', last, error: j.error }); j = null; } } catch (e) { out({ kind: 'pageError', last, error: e.message }); await sleep(3000); } }
+    if (!j || !j.features || !j.features.length) break;
+    for (const f of j.features) rows.push(f.attributes);
+    last = j.features[j.features.length - 1].attributes.objectid; pages++;
+    if (j.features.length < 1000 && !j.exceededTransferLimit) break;
+  }
+  out({ kind: 'read', rows: rows.length, pages });
+  const n = (v) => (v == null || v === '' ? null : Number(v));
+  /* code 110 (special housing): the layer publishes approved, change AND proposed — the structure test */
+  const t110 = { withAny: 0, proposedEqApprovedPlusChange: 0, proposedEqApproved: 0, proposedEqChange: 0, other: 0, examplesOther: [] };
+  for (const r of rows) { const A = n(r.pq_authorised_quantity_110), D = n(r.quantity_delta_110), P = n(r.pq_detailed_plan_110);
+    if (A == null || D == null || P == null || (!A && !D && !P)) continue; t110.withAny++;
+    if (P === A + D) t110.proposedEqApprovedPlusChange++; else if (P === A) t110.proposedEqApproved++; else if (P === D) t110.proposedEqChange++; else { t110.other++; if (t110.examplesOther.length < 8) t110.examplesOther.push([r.pl_number, A, D, P]); } }
+  out({ kind: 'code110', ...t110 });
+  const t105 = { withAny: 0, detailedEqApprovedPlusChange: 0, detailedEqApproved: 0, detailedEqChange: 0, other: 0, ex: [] };
+  for (const r of rows) { const A = n(r.pq_authorised_quantity_105), D = n(r.quantity_delta_105), P = n(r.pq_detailed_plan_105);
+    if (A == null || D == null || P == null || (!A && !D && !P)) continue; t105.withAny++;
+    if (P === A + D) t105.detailedEqApprovedPlusChange++; else if (P === A) t105.detailedEqApproved++; else if (P === D) t105.detailedEqChange++; else { t105.other++; if (t105.ex.length < 6) t105.ex.push([r.pl_number, A, D, P, n(r.pq_implementation_105)]); } }
+  out({ kind: 'code105', ...t105 });
+  /* code 120 (housing units): distribution */
+  const c = { total: rows.length, nullA: 0, nullD: 0, zeroBoth: 0, zeroA_posD: 0, posA_zeroD: 0, posA_posD: 0, negD: 0, negBelowA: 0, sumA: 0, sumD: 0 };
+  const by = {};
+  for (const r of rows) { const A = n(r.pq_authorised_quantity_120), D = n(r.quantity_delta_120);
+    if (A == null) c.nullA++; if (D == null) c.nullD++; if (A == null || D == null) continue;
+    c.sumA += A; c.sumD += D;
+    const k = A === 0 && D === 0 ? 'zeroBoth' : A === 0 && D > 0 ? 'zeroA_posD' : A > 0 && D === 0 ? 'posA_zeroD' : D < 0 ? 'negD' : 'posA_posD'; c[k]++;
+    if (D < 0 && A + D < 0) c.negBelowA++;
+    const g = (r.entity_subtype_desc || '—') + ' | ' + (r.station_desc || '—'); by[g] = by[g] || { n: 0, zeroA_posD: 0, posA_zeroD: 0, posA_posD: 0, negD: 0, zeroBoth: 0 }; by[g].n++; by[g][k]++; }
+  out({ kind: 'code120', ...c, byTypeStation: Object.fromEntries(Object.entries(by).sort((a, b) => b[1].n - a[1].n).slice(0, 14)) });
+  /* the plans' own objectives text (validation only) */
+  const num = (s) => Number(String(s).replace(/,/g, ''));
+  const ADD = /(?:תוספת|הוספת|להוסיף|ותוספת|ולהוסיף)\s+(?:של\s+)?(\d[\d,]{0,6})\s*(?:יח"ד|יח״ד|יחידות דיור|יחידות)/;
+  const TOTAL = /(?:סה"כ|סה״כ|סך הכל|בסה"כ|ל-\s*|לסה"כ\s+)\s*(\d[\d,]{0,6})\s*(?:יח"ד|יח״ד|יחידות דיור)/;
+  const FROM_TO = /מ-?\s*(\d[\d,]{0,6})\s*(?:יח"ד|יח״ד|יחידות דיור)\s*ל-?\s*(\d[\d,]{0,6})\s*(?:יח"ד|יח״ד|יחידות דיור)/;
+  const v = { add: { n: 0, eqD: 0, eqA: 0, eqAD: 0, ex: [] }, total: { n: 0, eqAD: 0, eqA: 0, eqD: 0, ex: [] }, fromTo: { n: 0, fromEqA: 0, toEqAD: 0, both: 0, ex: [] } };
+  for (const r of rows) {
+    const A = n(r.pq_authorised_quantity_120), D = n(r.quantity_delta_120), o = String(r.pl_objectives || '');
+    if (A == null || D == null || !o) continue;
+    const ft = FROM_TO.exec(o);
+    if (ft) { const f = num(ft[1]), to = num(ft[2]); v.fromTo.n++; if (f === A) v.fromTo.fromEqA++; if (to === A + D) v.fromTo.toEqAD++; if (f === A && to === A + D) v.fromTo.both++; if (v.fromTo.ex.length < 8) v.fromTo.ex.push([r.pl_number, A, D, f, to]); continue; }
+    const ad = ADD.exec(o);
+    if (ad) { const x = num(ad[1]); v.add.n++; if (x === D) v.add.eqD++; if (x === A) v.add.eqA++; if (x === A + D) v.add.eqAD++; if (v.add.ex.length < 8) v.add.ex.push([r.pl_number, A, D, x]); }
+    const tt = TOTAL.exec(o);
+    if (tt) { const x = num(tt[1]); v.total.n++; if (x === A + D) v.total.eqAD++; if (x === A) v.total.eqA++; if (x === D) v.total.eqD++; if (v.total.ex.length < 8) v.total.ex.push([r.pl_number, A, D, x]); }
+  }
+  out({ kind: 'objectivesValidation', ...v });
+  /* the Mavat plan page (the site's own public JSON API) for three plans: the quantities table, if it answers */
+  for (const mp of [4000298709, 4000346997, 6000390577]) {
+    for (const url of [`https://mavat.iplan.gov.il/rest/api/SV4/1?mid=${mp}`]) {
+      try { const r = await req(url, { timeoutMs: 45000, headers: { Referer: `https://mavat.iplan.gov.il/SV4/1/${mp}/310` } });
+        const q = r.json && JSON.stringify(r.json).match(/.{0,200}(QUANTITY|quantity|כמות|כמויות|מאושר|שינוי|מוצע).{0,400}/g);
+        out({ kind: 'mavat', mp, url, status: r.status, type: r.type, keys: r.json ? Object.keys(r.json).slice(0, 40) : null, quantities: q ? q.slice(0, 6) : null, head: r.json ? null : trim(r.text, 300) }); }
+      catch (e) { out({ kind: 'mavat', mp, url, error: e.message }); }
+    }
+  }
+}
+
 (async () => {
   const all = has('all');
+  if (has('xplan-semantics')) await xplanSemantics();
   if (has('arcgis-layers')) await arcgisLayers(String(argVal('arcgis-layers') || '').split('|').map((x) => x.trim()).filter(Boolean));
   if (has('renewal-xplan')) await renewalXplan();
   if (has('renewal-xplan-extra')) await renewalXplanExtra();
