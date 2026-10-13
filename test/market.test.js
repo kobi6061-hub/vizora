@@ -207,12 +207,13 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
 
   console.log('CBS optional monthly series (construction inputs · CPI · rent)');
   const CAT2 = { chapters: [...CATALOG.chapters,
-    { chapterId: 'c', chapterName: 'מדד תשומות הבנייה למגורים', mainCode: 990200, subject: null },
+    { chapterId: 'c', chapterName: 'מדד מחירי תשומה בבנייה למגורים', mainCode: 990200, subject: null },
+    { chapterId: 'e', chapterName: 'מדד מחירי תשומה בבנייה למסחר ולמשרדים', mainCode: 990250, subject: null },
     { chapterId: 'd', chapterName: 'מדד מחירי תשומה בחקלאות', mainCode: 990300, subject: null }] };
   const CHAPTER_A2 = { ...CHAPTER_A, subject: [...CHAPTER_A.subject, { subjectId: 38, subjectName: 'שכר דירה', code: null }] };
   const CHAPTER_C = { chapterId: 'c', subject: [{ subjectId: 50, subjectName: 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', code: null }] };
   const OPT_ROUTES = [['catalog/catalog', CAT2], ['catalog/chapter?id=aa&', CHAPTER_AA], ['catalog/chapter?id=a&', CHAPTER_A2], ['catalog/chapter?id=c&', CHAPTER_C],
-    ['catalog/chapter?id=d&', { chapterId: 'd', subject: [] }],
+    ['catalog/chapter?id=d&', { chapterId: 'd', subject: [] }], ['catalog/chapter?id=e&', { chapterId: 'e', subject: [] }],
     ['subject?id=38&', SUBJECT(38, 'שכר דירה', [[990410, 'שכר דירה'], [990411, 'שכר דירה - חוזים חדשים'], [990412, 'שכר דירה - מחוז ירושלים']])],
     ['subject?id=50&', SUBJECT(50, 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', [[990210, 'מדד תשומות הבנייה למגורים - עבודה'], [990220, 'מדד תשומות הבנייה למגורים - חומרים']])],
     ...CBS_ROUTES.slice(3)];
