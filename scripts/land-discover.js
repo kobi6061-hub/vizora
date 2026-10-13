@@ -470,9 +470,67 @@ async function renewalXplan() {
   try { const x = await req(`${XPLAN}/PlanningPublic/Xplan/MapServer?f=pjson`, { timeoutMs: 60000 }); out({ kind: 'service', layers: (x.json.layers || []).map((l) => l.id + ':' + l.name), tables: (x.json.tables || []).map((l) => l.id + ':' + l.name) }); } catch (e) { out({ kind: 'service', error: e.message }); }
 }
 
+/* the misses of renewalXplan(): every miss looked up by the Mavat main-plan id MoCH's own link carries (layer 1 mp_id), and the
+   PlanningPublic services listed with any layer that has a plan-number field, where a few old-format numbers are tried exactly */
+async function renewalXplanExtra() {
+  const L = `${XPLAN}/PlanningPublic/Xplan/MapServer/1`;
+  const rows = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'data', 'renewal', 'complexes.json'), 'utf8'));
+  const mavatId = (r) => { const m = r.links && r.links.site && /mavat\.iplan\.gov\.il\/SV\d\/\d+\/(\d+)\//.exec(r.links.site); return m ? Number(m[1]) : null; };
+  const withPlan = rows.filter((r) => r.planNumber), found = new Set();
+  for (let i = 0; i < withPlan.length; i += 50) {
+    const slice = withPlan.slice(i, i + 50).map((r) => r.planNumber);
+    const where = 'pl_number IN (' + slice.map((n) => `'${n.replace(/'/g, "''")}'`).join(',') + ')';
+    try { const r = await req(`${L}/query?where=${encodeURIComponent(where)}&outFields=pl_number&returnGeometry=false&f=pjson`, { timeoutMs: 90000 }); for (const f of (r.json && r.json.features) || []) found.add(f.attributes.pl_number); }
+    catch (e) { out({ kind: 'batchError', i, error: e.message }); }
+  }
+  const misses = rows.filter((r) => !r.planNumber || !found.has(r.planNumber));
+  const ids = [...new Set(misses.map(mavatId).filter(Boolean))];
+  const byId = new Map();
+  for (let i = 0; i < ids.length; i += 50) {
+    const slice = ids.slice(i, i + 50);
+    try { const r = await req(`${L}/query?where=${encodeURIComponent('mp_id IN (' + slice.join(',') + ')')}&outFields=pl_number,mp_id,pl_id,pl_name,station_desc,internet_short_status,pq_authorised_quantity_120,jurstiction_area_name&returnGeometry=false&f=pjson`, { timeoutMs: 90000 });
+      for (const f of (r.json && r.json.features) || []) { const k = f.attributes.mp_id; if (!byId.has(k)) byId.set(k, []); byId.get(k).push(f.attributes); } }
+    catch (e) { out({ kind: 'idBatchError', i, error: e.message }); }
+  }
+  const resolved = misses.filter((r) => byId.has(mavatId(r)));
+  out({ kind: 'missById', misses: misses.length, missesNoPlan: misses.filter((r) => !r.planNumber).length, withMavatId: misses.filter(mavatId).length, distinctIds: ids.length, resolvedById: resolved.length,
+    severalPerId: [...byId.values()].filter((v) => v.length > 1).length,
+    examples: resolved.slice(0, 40).map((r) => ({ c: r.complexId, moch: r.planNumber, city: r.city, id: mavatId(r), xp: byId.get(mavatId(r)).map((a) => [a.pl_number, a.pl_name && a.pl_name.slice(0, 50), a.station_desc, a.internet_short_status, a.pq_authorised_quantity_120]) })),
+    idLengths: Object.entries(misses.map(mavatId).filter(Boolean).reduce((m, id) => { const k = String(id).length; m[k] = (m[k] || 0) + 1; return m; }, {})),
+    unresolvedIdLengths: Object.entries(misses.filter((r) => mavatId(r) && !byId.has(mavatId(r))).map(mavatId).reduce((m, id) => { const k = String(id).length; m[k] = (m[k] || 0) + 1; return m; }, {})) });
+  for (const folder of ['PlanningPublic']) {
+    try {
+      const d = await req(`${XPLAN}/${folder}?f=pjson`, { timeoutMs: 60000 });
+      const services = (d.json && d.json.services || []).map((s) => s.name + '/' + s.type);
+      out({ kind: 'services', folder, services });
+      for (const sv of services.slice(0, 40)) {
+        try { const m = await req(`${XPLAN}/${sv.replace(/^.*?\//, folder + '/').replace(/\/(MapServer|FeatureServer)$/, '/$1')}?f=pjson`, { timeoutMs: 45000 });
+          const layers = (m.json && m.json.layers || []).map((l) => l.id + ':' + l.name);
+          const planLayers = [];
+          for (const l of (m.json && m.json.layers || []).slice(0, 10)) {
+            const lm = await req(`${XPLAN}/${sv}/${l.id}?f=pjson`, { timeoutMs: 30000 }).catch(() => null);
+            const fl = (lm && lm.json && lm.json.fields || []).map((f) => f.name);
+            if (fl.some((f) => /^(pl_number|plan_number|mispar_tochnit|tochnit|PL_NUMBER|PLAN_NO)$/i.test(f))) planLayers.push({ id: l.id, name: l.name, fields: fl.slice(0, 40) });
+          }
+          out({ kind: 'service', sv, layers: layers.slice(0, 40), planLayers });
+          for (const pl of planLayers) {
+            const field = pl.fields.find((f) => /^(pl_number|plan_number|mispar_tochnit|tochnit|PL_NUMBER|PLAN_NO)$/i.test(f));
+            const old = misses.filter((r) => r.planNumber && /[\u0590-\u05FF]/.test(r.planNumber)).slice(0, 12).map((r) => r.planNumber);
+            const where = `${field} IN (` + old.map((n) => `'${n.replace(/'/g, "''")}'`).join(',') + ')';
+            const q = await req(`${XPLAN}/${sv}/${pl.id}/query?where=${encodeURIComponent(where)}&outFields=*&returnGeometry=false&resultRecordCount=12&f=pjson`, { timeoutMs: 60000 }).catch((e) => ({ json: { error: e.message } }));
+            const c = await req(`${XPLAN}/${sv}/${pl.id}/query?where=1%3D1&returnCountOnly=true&f=pjson`, { timeoutMs: 60000 }).catch(() => null);
+            out({ kind: 'oldTry', sv, layer: pl.id, name: pl.name, count: c && c.json && c.json.count, asked: old, hits: ((q.json && q.json.features) || []).map((f) => trim(f.attributes, 400)), error: q.json && q.json.error });
+          }
+        } catch (e) { out({ kind: 'service', sv, error: e.message }); }
+      }
+    } catch (e) { out({ kind: 'services', folder, error: e.message }); }
+  }
+}
+
 (async () => {
   const all = has('all');
   if (has('renewal-xplan')) await renewalXplan();
+  if (has('renewal-xplan-extra')) await renewalXplanExtra();
   if (has('rmi-codes')) await rmiCodes();
   if (has('xplan-plan')) {
     // exact plan-number lookups in the blue-lines layer, with every attribute (so the quantity codes can be read off known plans)
