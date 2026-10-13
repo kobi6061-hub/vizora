@@ -12,11 +12,14 @@
 //   view=search       q → routed results (tender / plan / parcel / address / developer / project / locality / street)
 //   view=status       registry coverage, freshness, methodology
 //   view=sources      the Data & Trust Center catalogue (lib/trust/catalog.js)
+//   view=renewal      declared urban-renewal complexes (MoCH): summary + one page (city, stage, track, q, sort, page, size)
+//   view=renewalComplex  one complex (id=renewal:<complex number>) with its history
 
 'use strict';
 
 const Q = require('../lib/entities/query');
 const { catalog } = require('../lib/trust/catalog');
+const RN = require('../lib/renewal/query');
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -34,6 +37,8 @@ module.exports = async (req, res) => {
     if (view === 'projects') return send(res, 200, Q.projects(p));
     if (view === 'signals') return send(res, 200, Q.signals(p));
     if (view === 'search') return send(res, 200, Q.search(p.q));
+    if (view === 'renewal') return send(res, 200, { summary: RN.summary(p), page: RN.records(p) });
+    if (view === 'renewalComplex') { const out = RN.record(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     if (view === 'developer') { const out = Q.developer(p.id || (p.name ? Q.idOfName(p.name) : null)); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     if (view === 'project') { const out = Q.project(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
     return send(res, 400, { error: 'unknown view' });

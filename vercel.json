@@ -101,7 +101,7 @@
       "includeFiles": "data/transactions/watch.json"
     },
     "api/intel.js": {
-      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/*.json}"
+      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/*.json,data/renewal/*.json*}"
     }
   },
   "rewrites": [

@@ -35,6 +35,12 @@ t('padded text is trimmed and collapsed; the status is kept verbatim beside its 
   assert.equal(N.normalizeRow(row({ Status: ' 2025 ' }), CTX).record.stage, 'unknown', 'an unknown status is shown verbatim, never guessed');
   assert.equal(N.normalizeRow(row({ Status: '' }), CTX).record.stage, 'declared');
 });
+t('declared only with a declaration date; "טרם הוכרז" in the track column is "not yet declared"; otherwise not stated', () => {
+  assert.equal(N.normalizeRow(row(), CTX).record.declaration, 'declared');
+  assert.equal(N.normalizeRow(row({ TaarichHachraza: '', Maslul: ' טרם הוכרז ' }), CTX).record.declaration, 'not-yet-declared');
+  assert.equal(N.normalizeRow(row({ TaarichHachraza: '', Maslul: '' }), CTX).record.declaration, 'not-stated');
+  assert.equal(N.NORMALIZER_VERSION, 2);
+});
 t('numbers only from plain numeric cells — "" and text are null, never 0; dates dd/mm/yyyy only when valid', () => {
   const { record: r } = N.normalizeRow(row({ YachadKayam: '', YachadTosafti: 'לא ידוע', YachadMutza: ' 530 ' }), CTX);
   assert.equal(r.existingUnits, null); assert.equal(r.additionalUnits, null); assert.equal(r.proposedUnits, 530); assert.equal(r.unitsAddUp, null);
