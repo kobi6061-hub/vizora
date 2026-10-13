@@ -132,6 +132,13 @@ async function walk(startUrl, re, maxReq) {
         if (re.test(h) && !seen.has(h)) { seen.add(h); console.log('  ' + h); }
       }
       console.log(`${seen.size} links`);
+      /* links a page builds in script or JSON rather than in href: show where the pattern occurs in the raw page */
+      const raw = String(res.text || '');
+      let n = 0;
+      for (const m of raw.matchAll(new RegExp(re.source, 'gi'))) {
+        if (++n > 25) break;
+        console.log(`  ~ …${raw.slice(Math.max(0, m.index - 160), m.index + 200).replace(/\s+/g, ' ')}…`);
+      }
     }
   } else if (args.includes('--pdf')) {
     /* official PDFs: is there a table, and by what geography? (pdftotext from poppler-utils, installed by the workflow) */
