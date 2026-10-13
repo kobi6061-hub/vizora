@@ -189,8 +189,11 @@ t('every ranked metric names the field it ranks', () => {
   }
 });
 t('the areas table opens in name order', () => {
-  assert.match(INDEX, /sort:\{key:"name",dir:1\},/);
-  assert.match(fnBody(INDEX, 'setMode'), /state\.sort=\{key:"name",dir:1\};/);
+  /* the shared table standard (lib/table/core.js): the board's default order is the name column, ascending; a sort on a
+     column that no longer ranks (rows changed) falls back to it, and switching sale ↔ rent clears the board's sort */
+  assert.match(fnBody(INDEX, 'renderTable'), /const DEF=\{key:"name",dir:"asc"\}/);
+  assert.match(fnBody(INDEX, 'renderTable'), /if\(st\.sort&&!st\.sort\.isDefault&&!ptc\.some\(c=>c\.k===st\.sort\.key&&c\.sort\)\)st\.sort=null;/);
+  assert.match(fnBody(INDEX, 'setMode'), /const bs=ptLoad\("board"\);bs\.sort=null;bs\.f=\{\};ptSave\("board"\);/);
 });
 
 console.log('index.html — capital model');

@@ -7,11 +7,16 @@
 // for a summary, one page of rows, one tender, the planning pipeline or the
 // map points, already filtered here.
 //
-//   view=summary   KPIs · lifecycle counts · series · cities · developers (observed wins) · facets · methodology
-//   view=tenders   one sorted page of rows (sort, order, page, size ≤ 100)
+//   view=summary   KPIs · lifecycle counts · series · cities · developers (observed wins) · facets · methodology; the cities and
+//                  developers tables sort / filter over their whole lists before the limit: cs, co, cf_<col> · ds, do, df_<col>
+//   view=tenders   one sorted page of rows (sort, order, page, size ≤ 100, lang) — sorted and column-filtered over the whole filtered
+//                  set, missing values last; column filters f_<column>= (lib/table/core.js: text contains · min..max · from..to)
 //   view=tender    one tender (id=rmi:<MichrazID> or the number) with lots, bids, winners, plans, construction evidence, history, provenance
 //   view=pipeline  RMI planning inventory (STATE LAND ONLY, dated) · plans the tenders reference · the tender funnel · MoCH development costs by locality
 //   view=map       tender polygon centroids + locality-level counts for tenders without a published polygon
+//   view=rental    long-term rental: the ILA rental-track pipeline (total tender units — never "rental units"), Dira
+//                  Lehaskir's stated rental terms per tender (exact tender-number key), its planning sites and project-status
+//                  counts, the CBS rent component as a GENERAL RENT MARKET BENCHMARK (lib/rental/query.js)
 //   view=status    freshness, the latest sync runs, the source registry
 // Filters: period=6m|12m|24m|5y|all|custom (&from&to=YYYY-MM-DD) over dateField=published|close|committee,
 // city (CBS code or official name), region, track (comma list), lifecycle (comma list), type, purpose, basis,
@@ -32,13 +37,18 @@ module.exports = async (req, res) => {
   const view = g('view') || 'summary';
   try {
     if (view === 'status') return send(res, 200, Q.status());
-    if (view === 'tender') { const out = g('id') ? Q.record(g('id')) : null; return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+    if (view === 'tender') {
+      const out = g('id') ? Q.record(g('id')) : null;
+      if (out) out.dira = require('../lib/rental/query').diraFor(out.record.id);   /* the company's notice for this tender (exact key), or null */
+      return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' });
+    }
     const { filters, error } = Q.parseFilters(url.searchParams);
     if (error) return send(res, 400, { error });
     const lim = (d, max) => Math.max(1, Math.min(max, Math.floor(Number(g('limit'))) || d));
-    if (view === 'summary') return send(res, 200, Q.summary(filters, { bucket: g('bucket'), limit: lim(40, 100) }));
-    if (view === 'tenders') return send(res, 200, Q.records(filters, { sort: g('sort'), order: g('order'), page: g('page'), size: g('size') }));
+    if (view === 'summary') return send(res, 200, Q.summary(filters, { bucket: g('bucket'), limit: lim(40, 100), ...Q.listTables(url.searchParams, g('lang')) }));
+    if (view === 'tenders') return send(res, 200, Q.records(filters, { sort: g('sort'), order: g('order'), page: g('page'), size: g('size'), lang: g('lang'), filters: Q.columnFilters(url.searchParams) }));
     if (view === 'pipeline') return send(res, 200, Q.pipeline(filters, { limit: lim(30, 100) }));
+    if (view === 'rental') return send(res, 200, require('../lib/rental/query').summary(filters));
     if (view === 'map') return send(res, 200, Q.mapPoints(filters, { limit: lim(3000, 5000) }));
     return send(res, 400, { error: 'unknown view' });
   } catch (e) {

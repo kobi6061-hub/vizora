@@ -123,6 +123,26 @@
   strings only (approval ≠ permit ≠ construction); MoCH and XPlan values side by side with every disagreement flagged;
   `data/renewal/planning*.json` + `plan-geometry.json`; shown as the tab's planning strip and the drawer's PLANNING STATUS.
 
+- `lib/table/core.js` + `lib/table/README.md` + `test/table.test.js` = the one table standard (audit 14.10.2026): first click
+  = the column's primary order (high → low, newest first, yes first, א → ת, lifecycle), second = reverse, third = the
+  default; missing values ALWAYS last (never 0); typed column filters (contains · any of · min..max · from..to · yes/no ·
+  exact place, `f_<col>=`) that intersect; a column sorts on the value it shows. Paged tables sort/filter on the server
+  over the whole filtered set (land tenders + cities/developers `cs`/`ds`, housing, developers/projects/entries, renewal);
+  small tables sort all their rows (`ptRows` / `ptDom`). Per-table state in the URL (`<key>.s/.p/.f.<col>/.x.<facet>`) +
+  sessionStorage. UMD: the page loads `/lib/table/core.js` (inlined in the offline build), ALTARIS too (state in memory).
+  The board keeps `rankable` (official values only) and sorts sales on `txShown`, never `base.tx`.
+- `lib/rental/` + `scripts/rental-sync.js` + `.github/workflows/rental-sync.yml` + `data/rental/` + `test/rental.test.js`
+  = long-term rental (audit 14.10.2026): Dira Lehaskir's public CMS (www.renten.co.il WordPress REST, robots-allowed,
+  GET only) — developer-tender notices with the rental terms they state explicitly (long-term rental units, units for
+  sale, rental period, population-reserved rentals; the words kept as evidence; several figures → none picked), joined
+  to ILA tenders only by the printed tender number (→ MichrazID); planning sites (no plan number → no XPlan join);
+  project-status counts + pages (OFFICIAL_PAGE_ONLY). `GET /api/land?view=rental` + the land section's rental panel and
+  the tender drawer keep apart: the ILA pipeline (a tender's units are its TOTAL, never "rental units"), the stated
+  terms, the lifecycle on direct evidence only (permit / completion / occupancy "—"), and the CBS rent CPI component as
+  a GENERAL RENT MARKET BENCHMARK (never project or institutional rent). No project rent, yield or occupancy is ever
+  estimated. CBS average rent in ₪ is not machine-readable (Trust Center `cbs:average-rent`). `scripts/rental-discover.js`
+  + `.github/workflows/rental-discover.yml` = read-only discovery. `data/rental/` is bot-written. See `lib/rental/README.md`.
+
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,

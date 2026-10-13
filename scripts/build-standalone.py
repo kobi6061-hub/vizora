@@ -53,6 +53,13 @@ snap2 = (ROOT / "data" / "cbs-sales" / "latest.js").read_text(encoding="utf-8")
 assert "<" not in snap2.split("*/", 1)[-1], "CBS snapshot must not contain raw '<'"
 s = s.replace(TAG2, "<script>\n" + snap2 + "</script>", 1)
 
+# the shared table sort / filter core (lib/table/core.js) — pure functions, inlined like the snapshots
+TAG3 = '<script src="/lib/table/core.js"></script>'
+assert s.count(TAG3) == 1
+core = (ROOT / "lib" / "table" / "core.js").read_text(encoding="utf-8")
+assert "</script" not in core.lower(), "table core must not close the script element"
+s = s.replace(TAG3, "<script>\n" + core + "</script>", 1)
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

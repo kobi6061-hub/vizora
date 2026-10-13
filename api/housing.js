@@ -7,7 +7,8 @@
 // record, already filtered here.
 //
 //   view=summary  KPIs · coverage of the period · series · drill-down · filter choices
-//   view=records  one sorted page of rows (sort, order, page, size ≤ 100)
+//   view=records  one sorted page of rows (sort, order, page, size ≤ 100, lang) — sorted and column-filtered over the whole filtered
+//                 set, missing values last; column filters f_<column>= (lib/table/core.js)
 //   view=record   one lottery (id=lottery:<LotteryId>) with its project, lifecycle evidence, history
 //   view=status   freshness + the latest sync runs
 // Filters: period=6m|12m|24m|all|custom (&from&to=YYYY-MM-DD), city (CBS code or
@@ -46,7 +47,7 @@ module.exports = async (req, res) => {
     const { filters, error } = Q.parseFilters(url.searchParams);
     if (error) return send(res, 400, { error });
     if (view === 'summary') return send(res, 200, Q.summary(filters, { bucket: g('bucket') }));
-    if (view === 'records') return send(res, 200, Q.records(filters, { sort: g('sort'), order: g('order'), page: g('page'), size: g('size') }));
+    if (view === 'records') return send(res, 200, Q.records(filters, { sort: g('sort'), order: g('order'), page: g('page'), size: g('size'), lang: g('lang'), filters: Q.columnFilters(url.searchParams) }));
     return send(res, 400, { error: 'unknown view' });
   } catch (e) {
     console.error('housing api:', e.message);

@@ -588,6 +588,55 @@
       snapshotAt: m.snapshotAt || null, scope: d.scope ? (d.scope.level || d.scope.label || null) : null, more: !!(m.sourceCoverage && m.sourceCoverage.more),
     };
   }
+  /* ALTARIS data tables (comparables, portfolio, saved deals) — the PROPX sorting standard (lib/table/core.js):
+     first click = the column's primary order (high → low, newest first, א → ת), second = reverse, third = the table's
+     own order; missing values always last; a quick "contains" filter over the rows. Display only — no table order or
+     filter ever reaches a calculation. State per table in memory for the page's life (ALTARIS stores nothing beyond
+     its own altaris:* keys). */
+  const AXT = { types: { comps: 'date,text,number,number,currency,currency', pf: 'text,text,text,text,currency,currency,percent,percent,number,number,date,number,text',
+    saved: 'text,text,text,text,text,date,number,-' } };
+  AXT.st = {};
+  const axtState = (k) => AXT.st[k] || (AXT.st[k] = { sort: null, q: '' });
+  const axtSave = (k, st) => { AXT.st[k] = st; };
+  function axtCell(td) {
+    if (!td) return null;
+    if (td.dataset.v !== undefined) return td.dataset.v || null;
+    const sel = td.querySelector('select'); if (sel) return sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : null;
+    let t = ''; for (const n of td.childNodes) { if (n.nodeType === 1 && n.matches('.ax-tag')) continue; t += n.textContent; }
+    t = t.replace(/\s+/g, ' ').trim(); return t === '' || t === '—' ? null : t;
+  }
+  function axTables(root) {
+    const PTC = window.PropxTable; if (!PTC || !root) return;
+    for (const table of root.querySelectorAll('table[data-axt]')) {
+      const k = table.dataset.axt, types = (AXT.types[k] || '').split(','), st = axtState(k), tb = table.tBodies[0];
+      if (!tb || !table.tHead) continue;
+      const trs = [...tb.rows]; trs.forEach((tr, i) => { if (tr.dataset.i === undefined) tr.dataset.i = i; });
+      const ths = [...table.tHead.rows[0].cells];
+      ths.forEach((th, i) => {
+        const ty = types[i]; if (!ty || ty === '-') return;
+        if (!th.dataset.label) th.dataset.label = th.innerHTML;
+        const on = st.sort && st.sort.key === String(i), dir = on ? st.sort.dir : null;
+        th.setAttribute('aria-sort', on ? (dir === 'asc' ? 'ascending' : 'descending') : 'none');
+        th.innerHTML = `<button type="button" class="ax-sortb" data-axs="${i}">${th.dataset.label}<span aria-hidden="true">${on ? (dir === 'asc' ? '↑' : '↓') : '↕'}</span></button>`;
+      });
+      const q = PTC.textKey(st.q || '');
+      let rows = trs.filter((tr) => !q || PTC.textKey(tr.textContent).includes(q));
+      if (st.sort) { const i = Number(st.sort.key), ty = types[i]; if (ty && ty !== '-') rows = PTC.sortRows(rows, (tr) => axtCell(tr.cells[i]), ty, st.sort.dir, { lang: 'he' }); }
+      else rows.sort((a, b) => a.dataset.i - b.dataset.i);
+      trs.forEach((tr) => { tr.hidden = true; }); rows.forEach((tr) => { tr.hidden = false; tb.appendChild(tr); });
+      let bar = table.closest('.ax-tbl-wrap'); bar = bar && bar.previousElementSibling && bar.previousElementSibling.classList.contains('ax-tf') ? bar.previousElementSibling : null;
+      const wrap = table.closest('.ax-tbl-wrap') || table;
+      if (!bar) { wrap.insertAdjacentHTML('beforebegin', `<div class="ax-tf"><label>סינון שורות <input type="search" class="ax-in" data-axq="${k}" value="${esc(st.q || '')}" aria-label="סינון שורות בטבלה"></label><span class="ax-muted" data-axn="${k}"></span></div>`); bar = wrap.previousElementSibling; }
+      const n = bar.querySelector('[data-axn]'); if (n) n.textContent = rows.length < trs.length ? `${rows.length} מתוך ${trs.length} שורות` : '';
+      if (!table.dataset.axb) {
+        table.dataset.axb = '1';
+        table.tHead.addEventListener('click', (e) => { const b = e.target.closest('[data-axs]'); if (!b) return; const S0 = axtState(k), ty = types[+b.dataset.axs];
+          S0.sort = PTC.nextSort(S0.sort || { key: '', dir: 'asc', isDefault: true }, b.dataset.axs, ty, { key: '', dir: 'asc' }); if (S0.sort.isDefault) S0.sort = null;
+          axtSave(k, S0); axTables(table.parentElement.parentElement || root); const f = table.querySelector(`[data-axs="${b.dataset.axs}"]`); if (f) f.focus(); });
+        bar.addEventListener('input', (e) => { if (e.target.dataset.axq === undefined) return; const S0 = axtState(k); S0.q = e.target.value; axtSave(k, S0); axTables(table.parentElement.parentElement || root); });
+      }
+    }
+  }
   const viaTxt = (tx) => (tx.via === 'over.org.il' ? 'רשומות רשות המסים · באמצעות גרסאות לעם — פרסום עצמאי, לא ערוץ ממשלתי' : tx.via === 'GovMap' ? 'רשות המסים · GovMap' : 'רשות המסים');
   async function loadMarket() {
     const info = S.deal.info || {};
@@ -611,6 +660,13 @@
         out.pipeline = { total: d.total, stageCounts: d.stageCounts || {}, recent: (d.rows || []).map((r) => ({ id: r.id, kind: r.kind, name: r.name || (r.tender ? `מכרז ${r.tender}` : null), developer: r.developerName || null,
           units: r.kind === 'ila-awarded-lot' ? r.units : r.unitsFirstLottery, date: r.kind === 'ila-awarded-lot' ? r.decisionDate : r.lastLotteryDate, stage: r.stage })), basis: d.basis };
       }).catch((e) => { out.pipelineError = e.message; }));
+      /* long-term rental in the city: the ILA rental-track tenders and the rental terms Dira Lehaskir states for them —
+         read-only context; never written into the deal's rent, occupancy or exit assumptions */
+      jobs.push(getJSON(`/api/land?view=rental&city=${encodeURIComponent(info.cityCode)}&scope=current`).then((d) => {
+        const P = d.pipeline || {}, Q = d.terms || {};
+        out.rental = { tenders: P.tenders, tenderUnits: P.tenderUnits, withNotice: Q.withNotice, comparable: Q.comparable, rentalUnits: Q.rentalUnitsStated, tenderUnitsOfStated: Q.tenderUnitsOfStated,
+          saleUnits: Q.saleUnitsStated, years: Q.rentalYears || {}, checkedAt: d.freshness && d.freshness.dira ? d.freshness.dira.fetchedAt : null };
+      }).catch((e) => { out.rentalError = e.message; }));
       jobs.push(getJSON(`/api/intel?view=signals&city=${encodeURIComponent(info.cityCode)}&limit=5`).then((d) => {
         out.entries = { total: d.total, rows: (d.rows || []).map((r) => ({ developer: r.developer, date: r.date, via: r.via })), definition: d.definition };
       }).catch((e) => { out.entriesError = e.message; }));
@@ -679,6 +735,9 @@
     if (boi.constructionInputsIndex && isNum(boi.constructionInputsIndex.yoy) && boi.constructionInputsIndex.period) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי תשומה בבנייה למגורים</div><div class="v num">${boi.constructionInputsIndex.yoy > 0 ? '+' : ''}${boi.constructionInputsIndex.yoy}%</div><div class="s">שינוי שנתי · ${pad2(boi.constructionInputsIndex.period.month)}/${boi.constructionInputsIndex.period.year}${boi.constructionInputsIndex.stale ? ' · לא עדכני' : ''} · למ״ס · נתון עבר, לא הנחת עלות <span class="ax-tag off">רשמי</span></div></div>`);
     if (boi.newHomesIndex && isNum(boi.newHomesIndex.yoy)) facts.push(`<div class="ax-fact"><div class="k">מדד מחירי דירות חדשות</div><div class="v num">${boi.newHomesIndex.yoy > 0 ? '+' : ''}${boi.newHomesIndex.yoy}%</div><div class="s">שינוי שנתי · ${boi.newHomesIndex.period ? pad2(boi.newHomesIndex.period.month) + '/' + boi.newHomesIndex.period.year : ''} · למ״ס · ארצי <span class="ax-tag off">רשמי</span></div></div>`);
     facts.push(...cbsSalesFacts(info));
+    /* the CBS rent index — a GENERAL RENT MARKET BENCHMARK (national CPI rent component); never this deal's rent, never applied to an assumption */
+    const ri = boi.rentIndex;
+    if (ri && isNum(ri.yoy) && ri.period) facts.push(`<div class="ax-fact"><div class="k">מדד שכר הדירה · רף שוק כללי</div><div class="v num">${ri.yoy > 0 ? '+' : ''}${ri.yoy}%</div><div class="s">שינוי שנתי · ${pad2(ri.period.month)}/${ri.period.year} · רכיב שכר הדירה במדד המחירים לצרכן, ארצי · למ״ס <span class="ax-tag off">רשמי</span> · לא שכר הדירה בעסקה — הנחת השכירות שלכם לא שונתה</div></div>`);
     let body = '';
     if (m) {
       const tx = m.tx;
@@ -687,6 +746,10 @@
         if (tx.newN) facts.splice(1, 0, `<div class="ax-fact"><div class="k">חציון ₪/מ״ר · דירות חדשות</div><div class="v num">${F.int(tx.newMedian)}</div><div class="s">${tx.newN} עסקאות (חדשות לפי שנת בנייה) <span class="ax-tag der">נגזר</span></div></div>`);
       }
       if (m.land) facts.push(`<div class="ax-fact"><div class="k">קרקע ממשלתית במכרז · יחידות פתוחות</div><div class="v num">${F.int(m.land.unitsOpen)}</div><div class="s">${F.int(m.land.tenders)} מכרזים בהיקף נוכחי (מ-${F.date(m.land.currentFrom)}) · ${F.int(m.land.unitsResidential)} יח״ד שפורסמו · רמ״י · קרקע מדינה בלבד <span class="ax-tag off">רשמי</span></div></div>`);
+      if (m.rental && m.rental.tenders) {
+        const R = m.rental, yrs = Object.entries(R.years || {}).sort((a, b) => +a[0] - +b[0]).map(([y, n]) => `${y} שנים × ${n}`).join(' · ');
+        facts.push(`<div class="ax-fact"><div class="k">דיור להשכרה ארוכת טווח ביישוב · מכרזים</div><div class="v num">${F.int(R.tenders)}</div><div class="s">${F.int(R.tenderUnits)} יח״ד במכרזים (סה״כ — לא יח״ד להשכרה) · רמ״י <span class="ax-tag off">רשמי</span>${R.comparable ? ` · לפי הודעות דירה להשכיר: ${F.int(R.rentalUnits)} יח״ד להשכרה מתוך ${F.int(R.tenderUnitsOfStated)} ב-${F.int(R.comparable)} מכרזים${yrs ? ` · תקופות: ${yrs}` : ''}` : ''} · הקשר בלבד — לא נכנס להנחות</div></div>`);
+      }
       if (m.housing) facts.push(`<div class="ax-fact"><div class="k">דיור מסובסד · הגרלות</div><div class="v num">${F.int(m.housing.lotteries)}</div><div class="s">${F.int(m.housing.units)} דירות · ${F.int(m.housing.projects)} פרויקטים · ${F.date(m.housing.from)}–${F.date(m.housing.to)} · משרד הבינוי והשיכון <span class="ax-tag off">רשמי</span></div></div>`);
       if (m.devWins) facts.push(`<div class="ax-fact"><div class="k">זכיות היזם במכרזי רמ״י (שם זהה)</div><div class="v num">${m.devWins.none ? '0' : F.int(m.devWins.tendersWon)}</div><div class="s">${m.devWins.none ? 'לא נמצאה זכייה בשם זהה בדיוק' : `${F.int(m.devWins.lotsWon)} מגרשים · ${F.int(m.devWins.units)} יח״ד · אחרונה ${F.date(m.devWins.lastWin)}`} · OBSERVED PUBLIC TENDER WINS IN DETAIL-READ RECORDS — לא מאגר קרקעות</div></div>`);
       if (m.devIntel) {
@@ -705,10 +768,11 @@
       if (!m.cityCode) errs.push('ליישוב לא נבחר קוד רשמי — בחרו אותו מרשימת החיפוש כדי לקבל נתוני קרקע ודיור');
       body += `<div class="ax-facts">${facts.join('')}</div>`;
       if (tx) body += `<p class="ax-muted">${esc(viaTxt(tx))}${tx.snapshotAt ? ' · עותק המרשם מיום ' + esc(F.date(String(tx.snapshotAt).slice(0, 10))) : ''} · היקף: ${esc(tx.scope || '—')} · ${tx.nAll} רשומות מגורים נשלפו (${tx.more ? 'עמוד ראשון מתוך יותר' : 'כל הרשומות בהיקף'}) · נשלף ${esc(F.date(m.retrievedAt.slice(0, 10)))}. השווי המוערך הוא חציון — לא שומה.</p>`;
-      if (tx && tx.comps.length) body += `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>תאריך</th><th>כתובת</th><th class="n">חדרים</th><th class="n">שטח</th><th class="n">מחיר</th><th class="n">₪/מ״ר</th></tr></thead><tbody>${tx.comps.map((c) => `<tr><td class="num">${esc(F.date(c.date))}</td><td>${esc([c.street, c.house].filter(Boolean).join(' ') || '—')}${c.isNew ? ' <span class="ax-tag">חדשה</span>' : ''}</td><td class="n">${esc(c.rooms || '—')}</td><td class="n">${F.int(c.area)}</td><td class="n">${F.nis(c.price)}</td><td class="n">${F.int(c.psm)}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted">עסקאות השוואה: חדרים כמו ביחידות העסקה (±0.5) ושטח בטווח ±20% — ${tx.compsN} נמצאו${tx.compsN < 5 ? ' (פחות מ-5: לא הוצע שווי השוואה)' : ''}.</p>`;
+      if (tx && tx.comps.length) body += `<div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="comps"><thead><tr><th>תאריך</th><th>כתובת</th><th class="n">חדרים</th><th class="n">שטח</th><th class="n">מחיר</th><th class="n">₪/מ״ר</th></tr></thead><tbody>${tx.comps.map((c) => `<tr><td class="num">${esc(F.date(c.date))}</td><td>${esc([c.street, c.house].filter(Boolean).join(' ') || '—')}${c.isNew ? ' <span class="ax-tag">חדשה</span>' : ''}</td><td class="n">${esc(c.rooms || '—')}</td><td class="n">${F.int(c.area)}</td><td class="n">${F.nis(c.price)}</td><td class="n">${F.int(c.psm)}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted">עסקאות השוואה: חדרים כמו ביחידות העסקה (±0.5) ושטח בטווח ±20% — ${tx.compsN} נמצאו${tx.compsN < 5 ? ' (פחות מ-5: לא הוצע שווי השוואה)' : ''}.</p>`;
       if (errs.length) body += `<p class="ax-muted" style="color:var(--down)">${errs.map(esc).join(' · ')}</p>`;
     } else body += facts.length ? `<div class="ax-facts">${facts.join('')}</div>` : '';
     box.innerHTML = btn + body;
+    axTables(box);
   }
 
   /* --------------------------------------------- section 3: capital structure */
@@ -1158,10 +1222,11 @@
     const bars = (list, limit, title) => C.shareBars(list.map((x) => ({ label: x.key === '—' ? 'לא הוזן' : x.key, v: x.capital, share: st.fundSize ? x.ofFund : x.share })), { limit: st.fundSize ? limit / 100 : null, title, question: st.fundSize ? 'שיעור מגודל הקרן מול התקרה שהוגדרה' : 'שיעור מההון בפורטפוליו', w: CW(true) });
     const cal = C.columns(sm.calendar.slice(0, 8).map((x) => ({ label: x.q, v: x.v })), { title: 'לוח החזרי הון', question: 'מתי צפוי ההון (קרן ורווח) לחזור לקרן?', periodLabel: 'רבעון', w: CW(true) });
     box.innerHTML = `<section class="ax-sec">${secHead('', 'פורטפוליו', `${sm.deals} עסקאות פעילות · הגרסה האחרונה של כל עסקה, במבנה שנבחר לביצוע או במבנה המועדף. גודל קרן: ${F.m(st.fundSize)}.`)}${kp}
-      <h3 class="ax-h3">עסקאות</h3><div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>עסקה</th><th>יזם</th><th>פרויקט</th><th>מבנה</th><th class="n">הון</th><th class="n">שווי נתמך</th><th class="n">LTV</th><th class="n">IRR</th><th class="n">MOIC</th><th class="n">משך</th><th class="n">יציאה צפויה</th><th class="n">סיכון</th><th>סטטוס</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+      <h3 class="ax-h3">עסקאות</h3><div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="pf"><thead><tr><th>עסקה</th><th>יזם</th><th>פרויקט</th><th>מבנה</th><th class="n">הון</th><th class="n">שווי נתמך</th><th class="n">LTV</th><th class="n">IRR</th><th class="n">MOIC</th><th class="n">משך</th><th class="n">יציאה צפויה</th><th class="n">סיכון</th><th>סטטוס</th></tr></thead><tbody>${rows}</tbody></table></div></section>
       <section class="ax-sec">${secHead('', 'חשיפה ולוח נזילות')}<div class="ax-res two">${C.shareBars(sm.byStrategy.map((x) => ({ label: SN[x.key] || x.key, v: x.capital, share: x.share, c: SC[x.key] })), { title: 'חשיפה לפי מבנה', question: 'איך ההון מתחלק בין רכישה, מימון ומבנה משולב?', w: CW(true) })}${cal}</div>
       <div class="ax-res two">${bars(sm.byDeveloper.slice(0, 8), st.maxDevExposure, 'חשיפה לפי יזם')}${bars(sm.byCity.slice(0, 8), st.maxGeoExposure, 'חשיפה לפי יישוב')}</div>
       <h3 class="ax-h3">יציאות קרובות</h3>${sm.upcoming.length ? `<div class="ax-ledger">${sm.upcoming.map((u) => lr(`${u.name} · ${SN[u.strategy] || ''}`, `${F.date(u.exitDate)} · ${F.m(u.capital)}`)).join('')}</div>` : '<p class="ax-muted">אין יציאות צפויות.</p>'}</section>`;
+    axTables(box);
   }
   const statusSelect = (id) => `<select class="ax-status" data-status="${esc(id)}" aria-label="סטטוס">${optsHTML('dealStatus', (S.deals[id] || {}).status || 'draft')}</select>`;
 
@@ -1174,12 +1239,13 @@
     const tools = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button class="ax-btn pri" type="button" data-act="new">עסקה חדשה</button><label class="ax-btn" style="cursor:pointer">ייבוא קובץ עסקה (JSON)<input type="file" accept="application/json,.json" data-act-file="import" hidden></label><label class="ax-switch"><input type="checkbox" data-act-check="arch"${showArch ? ' checked' : ''}> הצגת ארכיון (${all.filter((r) => r.archived).length})</label></div>`;
     let body;
     if (!all.length) body = `<div class="ax-empty"><b>אין עסקאות שמורות</b><p>העסקאות נשמרות בדפדפן הזה בלבד (localStorage). כדי להעביר עסקה לעמית או למחשב אחר — ייצאו קובץ עסקה (JSON) וייבאו אותו שם.</p><button class="ax-btn pri" type="button" data-view-go="deal">לעסקה חדשה</button></div>`;
-    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
+    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data" data-axt="saved"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
       const v = r.versions[r.versions.length - 1], info = v.deal.info || {};
       return `<tr${r.id === S.dealId ? ' class="pick"' : ''}><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(dealName(v.deal))}</button>${r.archived ? ' <span class="ax-tag">ארכיון</span>' : ''}${v.deal.example ? ' <span class="ax-tag">דוגמה</span>' : ''}${fromCase(v.deal) ? ' <span class="ax-tag ill">מבוסס על מקרה להמחשה</span>' : ''}</td><td>${esc(info.developer || '—')}</td><td>${esc(info.city || '—')}</td><td>${esc(v.signal || '—')}</td><td>${statusSelect(r.id)}</td><td class="n">${esc(F.date((r.updatedAt || '').slice(0, 10)))}</td><td class="n">${r.versions.length}</td>
         <td style="white-space:nowrap"><button class="ax-btn" type="button" data-act="dup" data-id="${esc(r.id)}">שכפול</button> <button class="ax-btn" type="button" data-act="archive" data-id="${esc(r.id)}">${r.archived ? 'שחזור' : 'ארכוב'}</button> <button class="ax-btn" type="button" data-act="cmp" data-id="${esc(r.id)}"${r.versions.length < 2 ? ' disabled title="נדרשות לפחות שתי גרסאות"' : ''}>השוואת גרסאות</button></td></tr>`;
     }).join('')}</tbody></table></div>`;
     box.innerHTML = `<section class="ax-sec">${secHead('', 'עסקאות שמורות', 'שמירה יוצרת גרסה חדשה; גרסאות קודמות נשמרות להשוואה. העסקאות נשמרות בדפדפן זה בלבד.')}${tools}${body}</section>${S.cmpVer.id && S.deals[S.cmpVer.id] ? versionsHTML() : ''}`;
+    axTables(box);
   }
   function flat(o, pre, out) {
     out = out || {};

@@ -627,14 +627,17 @@ function syncInto(dir, rows, extraArgs = [], env = {}) {
     throw new Error('unbalanced ' + anchor);
   };
   const HO_SRC = INDEX.slice(INDEX.indexOf('const HO_PAGE='), INDEX.indexOf('function initHousing('));
+  /* the shared table module (header sort / filter controls) the section's table head is built with */
+  const PT_SRC = INDEX.slice(INDEX.indexOf('const PTC=window.PropxTable;'), INDEX.indexOf('const PT_DOM='));
   const UI = require('node:vm').runInNewContext(matched('const I18N={') + `;
     const T=()=>I18N[state.lang];
     const calcEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
     const nf=new Intl.NumberFormat("en-US");const fmtInt=n=>nf.format(Math.round(n));const fmtNIS=n=>"₪"+fmtInt(n);
     const vcTag=c=>'<span class="vc '+c+'">'+T().vcName[c]+'</span>';
     function coveredIdByName(){return null}
-    ` + HO_SRC + ';({hoN,hoDash,hoKpisHTML,hoChartHTML,hoGeoHTML,hoTableHTML,hoCovHTML,I18N,state,hoState})',
-  { state: { lang: 'he', locId: null }, LOC: {}, MKT: { nh: null, boi: null }, location: { protocol: 'https:', host: 'x' }, Intl });
+    ` + PT_SRC + HO_SRC + ';({hoN,hoDash,hoKpisHTML,hoChartHTML,hoGeoHTML,hoTableHTML,hoCovHTML,I18N,state,hoState})',
+  { state: { lang: 'he', locId: null }, LOC: {}, MKT: { nh: null, boi: null }, location: { protocol: 'https:', host: 'x', search: '' }, Intl,
+    URLSearchParams, window: { PropxTable: require('../lib/table/core') } });
   const stripTags = (h) => h.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
   await t('the section exists, is in the rail, and carries the specified titles', () => {
     assert.match(INDEX, /<section class="blk" id="housing">/);

@@ -5,10 +5,11 @@
 // route (middleware.js). Nothing is fetched from a source here.
 //
 //   view=developers   one sorted page of developer entities — OBSERVED PROPX ACTIVITY (q, city, role, kind, period=all|recent, sort, order, page, size ≤ 100)
+//                     every table view sorts and column-filters (f_<column>=, lib/table/core.js) over its whole filtered set, missing last
 //   view=developer    one entity (id=dev-… or name=<the source string>): activity per source, markets, sites, projects, construction evidence, aliases, possible same entities
 //   view=projects     one sorted page of projects (kind=moch|ila, q, city, stage, developer, sort, order, page, size ≤ 100)
 //   view=project      one project (id=moch:<ProjectID> | ila:<MichrazID>:<lot>) with stage evidence and provenance
-//   view=signals      DEVELOPER MARKET ENTRY (derived; city, limit)
+//   view=signals      DEVELOPER MARKET ENTRY (derived; city, limit — or sort, order, page, size like the other tables)
 //   view=search       q → routed results (tender / plan / parcel / address / developer / project / locality / street)
 //   view=status       registry coverage, freshness, methodology
 //   view=sources      the Data & Trust Center catalogue (lib/trust/catalog.js)

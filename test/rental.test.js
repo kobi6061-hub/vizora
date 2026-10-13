@@ -99,4 +99,96 @@ t('read-only: the module only ever issues GET requests with its own User-Agent',
   assert.match(D.UA, /^PROPX-rental-sync\//);
 });
 
+console.log('rental: the read model over the committed data (ILA tenders + the stored Dira Lehaskir notices)');
+const LQ = require('../lib/land/query'), RQ = require('../lib/rental/query'), codes = require('../lib/land/codes');
+const S = RQ.summary(LQ.parseFilters(new URLSearchParams('scope=current')).filters);
+t('rental-track classification is the Authority\'s own codes: tender type 6 or purpose 20 / 21', () => {
+  assert.equal(codes.trackOf({ typeCode: 6, purposeCode: 2 }), 'rental');
+  assert.equal(codes.trackOf({ typeCode: 1, purposeCode: 20 }), 'rental');
+  assert.notEqual(codes.trackOf({ typeCode: 1, purposeCode: 2 }), 'rental');
+  assert.ok(S.rows.length === S.pipeline.tenders && S.rows.every((r) => LQ.load().byId.get(r.id).track === 'rental'));
+});
+t('total vs rental-designated units: the ILA figure is labelled the tender\'s TOTAL; sums compare like with like', () => {
+  assert.match(S.pipeline.unitsLabel, /NOT long-term rental units/);
+  const T = S.terms;
+  assert.equal(T.sumsBasis.startsWith('Σ over the same tenders on both sides'), true);
+  const comp = S.rows.filter((r) => r.dira && r.dira.rentalUnits != null && !r.dira.inconsistent && r.tenderUnits != null);
+  assert.equal(T.comparable, comp.length);
+  assert.equal(T.rentalUnitsStated, comp.reduce((a, r) => a + r.dira.rentalUnits, 0));
+  assert.equal(T.tenderUnitsOfStated, comp.reduce((a, r) => a + r.tenderUnits, 0));
+  assert.ok(T.rentalUnitsStated <= T.tenderUnitsOfStated, 'more rental units than the tenders hold');
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.match(page, /kUnits:"יח״ד במכרזים \(סה״כ\)",kUnitsS:"סך YechidotDiur של המכרזים — לא ״יח״ד להשכרה״/);
+});
+t('mixed sale / rental tenders are counted as such; a stated sale share is never added to the rental figure', () => {
+  const mixed = S.rows.filter((r) => r.dira && r.dira.saleUnits != null && r.dira.rentalUnits != null);
+  assert.ok(mixed.length > 0);
+  for (const r of mixed) { assert.equal(r.dira.rentalBasis, 'stated-part'); if (r.dira.totalUnits != null) assert.ok(r.dira.rentalUnits + r.dira.saleUnits <= r.dira.totalUnits); }
+});
+t('exact joins only: a notice reaches a tender only through its printed number (MichrazID); nothing by name or place', () => {
+  const C = RQ.load();
+  for (const [id, r] of C.byMichraz) assert.equal(id, 'rmi:' + r.tender.michrazId);
+  assert.equal(RQ.diraFor('rmi:19990001'), null);
+  const src = fs.readFileSync(path.join(ROOT, 'lib/rental/query.js'), 'utf8');
+  assert.doesNotMatch(src, /placeText\s*===|\.city\s*===\s*r\.placeText|similar|levenshtein|includes\(r\.title/i);
+});
+t('the lifecycle advances only on direct evidence: no permit, completion or occupancy is inferred; the company\'s counts stay apart', () => {
+  const L = Object.fromEntries(S.lifecycle.map((x) => [x.stage, x]));
+  assert.deepStrictEqual(['PLANNING', 'PERMIT', 'COMPLETED', 'OPERATING'].map((k) => L[k].n), [null, null, null, null]);
+  assert.equal(L.AWARDED.n, S.pipeline.awarded);
+  assert.ok(L.OPERATING.companyCount == null || Number.isInteger(L.OPERATING.companyCount));
+  assert.equal(S.projects.class, 'OFFICIAL_PAGE_ONLY');
+  assert.equal(S.planning.xplan.startsWith('not joined'), true);
+});
+t('no project rent, no yield, no occupancy anywhere in the rental read model', () => {
+  const json = JSON.stringify(S);
+  assert.doesNotMatch(json, /"(rent|rentPerSqm|monthlyRent|yield|grossYield|occupancy|occupied)"\s*:/);
+  for (const r of S.rows) assert.ok(!('rent' in r) && !('yield' in r));
+});
+t('the CBS rent index is a GENERAL RENT MARKET BENCHMARK with its own period and check date; stale is said', () => {
+  const M = S.market;
+  if (M.state === 'not-synced') return;
+  assert.equal(M.role, 'GENERAL RENT MARKET BENCHMARK'); assert.equal(M.class, 'OFFICIAL');
+  assert.ok(M.period && M.period.year && M.period.month && M.checkedAt);
+  assert.ok(M.notIs.includes('the rent of any project') && M.notIs.includes('institutional or Dira Lehaskir rent'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rent-'));
+  const mk = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/market/latest.json'), 'utf8')); mk.indicators.rentIndex.stale = true;
+  fs.writeFileSync(path.join(tmp, 'latest.json'), JSON.stringify(mk));
+  const prev = process.env.MARKET_DATA_FILE; process.env.MARKET_DATA_FILE = path.join(tmp, 'latest.json');
+  delete require.cache[require.resolve('../lib/rental/query')];
+  try { assert.equal(require('../lib/rental/query').marketBenchmark().state, 'stale'); } finally { if (prev == null) delete process.env.MARKET_DATA_FILE; else process.env.MARKET_DATA_FILE = prev; delete require.cache[require.resolve('../lib/rental/query')]; }
+});
+t('provenance: every stated rental figure keeps the words it came from', () => {
+  for (const r of S.rows) if (r.dira && r.dira.rentalUnits != null) assert.ok(r.dira.evidence && r.dira.evidence.rentalUnits, r.id);
+});
+t('model vs observed on the board: rent, rent per m² and yield stay MODEL; the yield sentence names its classes', () => {
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.match(page, /case "rent":case "rentPsm":case "yield":case "ptr":return "mod";/);
+  assert.match(page, /on these values the gross yield \(\$\{t\.vcName\.mod\}\) is compressing/);
+  assert.doesNotMatch(page, /gross yield is gradually compressing/);
+});
+t('ALTARIS reads the rental context and never writes it into an assumption', () => {
+  const app = fs.readFileSync(path.join(ROOT, 'altaris/app.js'), 'utf8');
+  assert.match(app, /getJSON\(`\/api\/land\?view=rental&city=/);
+  assert.match(app, /לא שכר הדירה בעסקה — הנחת השכירות שלכם לא שונתה/);
+  assert.doesNotMatch(app, /\.rent\s*=\s*[^=]*(rental|rentIndex)/, 'a rental figure assigned to the deal rent');
+  assert.doesNotMatch(app, /i\.rent\s*=|inputs\.rent\s*=|\.occupancy\s*=/);
+});
+t('Trust Center: the rental sources with their class, coverage, limitations and run state', () => {
+  const { catalog } = require('../lib/trust/catalog');
+  const c = catalog(), by = Object.fromEntries(c.sources.map((x) => [x.id, x]));
+  assert.equal(by['dira-lehaskir:tenders'].classification, 'CMS_PUBLIC_API');
+  assert.equal(by['dira-lehaskir:planning'].classification, 'CMS_PUBLIC_API');
+  assert.equal(by['dira-lehaskir:projects'].classification, 'OFFICIAL_PAGE_ONLY');
+  assert.equal(by['cbs:average-rent'].classification, 'NOT_MACHINE_READABLE'); assert.equal(by['cbs:average-rent'].inProduct, false);
+  assert.ok(by['cbs:rentIndex'].limitations.some((l) => /GENERAL RENT MARKET BENCHMARK/.test(l)));
+  for (const k of ['dira-lehaskir:tenders', 'dira-lehaskir:planning', 'dira-lehaskir:projects']) assert.ok(by[k].sync && by[k].sync.state && by[k].limitations.length, k);
+});
+t('no fake completeness: the rental wording never claims all projects', () => {
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const rt = page.slice(page.indexOf('  rt:{title:"שכירות'), page.indexOf('  rtD:{title:"תנאי'));
+  assert.doesNotMatch(rt, /כל פרויקטי השכירות(?!״)|כל הפרויקטים|all rental projects(?!")/);
+  assert.match(page, /לא ״כל פרויקטי השכירות״/); assert.match(page, /not "all rental projects"/);
+});
+
 console.log(`\nrental: ${passed} passed${process.exitCode ? ', SOME FAILED' : ''}`);

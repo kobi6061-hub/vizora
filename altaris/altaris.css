@@ -191,6 +191,12 @@ header.top{position:sticky;top:0;z-index:60;background:var(--glass);backdrop-fil
 table.ax-tbl{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px}
 .ax-tbl th{font-size:10.5px;font-weight:700;color:var(--ink-3);text-align:start;padding:6px 6px;border-bottom:1px solid var(--edge);white-space:nowrap;letter-spacing:.02em}
 .ax-tbl td{padding:4px 6px;border-bottom:1px solid var(--hairline);vertical-align:middle}
+.ax-sortb{font:inherit;color:inherit;display:inline-flex;align-items:center;gap:4px;padding:1px 0;border-radius:4px;cursor:pointer;background:none;border:0}
+.ax-sortb span{font-size:10px;opacity:.4}
+.ax-tbl th[aria-sort="ascending"] .ax-sortb span,.ax-tbl th[aria-sort="descending"] .ax-sortb span{opacity:1;color:var(--accent,currentColor)}
+.ax-sortb:focus-visible{outline:2px solid currentColor;outline-offset:1px}
+.ax-tf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0;font-size:12px}
+.ax-tf .ax-in{max-width:220px}
 .ax-tbl td.n,.ax-tbl th.n{text-align:end;font-variant-numeric:tabular-nums;direction:ltr;white-space:nowrap}
 .ax-tbl tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none;padding-top:7px}
 .ax-tbl input{width:100%;min-width:0;height:30px;border:1px solid var(--hairline);border-radius:7px;background:var(--paper);padding-inline:7px;font-size:12.5px}

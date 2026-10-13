@@ -103,14 +103,14 @@
       "includeFiles": "data/housing/*.json*"
     },
     "api/land.js": {
-      "includeFiles": "{data/land/*.json*,data/geo/localities.json}"
+      "includeFiles": "{data/land/*.json*,data/geo/localities.json,data/rental/*.json*,data/market/latest.json}"
     },
     "api/jobs/tx-refresh.js": {
       "maxDuration": 60,
       "includeFiles": "data/transactions/watch.json"
     },
     "api/intel.js": {
-      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/*.json,data/renewal/*.json*,data/cbs-sales/latest.json,data/cbs-sales/runs.jsonl}"
+      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/*.json,data/renewal/*.json*,data/cbs-sales/*.json*,data/rental/*.json*}"
     }
   },
   "rewrites": [

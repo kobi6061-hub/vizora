@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="3c5ebd52f65dd56fdd9298d85988cfe85f0238c39063488e9d2bfadb58168aa7">
+<meta name="propx-source-sha256" content="b9fa22f90462a0dfc3caf3e5963f61a0d8b78ad68c5f4061dea01289b6cd6b08">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -1317,6 +1317,65 @@ details.ci-more>.in{padding:2px 13px 12px}
 .tc-leg{margin-top:10px;font-size:12px}
 .tc-leg summary{cursor:pointer;font-weight:700;color:var(--ink-2)}
 @media(max-width:719px){.tc-sum{grid-template-columns:minmax(0,1fr) auto}.tc-v,.tc-c{grid-column:1/-1}.tc-d{grid-column:span 1}.in-city{width:120px}.in-kids{padding-inline-start:0}}
+/* ============================ tables: sort + filter (lib/table/core.js) ============================ */
+.pt-h{display:inline-flex;align-items:center;gap:2px;max-width:100%}
+.pt-s{font:inherit;color:inherit;display:inline-flex;align-items:center;gap:4px;padding:2px 0;border-radius:4px;cursor:pointer;text-align:start}
+.pt-s:hover{color:var(--ink)}
+.pt-a{font-size:10px;line-height:1;opacity:.38;font-weight:700}
+th[aria-sort="ascending"] .pt-a,th[aria-sort="descending"] .pt-a{opacity:1;color:var(--accent-deep)}
+th[aria-sort="ascending"] .pt-s,th[aria-sort="descending"] .pt-s{color:var(--ink-2)}
+.pt-f{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;color:var(--ink-3);opacity:.55;flex:none}
+.pt-f:hover,.pt-f[aria-expanded="true"]{opacity:1;background:var(--accent-wash);color:var(--accent-deep)}
+.pt-f.on{opacity:1;color:var(--accent-deep);background:var(--accent-wash)}
+.pt-s:focus-visible,.pt-f:focus-visible,.pt-chip button:focus-visible,.pt-clr:focus-visible,.pt-fm:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pt-l{cursor:default}
+th.pt-n .pt-h{justify-content:flex-end}
+.pt-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 8px;font-size:12px}
+.pt-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent-wash);color:var(--accent-deep);border-radius:99px;padding:2px 4px 2px 9px;font-size:11.5px}
+.pt-chip b{font-weight:700}
+.pt-chip button{width:18px;height:18px;border-radius:99px;font-weight:800;line-height:1;color:inherit}
+.pt-chip button:hover{background:var(--panel)}
+.pt-clr{font-size:12px;font-weight:700;color:var(--accent-deep);padding:2px 6px}
+.pt-note{color:var(--ink-3);font-size:11.5px}
+.pt-host:empty{display:none}
+.rt-panel{border:1px solid var(--hairline);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:var(--panel)}
+.rt-k{margin:6px 0 4px}
+.rt-life{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px;margin:6px 0}
+.rt-st{display:flex;flex-direction:column;gap:2px;border:1px solid var(--hairline);border-radius:8px;padding:6px 8px;font-size:12px}
+.rt-st b{font-size:11px;color:var(--ink-2)}
+.rt-st .num{font-size:15px;font-weight:800}
+.rt-st.na .num{color:var(--ink-3);font-weight:600}
+.rt-st .sub{font-size:10.5px;color:var(--ink-3);line-height:1.3}
+.rt-tbl tbody tr{cursor:pointer}
+.rt-tbl tbody tr:hover{background:var(--accent-wash)}
+.rt-dates{margin-top:8px}
+.rt-yrs{display:block;font-size:13px;font-weight:700;line-height:1.45}
+.pt-host .pt-bar{padding:8px 12px 0;margin:0 0 4px}
+.pt-m{display:none}
+.pt-fm{align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ink-2);border:1px solid var(--hairline);background:var(--paper);border-radius:8px;padding:5px 9px}
+.pt-fm.on{color:var(--accent-deep);border-color:var(--accent-deep)}
+label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
+@media(max-width:719px){.pt-m{display:inline-flex}}
+.pt-bar.pt-all .pt-m{display:inline-flex}
+.pt-pop{position:fixed;z-index:80;width:264px;max-width:calc(100vw - 16px);background:var(--panel);color:var(--ink);border:1px solid var(--hairline);border-radius:12px;box-shadow:var(--shadow-pop);padding:10px 12px 12px;font-size:12.5px}
+.pt-pop.sheet{left:8px!important;right:8px;bottom:8px;top:auto!important;width:auto;max-width:none;border-radius:14px}
+.pt-ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pt-ph b{font-size:12.5px}
+.pt-xx{width:24px;height:24px;border-radius:6px;font-size:16px;line-height:1;color:var(--ink-3)}
+.pt-xx:hover{background:var(--accent-wash)}
+.pt-pop .ho-in,.pt-pop .ho-sel{width:100%;max-width:none;box-sizing:border-box}
+.pt-fl{display:block;font-size:11px;font-weight:700;color:var(--ink-3);margin:6px 0 3px}
+.pt-fs{border:0;margin:0;padding:0;max-height:220px;overflow:auto}
+.pt-ck{display:flex;align-items:center;gap:6px;padding:3px 0;cursor:pointer}
+.pt-cnt{color:var(--ink-3);font-size:11px}
+.pt-rg{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center}
+.pt-rg .pt-fl{margin:0}
+.pt-rg input[aria-invalid="true"]{border-color:var(--down)}
+.pt-fn{margin:8px 0 0;font-size:11px;color:var(--ink-3)}
+.pt-act{display:flex;gap:8px;margin-top:10px}
+.pt-ap{font-size:12px;font-weight:700;background:var(--ink);color:var(--paper);border-radius:8px;padding:6px 14px}
+.pt-cl{font-size:12px;font-weight:700;color:var(--accent-deep);padding:6px 8px}
+.pt-ap:focus-visible,.pt-cl:focus-visible,.pt-xx:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
 /* offline build: no server session — hide logout controls, and the ALTARIS
    link (a server route, /altaris, that an offline file cannot open) */
@@ -1508,6 +1567,7 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="filters" id="filters"></div>
     </div>
     <div class="card tbl-card">
+      <div class="pt-host" id="tblPt"></div>
       <div class="tbl-scroll"><table class="tbl" id="tbl"></table></div>
       <div class="tbl-cards" id="tblCards"></div>
       <p class="tbl-foot" id="tblFoot"></p>
@@ -1621,6 +1681,7 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="tx-scope" id="txScope" hidden></div>
       <div class="tx-warn" id="txWarn" hidden></div>
       <div class="tx-fresh" id="txFresh"></div>
+      <div class="pt-host" id="txTblPt"></div>
       <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
       <div class="tbl-cards" id="txCards"></div>
       <div class="tx-more" id="txMoreBox" hidden></div>
@@ -1647,6 +1708,7 @@ details.ci-more>.in{padding:2px 13px 12px}
         <div class="ho-box ho-geo" id="hoGeo"></div>
       </div>
       <div class="ho-tblhead" id="hoTblHead"></div>
+      <div class="pt-host" id="hoTblPt"></div>
       <div class="tbl-scroll"><table class="tbl ho-tbl" id="hoTbl"></table></div>
       <div class="tbl-cards" id="hoCards"></div>
       <div class="ho-pager" id="hoPager"></div>
@@ -1674,6 +1736,7 @@ details.ci-more>.in{padding:2px 13px 12px}
       <div class="ho-cov" id="inCov" hidden></div>
       <div class="ho-kpis" id="inKpis"></div>
       <div class="ho-tblhead" id="inTblHead"></div>
+      <div class="pt-host" id="inTblPt"></div>
       <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
       <div class="tbl-cards" id="inCards"></div>
       <div class="ho-pager" id="inPager"></div>
@@ -1697,6 +1760,7 @@ details.ci-more>.in{padding:2px 13px 12px}
     <div class="card ho-card">
       <div class="ho-bar" id="ldBar"></div>
       <div class="ho-cov" id="ldCov" hidden></div>
+      <div class="rt-panel" id="ldRental" hidden></div>
       <div class="ho-kpis" id="ldKpis"></div>
       <div class="ho-nopub" id="ldNoPub"></div>
       <div class="ho-mid">
@@ -1708,6 +1772,7 @@ details.ci-more>.in{padding:2px 13px 12px}
         <div class="ho-box" id="ldPipe"></div>
       </div>
       <div class="ho-tblhead" id="ldTblHead"></div>
+      <div class="pt-host" id="ldTblPt"></div>
       <div class="tbl-scroll"><table class="tbl ho-tbl" id="ldTbl"></table></div>
       <div class="tbl-cards" id="ldCards"></div>
       <div class="ho-pager" id="ldPager"></div>
@@ -1797,6 +1862,264 @@ details.ci-more>.in{padding:2px 13px 12px}
   </div>
 </footer>
 
+<script>
+/* PROPX · tables — the one sorting and filtering standard (audit 14.10.2026).
+ *
+ * Shared by the page (window.PropxTable, loaded from /lib/table/core.js and inlined in the offline build), the API
+ * query modules (require('../table/core')) and ALTARIS. Pure functions, no DOM.
+ *
+ *  · Sort cycle: first click = the column's primary order (numbers / currency / percent high → low, dates newest →
+ *    oldest, yes before no, text א → ת / A → Z, status in lifecycle order); second click = the reverse; third click =
+ *    the table's default order. On the default column the cycle is default → reverse → default.
+ *  · Missing values (null, undefined, NaN, "", "—", "MISSING", "חסר") ALWAYS sort last, in both directions — never 0.
+ *  · Stable: ties keep their previous order (or a caller tie-break), so paging never shuffles equal rows.
+ *  · Typed column filters, written to the URL as f_<column>=…:
+ *      text      contains          f_name=רמת
+ *      enum      any of            f_track=rental,open-market
+ *      number    min..max          f_units=100..500   (either side may be empty: 100.. / ..500)
+ *      currency  min..max          f_land=..5000000
+ *      percent   min..max          f_yield=3..        (in the unit shown: 3 = 3%)
+ *      date      from..to          f_close=2025-01-01..2025-12-31
+ *      bool      yes | no          f_awarded=yes
+ *      geo       exact code/name   f_city=5000
+ *    A missing value never satisfies an active filter (an unknown is not "between 100 and 500").
+ *    Filters intersect; sorting applies to the filtered rows.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.PropxTable = api;
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  const MISSING_TEXT = new Set(['', '—', '–', '-', '−', 'MISSING', 'missing', 'N/A', 'n/a', 'NA', 'חסר', 'לא ידוע', 'null', 'undefined']);
+  /** null / undefined / NaN / ±Infinity / an empty or dash string / MISSING — never a zero */
+  function isMissing(v) {
+    if (v == null) return true;
+    if (typeof v === 'number') return !Number.isFinite(v);
+    if (typeof v === 'string') return MISSING_TEXT.has(v.trim());
+    if (v instanceof Date) return Number.isNaN(v.getTime());
+    return false;
+  }
+
+  const TYPES = ['number', 'currency', 'percent', 'date', 'text', 'enum', 'status', 'bool', 'geo'];
+  const NUMERIC = new Set(['number', 'currency', 'percent']);
+  /** the order a first click gives */
+  const primaryDir = (type) => (NUMERIC.has(type) || type === 'date' || type === 'bool' ? 'desc' : 'asc');
+  const reverse = (d) => (d === 'asc' ? 'desc' : 'asc');
+
+  const COLLATORS = {};
+  function collator(lang) {
+    const k = lang === 'en' ? 'en' : 'he';
+    if (!COLLATORS[k]) {
+      try { COLLATORS[k] = new Intl.Collator(k === 'en' ? ['en', 'he'] : ['he', 'en'], { sensitivity: 'base', numeric: true }); }
+      catch (e) { COLLATORS[k] = { compare: (a, b) => (a < b ? -1 : a > b ? 1 : 0) }; }
+    }
+    return COLLATORS[k];
+  }
+
+  /** a number from a number or a displayed string ("₪1,234", "3.1%", "+0.4", "1.2M") — null when there is none */
+  function toNumber(v) {
+    if (isMissing(v)) return null;
+    if (typeof v === 'number') return v;
+    if (typeof v === 'boolean') return v ? 1 : 0;
+    let s = String(v).replace(/[‎‏‪-‮⁦-⁩]/g, '').replace(/[−–]/g, '-').trim();
+    let mul = 1;
+    const suf = s.match(/(K|M|B|אלף|מ׳|מיליון|מיליארד)\s*$/i);
+    if (suf) { const u = suf[1].toLowerCase(); mul = u === 'k' || u === 'אלף' ? 1e3 : u === 'b' || u === 'מיליארד' ? 1e9 : 1e6; s = s.slice(0, suf.index); }
+    const m = s.replace(/,/g, '').match(/-?\d+(\.\d+)?/);
+    if (!m) return null;
+    const n = Number(m[0]) * mul;
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /** a sortable day key "YYYY-MM-DD" (or "YYYY-MM" / "YYYY") from ISO, dd.mm.yyyy, mm/yyyy or a Date — null when none */
+  function toDateKey(v) {
+    if (isMissing(v)) return null;
+    if (v instanceof Date) return v.toISOString().slice(0, 10);
+    const s = String(v).trim();
+    let m = s.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/);
+    if (m) return m[3] ? `${m[1]}-${m[2]}-${m[3]}` : `${m[1]}-${m[2]}`;
+    m = s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);
+    if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+    m = s.match(/^(\d{1,2})[./](\d{4})$/);
+    if (m) return `${m[2]}-${m[1].padStart(2, '0')}`;
+    m = s.match(/^(\d{4})$/);
+    return m ? m[1] : null;
+  }
+
+  const textKey = (v) => String(v == null ? '' : v).normalize('NFKC').replace(/[‎‏‪-‮⁦-⁩]/g, '')
+    .replace(/[׳'`’‘״"“”]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const toBool = (v) => (v === true || v === 1 || /^(1|true|yes|y|כן)$/i.test(String(v)) ? true
+    : v === false || v === 0 || /^(0|false|no|n|לא)$/i.test(String(v)) ? false : null);
+
+  /** the comparable key of a value for its column type — null when missing */
+  function keyOf(v, type) {
+    if (isMissing(v)) return null;
+    if (NUMERIC.has(type)) return toNumber(v);
+    if (type === 'date') return toDateKey(v);
+    if (type === 'bool') { const b = toBool(v); return b == null ? null : b ? 1 : 0; }
+    return String(v);
+  }
+
+  /**
+   * Compare two values of one column. Missing ALWAYS last (whatever the direction).
+   * opt.order: the lifecycle order of a status column (unknown statuses after the known ones, alphabetically);
+   * opt.lang: 'he' | 'en' for the text collation.
+   */
+  function compareValues(a, b, type, dir, opt) {
+    opt = opt || {};
+    const x = keyOf(a, type), y = keyOf(b, type);
+    if (x == null || y == null) return x == null && y == null ? 0 : x == null ? 1 : -1;
+    let c;
+    if (NUMERIC.has(type) || type === 'bool') c = x - y;
+    else if (type === 'date') c = x < y ? -1 : x > y ? 1 : 0;
+    else if (type === 'status' && Array.isArray(opt.order)) {
+      const i = opt.order.indexOf(x), j = opt.order.indexOf(y);
+      c = i >= 0 && j >= 0 ? i - j : i >= 0 ? -1 : j >= 0 ? 1 : collator(opt.lang).compare(x, y);
+    } else c = collator(opt.lang).compare(x, y);
+    return dir === 'desc' ? -c : c;
+  }
+
+  /**
+   * Stable sort of rows by one column. get(row) returns the semantic value shown in the cell.
+   * tie(a, b): optional tie-break (e.g. the record id) — applied after the column, before the original order.
+   */
+  function sortRows(rows, get, type, dir, opt) {
+    opt = opt || {};
+    return rows.map((r, i) => [r, i]).sort((p, q) => compareValues(get(p[0]), get(q[0]), type, dir, opt) || (opt.tie ? opt.tie(p[0], q[0]) : 0) || p[1] - q[1]).map((p) => p[0]);
+  }
+
+  /**
+   * The next sort state after a click on column `key`.
+   * cur: {key, dir, isDefault}; def: the table's default {key, dir}; type: the clicked column's type.
+   */
+  function nextSort(cur, key, type, def, primary) {
+    const first = primary || primaryDir(type);
+    const isDef = (s) => !!s && s.key === def.key && s.dir === def.dir;
+    if (!cur || cur.key !== key) return { key, dir: first, isDefault: isDef({ key, dir: first }) };
+    if (cur.isDefault || isDef(cur)) return { key, dir: reverse(cur.dir), isDefault: false };   /* the default column: default → reverse */
+    if (cur.dir === first) { const s = { key, dir: reverse(first) }; return isDef(s) ? { key: def.key, dir: def.dir, isDefault: true } : { ...s, isDefault: false }; }
+    return { key: def.key, dir: def.dir, isDefault: true };
+  }
+
+  /* ------------------------------------------------------------ filters */
+  const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+  const num = (s) => { if (s == null || String(s).trim() === '') return null; const n = Number(String(s).replace(/,/g, '').trim()); return Number.isFinite(n) ? n : NaN; };
+  const day = (s) => { if (s == null || String(s).trim() === '') return null; const k = toDateKey(String(s).trim()); return k && ISO_DAY.test(k) ? k : NaN; };
+
+  /** a URL value → a filter spec for the type, or null (empty / invalid values are ignored, never guessed) */
+  function parseFilter(type, raw) {
+    if (raw == null) return null;
+    const s = String(raw).trim().slice(0, 200);
+    if (!s) return null;
+    if (type === 'text') return { q: s };
+    if (type === 'enum' || type === 'status') {
+      const xs = s.split(',').map((x) => { try { return decodeURIComponent(x).trim(); } catch (e) { return x.trim(); } }).filter(Boolean);
+      return xs.length ? { in: [...new Set(xs)] } : null;
+    }
+    if (type === 'geo') return { eq: s };
+    if (type === 'bool') return /^(yes|1|true)$/i.test(s) ? { is: 'yes' } : /^(no|0|false)$/i.test(s) ? { is: 'no' } : null;
+    if (NUMERIC.has(type) || type === 'date') {
+      const parts = s.includes('..') ? s.split('..') : [s, s];
+      if (parts.length !== 2) return null;
+      const P = type === 'date' ? day : num;
+      const lo = P(parts[0]), hi = P(parts[1]);
+      if (Number.isNaN(lo) || Number.isNaN(hi) || (lo == null && hi == null)) return null;
+      if (lo != null && hi != null && lo > hi) return null;
+      return type === 'date' ? { from: lo, to: hi } : { min: lo, max: hi };
+    }
+    return null;
+  }
+
+  /** a filter spec → its URL value (null = no filter) */
+  function formatFilter(type, spec) {
+    if (!spec) return null;
+    if (type === 'text') return spec.q ? String(spec.q) : null;
+    if (type === 'enum' || type === 'status') return spec.in && spec.in.length ? spec.in.map((x) => String(x).replace(/[,%]/g, encodeURIComponent)).join(',') : null;
+    if (type === 'geo') return spec.eq ? String(spec.eq) : null;
+    if (type === 'bool') return spec.is === 'yes' || spec.is === 'no' ? spec.is : null;
+    if (type === 'date') return spec.from == null && spec.to == null ? null : `${spec.from || ''}..${spec.to || ''}`;
+    if (NUMERIC.has(type)) return spec.min == null && spec.max == null ? null : `${spec.min == null ? '' : spec.min}..${spec.max == null ? '' : spec.max}`;
+    return null;
+  }
+
+  /** does one value satisfy one filter? A missing value never satisfies an active filter. */
+  function matchFilter(type, v, spec, opt) {
+    if (!spec) return true;
+    opt = opt || {};
+    if (type === 'enum' || type === 'status') {
+      const vs = Array.isArray(v) ? v : [v];
+      return vs.some((x) => !isMissing(x) && spec.in.includes(String(x)));
+    }
+    if (isMissing(v)) return false;
+    if (type === 'text') { const q = textKey(spec.q); return (Array.isArray(v) ? v : [v]).some((x) => textKey(x).includes(q)); }
+    if (type === 'geo') return (Array.isArray(v) ? v : [v]).some((x) => String(x) === String(spec.eq) || textKey(x) === textKey(spec.eq));
+    if (type === 'bool') { const b = toBool(v); return b != null && (spec.is === 'yes' ? b : !b); }
+    if (type === 'date') { const k = toDateKey(v); if (!k) return false; const d = k.length === 7 ? k + '-01' : k; return (spec.from == null || d >= spec.from) && (spec.to == null || d.slice(0, spec.to.length) <= spec.to); }
+    const n = toNumber(v); if (n == null) return false;
+    const x = opt.scale ? n * opt.scale : n;
+    return (spec.min == null || x >= spec.min) && (spec.max == null || x <= spec.max);
+  }
+
+  /**
+   * Column filters from URL parameters. cols: {key: {type, filter: true}} — only columns marked filter: true are read.
+   * prefix: 'f_' (the API) or '<table>.f_' (the page URL).
+   */
+  function filtersFromParams(params, cols, prefix) {
+    const p = prefix == null ? 'f_' : prefix, out = {};
+    const get = (k) => (params && typeof params.get === 'function' ? params.get(k) : params ? params[k] : null);
+    for (const [k, c] of Object.entries(cols || {})) {
+      if (!c || !c.filter) continue;
+      const spec = parseFilter(c.type, get(p + k));
+      if (spec) out[k] = spec;
+    }
+    return out;
+  }
+  function filtersToParams(filters, cols, prefix) {
+    const p = prefix == null ? 'f_' : prefix, out = [];
+    for (const [k, spec] of Object.entries(filters || {})) {
+      const c = cols && cols[k]; if (!c) continue;
+      const v = formatFilter(c.type, spec);
+      if (v != null) out.push([p + k, v]);
+    }
+    return out;
+  }
+
+  /** rows that satisfy every active column filter (an intersection); get(row, key) returns the column's value */
+  function applyFilters(rows, cols, filters, get) {
+    const active = Object.entries(filters || {}).filter(([k, s]) => s && cols[k] && cols[k].filter);
+    if (!active.length) return rows.slice();
+    return rows.filter((r) => active.every(([k, s]) => matchFilter(cols[k].type, get(r, k), s, cols[k])));
+  }
+
+  /**
+   * One table query over the full dataset: filter, then sort, then page.
+   * cols: {key: {type, get(row), order?, filter?}}; q: {sort, order, page, size, filters, lang, def: {key, dir}}
+   */
+  function query(rows, cols, q) {
+    q = q || {};
+    const def = q.def || { key: Object.keys(cols)[0], dir: 'desc' };
+    const get = (r, k) => (cols[k] && cols[k].get ? cols[k].get(r, q.lang) : r[k]);
+    /* a column may filter on more than it shows in one line (every winner of a tender, not only the first) */
+    const fget = (r, k) => (cols[k] && cols[k].fget ? cols[k].fget(r, q.lang) : get(r, k));
+    const filtered = applyFilters(rows, cols, q.filters, fget);
+    const key = Object.prototype.hasOwnProperty.call(cols, q.sort) && cols[q.sort].sort !== false ? q.sort : def.key;
+    const dir = q.order === 'asc' || q.order === 'desc' ? q.order : key === def.key ? def.dir : primaryDir(cols[key].type);
+    const c = cols[key];
+    const sorted = sortRows(filtered, (r) => get(r, key), c.type, dir, { order: c.order, lang: q.lang, tie: q.tie });
+    const size = Math.min(q.maxSize || 100, Math.max(1, Number(q.size) || 25));
+    const pages = Math.max(1, Math.ceil(sorted.length / size));
+    const page = Math.min(pages, Math.max(1, Number(q.page) || 1));
+    return { total: sorted.length, unfiltered: rows.length, page, pages, size, sort: key, order: dir,
+      filters: filtersToParams(q.filters, cols, 'f_').reduce((o, [k, v]) => (o[k] = v, o), {}),
+      rows: sorted.slice((page - 1) * size, page * size) };
+  }
+
+  return { TYPES, isMissing, toNumber, toDateKey, textKey, toBool, keyOf, primaryDir, reverse, compareValues, sortRows, nextSort,
+    parseFilter, formatFilter, matchFilter, filtersFromParams, filtersToParams, applyFilters, query, collator };
+}));
+</script>
 <script>
 /* generated by scripts/market-sync.js — do not edit by hand */
 window.PROPX_MARKET={"schema":1,"syncedAt":"2026-10-13T10:30:47.709Z","ok":true,"indicators":{"boiRate":{"value":3.25,"unit":"%","nextDecision":"2026-10-21","publishedAt":"2026-09-01","source":{"authority":"בנק ישראל","authorityEn":"Bank of Israel","dataset":"PublicApi/GetInterest","url":"https://www.boi.org.il/PublicApi/GetInterest"},"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"newHomesIndex":{"yoy":-0.8,"yoyBasis":"published","mom":0.5,"level":541.2,"base":"2017 אוקטובר","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"70000","name":"מדד מחירי דירות חדשות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי דירות חדשות","url":"https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=27"},"history":[{"y":2024,"m":6,"v":531.3,"yoy":1.2},{"y":2024,"m":7,"v":536.1,"yoy":2.7},{"y":2024,"m":8,"v":537.2,"yoy":2.7},{"y":2024,"m":9,"v":538.3,"yoy":3.5},{"y":2024,"m":10,"v":538.8,"yoy":4.4},{"y":2024,"m":11,"v":542,"yoy":4.1},{"y":2024,"m":12,"v":551.8,"yoy":5.5},{"y":2025,"m":1,"v":557.9,"yoy":6.7},{"y":2025,"m":2,"v":558.5,"yoy":6.2},{"y":2025,"m":3,"v":558.5,"yoy":5.2},{"y":2025,"m":4,"v":557.4,"yoy":5},{"y":2025,"m":5,"v":549,"yoy":4.3},{"y":2025,"m":6,"v":545.7,"yoy":2.7},{"y":2025,"m":7,"v":540.8,"yoy":0.9},{"y":2025,"m":8,"v":534.9,"yoy":-0.4},{"y":2025,"m":9,"v":528.5,"yoy":-1.8},{"y":2025,"m":10,"v":532.7,"yoy":-1.1},{"y":2025,"m":11,"v":536.4,"yoy":-1},{"y":2025,"m":12,"v":536.4,"yoy":-2.8},{"y":2026,"m":1,"v":534.8,"yoy":-4.1},{"y":2026,"m":2,"v":536.4,"yoy":-4},{"y":2026,"m":3,"v":535.3,"yoy":-4.2},{"y":2026,"m":4,"v":535.3,"yoy":-4},{"y":2026,"m":5,"v":538.5,"yoy":-1.9},{"y":2026,"m":6,"v":541.2,"yoy":-0.8}],"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"dwellingsIndex":{"yoy":-1.2,"yoyBasis":"published","mom":0.2,"level":594.8,"base":"1993 ממוצע","period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","series":{"code":"40010","name":"מחירי דירות"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מחירי דירות","url":"https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=27"},"history":[{"y":2024,"m":6,"v":591.8,"yoy":5.6},{"y":2024,"m":7,"v":593,"yoy":6},{"y":2024,"m":8,"v":592.4,"yoy":6.1},{"y":2024,"m":9,"v":593.6,"yoy":6.5},{"y":2024,"m":10,"v":596.6,"yoy":7.6},{"y":2024,"m":11,"v":599,"yoy":7.3},{"y":2024,"m":12,"v":606.2,"yoy":7.7},{"y":2025,"m":1,"v":609.8,"yoy":7.1},{"y":2025,"m":2,"v":608.6,"yoy":5.9},{"y":2025,"m":3,"v":607.4,"yoy":4.8},{"y":2025,"m":4,"v":605,"yoy":3.7},{"y":2025,"m":5,"v":602.6,"yoy":2.6},{"y":2025,"m":6,"v":602,"yoy":1.7},{"y":2025,"m":7,"v":600.8,"yoy":1.3},{"y":2025,"m":8,"v":597.2,"yoy":0.8},{"y":2025,"m":9,"v":593,"yoy":-0.1},{"y":2025,"m":10,"v":596,"yoy":-0.1},{"y":2025,"m":11,"v":600.8,"yoy":0.3},{"y":2025,"m":12,"v":600.2,"yoy":-1},{"y":2026,"m":1,"v":599.6,"yoy":-1.7},{"y":2026,"m":2,"v":602,"yoy":-1.1},{"y":2026,"m":3,"v":599.6,"yoy":-1.3},{"y":2026,"m":4,"v":593,"yoy":-2},{"y":2026,"m":5,"v":593.6,"yoy":-1.5},{"y":2026,"m":6,"v":594.8,"yoy":-1.2}],"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"constructionInputsIndex":{"yoy":3.5,"yoyBasis":"published","mom":0.4,"level":103.9,"base":"2025 יולי","period":{"year":2026,"month":8},"periodKind":"monthly","series":{"code":"200010","name":"מדד מחירי תשומה בבנייה למגורים"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי תשומה בבנייה למגורים","url":"https://api.cbs.gov.il/index/data/price?id=200010&format=json&download=false&lang=he&last=27"},"history":[{"y":2024,"m":8,"v":132,"yoy":2},{"y":2024,"m":9,"v":132.5,"yoy":2.3},{"y":2024,"m":10,"v":132.8,"yoy":2.4},{"y":2024,"m":11,"v":133.2,"yoy":2.6},{"y":2024,"m":12,"v":133.6,"yoy":2.9},{"y":2025,"m":1,"v":137.1,"yoy":5.3},{"y":2025,"m":2,"v":137.7,"yoy":6},{"y":2025,"m":3,"v":138.2,"yoy":6.1},{"y":2025,"m":4,"v":138.4,"yoy":6.4},{"y":2025,"m":5,"v":138.6,"yoy":6},{"y":2025,"m":6,"v":138.6,"yoy":5.6},{"y":2025,"m":7,"v":138.7,"yoy":5.3},{"y":2025,"m":8,"v":100.4,"yoy":5.5},{"y":2025,"m":9,"v":100.4,"yoy":5.1},{"y":2025,"m":10,"v":100.5,"yoy":5},{"y":2025,"m":11,"v":101.1,"yoy":5.3},{"y":2025,"m":12,"v":101.2,"yoy":5.1},{"y":2026,"m":1,"v":101.3,"yoy":2.5},{"y":2026,"m":2,"v":101.5,"yoy":2.2},{"y":2026,"m":3,"v":101.7,"yoy":2.1},{"y":2026,"m":4,"v":102.8,"yoy":3},{"y":2026,"m":5,"v":103.4,"yoy":3.5},{"y":2026,"m":6,"v":103.6,"yoy":3.7},{"y":2026,"m":7,"v":103.5,"yoy":3.5},{"y":2026,"m":8,"v":103.9,"yoy":3.5}],"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"cpi":{"yoy":1.5,"yoyBasis":"published","mom":0.7,"level":105.8,"base":"2024 ממוצע","period":{"year":2026,"month":8},"periodKind":"monthly","series":{"code":"120010","name":"מדד המחירים לצרכן - כללי"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד המחירים לצרכן - כללי","url":"https://api.cbs.gov.il/index/data/price?id=120010&format=json&download=false&lang=he&last=27"},"history":[{"y":2024,"m":8,"v":108.8,"yoy":3.6},{"y":2024,"m":9,"v":108.6,"yoy":3.5},{"y":2024,"m":10,"v":109.1,"yoy":3.5},{"y":2024,"m":11,"v":108.7,"yoy":3.4},{"y":2024,"m":12,"v":108.4,"yoy":3.2},{"y":2025,"m":1,"v":101.5,"yoy":3.8},{"y":2025,"m":2,"v":101.5,"yoy":3.4},{"y":2025,"m":3,"v":102,"yoy":3.3},{"y":2025,"m":4,"v":103.1,"yoy":3.6},{"y":2025,"m":5,"v":102.8,"yoy":3.1},{"y":2025,"m":6,"v":103.1,"yoy":3.3},{"y":2025,"m":7,"v":103.5,"yoy":3.1},{"y":2025,"m":8,"v":104.2,"yoy":2.9},{"y":2025,"m":9,"v":103.6,"yoy":2.5},{"y":2025,"m":10,"v":104.1,"yoy":2.5},{"y":2025,"m":11,"v":103.6,"yoy":2.4},{"y":2025,"m":12,"v":103.6,"yoy":2.6},{"y":2026,"m":1,"v":103.3,"yoy":1.8},{"y":2026,"m":2,"v":103.5,"yoy":2},{"y":2026,"m":3,"v":103.9,"yoy":1.9},{"y":2026,"m":4,"v":105.1,"yoy":1.9},{"y":2026,"m":5,"v":104.8,"yoy":1.9},{"y":2026,"m":6,"v":104.8,"yoy":1.6},{"y":2026,"m":7,"v":105.1,"yoy":1.5},{"y":2026,"m":8,"v":105.8,"yoy":1.5}],"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"rentIndex":{"yoy":3.1,"yoyBasis":"published","mom":0.4,"level":107.1,"base":"2024 ממוצע","period":{"year":2026,"month":8},"periodKind":"monthly","series":{"code":"120460","name":"שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי"},"source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"שכר דירה פרטי, ציבורי ושכירות ארוכת טווח בפיקוח ממשלתי","url":"https://api.cbs.gov.il/index/data/price?id=120460&format=json&download=false&lang=he&last=27"},"history":[{"y":2024,"m":8,"v":111,"yoy":4},{"y":2024,"m":9,"v":111.3,"yoy":3.8},{"y":2024,"m":10,"v":111.6,"yoy":3.7},{"y":2024,"m":11,"v":111.9,"yoy":3.6},{"y":2024,"m":12,"v":112.1,"yoy":3.5},{"y":2025,"m":1,"v":101.9,"yoy":3.5},{"y":2025,"m":2,"v":102.2,"yoy":3.5},{"y":2025,"m":3,"v":102.3,"yoy":3.3},{"y":2025,"m":4,"v":102.6,"yoy":3.4},{"y":2025,"m":5,"v":102.8,"yoy":3.4},{"y":2025,"m":6,"v":103,"yoy":3.3},{"y":2025,"m":7,"v":103.4,"yoy":3.3},{"y":2025,"m":8,"v":103.9,"yoy":3.3},{"y":2025,"m":9,"v":104.2,"yoy":3.4},{"y":2025,"m":10,"v":104.5,"yoy":3.4},{"y":2025,"m":11,"v":104.7,"yoy":3.3},{"y":2025,"m":12,"v":105,"yoy":3.4},{"y":2026,"m":1,"v":105.3,"yoy":3.3},{"y":2026,"m":2,"v":105.5,"yoy":3.2},{"y":2026,"m":3,"v":105.7,"yoy":3.3},{"y":2026,"m":4,"v":105.9,"yoy":3.2},{"y":2026,"m":5,"v":106.1,"yoy":3.2},{"y":2026,"m":6,"v":106.4,"yoy":3.3},{"y":2026,"m":7,"v":106.7,"yoy":3.2},{"y":2026,"m":8,"v":107.1,"yoy":3.1}],"checkedAt":"2026-10-13T10:30:47.709Z","stale":false},"dwellingsByDistrict":{"districts":[{"code":"60000","name":"ירושלים","yoy":1.1,"yoyBasis":"computed","mom":-0.4,"level":576.2,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":570.2,"yoy":null},{"y":2025,"m":7,"v":578.2,"yoy":null},{"y":2025,"m":8,"v":577,"yoy":null},{"y":2025,"m":9,"v":585.1,"yoy":null},{"y":2025,"m":10,"v":597.4,"yoy":null},{"y":2025,"m":11,"v":601,"yoy":null},{"y":2025,"m":12,"v":597.4,"yoy":null},{"y":2026,"m":1,"v":589,"yoy":null},{"y":2026,"m":2,"v":591.9,"yoy":null},{"y":2026,"m":3,"v":575.3,"yoy":null},{"y":2026,"m":4,"v":567.2,"yoy":null},{"y":2026,"m":5,"v":578.5,"yoy":null},{"y":2026,"m":6,"v":576.2,"yoy":null}]},{"code":"60100","name":"צפון","yoy":1,"yoyBasis":"computed","mom":-0.1,"level":664.7,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":658.2,"yoy":null},{"y":2025,"m":7,"v":658.9,"yoy":null},{"y":2025,"m":8,"v":659.6,"yoy":null},{"y":2025,"m":9,"v":657,"yoy":null},{"y":2025,"m":10,"v":660.3,"yoy":null},{"y":2025,"m":11,"v":662.9,"yoy":null},{"y":2025,"m":12,"v":662.9,"yoy":null},{"y":2026,"m":1,"v":669.5,"yoy":null},{"y":2026,"m":2,"v":667.5,"yoy":null},{"y":2026,"m":3,"v":664.8,"yoy":null},{"y":2026,"m":4,"v":660.8,"yoy":null},{"y":2026,"m":5,"v":665.4,"yoy":null},{"y":2026,"m":6,"v":664.7,"yoy":null}]},{"code":"60200","name":"חיפה","yoy":-2.4,"yoyBasis":"computed","mom":-0.3,"level":625.8,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":641.3,"yoy":null},{"y":2025,"m":7,"v":638.7,"yoy":null},{"y":2025,"m":8,"v":630.4,"yoy":null},{"y":2025,"m":9,"v":626,"yoy":null},{"y":2025,"m":10,"v":622.9,"yoy":null},{"y":2025,"m":11,"v":624.1,"yoy":null},{"y":2025,"m":12,"v":626,"yoy":null},{"y":2026,"m":1,"v":629.1,"yoy":null},{"y":2026,"m":2,"v":631.6,"yoy":null},{"y":2026,"m":3,"v":621.5,"yoy":null},{"y":2026,"m":4,"v":617.8,"yoy":null},{"y":2026,"m":5,"v":627.7,"yoy":null},{"y":2026,"m":6,"v":625.8,"yoy":null}]},{"code":"60300","name":"מרכז","yoy":-3.2,"yoyBasis":"computed","mom":0.3,"level":584.5,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":603.7,"yoy":null},{"y":2025,"m":7,"v":595.9,"yoy":null},{"y":2025,"m":8,"v":589.9,"yoy":null},{"y":2025,"m":9,"v":588.1,"yoy":null},{"y":2025,"m":10,"v":589.9,"yoy":null},{"y":2025,"m":11,"v":589.3,"yoy":null},{"y":2025,"m":12,"v":586.4,"yoy":null},{"y":2026,"m":1,"v":590.5,"yoy":null},{"y":2026,"m":2,"v":590.5,"yoy":null},{"y":2026,"m":3,"v":590.5,"yoy":null},{"y":2026,"m":4,"v":588.1,"yoy":null},{"y":2026,"m":5,"v":582.8,"yoy":null},{"y":2026,"m":6,"v":584.5,"yoy":null}]},{"code":"60400","name":"תל אביב","yoy":-0.9,"yoyBasis":"computed","mom":0.7,"level":563.2,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":568.3,"yoy":null},{"y":2025,"m":7,"v":567.2,"yoy":null},{"y":2025,"m":8,"v":563.8,"yoy":null},{"y":2025,"m":9,"v":553.1,"yoy":null},{"y":2025,"m":10,"v":555.9,"yoy":null},{"y":2025,"m":11,"v":568.1,"yoy":null},{"y":2025,"m":12,"v":569.8,"yoy":null},{"y":2026,"m":1,"v":565.2,"yoy":null},{"y":2026,"m":2,"v":572.5,"yoy":null},{"y":2026,"m":3,"v":578.8,"yoy":null},{"y":2026,"m":4,"v":563.8,"yoy":null},{"y":2026,"m":5,"v":559.3,"yoy":null},{"y":2026,"m":6,"v":563.2,"yoy":null}]},{"code":"60500","name":"דרום","yoy":-0.6,"yoyBasis":"computed","mom":0.1,"level":575.1,"period":{"year":2026,"month":6},"history":[{"y":2025,"m":6,"v":578.6,"yoy":null},{"y":2025,"m":7,"v":582.7,"yoy":null},{"y":2025,"m":8,"v":580.4,"yoy":null},{"y":2025,"m":9,"v":571.1,"yoy":null},{"y":2025,"m":10,"v":572.8,"yoy":null},{"y":2025,"m":11,"v":579.1,"yoy":null},{"y":2025,"m":12,"v":580.3,"yoy":null},{"y":2026,"m":1,"v":582,"yoy":null},{"y":2026,"m":2,"v":579.7,"yoy":null},{"y":2026,"m":3,"v":573.3,"yoy":null},{"y":2026,"m":4,"v":571.6,"yoy":null},{"y":2026,"m":5,"v":574.5,"yoy":null},{"y":2026,"m":6,"v":575.1,"yoy":null}]}],"period":{"year":2026,"month":6},"periodKind":"bimonthly-first-month","scope":"all dwellings, by CBS district","source":{"authority":"הלשכה המרכזית לסטטיסטיקה","authorityEn":"Central Bureau of Statistics","dataset":"מדד מחירי דירות לפי מחוזות","url":"https://api.cbs.gov.il/index/data/price?id=60000&format=json&download=false&lang=he&last=27"},"checkedAt":"2026-10-13T10:30:47.709Z","stale":false}},"failures":[]};
@@ -2236,6 +2559,57 @@ he:{
   basisTx:"עסקאות: נשלפות בזמן אמת ממאגר רשות המסים (טבלת העסקאות), עם היקף המדגם והכיסוי של כל שליפה.",
   txPace:"מכירות דירות חדשות",
   tblFoot:"הסיווג בכל שורה מתייחס למחיר (במצב השכרה — לשכ״ד). שכ״ד ותשואה — מודל; מכירות דירות חדשות — רק ארצי (2025, סטטי) ותל אביב (אומדן ממחצית א׳ 2026); בכל אזור אחר ותחת מסננים — חסר (—); מלאי — סטטי היכן שצוטט פרסום, אחרת מודל; שינוי שנתי — נגזר, מאי–יוני 2026.",
+  ptTip:{num:"מיון: מהגבוה לנמוך",date:"מיון: מהחדש לישן",bool:"מיון: כן תחילה",text:"מיון: א → ת",status:"מיון: לפי סדר השלבים"},
+  ptTipRev:"לחיצה נוספת: סדר הפוך",ptTipDef:"לחיצה נוספת: חזרה לסדר ברירת המחדל",
+  ptFilterOf:l=>`סינון: ${l}`,ptOn:"פעיל",ptClearOf:l=>`הסרת הסינון: ${l}`,ptClearAll:"ניקוי כל הסינונים",ptSortBy:"מיון",ptDefault:"ברירת מחדל",
+  ptFilter:"סינון",ptContains:"מכיל את הטקסט",ptAnyOf:"אחד מהערכים",ptPlace:"מקום (התאמה מדויקת)",ptAll:"הכל",ptYes:"כן",ptNo:"לא",
+  ptFrom:"מתאריך",ptTo:"עד תאריך",ptMin:"מינימום",ptMax:"מקסימום",ptApply:"החלה",ptClear:"ניקוי",ptCloseL:"סגירה",ptCol:"עמודה",
+  ptMissingNote:"ערך חסר (—) אינו עונה על סינון ואינו נחשב 0; במיון הוא תמיד אחרון.",
+  ptKept:(n,m)=>`${n} מתוך ${m} שורות`,ptColRows:(n,m)=>`${n} מתוך ${m} אחרי סינון עמודות — הסינון חל על הטבלה הזו בלבד`,
+  ptLoaded:(n)=>`המיון והסינון חלים על ${n} העסקאות שנטענו; בתקופה יש עוד עסקאות במרשם`,ptLoadAll:"טעינת כל העסקאות בתקופה",ptLoadAllBusy:"טוען…",
+  ptLoadCap:(n)=>`נטענו ${n} עסקאות (התקרה לטעינה אחת) — יש עוד בתקופה`,
+  ptMixed:"העמודה מציגה מדדים שונים (₪/מ״ר בהגרלות, הצעה ל־מ״ר או קרקע ליח״ד במכרזים) — ממיינים אותה רק בתוך מקור אחד: בחרו סוג פרויקט.",
+  ptModelNo:"אין מיון ואין סינון לפי ערך מודל — רק לפי ערכים רשמיים.",
+  ptShown:(n,m)=>`המיון והסינון חלים על ${n} השורות המוצגות מתוך ${m}`,
+  ptTcName:"מקור",ptTcVert:"תחום",ptTcClass:"סיווג",ptTcState:"מצב הבדיקה",
+  ptVerbatim:"ערך רשמי כלשונו — מסננים לפיו, לא ממיינים",
+  ptLandBid:"במכרזי הצעה למ״ר מוצג ₪/מ״ר — מדד אחר; במיון ובסינון של סה״כ הקרקע הם נחשבים חסרים.",
+  ldMulti:n=>`${n} נבחרו`,
+  rtD:{title:"תנאי ההשכרה — הודעת דירה להשכיר",none:"לא נמצאה הודעה של דירה להשכיר באותו מספר מכרז — יח״ד להשכרה, למכירה ותקופת ההשכרה אינם ידועים (—).",
+    number:"מספר המכרז בהודעה",status:"סטטוס אצל החברה",total:"סה״כ יח״ד (הודעה)",ilaUnits:"סה״כ יח״ד (רמ״י)",rental:"יח״ד להשכרה ארוכת טווח",sale:"יח״ד למכירה",years:"תקופת ההשכרה (שנים)",
+    special:"השכרה לאוכלוסייה ייעודית",disc:"שכ״ד מופחת / מפוקח",discText:"מוזכר — ראו ציטוט",discL:"מתוך ההודעה",
+    multi:v=>`ההודעה מציינת כמה נתונים (${v}) — לא נבחר אחד`,differ:(a,b)=>`רמ״י: ${a} יח״ד · הודעת החברה: ${b} יח״ד — שני הנתונים מוצגים.`,
+    evT:"המילים שמהן נלקח כל נתון",ev:{totalUnits:"סה״כ",rentalUnits:"להשכרה",saleUnits:"למכירה",rentalYears:"תקופה"},
+    notice:"ההודעה המקורית",src:(l,p,c)=>`מקור: דירה להשכיר — ${l} · פורסם ${p} · נבדק לאחרונה ${c}.`,never:"אין כאן שכר דירה, תשואה או תפוסה — החברה אינה מפרסמת אותם כנתון."},
+  rtUnitsKpi:"במסלול השכירות: סך יח״ד המכרז — חלקן מיועדות למכירה; יח״ד להשכרה לפי הודעת דירה להשכיר, בנפרד.",rtNoStatus:"ללא סטטוס",
+  rtC:{tender:"מכרז",city:"יישוב",life:"מצב (רמ״י)",pub:"פורסם",units:"יח״ד במכרז (סה״כ)",rental:"יח״ד להשכרה (הוצהר)",sale:"יח״ד למכירה (הוצהר)",years:"שנות השכרה",dira:"הודעת דירה להשכיר"},
+  rt:{title:"שכירות ארוכת טווח — צנרת, תנאים, שלבים ושוק",
+    intro:"שלוש שכבות נפרדות, כל אחת ממקור משלה: מכרזי רמ״י במסלול דיור להשכרה (יח״ד = סך המכרז), התנאים שדירה להשכיר — החברה הממשלתית מפרסמת לכל מכרז (יח״ד להשכרה, למכירה ותקופת ההשכרה — רק כשנכתבו במפורש), ומדד שכר הדירה של הלמ״ס כרף שוק כללי. אין כאן שכר דירה של פרויקט, תשואה או תפוסה מוערכים.",
+    pipeT:"צנרת — מכרזי רמ״י במסלול השכירות",pipeSrc:"רמ״י · סוג מכרז 6 ״דיור להשכרה״ או ייעוד 20/21",
+    kTenders:"מכרזים",kUnits:"יח״ד במכרזים (סה״כ)",kUnitsS:"סך YechidotDiur של המכרזים — לא ״יח״ד להשכרה״: מכרז במסלול השכירות יכול לכלול גם יח״ד למכירה",
+    kAwarded:"הוכרזו זוכים",kAwardedS:u=>`${u} יח״ד במכרזים אלה (סה״כ)`,kPlan:"עם תכנית ב-XPlan",kPlanS:"תכנית המגרש לפי מספר מדויק — התכנית שעליה משווקת הקרקע, לא שלב שאחרי הזכייה",
+    termsT:"תנאי ההשכרה — לפי הודעות דירה להשכיר",termsSrc:"דירה להשכיר — החברה הממשלתית לדיור ולהשכרה · renten.co.il · מפתח: מספר המכרז שהחברה מפרסמת",
+    kNotice:"מכרזים עם הודעת החברה",kNoticeS:"מכרזי רמ״י בהיקף שלהם נמצאה הודעה של החברה באותו מספר מכרז",
+    kRental:"יח״ד להשכרה ארוכת טווח (הוצהר)",kRentalS:(n,u)=>`ב־${n} מכרזים שבהם ההודעה מציינת זאת · סך יח״ד באותם מכרזים: ${u}`,
+    kSale:"יח״ד למכירה (הוצהר)",kSaleS:(p,a)=>`${p} מכרזים משלבים השכרה ומכירה · ${a} כולם להשכרה`,
+    kYears:"תקופת ההשכרה שנקבעה",kYearsS:"כפי שנכתבה בהודעה; לא תקופת החכירה (98 שנים)",yearsN:(y,n)=>`${y} שנים × ${n}`,
+    differ:n=>`ב־${n} מכרזים סך יח״ד בהודעת החברה שונה מנתון רמ״י — שני הערכים מוצגים, אף אחד לא נדרס.`,
+    stale:(n,d,u,c)=>`${n} מהמכרזים נספרים ״בתהליך״ רק בגלל סטטוס ישן: פורסמו לפני ${d} ועדיין מסומנים אצל רמ״י ״נסגר — ממתין להחלטה״ / ״מוקפא״ (${u} יח״ד). הסטטוס של רמ״י נשמר כפי שהוא; ${c} מהם מסומנים ״סגור״ אצל דירה להשכיר.`,
+    notSynced:"נתוני דירה להשכיר עדיין לא נקראו — יח״ד להשכרה, למכירה ותקופת ההשכרה מוצגים כ—.",
+    tblT:"המכרזים — סך יח״ד מול יח״ד להשכרה שהוצהרו",tblS:"לחיצה על שורה פותחת את המכרז; ההודעה המקורית בקישור",
+    noNotice:"לא נמצאה הודעת דירה להשכיר לאותו מספר מכרז",incons:"ההודעה סותרת את עצמה (השכרה + מכירה > סה״כ) — לא מוצג",
+    basis:{"stated-all":"כולם להשכרה","project-rental":"הפרויקט מתואר להשכרה","stated-units":"ללא סה״כ"},
+    basisTip:{"stated-all":"ההודעה כותבת שכל יח״ד המכרז מיועדות להשכרה ארוכת טווח","project-rental":"ההודעה מתארת את כל הפרויקט כפרויקט להשכרה ואינה מציינת יח״ד למכירה — תיאור, לא פילוח יח״ד","stated-units":"ההודעה מציינת יח״ד להשכרה בלי סך יח״ד למכרז"},
+    perm:"לצמיתות",notice:"הודעה",
+    lifeT:"שלבים — רק על סמך ראיה ישירה",lifeS:"ספירה ברמת מכרז; ״—״ = אין מקור שמתעד את השלב",
+    stage:{TENDER_PUBLISHED:"מכרז פורסם",AWARDED:"הוכרזו זוכים",PLANNING:"תכנון (אחרי זכייה)",PERMIT:"היתר",CONSTRUCTION:"בנייה",COMPLETED:"הושלם",OPERATING:"מאוכלס / פועל"},
+    stageBasis:{TENDER_PUBLISHED:"קוד הסטטוס של רמ״י",AWARDED:"זוכה וסכום זכייה",PLANNING:"אין מקור תכנון שלאחר זכייה",PERMIT:"אין מקור היתרים מקושר",CONSTRUCTION:"התקדמות בנייה (משב״ש) לפי גוש+חלקה",COMPLETED:"אין מקור ברמת מכרז",OPERATING:"אין מקור ברמת מכרז"},
+    compT:"לפי החברה (ספירה, לא מקושרת למכרזים):",compS:n=>`${n} דפי פרויקט ציבוריים — דף בלבד, ללא שדות`,
+    planT:"אתרים בקידום תכנון של החברה:",planS:"לפני מכרז · לא מקושר ל-XPlan — החברה אינה מפרסמת מספר תכנית",
+    mktT:"שוק השכירות — מדד שכר הדירה (למ״ס)",mktRole:"רף שוק כללי",mktYoy:"שינוי שנתי",mktYoyS:p=>`${p} מול חודש מקביל`,mktLvl:"רמת המדד",mktLvlS:b=>`בסיס ${b}`,mktMom:"שינוי חודשי",mktMomS:p=>`${p}`,
+    mktNot:"רכיב שכר הדירה במדד המחירים לצרכן — שכירות פרטית, ציבורית וארוכת טווח בפיקוח, ארצי. זה אינו שכר הדירה של פרויקט כלשהו, אינו ״שכר דירה מוסדי״ ואינו שכר דירה בעיר או במחוז.",
+    mktDates:(p,c)=>`תקופת התצפית: ${p} · בדיקת PROPX: ${c}`,mktNone:"מדד שכר הדירה לא נקרא בסנכרון האחרון.",
+    dates:(d,l)=>`נקרא לאחרונה: דירה להשכיר ${d} · רמ״י ${l}. כיסוי: מכרזים שפורסמו באתר רמ״י והודעות שפורסמו באתר החברה — לא ״כל פרויקטי השכירות״.`},
   rankFoot:"הדירוג מוצג רק כשכל ערך מדורג הוא נתון רשמי שמקורו נשמר במערכת.",
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
@@ -2728,6 +3102,57 @@ en:{
   basisTx:"Transactions: pulled live from the Tax Authority registry (transactions table), with each pull's sample scope and coverage.",
   txPace:"New-home sales",
   tblFoot:"Each row's class refers to its price (rent in rent mode). Rent and yield are modelled; new-home sales are shown only nationally (2025, static) and for Tel Aviv (an estimate from H1 2026) — every other area and any filtered view shows — (missing); inventory is static where a publication is cited, otherwise modelled; annual change is derived, May–Jun 2026.",
+  ptTip:{num:"Sort: high → low",date:"Sort: newest first",bool:"Sort: yes first",text:"Sort: A → Z",status:"Sort: lifecycle order"},
+  ptTipRev:"Click again: reverse order",ptTipDef:"Click again: back to the default order",
+  ptFilterOf:l=>`Filter: ${l}`,ptOn:"active",ptClearOf:l=>`Remove filter: ${l}`,ptClearAll:"Clear all filters",ptSortBy:"Sort",ptDefault:"Default",
+  ptFilter:"Filter",ptContains:"Contains the text",ptAnyOf:"Any of",ptPlace:"Place (exact match)",ptAll:"All",ptYes:"Yes",ptNo:"No",
+  ptFrom:"From",ptTo:"To",ptMin:"Minimum",ptMax:"Maximum",ptApply:"Apply",ptClear:"Clear",ptCloseL:"Close",ptCol:"Column",
+  ptMissingNote:"A missing value (—) never satisfies a filter and never counts as 0; it always sorts last.",
+  ptKept:(n,m)=>`${n} of ${m} rows`,ptColRows:(n,m)=>`${n} of ${m} after column filters — they apply to this table only`,
+  ptLoaded:(n)=>`Sorting and filtering cover the ${n} deals loaded; the register holds more in this period`,ptLoadAll:"Load every deal in the period",ptLoadAllBusy:"Loading…",
+  ptLoadCap:(n)=>`${n} deals loaded (the cap for one load) — the period holds more`,
+  ptMixed:"This column shows different measures (₪/m² in lotteries, a ₪/m² bid or land per unit in tenders) — it sorts only within one source: pick a project kind.",
+  ptModelNo:"No sorting or filtering on a modelled value — only on official ones.",
+  ptShown:(n,m)=>`Sorting and filtering cover the ${n} rows shown of ${m}`,
+  ptTcName:"Source",ptTcVert:"Area",ptTcClass:"Classification",ptTcState:"Check state",
+  ptVerbatim:"The source's own wording — filter by it, not ranked",
+  ptLandBid:"Tenders bid per m² show ₪/m² — a different measure; for the land total they sort and filter as missing.",
+  ldMulti:n=>`${n} selected`,
+  rtD:{title:"Rental terms — Dira Lehaskir notice",none:"No Dira Lehaskir notice found under this tender number — rental units, units for sale and the rental period are unknown (—).",
+    number:"Tender number in the notice",status:"Status at the company",total:"Total units (notice)",ilaUnits:"Total units (ILA)",rental:"Long-term rental units",sale:"Units for sale",years:"Rental period (years)",
+    special:"Rental reserved for a population",disc:"Reduced / regulated rent",discText:"mentioned — see the quote",discL:"From the notice",
+    multi:v=>`the notice states several figures (${v}) — none picked`,differ:(a,b)=>`ILA: ${a} units · the company's notice: ${b} units — both shown.`,
+    evT:"The words each figure came from",ev:{totalUnits:"Total",rentalUnits:"Rental",saleUnits:"Sale",rentalYears:"Period"},
+    notice:"the original notice",src:(l,p,c)=>`Source: Dira Lehaskir — ${l} · published ${p} · last checked ${c}.`,never:"No rent, yield or occupancy here — the company does not publish them as data."},
+  rtUnitsKpi:"On the rental track: the tender's total units — some are for sale; rental units per the Dira Lehaskir notice, separately.",rtNoStatus:"no status",
+  rtC:{tender:"Tender",city:"Locality",life:"Status (ILA)",pub:"Published",units:"Tender units (total)",rental:"Rental units (stated)",sale:"Units for sale (stated)",years:"Rental years",dira:"Dira Lehaskir notice"},
+  rt:{title:"Long-term rental — pipeline, terms, stages and market",
+    intro:"Three separate layers, each from its own source: ILA tenders on the rental track (units = the tender's total), the terms the government company Dira Lehaskir publishes for each tender (rental units, units for sale and the rental period — only where written out), and the CBS rent index as a general market benchmark. No project rent, yield or occupancy is estimated here.",
+    pipeT:"Pipeline — ILA rental-track tenders",pipeSrc:"ILA · tender type 6 \"rental housing\" or purpose 20/21",
+    kTenders:"Tenders",kUnits:"Tender units (total)",kUnitsS:"Σ YechidotDiur of the tenders — not \"rental units\": a rental-track tender may also include units for sale",
+    kAwarded:"Awarded",kAwardedS:u=>`${u} units in these tenders (total)`,kPlan:"With an XPlan plan",kPlanS:"the lot's plan by exact number — the plan the land is marketed under, not a post-award stage",
+    termsT:"Rental terms — per Dira Lehaskir notices",termsSrc:"Dira Lehaskir — the Government Company for Housing and Rental · renten.co.il · key: the tender number the company prints",
+    kNotice:"Tenders with a company notice",kNoticeS:"ILA tenders in scope for which the company published a notice under the same tender number",
+    kRental:"Long-term rental units (stated)",kRentalS:(n,u)=>`in ${n} tenders whose notice states them · their total units: ${u}`,
+    kSale:"Units for sale (stated)",kSaleS:(p,a)=>`${p} tenders mix rental and sale · ${a} all rental`,
+    kYears:"Rental period set",kYearsS:"as written in the notice; not the lease term (98 years)",yearsN:(y,n)=>`${y} yrs × ${n}`,
+    differ:n=>`In ${n} tenders the company's total units differ from the ILA figure — both are shown, neither overwritten.`,
+    stale:(n,d,u,c)=>`${n} of these tenders count as "in play" only through an old status: published before ${d} and still "closed — decision pending" / "frozen" at the ILA (${u} units). The ILA status is kept as it is; the company marks ${c} of them closed.`,
+    notSynced:"Dira Lehaskir data not read yet — rental units, units for sale and the rental period show —.",
+    tblT:"The tenders — total units vs stated rental units",tblS:"Click a row for the tender; the original notice is linked",
+    noNotice:"No Dira Lehaskir notice found under this tender number",incons:"The notice contradicts itself (rental + sale > total) — not shown",
+    basis:{"stated-all":"all rental","project-rental":"project described as rental","stated-units":"no total"},
+    basisTip:{"stated-all":"the notice states that every unit of the tender is for long-term rental","project-rental":"the notice describes the whole project as a rental project and states no units for sale — a description, not a unit split","stated-units":"the notice states rental units without the tender's total"},
+    perm:"permanent",notice:"notice",
+    lifeT:"Stages — on direct evidence only",lifeS:"counted per tender; \"—\" = no source records the stage",
+    stage:{TENDER_PUBLISHED:"Tender published",AWARDED:"Awarded",PLANNING:"Planning (post-award)",PERMIT:"Permit",CONSTRUCTION:"Construction",COMPLETED:"Completed",OPERATING:"Occupied / operating"},
+    stageBasis:{TENDER_PUBLISHED:"ILA status code",AWARDED:"a winner and an award sum",PLANNING:"no post-award planning source",PERMIT:"no permit source joined",CONSTRUCTION:"MoCH construction progress by block + parcel",COMPLETED:"no tender-level source",OPERATING:"no tender-level source"},
+    compT:"Per the company (counts, not linked to tenders):",compS:n=>`${n} public project pages — pages only, no fields`,
+    planT:"The company's sites in planning promotion:",planS:"before any tender · not joined to XPlan — the company publishes no plan number",
+    mktT:"Rental market — CBS rent index",mktRole:"general market benchmark",mktYoy:"Annual change",mktYoyS:p=>`${p} vs a year earlier`,mktLvl:"Index level",mktLvlS:b=>`base ${b}`,mktMom:"Monthly change",mktMomS:p=>`${p}`,
+    mktNot:"The rent component of the CPI — private, public and regulated long-term rentals, national. It is not any project's rent, not \"institutional rent\" and not a city or district rent.",
+    mktDates:(p,c)=>`Observation period: ${p} · PROPX check: ${c}`,mktNone:"The rent index was not read in the latest sync.",
+    dates:(d,l)=>`Last read: Dira Lehaskir ${d} · ILA ${l}. Coverage: tenders published on the ILA site and notices published on the company's site — not "all rental projects".`},
   rankFoot:"A ranking is shown only when every ranked value is official, with its source stored in the system.",
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
@@ -3171,7 +3596,6 @@ const state={
   mapMetric:"price",
   filters:{rooms:"all",type:"all",area:"all",cond:"all"},
   compare:["old-north","em-hamoshavot","ir-yamim","rg-center"],
-  sort:{key:"name",dir:1},
   ci:{h:"5",strat:"bal",ltv:60,rate:4.9,term:25,cap:25e6,sel:null,w:null,app:2,appDn:2,appUp:2},
 };
 const T=()=>I18N[state.lang];
@@ -4051,6 +4475,254 @@ function renderFilters(){
     state.filters={rooms:"all",type:"all",area:"all",cond:"all"};refresh(false)});
 }
 
+/* =====================================================================
+   TABLES — one sorting and filtering standard for every table
+   (lib/table/core.js, window.PropxTable). First click = the column's
+   primary order (high → low, newest first, yes first, א → ת), second =
+   the reverse, third = the table's default. Missing values always last.
+   Paged tables sort and filter on the server over the whole filtered
+   set; small tables sort the rows they hold — all of them. Each table
+   keeps its own sort / filters / page in the URL (<key>.s, <key>.p,
+   <key>.f.<col>) and in sessionStorage, so a drawer, a language switch
+   or a resize never resets it and one table never leaks into another.
+   ===================================================================== */
+const PTC=window.PropxTable;
+const PT_F=`<svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true" focusable="false"><path d="M1.2 2h9.6L7.1 6.3v3.9L4.9 9.1V6.3z" fill="currentColor"/></svg>`;
+const ptTxt=s=>String(s==null?"":s).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();
+const ptEsc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const PT={st:{},pop:null,focus:null};
+/* ---- state: URL first (a shared link), then this tab's session ---- */
+function ptLoad(key){
+  if(PT.st[key])return PT.st[key];
+  let st=null;
+  try{const q=new URLSearchParams(location.search),s=q.get(key+".s"),p=q.get(key+".p"),f={},x={};
+    for(const[k,v]of q.entries()){if(k.startsWith(key+".f."))f[k.slice(key.length+3)]=v;else if(k.startsWith(key+".x."))x[k.slice(key.length+3)]=v}
+    if(s||p||Object.keys(f).length||Object.keys(x).length){const[sk,sd]=(s||"").split("~");st={sort:sk?{key:sk,dir:sd==="a"?"asc":"desc",isDefault:false}:null,page:Math.max(1,Number(p)||1),f,x}}}catch(e){}
+  if(!st)try{const j=JSON.parse(sessionStorage.getItem("propx:tbl:"+key)||"null");if(j&&typeof j==="object")st={sort:j.sort||null,page:j.page||1,f:j.f||{},x:j.x||{}}}catch(e){}
+  return PT.st[key]=st||{sort:null,page:1,f:{},x:{}};
+}
+function ptSave(key){
+  const st=PT.st[key];if(!st)return;
+  try{sessionStorage.setItem("propx:tbl:"+key,JSON.stringify(st))}catch(e){}
+  try{if(location.protocol==="file:")return;
+    const q=new URLSearchParams(location.search);
+    for(const k of[...q.keys()])if(k===key+".s"||k===key+".p"||k.startsWith(key+".f.")||k.startsWith(key+".x."))q.delete(k);
+    if(st.sort&&!st.sort.isDefault)q.set(key+".s",st.sort.key+"~"+(st.sort.dir==="asc"?"a":"d"));
+    if(st.page>1)q.set(key+".p",String(st.page));
+    for(const[k,v]of Object.entries(st.f||{}))if(v!=null&&v!=="")q.set(key+".f."+k,v);
+    for(const[k,v]of Object.entries(st.x||{}))if(v!=null&&v!=="")q.set(key+".x."+k,v);
+    const qs=q.toString();history.replaceState(history.state,"",location.pathname+(qs?"?"+qs:"")+location.hash)}catch(e){}
+}
+/* a column's active filter as a spec (the URL keeps its string form) */
+/* a column's filter value: its own (st.f), or — when the column's filter IS a section facet — the facet's */
+const ptVal=(st,c)=>c.fval?c.fval():st.f[c.k];
+function ptFiltText(c,raw){
+  const t=T(),sp=PTC.parseFilter(c.ftype||c.type,raw);if(!sp)return"";
+  const lbl=v=>c.opts?((c.opts().find(o=>String(o.value)===String(v))||{}).label||v):v;
+  if(sp.q!=null)return `“${ptEsc(sp.q)}”`;
+  if(sp.in)return sp.in.map(v=>ptEsc(ptTxt(lbl(v)))).join(", ");
+  if(sp.eq!=null)return ptEsc(ptTxt(lbl(sp.eq)));
+  if(sp.is)return sp.is==="yes"?t.ptYes:t.ptNo;
+  if("from"in sp)return `${sp.from?sp.from.split("-").reverse().join("."):"…"} – ${sp.to?sp.to.split("-").reverse().join("."):"…"}`;
+  return `${sp.min!=null?fmtInt(sp.min):"…"} – ${sp.max!=null?fmtInt(sp.max):"…"}`;
+}
+/* ---- header cell: label + sort (↕ ↑ ↓) + a compact filter button ---- */
+function ptTh(key,c,st){
+  const t=T(),s=st.sort,on=!!(c.sort&&s&&s.key===c.k),dir=on?s.dir:null;
+  const aria=c.sort?` aria-sort="${on?(dir==="asc"?"ascending":"descending"):"none"}"`:"";
+  const tip=c.sort?(on?(dir===PTC.primaryDir(c.type)?t.ptTipRev:t.ptTipDef):t.ptTip[PTC.primaryDir(c.type)==="desc"?(c.type==="date"?"date":c.type==="bool"?"bool":"num"):(c.type==="status"?"status":"text")]):(c.why||"");
+  const lab=c.sort?`<button type="button" class="pt-s" data-pts="${c.k}" title="${ptEsc(tip)}">${c.label}<span class="pt-a" aria-hidden="true">${on?(dir==="asc"?"↑":"↓"):"↕"}</span></button>`
+    :`<span class="pt-l"${c.why?` title="${ptEsc(c.why)}"`:""}>${c.label}</span>`;
+  const fv=c.filter?ptVal(st,c):null,fOn=fv!=null&&fv!=="";
+  const fb=c.filter?`<button type="button" class="pt-f${fOn?" on":""}" data-ptf="${c.k}" aria-haspopup="dialog" aria-expanded="false" aria-label="${ptEsc(t.ptFilterOf(ptTxt(c.label)))}${fOn?" · "+ptEsc(t.ptOn):""}" title="${ptEsc(t.ptFilterOf(ptTxt(c.label)))}">${PT_F}</button>`:"";
+  return `<th${aria}${c.num?' class="pt-n"':""}><span class="pt-h">${lab}${fb}</span></th>`;
+}
+const ptHead=(key,cols,st)=>`<thead><tr>${cols.map(c=>ptTh(key,c,st)).join("")}</tr></thead>`;
+/* active filters (every width) + the compact sort / filter controls for the card view (narrow screens) */
+function ptBar(key,cols,st,o={}){
+  const t=T(),act=cols.filter(c=>{const v=c.filter?ptVal(st,c):null;return v!=null&&v!==""});
+  const chips=act.map(c=>`<span class="pt-chip"><b>${ptEsc(ptTxt(c.label))}</b> ${ptFiltText(c,ptVal(st,c))}<button type="button" data-ptx="${c.k}" aria-label="${ptEsc(t.ptClearOf(ptTxt(c.label)))}">×</button></span>`).join("");
+  const sortable=cols.filter(c=>c.sort),cur=st.sort&&!st.sort.isDefault?st.sort.key+"~"+st.sort.dir:"";
+  const so=(o.cards||o.all)&&sortable.length?`<label class="pt-m"><span>${t.ptSortBy}</span><select class="ho-sel" data-ptsel aria-label="${ptEsc(t.ptSortBy)}"><option value="">${t.ptDefault}</option>${sortable.map(c=>{const p=PTC.primaryDir(c.type),r=PTC.reverse(p),L=ptEsc(ptTxt(c.label));
+    return [p,r].map(d=>`<option value="${c.k}~${d}"${cur===c.k+"~"+d?" selected":""}>${L} ${d==="asc"?"↑":"↓"}</option>`).join("")}).join("")}</select></label>`:"";
+  const fl=(o.cards||o.all)&&cols.some(c=>c.filter)?`<button type="button" class="pt-m pt-fm${act.length?" on":""}" data-ptfm aria-haspopup="dialog" aria-expanded="false">${PT_F} ${t.ptFilter}${act.length?` <span class="num">(${act.length})</span>`:""}</button>`:"";
+  const note=o.note?`<span class="pt-note">${o.note}</span>`:"";
+  if(!chips&&!so&&!fl&&!note)return"";
+  return `<div class="pt-bar${o.all?" pt-all":""}" data-ptbar="${key}">${so}${fl}${chips}${act.length>1?`<button type="button" class="pt-clr" data-ptx="*">${t.ptClearAll}</button>`:""}${note}</div>`;
+}
+/* ---- the filter popover ---- */
+function ptClose(back){
+  const p=PT.pop;if(!p)return;PT.pop=null;
+  p.el.remove();document.removeEventListener("keydown",p.onKey,true);document.removeEventListener("pointerdown",p.onDown,true);window.removeEventListener("resize",p.onResize);
+  if(p.btn&&p.btn.isConnected)p.btn.setAttribute("aria-expanded","false");
+  if(back){const b=p.btn&&p.btn.isConnected?p.btn:(p.refind&&p.refind());if(b)b.focus()}
+}
+function ptCtl(c,raw){
+  const t=T(),ty=c.ftype||c.type,sp=PTC.parseFilter(ty,raw)||{},id="ptc";
+  if(ty==="text")return `<label class="pt-fl" for="${id}0">${t.ptContains}</label><input class="ho-in" id="${id}0" type="search" value="${ptEsc(sp.q||"")}" autocomplete="off">`;
+  if(ty==="enum"||ty==="status"){const os=c.opts?c.opts():[],on=new Set((sp.in||[]).map(String));
+    return `<fieldset class="pt-fs"><legend class="pt-fl">${t.ptAnyOf}</legend>${os.length?os.map((o,i)=>`<label class="pt-ck"><input type="checkbox" value="${ptEsc(o.value)}"${on.has(String(o.value))?" checked":""}${i===0?` id="${id}0"`:""}> <span>${o.label}${o.n!=null?` <span class="num pt-cnt">${fmtInt(o.n)}</span>`:""}</span></label>`).join(""):`<p class="pt-fl">—</p>`}</fieldset>`}
+  if(ty==="geo"){const os=c.opts?c.opts():[];
+    return `<label class="pt-fl" for="${id}0">${c.flabel||t.ptPlace}</label><select class="ho-sel" id="${id}0"><option value="">${t.ptAll}</option>${os.map(o=>`<option value="${ptEsc(o.value)}"${String(sp.eq)===String(o.value)?" selected":""}>${ptTxt(o.label)}${o.n!=null?` (${fmtInt(o.n)})`:""}</option>`).join("")}</select>`}
+  if(ty==="bool")return `<fieldset class="pt-fs"><legend class="pt-fl">${ptEsc(ptTxt(c.label))}</legend>${[["",t.ptAll],["yes",t.ptYes],["no",t.ptNo]].map(([v,l],i)=>`<label class="pt-ck"><input type="radio" name="ptb" value="${v}"${(sp.is||"")===v?" checked":""}${i===0?` id="${id}0"`:""}> ${l}</label>`).join("")}</fieldset>`;
+  if(ty==="date")return `<div class="pt-rg"><label class="pt-fl" for="${id}0">${t.ptFrom}</label><input class="ho-in" id="${id}0" type="date" value="${ptEsc(sp.from||"")}"><label class="pt-fl" for="${id}1">${t.ptTo}</label><input class="ho-in" id="${id}1" type="date" value="${ptEsc(sp.to||"")}"></div>`;
+  const u=ty==="percent"?" %":ty==="currency"?" ₪":"";
+  return `<div class="pt-rg"><label class="pt-fl" for="${id}0">${t.ptMin}${u}</label><input class="ho-in" id="${id}0" type="text" inputmode="decimal" value="${sp.min!=null?sp.min:""}"><label class="pt-fl" for="${id}1">${t.ptMax}${u}</label><input class="ho-in" id="${id}1" type="text" inputmode="decimal" value="${sp.max!=null?sp.max:""}"></div>`;
+}
+function ptRead(c,box){
+  const ty=c.ftype||c.type,q=s=>box.querySelector(s);
+  if(ty==="text"){const v=q("#ptc0").value.trim();return v||null}
+  if(ty==="enum"||ty==="status"){const xs=[...box.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);return xs.length?PTC.formatFilter(ty,{in:xs}):null}
+  if(ty==="geo"){const v=q("#ptc0").value;return v||null}
+  if(ty==="bool"){const x=box.querySelector('input[name=ptb]:checked');return x&&x.value?x.value:null}
+  const a=q("#ptc0").value.trim().replace(/[,\s₪%]/g,""),b=q("#ptc1").value.trim().replace(/[,\s₪%]/g,"");
+  if(!a&&!b)return null;
+  const raw=`${a}..${b}`,sp=PTC.parseFilter(ty,raw);
+  return sp?raw:false;      /* false = invalid (kept open, marked) */
+}
+/* open the filter of one column (or, from the card view, a column picker first) */
+function ptOpen(btn,key,cols,c,onApply){
+  ptClose(false);
+  const t=T(),st=ptLoad(key),list=cols.filter(x=>x.filter);
+  if(!c)c=list.find(x=>ptVal(st,x))||list[0];
+  if(!c)return;
+  const el=document.createElement("div");
+  el.className="pt-pop";el.setAttribute("role","dialog");el.setAttribute("aria-modal","false");
+  const tid="ptpt"+Date.now();el.setAttribute("aria-labelledby",tid);
+  const draw=()=>{
+    el.innerHTML=`<div class="pt-ph"><b id="${tid}">${ptEsc(t.ptFilterOf(ptTxt(c.label)))}</b><button type="button" class="pt-xx" data-ptclose aria-label="${ptEsc(t.ptCloseL)}">×</button></div>
+      ${btn&&btn.dataset.ptfm!==undefined?`<label class="pt-fl" for="ptcol">${t.ptCol}</label><select class="ho-sel" id="ptcol">${list.map(x=>`<option value="${x.k}"${x.k===c.k?" selected":""}>${ptEsc(ptTxt(x.label))}${ptVal(st,x)?" •":""}</option>`).join("")}</select>`:""}
+      <div class="pt-body">${ptCtl(c,ptVal(st,c))}</div>${c.fnote?`<p class="pt-fn">${c.fnote}</p>`:""}<p class="pt-fn">${t.ptMissingNote}</p>
+      <div class="pt-act"><button type="button" class="pt-ap" data-ptapply>${t.ptApply}</button><button type="button" class="pt-cl" data-ptclear>${t.ptClear}</button></div>`;
+    const sel=el.querySelector("#ptcol");if(sel)sel.addEventListener("change",()=>{c=list.find(x=>x.k===sel.value)||c;draw();const f=el.querySelector("#ptc0");if(f)f.focus()});
+  };
+  draw();
+  document.body.appendChild(el);
+  const place=()=>{const r=btn.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,vw=document.documentElement.clientWidth,vh=window.innerHeight;
+    if(vw<560){el.classList.add("sheet");el.style.left="";el.style.top="";return}
+    el.classList.remove("sheet");
+    let x=state.lang==="he"?r.right-W:r.left;x=Math.max(8,Math.min(vw-W-8,x));
+    let y=r.bottom+6;if(y+H>vh-8)y=Math.max(8,r.top-H-6);
+    el.style.left=x+"px";el.style.top=y+"px"};
+  place();
+  const apply=clear=>{
+    const v=clear?null:ptRead(c,el);
+    if(v===false){el.querySelectorAll(".pt-rg input").forEach(i=>i.setAttribute("aria-invalid","true"));return}
+    ptClose(true);onApply(c,v);
+  };
+  el.addEventListener("click",e=>{if(e.target.closest("[data-ptclose]"))ptClose(true);else if(e.target.closest("[data-ptapply]"))apply(false);else if(e.target.closest("[data-ptclear]"))apply(true)});
+  el.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches("input:not([type=checkbox]):not([type=radio])")){e.preventDefault();apply(false)}});
+  const onKey=e=>{if(e.key==="Escape"){e.preventDefault();ptClose(true)}
+    else if(e.key==="Tab"){const f=[...el.querySelectorAll("button,input,select")].filter(x=>!x.disabled);if(!f.length)return;
+      if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus()}}};
+  const onDown=e=>{if(!el.contains(e.target)&&e.target!==btn&&!btn.contains(e.target))ptClose(false)};
+  const onResize=()=>place();
+  document.addEventListener("keydown",onKey,true);document.addEventListener("pointerdown",onDown,true);window.addEventListener("resize",onResize);
+  const sel=btn.dataset.ptf!==undefined?`[data-ptf="${btn.dataset.ptf}"]`:"[data-ptfm]";
+  PT.pop={el,btn,onKey,onDown,onResize,refind:()=>document.querySelector(`[data-ptkey="${key}"] ${sel},[data-ptbar="${key}"] ${sel}`)};
+  btn.setAttribute("aria-expanded","true");
+  const f=el.querySelector("#ptc0")||el.querySelector("button");if(f)f.focus();
+}
+/**
+ * Wire one table's header, bar and cards to its state. cfg: {key, cols(), def(), onChange(what)} — onChange reloads
+ * (server tables) or re-renders (client tables); the state is already saved. One listener per root; each click is
+ * routed to its own table by the nearest [data-ptkey] / [data-ptbar], so tables never share state.
+ */
+function ptBind(root,cfg){
+  if(!root)return;
+  (root._pt=root._pt||{})[cfg.key]=cfg;
+  if(root._ptOn)return;root._ptOn=true;
+  const cfgOf=e=>{const h=e.target.closest("[data-ptkey],[data-ptbar]");const k=h&&(h.dataset.ptkey||h.dataset.ptbar);return k&&root._pt[k]};
+  root.addEventListener("click",e=>{
+    const cfg=cfgOf(e);if(!cfg)return;
+    const st=ptLoad(cfg.key),cols=cfg.cols();
+    const s=e.target.closest("[data-pts]");
+    if(s){const c=cols.find(x=>x.k===s.dataset.pts);if(!c||!c.sort)return;
+      const cur=st.sort||{...cfg.def(),isDefault:true};
+      st.sort=PTC.nextSort(cur,c.k,c.type,cfg.def(),c.first);st.page=1;ptSave(cfg.key);
+      PT.focus={key:cfg.key,sel:`[data-pts="${c.k}"]`};cfg.onChange("sort");return}
+    const f=e.target.closest("[data-ptf],[data-ptfm]");
+    if(f){e.stopPropagation();const c=f.dataset.ptf!==undefined?cols.find(x=>x.k===f.dataset.ptf):null;
+      if(PT.pop&&PT.pop.btn===f){ptClose(true);return}
+      ptOpen(f,cfg.key,cols,c,(col,v)=>{const S=ptLoad(cfg.key);
+        if(col.facet){col.facet(v);return}             /* a column whose filter is the section's own facet */
+        if(v==null)delete S.f[col.k];else S.f[col.k]=v;S.page=1;ptSave(cfg.key);cfg.onChange("filter")});return}
+    const x=e.target.closest("[data-ptx]");
+    if(x){const k=x.dataset.ptx;
+      if(k==="*"){for(const c of cols)if(c.facet&&ptVal(st,c))c.facet(null,true);st.f={}}
+      else{const c=cols.find(y=>y.k===k);if(c&&c.facet){c.facet(null);return}delete st.f[k]}
+      st.page=1;ptSave(cfg.key);cfg.onChange("filter");return}
+  });
+  root.addEventListener("change",e=>{
+    const s=e.target.closest("[data-ptsel]");if(!s)return;
+    const cfg=cfgOf(e);if(!cfg)return;
+    const st=ptLoad(cfg.key);
+    if(!s.value)st.sort={...cfg.def(),isDefault:true};else{const[k,d]=s.value.split("~");st.sort={key:k,dir:d,isDefault:false}}
+    st.page=1;ptSave(cfg.key);PT.focus={key:cfg.key,sel:"[data-ptsel]"};cfg.onChange("sort");
+  });
+}
+/* after a re-render: keep keyboard focus on the control that changed it */
+function ptRefocus(){const f=PT.focus;if(!f)return;PT.focus=null;const n=document.querySelector(`[data-ptkey="${f.key}"] ${f.sel},[data-ptbar="${f.key}"] ${f.sel}`);if(n)n.focus()}
+/* the sort a table should apply now: its own, or its default */
+const ptSort=(key,def)=>{const s=ptLoad(key).sort;return s&&!s.isDefault?s:{...def,isDefault:true}};
+/* client tables: filter, then sort, every row the table holds */
+function ptRows(key,rows,cols,def,get){
+  const st=ptLoad(key),C={};for(const c of cols)C[c.k]={type:c.ftype||c.type,filter:!!c.filter&&!c.facet,order:c.order};
+  const g=(r,k)=>{const c=cols.find(x=>x.k===k);return c&&c.v?c.v(r):get?get(r,k):r[k]};
+  const out=PTC.applyFilters(rows,C,Object.fromEntries(Object.entries(st.f).map(([k,v])=>[k,C[k]?PTC.parseFilter(C[k].type,v):null]).filter(([,s])=>s)),(r,k)=>{const c=cols.find(x=>x.k===k);return c&&c.fv?c.fv(r):g(r,k)});
+  const s=ptSort(key,def),c=cols.find(x=>x.k===s.key&&x.sort);
+  if(!c)return out;
+  return PTC.sortRows(out,r=>g(r,c.k),c.type,s.dir,{order:c.order,lang:state.lang});
+}
+/* ---- small tables rendered as HTML (summaries, drawers): sort and filter the rows in place ----
+   cols[i] = {type, sort, filter, label} for the i-th header; a cell's value is its data-v, else its shown text
+   (sub-lines, tags and notes excluded) — always the value the cell shows. */
+function ptCell(td,type){
+  if(!td)return null;
+  if(td.dataset.v!==undefined)return td.dataset.v===""?null:td.dataset.v;
+  let s="";for(const n of td.childNodes){if(n.nodeType===1&&n.matches(".sub,.tx-note,.vc,.ld-tag,.ho-chip.cont,.pt-skip"))continue;s+=n.textContent}
+  s=s.replace(/\s+/g," ").trim();
+  return s===""||s==="—"?null:s;
+}
+function ptDom(table,key,spec,o={}){
+  if(!table||!table.tHead||!table.tBodies[0])return;
+  if(!table._ptl){const hd=[...table.tHead.rows[0].cells];table._ptl=hd.map(h=>h.innerHTML);[...table.tBodies[0].rows].forEach((tr,i)=>{tr.dataset.pti=i})}
+  const st=ptLoad(key),tb=table.tBodies[0],trs=[...tb.rows].sort((a,b)=>a.dataset.pti-b.dataset.pti);
+  const cols=spec.map((c,i)=>({k:String(i),label:c.label!=null?c.label:table._ptl[i]||"",...c}));
+  table.dataset.ptkey=key;
+  table.tHead.innerHTML=`<tr>${cols.map(c=>ptTh(key,c,st)).join("")}</tr>`;
+  const val=(tr,c)=>ptCell(tr.cells[Number(c.k)],c.type);
+  const fl=cols.filter(c=>c.filter&&st.f[c.k]);
+  let rows=trs.filter(tr=>fl.every(c=>PTC.matchFilter(c.type,val(tr,c),PTC.parseFilter(c.type,st.f[c.k]))));
+  const s=st.sort&&!st.sort.isDefault?st.sort:null,sc=s&&cols.find(c=>c.k===s.key&&c.sort);
+  if(sc)rows=PTC.sortRows(rows,tr=>val(tr,sc),sc.type,s.dir,{order:sc.order,lang:state.lang});
+  const lim=o.limit||0;      /* "the first N" are the first N of every row in the chosen order */
+  for(const tr of trs)tr.hidden=true;
+  rows.forEach((tr,i)=>{tr.hidden=!!(lim&&i>=lim);tb.appendChild(tr)});
+  if(o.onCount)o.onCount(rows.length,trs.length);
+  const host=table.parentElement,old=host.querySelector(`:scope > .pt-bar[data-ptbar="${key}"]`);
+  if(old)old.remove();
+  const html=ptBar(key,cols,st,{note:fl.length?T().ptKept(rows.length,trs.length):(o.note||"")});
+  if(html)table.insertAdjacentHTML("beforebegin",html);
+  ptBind(host,{key,cols:()=>cols,def:()=>({key:"",dir:"asc"}),onChange:()=>{ptDom(table,key,spec,o);ptRefocus()}});
+}
+
+/* small tables inside drawers and summaries: one spec per table (types in header order; s = sortable, f = filterable) */
+const PT_DOM={
+  ldlots:"text,number,number,currency,currency,currency,text,currency,number,currency",
+  ldplans:"text,text,text,number,number,number,date,number,-",
+  hoproj:"date,text,number,number,text",
+  indm:"text,number,number,number,date,date",
+  inds:"text,text,number,-,status,date",
+  indp:"text,text,number,currency,status,date",
+  inpl:"date,text,number,number,number,text",
+  inrc:"text,number,number,number,number,number",
+  dist:"text,percent,text"};
+function ptDomAll(root,o={}){
+  if(!root)return;
+  for(const tb of root.querySelectorAll("table[data-ptdom]")){const k=tb.dataset.ptdom,spec=PT_DOM[k];if(!spec)continue;
+    ptDom(tb,k,spec.split(",").map(x=>x==="-"?{type:"text",sort:false,filter:false}:{type:x,sort:true,filter:true}),{note:tb.dataset.ptnote||"",...(o[k]||{})})}
+}
 /* ---------- area table ---------- */
 function tableChildren(){
   const l=LOC[state.locId];
@@ -4063,34 +4735,32 @@ function renderTable(){
   const rows=tableChildren();
   const rowType=rows[0]?rows[0].type:"nbhd";
   el("tblTitle").textContent=rowType==="city"?t.tblCities:rowType==="district"?t.tblDistricts:t.tblNbhd;
-  el("tblCount").innerHTML=`${rows.length} ${t.areas}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:700">${t.filtered}</span>`:""}`;
   const nameTh=rowType==="city"?t.thNameCity:rowType==="district"?t.thNameDist:t.thName;
+  const sale=state.mode==="sale";
+  /* every sortable value is the value its cell shows: sales = txShown (the CBS series), never the research base.tx */
+  const shownTx=r=>{const x=sale?txShown(r.loc):invShown(r.loc);return x.show?x.v:null};
   const cols=[
-    {key:"name",label:nameTh,get:r=>heName(r.loc),num:false},
-    {key:"price",f:"price",label:t.thPrice,get:r=>r.m.price,fmt:v=>fmtNIS(v)},
-    {key:"sqm",f:"sqm",label:t.thPsm,get:r=>r.m.sqm,fmt:v=>fmtNIS(v)},
-    {key:"rent",f:"rent",label:t.thRent,get:r=>r.m.rent,fmt:v=>fmtNIS(v)},
-    {key:"yield",f:"yield",label:t.thYield,get:r=>r.m.grossYield,fmt:v=>v.toFixed(1)+"%"},
-    {key:"yoy",f:state.mode==="sale"?"yoy":"rentYoy",label:t.thYoy,get:r=>state.mode==="sale"?r.m.yoy:r.m.rentYoy,fmt:null},
-    {key:"tx",f:state.mode==="sale"?"tx":"listings",label:state.mode==="sale"?t.thTx:t.thListings,get:r=>state.mode==="sale"?r.m.tx:r.m.listings,fmt:fmtInt},
+    {key:"name",label:nameTh,v:r=>heName(r.loc),num:false},
+    {key:"price",f:"price",label:t.thPrice,v:r=>r.m.price},
+    {key:"sqm",f:"sqm",label:t.thPsm,v:r=>r.m.sqm},
+    {key:"rent",f:"rent",label:t.thRent,v:r=>r.m.rent},
+    {key:"yield",f:"yield",label:t.thYield,v:r=>r.m.grossYield},
+    {key:"yoy",f:sale?"yoy":"rentYoy",label:t.thYoy,v:r=>sale?r.m.yoy:r.m.rentYoy},
+    {key:"tx",f:sale?"tx":"listings",label:sale?t.thTx:t.thListings,v:shownTx},
   ];
-  /* sorting by a value ranks the rows — allowed only when every value is RAW */
+  /* sorting (or filtering) by a value ranks the rows — allowed only when every value is RAW */
   const canSort=c=>c.key==="name"||rankable(c.f,rows);
-  if(!canSort(cols.find(c=>c.key===state.sort.key)||cols[0]))state.sort={key:"name",dir:1};
-  const data=rows.map(loc=>({loc,m:metricsOf(loc.id)}));
-  const sc=cols.find(c=>c.key===state.sort.key)||cols[0];
-  data.sort((a,b)=>{
-    if(sc.key==="name")return state.sort.dir*heName(a.loc).localeCompare(heName(b.loc),state.lang);
-    if(!sc.get)return 0;
-    return state.sort.dir*(sc.get(a)-sc.get(b));
-  });
+  const ptc=cols.map(c=>{const sortable=canSort(c);
+    return{k:c.key,label:c.label,type:c.key==="name"?"text":c.key==="yield"||c.key==="yoy"?"percent":c.key==="tx"?"number":"currency",sort:sortable,filter:sortable,num:c.key!=="name",why:sortable?"":t.ptModelNo,v:c.v}});
+  const DEF={key:"name",dir:"asc"},st=ptLoad("board");
+  if(st.sort&&!st.sort.isDefault&&!ptc.some(c=>c.k===st.sort.key&&c.sort))st.sort=null;      /* the rows changed: that column no longer ranks */
+  for(const k of Object.keys(st.f))if(!ptc.some(c=>c.k===k&&c.filter))delete st.f[k];
+  const all=rows.map(loc=>({loc,m:metricsOf(loc.id)}));
+  const data=ptRows("board",all,ptc,DEF);
+  el("tblCount").innerHTML=`${data.length<all.length?`${fmtInt(data.length)} / `:""}${all.length} ${t.areas}${filtersActive()?` · <span style="color:var(--accent-deep);font-weight:700">${t.filtered}</span>`:""}`;
+  el("tbl").dataset.ptkey="board";
   el("tbl").innerHTML=`
-    <thead><tr>${cols.map(c=>{
-      const sortable=canSort(c);
-      const active=state.sort.key===c.key;
-      return `<th ${active?`aria-sort="${state.sort.dir===1?"ascending":"descending"}"`:""}>
-        ${sortable?`<button data-sort="${c.key}">${c.label}<span class="arr">${active?(state.sort.dir===1?"▲":"▼"):"▼"}</span></button>`:c.label}</th>`;
-    }).join("")}</tr></thead>
+    ${ptHead("board",ptc,st)}
     <tbody>${data.map(r=>`
       <tr data-go="${r.loc.id}" tabindex="0"${r.loc.id===state.locId?' class="sel"':''}>
         <td class="nm">${heName(r.loc)} ${vcTag(vcOf(r.loc,state.mode==="sale"?"price":"rent"))}</td>
@@ -4101,11 +4771,9 @@ function renderTable(){
         <td>${deltaHTML(state.mode==="sale"?r.m.yoy:r.m.rentYoy,true)}</td>
         <td class="num">${(x=>x.show?`<span title="${calcEsc(x.per)}">${x.text}</span>`:`<span title="${calcEsc(x.why)}">—</span>`)(state.mode==="sale"?txShown(r.loc):invShown(r.loc))}</td>
       </tr>`).join("")}</tbody>`;
-  el("tbl").querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{
-    const k=b.dataset.sort;
-    if(state.sort.key===k)state.sort.dir*=-1;else{state.sort.key=k;state.sort.dir=k==="name"?1:-1}
-    renderTable();
-  }));
+  el("tblPt").innerHTML=ptBar("board",ptc,st,{cards:true});
+  el("tblPt").dataset.ptbar="board";
+  ptBind(el("tbl").closest(".tbl-card"),{key:"board",cols:()=>ptc,def:()=>DEF,onChange:()=>{renderTable();ptRefocus()}});
   el("tbl").querySelectorAll("tr[data-go]").forEach(row=>{
     row.addEventListener("click",()=>selectLocation(row.dataset.go));
     row.addEventListener("keydown",e=>{if(e.key==="Enter")selectLocation(row.dataset.go)});
@@ -4272,8 +4940,8 @@ function renderInsights(){
     ?`השכירות עולה בקצב מהיר יותר ממחירי המכירה (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, לעומת <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — לחץ כלפי מעלה על התשואה.`
     :`Rents are rising faster than sale prices (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}, vs <b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) — upward pressure on yields.`);
   else if(m.yoy>m.rentYoy+0.15)out.push(he
-    ?`מחירי המכירה עולים מהר מהשכירות — התשואה הברוטו נשחקת בהדרגה.`
-    :`Sale prices are outpacing rents — gross yield is gradually compressing.`);
+    ?`מחירי המכירה (<b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) עולים מהר מהשכירות (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}) — לפי ערכים אלה התשואה הברוטו (${t.vcName.mod}) נשחקת.`
+    :`Sale prices (<b class="num">${fmtPct(m.yoy)}</b> · ${cp("yoy")}) are outpacing rents (<b class="num">${fmtPct(m.rentYoy)}</b> · ${cp("rentYoy")}) — on these values the gross yield (${t.vcName.mod}) is compressing.`);
   if(pm){
     const psmDiff=(m.sqm/pm.sqm-1)*100;
     if(Math.abs(psmDiff)>=3)out.push(he
@@ -4349,7 +5017,7 @@ async function txFetch(force){
   /* a new geography must never show the previous one's rows while loading */
   txState.key=key;txState.status="loading";
   txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];
-  txState.more=false;txState.nextOffset=0;txState.moreBusy=false;txState.moreErr=null;
+  txState.more=false;txState.nextOffset=0;txState.moreBusy=false;txState.moreErr=null;txState.allCapped=false;
   renderTx();renderMap(true);
   const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120"});
   if(q.street)p.set("street",q.street);
@@ -4433,6 +5101,28 @@ function txFiltered(){
     :txState.tab==="unknown"?rows.filter(t=>t.newness==="unknown")
     :rows;
 }
+/* the deals table's columns: each sorts / filters on the value its cell shows (lib/table/core.js) */
+const TX_DEF={key:"date",dir:"desc"},TX_NEW_ORDER=["confirmed_new","probable_new","second_hand","unknown"];
+const txFloorN=f=>{if(f==null||f==="")return null;const s=String(f);if(/קרקע|ground/i.test(s))return 0;if(/מרתף|basement/i.test(s))return -1;return PTC.toNumber(s)};
+const txAddrText=r=>[r.street,r.houseNumber].filter(Boolean).join(" ")||null;
+function txCols(){const t=T();return[
+  {k:"date",label:t.thDate,type:"date",sort:true,filter:true,num:true,v:r=>r.date},
+  {k:"addr",label:t.thStreet,type:"text",sort:true,filter:true,v:txAddrText,fv:r=>[txAddrText(r),r.city,r.neighborhood].filter(Boolean).join(" ")},
+  {k:"rooms",label:t.thRooms,type:"number",sort:true,filter:true,num:true,v:r=>txVal(r.rooms)||null},
+  {k:"area",label:t.thAreaSqm,type:"number",sort:true,filter:true,num:true,v:r=>txVal(r.areaSqm)||null},
+  {k:"floor",label:t.thFloor,type:"number",sort:true,filter:true,num:true,v:r=>txFloorN(r.floor)},
+  {k:"price",label:t.thTxPrice,type:"currency",sort:true,filter:true,num:true,v:r=>r.price||null},
+  {k:"psm",label:t.thTxPsm,type:"currency",sort:true,filter:true,num:true,v:r=>txPsm(r)||null},
+  {k:"tag",label:t.thTag,type:"status",ftype:"enum",sort:true,filter:true,order:TX_NEW_ORDER,v:r=>r.newness,
+    opts:()=>[["confirmed_new",t.txTagNew],["probable_new",t.txTagProb],["second_hand",t.txTagUsed],["unknown",t.txTagUnk]].map(([value,label])=>({value,label}))},
+  {k:"src",label:t.thSrc,type:"text",sort:false}]}
+/* load every deal of the scope and period (page by page, capped), so sorting and filtering cover all of them */
+const TX_ALL_CAP=3000;
+async function txLoadAll(){
+  const key=txState.key;txState.allCapped=false;
+  while(txState.key===key&&txState.more&&!txState.moreErr&&txState.rows.length<TX_ALL_CAP)await txMore();
+  if(txState.key===key&&txState.more&&txState.rows.length>=TX_ALL_CAP){txState.allCapped=true;renderTx()}
+}
 /* small-sample rule for observed deals: fewer than 10 → "small sample", medians de-emphasised, no trend read.
    Why 10: a median's distribution-free 95% interval (order statistics, Binomial(n, ½)) does not exist below n = 6,
    spans the whole sample at n = 6–8 and runs from the 2nd to the 2nd-last observation at n = 9–11 — below 10 a median
@@ -4478,13 +5168,16 @@ function renderTx(){
     (M&&M.syncedAt&&!viaRepub?` · ${t.txSynced(when(M.syncedAt))}`:"")+
     (noAnswer&&M.attemptedAt?` · ${t.txAttempted(when(M.attemptedAt))}`:"");
 
-  const rows=txFiltered();
-  const hasAny=rows.length>0;
+  const tabRows=txFiltered();
   /* HARD INVARIANT: what the table paints is exactly what the active tab
      counted. Two datasets can never drift apart again. */
   const tabCount=txState.tab==="new"?nNew:txState.tab==="second"?nSec
     :txState.tab==="unknown"?nUnk:txState.tab==="other"?nOther:R.length;
-  if(rows.length!==tabCount)console.error("PROPX invariant violated: rows",rows.length,"!= tab",tabCount);
+  if(tabRows.length!==tabCount)console.error("PROPX invariant violated: rows",tabRows.length,"!= tab",tabCount);
+  /* the table's own sort and column filters run over every deal loaded for the tab; the summary below describes
+     exactly the rows shown */
+  const rows=ptRows("tx",tabRows,txCols(),TX_DEF);
+  const hasAny=rows.length>0;
 
   /* scope disclosure — never pretend a wider scope is the street itself */
   const sc=txState.scope;
@@ -4583,8 +5276,15 @@ function renderTx(){
     <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
     <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${calcEsc(r.dealType)}</div>`:""}</td>
     <td class="tx-src">${srcOf(r)}</td></tr>`;
-  const head=`<thead><tr><th>${t.thDate}</th><th>${t.thStreet}</th><th>${t.thRooms}</th><th>${t.thAreaSqm}</th><th>${t.thFloor}</th><th>${t.thTxPrice}</th><th>${t.thTxPsm}</th><th>${t.thTag}</th><th>${t.thSrc}</th></tr></thead>`;
-  el("txTbl").innerHTML=!hasAny?"":head+"<tbody>"+rows.map(liveTr).join("")+"</tbody>";
+  const pst=ptLoad("tx"),cfOn=rows.length<tabRows.length;
+  const head=ptHead("tx",txCols(),pst);
+  el("txTbl").dataset.ptkey="tx";
+  el("txTbl").innerHTML=!hasAny&&!cfOn?"":head+"<tbody>"+rows.map(liveTr).join("")+"</tbody>";
+  /* sorting / filtering over the loaded deals only — said so whenever the register holds more for the period */
+  const more=reg&&txState.more,note=(cfOn?t.ptKept(fmtInt(rows.length),fmtInt(tabRows.length))+" · ":"")+(more?t.ptLoaded(fmtInt(txState.rows.length))
+    +` <button type="button" class="pt-clr" data-txall${txState.moreBusy?" disabled":""}>${txState.moreBusy?t.ptLoadAllBusy:t.ptLoadAll}</button>`:txState.allCapped?t.ptLoadCap(fmtInt(txState.rows.length)):"");
+  el("txTblPt").dataset.ptbar="tx";el("txTblPt").innerHTML=(hasAny||cfOn)?ptBar("tx",txCols(),pst,{cards:true,note}):"";
+  ptBind(el("txTbl").closest(".tbl-card")||el("txSection"),{key:"tx",cols:txCols,def:()=>TX_DEF,onChange:()=>{renderTx();ptRefocus()}});
 
   const liveCard=r=>`<div class="tcard" style="cursor:default">
     <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>${part(r)}
@@ -4627,6 +5327,7 @@ function initTx(){
     if(tb){txState.tab=tb.dataset.txtab;renderTx();renderMap(true);return}
     if(e.target.id==="txMapBtn"){txState.mapOn=!txState.mapOn;renderTx();renderMap(true);return}
     if(e.target.id==="txMoreBtn"){txMore();return}
+    if(e.target.closest("[data-txall]")){txLoadAll();return}
   });
   sec.addEventListener("change",e=>{
     if(e.target.id==="txMonths"){txState.months=+e.target.value;txFetch(true)}
@@ -5144,8 +5845,9 @@ function renderOfficialTrend(){
   card.innerHTML=`<div class="chart-tools"><h2 style="font-size:15.5px">${t.title}</h2>${vcTag("raw")}${I.newHomesIndex.stale||I.dwellingsIndex.stale?` <span class="vc na">${t.stale}</span>`:""}</div>
     <div class="ot-legend"><span class="ot-k nh"></span>${t.nh} <b class="num">${pct(last(nh).yoy)}</b><span class="ot-k dw"></span>${t.dw} <b class="num">${pct(last(dw).yoy)}</b> <span class="ot-s">· ${t.yoy}</span></div>
     <div class="ot-wrap">${otLineSVG(nh,dw)}</div>
-    ${distRows?`<h4 class="ld-h4">${t.dist} ${distTag}${D.stale?` <span class="vc na">${t.stale}</span>`:""}</h4><table class="ho-gt ot-dist"><thead><tr><th>${t.distName}</th><th>${t.distYoy}</th><th>${t.distWin}</th></tr></thead><tbody>${distRows}</tbody></table>${distAll.some(d=>!distPub(d))?`<p class="ho-note">${t.distCalc}</p>`:""}`:""}
+    ${distRows?`<h4 class="ld-h4">${t.dist} ${distTag}${D.stale?` <span class="vc na">${t.stale}</span>`:""}</h4><table class="ho-gt ot-dist" data-ptdom="dist"><thead><tr><th>${t.distName}</th><th>${t.distYoy}</th><th>${t.distWin}</th></tr></thead><tbody>${distRows}</tbody></table>${distAll.some(d=>!distPub(d))?`<p class="ho-note">${t.distCalc}</p>`:""}`:""}
     <p class="ho-note">${t.note}</p><p class="ho-note">${t.src(calcEsc(I.newHomesIndex.series&&I.newHomesIndex.series.code||"—"),calcEsc(I.dwellingsIndex.series&&I.dwellingsIndex.series.code||"—"),chk)}</p>`;
+  ptDomAll(card);
 }
 
 
@@ -6227,6 +6929,28 @@ const HO_PAGE=25;
 const HO_FILTERS=["period","from","to","city","neighborhood","project","developer","program","status","permit","type","q"];
 const hoState={f:{period:"all"},page:1,sort:"lotteryDate",order:"desc",metric:"lotteries",bucket:null,geoAll:false,
   sum:null,rec:null,facets:null,status:"idle",err:null,req:0,started:false,detail:null,detailErr:null,openId:null,returnFocus:null};
+/* the lottery table's columns: sorted / filtered on the server over the whole filtered set (lib/housing/query.js COLS).
+   Program, permit and project status are the source's own words — filtered by the section's facets, not ranked. */
+const HO_DEF={key:"lotteryDate",dir:"desc"};
+const hoFacet=k=>(v,quiet)=>{const f=hoState.f;f[k]=v||null;if(k==="city"){f.neighborhood=null;f.project=null}hoState.page=1;hoState.geoAll=false;if(!quiet)hoLoad()};
+function hoCols(){
+  const t=T(),C=t.hoC,S=hoState.sum,F=(S&&S.facets)||hoState.facets||{};
+  const gl=l=>(l||[]).map(x=>({value:x.value,label:state.lang==="en"&&t.hoGloss&&t.hoGloss[x.value]?t.hoGloss[x.value]:x.value,n:x.n}));
+  return [
+    {k:"lotteryDate",label:C.date,type:"date",sort:true,filter:true,num:true},
+    {k:"projectName",label:C.project,type:"text",sort:true,filter:true},
+    {k:"city",label:C.place,type:"text",ftype:"geo",sort:true,filter:true,facet:hoFacet("city"),fval:()=>hoState.f.city,opts:()=>(F.city||[]).map(c=>({value:c.value,label:ptTxt(hoCityName(c.label)),n:c.n}))},
+    {k:"program",label:C.program,type:"text",ftype:"geo",flabel:C.program,sort:false,why:t.ptVerbatim,filter:true,facet:hoFacet("program"),fval:()=>hoState.f.program,opts:()=>(F.program||[]).map(x=>({value:x.value,label:ptTxt(hoProgName(x.value)),n:x.n}))},
+    {k:"developer",label:C.dev,type:"text",sort:true,filter:true},
+    {k:"lotteryType",label:C.type,type:"status",ftype:"geo",flabel:C.type,sort:true,filter:true,facet:hoFacet("type"),fval:()=>hoState.f.type,opts:()=>[{value:"first",label:t.hoTypeFirst},{value:"continuation",label:t.hoTypeCont}]},
+    {k:"unitsInLottery",label:C.units,type:"number",sort:true,filter:true,num:true},
+    {k:"winners",label:C.win,type:"number",sort:true,filter:true,num:true},
+    {k:"pricePerSqm",label:C.price,type:"currency",sort:true,filter:true,num:true},
+    {k:"permit",label:C.permit,type:"text",ftype:"geo",flabel:C.permit,sort:false,why:t.ptVerbatim,filter:true,facet:hoFacet("permit"),fval:()=>hoState.f.permit,opts:()=>gl(F.permit)},
+    {k:"status",label:C.status,type:"text",ftype:"geo",flabel:C.status,sort:false,why:t.ptVerbatim,filter:true,facet:hoFacet("status"),fval:()=>hoState.f.status,opts:()=>gl(F.status)}];
+}
+function hoPersist(){const st=ptLoad("ho");st.page=hoState.page;st.x={};for(const k of HO_FILTERS){const v=hoState.f[k];if(v!=null&&v!=="")st.x[k]=String(v)}ptSave("ho")}
+function hoRestore(){const st=ptLoad("ho");if(st.x&&Object.keys(st.x).length){hoState.f={period:"all"};for(const k of HO_FILTERS)if(st.x[k]!=null)hoState.f[k]=st.x[k]}hoState.page=st.page||1}
 const hoE=s=>calcEsc(s==null?"":s);
 const hoDash=()=>`<span class="ho-na" title="${hoE(T().hoMissingTip)}">—</span>`;
 const hoN=(v,f=fmtInt)=>v==null?hoDash():`<span class="num">${f(v)}</span>`;
@@ -6263,8 +6987,10 @@ function hoLoad(what){
   /* an incomplete custom range shows no numbers at all — never the previous period's — and cancels answers in flight */
   if(f.period==="custom"&&!(f.from&&f.to&&f.from<=f.to)){hoState.req++;hoState.sum=null;hoState.rec=null;hoState.status="range";renderHousing();return}
   const id=++hoState.req;hoState.status="loading";renderHousing();
+  hoPersist();
+  const so=ptSort("ho",HO_DEF);
   const sum=what==="rows"&&hoState.sum?Promise.resolve(hoState.sum):hoGet(hoQS({view:"summary",bucket:hoState.bucket}));
-  const rec=hoGet(hoQS({view:"records",sort:hoState.sort,order:hoState.order,page:hoState.page,size:HO_PAGE}));
+  const rec=hoGet(hoQS({view:"records",sort:so.key,order:so.dir,page:hoState.page,size:HO_PAGE,lang:state.lang,...ptParams("ho","f_",hoCols())}));
   Promise.all([sum,rec]).then(([S,R])=>{
     if(id!==hoState.req)return;
     hoState.sum=S;hoState.rec=R;hoState.facets=S.facets;hoState.status="ok";hoState.err=null;renderHousing();
@@ -6350,7 +7076,7 @@ function hoGeoHTML(S){
   if(f.city)crumbs.push(`<button type="button" data-hocrumb="city">${fc?hoCityName(fc.label):hoE(f.city)}</button>`);
   if(f.neighborhood)crumbs.push(`<button type="button" data-hocrumb="nbhd">${hoE(f.neighborhood)}</button>`);
   const nameCol={city:t.hoGCity,neighborhood:t.hoGNbhd,project:t.hoGProj}[B.level];
-  const rows=hoState.geoAll?B.rows:B.rows.slice(0,10);
+  const rows=B.rows;     /* every row: the table shows the first 10 in the chosen order (ptDom), all with "more" */
   const go=r=>B.level==="city"?`data-hogo="city" data-hov="${hoE(r.key)}"`:B.level==="neighborhood"?(r.label?`data-hogo="neighborhood" data-hov="${hoE(r.label)}"`:""):`data-hogo="project" data-hov="${hoE(r.key)}"`;
   const label=r=>B.level==="city"?hoCityName(r.label):r.label?hoE(r.label):`<span class="ho-na">${t.hoNbhdNone}</span>`;
   const table=B.rows.length?`<table class="ho-gt"><thead><tr><th>${nameCol}</th><th>${t.hoGLot}</th><th>${t.hoGUnits}</th><th>${t.hoGWin}</th><th>${t.hoGLast}</th></tr></thead><tbody>${
@@ -6361,11 +7087,8 @@ function hoGeoHTML(S){
 }
 
 function hoTableHTML(R){
-  const t=T(),C=t.hoC;
-  const sortable={date:"lotteryDate",project:"projectName",place:"city",dev:"developer",units:"unitsInLottery",win:"winners",price:"pricePerSqm"};
-  const th=k=>{const s=sortable[k];if(!s)return`<th>${C[k]}</th>`;
-    const on=hoState.sort===s;return`<th${on?` aria-sort="${hoState.order==="asc"?"ascending":"descending"}"`:""}><button type="button" data-hosort="${s}">${C[k]}<span class="arr">${on?(hoState.order==="asc"?"▲":"▼"):"▲"}</span></button></th>`};
-  const head=`<thead><tr>${["date","project","place","program","dev","type","units","win","price","permit","status"].map(th).join("")}</tr></thead>`;
+  const t=T();
+  const head=ptHead("ho",hoCols(),ptLoad("ho"));
   const row=r=>`<tr tabindex="0" data-hoid="${hoE(r.id)}">
     <td class="num">${hoDate(r.lotteryDate)}</td>
     <td class="w"><span class="nm">${hoE(r.projectName)||hoDash()}</span><div class="sub num">#${r.projectId} · ${t.hoDLot(r.lotteryId)}</div>${r.inLatestSource===false?`<span class="ho-chip cont">${t.hoDelisted}</span>`:""}</td>
@@ -6445,8 +7168,11 @@ function renderHousing(){
   el("hoSeries").innerHTML=hoChartHTML(S);
   el("hoGeo").innerHTML=hoGeoHTML(S);
   if(R){
-    el("hoTblHead").innerHTML=`<h3>${R.total==null?t.hoTblTNone:t.hoTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${t.hoTblS}</span>`;
-    el("hoTbl").innerHTML=hoTableHTML(R);
+    const cf=R.beforeColumnFilters!=null&&R.total!=null&&R.total<R.beforeColumnFilters;
+    el("hoTblHead").innerHTML=`<h3>${R.total==null?t.hoTblTNone:t.hoTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${cf?t.ptColRows(fmtInt(R.total),fmtInt(R.beforeColumnFilters))+" · ":""}${t.hoTblS}</span>`;
+    el("hoTbl").dataset.ptkey="ho";
+    el("hoTbl").innerHTML=hoTableHTML(R)||(cf?ptHead("ho",hoCols(),ptLoad("ho")):"");
+    el("hoTblPt").dataset.ptbar="ho";el("hoTblPt").innerHTML=ptBar("ho",hoCols(),ptLoad("ho"),{cards:true});
     el("hoCards").innerHTML=hoCardsHTML(R);
     el("hoPager").hidden=R.pages<=1;
     el("hoPager").innerHTML=`<button type="button" data-hopage="${R.page-1}"${R.page<=1?" disabled":""}>${t.hoPrev}</button>
@@ -6454,6 +7180,11 @@ function renderHousing(){
       <button type="button" data-hopage="${R.page+1}"${R.page>=R.pages?" disabled":""}>${t.hoNext}</button>`;
   }
   el("hoFoot").textContent=t.hoFoot;
+  ptBind(sec,{key:"ho",cols:hoCols,def:()=>HO_DEF,onChange:w=>{hoState.page=1;hoLoad(w==="sort"?"rows":undefined)}});
+  const gt=el("hoGeo").querySelector("table.ho-gt");
+  if(gt)ptDom(gt,"hog",[{type:"text",sort:true,filter:true},{type:"number",sort:true,filter:true},{type:"number",sort:true,filter:true},{type:"number",sort:true,filter:true},{type:"date",sort:true,filter:true}],
+    {limit:hoState.geoAll?0:10});
+  if(st!=="loading")ptRefocus();
   if(hoState.openId)renderHoDrawer();
 }
 
@@ -6512,16 +7243,18 @@ function renderHoDrawer(){
       ${kv(t.hoDWin,hoN(r.winners))}${kv(t.hoDWinLocal,hoN(r.winnersLocalResidents))}${kv(t.hoDWinHome,hoN(r.winnersHomeless))}${kv(t.hoDWinUp,hoN(r.winnersUpgraders))}
       ${kv(t.hoDPrice,r.pricePerSqm!=null?`<span class="num">${fmtNIS(r.pricePerSqm)}</span>`:hoDash())}${kv(t.hoDSigned,hoDash())}${kv(t.hoDInv,hoDash())}</div>`)}
     ${sec(t.hoDLifeT,O,`<div class="ho-dl">${life}</div><p class="ho-note">${t.hoDLifeNote}</p>`)}
-    ${sec(t.hoDProjT(fmtInt((J.lotteries||[]).length)),O,`<table class="ho-dt"><thead><tr><th>${t.hoC.date}</th><th>${t.hoC.type}</th><th>${t.hoC.units}</th><th>${t.hoC.win}</th><th>${t.hoDLotSt}</th></tr></thead><tbody>${sib}</tbody></table>`)}
+    ${sec(t.hoDProjT(fmtInt((J.lotteries||[]).length)),O,`<table class="ho-dt" data-ptdom="hoproj"><thead><tr><th>${t.hoC.date}</th><th>${t.hoC.type}</th><th>${t.hoC.units}</th><th>${t.hoC.win}</th><th>${t.hoDLotSt}</th></tr></thead><tbody>${sib}</tbody></table>`)}
     ${sec(t.hoDHistT,"",hist?`<ul class="ho-note" style="padding-inline-start:16px">${hist}</ul>`:`<p class="ho-note">${t.hoDHistNone}</p>`)}
     ${sec(t.hoDProvT,"",`<div class="ho-dl">${kv(t.hoDSrc,hoE(t.hoSrcName))}${kv(t.hoDRes,`<span class="num" style="font-size:11px">${hoE(P.resourceId||"")}</span>`)}
       ${kv(t.hoDRow,P.sourceRowId!=null?`<span class="num">${hoE(String(P.sourceRowId))}</span>`:hoDash())}${kv(t.hoDSrcUpd,hoDate(P.sourceUpdatedAt))}
       ${kv(t.hoDFirst,hoDate(r.firstSeenAt))}${kv(t.hoDChecked,hoDate(r.lastSeenAt))}${kv(t.hoDInSrc,r.inLatestSource===false?t.hoDNo:t.hoDYes)}
       ${kv(t.hoDSnap,`<span class="num" style="font-size:11px">${hoE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
+  ptDomAll(el("hoPanel"));
 }
 
 function initHousing(){
   const sec=el("housing");if(!sec)return;
+  hoRestore();
   /* the drawer lives at the page level: inside the animated section it would share the
      section's stacking context and slide under the sticky header */
   const drawer=el("hoDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
@@ -6530,7 +7263,7 @@ function initHousing(){
     if(k==="neighborhood")f.project=null;
     hoState.page=1;hoState.geoAll=false;hoLoad()};
   const onClick=e=>{
-    const b=e.target.closest("[data-hoper],[data-hoset],[data-horeset],[data-hom],[data-hob],[data-hocrumb],[data-hogo],[data-hogeoall],[data-hosort],[data-hopage],[data-hoclose],[data-hoid]");
+    const b=e.target.closest("[data-hoper],[data-hoset],[data-horeset],[data-hom],[data-hob],[data-hocrumb],[data-hogo],[data-hogeoall],[data-hopage],[data-hoclose],[data-hoid]");
     if(!b)return;
     const d=b.dataset,f=hoState.f;
     if(d.hoclose!==undefined){hoClose();return}
@@ -6543,8 +7276,6 @@ function initHousing(){
       hoState.page=1;hoState.geoAll=false;hoLoad();return}
     if(d.hogo){setF(d.hogo,d.hov);return}
     if(d.hogeoall!==undefined){hoState.geoAll=!hoState.geoAll;renderHousing();return}
-    if(d.hosort){if(hoState.sort===d.hosort)hoState.order=hoState.order==="asc"?"desc":"asc";else{hoState.sort=d.hosort;hoState.order=d.hosort==="lotteryDate"?"desc":"asc"}
-      hoState.page=1;hoLoad("rows");return}
     if(d.hopage){hoState.page=Math.max(1,+d.hopage);hoLoad("rows");el("hoTblHead").scrollIntoView({block:"nearest"});return}
     if(d.hoid){hoOpen(d.hoid,b.closest("#hoPanel")?hoState.returnFocus:b);return}
   };
@@ -6594,7 +7325,42 @@ function initHousing(){
 const LD_PAGE=25;
 const LD_FILTERS=["scope","period","from","to","dateField","city","region","track","lifecycle","type","winner","residential","q"];
 const ldState={f:{scope:"current",period:"all",dateField:"published"},page:1,sort:"publishedDate",order:"desc",metric:"tenders",bucket:null,citiesAll:false,devsAll:false,
-  sum:null,rec:null,pipe:null,facets:null,status:"idle",err:null,req:0,started:false,detail:null,detailErr:null,openId:null,returnFocus:null,mapOn:false,map:null,mapReq:0};
+  sum:null,rec:null,pipe:null,facets:null,status:"idle",err:null,req:0,started:false,detail:null,detailErr:null,openId:null,returnFocus:null,mapOn:false,map:null,mapReq:0,rental:null,rtReq:0};
+/* the land tables' columns: each sorts / filters on the server over the whole filtered set (lib/land/query.js COLS) */
+const LD_DEF={key:"publishedDate",dir:"desc"},LDC_DEF={key:"units",dir:"desc"},LDD_DEF={key:"unitsInLotsWon",dir:"desc"};
+const ldFacet=k=>(v,quiet)=>{ldState.f[k]=v||null;ldState.page=1;if(!quiet)ldLoad()};
+function ldCols(){
+  const t=T(),C=t.ldC,S=ldState.sum,F=(S&&S.facets)||ldState.facets||{};
+  return [
+    {k:"publishedDate",label:C.date,type:"date",sort:true,filter:true,num:true},
+    {k:"name",label:C.tender,type:"text",sort:true,filter:true},
+    {k:"city",label:C.place,type:"text",ftype:"geo",sort:true,filter:true,facet:ldFacet("city"),fval:()=>ldState.f.city,
+      opts:()=>(F.city||[]).map(c=>({value:c.value,label:state.lang==="en"&&c.labelEn?c.labelEn:c.label||String(c.value),n:c.n}))},
+    {k:"track",label:C.track,type:"status",ftype:"enum",sort:true,filter:true,facet:ldFacet("track"),fval:()=>ldState.f.track,
+      opts:()=>(F.track||[]).map(x=>({value:x.value,label:ldE(ldTrackName(x.value)),n:x.n}))},
+    {k:"purpose",label:C.purpose,type:"text",sort:true,filter:true},
+    {k:"units",label:C.units,type:"number",sort:true,filter:true,num:true},
+    {k:"lots",label:C.lots,type:"number",sort:true,filter:true,num:true},
+    {k:"winner",label:C.winner,type:"text",sort:true,filter:true},
+    {k:"awardedLandTotal",label:C.land,type:"currency",sort:true,filter:true,num:true,fnote:t.ptLandBid},
+    {k:"landPerUnit",label:C.lpu,type:"currency",sort:true,filter:true,num:true},
+    {k:"closeDate",label:C.close,type:"date",sort:true,filter:true,num:true},
+    {k:"committeeDate",label:C.committee,type:"date",sort:true,filter:true,num:true}];
+}
+function ldCityCols(){const t=T();return [
+  {k:"city",label:t.ldCCity,type:"text",sort:true,filter:true},{k:"tenders",label:t.ldCTend,type:"number",sort:true,filter:true,num:true},
+  {k:"open",label:t.ldCOpen,type:"number",sort:true,filter:true,num:true},{k:"units",label:t.ldCUnits,type:"number",sort:true,filter:true,num:true},
+  {k:"unitsAwarded",label:t.ldCAw,type:"number",sort:true,filter:true,num:true},{k:"landPerUnit",label:t.ldCLand,type:"currency",sort:true,filter:true,num:true},
+  {k:"lastPublished",label:t.ldCLast,type:"date",sort:true,filter:true,num:true}]}
+function ldDevCols(){const t=T();return [
+  {k:"name",label:t.ldDName,type:"text",sort:true,filter:true},{k:"lotsWon",label:t.ldDLots,type:"number",sort:true,filter:true,num:true},
+  {k:"tendersWon",label:t.ldDTend,type:"number",sort:true,filter:true,num:true},{k:"unitsInLotsWon",label:t.ldDUnits,type:"number",sort:true,filter:true,num:true},
+  {k:"landTotalCompetitive",label:t.ldDLand,type:"currency",sort:true,filter:true,num:true},{k:"lastWin",label:t.ldDLast,type:"date",sort:true,filter:true,num:true}]}
+/* a table's own column filters as request parameters (facet columns travel as the section's facets) */
+function ptParams(key,prefix,cols){const st=ptLoad(key),o={};for(const c of cols)if(c.filter&&!c.facet&&st.f[c.k])o[prefix+c.k]=st.f[c.k];return o}
+/* the section's facets and page live with the tender table's state (URL + session), so a reload or a shared link keeps them */
+function ldPersist(){const st=ptLoad("ld");st.page=ldState.page;st.x={};for(const k of LD_FILTERS){const v=ldState.f[k];if(v!=null&&v!==""&&v!==false)st.x[k]=v===true?"1":String(v)}ptSave("ld")}
+function ldRestore(){const st=ptLoad("ld");if(st.x&&Object.keys(st.x).length){ldState.f={scope:"current",period:"all",dateField:"published"};for(const k of LD_FILTERS)if(st.x[k]!=null)ldState.f[k]=k==="residential"?st.x[k]==="1":st.x[k]}ldState.page=st.page||1}
 const ldE=s=>calcEsc(s==null?"":s);
 const ldDash=()=>`<span class="ho-na" title="${ldE(T().ldMissingTip)}">—</span>`;
 const ldN=(v,f=fmtInt)=>v==null?ldDash():`<span class="num">${f(v)}</span>`;
@@ -6624,9 +7390,13 @@ function ldLoad(what){
   const f=ldState.f;
   if(f.period==="custom"&&!(f.from&&f.to&&f.from<=f.to)){ldState.req++;ldState.sum=null;ldState.rec=null;ldState.status="range";renderLand();return}
   const id=++ldState.req;ldState.status="loading";renderLand();
-  const sum=what==="rows"&&ldState.sum?Promise.resolve(ldState.sum):ldGet(ldQS({view:"summary",bucket:ldState.bucket}));
-  const rec=ldGet(ldQS({view:"tenders",sort:ldState.sort,order:ldState.order,page:ldState.page,size:LD_PAGE}));
-  const pipe=what==="rows"&&ldState.pipe?Promise.resolve(ldState.pipe):ldGet(ldQS({view:"pipeline"}));
+  ldPersist();
+  const so=ptSort("ld",LD_DEF),cs=ptSort("ldc",LDC_DEF),ds=ptSort("ldd",LDD_DEF);
+  const sum=what==="rows"&&ldState.sum?Promise.resolve(ldState.sum):ldGet(ldQS({view:"summary",bucket:ldState.bucket,lang:state.lang,cs:cs.key,co:cs.dir,ds:ds.key,do:ds.dir,
+    ...ptParams("ldc","cf_",ldCityCols()),...ptParams("ldd","df_",ldDevCols())}));
+  const rec=what==="sum"&&ldState.rec?Promise.resolve(ldState.rec):ldGet(ldQS({view:"tenders",sort:so.key,order:so.dir,page:ldState.page,size:LD_PAGE,lang:state.lang,...ptParams("ld","f_",ldCols())}));
+  const pipe=(what==="rows"||what==="sum")&&ldState.pipe?Promise.resolve(ldState.pipe):ldGet(ldQS({view:"pipeline"}));
+  if(ldRentalOn()&&what!=="rows"&&what!=="sum"){const rid=++ldState.rtReq;ldGet(ldQS({view:"rental"})).then(X=>{if(rid!==ldState.rtReq)return;ldState.rental=X;renderLand()}).catch(()=>{if(rid!==ldState.rtReq)return;ldState.rental={error:true};renderLand()})}
   Promise.all([sum,rec,pipe]).then(([S,R,P])=>{
     if(id!==ldState.req)return;
     ldState.sum=S;ldState.rec=R;ldState.pipe=P;ldState.facets=S.facets;ldState.status="ok";ldState.err=null;renderLand();
@@ -6644,7 +7414,8 @@ function ldBarHTML(){
   const per=["6m","12m","24m","5y","all","custom"].map(k=>`<button type="button" data-ldper="${k}" aria-pressed="${f.period===k}">${t.ldPer[k]}</button>`).join("");
   const scope=`<span class="ho-per" role="group" aria-label="${ldE(t.ldScopeL)}">${["current","all"].map(k=>`<button type="button" data-ldscope="${k}" aria-pressed="${(f.scope||"current")===k}" title="${ldE(t.ldScopeTip[k])}">${t.ldScope[k]}</button>`).join("")}</span>`;
   const opt=(v,l,n,sel)=>`<option value="${ldE(v)}"${sel?" selected":""}>${l}${n!=null?` (${fmtInt(n)})`:""}</option>`;
-  const sel=(k,all,list,lab)=>`<select class="ho-sel" data-ldf="${k}" aria-label="${ldE(lab)}">${opt("",all,null,!f[k])}${(list||[]).map(x=>opt(x.value,x.label!=null?x.label:x.value,x.n,String(f[k])===String(x.value))).join("")}</select>`;
+  const multi=k=>f[k]&&String(f[k]).includes(",")?opt(f[k],t.ldMulti(String(f[k]).split(",").length),null,true):"";
+  const sel=(k,all,list,lab)=>`<select class="ho-sel" data-ldf="${k}" aria-label="${ldE(lab)}">${opt("",all,null,!f[k])}${multi(k)}${(list||[]).map(x=>opt(x.value,x.label!=null?x.label:x.value,x.n,String(f[k])===String(x.value))).join("")}</select>`;
   const cityList=(F.city||[]).map(c=>({value:c.value,label:state.lang==="en"&&c.labelEn?ldE(c.labelEn):c.label?ldE(c.label):c.value,n:c.n}));
   if(f.city&&!cityList.some(c=>String(c.value)===String(f.city)))cityList.unshift({value:f.city,label:ldE(f.city),n:null});
   const trackList=(F.track||[]).map(x=>({value:x.value,label:ldE(ldTrackName(x.value)),n:x.n}));
@@ -6685,7 +7456,7 @@ function ldKpisHTML(S){
     tile(t.ldKClosed,ldN(K.closed+K.lotteryPending),K.unitsPendingDecision!=null?t.ldKClosedS(fmtInt(K.unitsPendingDecision)):"","full"),
     tile(t.ldKAwarded,ldN(K.awarded),[t.ldKAwardedS(K.unitsAwarded!=null?fmtInt(K.unitsAwarded):"",K.unitsAwardedTenders!=null?fmtInt(K.unitsAwardedTenders):""),nd].filter(Boolean).join(" · "),"partial"),
     tile(t.ldKCancelled,ldN(K.cancelled+K.frozen+(K.decided-K.decidedWithoutDetail)),K.unitsFailed!=null?t.ldKCancelledS(fmtInt(K.unitsFailed),fmtInt(K.cancelled+K.frozen),fmtInt(K.decided-K.decidedWithoutDetail)):"","partial"),
-    tile(t.ldKUnits,ldN(K.unitsResidential),t.ldKUnitsS,"full"),
+    tile(t.ldKUnits,ldN(K.unitsResidential),t.ldKUnitsS+(ldRentalOn()?" "+t.rtUnitsKpi:""),"full"),
     tile(t.ldKUnique,U&&U.tendersCovered?ldN(U.units):ldDash(),U?t.ldKUniqueS(fmtInt(U.lots),fmtInt(U.tendersCovered),fmtInt(U.duplicateUnits),fmtInt(U.tendersNotDeduplicable),fmtInt(U.unitsNotDeduplicable),Object.entries(U.byLatestStage||{}).filter(([,v])=>v).map(([k,v])=>`${t.ldKUniqueSt[k]||k} ${fmtInt(v)}`).join(" · ")):"","derived"),
     tile(t.ldKLand,ldNIS(K.landPerUnit),K.landPerUnit!=null?t.ldKLandS(fmtInt(LB.lots||K.landPerUnitLots),fmtInt(LB.units||K.landPerUnitUnits),fmtInt(LB.tenders||0),LB.medianLotPerUnit!=null?fmtNIS(LB.medianLotPerUnit):"—",t.ldTrackScope(K.landPerUnitTracks),(LB.competitionTypes||[]).map(x=>x.he).join(" / ")):"","derived"),
     tile(t.ldKPsm,K.pricePerSqmMin!=null?`<span class="num">${fmtNIS(K.pricePerSqmMin)}–${fmtNIS(K.pricePerSqmMax)}</span>`:ldDash(),K.pricePerSqmLots?t.ldKPsmS(fmtInt(K.pricePerSqmLots)):"","derived"),
@@ -6707,18 +7478,20 @@ function ldChartHTML(S){
   return head+`<div class="ho-svgw"><svg class="ho-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${ldE(t.ldSeriesT)}"><line class="ax" x1="0" x2="${W}" y1="${H-bot}" y2="${H-bot}"/>${bars}${ticks}<text x="2" y="11">${fmtInt(max)}</text></svg></div><p class="ho-note">${t.ldSeriesNote}</p>`;
 }
 function ldCitiesHTML(S){
-  const t=T(),rows=S.cities||[],show=ldState.citiesAll?rows:rows.slice(0,10);
-  const table=rows.length?`<table class="ho-gt"><thead><tr><th>${t.ldCCity}</th><th>${t.ldCTend}</th><th>${t.ldCOpen}</th><th>${t.ldCUnits}</th><th>${t.ldCAw}</th><th>${t.ldCLand}</th><th>${t.ldCLast}</th></tr></thead><tbody>${
+  const t=T(),rows=S.cities||[],show=ldState.citiesAll?rows:rows.slice(0,10),M=S.citiesTable||{},st=ptLoad("ldc");
+  const cnt=M.total!=null&&M.all!=null&&M.total<M.all?`<span class="pt-note">${t.ptColRows(fmtInt(M.total),fmtInt(M.all))}</span>`:"";
+  const table=rows.length?`${ptBar("ldc",ldCityCols(),st)}${cnt}<table class="ho-gt" data-ptkey="ldc">${ptHead("ldc",ldCityCols(),st)}<tbody>${
     show.map(r=>`<tr data-ldgo="city" data-ldv="${r.localityCode}" tabindex="0"><td>${ldCity(r)}</td><td class="n">${ldN(r.tenders)}</td><td class="n">${ldN(r.open)}</td><td class="n">${ldN(r.units)}</td><td class="n">${ldN(r.unitsAwarded)}</td><td class="n">${ldNIS(r.landPerUnit)}</td><td class="n">${ldDate(r.lastPublished)}</td></tr>`).join("")}</tbody></table>`
-    :`<p class="ho-note">${t.ldNoneHere}</p>`;
+    :`${ptBar("ldc",ldCityCols(),st)}<p class="ho-note">${t.ldNoneHere}</p>`;
   const more=rows.length>10?`<button type="button" class="ho-more" data-ldcitiesall>${ldState.citiesAll?t.ldLess:t.ldMore(rows.length)}</button>`:"";
   return `<div class="ho-bh"><h3>${t.ldCitiesT} ${vcTag("der")}</h3></div>${table}${more}<p class="ho-note">${t.ldCitiesNote}</p>`;
 }
 function ldDevsHTML(S){
-  const t=T(),rows=S.developers||[],show=ldState.devsAll?rows:rows.slice(0,10);
-  const table=rows.length?`<table class="ho-gt"><thead><tr><th>${t.ldDName}</th><th>${t.ldDLots}</th><th>${t.ldDTend}</th><th>${t.ldDUnits}</th><th>${t.ldDLand}</th><th>${t.ldDLast}</th></tr></thead><tbody>${
+  const t=T(),rows=S.developers||[],show=ldState.devsAll?rows:rows.slice(0,10),M=S.developersTable||{},st=ptLoad("ldd");
+  const cnt=M.total!=null&&M.all!=null&&M.total<M.all?`<span class="pt-note">${t.ptColRows(fmtInt(M.total),fmtInt(M.all))}</span>`:"";
+  const table=rows.length?`${ptBar("ldd",ldDevCols(),st)}${cnt}<table class="ho-gt" data-ptkey="ldd">${ptHead("ldd",ldDevCols(),st)}<tbody>${
     show.map(r=>`<tr data-ldgo="winner" data-ldv="${ldE(r.name)}" tabindex="0"><td><bdi>${ldE(r.name)}</bdi></td><td class="n">${ldN(r.lotsWon)}</td><td class="n">${ldN(r.tendersWon)}</td><td class="n">${ldN(r.unitsInLotsWon)}</td><td class="n">${ldNIS(r.landTotalCompetitive)}</td><td class="n">${ldDate(r.lastWin)}</td></tr>`).join("")}</tbody></table>`
-    :`<p class="ho-note">${t.ldNoneHere}</p>`;
+    :`${ptBar("ldd",ldDevCols(),st)}<p class="ho-note">${t.ldNoneHere}</p>`;
   const more=rows.length>10?`<button type="button" class="ho-more" data-lddevsall>${ldState.devsAll?t.ldLess:t.ldMore(rows.length)}</button>`:"";
   const DV=S.developersCoverage||{};
   return `<div class="ho-bh"><h3>${t.ldDevT} ${vcTag("der")}${ldTag("derived")}</h3></div><p class="ho-note ld-devcov">${t.ldDevCov(fmtInt(DV.detailRead||0),fmtInt(DV.inScope||0),fmtInt(DV.awardedRead||0))}</p>${table}${more}<p class="ho-note">${t.ldDevNote}</p>`;
@@ -6752,12 +7525,92 @@ function ldCovHTML(S){
   const scopeSay=(S.scope&&S.scope.mode)==="current"?t.ldScopeSay(ldDate(S.scope.currentFrom)):t.ldScopeSayAll;
   return `<div class="ho-facts">${fact(t.ldF.chk,ldDate(fr.checkedAt))}${fact(t.ldF.latest,ldDate(fr.latestPublished))}${fact(t.ldF.maps,d.withGeometry!=null?`<span class="num">${fmtInt(d.withGeometry)}</span>`:"—")}${fact(t.ldF.per,per)}</div>${strip}<p class="ho-covs">${scopeSay} ${say}${nopos}</p><p class="ho-covs ld-stateland">${t.ldStateLand}</p>`;
 }
+/* =====================================================================
+   LONG-TERM RENTAL (lib/rental/query.js, view=rental) — shown with the rental track.
+   Kept apart, each with its own source and dates: the ILA rental-track PIPELINE (a tender's units are its TOTAL —
+   never "rental units"), Dira Lehaskir's stated TERMS per tender (exact tender-number key), the LIFECYCLE on direct
+   evidence only, the company's PLANNING sites and project-status counts, and the CBS rent component as a GENERAL
+   RENT MARKET BENCHMARK. No project rent, no yield, no occupancy is ever estimated.
+   ===================================================================== */
+const ldRentalOn=()=>String(ldState.f.track||"").split(",").includes("rental");
+const RT_DEF={key:"publishedDate",dir:"desc"};
+function rtCols(){const t=T(),C=t.rtC;return[
+  {k:"name",label:C.tender,type:"text",sort:true,filter:true,v:r=>r.name},
+  {k:"city",label:C.city,type:"text",sort:true,filter:true,v:r=>state.lang==="en"&&r.cityEn?r.cityEn:r.city},
+  {k:"lifecycle",label:C.life,type:"status",ftype:"enum",sort:true,filter:true,order:["published","open","closed","lottery-pending","decided","awarded","decided-no-award","frozen","cancelled"],v:r=>r.lifecycle,
+    opts:()=>Object.keys(t.ldLife).map(k=>({value:k,label:t.ldLife[k]}))},
+  {k:"publishedDate",label:C.pub,type:"date",sort:true,filter:true,num:true,v:r=>r.publishedDate},
+  {k:"tenderUnits",label:C.units,type:"number",sort:true,filter:true,num:true,v:r=>r.tenderUnits},
+  {k:"rentalUnits",label:C.rental,type:"number",sort:true,filter:true,num:true,v:r=>r.dira&&!r.dira.inconsistent?r.dira.rentalUnits:null},
+  {k:"saleUnits",label:C.sale,type:"number",sort:true,filter:true,num:true,v:r=>r.dira?r.dira.saleUnits:null},
+  {k:"years",label:C.years,type:"number",sort:true,filter:true,num:true,v:r=>r.dira?r.dira.rentalYears:null},
+  {k:"dira",label:C.dira,type:"text",ftype:"enum",sort:true,filter:true,v:r=>r.dira?(r.dira.status?r.dira.status.name:t.rtNoStatus):null,
+    opts:()=>[...new Set(((ldState.rental&&ldState.rental.rows)||[]).map(r=>r.dira&&r.dira.status?r.dira.status.name:null).filter(Boolean))].map(v=>({value:v,label:v})),fv:r=>r.dira&&r.dira.status?r.dira.status.name:null}];}
+function rtPanelHTML(X){
+  const t=T(),R=t.rt;
+  if(!X)return `<p class="ho-note">${t.ldLoading}</p>`;
+  if(X.error)return `<p class="ho-note">${ldOffline()?t.ldOffline:t.ldErr}</p>`;
+  const P=X.pipeline||{},Q=X.terms||{},F=X.freshness||{},M=X.market||{},PL=X.planning||{},PJ=X.projects||{};
+  const tag=c=>vcTag(c==="OFFICIAL"?"raw":c==="DERIVED"?"der":"na");
+  const tile=(l,v,sub,c)=>`<div class="ho-k"><div class="l">${l} ${c?tag(c):""}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  const life=P.lifecycle||{},lifeTxt=Object.entries(life).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`${ldE(t.ldLife[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · ");
+  const yrs=Object.entries(Q.rentalYears||{}).sort((a,b)=>+a[0]-+b[0]).map(([y,n])=>R.yearsN(y,fmtInt(n))).join(" · ");
+  const dsync=F.dira&&F.dira.synced;
+  /* pipeline ≠ terms ≠ market: three bands, each with its own source line */
+  const pipe=`<h4 class="ld-h4">${R.pipeT} ${tag("OFFICIAL")} <span class="tx-note">${R.pipeSrc}</span></h4>
+    <div class="ho-kpis rt-k">${tile(R.kTenders,ldN(P.tenders),lifeTxt)}${tile(R.kUnits,ldN(P.tenderUnits),R.kUnitsS)}${tile(R.kAwarded,ldN(P.awarded),R.kAwardedS(P.awardedUnits!=null?fmtInt(P.awardedUnits):"—"))}${tile(R.kPlan,ldN(P.withXplanPlan),R.kPlanS)}</div>
+    ${P.staleStatus&&P.staleStatus.n?`<p class="ho-note">${tag("DERIVED")} ${R.stale(fmtInt(P.staleStatus.n),ldDate(P.staleStatus.before),P.staleStatus.units!=null?fmtInt(P.staleStatus.units):"—",fmtInt(P.staleStatus.companyClosed))}</p>`:""}`;
+  const terms=dsync?`<h4 class="ld-h4">${R.termsT} ${tag("OFFICIAL")} <span class="tx-note">${R.termsSrc}</span></h4>
+    <div class="ho-kpis rt-k">${tile(R.kNotice,`<span class="num">${fmtInt(Q.withNotice||0)}</span> / <span class="num">${fmtInt(Q.ilaTenders||0)}</span>`,R.kNoticeS)}
+      ${tile(R.kRental,ldN(Q.rentalUnitsStated),R.kRentalS(fmtInt(Q.withStatedRentalUnits||0),Q.tenderUnitsOfStated!=null?fmtInt(Q.tenderUnitsOfStated):"—"))}
+      ${tile(R.kSale,ldN(Q.saleUnitsStated),R.kSaleS(fmtInt(Q.partRental||0),fmtInt(Q.allRental||0)))}
+      ${tile(R.kYears,yrs?`<span class="rt-yrs">${yrs}</span>`:ldDash(),R.kYearsS)}</div>
+    ${(Q.unitsDiffer||[]).length?`<p class="ho-note">${R.differ(fmtInt(Q.unitsDiffer.length))}</p>`:""}`
+    :`<p class="ho-note">${R.notSynced}</p>`;
+  const L=X.lifecycle||[],stage=x=>`<div class="rt-st${x.n==null?" na":""}"><b>${ldE(R.stage[x.stage]||x.stage)}</b><span class="num">${x.n==null?"—":fmtInt(x.n)}</span><span class="sub" title="${ldE(x.basis)}">${ldE(R.stageBasis[x.stage]||x.basis)}</span></div>`;
+  const comp=(PJ.statusCounts||[]).map(s=>`${ldE(s.name)} <span class="num">${fmtInt(s.count)}</span>`).join(" · ");
+  const lc=`<h4 class="ld-h4">${R.lifeT} <span class="tx-note">${R.lifeS}</span></h4><div class="rt-life">${L.map(stage).join("")}</div>
+    ${comp?`<p class="ho-note"><b>${R.compT}</b> ${tag("OFFICIAL")} ${comp} · ${R.compS(fmtInt(PJ.pages||0))}</p>`:""}`;
+  const plan=dsync&&PL.sites?`<p class="ho-note"><b>${R.planT}</b> ${tag("OFFICIAL")} ${(PL.statusCounts||[]).map(s=>`${ldE(s.name)} <span class="num">${fmtInt(s.count)}</span>`).join(" · ")} · ${R.planS}</p>`:"";
+  const per=M.period?`${M.period.month<10?"0":""}${M.period.month}/${M.period.year}`:"—";
+  const mkt=M.state&&M.state!=="not-synced"?`<h4 class="ld-h4">${R.mktT} ${tag("OFFICIAL")} <span class="ho-chip cont">${R.mktRole}</span></h4>
+    <div class="ho-kpis rt-k">${tile(R.mktYoy,M.yoy!=null?`<span class="num">${(M.yoy>0?"+":"")+M.yoy.toFixed(1)}%</span>`:ldDash(),R.mktYoyS(per))}${tile(R.mktLvl,M.level!=null?`<span class="num">${M.level}</span>`:ldDash(),R.mktLvlS(ldE(M.base||"")))}${tile(R.mktMom,M.mom!=null?`<span class="num">${(M.mom>0?"+":"")+M.mom.toFixed(1)}%</span>`:ldDash(),R.mktMomS(per))}</div>
+    <p class="ho-note">${R.mktNot}</p><p class="ho-note">${R.mktDates(per,ldDate(M.checkedAt))}${M.stale?` <span class="vc na">${t.stale||"stale"}</span>`:""}</p>`:`<p class="ho-note">${R.mktNone}</p>`;
+  /* the rental tenders themselves: total vs stated rental vs sale, per tender — sortable and filterable over all of them */
+  const st=ptLoad("ldr"),all=ptRows("ldr",X.rows||[],rtCols(),RT_DEF),rows=ldState.rtAll?all:all.slice(0,12);      /* the first 12 of every row, in the chosen order */
+  const yrsCell=d=>!d?ldDash():d.rentalPermanent?`<span>${R.perm}</span>`:d.rentalYears!=null?`<span class="num">${d.rentalYears}</span>`:ldDash();
+  const rentCell=d=>!d?`<span class="ho-na" title="${ldE(R.noNotice)}">—</span>`:d.inconsistent?`<span class="ho-na" title="${ldE(R.incons)}">≠</span>`:d.rentalUnits!=null?`<span class="num">${fmtInt(d.rentalUnits)}</span>${d.rentalBasis&&d.rentalBasis!=="stated-part"?` <span class="ho-chip cont" title="${ldE(R.basisTip[d.rentalBasis]||"")}">${ldE(R.basis[d.rentalBasis]||d.rentalBasis)}</span>`:""}`:ldDash();
+  const tbl=`<div class="ld-scroll"><table class="ho-gt rt-tbl" data-ptkey="ldr">${ptHead("ldr",rtCols(),st)}<tbody>${rows.map(r=>`<tr data-ldid="${ldE(r.id)}" tabindex="0">
+    <td><span class="num">${ldE(r.name)}</span></td><td>${ldCity(r)}</td><td>${ldLifeChip(r.lifecycle)}</td><td class="n">${ldDate(r.publishedDate)}</td><td class="n">${ldN(r.tenderUnits)}</td>
+    <td class="n">${rentCell(r.dira)}</td><td class="n">${r.dira?ldN(r.dira.saleUnits):ldDash()}</td><td class="n">${yrsCell(r.dira)}</td>
+    <td>${r.dira?`<a href="${ldE(r.dira.link||"#")}" target="_blank" rel="noopener noreferrer">${ldE(r.dira.status?r.dira.status.name:R.notice)}</a>`:ldDash()}</td></tr>`).join("")}</tbody></table></div>
+    ${all.length>12?`<button type="button" class="ho-more" data-rtall>${ldState.rtAll?t.ldLess:t.ldMore(all.length)}</button>`:""}`;
+  return `<div class="ho-bh"><h3>${R.title}</h3></div><p class="ho-covs">${R.intro}</p>${pipe}${terms}
+    <h4 class="ld-h4">${R.tblT} <span class="tx-note">${R.tblS}</span></h4>${ptBar("ldr",rtCols(),st,{note:all.length<(X.rows||[]).length?t.ptKept(fmtInt(all.length),fmtInt((X.rows||[]).length)):""})}${tbl}
+    ${lc}${plan}${mkt}
+    <p class="ho-note rt-dates">${R.dates(F.dira&&F.dira.fetchedAt?ldDate(F.dira.fetchedAt):"—",F.land&&F.land.checkedAt?ldDate(F.land.checkedAt):"—")}</p>`;
+}
+/* the company's own terms for one tender, as its notice states them — each figure with the words it came from */
+function rtDrawerHTML(x,r){
+  const t=T(),D=t.rtD;
+  if(!x)return `<p class="ho-note">${D.none}</p>`;
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const ev=k=>x.evidence&&x.evidence[k]?`<li><b>${ldE(D.ev[k]||k)}:</b> <q>${ldE(x.evidence[k])}</q></li>`:"";
+  const rent=x.inconsistent?`<span class="ho-na">${ldE(t.rt.incons)}</span>`:x.ambiguous==="multiple-statements"?`<span class="ho-na">${D.multi((x.rentalStatements||[]).map(fmtInt).join(" · "))}</span>`
+    :x.rentalUnits!=null?`<span class="num">${fmtInt(x.rentalUnits)}</span>${x.rentalBasis&&x.rentalBasis!=="stated-part"?` <span class="ho-chip cont" title="${ldE(t.rt.basisTip[x.rentalBasis]||"")}">${ldE(t.rt.basis[x.rentalBasis]||x.rentalBasis)}</span>`:""}`:ldDash();
+  const diff=x.totalUnits!=null&&r.units!=null&&x.totalUnits!==r.units?`<p class="ho-note">${D.differ(fmtInt(r.units),fmtInt(x.totalUnits))}</p>`:"";
+  return `<div class="ho-dl">${kv(D.number,`<span class="num">${ldE(x.tenderNumber||"—")}</span>`)}${kv(D.status,x.status?ldE(x.status.name):ldDash())}
+    ${kv(D.total,x.totalUnits!=null?`<span class="num">${x.totalApprox?"~":""}${fmtInt(x.totalUnits)}</span>`:ldDash())}${kv(D.ilaUnits,ldN(r.units))}
+    ${kv(D.rental,rent)}${kv(D.sale,ldN(x.saleUnits))}${kv(D.years,x.rentalPermanent?ldE(t.rt.perm):ldN(x.rentalYears))}
+    ${kv(D.special,(x.specialRental||[]).length?x.specialRental.map(y=>`<span class="num">${fmtInt(y.units)}</span>`).join(" · "):ldDash())}
+    ${kv(D.disc,x.discountedShare!=null?`<span class="num">${x.discountedShare}%</span>`:x.discountedText?`<span class="ho-na">${D.discText}</span>`:ldDash())}</div>
+    ${diff}${x.discountedText?`<p class="ho-note"><b>${D.discL}:</b> <q>${ldE(x.discountedText)}</q></p>`:""}
+    <details class="tc-meth"><summary class="ho-note"><b>${D.evT}</b></summary><ul class="ho-note ld-ul">${["totalUnits","rentalUnits","saleUnits","rentalYears"].map(ev).join("")}</ul></details>
+    <p class="ho-note">${D.src(x.link?`<a href="${ldE(x.link)}" target="_blank" rel="noopener noreferrer">${D.notice}</a>`:D.notice,ldDate(x.published),ldDate(x.lastSeenAt))} ${D.never}</p>`;
+}
 function ldTableHTML(R){
-  const t=T(),C=t.ldC;
-  const sortable={date:"publishedDate",place:"city",units:"units",land:"awardedLandTotal",lpu:"landPerUnit",close:"closeDate",committee:"committeeDate"};
-  const th=k=>{const s=sortable[k];if(!s)return`<th>${C[k]}</th>`;const on=ldState.sort===s;
-    return`<th${on?` aria-sort="${ldState.order==="asc"?"ascending":"descending"}"`:""}><button type="button" data-ldsort="${s}">${C[k]}<span class="arr">${on?(ldState.order==="asc"?"▲":"▼"):"▲"}</span></button></th>`};
-  const head=`<thead><tr>${["date","tender","place","track","purpose","units","lots","winner","land","lpu","close","committee"].map(th).join("")}</tr></thead>`;
+  const t=T();
+  const head=ptHead("ld",ldCols(),ptLoad("ld"));
   const winner=r=>!r.winners?`<span class="ho-na">${t.ldListOnly}</span>`:r.winners.length?`<bdi>${ldE(r.winners[0].name)}</bdi>${r.winners.length>1?` <span class="ho-chip">+${r.winners.length-1}</span>`:""}`:ldDash();
   const row=r=>`<tr tabindex="0" data-ldid="${ldE(r.id)}">
     <td class="num">${ldDate(r.publishedDate)}</td>
@@ -6805,9 +7658,13 @@ function renderLand(){
   el("ldCities").innerHTML=ldCitiesHTML(S);
   el("ldDevs").innerHTML=ldDevsHTML(S);
   el("ldPipe").innerHTML=ldPipeHTML(ldState.pipe);
+  const rp=el("ldRental");rp.hidden=!ldRentalOn();if(ldRentalOn())rp.innerHTML=rtPanelHTML(ldState.rental);
   if(R){
-    el("ldTblHead").innerHTML=`<h3>${R.total==null?t.ldTblTNone:t.ldTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${t.ldTblS}</span>`;
-    el("ldTbl").innerHTML=ldTableHTML(R);
+    const cf=R.beforeColumnFilters!=null&&R.total!=null&&R.total<R.beforeColumnFilters;
+    el("ldTblHead").innerHTML=`<h3>${R.total==null?t.ldTblTNone:t.ldTblT(fmtInt(R.total))} ${vcTag("raw")}</h3><span class="tx-note">${cf?t.ptColRows(fmtInt(R.total),fmtInt(R.beforeColumnFilters))+" · ":""}${t.ldTblS}</span>`;
+    el("ldTbl").dataset.ptkey="ld";
+    el("ldTbl").innerHTML=ldTableHTML(R)||(cf?ptHead("ld",ldCols(),ptLoad("ld")):"");
+    el("ldTblPt").dataset.ptbar="ld";el("ldTblPt").innerHTML=ptBar("ld",ldCols(),ptLoad("ld"),{cards:true});
     el("ldCards").innerHTML=ldCardsHTML(R);
     el("ldPager").hidden=R.pages<=1;
     el("ldPager").innerHTML=`<button type="button" data-ldpage="${R.page-1}"${R.page<=1?" disabled":""}>${t.ldPrev}</button>
@@ -6815,6 +7672,11 @@ function renderLand(){
       <button type="button" data-ldpage="${R.page+1}"${R.page>=R.pages?" disabled":""}>${t.ldNext}</button>`;
   }
   el("ldFoot").textContent=t.ldFoot;
+  ptBind(sec,{key:"ld",cols:ldCols,def:()=>LD_DEF,onChange:w=>{ldState.page=1;ldLoad(w==="sort"?"rows":undefined)}});
+  ptBind(sec,{key:"ldc",cols:ldCityCols,def:()=>LDC_DEF,onChange:()=>ldLoad("sum")});
+  ptBind(sec,{key:"ldd",cols:ldDevCols,def:()=>LDD_DEF,onChange:()=>ldLoad("sum")});
+  ptBind(sec,{key:"ldr",cols:rtCols,def:()=>RT_DEF,onChange:()=>{renderLand();ptRefocus()}});
+  if(st!=="loading")ptRefocus();
   if(ldState.openId)renderLdDrawer();
 }
 /* tender markers on the SVG map: square = the ILA polygon centroid; circle = locality-level count (no polygon published) — never a synthetic pin */
@@ -6858,12 +7720,12 @@ function renderLdDrawer(){
     <td>${l.winner?`<bdi>${ldE(l.winner.name)}</bdi>`:l.namedWithoutSum?`<bdi>${ldE(l.namedWithoutSum.name)}</bdi> <span class="ho-chip cont" title="${ldE(t.ldDNamed)}">${t.ldDNamed}</span>`:ldDash()}</td>
     <td class="num">${l.winner&&l.winner.amount!=null?(r.priceBasis==="price-per-sqm-bid"?`${fmtNIS(l.winner.amount)}/m²${l.ceilingPerSqm?` <span class="ho-na">(≤ ${fmtNIS(l.ceilingPerSqm)})</span>`:""}`:fmtNIS(l.winner.amount)):l.winner?`<span class="ho-na">${t.ldDAlloc}</span>`:ldDash()}</td>
     <td class="num">${e.bidsReceived!=null?fmtInt(e.bidsReceived):ldDash()}</td><td class="num">${ldNIS(e.landPerUnit)}</td></tr>`};
-  const lots=r.lots?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["lot","area","units","dev","min","app","winner","amount","bids","lpu"].map(k=>`<th>${t.ldDL[k]}</th>`).join("")}</tr></thead><tbody>${r.lots.map(lotRow).join("")}</tbody></table></div>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
+  const lots=r.lots?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="ldlots"><thead><tr>${["lot","area","units","dev","min","app","winner","amount","bids","lpu"].map(k=>`<th>${t.ldDL[k]}</th>`).join("")}</tr></thead><tbody>${r.lots.map(lotRow).join("")}</tbody></table></div>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
   const econ=E?`<div class="ho-dl">${kv(t.ldDE.basis,ldE(t.ldBasis[E.basis]||E.basis))}${kv(t.ldDE.vat,ldE(t.ldVat.split(":")[1]||E.vat))}${kv(t.ldDE.aw,`<span class="num">${fmtInt(E.awardedLots)}/${fmtInt(E.lots)}</span>`)}
     ${E.basis==="price-per-sqm-bid"?kv(t.ldDE.psm,E.pricePerSqmMin!=null?`<span class="num">${fmtNIS(E.pricePerSqmMin)}–${fmtNIS(E.pricePerSqmMax)}</span>`:ldDash())+kv(t.ldDE.ceil,E.ceilingPerSqmMin!=null?`<span class="num">${fmtNIS(E.ceilingPerSqmMin)}–${fmtNIS(E.ceilingPerSqmMax)}</span>`:ldDash())
     :kv(t.ldDE.units,ldN(E.awardedUnits))+kv(t.ldDE.total,ldNIS(E.awardedLandTotal))+kv(t.ldDE.lpu,ldNIS(E.landPerUnit))+kv(t.ldDE.dpu,ldNIS(E.developmentPerUnit))+kv(t.ldDE.tpu,ldNIS(E.totalBasisPerUnit))+kv(t.ldDE.prem,ldPct(E.premiumVsMinimum))+kv(t.ldDE.app,ldPct(E.premiumVsAppraisal))}
     ${kv(t.ldDE.bids,ldN(E.bidsReceived))}</div><p class="ho-note">${t.ldDEconNote}${E.perUnitScope?` ${t.ldDPerUnitScope[E.perUnitScope]||""}.`:""}</p>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
-  const plans=(d.plans||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["plan","join","station","before","delta","after","date","pot","link"].map(k=>`<th>${t.ldDP[k]}${k==="after"?" "+vcTag("der"):""}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory,U=pl.units||{};
+  const plans=(d.plans||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="ldplans"><thead><tr>${["plan","join","station","before","delta","after","date","pot","link"].map(k=>`<th>${t.ldDP[k]}${k==="after"?" "+vcTag("der"):""}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory,U=pl.units||{};
     return`<tr><td class="num">${ldE(pl.plan)}</td><td>${pl.via==="lot"?(x?`<span class="ho-chip">${t.ldDPlanExact}</span>`:pl.xplanStatus==="not-found"?`<span class="ho-na">${t.ldDPlanNo}</span>`:`<span class="ho-na">${t.ldDPlanPending}</span>`):`<span class="ho-na">${t.ldDPlanLink}</span>`}</td>
       <td>${x?ldTx(x.station):ldDash()}</td><td class="num">${x?ldN(U.existingAuthorisedUnits):ldDash()}</td><td class="num">${x&&U.planUnitDelta!=null?`<span class="num">${U.planUnitDelta>0?"+":""}${fmtInt(U.planUnitDelta)}</span>`:ldDash()}</td><td class="num">${x?ldN(U.unitsAfterPlan):ldDash()}</td><td class="num">${x?ldDate(x.approvalDate):ldDash()}</td><td class="num">${inv?`${fmtInt(inv.potentialUnits)} <span class="ho-na">(${ldE(String(inv.asOf||"").slice(0,4))})</span>`:ldDash()}</td>
       <td>${x&&x.url?`<a href="${ldE(x.url)}" target="_blank" rel="noopener">↗</a>`:ldDash()}</td></tr>`}).join("")}</tbody></table></div><p class="ho-note">${t.ldPU.note}</p>`:`<p class="ho-note">${t.ldDPlansNone}</p>`;
@@ -6886,6 +7748,7 @@ function renderLdDrawer(){
       <p class="ho-note"><a href="${ldE(r.page)}" target="_blank" rel="noopener">${t.ldDOpen} ↗</a></p>`)}
     ${sec(t.ldDClass,O,`<div class="ho-dl">${kv(t.ldDType,ldTx(r.type))}${kv(t.ldDPurpose,ldTx(r.purpose))}${kv(t.ldDTrack,ldE(ldTrackName(r.track)))}${kv(t.ldDRegion,ldTx(r.region))}${kv(t.ldDPops,pops||ldDash())}${kv(t.ldDBasisL,r.priceBasis?ldE(t.ldBasis[r.priceBasis]):ldDash())}</div>`)}
     ${sec(t.ldDDates,O,`<div class="ho-dl">${kv(t.ldDPub,ldDate(r.publishedDate))}${kv(t.ldDOpenD,ldDate(r.openDate))}${kv(t.ldDCloseD,ldDate(r.closeDate))}${kv(t.ldDComm,ldDate(r.committeeDate))}${kv(t.ldDLottery,ldDate(r.lotteryDate))}${kv(t.ldDSrcUpd,ldDate(r.sourceUpdatedAt))}</div>`)}
+    ${d.dira||r.track==="rental"?sec(t.rtD.title,O,rtDrawerHTML(d.dira,r)):""}
     ${sec(t.ldDLots(r.lots?fmtInt(r.lots.length):"—"),O,lots)}
     ${sec(t.ldDEcon,D,econ)}
     ${sec(t.ldDPlans,D,plans+(parcels?`<p class="ho-note">${t.ldDParcels}: ${parcels}</p>`:""))}
@@ -6894,13 +7757,15 @@ function renderLdDrawer(){
     ${sec(t.ldDHist,"",hist?`<ul class="ho-note ld-ul">${hist}</ul>`:`<p class="ho-note">${t.ldDHistNone}</p>`)}
     ${sec(t.ldDProv,"",`<div class="ho-dl">${kv(t.ldDSrc,ldE(t.ldSrcName))}${kv(t.ldDListAt,ldDate(P.fetchedAt))}${kv(t.ldDDetailAt,P.detail?ldDate(P.detail.fetchedAt):ldDash())}${kv(t.ldDMapAt,P.map?ldDate(P.map.fetchedAt):ldDash())}
       ${kv(t.ldDFirst,ldDate(r.firstSeenAt))}${kv(t.ldDChecked,ldDate(r.lastSeenAt))}${kv(t.ldDInSrc,r.inLatestSource===false?t.ldDNo:t.ldDYes)}${kv(t.ldDSnap,`<span class="num" style="font-size:11px">${ldE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
+  ptDomAll(el("ldPanel"));
 }
 function initLand(){
   const sec=el("land");if(!sec)return;
+  ldRestore();
   const drawer=el("ldDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const setF=(k,v)=>{ldState.f[k]=v||null;ldState.page=1;ldState.citiesAll=false;ldState.devsAll=false;ldLoad()};
   const onClick=e=>{
-    const b=e.target.closest("[data-ldper],[data-ldscope],[data-ldset],[data-ldreset],[data-ldm],[data-ldb],[data-ldgo],[data-ldcitiesall],[data-lddevsall],[data-ldsort],[data-ldpage],[data-ldclose],[data-ldid],[data-ldmap]");
+    const b=e.target.closest("[data-ldper],[data-ldscope],[data-ldset],[data-ldreset],[data-ldm],[data-ldb],[data-ldgo],[data-ldcitiesall],[data-lddevsall],[data-rtall],[data-ldpage],[data-ldclose],[data-ldid],[data-ldmap]");
     if(!b)return;
     const d=b.dataset,f=ldState.f;
     if(d.ldclose!==undefined){ldClose();return}
@@ -6912,10 +7777,9 @@ function initLand(){
     if(d.ldb){ldState.bucket=d.ldb;ldLoad();return}
     if(d.ldgo){setF(d.ldgo,d.ldv);return}
     if(d.ldcitiesall!==undefined){ldState.citiesAll=!ldState.citiesAll;renderLand();return}
+    if(d.rtall!==undefined){ldState.rtAll=!ldState.rtAll;renderLand();return}
     if(d.lddevsall!==undefined){ldState.devsAll=!ldState.devsAll;renderLand();return}
     if(d.ldmap!==undefined){ldState.mapOn=!ldState.mapOn;if(ldState.mapOn)ldMapLoad();else renderMap(true);renderLand();return}
-    if(d.ldsort){if(ldState.sort===d.ldsort)ldState.order=ldState.order==="asc"?"desc":"asc";else{ldState.sort=d.ldsort;ldState.order=["publishedDate","closeDate","committeeDate","awardedLandTotal","landPerUnit","units"].includes(d.ldsort)?"desc":"asc"}
-      ldState.page=1;ldLoad("rows");return}
     if(d.ldpage){ldState.page=Math.max(1,+d.ldpage);ldLoad("rows");el("ldTblHead").scrollIntoView({block:"nearest"});return}
     if(d.ldid){ldOpen(d.ldid,b.closest("#ldPanel")?ldState.returnFocus:b);return}
   };
@@ -7141,10 +8005,41 @@ en:{
   hitDev:(l,p,c)=>`${l} lots · ${p} lottery projects · ${c} cities`,hitN:n=>`${n} tenders`,showAll:n=>`Show all ${n} results`,showLess:"Fewer results",
 }};
 const IT=()=>IN_I18N[state.lang];
-const inState={tab:"developers",period:"all",sort:"units",order:"desc",page:1,q:"",city:"",kind:"",
+const inState={tab:"developers",period:"all",page:1,q:"",city:"",kind:"",
   data:null,cov:null,status:"idle",err:null,req:0,started:false,
   sq:"",sres:null,sbusy:false,sreq:0,sopen:null,
   open:null,detail:null,detailErr:null,returnFocus:null};
+/* the intelligence tables' columns, one table state per tab (lib/entities/query.js, lib/renewal/query.js): sorted and
+   filtered on the server over the whole filtered set, missing values last */
+const IN_KEY={developers:"ind",projects:"inp",entries:"ine",renewal:"inr"};
+const IN_DEF={developers:{key:"units",dir:"desc"},projects:{key:"date",dir:"desc"},entries:{key:"date",dir:"desc"},renewal:{key:"declarationDate",dir:"desc"}};
+const inFacet=k=>(v,quiet)=>{inState[k]=v||"";inState.page=1;if(!quiet)inLoad()};
+function inCols(tab){
+  const t=IT(),C=t.c,R=t.rn,L=R.pl;tab=tab||inState.tab;
+  const n=(k,label,o)=>({k,label,type:"number",sort:true,filter:true,num:true,...o});
+  if(tab==="developers")return [{k:"name",label:C.name,type:"text",sort:true,filter:true},n("lots",C.lots),n("units",C.units),n("land",C.land,{type:"currency"}),
+    n("projects",C.mproj),n("munits",C.munits),n("cities",C.cities),n("cons",C.cons,{filter:false}),{k:"last",label:C.last,type:"date",sort:true,filter:true,num:true}];
+  if(tab==="projects"){const one=!!inState.kind;
+    return [{k:"kind",label:C.kind,type:"status",ftype:"geo",flabel:C.kind,sort:true,filter:true,facet:inFacet("kind"),fval:()=>inState.kind,opts:()=>[{value:"moch",label:t.kindMoch},{value:"ila",label:t.kindIla}]},
+      {k:"name",label:C.pname,type:"text",sort:true,filter:true},{k:"developer",label:C.dev,type:"text",sort:true,filter:true},
+      {k:"city",label:C.place,type:"text",sort:true,filter:true,facet:inFacet("city"),fval:()=>inState.city},n("units",C.punits),
+      {k:"price",label:C.price,type:"currency",sort:one,filter:one,num:true,why:one?"":t.ptMixed},
+      {k:"stage",label:C.stage,type:"status",ftype:"geo",flabel:C.stage,sort:true,filter:true,facet:inFacet("stage"),fval:()=>inState.stage,opts:()=>Object.keys(t.stages).map(k=>({value:k,label:t.stages[k]}))},
+      {k:"date",label:C.date,type:"date",sort:true,filter:true,num:true}]}
+  if(tab==="entries")return [{k:"developer",label:C.edev,type:"text",sort:true,filter:true},{k:"city",label:C.ecity,type:"text",sort:true,filter:true},
+    {k:"date",label:C.edate,type:"date",sort:true,filter:true,num:true},{k:"via",label:C.evia,type:"status",sort:true},{k:"earlier",label:C.eearlier,type:"date",sort:true,filter:true,num:true}];
+  return [{k:"name",label:R.c.name,type:"text",sort:true,filter:true},{k:"city",label:R.c.city,type:"text",sort:true,filter:true},{k:"track",label:R.c.track,type:"text",sort:true,filter:true},
+    {k:"declaration",label:R.c.decl,type:"status",ftype:"geo",flabel:R.c.decl,sort:true,filter:true,facet:inFacet("decl"),fval:()=>inState.decl,opts:()=>Object.keys(R.decl).map(k=>({value:k,label:R.decl[k]}))},
+    {k:"stage",label:R.c.status,type:"status",ftype:"geo",flabel:R.stageL,sort:true,filter:true,facet:inFacet("stage"),fval:()=>inState.stage,opts:()=>Object.keys(R.stages).map(k=>({value:k,label:R.stages[k]}))},
+    {k:"planning",label:L.col,type:"status",ftype:"geo",flabel:L.pstageL,sort:true,filter:true,facet:inFacet("pstage"),fval:()=>inState.pstage,opts:()=>Object.keys(L.stages).map(k=>({value:k,label:L.stages[k]})).concat([{value:"none",label:L.noneP}])},
+    n("existingUnits",R.c.ex),n("additionalUnits",R.c.add),n("proposedUnits",R.c.prop),{k:"declarationDate",label:R.c.date,type:"date",sort:true,filter:true,num:true},
+    {k:"planNumber",label:R.c.plan,type:"text",sort:true,filter:true}];
+}
+function inPersist(){const k=IN_KEY[inState.tab],st=ptLoad(k);st.page=inState.page;st.x={};
+  for(const f of["q","city","kind","period","stage","decl","pstage","match","flag"])if(inState[f]&&!(f==="period"&&inState[f]==="all"))st.x[f]=String(inState[f]);ptSave(k);
+  const g=ptLoad("in");g.x={tab:inState.tab};ptSave("in")}
+function inRestore(tab){const st=ptLoad(IN_KEY[tab]);inState.page=st.page||1;
+  for(const f of["q","city","kind","stage","decl","pstage","match","flag"])inState[f]=(st.x&&st.x[f])||"";inState.period=(st.x&&st.x.period)||"all"}
 const inE=s=>calcEsc(s==null?"":s);
 const inDash=()=>`<span class="ho-na" title="${inE(IT().missing)}">—</span>`;
 const inN=v=>v==null?inDash():`<span class="num">${fmtInt(v)}</span>`;
@@ -7164,8 +8059,12 @@ function inLoad(){
   const id=++inState.req;inState.status="loading";renderIntel();
   const view=inState.tab==="entries"?"signals":inState.tab,p=new URLSearchParams({view});
   if(view==="renewal"){if(inState.stage)p.set("stage",inState.stage);if(inState.decl)p.set("declaration",inState.decl);if(inState.pstage)p.set("pstage",inState.pstage);if(inState.match)p.set("match",inState.match);if(inState.flag)p.set("flag",inState.flag)}
-  if(view!=="signals"){p.set("page",String(inState.page));p.set("size","25");p.set("sort",inState.sort);p.set("order",inState.order);if(inState.q)p.set("q",inState.q)}
-  else p.set("limit","300");
+  inPersist();
+  const so=ptSort(IN_KEY[inState.tab],IN_DEF[inState.tab]);
+  p.set("page",String(inState.page));p.set("size","25");p.set("sort",so.key);p.set("order",so.dir);p.set("lang",state.lang);
+  for(const[k,v]of Object.entries(ptParams(IN_KEY[inState.tab],"f_",inCols())))p.set(k,v);
+  if(view!=="signals"&&inState.q)p.set("q",inState.q);
+  if(view==="projects"&&inState.stage)p.set("stage",inState.stage);
   if(view==="developers")p.set("period",inState.period);
   if(view==="projects"&&inState.kind)p.set("kind",inState.kind);
   if(inState.city)p.set("city",inState.city);
@@ -7181,17 +8080,14 @@ function inBarHTML(){
   if(s.tab==="renewal"){const R=t.rn;
     const stSel=`<select class="ho-sel" data-instage aria-label="${inE(R.stageL)}"><option value="">${R.allStages}</option>${Object.keys(R.stages).map(k=>`<option value="${k}"${s.stage===k?" selected":""}>${inE(R.stages[k])}</option>`).join("")}</select>`;
     const dSel=`<select class="ho-sel" data-indecl aria-label="${inE(R.declL)}"><option value="">${R.allDecl}</option>${Object.keys(R.decl).map(k=>`<option value="${k}"${s.decl===k?" selected":""}>${inE(R.decl[k])}</option>`).join("")}</select>`;
-    const so=`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${Object.keys(R.sort).map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${R.sort[k]}</option>`).join("")}</select>`;
     const L=R.pl,opt=(v,txt,cur)=>`<option value="${v}"${cur===v?" selected":""}>${inE(txt)}</option>`;
     const mSel=`<select class="ho-sel" data-inmatch aria-label="${inE(L.matchL)}">${opt("",L.allMatch,s.match||"")}${Object.keys(L.match).map(k=>opt(k,L.match[k],s.match)).join("")}</select>`;
     const pSel=`<select class="ho-sel" data-inpstage aria-label="${inE(L.pstageL)}">${opt("",L.allP,s.pstage||"")}${Object.keys(L.stages).map(k=>opt(k,L.stages[k],s.pstage)).join("")}${opt("none",L.noneP,s.pstage)}</select>`;
     const fSel=`<select class="ho-sel" data-inflag aria-label="${inE(L.flagL)}">${opt("",L.allFlags,s.flag||"")}${Object.keys(L.flags).map(k=>opt(k,L.flags[k],s.flag)).join("")}</select>`;
-    return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${mSel}${pSel}${fSel}${so}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
-  const sorts=s.tab==="developers"?["units","lots","projects","cities","last","name"]:s.tab==="projects"?["date","units","name"]:[];
-  const sort=sorts.length?`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${sorts.map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${k==="units"&&s.tab==="projects"?t.sort.unitsP:t.sort[k]}</option>`).join("")}</select>`:"";
+    return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${mSel}${pSel}${fSel}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
   const filt=s.tab!=="entries"?`<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(t.filterPh[s.tab])}" aria-label="${inE(t.filterPh[s.tab])}">`:"";
   const city=`<input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`;
-  return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${per}${kind}${sort}${filt}${city}`;
+  return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${per}${kind}${filt}${city}`;
 }
 function inCovHTML(C){
   const t=IT(),F=(inState.data&&inState.data.freshness)||(inState.cov&&inState.cov.freshness)||{},L=F.land||{},H=F.housing||{},DC=L.detailCoverage||{};
@@ -7235,11 +8131,11 @@ function inEntryRow(r){
   return `<tr tabindex="0" data-indev="${inE(r.developerId)}"><td class="w"><bdi>${inE(r.developer)}</bdi></td><td class="w">${inCity(r)}</td><td class="num">${inDate(r.date)}</td><td>${inE(t.via[r.via]||r.via)}</td><td class="num">${inDate(r.earlierActivityFrom)}</td></tr>`;
 }
 function inTableHTML(d){
-  const t=IT(),C=t.c,th=k=>`<th>${C[k]}</th>`;
+  const k=IN_KEY[inState.tab],head=ptHead(k,inCols(),ptLoad(k));
   if(!d.rows||!d.rows.length)return "";
-  if(inState.tab==="developers")return `<thead><tr>${["name","lots","units","land","mproj","munits","cities","cons","last"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inDevRow).join("")}</tbody>`;
-  if(inState.tab==="projects")return `<thead><tr>${["kind","pname","dev","place","punits","price","stage","date"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inProjRow).join("")}</tbody>`;
-  return `<thead><tr>${["edev","ecity","edate","evia","eearlier"].map(th).join("")}</tr></thead><tbody>${d.rows.map(inEntryRow).join("")}</tbody>`;
+  if(inState.tab==="developers")return `${head}<tbody>${d.rows.map(inDevRow).join("")}</tbody>`;
+  if(inState.tab==="projects")return `${head}<tbody>${d.rows.map(inProjRow).join("")}</tbody>`;
+  return `${head}<tbody>${d.rows.map(inEntryRow).join("")}</tbody>`;
 }
 function inCardsHTML(d){
   const t=IT();if(!d.rows)return "";
@@ -7277,8 +8173,12 @@ function renderIntel(){
   PL.sort((a,b)=>ORD.indexOf(a[0])-ORD.indexOf(b[0]));
   const plCell=(x,lab)=>x?`<span class="in-pl-s">${lab} <b class="num">${fmtInt(x.n)}</b>${x.unitsKnown?` · <span class="num">${fmtInt(x.units)}</span> ${t.c.punits}`:""}</span>`:"";
   const pipe=PL.length?`<div class="in-pl"><div class="in-pl-h"><b>${t.pipeT}</b> ${vcTag("der")} <span class="tx-note">${t.pipeS}</span></div><div class="in-pl-r">${PL.map(([k,v])=>`<div class="in-pl-c">${inStage(k)}${plCell(v.ila,t.pipeIla)}${plCell(v.moch,t.pipeMoch)}</div>`).join("")}</div></div>`:"";
-  el("inTblHead").innerHTML=`${pipe}<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="projects"?"raw":"der")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
-  el("inTbl").innerHTML=inTableHTML(d)||`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
+  const K=IN_KEY[inState.tab],cf=d.beforeColumnFilters!=null&&d.total!=null&&d.total<d.beforeColumnFilters;
+  el("inTblHead").innerHTML=`${pipe}<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="projects"?"raw":"der")}</h3><span class="tx-note">${cf?T().ptColRows(fmtInt(d.total),fmtInt(d.beforeColumnFilters))+" · ":""}${t.tblS[inState.tab]}</span>`;
+  el("inTbl").dataset.ptkey=K;
+  el("inTbl").innerHTML=inTableHTML(d)||`${ptHead(K,inCols(),ptLoad(K))}<tbody><tr><td class="ho-note" colspan="9">${t.none}</td></tr></tbody>`;
+  el("inTblPt").dataset.ptbar=K;el("inTblPt").innerHTML=ptBar(K,inCols(),ptLoad(K),{cards:true});
+  inBindTables(sec);
   el("inCards").innerHTML=inCardsHTML(d);
   const pages=d.pages||1;
   el("inPager").hidden=pages<=1;
@@ -7286,8 +8186,10 @@ function renderIntel(){
     <span>${t.page(`<span class="num">${d.page}</span>`,`<span class="num">${pages}</span>`)}</span>
     <button type="button" data-inpage="${d.page+1}"${d.page>=pages?" disabled":""}>${t.next}</button>`:"";
   el("inFoot").textContent=t.foot;
+  if(st!=="loading")ptRefocus();
   if(inState.open)renderInDrawer();
 }
+function inBindTables(sec){for(const tab of Object.keys(IN_KEY))ptBind(sec,{key:IN_KEY[tab],cols:()=>inCols(tab),def:()=>IN_DEF[tab],onChange:()=>{inState.page=1;inLoad()}})}
 /* ---------------- unified search (one query → routed entities) ---------------- */
 let inSTimer=null;
 function inSearch(q){
@@ -7359,7 +8261,7 @@ function renderInDrawer(){
   const O=vcTag("raw"),D=vcTag("der"),K=t.kv;
   const srcList=(d.sources||[]).map(s=>`<li><b>${inE(state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher)}</b> — ${inE(s.name)} <span class="ho-chip">${inE(s.classification)}</span><div class="sub">${inE(s.role||"")}</div></li>`).join("");
   const meth=`<ul class="ho-note ld-ul">${t.meth.map(m=>`<li>${inE(m)}</li>`).join("")}</ul>`;
-  if(o.kind==="renewal"){p.innerHTML=renewalDrawerHTML(d,close);return}
+  if(o.kind==="renewal"){p.innerHTML=renewalDrawerHTML(d,close);ptDomAll(p);return}
   if(o.kind==="developer"){
     const A=d.tenders||{},AR=d.tendersRecent||{},M=d.lotteries||{},MR=d.lotteriesRecent||{},C=d.construction;
     const two=(lab,a,b)=>`<tr><th>${lab}</th><td class="num">${a}</td><td class="num">${b}</td></tr>`;
@@ -7372,9 +8274,9 @@ function renderInDrawer(){
       ${two(K.projects,inN(M.projects),inN(MR.projects))}${two(K.lotteries,inN(M.lotteries),inN(MR.lotteries))}${two(K.ufirst,inN(M.unitsFirstLotteries),inN(MR.unitsFirstLotteries))}
       ${two(K.apps,inN(M.applicantsFirstLotteries),inN(MR.applicantsFirstLotteries))}${two(K.firstl,inDate(M.firstLottery),inDate(MR.firstLottery))}${two(K.lastl,inDate(M.lastLottery),inDate(MR.lastLottery))}</tbody></table>`;
     const cons=C?`<div class="ho-dl">${kv(K.clots,inN(C.lots))}${kv(K.cbld,inN(C.buildings))}${kv(K.cunits,inN(C.units||null))}${kv(K.cstart,inN(C.started))}${kv(K.ccomp,inN(C.completed))}${kv(K.cfirst,inDate(C.firstStart))}${kv(K.clast,inDate(C.lastCompletion))}${kv(K.casof,inDate(C.asOf))}</div><p class="ho-note">${inE(C.join||"")}</p>`:`<p class="ho-note">${t.noneYet}</p>`;
-    const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${t.c.edate}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
-    const sites=(d.sites||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.sTender}</th><th>${t.c.ecity}</th><th>${t.sUnits}</th><th>${t.sLand}</th><th>${t.c.stage}</th><th>${t.sDecision}</th></tr></thead><tbody>${d.sites.map(s=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(s.id)}"><span class="num">${inE(s.tender||"")}</span> · <span class="num">${inE(s.lotId)}</span></button></td><td>${inCity(s)}</td><td class="num">${inN(s.units)}</td><td class="num">${s.bidPerSqm!=null?`<span class="num">${fmtNIS(s.bidPerSqm)}/m²</span>`:inNIS(s.landPrice)}</td><td>${inStage(s.stage)}</td><td class="num">${inDate(s.decisionDate)}</td></tr>`).join("")}</tbody></table></div>${d.sitesTotal>d.sites.length?`<p class="ho-note">${t.more(fmtInt(d.sitesTotal-d.sites.length))}</p>`:""}`:`<p class="ho-note">${t.noneYet}</p>`;
-    const projs=(d.projects||[]).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.c.pname}</th><th>${t.c.ecity}</th><th>${t.pUnits}</th><th>${t.pPsm}</th><th>${t.c.stage}</th><th>${t.lt.date}</th></tr></thead><tbody>${d.projects.map(x=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(x.id)}"><bdi>${inE(x.name||x.projectId)}</bdi></button></td><td>${inCity(x)}</td><td class="num">${inN(x.unitsFirstLottery)}</td><td class="num">${x.pricePerSqm!=null?`<span class="num">${fmtNIS(x.pricePerSqm)}</span>`:inDash()}</td><td>${inStage(x.stage)}</td><td class="num">${inDate(x.lastLotteryDate)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="indm"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${t.c.edate}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
+    const sites=(d.sites||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="inds"${d.sitesTotal>d.sites.length?` data-ptnote="${inE(T().ptShown(fmtInt(d.sites.length),fmtInt(d.sitesTotal)))}"`:""}><thead><tr><th>${t.sTender}</th><th>${t.c.ecity}</th><th>${t.sUnits}</th><th>${t.sLand}</th><th>${t.c.stage}</th><th>${t.sDecision}</th></tr></thead><tbody>${d.sites.map(s=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(s.id)}"><span class="num">${inE(s.tender||"")}</span> · <span class="num">${inE(s.lotId)}</span></button></td><td>${inCity(s)}</td><td class="num">${inN(s.units)}</td><td class="num">${s.bidPerSqm!=null?`<span class="num">${fmtNIS(s.bidPerSqm)}/m²</span>`:inNIS(s.landPrice)}</td><td>${inStage(s.stage)}</td><td class="num">${inDate(s.decisionDate)}</td></tr>`).join("")}</tbody></table></div>${d.sitesTotal>d.sites.length?`<p class="ho-note">${t.more(fmtInt(d.sitesTotal-d.sites.length))}</p>`:""}`:`<p class="ho-note">${t.noneYet}</p>`;
+    const projs=(d.projects||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="indp"${d.projectsTotal>d.projects.length?` data-ptnote="${inE(T().ptShown(fmtInt(d.projects.length),fmtInt(d.projectsTotal)))}"`:""}><thead><tr><th>${t.c.pname}</th><th>${t.c.ecity}</th><th>${t.pUnits}</th><th>${t.pPsm}</th><th>${t.c.stage}</th><th>${t.lt.date}</th></tr></thead><tbody>${d.projects.map(x=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(x.id)}"><bdi>${inE(x.name||x.projectId)}</bdi></button></td><td>${inCity(x)}</td><td class="num">${inN(x.unitsFirstLottery)}</td><td class="num">${x.pricePerSqm!=null?`<span class="num">${fmtNIS(x.pricePerSqm)}</span>`:inDash()}</td><td>${inStage(x.stage)}</td><td class="num">${inDate(x.lastLotteryDate)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
     const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
     const ent=(d.entries||[]).length?`<ul class="ho-note ld-ul">${d.entries.map(x=>`<li>${inCity(x)} · ${inDate(x.date)} · ${inE(t.via[x.via]||x.via)}</li>`).join("")}</ul>`:"";
     p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.dDev} · ${inE(t.basisShort)}</span><h3 id="inDTitle"><bdi>${inE(d.name)}</bdi></h3>
@@ -7389,7 +8291,7 @@ function renderInDrawer(){
       ${(d.projects||[]).length?sec(t.dProjects,O,projs):""}
       ${sec(t.dSrc,"",`<ul class="ho-note ld-ul">${srcList}</ul>`)}
       ${sec(t.dMeth,"",meth)}`;
-    return;
+    ptDomAll(p);return;
   }
   /* project */
   const ila=d.kind==="ila-awarded-lot",S=d.stage||{evidence:[]};
@@ -7404,7 +8306,7 @@ function renderInDrawer(){
       ${sec(t.sPlans,O,`<p class="ho-note">${(d.planLots||[]).map(x=>`<span class="ho-chip num">${inE(x)}</span>`).join(" ")||inDash()}</p><p class="ho-note">${t.sParcels}: ${(d.parcels||[]).map(x=>`<span class="ho-chip num">${inE(x)}</span>`).join(" ")||inDash()}</p>`)}
       ${Cn?sec(t.dCons,D,`<div class="ho-dl">${kv(t.kv.cbld,inN(Cn.buildings))}${kv(t.kv.cunits,inN(Cn.units))}${kv(t.kv.cstart,inN(Cn.started))}${kv(t.kv.ccomp,inN(Cn.completed))}${kv(t.kv.cfirst,inDate(Cn.firstStart))}${kv(t.kv.clast,inDate(Cn.lastCompletion))}${kv(t.kv.casof,inDate(Cn.asOf))}</div>`):""}`;
   }else{
-    const lots=`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${["date","type","units","apps","winners","status"].map(k=>`<th>${t.lt[k]}</th>`).join("")}</tr></thead><tbody>${(d.lotteries||[]).map(l=>`<tr><td class="num">${inDate(l.date)}</td><td>${inE(t.ltype[l.type]||l.type)}</td><td class="num">${inN(l.units)}</td><td class="num">${inN(l.applicants)}</td><td class="num">${inN(l.winners)}</td><td>${inE(l.status||"")}</td></tr>`).join("")}</tbody></table></div>`;
+    const lots=`<div class="ld-scroll"><table class="ho-dt" data-ptdom="inpl"><thead><tr>${["date","type","units","apps","winners","status"].map(k=>`<th>${t.lt[k]}</th>`).join("")}</tr></thead><tbody>${(d.lotteries||[]).map(l=>`<tr><td class="num">${inDate(l.date)}</td><td>${inE(t.ltype[l.type]||l.type)}</td><td class="num">${inN(l.units)}</td><td class="num">${inN(l.applicants)}</td><td class="num">${inN(l.winners)}</td><td>${inE(l.status||"")}</td></tr>`).join("")}</tbody></table></div>`;
     body=`${sec(t.dProj,O,`<div class="ho-dl">${kv(t.pDev,devs)}${kv(t.pPlace,`${inCity(d)}${d.neighborhood?` · ${inE(d.neighborhood)}`:""}`)}${kv(t.pProgram,inE(d.programHe||""))}
         ${kv(t.pUnits,inN(d.unitsFirstLottery))}${kv(t.pLatestU,inN(d.unitsLatestOffered))}${kv(t.pPsm,d.pricePerSqm!=null?`<span class="num">${fmtNIS(d.pricePerSqm)}</span>`:inDash())}
         ${kv(t.pPermit,inE(d.permitStatusHe||"—"))}${kv(t.pStage,inE(d.projectStatusHe||"—"))}</div><p class="ho-note">${inE(t.pPsmNote)}</p>`)}
@@ -7418,9 +8320,11 @@ function renderInDrawer(){
     ${sec(t.pEvidence,D,ev)}
     ${sec(t.pJoin,"",`<p class="ho-note">${inE(ila?t.joinIla:t.joinMoch)}</p>`)}
     ${sec(t.pProv,"",`<div class="ho-dl">${kv(t.srcUpd,inDate(prov.sourceUpdatedAt))}${kv(t.fetched,inDate(prov.fetchedAt||prov.detailFetchedAt))}</div><ul class="ho-note ld-ul">${srcList}</ul>`)}`;
+  ptDomAll(el("inPanel"));
 }
 function initIntel(){
   const sec=el("intel");if(!sec)return;
+  {const g=ptLoad("in");if(g.x&&IN_KEY[g.x.tab])inState.tab=g.x.tab;inRestore(inState.tab)}
   const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const onClick=e=>{
     const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
@@ -7428,7 +8332,7 @@ function initIntel(){
     const d=b.dataset;
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
-    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":d.intab==="renewal"?"declared":"units";inState.order="desc";inState.q="";inState.stage="";inState.decl="";inState.pstage="";inState.match="";inState.flag="";inLoad()}return}
+    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.data=null;inRestore(d.intab);inLoad()}return}   /* never the previous tab's rows under the new tab's columns */
     if(d.inrn){inOpen("renewal",d.inrn,b.closest("#inPanel")?inState.returnFocus:b);return}
     if(d.inpst!==undefined){inState.pstage=inState.pstage===d.inpst?"":d.inpst;inState.page=1;inLoad();return}
     if(d.inper){inState.period=d.inper;inState.page=1;inLoad();return}
@@ -7450,7 +8354,6 @@ function initIntel(){
     if(d.inmatch!==undefined){inState.match=x.value;inState.page=1;inLoad();return}
     if(d.inpstage!==undefined){inState.pstage=x.value;inState.page=1;inLoad();return}
     if(d.inflag!==undefined){inState.flag=x.value;inState.page=1;inLoad();return}
-    if(d.insort!==undefined){inState.sort=x.value;inState.order=x.value==="name"?"asc":"desc";inState.page=1;inLoad();return}
   });
   let qt;
   sec.addEventListener("input",e=>{
@@ -7500,17 +8403,20 @@ function renderRenewal(d){
     <p class="tx-note rn-der"><b>${L.discT}:</b> ${Object.keys(L.disc).filter(k=>cmp[k]).map(k=>`${inE(L.disc[k])} <span class="num">${L.discN(rnCnt(dif[k]),fmtInt(cmp[k]))}</span>`).join(" · ")}</p>`:"";
   const CT=PS.cities||{},C=L.cityC;
   const cRow=c=>`<tr><td>${inE(c.city||"—")}</td><td class="num">${fmtInt(c.complexes)}</td><td class="num">${fmtInt(c.exact)} <span class="tx-note">(${c.matchRate}%)</span></td><td class="num">${c.mochProposedUnits&&c.mochProposedUnits.sum!=null?fmtInt(c.mochProposedUnits.sum):"—"}</td><td class="num">${rnCnt(c.xplanApprovedPlans)}</td><td class="num">${c.xplanUnitsAfterApprovedPlans&&c.xplanUnitsAfterApprovedPlans.sum!=null?fmtInt(c.xplanUnitsAfterApprovedPlans.sum):"—"}</td></tr>`;
-  const cities=(CT.largestPipeline||[]).length&&PF.synced?`<details class="rn-cities"><summary><b>${L.cityT}</b> ${D}</summary><div class="ld-scroll"><table class="ho-gt"><thead><tr><th>${C.city}</th><th>${C.cx}</th><th>${C.ex}</th><th>${C.prop}</th><th>${C.ap}</th><th>${C.apu}</th></tr></thead><tbody>${CT.largestPipeline.slice(0,10).map(cRow).join("")}</tbody></table></div>
+  const cities=(CT.largestPipeline||[]).length&&PF.synced?`<details class="rn-cities"><summary><b>${L.cityT}</b> ${D}</summary><div class="ld-scroll"><table class="ho-gt" data-ptdom="inrc" data-ptnote="${inE(L.cityT)}"><thead><tr><th>${C.city}</th><th>${C.cx}</th><th>${C.ex}</th><th>${C.prop}</th><th>${C.ap}</th><th>${C.apu}</th></tr></thead><tbody>${CT.largestPipeline.slice(0,10).map(cRow).join("")}</tbody></table></div>
     <p class="tx-note">${L.best}: ${(CT.bestCoverage||[]).map(c=>`${inE(c.city)} <span class="num">${c.matchRate}%</span>`).join(" · ")} — ${L.worst}: ${(CT.worstCoverage||[]).map(c=>`${inE(c.city)} <span class="num">${c.matchRate}%</span>`).join(" · ")} (${L.minC(CT.minComplexes||5)})</p></details>`:"";
   el("inTblHead").innerHTML=`${strip}${pipe}${derLine}${cities}<h3>${R.tblT(d.total!=null?fmtInt(d.total):"—")} ${vcTag("raw")}</h3><span class="tx-note">${R.tblS}</span>`;
   const st=r=>`<span class="ho-chip in-st-${inE(r.stage)}" title="${inE(r.statusHe||"")}">${inE(R.stages[r.stage]||r.stage)}</span>`;
   const xp=r=>{const P=r.planning;if(!P)return inDash();
     if(P.status!=="exact")return `<span class="ho-na rn-ms">${inE(L.match[P.status]||P.status)}</span>`;
     return `<span class="ho-chip rn-xs-${inE(P.stage)}">${inE(L.stages[P.stage]||P.stage)}</span>${P.differs&&P.differs.length?` <span class="rn-neq" title="${inE(P.differs.map(k=>L.disc[k]||k).join(" · "))}">≠</span>`:""}${P.stale?` <span class="vc na" title="${inE(L.stale)}">${inE(L.flags.stale)}</span>`:""}`};
-  el("inTbl").innerHTML=d.rows&&d.rows.length?`<thead><tr>${["name","city","track","decl","status"].map(k=>`<th>${R.c[k]}</th>`).join("")}<th>${L.col}</th>${["ex","add","prop","date","plan"].map(k=>`<th>${R.c[k]}</th>`).join("")}</tr></thead><tbody>${d.rows.map(r=>`<tr tabindex="0" data-inrn="${inE(r.id)}">
+  el("inTbl").dataset.ptkey="inr";el("inTblPt").dataset.ptbar="inr";el("inTblPt").innerHTML=ptBar("inr",inCols("renewal"),ptLoad("inr"),{cards:true});
+  inBindTables(el("intel"));
+  el("inTbl").innerHTML=d.rows&&d.rows.length?`${ptHead("inr",inCols("renewal"),ptLoad("inr"))}<tbody>${d.rows.map(r=>`<tr tabindex="0" data-inrn="${inE(r.id)}">
     <td class="w"><bdi class="nm">${inE(r.name||"")}</bdi><div class="sub"><span class="num">${inE(r.complexId)}</span></div></td><td class="w">${inE(r.city||"")}</td><td>${r.track?inE(r.track):inDash()}</td>
     <td>${inE(R.decl[r.declaration]||"—")}</td><td class="w">${st(r)}</td><td class="w">${xp(r)}</td><td class="num">${inN(r.existingUnits)}</td><td class="num">${inN(r.additionalUnits)}</td><td class="num">${inN(r.proposedUnits)}</td>
-    <td class="num">${inDate(r.declarationDate)}</td><td class="num">${r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash()}</td></tr>`).join("")}</tbody>`:`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
+    <td class="num">${inDate(r.declarationDate)}</td><td class="num">${r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash()}</td></tr>`).join("")}</tbody>`:`${ptHead("inr",inCols("renewal"),ptLoad("inr"))}<tbody><tr><td class="ho-note" colspan="11">${t.none}</td></tr></tbody>`;
+  ptDomAll(el("inTblHead"));
   el("inCards").innerHTML=(d.rows||[]).map(r=>`<div class="tcard" tabindex="0" data-inrn="${inE(r.id)}"><div class="r1"><bdi><b>${inE(r.name||"")}</b></bdi>${inDate(r.declarationDate)}</div>
     <div class="r2" style="color:var(--ink-3)">${inE(r.city||"")} · ${inE(R.decl[r.declaration]||"—")}</div><div class="r2">${st(r)}</div><div class="r2">${L.col}: ${xp(r)}</div>
     <div class="r2"><span>${R.c.ex} ${inN(r.existingUnits)}</span><span>${R.c.prop} ${inN(r.proposedUnits)}</span></div></div>`).join("");
@@ -7629,10 +8535,23 @@ function tcLoad(){
   tcState.started=true;tcState.status="loading";renderTrust();
   inGet("view=sources").then(d=>{tcState.data=d;tcState.status="ok";renderTrust()}).catch(()=>{tcState.status="error";renderTrust()});
 }
+const TC_ORDER=["SUCCESS","UNCHANGED","PARTIAL","STALE","REFUSED","FAILED","SCHEMA_CHANGED","NO_RUN"];
+function tcCols(){
+  const t=TT(),P=T(),src=(tcState.data&&tcState.data.sources)||[],uniq=f=>[...new Set(src.map(f).filter(Boolean))];
+  return [
+    {k:"name",label:P.ptTcName,type:"text",sort:true,filter:true,v:r=>state.lang==="en"&&r.s.publisherEn?r.s.publisherEn:r.s.publisher,fv:r=>[r.s.publisher,r.s.publisherEn,r.s.name,r.s.id].filter(Boolean).join(" ")},
+    {k:"vertical",label:P.ptTcVert,type:"text",ftype:"enum",sort:true,filter:true,v:r=>t.vert[r.s.vertical]||r.s.vertical,fv:r=>r.s.vertical,opts:()=>uniq(s=>s.vertical).map(v=>({value:v,label:t.vert[v]||v}))},
+    {k:"class",label:P.ptTcClass,type:"text",ftype:"enum",sort:true,filter:true,v:r=>r.s.classification,opts:()=>uniq(s=>s.classification).map(v=>({value:v,label:v}))},
+    {k:"state",label:P.ptTcState,type:"status",ftype:"enum",sort:true,filter:true,order:TC_ORDER,v:r=>(r.s.sync||{}).state||"NO_RUN",opts:()=>TC_ORDER.map(v=>({value:v,label:t.st[v]||v}))},
+    {k:"last",label:t.c.last,type:"date",sort:true,filter:true,v:r=>(r.s.sync||{}).lastCheckAt},
+    {k:"obs",label:t.c.obs,type:"date",sort:true,filter:true,v:r=>r.s.latestObservation},
+    {k:"upd",label:t.c.upd,type:"date",sort:true,filter:true,v:r=>r.s.sourceUpdatedAt}];
+}
 function renderTrust(){
   const box=el("tcBody");if(!box)return;
   const t=TT(),d=tcState.data;
   if(!d){box.innerHTML=`<p class="ho-note">${tcState.status==="error"?(inOffline()?t.offline:t.err):t.loading}</p>`;return}
+  const all=d.sources.map((s,i)=>({s,i})),shown=ptRows("tc",all,tcCols(),{key:"",dir:"asc"});
   const counts=Object.entries(d.counts||{}).map(([k,n])=>`${tcSt(k)} <span class="num">${fmtInt(n)}</span>`).join(" ");
   const row=(s,i)=>{const S=s.sync||{};const name=state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher;
     const used=s.usedFor?(state.lang==="en"?s.usedFor.en:s.usedFor.he):"";
@@ -7656,12 +8575,14 @@ function renderTrust(){
       <span class="tc-d"><span class="k">${t.c.obs}</span> ${s.latestObservation!=null?`<span class="num">${inE(s.latestObservation)}</span>`:inDash()}</span>
       <span class="tc-d"><span class="k">${t.c.upd}</span> ${inDate(s.sourceUpdatedAt)}</span></button>${det}</div>`};
   box.innerHTML=`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
-    <div class="tc-list">${d.sources.map(row).join("")}</div>
+    ${ptBar("tc",tcCols(),ptLoad("tc"),{all:true,note:shown.length<all.length?T().ptKept(fmtInt(shown.length),fmtInt(all.length)):""})}
+    <div class="tc-list">${shown.map(x=>row(x.s,x.i)).join("")}</div>
     <details class="tc-leg"><summary>${t.legend} · ${t.principles}</summary><ul class="ho-note ld-ul">${Object.entries(d.vocabulary||{}).map(([k,v])=>`<li>${tcSt(k)} ${inE(v)}</li>`).join("")}</ul>
       <ul class="ho-note ld-ul">${(d.principles||[]).map(x=>`<li>${inE(x)}</li>`).join("")}</ul></details>`;
 }
 function initTrust(){
   const box=el("trust");if(!box)return;
+  ptBind(box,{key:"tc",cols:tcCols,def:()=>({key:"",dir:"asc"}),onChange:()=>{renderTrust();ptRefocus()}});
   box.addEventListener("click",e=>{const b=e.target.closest("[data-tcrow]");if(!b)return;const i=+b.dataset.tcrow;tcState.open=tcState.open===i?null:i;renderTrust()});
   if("IntersectionObserver" in window){
     const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!tcState.started)tcLoad()}},{rootMargin:"600px 0px"});
@@ -7699,7 +8620,7 @@ function setMode(mode){
   state.mode=mode;
   document.querySelectorAll('#modeToggle button,#modeToggleM button').forEach(b=>
     b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
-  state.sort={key:"name",dir:1};
+  const bs=ptLoad("board");bs.sort=null;bs.f={};ptSave("board");      /* the columns mean other values in the other mode */
   refresh(true);
 }
 function setLang(lang){
