@@ -85,6 +85,9 @@ const data = (plans, { planKeys, mavatIds } = {}) => ({ meta: { checkedAt: FETCH
     const nf = P.matchComplex(complex({ planNumber: '999-9990008' }), asked);
     assert.equal(nf.status, 'not-found'); assert.equal(nf.diagnostics.numberAsked, true); assert.equal(nf.oldFormat, false);
     assert.equal(P.matchComplex(complex({ planNumber: 'גב/490' }), P.indexOf({ plans: [], lookups: { planKeys: ['גב/490'] } })).oldFormat, true, 'a local-format number is diagnosed as such');
+    const vat = P.matchComplex(complex({ planNumber: 'תמל/2064' }), P.indexOf({ plans: [], lookups: { planKeys: ['תמל/2064'] } }));
+    assert.equal(vat.oldFormat, false, 'a VATMAL number is not a local pre-online number'); assert.equal(vat.diagnostics.format, 'vatmal');
+    assert.deepEqual(['101-0935189', 'תמל/2022', 'גב/490', null].map((k) => P.formatOf(k)), ['national', 'vatmal', 'local', null]);
   });
   await t('geometry without an exact identifier is never a join — it is recorded as a diagnostic only', () => {
     const p = plan({ pl_number: '999-9990009', mp_id: 99999009 });
@@ -206,6 +209,41 @@ const data = (plans, { planKeys, mavatIds } = {}) => ({ meta: { checkedAt: FETCH
     const r = spawnSync(process.execPath, ['-r', stub, path.join(ROOT, 'scripts/renewal-planning-sync.js')], { env: { ...process.env, RENEWAL_DATA_DIR: dir }, encoding: 'utf8' });
     assert.equal(r.status, 1, r.stdout + r.stderr);
     assert.equal(S.readPlanning().plans[0].mpId, 99999030, 'the stored plan stays'); assert.equal(S.readRuns().slice(-1)[0].status, 'failed');
+  });
+  console.log('renewal × xplan: the committed data and the page');
+  await t('over the committed data: every exact join is proven by its own key; the counts add up; no fuzzy evidence exists', () => {
+    const RN = require('../lib/renewal/query'), C = RN.load();
+    if (!C.planning) return;                                                  // before the first read every complex is "not checked"
+    const K = C.join.coverage;
+    assert.equal(K.exact + K.ambiguous + K.notFound + K.noIdentifier + K.notChecked, K.complexes, 'every complex in exactly one state');
+    for (const c of C.live) {
+      const j = C.join.byComplex.get(c.id);
+      if (j.match.status !== 'exact') { assert.equal(j.plan, null); continue; }
+      assert.ok(j.match.evidence.length && j.match.evidence.every((e) => e === 'plan-number' || e === 'mavat-id'), c.id);
+      if (j.match.evidence.includes('plan-number')) assert.equal(P.planKey(c.planNumber), j.plan.planKey, c.id + ' plan number');
+      if (j.match.evidence.includes('mavat-id')) assert.equal(P.mavatIdOf(c), j.plan.mpId, c.id + ' Mavat id');
+      assert.ok(!/PERMIT|CONSTRUCTION|COMPLET/.test(j.plan.stage));
+    }
+    const S = RN.summary({}), rows = RN.records({ match: 'exact', size: 1 });
+    assert.equal(rows.total, S.planning.coverage.exact, 'the match filter and the coverage agree');
+    assert.equal(RN.records({ pstage: 'EFFECTIVE', size: 1 }).total, (S.planning.pipeline.find((x) => x.stage === 'EFFECTIVE') || { complexes: 0 }).complexes);
+    const d = RN.record(rows.rows[0].id).planning;
+    assert.ok(d.plan && d.plan.provenance.source === 'iplan:xplan:renewal' && d.freshness.checkedAt);
+  });
+  await t('the page: PLANNING STATUS beside the MoCH values, "—" for missing, DERIVED tags, only milestones that exist, never "|| 0"', () => {
+    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const fn = (name) => { const i = html.indexOf('function ' + name + '('); assert.ok(i > -1, name); return html.slice(i, html.indexOf('\nfunction ', i + 10)); };
+    const list = fn('renderRenewal'), drawer = fn('renewalDrawerHTML');
+    assert.doesNotMatch(list + drawer, /\|\|\s*0\b/, 'a missing figure is never rendered as 0');
+    assert.match(drawer, /L\.sec/); assert.match(drawer, /urow\(L\.urow\.prop\+" "\+D/, 'the summed after-the-plan units are tagged DERIVED');
+    assert.match(drawer, /\.filter\(\(\[,v\]\)=>v\)/, 'a timeline milestone without a date is not drawn');
+    assert.match(drawer, /X\.stage==="EFFECTIVE"\?XD\.gazetteDate:null/, 'the in-force milestone only on an EFFECTIVE plan');
+    assert.match(html, /pl:\{t:"תכנון — מינהל התכנון \(XPlan\)"/); assert.match(html, /pl:\{t:"Planning — Planning Administration \(XPlan\)"/);
+    for (const st of P.STAGES.concat(P.TERMINAL, P.OTHER)) assert.ok(html.includes(st + ':"'), 'a label for every stage: ' + st);
+  });
+  await t('the Trust Center lists the planning join with its run state', () => {
+    const c = require('../lib/trust/catalog').catalog(), s = c.sources.find((x) => x.id === 'iplan:xplan:renewal');
+    assert.ok(s && s.vertical === 'renewal' && s.sync && s.sync.state); assert.ok(s.limitations.some((l) => /never by name or geometry/.test(l)));
   });
   await t('no credential or store address in the planning modules', () => {
     for (const f of ['lib/renewal/planning.js', 'lib/renewal/planning-source.js', 'lib/renewal/planning-store.js', 'scripts/renewal-planning-sync.js']) {

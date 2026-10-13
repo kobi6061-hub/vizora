@@ -1268,6 +1268,30 @@ details.ci-more>.in{padding:2px 13px 12px}
 .ho-chip.in-r-moch{border-color:var(--brass);color:var(--brass)}
 .ho-chip.in-st-construction-started,.ho-chip.in-st-completed,.ho-chip.in-st-occupied{border-color:var(--up);color:var(--up)}
 .ho-chip.in-st-permitted{border-color:var(--accent);color:var(--accent-deep)}
+/* urban renewal × XPlan */
+.rn-pst{font:inherit;text-align:start;cursor:pointer;background:var(--paper)}
+.rn-pst:hover,.rn-pst.on{border-color:var(--accent)}
+.rn-pst.on{box-shadow:inset 0 0 0 1px var(--accent)}
+.ho-chip.rn-xs-EFFECTIVE,.ho-chip.rn-xs-APPROVED{border-color:var(--up);color:var(--up)}
+.ho-chip.rn-xs-DEPOSITED,.ho-chip.rn-xs-OBJECTIONS,.ho-chip.rn-xs-APPROVAL_PROCESS{border-color:var(--accent);color:var(--accent-deep)}
+.ho-chip.rn-xs-REJECTED{border-color:var(--down);color:var(--down)}
+.rn-neq{color:var(--brass);font-weight:700}
+.rn-ms{font-size:11.5px}
+.rn-why{font-weight:500;font-size:12.5px;line-height:1.5}
+.rn-der{margin:2px 0 6px;line-height:1.6}
+.rn-cities{margin:4px 0 10px;font-size:12px}
+.rn-cities summary{cursor:pointer;margin-bottom:6px}
+.rn-h5{font-size:12px;margin:12px 0 6px;color:var(--ink-2)}
+.rn-ph{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.rn-cmp td:first-child{white-space:normal;min-width:150px}
+.rn-tl{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 0;font-size:12px}
+.rn-tl li{display:flex;flex-direction:column;gap:2px;padding:4px 10px;border:1px solid var(--hairline);border-radius:9px;margin-inline-end:18px;position:relative}
+.rn-tl li+li::before{content:"→";position:absolute;inset-inline-start:-15px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
+[dir="rtl"] .rn-tl li+li::before{content:"←"}
+.rn-tl-l{color:var(--ink-3);font-size:11px}
+.rn-olw{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.rn-ol{width:180px;height:130px;border:1px solid var(--hairline);border-radius:9px;background:var(--paper)}
+.rn-ol path{fill:color-mix(in srgb,var(--accent) 14%,transparent);stroke:var(--accent);stroke-width:1.4;vector-effect:non-scaling-stroke}
 #inTbl td .nm{font-weight:700}
 #inTbl td .sub{margin-top:3px;display:flex;flex-wrap:wrap;gap:3px}
 .in-two th{text-align:start}
@@ -6758,13 +6782,44 @@ he:{
   tabsL:"תצוגה",tab:{developers:"יזמים",projects:"פרויקטים ואתרים",entries:"כניסה לשווקים",renewal:"התחדשות עירונית"},
   rn:{stages:{"declared":"ללא סטטוס","planning-initial":"תכנון ראשוני","planning-statutory":"תכנון סטטוטורי","approved":"תכנית מאושרת לפני מימוש","approved-in-implementation":"תכנית מאושרת במימוש","approved-after-licensing":"מאושרת — אחרי רישוי","unknown":"סטטוס לא מזוהה"},
     decl:{declared:"הוכרז",["not-yet-declared"]:"טרם הוכרז",["not-stated"]:"לא צוין"},declL:"הכרזה",allDecl:"כל מצבי ההכרזה",stageL:"סטטוס",allStages:"כל הסטטוסים",
-    sort:{declared:"תאריך הכרזה",proposed:"יח״ד מוצעות",city:"יישוב",name:"שם"},ph:"סינון לפי שם מתחם · תכנית · מספר",
+    sort:{declared:"תאריך הכרזה",proposed:"יח״ד מוצעות",city:"יישוב",name:"שם",maturity:"בשלות תכנונית (XPlan)"},ph:"סינון לפי שם מתחם · תכנית · מספר",
     kC:"מתחמים",kE:"יח״ד קיימות",kA:"תוספת יח״ד (כפי שפורסמה)",kP:"יח״ד מוצעות",of:(a,b)=>`סכום על ${a} מתוך ${b} מתחמים שמפרסמים`,
     c:{name:"מתחם",city:"יישוב",track:"מסלול",decl:"הכרזה",status:"סטטוס (משב״ש)",ex:"קיימות",add:"תוספת",prop:"מוצעות",date:"הוכרז",plan:"תכנית",year:"שנת תוקף"},
     tblT:n=>`${n} מתחמי התחדשות עירונית`,tblS:"לחיצה פותחת את המתחם",strip:"מתחמים לפי סטטוס משב״ש",stripS:"מספר · יח״ד מוצעות (סכום על המתחמים שמפרסמים) — מתחם מוכרז אינו בנייה",
     basis:"מתחמי ההתחדשות העירונית של משרד הבינוי והשיכון — מוכרזים, טרם הוכרזו או ללא ציון, כפי שכל שורה אומרת; לא כל פרויקטי ההתחדשות (תמ״א 38 אינה מתחם)",
     note:"הסטטוס הוא של משב״ש, כלשונו; מתחם מוכרז אינו בנייה. עמודת התוספת אינה בהכרח תוספת נטו — בחלק מהשורות היא אינה שווה למוצעות פחות קיימות.",
     addUp:{true:"קיימות + תוספת = מוצעות",false:"קיימות + תוספת ≠ מוצעות (כפי שפורסם)",null:"—"},
+    pl:{t:"תכנון — מינהל התכנון (XPlan)",s:"חיבור מדויק בלבד: מספר התכנית שמשב״ש מפרסם, ואחריו מזהה התכנית במבא״ת שבקישור של משב״ש — לעולם לא לפי שם או מיקום. אישור תכנית אינו היתר ואינו בנייה.",
+      stages:{PREPARATION:"הכנה",SUBMITTED:"בבדיקה תכנונית",PRE_DEPOSIT:"במילוי תנאים להפקדה",DEPOSITED:"הפקדה",OBJECTIONS:"הכרעה בהתנגדויות",APPROVAL_PROCESS:"בהליך אישור",APPROVED:"אושרה",EFFECTIVE:"בתוקף (פורסם אישור)",REJECTED:"נדחתה",OTHER:"אחר",UNKNOWN:"לא מזוהה"},
+      match:{exact:"חיבור מדויק",ambiguous:"דו-משמעי",["not-found"]:"לא נמצא ב-XPlan",["no-identifier"]:"ללא מזהה",["not-checked"]:"טרם נבדק"},
+      ev:{"plan-number":"מספר תכנית","mavat-id":"מזהה מבא״ת"},
+      matchL:"חיבור XPlan",allMatch:"כל מצבי החיבור",pstageL:"שלב תכנוני (XPlan)",allP:"כל השלבים (XPlan)",noneP:"ללא תכנית מחוברת",flagL:"סימון",allFlags:"כל המתחמים",
+      flags:{discrepancy:"פער משב״ש ↔ XPlan",stale:"תכנון לא פעיל",["no-evidence"]:"מאושרת ללא ראיית היתר/ביצוע",shared:"תכנית משותפת"},
+      kM:"חוברו ל-XPlan",kMs:(a,b)=>`${a} מתוך ${b} · דו-משמעי / לא נמצא / ללא מזהה / טרם נבדק בפירוט למטה`,kU:"יח״ד אחרי התכניות (XPlan)",kUs:n=>`מצב מאושר + שינוי, ${n} תכניות, כל תכנית פעם אחת`,
+      cov:(a,b,r)=>`${a} מתוך ${b} מתחמים חוברו במדויק (${r}%)`,amb:"דו-משמעיים",nf:"לא נמצאו",ni:"ללא מזהה",nc:"טרם נבדקו",
+      unitsCov:(a,b)=>`יח״ד מוצעות (משב״ש) במתחמים שחוברו: ${a} מתוך ${b}`,chk:"XPlan נבדק",partial:"קריאה חלקית",
+      why:{"local-format-number-not-online":"מספר בפורמט מקומי ישן — לא בשכבת התכניות המקוונות","vatmal-number-not-in-layer":"מספר ותמ״ל שאינו בשכבה","national-number-not-in-layer":"מספר ארצי שאינו בשכבה","no-plan-number-link-not-in-layer":"ללא מספר; המזהה אינו בשכבה","no-plan-number-no-link":"ללא מספר וללא קישור","not-checked":"טרם נבדק"},
+      pipeT:"מתחמים לפי שלב תכנוני ב-XPlan",pipeS:"מתחמים · יח״ד אחרי התכנית (כל תכנית פעם אחת) · לחיצה מסננת — אישור תכנית אינו היתר ואינו בנייה",
+      cityT:"ערים — צבר ההתחדשות, משב״ש מול XPlan",cityC:{city:"יישוב",cx:"מתחמים",ex:"חוברו",prop:"מוצעות (משב״ש)",ap:"תכניות מאושרות/בתוקף",apu:"יח״ד אחרי תכניות מאושרות (XPlan)"},
+      best:"כיסוי החיבור הגבוה ביותר",worst:"כיסוי החיבור הנמוך ביותר",minC:n=>`ערים עם ${n} מתחמים ומעלה`,
+      derT:"נגזר מהחיבור",medDA:(v,n)=>`חציון הכרזה → אישור: ${v} שנים (${n} מתחמים)`,medPA:(v,n)=>`חציון הפקדה → אישור: ${v} שנים (${n})`,
+      staleN:n=>`${n} מתחמים בתכנון לא פעיל`,noEvN:n=>`${n} מאושרים ללא ראיית היתר/ביצוע בעמודות משב״ש`,beforeN:n=>`${n} תכניות אושרו לפני ההכרזה`,
+      discT:"פערים בין המקורות (שני הערכים מוצגים, ללא הכרעה)",
+      disc:{"existingUnits~unitsApprovedState":"קיימות ↔ מצב מאושר","additionalUnits~unitsChange":"תוספת ↔ שינוי","proposedUnits~unitsAfterPlan":"מוצעות ↔ אחרי התכנית","approvalYear":"שנת אישור","stage":"מאושרת לפי משב״ש ↔ לפי XPlan","planNumber":"מספר תכנית"},
+      discN:(a,b)=>`${a} מתוך ${b}`,col:"XPlan",uAfter:"יח״ד אחרי התכנית",
+      sec:"מצב תכנוני (XPlan)",plan:"תכנית",name:"שם התכנית",kind:"סוג תכנית",power:"סמכות להיתרים",district:"מחוז",juris:"תחום שיפוט",committee:"ועדה",area:"שטח (דונם)",landUse:"ייעודי קרקע",
+      station:"תחנה · אירוע אחרון (כלשונם)",evid:"מפתח החיבור",mavat:"מבא״ת ↗",
+      unitsT:"יחידות דיור — משב״ש מול XPlan",uh:{moch:"משב״ש",xp:"XPlan"},urow:{ex:"קיימות ↔ מצב מאושר (לפני התכנית)",add:"תוספת ↔ שינוי שהתכנית קובעת",prop:"מוצעות ↔ אחרי התכנית (סכום, נגזר)"},differs:"פער",
+      datesT:"תאריכים (XPlan)",dates:{receivedDate:"קבלת תכנית",thresholdDate:"עמידה בתנאי סף",depositHearingDate:"דיון בהפקדה",depositDate:"תאריך אחרון להפקדה",newspaperDate:"פרסום בעיתונים",objectionsDeadline:"מועד אחרון להתנגדויות",approvalHearingDate:"דיון באישור",approvalHandlingStart:"תחילת טיפול באישור",approvalHandlingEnd:"סיום טיפול באישור",gazetteDate:"פרסום ברשומות"},
+      tlT:"ציר זמן",tl:{decl:"הכרזה (משב״ש)",dep:"הפקדה",depH:"דיון בהפקדה",app:"דיון באישור",eff:"בתוקף — פרסום ברשומות"},
+      mat:(a,b)=>`בשלות תכנונית ${a}/${b}`,yDA:"הכרזה → אישור",yPA:"הפקדה → אישור",yrs:v=>`${v} שנים`,before:v=>`התכנית אושרה ${v} שנים לפני ההכרזה`,
+      upd:"עדכון אחרון ב-XPlan",sinceUpd:v=>`לפני ${v} שנים`,stale:"תכנון לא פעיל — לא מאושרת / נדחתה, ולא עודכנה יותר מ-3 שנים",noEv:"מאושרת — אין בעמודות משב״ש (בביצוע / היתרים / סטטוס) ראיה להיתר או ביצוע; אינה הוכחה שלא נבנה",
+      delta:"הפרש יח״ד (XPlan אחרי התכנית − משב״ש מוצעות)",boundary:"קו כחול (גבול התכנית)",centroid:"מרכז",genz:"מוכלל ~5 מ׳",
+      shared:"תכנית משותפת למתחמים נוספים — יח״ד התכנית נספרות פעם אחת",diag:"מדוע לא חובר",
+      rs:{num:n=>`מספר התכנית ${n} אינו בשכבת XPlan`,noNum:"משב״ש לא פרסם מספר תכנית",id:n=>`מזהה מבא״ת ${n} אינו בשכבה`,noId:"אין קישור מבא״ת",amb:"המפתחות מצביעים על יותר מתכנית אחת — PROPX אינו בוחר",nc:"טרם נבדק בשכבה (בקשה שנכשלה או ממתינה) — לעולם לא \"לא נמצא\"",
+        fmt:{local:"המספר בפורמט מקומי ישן — השכבה מכילה תכניות שמנוהלות מקוונת",vatmal:"מספר של הוועדה לדיור מועדף (ותמ״ל) שהשכבה המקוונת אינה מכילה",national:""}},diagK:{reason:"סיבה",num:"מספר תכנית (משב״ש)",id:"מזהה מבא״ת בקישור",cand:"תכניות מועמדות"},
+      phist:"היסטוריית התכנית (כפי שנצפתה ב-PROPX)",pnone:"אין שינויים מתועדים עדיין",prov:"מקור התכנון",fetched:"נשלף מ-XPlan",lastUp:"עדכון אחרון במקור",
+      notSynced:"שכבת XPlan טרם נקראה — כל המתחמים \"טרם נבדקו\"",fields:"שם השדה במקור"},
     d:{ids:"זהות המתחם",units:"יחידות דיור (כפי שפורסמו)",plan:"תכנון ורישוי",links:"קישורים",hist:"היסטוריה",prov:"מקור",num:"מספר מתחם",exec:"בביצוע (כפי שפורסם)",permits:"סך היתרים (כפי שפורסם)",site:"אתר",map:"מפה",none:"אין שינויים מתועדים עדיין",src:"נשלף",upd:"עודכן במקור",raw:"ערך מקורי"}},
   perL:"תקופה",per:{all:"כל התקופה",recent:"24 חודשים"},perTip:{all:"כל הרשומות במקורות",recent:"הוכרע / הוגרל ב-24 החודשים שלפני תאריך הבנייה"},
   kindL:"סוג",kindAll:"כל הסוגים",kindMoch:"פרויקטי הגרלה (משב״ש)",kindIla:"מגרשים שנזכו (רמ״י)",
@@ -6816,13 +6871,44 @@ en:{
   tabsL:"View",tab:{developers:"Developers",projects:"Projects & sites",entries:"Market entries",renewal:"Urban renewal"},
   rn:{stages:{"declared":"No status","planning-initial":"Initial planning","planning-statutory":"Statutory planning","approved":"Approved plan, before implementation","approved-in-implementation":"Approved plan, in implementation","approved-after-licensing":"Approved — after licensing","unknown":"Unrecognized status"},
     decl:{declared:"Declared",["not-yet-declared"]:"Not yet declared",["not-stated"]:"Not stated"},declL:"Declaration",allDecl:"Any declaration state",stageL:"Status",allStages:"All statuses",
-    sort:{declared:"Declaration date",proposed:"Proposed units",city:"Locality",name:"Name"},ph:"Filter by complex name · plan · number",
+    sort:{declared:"Declaration date",proposed:"Proposed units",city:"Locality",name:"Name",maturity:"Planning maturity (XPlan)"},ph:"Filter by complex name · plan · number",
     kC:"Complexes",kE:"Existing units",kA:"Additional units (as published)",kP:"Proposed units",of:(a,b)=>`sum over ${a} of ${b} complexes that publish it`,
     c:{name:"Complex",city:"Locality",track:"Track",decl:"Declaration",status:"Status (MoCH)",ex:"Existing",add:"Additional",prop:"Proposed",date:"Declared",plan:"Plan",year:"Approval year"},
     tblT:n=>`${n} urban-renewal complexes`,tblS:"Click to open the complex",strip:"Complexes by MoCH status",stripS:"count · proposed units (summed over the complexes that publish them) — a declared complex is not construction",
     basis:"The Ministry of Construction and Housing's urban-renewal complexes — declared, not yet declared or not stated, as each row says; not every renewal project (TAMA 38 is not a complex)",
     note:"The status is the Ministry's, verbatim; a declared complex is not construction. The additional column is not necessarily net new units — in part of the rows it differs from proposed minus existing.",
     addUp:{true:"existing + additional = proposed",false:"existing + additional ≠ proposed (as published)",null:"—"},
+    pl:{t:"Planning — Planning Administration (XPlan)",s:"Exact joins only: the plan number MoCH publishes, then the Mavat plan id in MoCH's own link — never by name or location. A plan's approval is not a permit and not construction.",
+      stages:{PREPARATION:"Preparation",SUBMITTED:"In planning review",PRE_DEPOSIT:"Meeting deposit conditions",DEPOSITED:"Deposited",OBJECTIONS:"Objections decision",APPROVAL_PROCESS:"In approval",APPROVED:"Approved",EFFECTIVE:"In force (approval published)",REJECTED:"Rejected",OTHER:"Other",UNKNOWN:"Unrecognized"},
+      match:{exact:"Exact join",ambiguous:"Ambiguous",["not-found"]:"Not in XPlan",["no-identifier"]:"No identifier",["not-checked"]:"Not checked yet"},
+      ev:{"plan-number":"plan number","mavat-id":"Mavat id"},
+      matchL:"XPlan join",allMatch:"All join states",pstageL:"Planning stage (XPlan)",allP:"All stages (XPlan)",noneP:"No joined plan",flagL:"Flag",allFlags:"All complexes",
+      flags:{discrepancy:"MoCH ↔ XPlan gap",stale:"Stale planning",["no-evidence"]:"Approved, no permit/execution evidence",shared:"Shared plan"},
+      kM:"Joined to XPlan",kMs:(a,b)=>`${a} of ${b} · ambiguous / not found / no identifier / not checked below`,kU:"Units after the plans (XPlan)",kUs:n=>`approved state + change, ${n} plans, each counted once`,
+      cov:(a,b,r)=>`${a} of ${b} complexes joined exactly (${r}%)`,amb:"ambiguous",nf:"not found",ni:"no identifier",nc:"not checked",
+      unitsCov:(a,b)=>`MoCH proposed units in joined complexes: ${a} of ${b}`,chk:"XPlan checked",partial:"partial read",
+      why:{"local-format-number-not-online":"old local-format number — not in the online-plans layer","vatmal-number-not-in-layer":"VATMAL number not in the layer","national-number-not-in-layer":"national number not in the layer","no-plan-number-link-not-in-layer":"no number; the id is not in the layer","no-plan-number-no-link":"no number and no link","not-checked":"not checked yet"},
+      pipeT:"Complexes by XPlan planning stage",pipeS:"complexes · units after the plan (each plan once) · click to filter — a plan's approval is not a permit or construction",
+      cityT:"Cities — renewal pipeline, MoCH vs XPlan",cityC:{city:"Locality",cx:"Complexes",ex:"Joined",prop:"Proposed (MoCH)",ap:"Approved/in-force plans",apu:"Units after approved plans (XPlan)"},
+      best:"Best join coverage",worst:"Lowest join coverage",minC:n=>`cities with ${n}+ complexes`,
+      derT:"Derived from the join",medDA:(v,n)=>`median declaration → approval: ${v} years (${n} complexes)`,medPA:(v,n)=>`median deposit → approval: ${v} years (${n})`,
+      staleN:n=>`${n} complexes with stale planning`,noEvN:n=>`${n} approved with no permit/execution evidence in MoCH's columns`,beforeN:n=>`${n} plans approved before the declaration`,
+      discT:"Gaps between the sources (both values shown, never resolved)",
+      disc:{"existingUnits~unitsApprovedState":"existing ↔ approved state","additionalUnits~unitsChange":"additional ↔ change","proposedUnits~unitsAfterPlan":"proposed ↔ after the plan","approvalYear":"approval year","stage":"approved per MoCH ↔ per XPlan","planNumber":"plan number"},
+      discN:(a,b)=>`${a} of ${b}`,col:"XPlan",uAfter:"units after the plan",
+      sec:"Planning status (XPlan)",plan:"Plan",name:"Plan name",kind:"Plan type",power:"Permit power",district:"District",juris:"Jurisdiction",committee:"Committee",area:"Area (dunam)",landUse:"Land uses",
+      station:"Station · latest event (verbatim)",evid:"Join key",mavat:"Mavat ↗",
+      unitsT:"Housing units — MoCH vs XPlan",uh:{moch:"MoCH",xp:"XPlan"},urow:{ex:"existing ↔ approved state (before the plan)",add:"additional ↔ change set by the plan",prop:"proposed ↔ after the plan (sum, derived)"},differs:"gap",
+      datesT:"Dates (XPlan)",dates:{receivedDate:"Plan received",thresholdDate:"Threshold met",depositHearingDate:"Deposit hearing",depositDate:"Last deposit date",newspaperDate:"Newspaper notice",objectionsDeadline:"Objections deadline",approvalHearingDate:"Approval hearing",approvalHandlingStart:"Approval handling start",approvalHandlingEnd:"Approval handling end",gazetteDate:"Official Gazette publication"},
+      tlT:"Timeline",tl:{decl:"Declaration (MoCH)",dep:"Deposit",depH:"Deposit hearing",app:"Approval hearing",eff:"In force — Gazette publication"},
+      mat:(a,b)=>`planning maturity ${a}/${b}`,yDA:"Declaration → approval",yPA:"Deposit → approval",yrs:v=>`${v} years`,before:v=>`the plan was approved ${v} years before the declaration`,
+      upd:"Last update in XPlan",sinceUpd:v=>`${v} years ago`,stale:"Stale planning — not approved / rejected and not updated for more than 3 years",noEv:"Approved — MoCH's columns (execution / permits / status) show no permit or execution evidence; not proof that nothing was built",
+      delta:"Unit gap (XPlan after the plan − MoCH proposed)",boundary:"Blue line (plan boundary)",centroid:"Centroid",genz:"generalized ~5 m",
+      shared:"Plan shared with other complexes — its units count once",diag:"Why it is not joined",
+      rs:{num:n=>`plan number ${n} is not in the XPlan layer`,noNum:"MoCH publishes no plan number",id:n=>`Mavat id ${n} is not in the layer`,noId:"no Mavat link",amb:"the keys point at more than one plan — PROPX does not pick one",nc:"not yet looked up in the layer (a failed or pending request) — never \"not found\"",
+        fmt:{local:"the number is in an old local format — the layer holds plans managed online",vatmal:"a number of the national committee for preferred housing (VATMAL) the online layer does not hold",national:""}},diagK:{reason:"Reason",num:"Plan number (MoCH)",id:"Mavat id in the link",cand:"Candidate plans"},
+      phist:"Plan history (as observed by PROPX)",pnone:"No recorded changes yet",prov:"Planning source",fetched:"Fetched from XPlan",lastUp:"Last update at the source",
+      notSynced:"The XPlan layer has not been read yet — every complex is \"not checked\"",fields:"source field"},
     d:{ids:"The complex",units:"Housing units (as published)",plan:"Planning & licensing",links:"Links",hist:"History",prov:"Source",num:"Complex number",exec:"In execution (as published)",permits:"Permits total (as published)",site:"Site",map:"Map",none:"No recorded changes yet",src:"Fetched",upd:"Updated at source",raw:"Raw value"}},
   perL:"Period",per:{all:"All time",recent:"24 months"},perTip:{all:"every record in the sources",recent:"decided / lotteried in the 24 months before the build date"},
   kindL:"Kind",kindAll:"All kinds",kindMoch:"Lottery projects (MoCH)",kindIla:"Awarded lots (ILA)",
@@ -6893,7 +6979,7 @@ function inLoad(){
   inState.started=true;
   const id=++inState.req;inState.status="loading";renderIntel();
   const view=inState.tab==="entries"?"signals":inState.tab,p=new URLSearchParams({view});
-  if(view==="renewal"){if(inState.stage)p.set("stage",inState.stage);if(inState.decl)p.set("declaration",inState.decl)}
+  if(view==="renewal"){if(inState.stage)p.set("stage",inState.stage);if(inState.decl)p.set("declaration",inState.decl);if(inState.pstage)p.set("pstage",inState.pstage);if(inState.match)p.set("match",inState.match);if(inState.flag)p.set("flag",inState.flag)}
   if(view!=="signals"){p.set("page",String(inState.page));p.set("size","25");p.set("sort",inState.sort);p.set("order",inState.order);if(inState.q)p.set("q",inState.q)}
   else p.set("limit","300");
   if(view==="developers")p.set("period",inState.period);
@@ -6912,7 +6998,11 @@ function inBarHTML(){
     const stSel=`<select class="ho-sel" data-instage aria-label="${inE(R.stageL)}"><option value="">${R.allStages}</option>${Object.keys(R.stages).map(k=>`<option value="${k}"${s.stage===k?" selected":""}>${inE(R.stages[k])}</option>`).join("")}</select>`;
     const dSel=`<select class="ho-sel" data-indecl aria-label="${inE(R.declL)}"><option value="">${R.allDecl}</option>${Object.keys(R.decl).map(k=>`<option value="${k}"${s.decl===k?" selected":""}>${inE(R.decl[k])}</option>`).join("")}</select>`;
     const so=`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${Object.keys(R.sort).map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${R.sort[k]}</option>`).join("")}</select>`;
-    return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${so}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
+    const L=R.pl,opt=(v,txt,cur)=>`<option value="${v}"${cur===v?" selected":""}>${inE(txt)}</option>`;
+    const mSel=`<select class="ho-sel" data-inmatch aria-label="${inE(L.matchL)}">${opt("",L.allMatch,s.match||"")}${Object.keys(L.match).map(k=>opt(k,L.match[k],s.match)).join("")}</select>`;
+    const pSel=`<select class="ho-sel" data-inpstage aria-label="${inE(L.pstageL)}">${opt("",L.allP,s.pstage||"")}${Object.keys(L.stages).map(k=>opt(k,L.stages[k],s.pstage)).join("")}${opt("none",L.noneP,s.pstage)}</select>`;
+    const fSel=`<select class="ho-sel" data-inflag aria-label="${inE(L.flagL)}">${opt("",L.allFlags,s.flag||"")}${Object.keys(L.flags).map(k=>opt(k,L.flags[k],s.flag)).join("")}</select>`;
+    return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${mSel}${pSel}${fSel}${so}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
   const sorts=s.tab==="developers"?["units","lots","projects","cities","last","name"]:s.tab==="projects"?["date","units","name"]:[];
   const sort=sorts.length?`<select class="ho-sel" data-insort aria-label="${inE(t.sortL)}">${sorts.map(k=>`<option value="${k}"${s.sort===k?" selected":""}>${k==="units"&&s.tab==="projects"?t.sort.unitsP:t.sort[k]}</option>`).join("")}</select>`:"";
   const filt=s.tab!=="entries"?`<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(t.filterPh[s.tab])}" aria-label="${inE(t.filterPh[s.tab])}">`:"";
@@ -7149,13 +7239,14 @@ function initIntel(){
   const sec=el("intel");if(!sec)return;
   const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const onClick=e=>{
-    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
+    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
     if(!b)return;
     const d=b.dataset;
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
-    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":d.intab==="renewal"?"declared":"units";inState.order="desc";inState.q="";inState.stage="";inState.decl="";inLoad()}return}
+    if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.page=1;inState.sort=d.intab==="projects"?"date":d.intab==="renewal"?"declared":"units";inState.order="desc";inState.q="";inState.stage="";inState.decl="";inState.pstage="";inState.match="";inState.flag="";inLoad()}return}
     if(d.inrn){inOpen("renewal",d.inrn,b.closest("#inPanel")?inState.returnFocus:b);return}
+    if(d.inpst!==undefined){inState.pstage=inState.pstage===d.inpst?"":d.inpst;inState.page=1;inLoad();return}
     if(d.inper){inState.period=d.inper;inState.page=1;inLoad();return}
     if(d.inpage){inState.page=Math.max(1,+d.inpage);inLoad();el("inTblHead").scrollIntoView({block:"nearest"});return}
     if(d.indev){inOpen("developer",d.indev,b.closest("#inPanel")?inState.returnFocus:b);return}
@@ -7172,6 +7263,9 @@ function initIntel(){
     if(d.inkind!==undefined){inState.kind=x.value;inState.page=1;inLoad();return}
     if(d.instage!==undefined){inState.stage=x.value;inState.page=1;inLoad();return}
     if(d.indecl!==undefined){inState.decl=x.value;inState.page=1;inLoad();return}
+    if(d.inmatch!==undefined){inState.match=x.value;inState.page=1;inLoad();return}
+    if(d.inpstage!==undefined){inState.pstage=x.value;inState.page=1;inLoad();return}
+    if(d.inflag!==undefined){inState.flag=x.value;inState.page=1;inLoad();return}
     if(d.insort!==undefined){inState.sort=x.value;inState.order=x.value==="name"?"asc":"desc";inState.page=1;inLoad();return}
   });
   let qt;
@@ -7201,39 +7295,96 @@ function initIntel(){
   }else inLoad();
 }
 /* ---------------- urban renewal (MoCH complexes) ---------------- */
+const rnCnt=v=>v==null?"—":fmtInt(v);   /* a count the API did not give is "—", never 0 */
 function renderRenewal(d){
-  const t=IT(),R=t.rn,S=d.renewal||{},K=S.kpis||{},F=S.freshness||{};
+  const t=IT(),R=t.rn,L=R.pl,S=d.renewal||{},K=S.kpis||{},F=S.freshness||{},PS=S.planning||{},PC=PS.coverage||{},PF=PS.freshness||{};
   const cov=el("inCov");cov.className="ho-cov";cov.hidden=false;
   const fact=(l,v)=>`<span class="ho-fact">${l} <b>${v}</b></span>`;
-  cov.innerHTML=`<div class="ho-facts">${fact(R.d.src,inDate(F.checkedAt))}${fact(R.d.upd,inDate(F.sourceUpdatedAt))}${fact(R.c.date,F.coverage?`${inDate(F.coverage.declarationFrom)}–${inDate(F.coverage.declarationTo)}`:"—")}</div><p class="ho-covs"><b>${R.basis}.</b> ${R.note}</p>`;
-  const D=vcTag("der"),tile=(l,v,sub)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  const why=PC.unmatchedReasons?Object.entries(PC.unmatchedReasons).map(([k,n])=>`${inE(L.why[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · "):"";
+  cov.innerHTML=`<div class="ho-facts">${fact(R.d.src,inDate(F.checkedAt))}${fact(R.d.upd,inDate(F.sourceUpdatedAt))}${fact(R.c.date,F.coverage?`${inDate(F.coverage.declarationFrom)}–${inDate(F.coverage.declarationTo)}`:"—")}${fact(L.chk,PF.synced?inDate(PF.checkedAt)+(PF.status==="partial"?` <span class="vc na">${L.partial}</span>`:""):"—")}</div><p class="ho-covs"><b>${R.basis}.</b> ${R.note}</p>
+    <p class="ho-covs"><b>${L.t}.</b> ${PF.synced?`${L.cov(rnCnt(PC.exact),rnCnt(PC.complexes),PC.matchRate??"—")} · ${L.amb} <span class="num">${rnCnt(PC.ambiguous)}</span> · ${L.nf} <span class="num">${rnCnt(PC.notFound)}</span> · ${L.ni} <span class="num">${rnCnt(PC.noIdentifier)}</span> · ${L.nc} <span class="num">${rnCnt(PC.notChecked)}</span>${why?` — ${why}`:""}. ${L.s}`:L.notSynced}</p>`;
+  const D=vcTag("der"),tile=(l,v,sub,tag)=>`<div class="ho-k"><div class="l">${l} ${tag||D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
   const sumT=x=>x&&x.sum!=null?inN(x.sum):inDash(),ofT=x=>x&&K.complexes!=null?R.of(fmtInt(x.of),fmtInt(K.complexes)):"";
+  const XU=PC.xplanUnitsAfterPlan;
   el("inKpis").innerHTML=tile(R.kC,inN(K.complexes),S.declaration?Object.entries(S.declaration).map(([k,n])=>`${inE(R.decl[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · "):"")
-    +tile(R.kE,sumT(K.existingUnits),ofT(K.existingUnits))+tile(R.kA,sumT(K.additionalUnits),ofT(K.additionalUnits))+tile(R.kP,sumT(K.proposedUnits),ofT(K.proposedUnits));
+    +tile(R.kE,sumT(K.existingUnits),ofT(K.existingUnits))+tile(R.kA,sumT(K.additionalUnits),ofT(K.additionalUnits))+tile(R.kP,sumT(K.proposedUnits),ofT(K.proposedUnits))
+    +(PF.synced?tile(L.kM,PC.matchRate!=null?`<span class="num">${PC.matchRate}%</span>`:inDash(),L.kMs(rnCnt(PC.exact),rnCnt(PC.complexes)))+tile(L.kU,sumT(XU),XU&&XU.of?L.kUs(fmtInt(XU.of)):""):"");
   const strip=(S.stages||[]).length?`<div class="in-pl"><div class="in-pl-h"><b>${R.strip}</b> ${vcTag("raw")} <span class="tx-note">${R.stripS}</span></div><div class="in-pl-r">${S.stages.map(x=>`<div class="in-pl-c"><span class="ho-chip in-st-${inE(x.stage)}">${inE(R.stages[x.stage]||x.stage)}</span><span class="in-pl-s"><b class="num">${fmtInt(x.complexes)}</b>${x.proposedUnits&&x.proposedUnits.sum!=null?` · <span class="num">${fmtInt(x.proposedUnits.sum)}</span> ${R.c.prop}`:""}</span></div>`).join("")}</div></div>`:"";
-  el("inTblHead").innerHTML=`${strip}<h3>${R.tblT(d.total!=null?fmtInt(d.total):"—")} ${vcTag("raw")}</h3><span class="tx-note">${R.tblS}</span>`;
+  const pipe=(PS.pipeline||[]).length?`<div class="in-pl"><div class="in-pl-h"><b>${L.pipeT}</b> ${vcTag("raw")} ${D} <span class="tx-note">${L.pipeS}</span></div><div class="in-pl-r">${PS.pipeline.map(x=>`<button type="button" class="in-pl-c rn-pst${inState.pstage===x.stage?" on":""}" data-inpst="${inE(x.stage)}" aria-pressed="${inState.pstage===x.stage}"><span class="ho-chip rn-xs-${inE(x.stage)}">${inE(L.stages[x.stage]||x.stage)}</span><span class="in-pl-s"><b class="num">${fmtInt(x.complexes)}</b>${x.xplanUnitsAfterPlan&&x.xplanUnitsAfterPlan.sum!=null?` · <span class="num">${fmtInt(x.xplanUnitsAfterPlan.sum)}</span> ${L.uAfter}`:""}</span></button>`).join("")}</div></div>`:"";
+  const DC=PS.derived||{},DS=PS.discrepancies||{},dif=DS.differs||{},cmp=DS.comparable||{};
+  const derLine=PF.synced&&PC.exact?`<p class="tx-note rn-der">${D} <b>${L.derT}:</b> ${[DC.medianYearsDeclarationToApproval!=null?L.medDA(DC.medianYearsDeclarationToApproval,fmtInt(DC.withDeclarationToApproval)):"",DC.medianYearsDepositToApproval!=null?L.medPA(DC.medianYearsDepositToApproval,fmtInt(DC.withDepositToApproval)):"",L.staleN(rnCnt(DC.stalePlanning)),L.noEvN(rnCnt(DC.approvedNoMochEvidence)),DC.approvedBeforeDeclaration?L.beforeN(fmtInt(DC.approvedBeforeDeclaration)):""].filter(Boolean).join(" · ")}</p>
+    <p class="tx-note rn-der"><b>${L.discT}:</b> ${Object.keys(L.disc).filter(k=>cmp[k]).map(k=>`${inE(L.disc[k])} <span class="num">${L.discN(rnCnt(dif[k]),fmtInt(cmp[k]))}</span>`).join(" · ")}</p>`:"";
+  const CT=PS.cities||{},C=L.cityC;
+  const cRow=c=>`<tr><td>${inE(c.city||"—")}</td><td class="num">${fmtInt(c.complexes)}</td><td class="num">${fmtInt(c.exact)} <span class="tx-note">(${c.matchRate}%)</span></td><td class="num">${c.mochProposedUnits&&c.mochProposedUnits.sum!=null?fmtInt(c.mochProposedUnits.sum):"—"}</td><td class="num">${rnCnt(c.xplanApprovedPlans)}</td><td class="num">${c.xplanUnitsAfterApprovedPlans&&c.xplanUnitsAfterApprovedPlans.sum!=null?fmtInt(c.xplanUnitsAfterApprovedPlans.sum):"—"}</td></tr>`;
+  const cities=(CT.largestPipeline||[]).length&&PF.synced?`<details class="rn-cities"><summary><b>${L.cityT}</b> ${D}</summary><div class="ld-scroll"><table class="ho-gt"><thead><tr><th>${C.city}</th><th>${C.cx}</th><th>${C.ex}</th><th>${C.prop}</th><th>${C.ap}</th><th>${C.apu}</th></tr></thead><tbody>${CT.largestPipeline.slice(0,10).map(cRow).join("")}</tbody></table></div>
+    <p class="tx-note">${L.best}: ${(CT.bestCoverage||[]).map(c=>`${inE(c.city)} <span class="num">${c.matchRate}%</span>`).join(" · ")} — ${L.worst}: ${(CT.worstCoverage||[]).map(c=>`${inE(c.city)} <span class="num">${c.matchRate}%</span>`).join(" · ")} (${L.minC(CT.minComplexes||5)})</p></details>`:"";
+  el("inTblHead").innerHTML=`${strip}${pipe}${derLine}${cities}<h3>${R.tblT(d.total!=null?fmtInt(d.total):"—")} ${vcTag("raw")}</h3><span class="tx-note">${R.tblS}</span>`;
   const st=r=>`<span class="ho-chip in-st-${inE(r.stage)}" title="${inE(r.statusHe||"")}">${inE(R.stages[r.stage]||r.stage)}</span>`;
-  el("inTbl").innerHTML=d.rows&&d.rows.length?`<thead><tr>${["name","city","track","decl","status","ex","add","prop","date","plan"].map(k=>`<th>${R.c[k]}</th>`).join("")}</tr></thead><tbody>${d.rows.map(r=>`<tr tabindex="0" data-inrn="${inE(r.id)}">
+  const xp=r=>{const P=r.planning;if(!P)return inDash();
+    if(P.status!=="exact")return `<span class="ho-na rn-ms">${inE(L.match[P.status]||P.status)}</span>`;
+    return `<span class="ho-chip rn-xs-${inE(P.stage)}">${inE(L.stages[P.stage]||P.stage)}</span>${P.differs&&P.differs.length?` <span class="rn-neq" title="${inE(P.differs.map(k=>L.disc[k]||k).join(" · "))}">≠</span>`:""}${P.stale?` <span class="vc na" title="${inE(L.stale)}">${inE(L.flags.stale)}</span>`:""}`};
+  el("inTbl").innerHTML=d.rows&&d.rows.length?`<thead><tr>${["name","city","track","decl","status"].map(k=>`<th>${R.c[k]}</th>`).join("")}<th>${L.col}</th>${["ex","add","prop","date","plan"].map(k=>`<th>${R.c[k]}</th>`).join("")}</tr></thead><tbody>${d.rows.map(r=>`<tr tabindex="0" data-inrn="${inE(r.id)}">
     <td class="w"><bdi class="nm">${inE(r.name||"")}</bdi><div class="sub"><span class="num">${inE(r.complexId)}</span></div></td><td class="w">${inE(r.city||"")}</td><td>${r.track?inE(r.track):inDash()}</td>
-    <td>${inE(R.decl[r.declaration]||"—")}</td><td class="w">${st(r)}</td><td class="num">${inN(r.existingUnits)}</td><td class="num">${inN(r.additionalUnits)}</td><td class="num">${inN(r.proposedUnits)}</td>
+    <td>${inE(R.decl[r.declaration]||"—")}</td><td class="w">${st(r)}</td><td class="w">${xp(r)}</td><td class="num">${inN(r.existingUnits)}</td><td class="num">${inN(r.additionalUnits)}</td><td class="num">${inN(r.proposedUnits)}</td>
     <td class="num">${inDate(r.declarationDate)}</td><td class="num">${r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash()}</td></tr>`).join("")}</tbody>`:`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
   el("inCards").innerHTML=(d.rows||[]).map(r=>`<div class="tcard" tabindex="0" data-inrn="${inE(r.id)}"><div class="r1"><bdi><b>${inE(r.name||"")}</b></bdi>${inDate(r.declarationDate)}</div>
-    <div class="r2" style="color:var(--ink-3)">${inE(r.city||"")} · ${inE(R.decl[r.declaration]||"—")}</div><div class="r2">${st(r)}</div>
+    <div class="r2" style="color:var(--ink-3)">${inE(r.city||"")} · ${inE(R.decl[r.declaration]||"—")}</div><div class="r2">${st(r)}</div><div class="r2">${L.col}: ${xp(r)}</div>
     <div class="r2"><span>${R.c.ex} ${inN(r.existingUnits)}</span><span>${R.c.prop} ${inN(r.proposedUnits)}</span></div></div>`).join("");
   const pages=d.pages||1;el("inPager").hidden=pages<=1;
   el("inPager").innerHTML=pages>1?`<button type="button" data-inpage="${d.page-1}"${d.page<=1?" disabled":""}>${t.prev}</button><span>${t.page(`<span class="num">${d.page}</span>`,`<span class="num">${pages}</span>`)}</span><button type="button" data-inpage="${d.page+1}"${d.page>=pages?" disabled":""}>${t.next}</button>`:"";
-  el("inFoot").textContent=`${S.source?S.source.authority+" — "+S.source.dataset+" / "+S.source.resource:""}`;
+  el("inFoot").textContent=`${S.source?S.source.authority+" — "+S.source.dataset+" / "+S.source.resource:""}${PS.source?" · "+PS.source.authority+" — "+PS.source.dataset:""}`;
+}
+/* the plan boundary as a small inline outline (WGS84 → equirectangular at the plan's latitude); no basemap */
+function rnOutlineSVG(o){
+  if(!o||!Array.isArray(o.rings)||!o.rings.length||!o.bbox)return "";
+  const[x0,y0,x1,y1]=o.bbox,k=Math.cos(((y0+y1)/2)*Math.PI/180),w=Math.max((x1-x0)*k,1e-6),h=Math.max(y1-y0,1e-6),W=180,H=130,pad=8,sc=Math.min((W-2*pad)/w,(H-2*pad)/h);
+  const ox=(W-w*sc)/2,oy=(H-h*sc)/2,X=x=>(ox+(x-x0)*k*sc).toFixed(1),Y=y=>(oy+(y1-y)*sc).toFixed(1);
+  const d=o.rings.map(r=>r.map(([x,y],i)=>`${i?"L":"M"}${X(x)},${Y(y)}`).join("")+"Z").join("");
+  return `<svg class="rn-ol" viewBox="0 0 ${W} ${H}" role="img" aria-label="${inE(IT().rn.pl.boundary)}"><path d="${d}"/></svg>`;
 }
 function renewalDrawerHTML(d,close){
-  const t=IT(),R=t.rn,r=d.record||{},P=r.provenance||{};
+  const t=IT(),R=t.rn,L=R.pl,r=d.record||{},P=r.provenance||{},G=d.planning||{},M=G.match||{},X=G.plan;
   const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
   const link=u=>u&&/^https?:\/\//i.test(u)?`<a href="${inE(u)}" target="_blank" rel="noopener noreferrer">↗</a>`:inDash();
   const hist=(d.history||[]).map(h=>`<li>${inE(h.field)}: ${inE(h.from==null?"—":String(h.from))} → ${inE(h.to==null?"—":String(h.to))} · ${inDate(h.observedAt)}</li>`).join("");
+  const D=vcTag("der"),O=vcTag("raw");
+  let plan="";
+  if(X){
+    const XD=X.dates||{},DV=G.derived||{},CP=G.compare||[],pair=f=>CP.find(c=>c.field===f)||{};
+    const urow=(lab,f)=>{const c=pair(f);return `<tr><td>${lab}</td><td class="num">${inN(c.moch)}</td><td class="num">${inN(c.xplan)}</td><td>${c.differs?`<span class="rn-neq">≠ ${L.differs}</span>`:c.moch!=null&&c.xplan!=null?"=":""}</td></tr>`};
+    const tl=[[L.tl.decl,r.declarationDate],[XD.depositDate?L.tl.dep:L.tl.depH,XD.depositDate||XD.depositHearingDate],[L.tl.app,XD.approvalHearingDate],[L.tl.eff,X.stage==="EFFECTIVE"?XD.gazetteDate:null]]
+      .filter(([,v])=>v).sort((a,b)=>a[1]<b[1]?-1:a[1]>b[1]?1:0);
+    const ali=d.planning.aliases||{};
+    const dates=Object.keys(L.dates).filter(k=>XD[k]).map(k=>kv(`<span title="${inE(L.fields+": "+(ali[k]||k))}">${L.dates[k]}</span>`,inDate(XD[k]))).join("");
+    const other=CP.filter(c=>c.differs&&!/Units/.test(c.field));
+    plan=`<section class="ho-dsec rn-plan"><h4>${L.sec} ${O}</h4>
+      <div class="rn-ph"><span class="ho-chip rn-xs-${inE(X.stage)}">${inE(L.stages[X.stage]||X.stage)}</span> <span class="tx-note">${L.station}: <bdi>${inE([X.station,X.event].filter(Boolean).join(" · ")||"—")}</bdi></span></div>
+      <div class="ho-dl">${kv(L.plan,`<bdi class="num">${inE(X.planNumber)}</bdi>${X.url?` <a href="${inE(X.url)}" target="_blank" rel="noopener noreferrer">${L.mavat}</a>`:""}`)}${kv(L.evid,`${inChip(inE(L.match.exact),"rn-xs-EFFECTIVE")} ${(M.evidence||[]).map(e=>inE(L.ev[e]||e)).join(" + ")}`)}
+        ${kv(L.name,`<bdi>${inE(X.name||"—")}</bdi>`)}${kv(L.kind,inE(X.kind||"—"))}${kv(L.power,inE(X.permitPower||"—"))}${kv(L.district,inE(X.district||"—"))}${kv(L.juris,inE(X.jurisdiction||X.locality||"—"))}${kv(L.committee,inE(X.committee||"—"))}${kv(L.area,X.areaDunam!=null?`<span class="num">${X.areaDunam}</span>`:inDash())}${kv(L.upd,inDate(X.lastUpdate))}</div>
+      ${X.landUse?`<p class="ho-note">${L.landUse}: ${inE(X.landUse)}</p>`:""}
+      <h5 class="rn-h5">${L.unitsT}</h5><div class="ld-scroll"><table class="ho-dt rn-cmp"><thead><tr><th></th><th>${L.uh.moch} ${O}</th><th>${L.uh.xp} ${O}</th><th></th></tr></thead><tbody>
+        ${urow(L.urow.ex,"existingUnits~unitsApprovedState")}${urow(L.urow.add,"additionalUnits~unitsChange")}${urow(L.urow.prop+" "+D,"proposedUnits~unitsAfterPlan")}</tbody></table></div>
+      ${other.length?`<p class="ho-note"><span class="rn-neq">≠</span> ${other.map(c=>`${inE(L.disc[c.field]||c.field)}: ${L.uh.moch} <bdi>${inE(c.moch==null?"—":String(c.moch))}</bdi> · ${L.uh.xp} <bdi>${inE(c.xplan==null?"—":String(c.xplan))}</bdi>`).join(" — ")}</p>`:""}
+      ${tl.length?`<h5 class="rn-h5">${L.tlT}</h5><ol class="rn-tl">${tl.map(([lab,v])=>`<li><span class="rn-tl-l">${lab}</span>${inDate(v)}</li>`).join("")}</ol>`:""}
+      ${dates?`<h5 class="rn-h5">${L.datesT} ${O}</h5><div class="ho-dl">${dates}</div>`:""}
+      <h5 class="rn-h5">${L.derT} ${D}</h5><div class="ho-dl">${kv(L.mat(DV.maturity??"—",DV.maturityOf||8),"")}${kv(L.yDA,DV.yearsDeclarationToApproval!=null?L.yrs(DV.yearsDeclarationToApproval):DV.approvedBeforeDeclaration!=null?inE(L.before(DV.approvedBeforeDeclaration)):inDash())}${kv(L.yPA,DV.yearsDepositToApproval!=null?L.yrs(DV.yearsDepositToApproval):inDash())}${kv(L.delta,DV.unitDeltaVsMoch!=null?`<span class="num">${DV.unitDeltaVsMoch>0?"+":""}${fmtInt(DV.unitDeltaVsMoch)}</span>`:inDash())}${kv(L.upd,DV.yearsSinceUpdate!=null?L.sinceUpd(DV.yearsSinceUpdate):inDash())}</div>
+      ${DV.stalePlanning?`<p class="ho-note"><span class="vc na">${inE(L.flags.stale)}</span> ${L.stale}</p>`:""}${DV.approvedNoMochEvidence?`<p class="ho-note"><span class="vc na">${inE(L.flags["no-evidence"])}</span> ${L.noEv}</p>`:""}
+      ${(G.sharedWith||[]).length?`<p class="ho-note">${L.shared}: ${G.sharedWith.map(o=>`<button type="button" class="ci-alink" data-inrn="${inE(o.id)}"><bdi>${inE(o.name||o.id)}</bdi></button>`).join(" · ")}</p>`:""}
+      ${G.outline?`<div class="rn-olw">${rnOutlineSVG(G.outline)}<p class="tx-note">${L.boundary} ${O} · ${L.centroid} <span class="num">${G.outline.centroid?G.outline.centroid.slice().reverse().join(", "):"—"}</span> · ${L.genz}</p></div>`:""}
+      ${(G.history||[]).length?`<h5 class="rn-h5">${L.phist}</h5><ul class="ho-note ld-ul">${G.history.map(h=>`<li>${inE(h.field)}: ${inE(h.from==null?"—":typeof h.from==="object"?JSON.stringify(h.from):String(h.from))} → ${inE(h.to==null?"—":typeof h.to==="object"?JSON.stringify(h.to):String(h.to))} · ${inDate(h.observedAt)}</li>`).join("")}</ul>`:""}
+      <p class="ho-note">${L.prov}: ${inE(G.source?G.source.authority+" — "+G.source.dataset:"")} · ${L.fetched} ${inDate(X.provenance&&X.provenance.fetchedAt)} · ${L.lastUp} ${inDate(X.lastUpdate)}</p></section>`;
+  }else{
+    const DG=M.diagnostics||{},RS=L.rs;
+    const why=M.status==="ambiguous"?RS.amb:M.status==="not-checked"?(G.freshness&&!G.freshness.synced?L.notSynced:RS.nc):M.status==="no-identifier"?`${RS.noNum} · ${RS.noId}`
+      :[DG.planNumber?RS.num(DG.planNumber):RS.noNum,DG.mavatId!=null?RS.id(DG.mavatId):RS.noId,RS.fmt[DG.format]||""].filter(Boolean).join(" · ");
+    plan=sec(L.sec,"",`<div class="rn-ph"><span class="ho-na rn-ms">${inE(L.match[M.status]||M.status||"—")}</span></div><div class="ho-dl">${kv(L.diagK.reason,`<span class="rn-why">${inE(why)}</span>`)}${kv(L.diagK.num,DG.planNumber?`<bdi>${inE(DG.planNumber)}</bdi>`:inDash())}${kv(L.diagK.id,DG.mavatId!=null?`<span class="num">${inE(DG.mavatId)}</span>`:inDash())}${M.candidates?kv(L.diagK.cand,M.candidates.map(c=>`<span class="num">${inE(c)}</span>`).join(" · ")):""}</div><p class="ho-note">${L.s}</p>`);
+  }
   return `<div class="ho-dh"><div><span class="lyr">${t.tab.renewal} · <span class="num">${inE(r.complexId)}</span></span><h3 id="inDTitle"><bdi>${inE(r.name||"")}</bdi> · ${inE(r.city||"")}</h3>
-      <div class="sub"><span class="ho-chip in-st-${inE(r.stage)}">${inE(R.stages[r.stage]||r.stage)}</span> ${inE(R.decl[r.declaration]||"")}</div></div>${close}</div>
+      <div class="sub"><span class="ho-chip in-st-${inE(r.stage)}">${inE(R.stages[r.stage]||r.stage)}</span> ${inE(R.decl[r.declaration]||"")}${X?` <span class="ho-chip rn-xs-${inE(X.stage)}">XPlan · ${inE(L.stages[X.stage]||X.stage)}</span>`:""}</div></div>${close}</div>
     ${sec(R.d.ids,vcTag("raw"),`<div class="ho-dl">${kv(R.d.num,`<span class="num">${inE(r.complexId)}</span>`)}${kv(R.c.city,`${inE(r.city||"")} <span class="num">${inE(r.localityCode||"")}</span>`)}${kv(R.c.track,r.track?inE(r.track):inDash())}${kv(R.c.decl,`${inE(R.decl[r.declaration]||"—")}${r.declarationDate?` · ${inDate(r.declarationDate)}`:r.declarationRaw?` · ${R.d.raw}: ${inE(r.declarationRaw)}`:""}`)}${kv(R.c.status,`<bdi>${inE(r.statusHe||"—")}</bdi>`)}</div>`)}
     ${sec(R.d.units,vcTag("raw"),`<div class="ho-dl">${kv(R.c.ex,inN(r.existingUnits))}${kv(R.c.add,inN(r.additionalUnits))}${kv(R.c.prop,inN(r.proposedUnits))}</div><p class="ho-note">${inE(R.addUp[String(r.unitsAddUp)])} · ${R.note}</p>`)}
+    ${plan}
     ${sec(R.d.plan,vcTag("raw"),`<div class="ho-dl">${kv(R.c.plan,r.planNumber?`<bdi>${inE(r.planNumber)}</bdi>`:inDash())}${kv(R.c.year,r.approvalYear?`<span class="num">${r.approvalYear}</span>`:r.approvalYearRaw?inE(r.approvalYearRaw):inDash())}${kv(R.d.exec,r.executionRaw?inE(r.executionRaw):inDash())}${kv(R.d.permits,r.permitsRaw?inE(r.permitsRaw):inDash())}</div>`)}
     ${sec(R.d.links,"",`<div class="ho-dl">${kv(R.d.site,link(r.links&&r.links.site))}${kv(R.d.map,link(r.links&&r.links.map))}</div>`)}
     ${sec(R.d.hist,"",hist?`<ul class="ho-note ld-ul">${hist}</ul>`:`<p class="ho-note">${R.d.none}</p>`)}
