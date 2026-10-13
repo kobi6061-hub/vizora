@@ -87,6 +87,15 @@
   one vocabulary (SUCCESS / UNCHANGED / PARTIAL / REFUSED / FAILED / SCHEMA_CHANGED / STALE / NO_RUN). See
   `lib/entities/README.md`.
 
+- `lib/renewal/` + `scripts/renewal-sync.js` + `.github/workflows/renewal-sync.yml` + `data/renewal/` + `test/renewal.test.js`
+  = urban renewal: the Ministry of Construction and Housing's urban-renewal complexes (data.gov.il `urban_renewal`,
+  resource f65a0daf…) — read whole daily, upserted on the complex number (never deleted), every changed field in
+  `history.jsonl`, raw snapshot per content hash; the Ministry's status kept verbatim beside a mapped stage; the
+  declaration state per row (declared / not yet declared / not stated); units as published (additional ≠ net in every
+  row). Served by `GET /api/intel?view=renewal|renewalComplex` and shown as the "התחדשות עירונית" tab of `#intel`. A
+  declared complex is not construction and is never attributed to a developer; `data/renewal/` is bot-written (see
+  `lib/renewal/README.md`).
+
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,
