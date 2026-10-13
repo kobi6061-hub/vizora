@@ -13,6 +13,9 @@
 //                                                                      the observations of time series, with metadata
 //   node scripts/cbs-sales-discover.js --links <url…> [--match <regex>] every link on the pages (matching the regex)
 //   node scripts/cbs-sales-discover.js --pdf <url> [--match <regex>]    the text of a PDF (pdftotext), matching lines
+//   node scripts/cbs-sales-discover.js --probe 2026:78-300 [--dept 04]  which media-release numbers carry a PDF of a
+//                                                                      department (static DocLib files; robots.txt
+//                                                                      allows them) — HEAD only, one request at a time
 
 'use strict';
 
@@ -158,6 +161,23 @@ async function walk(startUrl, re, maxReq) {
       console.log(`   ${lines.length} lines`);
       lines.forEach((ln, i) => { if (re.test(ln)) console.log(`   ${String(i + 1).padStart(5)}| ${ln.replace(/\s+$/, '')}`); });
     }
+  } else if (args.includes('--probe')) {
+    const [year, range] = opt('--probe').split(':');
+    const [a, b] = range.split('-').map(Number);
+    const dept = opt('--dept', '04'), yy = String(year).slice(2);
+    if (!(b >= a && b - a <= 400)) throw new Error('range too wide');
+    let hits = 0;
+    for (let n = a; n <= b; n++) {
+      const num = String(n).padStart(3, '0');
+      const url = `https://www.cbs.gov.il/he/mediarelease/DocLib/${year}/${num}/${dept}_${yy}_${num}b.pdf`;
+      try {
+        const r = await fetch(url, { method: 'HEAD', headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(TIMEOUT) });
+        const type = r.headers.get('content-type') || '';
+        if (r.status === 200 && /pdf/i.test(type)) { hits++; console.log(`  ${num}  ${r.headers.get('last-modified')}  ${r.headers.get('content-length')} bytes  ${url}`); }
+      } catch (e) { console.log(`  ${num}  ERROR ${e.message}`); }
+      await new Promise((ok) => setTimeout(ok, 250));
+    }
+    console.log(`${hits} PDFs of department ${dept} in ${year}/${a}-${b}`);
   } else if (args.includes('--series')) {
     const ids = opt('--series');
     const from = opt('--from', '01-2018'), to = opt('--to', '12-2026');
