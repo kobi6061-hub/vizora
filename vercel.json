@@ -99,6 +99,9 @@
     "api/jobs/tx-refresh.js": {
       "maxDuration": 60,
       "includeFiles": "data/transactions/watch.json"
+    },
+    "api/intel.js": {
+      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/lotteries.json,data/housing/meta.json,data/housing/sync-runs.jsonl,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/localities.json,data/geo/streets-index.json,data/geo/registry-meta.json,data/geo/neighborhoods.json}"
     }
   },
   "rewrites": [

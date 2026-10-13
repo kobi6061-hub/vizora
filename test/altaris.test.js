@@ -365,7 +365,9 @@ t('vercel.json: one rewrite for /altaris; framework and PROPX functions unchange
   const v = JSON.parse(SRC('vercel.json'));
   assert.deepEqual(v.rewrites, [{ source: '/altaris', destination: '/altaris/index.html' }]);
   assert.equal(v.framework, null);
-  assert.deepEqual(Object.keys(v.functions).sort(), ['api/gov/transactions.js', 'api/housing.js', 'api/jobs/tx-refresh.js', 'api/land.js']);
+  /* PROPX's own functions (api/intel.js: the developer & project registry); ALTARIS adds none */
+  assert.deepEqual(Object.keys(v.functions).sort(), ['api/gov/transactions.js', 'api/housing.js', 'api/intel.js', 'api/jobs/tx-refresh.js', 'api/land.js']);
+  assert.ok(!Object.keys(v.functions).some((k) => /altaris/i.test(k)));
   assert.ok(v.headers.some((h) => h.source === '/altaris' && /no-store/.test(h.headers[0].value)));
 });
 t('the PROPX session gate covers /altaris and its assets (middleware unchanged)', () => {
