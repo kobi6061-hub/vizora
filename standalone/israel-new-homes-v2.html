@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="9b0acbc8d6d99263db23fcc1322f3e4f19670290d17acfdce639aac0c18410f1">
+<meta name="propx-source-sha256" content="64b3c82ffff2ff6ad1711882795bd5dc308ad9d03bc9d1549945f0267af1ecee">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -4722,6 +4722,7 @@ he:{title:"כלי דירה חדשה מקבלן",sub:"שישה מחשבונים �
   flows:"לוח התשלומים",fM:"חודש",fBase:"קרן",fAmt:"תשלום כולל הצמדה",pays:"פירוק לפי תשלום",pAdd:"תוספת",
   modelNote:"מודל — לא תצפית. מע״מ על הקרקע לא צוין במקור; עלויות הבנייה, העקיפות, המימון ומחיר המכירה הם הנחות שלכם.",
   idxNote:"מדד תשומות הבנייה הרשמי (הלמ״ס) עדיין אינו מסונכרן ב-PROPX — הקצב השנתי הוא הנחה שלכם. החלק הצמוד לפי החוזה שלכם.",
+  idxRef:(y,p,c)=>`לעיון: מדד תשומות הבנייה למגורים (הלמ״ס) — שינוי שנתי ${y} (${p}, נבדק ${c}). נתון עבר — אינו תחזית ואינו מוזן כהנחה.`,
   discNote:"שיעור ההיוון הוא הנחה שלכם (למשל ריבית המשכנתא או תשואת פיקדון) — ריבית בנק ישראל אינה מוזנת אוטומטית.",
   boiRef:(v,d)=>`לעיון: ריבית בנק ישראל ${v} (נבדק ${d}) — אינה ריבית משכנתא`,
   useCalc:"העברה למחשבון העסקה",usedCalc:"הועבר: מחיר, מס רכישה ועלויות נלוות כאחוזים",
@@ -4757,6 +4758,7 @@ en:{title:"New-home tools",sub:"Six calculators for buying from a developer · e
   flows:"Payment schedule",fM:"Month",fBase:"Principal",fAmt:"Payment incl. indexation",pays:"By payment",pAdd:"Added",
   modelNote:"Model — not an observation. VAT on land is not stated by the source; construction, soft costs, financing and the sale price are your assumptions.",
   idxNote:"The official CBS construction-inputs index is not yet synced in PROPX — the annual rate is your assumption. The linked share follows your contract.",
+  idxRef:(y,p,c)=>`For reference: CBS residential construction-inputs index — ${y} year on year (${p}, checked ${c}). Past data — not a forecast, never filled in as your assumption.`,
   discNote:"The discount rate is your assumption (e.g. your mortgage rate or a deposit yield) — the Bank of Israel rate is never filled in for you.",
   boiRef:(v,d)=>`For reference: Bank of Israel rate ${v} (checked ${d}) — not a mortgage rate`,
   useCalc:"Send to the deal calculator",usedCalc:"Sent: price, purchase tax and side costs as percentages",
@@ -4798,7 +4800,9 @@ function nhOutputsHTML(tool,r){
   }
   if(tool==="index"){
     if(r.rows.pays)extra+=`<div class="nh-rows"><b>${n.pays}</b>${r.rows.pays.map(p=>`<span class="num">${n.fM} ${p.m} · ${p.pct}% · ${fmtNIS(p.base)} · ${n.pAdd} ${fmtNIS(p.add)}</span>`).join("")}</div>`;
-    extra+=`<p class="calc-foot">${n.idxNote}</p>`;
+    const ci=window.PROPX_MARKET&&window.PROPX_MARKET.indicators&&window.PROPX_MARKET.indicators.constructionInputsIndex;
+    extra+=ci&&typeof ci.yoy==="number"&&ci.period&&ci.checkedAt?`<p class="calc-foot">${vcTag("raw")}${ci.stale?` <span class="vc na">${T().vcName.na}</span>`:""} ${n.idxRef(`<span class="num">${(ci.yoy>0?"+":"")+ci.yoy.toFixed(1)}%</span>`,`<span class="num">${ci.period.month}/${ci.period.year}</span>`,`<span class="num">${String(ci.checkedAt).slice(0,10).split("-").reverse().join(".")}</span>`)}</p>`
+      :`<p class="calc-foot">${n.idxNote}</p>`;
   }
   if(tool==="bridge")extra+=`<p class="calc-foot">${vcTag("mod")} ${n.modelNote}</p>`;
   if(tool==="compare")extra+=`<p class="calc-foot">${n.compareNote}</p>`;
