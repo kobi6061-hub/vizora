@@ -1,0 +1,72 @@
+# PROPX · long-term rental — daily read of the Dira Lehaskir public CMS data (developer tenders, planning sites,
+# status taxonomies, public project pages). scripts/rental-sync.js upserts every record (never deleted), records every
+# changed field, stores the raw responses once per content hash and writes only data/rental/. GET requests only, to
+# the company's own website (robots.txt allows every path). `dry-run` prints the parsed records and writes nothing.
+
+name: Long-term rental sync (Dira Lehaskir)
+
+on:
+  schedule:
+    - cron: '41 5 * * 0-4'   # Sun–Thu 05:41 UTC
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'sync (write + commit) · dry-run (fetch and print)'
+        type: choice
+        options: [sync, dry-run]
+        default: sync
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rental-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MODE: ${{ inputs.mode || 'sync' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline tests (must pass before any data is written)
+        run: node test/rental.test.js
+
+      - name: Read the official site
+        id: sync
+        run: |
+          set +e
+          if [ "$MODE" = "dry-run" ]; then node scripts/rental-sync.js --dry-run; else node scripts/rental-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Commit the data
+        if: env.MODE == 'sync'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/rental
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Dira Lehaskir: run log' > "$RUNNER_TEMP/summary.txt"
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if the source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "rental-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1
