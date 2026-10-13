@@ -1244,6 +1244,11 @@ details.ci-more>.in{padding:2px 13px 12px}
 .nh-rows b{width:100%;font-size:11px;color:var(--ink-3)}
 .nh-send{margin-top:8px}
 /* developers & projects (#intel) · data & trust center (#trust) */
+.in-pl{width:100%;margin-bottom:8px}
+.in-pl-h{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px;margin-bottom:6px}
+.in-pl-r{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.in-pl-c{border:1px solid var(--hairline);border-radius:9px;padding:6px 8px;display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--ink-2)}
+.in-pl-s b{color:var(--ink)}
 .in-search{display:flex;gap:8px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--hairline)}
 .in-search input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink)}
 .in-res{padding:8px 15px 10px;border-bottom:1px solid var(--hairline);display:grid;gap:5px}
@@ -6786,6 +6791,7 @@ he:{
   stageBasis:"השלב המתקדם ביותר שיש לו ראיה ישירה במקורות PROPX; לשלב מוקדם יותר ייתכן שפשוט אין ראיה",
   joinIla:"אין מפתח רשמי משותף עם רשומות ההגרלות של משרד הבינוי — לא צורף",joinMoch:"רשומת ההגרלה אינה נושאת מכרז, תכנית או גוש/חלקה — לא צורפה למגרש במכרז",
   meth:["יזם = שם קנוני אחד מהרשומות הרשמיות (הבדלי הקלדה בלבד: מירכאות ורווחים); אין מיזוג לפי דמיון","שם משפטי זהה (עם סימון צורה משפטית) בשני מקורות הוא ישות אחת — רשם החברות אינו רושם שתי חברות באותו שם","שם חתוך או אותן אותיות בפיסוק שונה מקושרים כ״ייתכן שזהה״ ואינם ממוזגים","זוכים ללא סימון צורה משפטית (בדרך כלל אנשים פרטיים) נספרים ואינם מוצגים","יח״ד ברמ״י = קיבולת מגרשים שנזכו; יח״ד במשב״ש = יח״ד בהגרלה הראשונה — לעולם לא מחוברות בין מקורות","סכומי קרקע: מגרשים בתחרות מחיר בלבד; הצעות ₪/מ״ר והקצאות במחיר קבוע נספרות בנפרד","ראיית בנייה: דיווחי התקדמות של משרד הבינוי (2024, ישן) בצירוף גוש וחלקה מדויקים למגרש שנזכה בלבד","24 חודשים = הוכרע/הוגרל ב-24 החודשים שלפני תאריך הבנייה (שעון ישראל)"],
+  pipeT:"צבר שנצפה לפי שלב מתועד (כל הרשומות)",pipeS:"מספר · יח״ד לפי מקור — לא מחוברות בין רמ״י למשב״ש · השלב המתקדם ביותר שיש לו ראיה: מגרש ותיק שנזכה עשוי להיות בנוי מזמן ללא ראיה כאן",pipeIla:"רמ״י",pipeMoch:"משב״ש",
   hitDev:(l,p,c)=>`${l} מגרשים · ${p} פרויקטי הגרלה · ${c} ערים`,hitN:n=>`${n} מכרזים`,showAll:n=>`הצגת כל ${n} התוצאות`,showLess:"פחות תוצאות",
 },
 en:{
@@ -6833,6 +6839,7 @@ en:{
   stageBasis:"the furthest stage with direct evidence in PROPX's sources; an earlier stage may simply lack evidence",
   joinIla:"no shared official key with the MoCH lottery records — not joined",joinMoch:"the lottery record carries no tender, plan or parcel — not joined to a tender lot",
   meth:["developer = one canonical name from the official records (typographic variants only: quotes, spacing); no similarity merge","an identical legal name (with a legal-form marker) in two sources is one entity — the Registrar of Companies does not register two companies under one name","a cut name or the same letters with different punctuation are linked as \"possibly the same\" and never merged","winners without a legal-form marker (usually private persons) are counted, never listed","ILA units = capacity of lots won; MoCH units = units in the first lottery — never added across sources","land sums: price-competition lots only; ₪/m² bids and fixed-price allocations are counted apart","construction evidence: MoCH progress reports (2024, stale) joined to an awarded lot by exact block and parcel only","24 months = decided / lotteried in the 24 months before the build date (Israel time)"],
+  pipeT:"Observed pipeline by evidenced stage (all records)",pipeS:"count · units per source — never added across ILA and MoCH · the furthest stage with evidence: an old awarded lot may long be built without evidence here",pipeIla:"ILA",pipeMoch:"MoCH",
   hitDev:(l,p,c)=>`${l} lots · ${p} lottery projects · ${c} cities`,hitN:n=>`${n} tenders`,showAll:n=>`Show all ${n} results`,showLess:"Fewer results",
 }};
 const IT=()=>IN_I18N[state.lang];
@@ -6956,7 +6963,12 @@ function renderIntel(){
   cov.className="ho-cov";cov.hidden=false;cov.innerHTML=inCovHTML(C);
   el("inKpis").innerHTML=inKpisHTML(C);
   const total=d.total!=null?d.total:(d.rows||[]).length;
-  el("inTblHead").innerHTML=`<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="entries"?"der":"raw")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
+  const PL=inState.tab==="projects"&&d.pipeline?Object.entries(d.pipeline).filter(([k])=>t.stages[k]):[];
+  const ORD=["land-awarded","marketed","permitted","construction-started","completed","occupied"];
+  PL.sort((a,b)=>ORD.indexOf(a[0])-ORD.indexOf(b[0]));
+  const plCell=(x,lab)=>x?`<span class="in-pl-s">${lab} <b class="num">${fmtInt(x.n)}</b>${x.unitsKnown?` · <span class="num">${fmtInt(x.units)}</span> ${t.c.punits}`:""}</span>`:"";
+  const pipe=PL.length?`<div class="in-pl"><div class="in-pl-h"><b>${t.pipeT}</b> ${vcTag("der")} <span class="tx-note">${t.pipeS}</span></div><div class="in-pl-r">${PL.map(([k,v])=>`<div class="in-pl-c">${inStage(k)}${plCell(v.ila,t.pipeIla)}${plCell(v.moch,t.pipeMoch)}</div>`).join("")}</div></div>`:"";
+  el("inTblHead").innerHTML=`${pipe}<h3>${t.tblT[inState.tab](fmtInt(total))} ${vcTag(inState.tab==="entries"?"der":"raw")}</h3><span class="tx-note">${t.tblS[inState.tab]}</span>`;
   el("inTbl").innerHTML=inTableHTML(d)||`<tbody><tr><td class="ho-note">${t.none}</td></tr></tbody>`;
   el("inCards").innerHTML=inCardsHTML(d);
   const pages=d.pages||1;

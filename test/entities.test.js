@@ -155,6 +155,9 @@ function fixtureDirs(tenders, lotteries) {
     const p = Q.projects({ kind: 'moch', q: 'רקפות באר שבע' }, opt);
     assert.equal(p.total, 1); assert.equal(p.rows[0].kind, 'moch-lottery-project');
     assert.equal(Q.project('moch:9990001', opt).joins.tenderLot, null);
+    const all = Q.projects({}, opt);
+    for (const v of Object.values(all.pipeline)) assert.ok(!('units' in v) && Object.keys(v).every((k) => k === 'ila' || k === 'moch'), 'per source, never one summed figure');
+    assert.equal(all.pipeline['land-awarded'].ila.n, 1); assert.equal(all.pipeline['land-awarded'].ila.units, 50); assert.equal(all.pipeline.permitted.moch.units, 40);
   });
   await t('search routes exact keys first: tender number, MichrazID, plan, block/parcel; names by substring; an address with a house number', () => {
     const s = (q) => Q.search(q, opt).results;
