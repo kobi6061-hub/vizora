@@ -21,7 +21,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { fetchBoiRate, discoverCbsSeries, fetchCbsIndex } = require('../lib/market/sources');
+const { fetchBoiRate, discoverCbsSeries, fetchCbsIndex, OPTIONAL_SERIES } = require('../lib/market/sources');
 const { mergeSnapshot, dataPayload, toJs, EMPTY } = require('../lib/market/snapshot');
 const { FileStore } = require('../lib/gov/store');
 
@@ -57,8 +57,12 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
     ]);
     results.newHomesIndex = nh;
     results.dwellingsIndex = dw;
+    /* optional monthly series (construction inputs, CPI, rent): recorded and shown when they fail, never fatal */
+    const opt = await Promise.all(OPTIONAL_SERIES.map((k) => settle(fetchCbsIndex(k, disc.data.picks[k], { fetchImpl, now, debug: has('dry-run') }))));
+    OPTIONAL_SERIES.forEach((k, i) => { results[k] = opt[i]; });
   } else {
     results.newHomesIndex = results.dwellingsIndex = { ok: false, error: disc.error };
+    for (const k of OPTIONAL_SERIES) results[k] = { ok: false, error: disc.error };
   }
 
   const snap = mergeSnapshot(prev, results, now);
@@ -71,10 +75,11 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
     ? `${I.boiRate.value}%` + (I.boiRate.nextDecision ? ` · next decision ${I.boiRate.nextDecision}` : '') +
       (I.boiRate.stale ? ` · STALE (${I.boiRate.lastError})` : '')
     : `unavailable · ${results.boiRate.error}`);
-  for (const k of ['newHomesIndex', 'dwellingsIndex']) {
+  for (const k of ['newHomesIndex', 'dwellingsIndex', ...OPTIONAL_SERIES]) {
     const v = I[k];
+    if (!v && OPTIONAL_SERIES.includes(k)) { line(k, `unavailable (optional) · ${results[k] && results[k].error}`); continue; }
     line(k, v
-      ? `${per(v.period)} y/y ${fmtPct(v.yoy)}` + (v.mom !== null ? ` m/m ${fmtPct(v.mom)}` : '') +
+      ? `${v.periodKind === 'monthly' ? `${v.period.year}-${v.period.month}` : per(v.period)} y/y ${fmtPct(v.yoy)}` + (v.mom !== null ? ` m/m ${fmtPct(v.mom)}` : '') +
         ` · series ${v.series.code} "${v.series.name}"` + (v.seriesChangedFrom ? ` (was ${v.seriesChangedFrom})` : '') +
         (v.stale ? ` · STALE (${v.lastError})` : '')
       : `unavailable · ${results[k].error}`);
@@ -83,11 +88,11 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
   if (has('discover') && disc.ok) {
     console.log('\nCBS response shapes:');
     for (const sh of disc.data.shapes) console.log('  ' + sh.slice(0, 1500));
-    const rel = disc.data.candidates.filter((c) => /דיר|שכר|מחיר/.test(c.name));
+    const rel = disc.data.candidates.filter((c) => /דיר|שכר|מחיר|תשומ|צרכן/.test(c.name));
     console.log(`\nCBS candidate series (${rel.length} of ${disc.data.candidates.length}):`);
     for (const c of rel.slice(0, 80)) console.log(`  ${c.code.padStart(7)}  ${c.name}`);
     console.log('picked:', JSON.stringify(disc.data.picks));
-    for (const k of ['newHomesIndex', 'dwellingsIndex']) {
+    for (const k of ['newHomesIndex', 'dwellingsIndex', ...OPTIONAL_SERIES]) {
       if (results[k] && results[k].ok && results[k].data.recent) console.log(`recent ${k}: ${results[k].data.recent.join(' · ')}`);
     }
   }
@@ -97,7 +102,9 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
     I.boiRate && `BoI ${I.boiRate.value}%${I.boiRate.stale ? ' (stale)' : ''}`,
     I.newHomesIndex && `new homes ${per(I.newHomesIndex.period)} ${fmtPct(I.newHomesIndex.yoy)} y/y${I.newHomesIndex.stale ? ' (stale)' : ''}`,
     I.dwellingsIndex && `all dwellings ${per(I.dwellingsIndex.period)} ${fmtPct(I.dwellingsIndex.yoy)} y/y${I.dwellingsIndex.stale ? ' (stale)' : ''}`,
-    snap.failures.length && `${snap.failures.length} source(s) failed`,
+    I.constructionInputsIndex && `construction inputs ${I.constructionInputsIndex.period.year}-${I.constructionInputsIndex.period.month} ${fmtPct(I.constructionInputsIndex.yoy)} y/y${I.constructionInputsIndex.stale ? ' (stale)' : ''}`,
+    snap.failures.filter((f) => !f.optional).length && `${snap.failures.filter((f) => !f.optional).length} source(s) failed`,
+    snap.failures.filter((f) => f.optional).length && `${snap.failures.filter((f) => f.optional).length} optional series unavailable`,
   ].filter(Boolean).join(' · ');
 
   if (!has('dry-run') && usable) {
@@ -113,10 +120,10 @@ const per = (p) => (p.month < 12 ? `${MON[p.month - 1]}–${MON[p.month]} ${p.ye
   const sf = argVal('summary-file');
   if (sf) fs.writeFileSync(sf, summary + '\n');
   if (process.env.GITHUB_STEP_SUMMARY) {
-    const rows = ['boiRate', 'newHomesIndex', 'dwellingsIndex'].map((k) => {
+    const rows = ['boiRate', 'newHomesIndex', 'dwellingsIndex', ...OPTIONAL_SERIES].map((k) => {
       const v = I[k];
       if (!v) return `| ${k} | — | ✗ ${results[k] && results[k].error} |`;
-      const val = k === 'boiRate' ? `${v.value}%` : `${per(v.period)} · ${fmtPct(v.yoy)} y/y`;
+      const val = k === 'boiRate' ? `${v.value}%` : v.periodKind === 'monthly' ? `${v.period.year}-${v.period.month} · ${fmtPct(v.yoy)} y/y` : `${per(v.period)} · ${fmtPct(v.yoy)} y/y`;
       return `| ${k} | ${val} | ${v.stale ? '✗ stale: ' + v.lastError : '✓ fresh'} |`;
     });
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,

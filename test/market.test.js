@@ -205,6 +205,44 @@ const ROUTES = [['PublicApi/GetInterest', BOI], ...CBS_ROUTES, ['price?id=90050&
     assert.deepEqual(JSON.parse(JSON.stringify(ctx.window.PROPX_MARKET)), JSON.parse(JSON.stringify(odd)));
   });
 
+  console.log('CBS optional monthly series (construction inputs · CPI · rent)');
+  const CAT2 = { chapters: [...CATALOG.chapters,
+    { chapterId: 'c', chapterName: 'מדד תשומות הבנייה למגורים', mainCode: 990200, subject: null },
+    { chapterId: 'd', chapterName: 'מדד מחירי תשומה בחקלאות', mainCode: 990300, subject: null }] };
+  const CHAPTER_A2 = { ...CHAPTER_A, subject: [...CHAPTER_A.subject, { subjectId: 38, subjectName: 'שכר דירה', code: null }] };
+  const CHAPTER_C = { chapterId: 'c', subject: [{ subjectId: 50, subjectName: 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', code: null }] };
+  const OPT_ROUTES = [['catalog/catalog', CAT2], ['catalog/chapter?id=aa&', CHAPTER_AA], ['catalog/chapter?id=a&', CHAPTER_A2], ['catalog/chapter?id=c&', CHAPTER_C],
+    ['catalog/chapter?id=d&', { chapterId: 'd', subject: [] }],
+    ['subject?id=38&', SUBJECT(38, 'שכר דירה', [[990410, 'שכר דירה'], [990411, 'שכר דירה - חוזים חדשים'], [990412, 'שכר דירה - מחוז ירושלים']])],
+    ['subject?id=50&', SUBJECT(50, 'מדד תשומות הבנייה למגורים לפי קבוצות תשומה', [[990210, 'מדד תשומות הבנייה למגורים - עבודה'], [990220, 'מדד תשומות הבנייה למגורים - חומרים']])],
+    ...CBS_ROUTES.slice(3)];
+  await t('the overall construction-inputs index, the general CPI and plain rent are picked by name — never a component, region or new-contract variant', async () => {
+    const d = await discoverCbsSeries({ fetchImpl: fakeFetch(OPT_ROUTES) });
+    assert.equal(d.picks.constructionInputsIndex.code, '990200');
+    assert.equal(d.picks.cpi.code, '990010');
+    assert.equal(d.picks.rentIndex.code, '990410');
+    assert.equal(d.picks.newHomesIndex.code, '90050', 'the required picks are unchanged');
+  });
+  await t('a monthly series is dated monthly and has its own staleness limit', async () => {
+    const ci = series(990200, 'מדד תשומות הבנייה למגורים', [[2026, 8, 141.3, 0.3, 2.9], [2026, 7, 140.9, 0.1, 3.1]]);
+    const r = await fetchCbsIndex('constructionInputsIndex', { code: '990200', name: 'מדד תשומות הבנייה למגורים' }, { fetchImpl: fakeFetch([['price?id=990200&', ci]]), now: NOW });
+    assert.equal(r.periodKind, 'monthly'); assert.equal(r.yoy, 2.9); assert.deepEqual(r.period, { year: 2026, month: 8 });
+    const old = series(990200, 'x', [[2025, 12, 130, 0.1, 2]]);
+    await assert.rejects(fetchCbsIndex('constructionInputsIndex', { code: '990200', name: 'x' }, { fetchImpl: fakeFetch([['price?id=990200&', old]]), now: NOW }), /not current/);
+  });
+  await t('an optional series that fails is recorded, kept stale if held, and never makes the run "not ok"', () => {
+    const good = { boiRate: { ok: true, data: { value: 3.25 } }, newHomesIndex: { ok: true, data: { yoy: -1, period: { year: 2026, month: 6 } } },
+      dwellingsIndex: { ok: true, data: { yoy: -1, period: { year: 2026, month: 6 } } } };
+    const s0 = mergeSnapshot(null, { ...good, constructionInputsIndex: { ok: false, error: 'series not found' } }, NOW);
+    assert.equal(s0.ok, true); assert.deepEqual(s0.failures, [{ key: 'constructionInputsIndex', error: 'series not found', optional: true }]);
+    assert.equal('constructionInputsIndex' in s0.indicators, false, 'never held: absent, not zero');
+    const s1 = mergeSnapshot(null, { ...good, cpi: { ok: true, data: { yoy: 2.5, period: { year: 2026, month: 8 } } } }, NOW);
+    const s2 = mergeSnapshot(s1, { ...good, cpi: { ok: false, error: 'HTTP 503' } }, NOW);
+    assert.equal(s2.ok, true); assert.equal(s2.indicators.cpi.stale, true); assert.equal(s2.indicators.cpi.yoy, 2.5);
+    const s3 = mergeSnapshot(s1, { ...good, cpi: undefined }, NOW);
+    assert.equal(s3.indicators.cpi.stale, true, 'held but not attempted: kept, marked stale');
+  });
+
   console.log('CLI end to end (stubbed network)');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mkt-cli-'));
   const stub = path.join(tmp, 'routes.json');
