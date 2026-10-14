@@ -17,9 +17,53 @@
    }
   }
  },
- "fetchedAt": "2026-10-13T22:22:32.033Z",
- "snapshot": "86a64aceb18ecad0",
+ "fetchedAt": "2026-10-14T10:36:40.770Z",
+ "snapshot": "e0ed52ef74f793b3",
  "records": [
+  {
+   "id": "dira:michraz:14689",
+   "wpId": 14689,
+   "kind": "developer-tender",
+   "title": "מכרז מספר ים/212/2026 – דירה להשכיר במתחם במתחם דוכיפת בירושלים",
+   "link": "https://www.renten.co.il/michraz/%d7%9e%d7%9b%d7%a8%d7%96-%d7%9e%d7%a1%d7%a4%d7%a8-%d7%99%d7%9d-378-2023-%d7%93%d7%99%d7%a8%d7%94-%d7%9c%d7%94%d7%a9%d7%9b%d7%99%d7%a8-%d7%91%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%90%d7%a8%d7%96%d7%99-2-3/",
+   "published": "2026-10-14",
+   "modified": "2026-10-14",
+   "tender": {
+    "raw": "ים/212/2026",
+    "prefix": "ים",
+    "number": 212,
+    "year": 2026,
+    "michrazId": 20260212
+   },
+   "placeText": null,
+   "status": {
+    "slug": "open",
+    "name": "פתוח"
+   },
+   "statusIds": [
+    20
+   ],
+   "terms": {
+    "totalUnits": 730,
+    "totalApprox": false,
+    "rentalUnits": 730,
+    "rentalBasis": "stated-all",
+    "saleUnits": null,
+    "rentalYears": 20,
+    "rentalPermanent": false,
+    "discountedShare": 25,
+    "discountedText": "חלק מיחה\"ד כפי שיפורט בחוברת המכרז, תיועדנה להשכרה ארוכת טווח למשך תקופה שלא תפחת מ20 שנה, כאשר 25% מהדירות תיועדנה לדיור בשכר דירה מופחת לזכאים ו-75% מהדירות יושכרו בשוק החופשי במחיר שוק.",
+    "evidence": {
+     "totalUnits": "י לרכישת זכויות חכירה להקמת מתחם מגורים הכולל 730 יח\"ד לבניה רוויה, אשר יכלול יח\"ד למטרת השכרה לטווח ארוך למשך 20 שנה, ויח\"ד למכירה מיידית, בתוספת שטחי מסחר, תעסוקה ושטחי ציבור, ולניהול ולהפעלה של פרויקט דירה להשכיר במתחם דוכיפת בירושלים מכ",
+     "rentalUnits": "שת זכויות חכירה להקמת מתחם מגורים הכולל 730 יח\"ד לבניה רוויה, אשר יכלול יח\"ד למטרת השכרה לטווח ארוך למשך 20 שנה, ויח\"ד למכירה מיידית, בתוספת שטחי מסחר, תעסוקה ושטחי ציבור, ולניהול ולהפעלה של פרויקט דירה להשכיר במתחם דוכיפת בירושלים מכרז מספ",
+     "rentalYears": ", אשר יכלול יח\"ד למטרת השכרה לטווח ארוך למשך 20 שנה, ויח\"ד למכירה מיידית, בתוספת שטחי מסחר, תעסוקה ושטחי ציבור, ולניהול ולהפעלה של פרויקט דירה להשכיר במתחם דוכיפת בירושלים מכרז מספר ים/212/2026 דירה להשכיר – החברה הממשלתית לדיור ולהשכרה בע\""
+    }
+   },
+   "textChars": 1237,
+   "firstSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "inLatestSource": true
+  },
   {
    "id": "dira:michraz:14554",
    "wpId": 14554,
@@ -61,7 +105,7 @@
    },
    "textChars": 1270,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -106,7 +150,7 @@
    },
    "textChars": 1344,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -151,7 +195,7 @@
    },
    "textChars": 1247,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -169,7 +213,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -187,7 +231,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -205,7 +249,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -223,7 +267,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -241,7 +285,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -259,7 +303,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -277,7 +321,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -295,7 +339,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -313,7 +357,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -331,7 +375,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -349,7 +393,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -367,7 +411,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -385,7 +429,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -403,7 +447,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -421,7 +465,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -439,7 +483,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -457,7 +501,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -475,7 +519,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -493,7 +537,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -511,7 +555,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -529,7 +573,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -547,7 +591,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -565,7 +609,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -583,7 +627,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -601,7 +645,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -619,7 +663,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -637,7 +681,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -655,7 +699,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -673,7 +717,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -691,7 +735,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -709,7 +753,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -727,7 +771,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -745,7 +789,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -763,7 +807,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -781,7 +825,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -799,7 +843,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -817,7 +861,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -835,7 +879,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -853,7 +897,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -871,7 +915,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -889,7 +933,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -907,7 +951,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -925,7 +969,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -943,7 +987,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -961,7 +1005,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -979,7 +1023,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -997,7 +1041,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1015,7 +1059,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1033,7 +1077,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1051,7 +1095,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1069,7 +1113,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1087,7 +1131,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1105,7 +1149,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1123,7 +1167,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1141,7 +1185,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1159,7 +1203,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1177,7 +1221,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1195,7 +1239,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1213,7 +1257,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1231,7 +1275,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1249,7 +1293,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1267,7 +1311,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1285,7 +1329,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1303,7 +1347,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1321,7 +1365,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1339,7 +1383,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1357,7 +1401,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1375,7 +1419,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1393,7 +1437,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1411,7 +1455,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1429,7 +1473,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1447,7 +1491,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1465,7 +1509,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1483,7 +1527,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1501,7 +1545,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1519,7 +1563,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1537,7 +1581,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1555,7 +1599,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1573,7 +1617,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1591,7 +1635,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1609,7 +1653,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1627,7 +1671,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1645,7 +1689,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1663,7 +1707,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1681,7 +1725,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1699,7 +1743,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1717,7 +1761,7 @@
    "terms": null,
    "textChars": 0,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1762,7 +1806,7 @@
    },
    "textChars": 1315,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1807,7 +1851,7 @@
    },
    "textChars": 1327,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1852,7 +1896,7 @@
    },
    "textChars": 1170,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1897,7 +1941,7 @@
    },
    "textChars": 1118,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1941,7 +1985,7 @@
    },
    "textChars": 1089,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -1986,7 +2030,7 @@
    },
    "textChars": 1153,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2031,7 +2075,7 @@
    },
    "textChars": 1109,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2075,7 +2119,7 @@
    },
    "textChars": 966,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2114,7 +2158,7 @@
    },
    "textChars": 1148,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2158,7 +2202,7 @@
    },
    "textChars": 1269,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2202,7 +2246,7 @@
    },
    "textChars": 932,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2247,7 +2291,7 @@
    },
    "textChars": 1199,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2292,7 +2336,7 @@
    },
    "textChars": 1206,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2337,7 +2381,7 @@
    },
    "textChars": 1192,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2381,7 +2425,7 @@
    },
    "textChars": 873,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2425,7 +2469,7 @@
    },
    "textChars": 1055,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2469,7 +2513,7 @@
    },
    "textChars": 1088,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2514,7 +2558,7 @@
    },
    "textChars": 1196,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2558,7 +2602,7 @@
    },
    "textChars": 1099,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2602,7 +2646,7 @@
    },
    "textChars": 1052,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2646,7 +2690,7 @@
    },
    "textChars": 1084,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2690,7 +2734,7 @@
    },
    "textChars": 1096,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2734,7 +2778,7 @@
    },
    "textChars": 1080,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2778,7 +2822,7 @@
    },
    "textChars": 959,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2823,7 +2867,7 @@
    },
    "textChars": 1128,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2868,7 +2912,7 @@
    },
    "textChars": 1264,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2912,7 +2956,7 @@
    },
    "textChars": 933,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -2956,7 +3000,7 @@
    },
    "textChars": 933,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3000,7 +3044,7 @@
    },
    "textChars": 924,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3044,7 +3088,7 @@
    },
    "textChars": 944,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3089,7 +3133,7 @@
    },
    "textChars": 1139,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3133,7 +3177,7 @@
    },
    "textChars": 1047,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3178,7 +3222,7 @@
    },
    "textChars": 1130,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3229,7 +3273,7 @@
    },
    "textChars": 1432,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3273,7 +3317,7 @@
    },
    "textChars": 883,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3317,7 +3361,7 @@
    },
    "textChars": 908,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3361,7 +3405,7 @@
    },
    "textChars": 951,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3406,7 +3450,7 @@
    },
    "textChars": 1140,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3451,7 +3495,7 @@
    },
    "textChars": 1295,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3495,7 +3539,7 @@
    },
    "textChars": 1049,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3541,7 +3585,7 @@
    },
    "textChars": 1069,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3586,7 +3630,7 @@
    },
    "textChars": 1091,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3630,7 +3674,7 @@
    },
    "textChars": 941,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3675,7 +3719,7 @@
    },
    "textChars": 1325,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3719,7 +3763,7 @@
    },
    "textChars": 892,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3763,7 +3807,7 @@
    },
    "textChars": 1084,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3808,7 +3852,7 @@
    },
    "textChars": 1219,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3852,7 +3896,7 @@
    },
    "textChars": 1388,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3897,7 +3941,7 @@
    },
    "textChars": 1233,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3942,7 +3986,7 @@
    },
    "textChars": 939,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -3987,7 +4031,7 @@
    },
    "textChars": 1042,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4032,7 +4076,7 @@
    },
    "textChars": 1245,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4075,7 +4119,7 @@
    },
    "textChars": 677,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4120,7 +4164,7 @@
    },
    "textChars": 1245,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4165,7 +4209,7 @@
    },
    "textChars": 1127,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4210,7 +4254,7 @@
    },
    "textChars": 1105,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4254,7 +4298,7 @@
    },
    "textChars": 1067,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4299,7 +4343,7 @@
    },
    "textChars": 1281,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4343,7 +4387,7 @@
    },
    "textChars": 906,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4388,7 +4432,7 @@
    },
    "textChars": 1149,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4433,7 +4477,7 @@
    },
    "textChars": 1102,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4456,7 +4500,7 @@
    "terms": null,
    "textChars": 1307,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4500,7 +4544,7 @@
    },
    "textChars": 489,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4544,7 +4588,7 @@
    },
    "textChars": 1161,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4589,7 +4633,7 @@
    },
    "textChars": 1199,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4633,7 +4677,7 @@
    },
    "textChars": 1049,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4678,7 +4722,7 @@
    },
    "textChars": 1163,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4722,7 +4766,7 @@
    },
    "textChars": 1161,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4767,7 +4811,7 @@
    },
    "textChars": 1025,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4811,7 +4855,7 @@
    },
    "textChars": 1062,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4855,7 +4899,7 @@
    },
    "textChars": 1019,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4898,7 +4942,7 @@
    },
    "textChars": 429,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4942,7 +4986,7 @@
    },
    "textChars": 841,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -4986,7 +5030,7 @@
    },
    "textChars": 836,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5030,7 +5074,7 @@
    },
    "textChars": 1068,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5074,7 +5118,7 @@
    },
    "textChars": 865,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5118,7 +5162,7 @@
    },
    "textChars": 838,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5163,7 +5207,7 @@
    },
    "textChars": 1153,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5208,7 +5252,7 @@
    },
    "textChars": 896,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5252,7 +5296,7 @@
    },
    "textChars": 1041,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5296,7 +5340,7 @@
    },
    "textChars": 828,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5340,7 +5384,7 @@
    },
    "textChars": 853,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5384,7 +5428,7 @@
    },
    "textChars": 845,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5429,7 +5473,7 @@
    },
    "textChars": 1019,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5473,7 +5517,7 @@
    },
    "textChars": 1210,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5517,7 +5561,7 @@
    },
    "textChars": 820,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5561,7 +5605,7 @@
    },
    "textChars": 971,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5604,7 +5648,7 @@
    },
    "textChars": 771,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5648,7 +5692,7 @@
    },
    "textChars": 959,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5692,7 +5736,7 @@
    },
    "textChars": 837,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5735,7 +5779,7 @@
    },
    "textChars": 804,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5778,7 +5822,7 @@
    },
    "textChars": 820,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5821,7 +5865,7 @@
    },
    "textChars": 742,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5865,7 +5909,7 @@
    },
    "textChars": 846,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5909,7 +5953,7 @@
    },
    "textChars": 838,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5953,7 +5997,7 @@
    },
    "textChars": 880,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -5996,7 +6040,7 @@
    },
    "textChars": 829,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6041,7 +6085,7 @@
    },
    "textChars": 1048,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6085,7 +6129,7 @@
    },
    "textChars": 938,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6130,7 +6174,7 @@
    },
    "textChars": 1250,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6174,7 +6218,7 @@
    },
    "textChars": 891,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6219,7 +6263,7 @@
    },
    "textChars": 1003,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6263,7 +6307,7 @@
    },
    "textChars": 828,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6306,7 +6350,7 @@
    },
    "textChars": 746,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6349,7 +6393,7 @@
    },
    "textChars": 1098,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6393,7 +6437,7 @@
    },
    "textChars": 820,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6438,7 +6482,7 @@
    },
    "textChars": 1110,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6483,7 +6527,7 @@
    },
    "textChars": 969,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6527,7 +6571,7 @@
    },
    "textChars": 797,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6572,7 +6616,7 @@
    },
    "textChars": 1025,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6615,7 +6659,7 @@
    },
    "textChars": 782,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6660,7 +6704,7 @@
    },
    "textChars": 974,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6703,7 +6747,7 @@
    },
    "textChars": 682,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6747,7 +6791,7 @@
    },
    "textChars": 774,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6792,7 +6836,7 @@
    },
    "textChars": 913,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6835,7 +6879,7 @@
    },
    "textChars": 786,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6880,7 +6924,7 @@
    },
    "textChars": 946,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6925,7 +6969,7 @@
    },
    "textChars": 1019,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -6974,7 +7018,7 @@
    },
    "textChars": 1092,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7019,7 +7063,7 @@
    },
    "textChars": 1233,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7063,7 +7107,7 @@
    },
    "textChars": 376,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7107,7 +7151,7 @@
    },
    "textChars": 762,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7151,7 +7195,7 @@
    },
    "textChars": 836,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7195,7 +7239,7 @@
    },
    "textChars": 812,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7239,7 +7283,7 @@
    },
    "textChars": 817,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7283,7 +7327,7 @@
    },
    "textChars": 942,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7327,7 +7371,7 @@
    },
    "textChars": 668,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7371,7 +7415,7 @@
    },
    "textChars": 715,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7415,7 +7459,7 @@
    },
    "textChars": 638,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7459,7 +7503,7 @@
    },
    "textChars": 772,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7503,7 +7547,7 @@
    },
    "textChars": 734,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7547,7 +7591,7 @@
    },
    "textChars": 916,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7592,7 +7636,7 @@
    },
    "textChars": 873,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7636,7 +7680,7 @@
    },
    "textChars": 730,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7680,7 +7724,7 @@
    },
    "textChars": 801,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7703,7 +7747,7 @@
    "terms": null,
    "textChars": 812,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7745,7 +7789,7 @@
    },
    "textChars": 475,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7789,7 +7833,7 @@
    },
    "textChars": 621,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7833,7 +7877,7 @@
    },
    "textChars": 529,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   },
   {
@@ -7877,7 +7921,7 @@
    },
    "textChars": 529,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-13T22:22:32.033Z",
+   "lastSeenAt": "2026-10-14T10:36:40.770Z",
    "inLatestSource": true
   }
  ]
