@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "syncedAt": "2026-10-14T08:39:20.921Z",
+ "syncedAt": "2026-10-15T08:14:34.278Z",
  "ok": true,
  "indicators": {
   "boiRate": {
@@ -14,7 +14,7 @@
     "dataset": "PublicApi/GetInterest",
     "url": "https://www.boi.org.il/PublicApi/GetInterest"
    },
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "newHomesIndex": {
@@ -190,7 +190,7 @@
      "yoy": -0.8
     }
    ],
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "dwellingsIndex": {
@@ -366,7 +366,7 @@
      "yoy": -1.2
     }
    ],
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "constructionInputsIndex": {
@@ -542,7 +542,7 @@
      "yoy": 3.5
     }
    ],
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "cpi": {
@@ -718,7 +718,7 @@
      "yoy": 1.5
     }
    ],
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "rentIndex": {
@@ -894,7 +894,7 @@
      "yoy": 3.1
     }
    ],
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   },
   "dwellingsByDistrict": {
@@ -1464,7 +1464,7 @@
     "dataset": "מדד מחירי דירות לפי מחוזות",
     "url": "https://api.cbs.gov.il/index/data/price?id=60000&format=json&download=false&lang=he&last=27"
    },
-   "checkedAt": "2026-10-14T08:39:20.921Z",
+   "checkedAt": "2026-10-15T08:14:34.278Z",
    "stale": false
   }
  },
