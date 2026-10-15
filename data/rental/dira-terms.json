@@ -17,8 +17,8 @@
    }
   }
  },
- "fetchedAt": "2026-10-14T10:36:40.770Z",
- "snapshot": "e0ed52ef74f793b3",
+ "fetchedAt": "2026-10-15T10:18:13.517Z",
+ "snapshot": "0313623a79dc6c8f",
  "taxonomies": {
   "tax_status_et": [
    {
@@ -45,7 +45,7 @@
     "id": 38,
     "name": "בהליך תכנון",
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
-    "count": 9
+    "count": 12
    },
    {
     "id": 36,

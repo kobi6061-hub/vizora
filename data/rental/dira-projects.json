@@ -17,13 +17,13 @@
    }
   }
  },
- "fetchedAt": "2026-10-14T10:36:40.770Z",
- "snapshot": "e0ed52ef74f793b3",
+ "fetchedAt": "2026-10-15T10:18:13.517Z",
+ "snapshot": "0313623a79dc6c8f",
  "classification": "OFFICIAL_PAGE_ONLY",
  "pages": [
   {
    "url": "https://www.renten.co.il/project/",
-   "lastmod": "2026-09-14",
+   "lastmod": "2026-10-14",
    "slug": "project"
   },
   {
@@ -60,11 +60,6 @@
    "url": "https://www.renten.co.il/project/%d7%9e%d7%a6%d7%a4%d7%94-%d7%90%d7%a4%d7%a7-%d7%9e%d7%aa%d7%97%d7%9d-%d7%99%d7%92%d7%b3-%d7%91%d7%90%d7%a8-%d7%99%d7%a2%d7%a7%d7%91/",
    "lastmod": "2025-02-02",
    "slug": "מצפה אפק מתחם יג׳ באר יעקב"
-  },
-  {
-   "url": "https://www.renten.co.il/project/%d7%a8%d7%90%d7%a9-%d7%94%d7%a2%d7%99%d7%9f-%d7%9e%d7%aa%d7%97%d7%9d-e/",
-   "lastmod": "2025-02-02",
-   "slug": "ראש העין מתחם e"
   },
   {
    "url": "https://www.renten.co.il/project/%d7%92%d7%a0%d7%99-%d7%90%d7%96%d7%a8-%d7%90-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
@@ -172,11 +167,6 @@
    "slug": "פארק איילון א אור יהודה"
   },
   {
-   "url": "https://www.renten.co.il/project/%d7%97%d7%95%d7%a8%d7%a9%d7%aa-%d7%a0%d7%97-%d7%90%d7%95%d7%a4%d7%a7%d7%99%d7%9d/",
-   "lastmod": "2025-04-08",
-   "slug": "חורשת נח אופקים"
-  },
-  {
    "url": "https://www.renten.co.il/project/%d7%aa%d7%9c-%d7%94%d7%a9%d7%95%d7%9e%d7%a8-%d7%9e%d7%aa%d7%97%d7%9d-%d7%90-%d7%a8%d7%9e%d7%aa-%d7%92%d7%9f/",
    "lastmod": "2025-04-08",
    "slug": "תל השומר מתחם א רמת גן"
@@ -207,11 +197,6 @@
    "slug": "תל השומר מתחם ב רמת גן"
   },
   {
-   "url": "https://www.renten.co.il/project/%d7%aa%d7%a2%d7%a9-%d7%94%d7%a9%d7%9c%d7%95%d7%9d-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
-   "lastmod": "2025-04-09",
-   "slug": "תעש השלום תל אביב"
-  },
-  {
    "url": "https://www.renten.co.il/project/%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7-%d7%a6%d7%a4%d7%95%d7%9f-%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7/",
    "lastmod": "2025-04-09",
    "slug": "בני ברק צפון בני ברק"
@@ -225,16 +210,6 @@
    "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%91%d7%b3-%d7%9c%d7%95%d7%93/",
    "lastmod": "2025-04-09",
    "slug": "נופי בן שמן ב׳ לוד"
-  },
-  {
-   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%92-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
-   "lastmod": "2025-04-09",
-   "slug": "סירקין ג פתח תקווה"
-  },
-  {
-   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%90-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
-   "lastmod": "2025-04-09",
-   "slug": "סירקין א פתח תקווה"
   },
   {
    "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%95-%d7%9c%d7%95%d7%93/",
@@ -307,11 +282,6 @@
    "slug": "מורדות מלחה ירושלים"
   },
   {
-   "url": "https://www.renten.co.il/project/%d7%a9%d7%97%d7%9e%d7%95%d7%9f-%d7%90%d7%99%d7%9c%d7%aa/",
-   "lastmod": "2026-02-16",
-   "slug": "שחמון אילת"
-  },
-  {
    "url": "https://www.renten.co.il/project/%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%99%d7%99%d7%9c%d7%95%d7%9f-%d7%92-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
    "lastmod": "2026-02-16",
    "slug": "פארק איילון ג אור יהודה"
@@ -325,11 +295,6 @@
    "url": "https://www.renten.co.il/project/%d7%94%d7%a8%d7%95%d7%91%d7%a2-%d7%94%d7%91%d7%99%d7%a0%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%9e%d7%aa%d7%97%d7%9d-%d7%90%d7%b3-%d7%9c%d7%95%d7%93/",
    "lastmod": "2026-02-16",
    "slug": "הרובע הבינלאומי מתחם א׳ לוד"
-  },
-  {
-   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%91-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
-   "lastmod": "2026-02-16",
-   "slug": "סירקין ב פתח תקווה"
   },
   {
    "url": "https://www.renten.co.il/project/%d7%9e%d7%92%d7%93%d7%9c-%d7%94%d7%a2%d7%9e%d7%a7/",
@@ -380,11 +345,6 @@
    "url": "https://www.renten.co.il/project/%d7%a8%d7%a0%d7%98%d7%9f-%d7%9c%d7%91-%d7%a0%d7%94%d7%a8%d7%99%d7%94/",
    "lastmod": "2026-05-04",
    "slug": "רנטן לב נהריה"
-  },
-  {
-   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%90%d7%b3-%d7%9c%d7%95%d7%93/",
-   "lastmod": "2026-07-16",
-   "slug": "נופי בן שמן א׳ לוד"
   },
   {
    "url": "https://www.renten.co.il/project/%d7%98%d7%95%d7%a4-%d7%92%d7%9c%d7%99%d7%9c-%d7%a0%d7%95%d7%a3-%d7%94%d7%92%d7%9c%d7%99%d7%9c/",
@@ -485,6 +445,46 @@
    "url": "https://www.renten.co.il/project/%d7%a4%d7%90%d7%a8%d7%a7-%d7%90%d7%99%d7%99%d7%9c%d7%95%d7%9f-%d7%91-%d7%90%d7%95%d7%a8-%d7%99%d7%94%d7%95%d7%93%d7%94/",
    "lastmod": "2026-09-14",
    "slug": "פארק איילון ב אור יהודה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%92-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2026-10-14",
+   "slug": "סירקין ג פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%91-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2026-10-14",
+   "slug": "סירקין ב פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a1%d7%99%d7%a8%d7%a7%d7%99%d7%9f-%d7%90-%d7%a4%d7%aa%d7%97-%d7%aa%d7%a7%d7%95%d7%95%d7%94/",
+   "lastmod": "2026-10-14",
+   "slug": "סירקין א פתח תקווה"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%aa%d7%a2%d7%a9-%d7%94%d7%a9%d7%9c%d7%95%d7%9d-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91/",
+   "lastmod": "2026-10-14",
+   "slug": "תעש השלום תל אביב"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a9%d7%97%d7%9e%d7%95%d7%9f-%d7%90%d7%99%d7%9c%d7%aa/",
+   "lastmod": "2026-10-14",
+   "slug": "שחמון אילת"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%97%d7%95%d7%a8%d7%a9%d7%aa-%d7%a0%d7%97-%d7%90%d7%95%d7%a4%d7%a7%d7%99%d7%9d/",
+   "lastmod": "2026-10-14",
+   "slug": "חורשת נח אופקים"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a8%d7%90%d7%a9-%d7%94%d7%a2%d7%99%d7%9f-%d7%9e%d7%aa%d7%97%d7%9d-e/",
+   "lastmod": "2026-10-14",
+   "slug": "ראש העין מתחם e"
+  },
+  {
+   "url": "https://www.renten.co.il/project/%d7%a0%d7%95%d7%a4%d7%99-%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%90%d7%b3-%d7%9c%d7%95%d7%93/",
+   "lastmod": "2026-10-14",
+   "slug": "נופי בן שמן א׳ לוד"
   }
  ]
 }

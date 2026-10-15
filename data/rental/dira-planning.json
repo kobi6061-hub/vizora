@@ -17,9 +17,72 @@
    }
   }
  },
- "fetchedAt": "2026-10-14T10:36:40.770Z",
- "snapshot": "e0ed52ef74f793b3",
+ "fetchedAt": "2026-10-15T10:18:13.517Z",
+ "snapshot": "0313623a79dc6c8f",
  "records": [
+  {
+   "id": "dira:planning:14711",
+   "wpId": 14711,
+   "title": "נווה חבצלת, רחובות",
+   "site": "נווה חבצלת",
+   "placeText": "רחובות",
+   "link": "https://www.renten.co.il/planning/%d7%a0%d7%95%d7%95%d7%94-%d7%97%d7%91%d7%a6%d7%9c%d7%aa-%d7%a8%d7%97%d7%95%d7%91%d7%95%d7%aa/",
+   "published": "2026-10-15",
+   "modified": "2026-10-15",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-15T10:18:13.517Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:14710",
+   "wpId": 14710,
+   "title": "מתחם G, מעלה אדומים",
+   "site": "מתחם G",
+   "placeText": "מעלה אדומים",
+   "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-g-%d7%9e%d7%a2%d7%9c%d7%94-%d7%90%d7%93%d7%95%d7%9e%d7%99%d7%9d/",
+   "published": "2026-10-15",
+   "modified": "2026-10-15",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-15T10:18:13.517Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
+   "inLatestSource": true
+  },
+  {
+   "id": "dira:planning:14685",
+   "wpId": 14685,
+   "title": "ביאליק על הפארק, קרית ביאליק",
+   "site": "ביאליק על הפארק",
+   "placeText": "קרית ביאליק",
+   "link": "https://www.renten.co.il/planning/%d7%91%d7%99%d7%90%d7%9c%d7%99%d7%a7-%d7%a2%d7%9c-%d7%94%d7%a4%d7%90%d7%a8%d7%a7-%d7%a7%d7%a8%d7%99%d7%aa-%d7%91%d7%99%d7%90%d7%9c%d7%99%d7%a7/",
+   "published": "2026-10-15",
+   "modified": "2026-10-15",
+   "status": {
+    "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
+    "name": "בהליך תכנון"
+   },
+   "statusIds": [
+    38
+   ],
+   "planNumber": null,
+   "firstSeenAt": "2026-10-15T10:18:13.517Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
+   "inLatestSource": true
+  },
   {
    "id": "dira:planning:14676",
    "wpId": 14676,
@@ -28,7 +91,7 @@
    "placeText": "חולון",
    "link": "https://www.renten.co.il/planning/%d7%94%d7%aa%d7%97%d7%93%d7%a9%d7%95%d7%aa-%d7%aa%d7%9c-%d7%92%d7%99%d7%91%d7%95%d7%a8%d7%99%d7%9d/",
    "published": "2026-10-12",
-   "modified": "2026-10-12",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -38,7 +101,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -49,7 +112,7 @@
    "placeText": "הרצליה",
    "link": "https://www.renten.co.il/planning/%d7%90%d7%91%d7%90-%d7%90%d7%91%d7%9f-%d7%9e%d7%92%d7%a8%d7%a9%d7%99%d7%9d-%d7%a6%d7%a4%d7%95%d7%a0%d7%99%d7%99%d7%9d-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
    "published": "2025-02-25",
-   "modified": "2025-04-06",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -59,7 +122,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -70,7 +133,7 @@
    "placeText": "הרצליה",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%91%d7%9f-%d7%92%d7%95%d7%a8%d7%99%d7%95%d7%9f-%d7%94%d7%a8%d7%a6%d7%9c%d7%99%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-10-11",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -80,7 +143,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -91,7 +154,7 @@
    "placeText": "חולון",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%92%d7%95%d7%9c%d7%93%d7%94-%d7%9e%d7%90%d7%99%d7%a8-%d7%97%d7%95%d7%9c%d7%95/",
    "published": "2025-02-25",
-   "modified": "2025-04-06",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -101,7 +164,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -112,7 +175,7 @@
    "placeText": "הוד השרון",
    "link": "https://www.renten.co.il/planning/%d7%aa%d7%a2%d7%a9-%d7%9e%d7%96%d7%a8%d7%97-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2026-01-20",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -122,7 +185,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -133,7 +196,7 @@
    "placeText": "הוד השרון",
    "link": "https://www.renten.co.il/planning/%d7%a9%d7%91%d7%99%d7%9c-%d7%94%d7%aa%d7%a4%d7%95%d7%96%d7%99%d7%9d-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2026-01-20",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -143,7 +206,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -164,7 +227,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -185,7 +248,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -196,7 +259,7 @@
    "placeText": null,
    "link": "https://www.renten.co.il/planning/%d7%a2%d7%95%d7%a4%d7%a8%d7%99%d7%9d-%d7%91%d7%99%d7%aa-%d7%90%d7%a8%d7%99%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-10-11",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -206,7 +269,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -217,7 +280,7 @@
    "placeText": "גדרה",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-8-%d7%92%d7%93%d7%a8%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-01-20",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -227,7 +290,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -248,7 +311,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -259,7 +322,7 @@
    "placeText": "ראשון לציון",
    "link": "https://www.renten.co.il/planning/%d7%a8%d7%9e%d7%aa-%d7%90%d7%9c%d7%99%d7%94%d7%95-%d7%a8%d7%90%d7%a9%d7%95%d7%9f-%d7%9c%d7%a6%d7%99%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2025-04-08",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -269,7 +332,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -290,7 +353,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -311,7 +374,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -322,7 +385,7 @@
    "placeText": "הוד השרון",
    "link": "https://www.renten.co.il/planning/%d7%a0%d7%95%d7%a3-%d7%99%d7%a8%d7%a7%d7%95%d7%9f-%d7%9e%d7%aa%d7%97%d7%9d-%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%95%d7%93-%d7%94%d7%a9%d7%a8%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2025-03-04",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -332,7 +395,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -353,7 +416,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -374,7 +437,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -395,7 +458,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -416,7 +479,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -427,7 +490,7 @@
    "placeText": "ג'לג'וליה",
    "link": "https://www.renten.co.il/planning/%d7%94%d7%a6%d7%a2%d7%99%d7%a8%d7%99%d7%9d-%d7%92%d7%9c%d7%92%d7%95%d7%9c%d7%99%d7%94/",
    "published": "2025-02-25",
-   "modified": "2025-03-04",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -437,7 +500,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -448,7 +511,7 @@
    "placeText": "חולון",
    "link": "https://www.renten.co.il/planning/%d7%97-500-%d7%97%d7%95%d7%9c%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2025-04-03",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -458,7 +521,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -479,7 +542,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -500,7 +563,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -511,7 +574,7 @@
    "placeText": "נס ציונה",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%a2%d7%a8-%d7%a0%d7%a1-%d7%a6%d7%99%d7%95%d7%a0%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-10-11",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%a1%d7%98%d7%98%d7%95%d7%98%d7%95%d7%a8%d7%99",
     "name": "בהליך סטטוטורי"
@@ -521,7 +584,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -532,7 +595,7 @@
    "placeText": "קרית שמונה",
    "link": "https://www.renten.co.il/planning/%d7%99%d7%95%d7%91%d7%9c%d7%99%d7%9d-%d7%a7%d7%a8%d7%99%d7%aa-%d7%a9%d7%9e%d7%95%d7%a0%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-10-12",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -542,7 +605,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -553,7 +616,7 @@
    "placeText": "חולון",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%98%d7%a8%d7%95-%d7%aa%d7%9c-%d7%92%d7%99%d7%91%d7%95%d7%a8%d7%99%d7%9d-%d7%97%d7%95%d7%9c%d7%95%d7%9f/",
    "published": "2025-02-25",
-   "modified": "2026-10-13",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -563,7 +626,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -584,7 +647,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -595,7 +658,7 @@
    "placeText": "כפר יונה",
    "link": "https://www.renten.co.il/planning/%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94-%d7%9e%d7%a2%d7%a8%d7%91-%d7%9b%d7%a4%d7%a8-%d7%99%d7%95%d7%a0%d7%94/",
    "published": "2025-02-25",
-   "modified": "2025-04-09",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%91%d7%94%d7%9c%d7%99%d7%9a-%d7%aa%d7%9b%d7%a0%d7%95%d7%9f",
     "name": "בהליך תכנון"
@@ -605,7 +668,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -616,7 +679,7 @@
    "placeText": "גדרה",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9e%d7%99%d7%9d-%d7%93%d7%a8%d7%95%d7%9e%d7%99%d7%99%d7%9d-%d7%92%d7%93%d7%a8%d7%94/",
    "published": "2025-02-25",
-   "modified": "2025-03-04",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -626,7 +689,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -637,7 +700,7 @@
    "placeText": "גדרה",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-7-%d7%92%d7%93%d7%a8%d7%94/",
    "published": "2025-02-25",
-   "modified": "2026-10-12",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -647,7 +710,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -668,7 +731,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -679,7 +742,7 @@
    "placeText": "טירת הכרמל",
    "link": "https://www.renten.co.il/planning/%d7%9e%d7%aa%d7%97%d7%9d-%d7%94%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%94-%d7%98%d7%99%d7%a8%d7%aa-%d7%94%d7%9b%d7%a8%d7%9e%d7%9c/",
    "published": "2025-02-25",
-   "modified": "2025-03-04",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -689,7 +752,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -710,7 +773,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -721,7 +784,7 @@
    "placeText": "בית שמש",
    "link": "https://www.renten.co.il/planning/%d7%91%d7%99%d7%9f-%d7%94%d7%92%d7%91%d7%a2%d7%95%d7%aa-%d7%91%d7%99%d7%aa-%d7%a9%d7%9e%d7%a9/",
    "published": "2025-02-25",
-   "modified": "2025-03-03",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -731,7 +794,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -752,7 +815,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -773,7 +836,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -794,7 +857,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -805,7 +868,7 @@
    "placeText": "לוד",
    "link": "https://www.renten.co.il/planning/%d7%91%d7%9f-%d7%a9%d7%9e%d7%9f-%d7%95%d7%91%d7%99%d7%aa-%d7%94%d7%a7%d7%a9%d7%aa%d7%95%d7%aa-%d7%9c%d7%95%d7%93/",
    "published": "2025-02-25",
-   "modified": "2025-03-04",
+   "modified": "2026-10-15",
    "status": {
     "slug": "%d7%aa%d7%9b%d7%a0%d7%99%d7%aa-%d7%9e%d7%90%d7%95%d7%a9%d7%a8%d7%aa",
     "name": "תכנית מאושרת"
@@ -815,7 +878,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -836,7 +899,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -857,7 +920,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -878,7 +941,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -899,7 +962,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -920,7 +983,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -941,7 +1004,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   },
   {
@@ -962,7 +1025,7 @@
    ],
    "planNumber": null,
    "firstSeenAt": "2026-10-13T22:17:25.080Z",
-   "lastSeenAt": "2026-10-14T10:36:40.770Z",
+   "lastSeenAt": "2026-10-15T10:18:13.517Z",
    "inLatestSource": true
   }
  ]
