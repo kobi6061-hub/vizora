@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "syncedAt": "2026-10-15T08:14:34.278Z",
+ "syncedAt": "2026-10-16T08:07:33.070Z",
  "ok": true,
  "indicators": {
   "boiRate": {
@@ -14,18 +14,18 @@
     "dataset": "PublicApi/GetInterest",
     "url": "https://www.boi.org.il/PublicApi/GetInterest"
    },
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "newHomesIndex": {
-   "yoy": -0.8,
+   "yoy": -0.4,
    "yoyBasis": "published",
-   "mom": 0.5,
-   "level": 541.2,
+   "mom": -0.4,
+   "level": 538.5,
    "base": "2017 אוקטובר",
    "period": {
     "year": 2026,
-    "month": 6
+    "month": 7
    },
    "periodKind": "bimonthly-first-month",
    "series": {
@@ -39,12 +39,6 @@
     "url": "https://api.cbs.gov.il/index/data/price?id=70000&format=json&download=false&lang=he&last=27"
    },
    "history": [
-    {
-     "y": 2024,
-     "m": 6,
-     "v": 531.3,
-     "yoy": 1.2
-    },
     {
      "y": 2024,
      "m": 7,
@@ -180,28 +174,34 @@
     {
      "y": 2026,
      "m": 5,
-     "v": 538.5,
-     "yoy": -1.9
+     "v": 538,
+     "yoy": -2
     },
     {
      "y": 2026,
      "m": 6,
-     "v": 541.2,
-     "yoy": -0.8
+     "v": 540.7,
+     "yoy": -0.9
+    },
+    {
+     "y": 2026,
+     "m": 7,
+     "v": 538.5,
+     "yoy": -0.4
     }
    ],
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "dwellingsIndex": {
-   "yoy": -1.2,
+   "yoy": -1.8,
    "yoyBasis": "published",
-   "mom": 0.2,
-   "level": 594.8,
+   "mom": -0.6,
+   "level": 590,
    "base": "1993 ממוצע",
    "period": {
     "year": 2026,
-    "month": 6
+    "month": 7
    },
    "periodKind": "bimonthly-first-month",
    "series": {
@@ -215,12 +215,6 @@
     "url": "https://api.cbs.gov.il/index/data/price?id=40010&format=json&download=false&lang=he&last=27"
    },
    "history": [
-    {
-     "y": 2024,
-     "m": 6,
-     "v": 591.8,
-     "yoy": 5.6
-    },
     {
      "y": 2024,
      "m": 7,
@@ -350,34 +344,40 @@
     {
      "y": 2026,
      "m": 4,
-     "v": 593,
-     "yoy": -2
+     "v": 592.4,
+     "yoy": -2.1
     },
     {
      "y": 2026,
      "m": 5,
-     "v": 593.6,
-     "yoy": -1.5
+     "v": 593,
+     "yoy": -1.6
     },
     {
      "y": 2026,
      "m": 6,
-     "v": 594.8,
-     "yoy": -1.2
+     "v": 593.6,
+     "yoy": -1.4
+    },
+    {
+     "y": 2026,
+     "m": 7,
+     "v": 590,
+     "yoy": -1.8
     }
    ],
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "constructionInputsIndex": {
-   "yoy": 3.5,
+   "yoy": 3.6,
    "yoyBasis": "published",
-   "mom": 0.4,
-   "level": 103.9,
+   "mom": 0.1,
+   "level": 104,
    "base": "2025 יולי",
    "period": {
     "year": 2026,
-    "month": 8
+    "month": 9
    },
    "periodKind": "monthly",
    "series": {
@@ -391,12 +391,6 @@
     "url": "https://api.cbs.gov.il/index/data/price?id=200010&format=json&download=false&lang=he&last=27"
    },
    "history": [
-    {
-     "y": 2024,
-     "m": 8,
-     "v": 132,
-     "yoy": 2
-    },
     {
      "y": 2024,
      "m": 9,
@@ -540,20 +534,26 @@
      "m": 8,
      "v": 103.9,
      "yoy": 3.5
+    },
+    {
+     "y": 2026,
+     "m": 9,
+     "v": 104,
+     "yoy": 3.6
     }
    ],
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "cpi": {
-   "yoy": 1.5,
+   "yoy": 1.6,
    "yoyBasis": "published",
-   "mom": 0.7,
-   "level": 105.8,
+   "mom": -0.5,
+   "level": 105.3,
    "base": "2024 ממוצע",
    "period": {
     "year": 2026,
-    "month": 8
+    "month": 9
    },
    "periodKind": "monthly",
    "series": {
@@ -567,12 +567,6 @@
     "url": "https://api.cbs.gov.il/index/data/price?id=120010&format=json&download=false&lang=he&last=27"
    },
    "history": [
-    {
-     "y": 2024,
-     "m": 8,
-     "v": 108.8,
-     "yoy": 3.6
-    },
     {
      "y": 2024,
      "m": 9,
@@ -716,20 +710,26 @@
      "m": 8,
      "v": 105.8,
      "yoy": 1.5
+    },
+    {
+     "y": 2026,
+     "m": 9,
+     "v": 105.3,
+     "yoy": 1.6
     }
    ],
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "rentIndex": {
-   "yoy": 3.1,
+   "yoy": 3.2,
    "yoyBasis": "published",
    "mom": 0.4,
-   "level": 107.1,
+   "level": 107.5,
    "base": "2024 ממוצע",
    "period": {
     "year": 2026,
-    "month": 8
+    "month": 9
    },
    "periodKind": "monthly",
    "series": {
@@ -743,12 +743,6 @@
     "url": "https://api.cbs.gov.il/index/data/price?id=120460&format=json&download=false&lang=he&last=27"
    },
    "history": [
-    {
-     "y": 2024,
-     "m": 8,
-     "v": 111,
-     "yoy": 4
-    },
     {
      "y": 2024,
      "m": 9,
@@ -892,9 +886,15 @@
      "m": 8,
      "v": 107.1,
      "yoy": 3.1
+    },
+    {
+     "y": 2026,
+     "m": 9,
+     "v": 107.5,
+     "yoy": 3.2
     }
    ],
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   },
   "dwellingsByDistrict": {
@@ -902,21 +902,15 @@
     {
      "code": "60000",
      "name": "ירושלים",
-     "yoy": 1.1,
+     "yoy": -0.2,
      "yoyBasis": "computed",
-     "mom": -0.4,
-     "level": 576.2,
+     "mom": -0.3,
+     "level": 576.9,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 570.2,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -974,19 +968,25 @@
       {
        "y": 2026,
        "m": 4,
-       "v": 567.2,
+       "v": 567.8,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 5,
-       "v": 578.5,
+       "v": 580.3,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 6,
-       "v": 576.2,
+       "v": 578.6,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 576.9,
        "yoy": null
       }
      ]
@@ -994,21 +994,15 @@
     {
      "code": "60100",
      "name": "צפון",
-     "yoy": 1,
+     "yoy": -0.8,
      "yoyBasis": "computed",
-     "mom": -0.1,
-     "level": 664.7,
+     "mom": -1.5,
+     "level": 653.4,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 658.2,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -1078,7 +1072,13 @@
       {
        "y": 2026,
        "m": 6,
-       "v": 664.7,
+       "v": 663.4,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 653.4,
        "yoy": null
       }
      ]
@@ -1086,21 +1086,15 @@
     {
      "code": "60200",
      "name": "חיפה",
-     "yoy": -2.4,
+     "yoy": -1.4,
      "yoyBasis": "computed",
-     "mom": -0.3,
-     "level": 625.8,
+     "mom": 0.4,
+     "level": 629.5,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 641.3,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -1158,19 +1152,25 @@
       {
        "y": 2026,
        "m": 4,
-       "v": 617.8,
+       "v": 618.4,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 5,
-       "v": 627.7,
+       "v": 628.3,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 6,
-       "v": 625.8,
+       "v": 627,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 629.5,
        "yoy": null
       }
      ]
@@ -1178,21 +1178,15 @@
     {
      "code": "60300",
      "name": "מרכז",
-     "yoy": -3.2,
+     "yoy": -2.7,
      "yoyBasis": "computed",
-     "mom": 0.3,
-     "level": 584.5,
+     "mom": -0.7,
+     "level": 579.9,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 603.7,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -1256,13 +1250,19 @@
       {
        "y": 2026,
        "m": 5,
-       "v": 582.8,
+       "v": 583.4,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 6,
-       "v": 584.5,
+       "v": 584,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 579.9,
        "yoy": null
       }
      ]
@@ -1270,21 +1270,15 @@
     {
      "code": "60400",
      "name": "תל אביב",
-     "yoy": -0.9,
+     "yoy": -1.9,
      "yoyBasis": "computed",
-     "mom": 0.7,
-     "level": 563.2,
+     "mom": -0.9,
+     "level": 556.4,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 568.3,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -1348,13 +1342,19 @@
       {
        "y": 2026,
        "m": 5,
-       "v": 559.3,
+       "v": 558.7,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 6,
-       "v": 563.2,
+       "v": 561.5,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 556.4,
        "yoy": null
       }
      ]
@@ -1362,21 +1362,15 @@
     {
      "code": "60500",
      "name": "דרום",
-     "yoy": -0.6,
+     "yoy": -1.5,
      "yoyBasis": "computed",
-     "mom": 0.1,
-     "level": 575.1,
+     "mom": -0.1,
+     "level": 573.9,
      "period": {
       "year": 2026,
-      "month": 6
+      "month": 7
      },
      "history": [
-      {
-       "y": 2025,
-       "m": 6,
-       "v": 578.6,
-       "yoy": null
-      },
       {
        "y": 2025,
        "m": 7,
@@ -1434,19 +1428,25 @@
       {
        "y": 2026,
        "m": 4,
-       "v": 571.6,
+       "v": 571,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 5,
-       "v": 574.5,
+       "v": 573.9,
        "yoy": null
       },
       {
        "y": 2026,
        "m": 6,
-       "v": 575.1,
+       "v": 574.5,
+       "yoy": null
+      },
+      {
+       "y": 2026,
+       "m": 7,
+       "v": 573.9,
        "yoy": null
       }
      ]
@@ -1454,7 +1454,7 @@
    ],
    "period": {
     "year": 2026,
-    "month": 6
+    "month": 7
    },
    "periodKind": "bimonthly-first-month",
    "scope": "all dwellings, by CBS district",
@@ -1464,7 +1464,7 @@
     "dataset": "מדד מחירי דירות לפי מחוזות",
     "url": "https://api.cbs.gov.il/index/data/price?id=60000&format=json&download=false&lang=he&last=27"
    },
-   "checkedAt": "2026-10-15T08:14:34.278Z",
+   "checkedAt": "2026-10-16T08:07:33.070Z",
    "stale": false
   }
  },
