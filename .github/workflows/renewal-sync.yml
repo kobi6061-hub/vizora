@@ -57,6 +57,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/renewal
+          node scripts/radar-build.js && git add data/radar
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           git commit -q -F "$RUNNER_TEMP/summary.txt"
           for i in 1 2 3; do

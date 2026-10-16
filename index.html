@@ -1382,6 +1382,29 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .pt-ap{font-size:12px;font-weight:700;background:var(--ink);color:var(--paper);border-radius:8px;padding:6px 14px}
 .pt-cl{font-size:12px;font-weight:700;color:var(--accent-deep);padding:6px 8px}
 .pt-ap:focus-visible,.pt-cl:focus-visible,.pt-xx:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+/* ---- Market Pulse (lib/radar) ---- */
+.pu-facts{padding:11px 15px 6px}
+.pu-ft{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--brass);text-transform:uppercase;margin-bottom:4px}
+.pu-fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 18px;font-size:12px;line-height:1.5;margin:0;padding:0}
+.pu-fl li{padding:5px 0;border-bottom:1px solid var(--hairline)}
+.pu-fk{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;color:var(--ink-3);margin-inline-end:6px;text-transform:uppercase}
+.pu-wins{display:flex;gap:4px;flex-wrap:wrap}
+.pu-wins .ho-chip{cursor:pointer;background:var(--panel);line-height:22px;padding:0 9px}
+.pu-wins .ho-chip.on{border-color:var(--ink);color:var(--ink);font-weight:800}
+.pu-q{min-width:160px}
+.pu-feed{display:flex;flex-direction:column;padding:0 15px}
+.pu-ev{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:4px 10px;padding:8px 0;border-bottom:1px solid var(--hairline);align-items:start}
+.pu-ev.m3 .pu-t{font-weight:800} .pu-ev.m1 .pu-t{font-weight:600;color:var(--ink-2)}
+.pu-l{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.pu-d{font-size:11px;font-weight:700;color:var(--ink-2)}
+.pu-m3{font-size:9px;font-weight:800;letter-spacing:.06em;color:var(--brass)}
+.pu-t{font-size:12.5px;font-weight:700;line-height:1.45;overflow-wrap:anywhere} .pu-geo{color:var(--ink-3);font-weight:600}
+.pu-x{font-size:11.5px;color:var(--ink-2);line-height:1.45;margin-top:2px;overflow-wrap:anywhere}
+.pu-meta{font-size:10px;color:var(--ink-3);margin-top:3px}
+.pu-go{font-size:11px;font-weight:700;color:var(--accent-deep);border:1px solid var(--hairline);border-radius:7px;padding:3px 8px;background:var(--panel);white-space:nowrap;text-decoration:none;align-self:center}
+.pu-note{padding:8px 15px 12px}
+.vc.obs{color:var(--conf-med)}
+@media(max-width:560px){.pu-ev{grid-template-columns:minmax(0,1fr) auto}.pu-l{flex-direction:row;gap:8px;grid-column:1/-1;align-items:center}}
 </style>
 </head><!-- doc-skeleton -->
 <body><!-- doc-skeleton -->
@@ -1411,6 +1434,7 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 
 <nav class="rail" aria-label="ניווט ראשי" data-ia="aNav" id="rail">
   <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
+  <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
   <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
   <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
@@ -1490,6 +1514,22 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
       <span class="note" id="kpiNote"></span>
     </div>
     <div class="kpi-scroll"><div class="kpis" id="kpis"></div></div>
+  </section>
+
+  <!-- Market Pulse — what changed (lib/radar: deterministic events over the committed histories) -->
+  <section class="blk" id="pulse">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrPulse">L1 · שוק · מה השתנה</span>
+      <h2 data-i="puTitle">דופק השוק — מה השתנה בשוק הדירות החדשות?</h2>
+      <p class="ho-sub" data-i="puSub">אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות</p></div>
+      <span class="tx-note" id="puProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="pu-facts" id="puFacts"></div>
+      <div class="ho-bar pu-bar" id="puBar"></div>
+      <div class="pu-feed" id="puFeed" aria-live="polite"></div>
+      <p class="ho-note pu-note" id="puNote"></p>
+    </div>
   </section>
 
   <!-- Map + rankings -->
@@ -2505,6 +2545,9 @@ he:{
   ldDProv:"מקור ומועדים", ldDSrc:"מקור", ldDListAt:"רשימה נקראה", ldDDetailAt:"פירוט נקרא", ldDMapAt:"מפה נקראה", ldDFirst:"נקלט לראשונה ב-PROPX", ldDChecked:"נבדק לאחרונה", ldDInSrc:"ברשימת המקור", ldDYes:"כן", ldDNo:"לא — נשמר, לא נמחק", ldDSnap:"תמונת רשימה", ldDGeo:"מיקום", ldDGeoV:{"tender-polygon-centroid":"מרכז פוליגון המכרז (רמ״י)",locality:"ברמת יישוב בלבד"},
   ldField:{statusCode:"קוד סטטוס",lifecycle:"שלב",units:"יח״ד",publishedDate:"פרסום",openDate:"פתיחה",closeDate:"סגירה",committeeDate:"ועדה",lotteryDate:"הגרלה",typeCode:"סוג",purposeCode:"ייעוד",localityCode:"יישוב",neighborhood:"שכונה",winners:"זוכים",lotCount:"מגרשים",bidCount:"הצעות",docsUpdatedAt:"מסמכים",sourceUpdatedAt:"עדכון רמ״י",inLatestSource:"ברשימת המקור"},
   ldMapLeg:"מכרזים: ריבוע = מרכז פוליגון רמ״י · עיגול = ברמת יישוב (ללא פוליגון)",
+  navPulse:"דופק", lyrPulse:"L1 · שוק · מה השתנה", puTitle:"דופק השוק — מה השתנה בשוק הדירות החדשות?", puSub:"אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות",
+  puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
+  puProv:(n,built,served)=>`${n} אירועים · נבנה ${built}${served==="built-on-read"?" · חושב בקריאה":""}`, puCls:{OFFICIAL:"רשמי",OBSERVED:"נצפה",DERIVED:"נגזר"}, puFactsT:"עובדות — השבוע והחודש", puM3:"מהותי",
   navHousing:"דיור", lyrHo:"L1 · שוק · דיור ממשלתי", hoTitle:"דיור מסובסד", hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה",
   hoSrcName:"משרד הבינוי והשיכון · data.gov.il",
   hoProv:src=>`מקור: ${src}`,
@@ -3048,6 +3091,9 @@ en:{
   ldDProv:"Source & dates", ldDSrc:"Source", ldDListAt:"List read", ldDDetailAt:"Detail read", ldDMapAt:"Map read", ldDFirst:"First seen by PROPX", ldDChecked:"Last checked", ldDInSrc:"In the source listing", ldDYes:"Yes", ldDNo:"No — kept, not deleted", ldDSnap:"List snapshot", ldDGeo:"Position", ldDGeoV:{"tender-polygon-centroid":"ILA tender polygon centroid",locality:"Locality level only"},
   ldField:{statusCode:"Status code",lifecycle:"Stage",units:"Units",publishedDate:"Published",openDate:"Opened",closeDate:"Closed",committeeDate:"Committee",lotteryDate:"Lottery",typeCode:"Type",purposeCode:"Purpose",localityCode:"Locality",neighborhood:"Neighborhood",winners:"Winners",lotCount:"Lots",bidCount:"Bids",docsUpdatedAt:"Documents",sourceUpdatedAt:"ILA update",inLatestSource:"In source listing"},
   ldMapLeg:"Tenders: square = ILA polygon centroid · circle = locality level (no polygon)",
+  navPulse:"Pulse", lyrPulse:"L1 · Market · What changed", puTitle:"Market Pulse — what changed in the Israeli new-home market?", puSub:"Deterministic events from official sources: what changed, when PROPX observed it and the source's own date — no interpretation",
+  puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
+  puProv:(n,built,served)=>`${n} events · built ${built}${served==="built-on-read"?" · computed on read":""}`, puCls:{OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED",DERIVED:"DERIVED"}, puFactsT:"Facts — this week and month", puM3:"material",
   navHousing:"Housing", lyrHo:"L1 · Market · Government housing", hoTitle:"Government Housing / Subsidized Housing Intelligence",
   hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה — Mechir LaMishtaken · Mechir Matara · Dira BeHanacha",
   hoSrcName:"Ministry of Construction and Housing · data.gov.il",
@@ -8345,7 +8391,7 @@ function refresh(withSkeleton){
     renderMap();renderProfile();
     renderSVR();renderFilters();renderTable();renderRankings();
     renderCmd();renderGeoView();renderCompare();renderInsights();renderConfidence();renderCalc();renderTx();txFetch(false);
-    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();renderNewHome();renderOfficialTrend();
+    if(CI_ENABLED){try{renderCapital()}catch(e){console.error("capital render:",e)}}if(CI_EXTERNAL)renderCITeaser();renderHousing();renderLand();renderIntel();renderTrust();renderNewHome();renderPulse();renderOfficialTrend();
     document.querySelectorAll("main .blk").forEach(b=>{b.classList.remove("fade-swap");void b.offsetWidth;b.classList.add("fade-swap")});
   }
 }
@@ -8387,10 +8433,58 @@ if(CI_ENABLED){initCapital();["capital","railCap"].forEach(id=>{el(id).hidden=fa
 if(CI_EXTERNAL)el("ciTeaserBlk").hidden=false;
 initCmd();
 initMapZoom();
+/* =====================================================================
+   MARKET PULSE — lib/radar over the committed histories (GET /api/intel?view=radar|pulse).
+   An event is a change between two PROPX reads, a new published period, an official
+   revision or a source-state change — never a first ingestion or a parser upgrade. */
+const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",page:1,data:null,acc:[],pulse:null,req:0};
+const puDay=iso=>iso?String(iso).slice(0,10).split("-").reverse().join("."):"—";
+function puLoad(){
+  puState.started=true;const id=++puState.req;puState.status="loading";renderPulse();
+  const qs=new URLSearchParams({view:"radar",window:puState.win,page:String(puState.page),size:"40"});
+  if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);if(puState.q)qs.set("q",puState.q);
+  const jobs=[inGet(qs.toString()).then(d=>{if(id!==puState.req)return;puState.data=d;puState.acc=puState.page>1?puState.acc.concat(d.rows):d.rows})];
+  if(!puState.pulse)jobs.push(inGet("view=pulse").then(d=>{if(id!==puState.req)return;puState.pulse=d}).catch(()=>{}));
+  Promise.all(jobs).then(()=>{if(id!==puState.req)return;puState.status="ok";renderPulse()}).catch(()=>{if(id!==puState.req)return;puState.status="error";renderPulse()});
+}
+function renderPulse(){
+  const t=T(),P=puState.pulse,D=puState.data,he=state.lang==="he",L=he?"he":"en";
+  const facts=el("puFacts"),bar=el("puBar"),feed=el("puFeed"),note=el("puNote"),prov=el("puProv");
+  if(!facts||!t.puWin)return;
+  prov.textContent=D?t.puProv(fmtInt(D.total),puDay(D.builtAt),D.served):"";
+  facts.innerHTML=P?`<div class="pu-ft">${t.puFactsT}</div><ul class="pu-fl">${P.facts.map(f=>`<li><span class="pu-fk">${ldE(P.groups[f.k]?P.groups[f.k][L]:f.k)}</span>${ldE(f[L])}</li>`).join("")}</ul>`:"";
+  const wins=Object.keys(t.puWin).map(w=>`<button type="button" class="ho-chip${puState.win===w?" on":""}" data-puwin="${w}" aria-pressed="${puState.win===w}">${t.puWin[w]}</button>`).join("");
+  const groups=D?`<select class="ho-sel" data-pugroup aria-label="${t.puAllG}"><option value="">${t.puAllG}</option>${Object.keys(D.groups).map(g=>`<option value="${g}"${puState.group===g?" selected":""}>${ldE(D.groups[g][L])}${D.counts[g]?` (${D.counts[g]})`:""}</option>`).join("")}</select>`:"";
+  const cities=D?`<select class="ho-sel" data-pucity aria-label="${t.puAllC}"><option value="">${t.puAllC}</option>${D.cities.map(c=>`<option value="${ldE(c.code)}"${puState.city===c.code?" selected":""}>${ldE(he?c.city:(c.cityEn||c.city))} (${c.n})</option>`).join("")}</select>`:"";
+  bar.innerHTML=`<div class="pu-wins" role="group" aria-label="${t.puWin["7d"]}">${wins}</div>${groups}${cities}<input class="ho-in pu-q" type="search" data-puq value="${ldE(puState.q)}" placeholder="${t.puQ}" aria-label="${t.puQ}">`;
+  if(puState.status==="error"){feed.innerHTML=`<p class="ho-note">${t.puErr}</p>`;note.textContent="";return}
+  if(!D){feed.innerHTML=`<p class="ho-note">${t.puLoading}</p>`;note.textContent="";return}
+  const rows=puState.acc.map(e=>{const cls=e.cls==="OFFICIAL"?"raw":e.cls==="DERIVED"?"der":"obs",ent=e.entity||{};
+    const go=(ent.type==="tender"&&ent.id)||(ent.type==="developer"&&ent.tenderId)?`<button type="button" class="pu-go" data-pugo="tender" data-puid="${ldE(ent.type==="tender"?ent.id:ent.tenderId)}">${t.puOpen}</button>`
+      :ent.link?`<a class="pu-go" href="${ldE(ent.link)}" target="_blank" rel="noopener">${t.puLink} ↗</a>`:(ent.type==="renewal"||ent.type==="plan")?`<a class="pu-go" href="#intel">${t.puOpen}</a>`:(ent.type==="source")?`<a class="pu-go" href="#sources">${t.puOpen}</a>`:"";
+    return `<div class="pu-ev m${e.m}"><div class="pu-l"><span class="pu-d num">${ldE(puDay(e.at))}</span><span class="vc ${cls}">${ldE(t.puCls[e.cls]||e.cls)}</span>${e.m===3?`<span class="pu-m3">${t.puM3}</span>`:""}</div>
+      <div class="pu-b"><div class="pu-t">${ldE(e.title[L])}${e.geo&&e.geo.city?` <span class="pu-geo">· ${ldE(he?e.geo.city:(e.geo.cityEn||e.geo.city))}</span>`:""}</div>${e.detail&&e.detail[L]?`<div class="pu-x">${ldE(e.detail[L])}</div>`:""}
+      <div class="pu-meta">${t.puObs} ${ldE(puDay(e.at))}${e.sourceDate?` · ${t.puSrcD} ${ldE(puDay(e.sourceDate))}`:""} · ${ldE(e.source)}</div></div>${go}</div>`}).join("");
+  feed.innerHTML=rows||`<p class="ho-note">${t.puNone}</p>`;
+  note.innerHTML=`${ldE(D.basis[L])}${D.page<D.pages?` <button type="button" class="ld-link" data-pumore>${t.puMore} (${D.page}/${D.pages})</button>`:""}`;
+}
+function initPulse(){
+  const sec=el("pulse");if(!sec)return;
+  sec.addEventListener("click",e=>{
+    const b=e.target.closest("[data-puwin],[data-pumore],[data-pugo]");if(!b)return;
+    if(b.dataset.puwin){puState.win=b.dataset.puwin;puState.page=1;puLoad();return}
+    if(b.dataset.pumore!==undefined){puState.page++;puLoad();return}
+    if(b.dataset.pugo==="tender"){ldOpen(b.dataset.puid,b)}
+  });
+  sec.addEventListener("change",e=>{const x=e.target;if(x.dataset.pugroup!==undefined){puState.group=x.value;puState.page=1;puLoad()}else if(x.dataset.pucity!==undefined){puState.city=x.value;puState.page=1;puLoad()}});
+  let qt;sec.addEventListener("input",e=>{if(e.target.dataset.puq===undefined)return;clearTimeout(qt);const v=e.target.value.trim();qt=setTimeout(()=>{if(puState.q===v)return;puState.q=v;puState.page=1;puLoad()},350)});
+  if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!puState.started)puLoad()}},{rootMargin:"600px 0px"});io.observe(sec)}else puLoad();
+}
 initHousing();
 initLand();
 initIntel();
 initTrust();
+initPulse();
 initNewHome();
 refresh(true);
 </script>

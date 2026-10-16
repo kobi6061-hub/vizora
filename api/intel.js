@@ -13,6 +13,8 @@
 //   view=search       q → routed results (tender / plan / parcel / address / developer / project / locality / street)
 //   view=status       registry coverage, freshness, methodology
 //   view=sources      the Data & Trust Center catalogue (lib/trust/catalog.js)
+//   view=radar        MARKET RADAR — the deterministic "what changed" feed (window=today|7d|30d|90d|all, group, kind, city, district, q, m, page, size; lib/radar)
+//   view=pulse        MARKET PULSE — what changed in the Israeli new-home market: official sales, inventory, land, developers, planning, rental, macro, source health
 //   view=renewal      urban-renewal complexes (MoCH) + their exact XPlan planning join: summary (incl. planning coverage, pipeline by
 //                     XPlan stage, cities, MoCH ↔ XPlan discrepancies, DERIVED counts) + one page (city, stage, track, declaration, q,
 //                     pstage=<XPlan stage>|none, match=exact|ambiguous|not-found|no-identifier|not-checked, flag=discrepancy|stale|no-evidence|shared,
@@ -25,6 +27,7 @@
 const Q = require('../lib/entities/query');
 const { catalog } = require('../lib/trust/catalog');
 const RN = require('../lib/renewal/query');
+const RADAR = require('../lib/radar/query');
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -37,6 +40,8 @@ module.exports = async (req, res) => {
   const view = p.view || 'status';
   try {
     if (view === 'sources') return send(res, 200, catalog());
+    if (view === 'radar') return send(res, 200, RADAR.feed(p));
+    if (view === 'pulse') return send(res, 200, RADAR.pulse());
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));
     if (view === 'projects') return send(res, 200, Q.projects(p));

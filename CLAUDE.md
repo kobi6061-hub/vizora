@@ -123,6 +123,14 @@
   strings only (approval ≠ permit ≠ construction); MoCH and XPlan values side by side with every disagreement flagged;
   `data/renewal/planning*.json` + `plan-geometry.json`; shown as the tab's planning strip and the drawer's PLANNING STATUS.
 
+- `lib/radar/` + `scripts/radar-build.js` + `data/radar/` + `test/radar.test.js` = MARKET RADAR / MARKET PULSE (16.10.2026): the
+  deterministic "what changed" engine over the ledgers the syncs already commit (land history, renewal + planning history,
+  rental history, CBS observations incl. revisions, indicator snapshots, lotteries, Trust run logs). An event = a change
+  between two PROPX reads, a new published period, an official revision (old value kept) or a source-state change — never a
+  first ingestion, a first detail read (`decided` → `awarded`) or a parser upgrade; class from the rule (OFFICIAL / OBSERVED /
+  DERIVED), `at` (PROPX observed) ≠ `sourceDate`, materiality 1–3 a constant per rule. `data/radar/events.json` (120 days) is
+  written by every sync workflow before it commits (bot-written); `GET /api/intel?view=radar|pulse`; the page's `#pulse`
+  section (rail "דופק"). See `lib/radar/README.md`.
 - `lib/table/core.js` + `lib/table/README.md` + `test/table.test.js` = the one table standard (audit 14.10.2026): first click
   = the column's primary order (high → low, newest first, yes first, א → ת, lifecycle), second = reverse, third = the
   default; missing values ALWAYS last (never 0); typed column filters (contains · any of · min..max · from..to · yes/no ·
