@@ -156,6 +156,18 @@
   documents the engine (never computes), pinned to the engine's sha256; the page's ⓘ marks → popover → "Metric
   Conventions" view (`#method`), the optional PDF appendix and the Excel "Metric Conventions" sheet all read it.
   `test/fixtures/altaris-baseline.json` freezes engine outputs (zero-drift gate in `test/altaris.test.js`).
+  `altaris/decision.js` + `test/altaris-decision.test.js` = the ALTARIS Investment Decision layer (methodology
+  `altaris-investment-decision-v1`, 16.10.2026): a deterministic policy ON TOP of the engine — never inside it, never
+  recomputing a return (reads `irrOf` / `moicOf` / `capOf`) — giving TAKE · TAKE WITH CONDITIONS · PASS · INSUFFICIENT
+  EVIDENCE, INVESTMENT ATTRACTIVENESS 0–100 (separate from) EVIDENCE QUALITY HIGH / MEDIUM / LOW (never a probability),
+  the recommended + second-best structure with the comparison, gates (fund hurdles pass / near miss / fail, downside
+  loss, supported-value evidence), conditions only from gates and the engine's solvers, flip points by re-running the
+  engine on copies, OFFICIAL / OBSERVED / DERIVED / MODEL / USER ASSUMPTION / USER OVERRIDE / MISSING breakdown, source
+  conflicts shown side by side, freshness (observation ≠ publication ≠ PROPX check), a deterministic narrative (no
+  model call). UI: the card at the top of the ledger, `#decision` basis view (he RTL / en LTR), IC block, PDF executive
+  page, Excel / CSV sheet, portfolio + saved-deal columns, the `decision` stamp on saved versions. Rental context
+  stays context (a tender is not an operating project; the rent index is a benchmark). Zero drift: the engine hash and
+  the frozen baseline are unchanged.
   `altaris/cases.js` = five illustrative, synthetic investment cases (inputs only, fictional names, real localities as
   setting); loaded into the ordinary deal screen via "מקרי השקעה"; never saved / in the portfolio / in any PROPX dataset
   unless the user creates a working copy; exports marked ILLUSTRATIVE CASE.

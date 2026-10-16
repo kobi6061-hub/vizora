@@ -6,7 +6,7 @@
  */
 (function () {
   'use strict';
-  const E = window.AltarisEngine, C = window.AxCharts, F = window.AXF, X = window.AxExport, MD = window.AltarisMethodology, CS = window.AltarisCases;
+  const E = window.AltarisEngine, C = window.AxCharts, F = window.AXF, X = window.AxExport, MD = window.AltarisMethodology, CS = window.AltarisCases, DX = window.AltarisDecision;
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const esc = F.esc;
@@ -212,8 +212,9 @@
     view: 'deal', strat: 'buy', deal: null, dealId: null, settings: store.get(KEY.settings, {}) || {},
     stress: null, R: null, dirty: false, deals: store.get(KEY.deals, {}) || {}, mkt: { status: 'idle' }, mbarOpen: false, cmpVer: {},
     mlang: 'he', mAppendix: true, mfocus: null,
+    D: null, flips: { key: null, list: null, t: 0 },   // the investment decision (altaris/decision.js) and its lazily computed flip points
   };
-  const VIEWS = ['deal', 'compare', 'portfolio', 'saved', 'settings', 'method'];
+  const VIEWS = ['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision'];
   const parseHash = () => { const [v, id] = location.hash.slice(1).split('/'); return { v, id: id ? decodeURIComponent(id) : null }; };
   const getP = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
   function setP(o, p, v) {
@@ -410,6 +411,142 @@
   }
   const popLater = () => { clearTimeout(POP.t); POP.t = setTimeout(() => { if (!POP.pinned) closePop(false); }, 220); };
 
+  /* =================================================== investment decision (altaris/decision.js) */
+  /* The deterministic decision layer sits on top of the engine output: the page only passes the engine's result and
+     the PROPX context it already holds (read-only) and renders what the layer returns. Nothing here computes a return. */
+  const DT = {
+    he: { kick: 'ALTARIS INVESTMENT DECISION', h: 'החלטת השקעה — בסיס ההחלטה', sub: 'מדיניות דטרמיניסטית על תוצאות החיתום וראיות PROPX', basis: 'הצגת בסיס ההחלטה', why: 'למה', risk: 'הסיכון העיקרי', cond: 'תנאי', struct: 'מבנה מומלץ', ev: 'איכות ראיות', score: 'אטרקטיביות',
+      s: { decision: 'החלטה', whyStruct: 'למה המבנה הזה', cmp: 'השוואת מבנים', returns: 'איכות התשואה', downside: 'הגנה בתרחיש השלילי', structure: 'איכות המבנה', market: 'ראיות שוק', execution: 'סיכון ביצוע', gates: 'ספי הקרן וספי ההחלטה', evidence: 'איכות הראיות', conds: 'תנאים להתקדמות', flips: 'מה ישנה את ההחלטה', sources: 'מקורות והנחות', conflicts: 'סתירות בין מקורות', fresh: 'רעננות', policy: 'המדיניות', narr: 'תקציר לוועדה' },
+      none: 'אין', computing: 'מחשב נקודות היפוך…', noFlip: 'לא נמצא שינוי קלט בטווח הנבדק שמשנה את ההחלטה', lang: 'שפת המסמך', gateT: ['סף', 'מצב', 'ערך', 'רף', 'קריטי', 'הסבר'], st: { pass: 'מתקיים', near: 'החמצה קלה', fail: 'נכשל' }, yes: 'כן', no: 'לא',
+      cls: { OFFICIAL: 'רשמי', OBSERVED: 'נצפה', DERIVED: 'נגזר', MODEL: 'מודל', USER_ASSUMPTION: 'הנחת משתמש', USER_OVERRIDE: 'עקיפת משתמש', MISSING: 'חסר' }, most: 'ההנחה המהותית ביותר', weightT: 'משקל', partT: ['גורם', 'ערך', 'ציון', 'הבסיס'], obs: 'תצפית', pub: 'פרסום', chk: 'נבדק ב-PROPX', state: 'מצב', verdict: 'החלטה', second: 'המבנה השני', noStruct: 'אף מבנה אינו כשיר', missing: 'חסר לחישוב', used: 'בשימוש', treat: 'הטיפול של PROPX', srcBasis: 'הופק מחיתום ALTARIS ומראיות PROPX לפי מדיניות ההחלטה הדטרמיניסטית — אינה המלצת AI.', backToDeal: 'חזרה לעסקה', pdf: 'PDF ועדה', explain: 'ההסבר המלא' },
+    en: { kick: 'ALTARIS INVESTMENT DECISION', h: 'Investment Decision — Decision Basis', sub: 'A deterministic policy over the underwriting results and PROPX evidence', basis: 'VIEW DECISION BASIS', why: 'WHY', risk: 'MAIN RISK', cond: 'CONDITION', struct: 'Recommended structure', ev: 'Evidence quality', score: 'Attractiveness',
+      s: { decision: 'DECISION', whyStruct: 'WHY THIS STRUCTURE', cmp: 'CROSS-STRUCTURE COMPARISON', returns: 'RETURN QUALITY', downside: 'DOWNSIDE PROTECTION', structure: 'STRUCTURE QUALITY', market: 'MARKET EVIDENCE', execution: 'EXECUTION RISK', gates: 'FUND HURDLES & DECISION GATES', evidence: 'EVIDENCE QUALITY', conds: 'CONDITIONS TO PROCEED', flips: 'WHAT WOULD CHANGE THE DECISION', sources: 'SOURCE / ASSUMPTION BREAKDOWN', conflicts: 'SOURCE CONFLICTS', fresh: 'FRESHNESS', policy: 'THE POLICY', narr: 'COMMITTEE NARRATIVE' },
+      none: 'none', computing: 'computing flip points…', noFlip: 'no input change inside the searched range moves the decision', lang: 'Document language', gateT: ['Gate', 'Status', 'Value', 'Threshold', 'Critical', 'Basis'], st: { pass: 'met', near: 'near miss', fail: 'failed' }, yes: 'yes', no: 'no',
+      cls: { OFFICIAL: 'OFFICIAL', OBSERVED: 'OBSERVED', DERIVED: 'DERIVED', MODEL: 'MODEL', USER_ASSUMPTION: 'USER ASSUMPTION', USER_OVERRIDE: 'USER OVERRIDE', MISSING: 'MISSING' }, most: 'Most material assumption', weightT: 'weight', partT: ['Factor', 'Value', 'Score', 'Basis'], obs: 'observation', pub: 'publication', chk: 'checked by PROPX', state: 'state', verdict: 'Decision', second: 'Second best', noStruct: 'No structure is eligible', missing: 'missing for the calculation', used: 'used', treat: 'PROPX treatment', srcBasis: 'Generated from ALTARIS underwriting and PROPX evidence by the deterministic decision policy — not an AI recommendation.', backToDeal: 'Back to the deal', pdf: 'IC PDF', explain: 'full explanation' },
+  };
+  const dlang = () => mlang();
+  const dT = (v, L) => DX.t(v, L || dlang());
+  /* the CBS sales context for a deal: the district when the locality came from the registry, else national (labelled) */
+  function cbsCtx(info) {
+    const s = window.PROPX_CBS_SALES;
+    if (!s || s.schema !== 1 || !s.geos || !s.geos.il || !s.geos.il.metrics || !s.geos.il.metrics.ok) return null;
+    const dk = CBS_DISTRICT[info && info.district], g = dk && s.geos[dk] && s.geos[dk].metrics && s.geos[dk].metrics.ok ? s.geos[dk] : null;
+    const M = (g || s.geos.il).metrics;
+    return { ok: true, level: g ? 'district' : 'national', scope: g ? { he: `${g.name.he} (מחוז)`, en: `${g.name.en || g.name.he} (district)` } : { he: 'ארצי', en: 'national' },
+      momentum: M.momentum && M.momentum.m3 && M.momentum.m3.ok ? M.momentum.m3.pct : null, small: !!M.small, latest: M.latest || null,
+      freshness: s.freshness && s.freshness.state || null, sourceUpdate: s.sourceUpdate || null, checkedAt: s.checkedAt || null,
+      inventory: s.inventory && s.inventory.latest ? s.inventory.latest.value : null, inventoryPeriod: s.inventory && s.inventory.latest ? s.inventory.latest.period : null };
+  }
+  const dctx = () => ({ today: TODAY, deal: S.deal, market: S.deal.market || null, cbs: cbsCtx(S.deal.info), indicators: (window.PROPX_MARKET || {}).indicators || {}, indicatorsCheckedAt: (window.PROPX_MARKET || {}).checkedAt || null });
+  /* flip points re-run the engine on modified copies of the deal (~1s): computed after the inputs settle, cached per deal state */
+  let flipT = 0;
+  function scheduleFlips(runCtx) {
+    const key = JSON.stringify([S.deal, S.settings]);
+    if (S.flips.key === key) { if (S.D) S.D.flips = S.flips.list; return; }
+    clearTimeout(flipT);
+    flipT = setTimeout(() => {
+      if (JSON.stringify([S.deal, S.settings]) !== key) return;
+      const list = DX.flips(S.R, dctx(), { run: (d) => E.run(d, S.settings, runCtx), decision: S.D });
+      S.flips = { key, list, t: Date.now() };
+      if (S.D) S.D.flips = list;
+      paintLedger();
+      if (S.view === 'decision') paintDecision();
+      else { const ic = $('#o-ic'); if (ic && S.view === 'deal') ic.innerHTML = icHTML(); }
+    }, 700);
+  }
+  const dvTone = (D) => (D ? D.tone : 'none');
+  const dvCode = (D, L) => (D ? dT(D.verdictLabel, L) : '—');
+  function decisionCardHTML() {
+    const D = S.D; if (!D) return '';
+    const L = 'he';
+    const why = D.strengths.slice(0, 3).map((x) => dT(x.text, L)).join(' · ');
+    const cond = D.conditions[0] ? dT(D.conditions[0].text, L) : '';
+    const risk = D.mainRisk ? dT(D.mainRisk, L) : '';
+    const insuff = D.verdict === 'INSUFFICIENT_EVIDENCE';
+    return `<div class="ax-dec tone-${dvTone(D)}" role="group" aria-label="${esc(DT.he.kick)}">
+      <div class="ax-dec-k">${DT.he.kick}<span class="v">v${DX.VERSION.n}</span></div>
+      <div class="ax-dec-v"><i></i><span class="code">${esc(DX.VERDICT[D.verdict].label.en)}</span><span class="he">${esc(DX.VERDICT[D.verdict].label.he)}</span></div>
+      <div class="ax-dec-row">${isNum(D.score) ? `<span><b class="num">${D.score} / 100</b> · ${esc(D.descriptorLabel ? D.descriptorLabel.en : '')}</span>` : ''}<span>${DT.he.struct}: <b>${D.recommended ? SN[D.recommended] : '—'}</b></span><span>${DT.he.ev}: <b>${esc(D.evidence.label.en)}</b></span></div>
+      <dl class="ax-dec-dl">${insuff ? `<dt>${DT.he.why}</dt><dd>${esc(dT(D.basis, L))}</dd>` : why ? `<dt>${DT.he.why}</dt><dd>${esc(why)}</dd>` : ''}${risk ? `<dt>${DT.he.risk}</dt><dd>${esc(risk)}</dd>` : ''}${cond ? `<dt>${DT.he.cond}</dt><dd>${esc(cond)}</dd>` : D.flips && D.flips[0] ? `<dt>${DT.he.s.flips}</dt><dd>${esc(dT(D.flips[0].text, L))}</dd>` : ''}</dl>
+      <button class="ax-link ax-dec-go" type="button" data-view-go="decision">${DT.he.basis} ←</button>
+      <p class="ax-dec-disc">${esc(DX.DISCLAIMER.he)}</p></div>`;
+  }
+  /* the IC snapshot block (on screen and in print): the one-page summary gains seven rows, nothing moves */
+  function icDecisionHTML(print) {
+    const D = S.D; if (!D) return '';
+    const rows = [['החלטה', `${DX.VERDICT[D.verdict].label.en} · ${DX.VERDICT[D.verdict].label.he}`], ['אטרקטיביות', isNum(D.score) ? `${D.score} / 100 · ${D.descriptorLabel.en}` : '—'], ['מבנה מומלץ', D.recommended ? `${SN[D.recommended]}${D.second ? ` (שני: ${SN[D.second]})` : ''}` : '—'], ['איכות ראיות', `${D.evidence.label.en} · ${D.evidence.score ?? '—'}`],
+      ['הסיבה העיקרית', D.verdict === 'INSUFFICIENT_EVIDENCE' ? dT(D.basis, 'he') : D.mainReason ? dT(D.mainReason, 'he') : '—'], ['הסיכון העיקרי', D.mainRisk ? dT(D.mainRisk, 'he') : '—'], ['תנאי', D.conditions[0] ? dT(D.conditions[0].text, 'he') : '—']];
+    return `<div class="ax-ic-dec tone-${dvTone(D)}"><div class="ax-dec-k">${DT.he.kick}<span class="v">${esc(DX.VERSION.id)}</span></div><div class="ax-ledger">${rows.map((r, i) => lr(r[0], r[1], { key: i === 0, txt: i >= 4 })).join('')}</div>${print ? '' : `<button class="ax-link" type="button" data-view-go="decision">${DT.he.basis} ←</button>`}</div>`;
+  }
+  /* the rows of the Excel sheet / CSV section "Investment Decision" (sheet language = the document language) */
+  function decisionRows() {
+    const D = S.D, L = dlang(), t = (v) => dT(v, L), T = DT[L];
+    if (!D) return [[T.s.decision, '—']];
+    const rows = [[{ v: T.kick, b: true }, { v: DX.VERSION.id, b: true }], [T.verdict, `${DX.VERDICT[D.verdict].label.en} · ${DX.VERDICT[D.verdict].label.he}`], [T.score, isNum(D.score) ? D.score : '—', D.descriptorLabel ? D.descriptorLabel.en : ''], [T.struct, D.recommended ? SN[D.recommended] : '—', T.second, D.second ? SN[D.second] : '—'], [T.ev, D.evidence.label.en, D.evidence.score ?? ''], ['basis', t(D.basis)], ['']];
+    rows.push([{ v: T.s.gates, b: true }], T.gateT.slice(0, 5).map((x) => ({ v: x, b: true })));
+    for (const k of E.STRATS) { const a = D.structures[k]; if (!a.ok) continue; for (const g of a.gates) rows.push([`${SN[k]} · ${t(g.label)}`, T.st[g.status], DX.fmtV(g.fmt, g.value, L), DX.fmtV(g.fmt, g.limit, L), g.critical ? T.yes : T.no]); }
+    rows.push(['']);
+    const a = D.lead ? D.structures[D.lead] : null;
+    if (a) { rows.push([{ v: `${T.partT[0]} (${SN[D.lead]})`, b: true }, ...T.partT.slice(1).map((x) => ({ v: x, b: true }))]); for (const g of ['returns', 'downside', 'structure', 'execution', 'market']) { const G = a.groups[g]; rows.push([{ v: `${t(G.label)} · ${T.weightT} ${G.weight}`, b: true }, '', G.score ?? '—']); for (const p of G.parts) rows.push([t(p.label), isNum(p.value) ? p.value : p.value == null ? '—' : String(p.value), p.score ?? '—', p.why ? t(p.why) : '']); } rows.push(['']); }
+    rows.push([{ v: T.s.evidence, b: true }]); for (const it of D.evidence.items) rows.push([t(it.text), it.delta, T.cls[it.cls] || it.cls]); rows.push(['']);
+    rows.push([{ v: T.s.conds, b: true }]); for (const c of D.conditions) rows.push([t(c.text), t(c.basis)]); if (!D.conditions.length) rows.push([T.none]); rows.push(['']);
+    rows.push([{ v: T.s.flips, b: true }]); for (const f of D.flips || []) rows.push([t(f.text)]); if (!(D.flips || []).length) rows.push([D.flips ? T.noFlip : T.computing]); rows.push(['']);
+    rows.push([{ v: T.s.sources, b: true }]); for (const [c, n] of Object.entries(D.breakdown.counts)) rows.push([T.cls[c] || c, n, D.breakdown.items[c].map((x) => t(x.text)).join(' · ')]); rows.push([T.most, t(D.breakdown.mostMaterial)]); rows.push(['']);
+    rows.push([{ v: T.s.conflicts, b: true }]); for (const c of D.conflicts) rows.push([t(c.label), c.values.map((v) => `${v.source} ${F.nis(v.value)}${v.used ? ' *' : ''}`).join(' / '), t(c.treatment)]); if (!D.conflicts.length) rows.push([T.none]); rows.push(['']);
+    rows.push([{ v: T.s.policy, b: true }]); for (const p of DX.POLICY_TEXT) rows.push([t(p)]);
+    rows.push([''], [T.srcBasis], [t(DX.DISCLAIMER)]);
+    return rows;
+  }
+  /* portfolio: the decision of each deal's latest version (its own structure context), cached per saved-deals revision */
+  let pfdRev = -1, pfdKey = '', pfd = {};
+  function pfDecisions(items, P) {
+    const key = JSON.stringify(S.settings);
+    if (pfdRev === S.dealsRev && pfdKey === key) return pfd;
+    pfdRev = S.dealsRev; pfdKey = key; pfd = {};
+    for (const it of items) {
+      try {
+        const others = P.rows.filter((r) => r.id !== it.id).map((r) => ({ developer: r.developer, project: r.project, city: r.city, capital: r.capital }));
+        const R1 = E.run(it.deal, S.settings, { today: TODAY, portfolio: others });
+        pfd[it.id] = DX.decide(R1, { today: TODAY, deal: it.deal, market: it.deal.market || null, cbs: cbsCtx(it.deal.info), indicators: (window.PROPX_MARKET || {}).indicators || {} });
+      } catch (e) { pfd[it.id] = null; }
+    }
+    return pfd;
+  }
+  const pfDecisionCells = (id) => { const D = pfd[id]; return D ? `<td><span class="ax-dv-${dvTone(D)}">${esc(DX.VERDICT[D.verdict].label.en)}</span></td><td class="n">${isNum(D.score) ? D.score : '—'}</td><td>${D.recommended ? `<span class="st" style="--c:${SC[D.recommended]}">${SN[D.recommended]}</span>` : '—'}</td><td>${esc(D.evidence.label.en)}</td>` : '<td>—</td><td class="n">—</td><td>—</td><td>—</td>'; };
+  /* the executive "Investment Decision" page of the full underwriting PDF */
+  function decisionPrintHTML() { return `<section class="ax-sec ax-dv">${decisionBasisHTML(true)}</section>`; }
+  function paintDecision() {
+    const box = $('#o-decision'); if (!box) return;
+    const L = dlang(), T = DT[L], dir = L === 'en' ? 'ltr' : 'rtl';
+    box.innerHTML = `<section class="ax-sec ax-mv ax-dv" dir="${dir}" lang="${L}"><div class="ax-mv-h"><div><div class="kick">${T.kick}</div><h2>${esc(T.h)}</h2><p class="sub">${esc(T.sub)} · ${esc(dealName(S.deal))}</p></div>
+        <div class="tools"><div class="ax-seg" role="group" aria-label="${esc(T.lang)}"><button type="button" data-mlang="he" lang="he" aria-pressed="${L === 'he'}">עברית</button><button type="button" data-mlang="en" lang="en" aria-pressed="${L === 'en'}">English</button></div><button type="button" class="ax-btn" data-view-go="deal">${esc(T.backToDeal)}</button><button type="button" class="ax-btn" data-act="pdf-ic">${esc(T.pdf)}</button></div></div>
+      ${decisionBasisHTML(false)}</section>`;
+  }
+  function decisionBasisHTML(print) {
+    const D = S.D, L = dlang(), T = DT[L], t = (v) => dT(v, L), en = L === 'en';
+    if (!D) return '';
+    const sec = (id, title, body) => `<section class="ax-dv-s" id="dv-${id}"><h3 class="ax-dv-h">${esc(title)}</h3>${body}</section>`;
+    const bar = (score) => (isNum(score) ? `<span class="ax-dv-bar" aria-hidden="true"><i style="width:${score}%"></i></span><b class="num">${score}</b>` : '<span class="ax-muted">—</span>');
+    const a = D.lead ? D.structures[D.lead] : null;
+    const head = `<div class="ax-dec tone-${dvTone(D)} big"><div class="ax-dec-v"><i></i><span class="code">${esc(DX.VERDICT[D.verdict].label.en)}</span><span class="he">${esc(DX.VERDICT[D.verdict].label.he)}</span></div>
+      <div class="ax-dec-row">${isNum(D.score) ? `<span>${esc(T.score)}: <b class="num">${D.score} / 100</b> · ${esc(t(D.descriptorLabel))}</span>` : ''}<span>${esc(T.struct)}: <b>${D.recommended ? SN[D.recommended] : '—'}</b>${D.second ? ` · ${esc(T.second)}: <b>${SN[D.second]}</b>` : ''}</span><span>${esc(T.ev)}: <b>${esc(t(D.evidence.label))}</b> (${D.evidence.score ?? '—'})</span></div>
+      <p class="ax-dv-basis">${esc(t(D.basis))}</p><p class="ax-dec-disc">${esc(T.srcBasis)}</p></div>`;
+    const why = D.recommended ? `<ul class="ax-dv-ul">${D.whyStructure.map((w) => `<li>${esc(t(w.text))}</li>`).join('')}</ul>` : `<p class="ax-muted">${esc(T.noStruct)}${a ? ` — ${SN[D.lead]}: ${esc(t(DX.VERDICT[a.verdict].label))} (${esc(t(a.basis))})` : ''}</p>`;
+    const cmpT = `<div class="ax-tbl-wrap"><table class="ax-tbl data ax-mx"><thead><tr><th></th>${E.STRATS.map((k) => `<th class="n${k === D.recommended ? ' hl' : ''}"><span class="st" style="--c:${SC[k]}">${SN[k]}</span></th>`).join('')}</tr></thead><tbody>${D.comparison.map((r) => `<tr><td>${esc(t(r.label))}</td>${E.STRATS.map((k) => { const v = r.cells[k]; let txt = '—'; if (v != null) txt = r.fmt === 'verdict' ? t(DX.VERDICT[v].label) : r.fmt === 'score' ? String(v) : r.fmt === 'level' ? ({ high: en ? 'high' : 'גבוהה', medium: en ? 'medium' : 'בינונית', low: en ? 'low' : 'נמוכה' }[v] || v) : r.fmt === 'evidence' ? t(DX.EVIDENCE[v]) : r.fmt === 'text' ? String(v) : DX.fmtV(r.fmt, v, L); return `<td class="n${k === D.recommended ? ' hl' : ''}">${esc(txt)}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const groupT = (G) => `<div class="ax-dv-g"><div class="ax-dv-gh">${bar(G.score)}<span class="ax-muted">${esc(T.weightT)} ${G.weight}${G.missing.length ? ` · ${esc(T.missing)}: ${esc(G.missing.join(', '))}` : ''}</span></div><div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr>${T.partT.map((x, i) => `<th${i === 1 || i === 2 ? ' class="n"' : ''}>${esc(x)}</th>`).join('')}</tr></thead><tbody>${G.parts.map((p) => `<tr><td>${esc(t(p.label))}</td><td class="n">${esc(isNum(p.value) ? (Math.abs(p.value) < 5 && !Number.isInteger(p.value) ? (p.value * 100).toFixed(1) + '%' : F.int(p.value)) : p.value == null ? '—' : String(p.value))}</td><td class="n">${p.score ?? '—'}</td><td class="ax-dv-why">${esc(p.why ? t(p.why) : '')}</td></tr>`).join('')}</tbody></table></div></div>`;
+    const groups = a ? ['returns', 'downside', 'structure', 'market', 'execution'].map((g) => sec(g, `${T.s[g]} · ${SN[D.lead]}`, groupT(a.groups[g]))).join('') : '';
+    const gatesT = a ? `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr>${T.gateT.map((x) => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${E.STRATS.filter((k) => D.structures[k].ok).flatMap((k) => D.structures[k].gates.map((g) => `<tr class="gs-${g.status}"><td>${SN[k]} · ${esc(t(g.label))}</td><td><span class="ax-dv-st ${g.status}">${esc(T.st[g.status])}</span></td><td class="n">${esc(DX.fmtV(g.fmt, g.value, L))}</td><td class="n">${esc(DX.fmtV(g.fmt, g.limit, L))}</td><td>${g.critical ? esc(T.yes) : esc(T.no)}</td><td class="ax-dv-why">${esc(t(g.why))}</td></tr>`)).join('')}</tbody></table></div>` : `<p class="ax-muted">${esc(T.noStruct)}</p>`;
+    const evT = `<div class="ax-dv-gh">${bar(D.evidence.score)}<b>${esc(t(D.evidence.label))}</b></div><ul class="ax-dv-ul">${D.evidence.items.map((it) => `<li><span class="ax-tag${it.cls === 'MISSING' || it.cls === 'STALE' || it.cls === 'CONFLICT' ? ' warn' : it.cls === 'OBSERVED' || it.cls === 'OFFICIAL' ? ' off' : it.cls === 'DERIVED' ? ' der' : ' usr'}">${esc(T.cls[it.cls] || it.cls)}</span> ${esc(t(it.text))}</li>`).join('')}</ul>`;
+    const condT = D.conditions.length ? `<ol class="ax-dv-ol">${D.conditions.map((c) => `<li><b>${esc(t(c.text))}</b><div class="ax-muted">${esc(t(c.basis))}</div></li>`).join('')}</ol>` : `<p class="ax-muted">${esc(T.none)}</p>`;
+    const flipT = D.flips ? (D.flips.length ? `<ul class="ax-dv-ul">${D.flips.map((f) => `<li>${esc(t(f.text))}</li>`).join('')}</ul>` : `<p class="ax-muted">${esc(T.noFlip)}</p>`) : `<p class="ax-muted" aria-live="polite">${esc(T.computing)}</p>`;
+    const bd = D.breakdown;
+    const srcT = `<div class="ax-dv-bd">${Object.keys(bd.counts).map((c) => `<div class="ax-dv-bdi"><b class="num">${bd.counts[c]}</b><span>${esc(T.cls[c])}</span><div class="ax-muted">${esc(bd.items[c].map((x) => t(x.text)).join(' · ') || '—')}</div></div>`).join('')}</div><p class="ax-dv-most"><b>${esc(T.most)}:</b> ${esc(t(bd.mostMaterial))}</p>`;
+    const confT = D.conflicts.length ? D.conflicts.map((c) => `<div class="ax-dv-conf"><div class="ax-dec-k">SOURCE CONFLICT</div><b>${esc(t(c.label))}</b><div class="ax-tbl-wrap"><table class="ax-tbl data"><tbody>${c.values.map((v) => `<tr><td>${esc(v.source)}${v.period ? ` · ${esc(v.period)}` : ''}</td><td class="n">${esc(F.nis(v.value))}</td><td>${v.used ? esc(T.used) : ''}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted"><b>${esc(T.treat)}:</b> ${esc(t(c.treatment))}</p></div>`).join('') : `<p class="ax-muted">${esc(T.none)}</p>`;
+    const freshT = D.freshness.length ? `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th></th><th>${esc(T.obs)}</th><th>${esc(T.pub)}</th><th>${esc(T.chk)}</th><th>${esc(T.state)}</th></tr></thead><tbody>${D.freshness.map((f) => `<tr><td>${esc(t(f.label))}</td><td class="n">${esc(f.observed ? F.date(String(f.observed).slice(0, 10)) : '—')}</td><td class="n">${esc(f.published ? F.date(String(f.published).slice(0, 10)) : '—')}</td><td class="n">${esc(f.checked ? F.date(String(f.checked).slice(0, 10)) : '—')}</td><td>${esc(f.state || '—')}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted">${en ? 'A current check of an old observation does not make the observation current.' : 'בדיקה עדכנית של תצפית ישנה אינה הופכת את התצפית לעדכנית.'}</p>` : `<p class="ax-muted">${esc(T.none)}</p>`;
+    const narr = DX.narrative(D, L).map((p) => `<p>${esc(p)}</p>`).join('');
+    return `${head}${sec('whyStruct', T.s.whyStruct, why)}${sec('cmp', T.s.cmp, cmpT)}${groups}${sec('gates', T.s.gates, gatesT)}${sec('evidence', T.s.evidence, evT)}${sec('conds', T.s.conds, condT)}${sec('flips', T.s.flips, flipT)}${sec('sources', T.s.sources, srcT)}${sec('conflicts', T.s.conflicts, confT)}${sec('fresh', T.s.fresh, freshT)}${print ? '' : sec('policy', T.s.policy, `<ul class="ax-dv-ul">${DX.POLICY_TEXT.map((p) => `<li>${esc(t(p))}</li>`).join('')}</ul>`)}${sec('narr', T.s.narr, `<div class="ax-dv-narr">${narr}</div>`)}<p class="ax-dec-disc">${esc(t(DX.DISCLAIMER))}</p><p class="ax-mline">${esc(dT(DX.VERSION.label, L))} · ${esc(DX.VERSION.id)} · ${en ? 'metrics per' : 'מדדים לפי'} ${esc(dT(MD.VERSION.label, L))}</p>`;
+  }
+
   /* ------------------------------------------------------------- shell */
   function renderShell() {
     $$('#axTabs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === S.view)));
@@ -433,6 +570,7 @@
     else if (S.view === 'saved') main.innerHTML = '<div id="o-saved"></div>';
     else if (S.view === 'settings') main.innerHTML = viewSettings();
     else if (S.view === 'method') main.innerHTML = viewMethod();
+    else if (S.view === 'decision') main.innerHTML = '<div id="o-decision"></div>';
     recompute(true);
     if (S.view === 'method') focusMethod();
   }
@@ -594,7 +732,8 @@
      filter ever reaches a calculation. State per table in memory for the page's life (ALTARIS stores nothing beyond
      its own altaris:* keys). */
   const AXT = { types: { comps: 'date,text,number,number,currency,currency', pf: 'text,text,text,text,currency,currency,percent,percent,number,number,date,number,text',
-    saved: 'text,text,text,text,text,date,number,-' } };
+    saved: 'text,text,text,text,text,text,date,number,-' } };
+  AXT.types.pf += ',text,number,text,text';   // additive decision columns: decision · attractiveness · recommended structure · evidence quality
   AXT.st = {};
   const axtState = (k) => AXT.st[k] || (AXT.st[k] = { sort: null, q: '' });
   const axtSave = (k, st) => { AXT.st[k] = st; };
@@ -1151,7 +1290,7 @@
     const long = new Set(['עסקה', 'הסיכון העיקרי', 'ההגנה העיקרית', 'מיקום', 'אות השקעה']);
     const IC_M = { 'שווי נתמך': 'supportedValue', 'הון נדרש': 'capitalAtRisk', 'משך צפוי': 'wal', 'IRR בסיס': 'irr', 'IRR בתרחיש שלילי': 'scenarios', 'MOIC': 'moic', 'מרווח ביטחון': 'mos', 'LTV · כיסוי': 'coverage' };
     return `<div class="ax-ic">${illusBanner()}<div class="ax-ic-h"><div><span class="w">ALTARIS INVESTMENT COMMITTEE SNAPSHOT</span><h3>${esc(dealName(S.deal))}</h3></div><span class="ax-muted num">${esc(F.date(TODAY))}${S.dealId && S.deals[S.dealId] ? ' · גרסה ' + S.deals[S.dealId].versions.length : ''}</span></div>
-      <div class="ax-ic-grid">${D.rows.filter((r) => !long.has(r[0])).map((r) => lr(r[0], tag(r), { key: r[0] === 'אות השקעה' || r[0] === 'IRR בסיס', m: print ? null : IC_M[r[0]] })).join('')}</div>
+      ${icDecisionHTML(print)}<div class="ax-ic-grid">${D.rows.filter((r) => !long.has(r[0])).map((r) => lr(r[0], tag(r), { key: r[0] === 'אות השקעה' || r[0] === 'IRR בסיס', m: print ? null : IC_M[r[0]] })).join('')}</div>
       <div class="ax-ledger" style="border-top:1px solid var(--hairline);margin-top:6px">${D.rows.filter((r) => long.has(r[0])).map((r) => `<div class="ax-lr" style="grid-template-columns:120px minmax(0,1fr)"><span class="l">${esc(r[0])}</span><span style="text-align:start;font-size:12.5px${r[0] === 'אות השקעה' ? ';font-weight:800' : ''}">${esc(tag(r))}</span></div>`).join('')}</div>
       <div class="ax-ic-cols"><div><h4>WHY THIS DEAL · למה העסקה</h4><ul>${D.why.length ? D.why.map((w) => `<li>${esc(w)}</li>`).join('') : '<li class="ax-muted">אין עדיין נימוקים — השלימו את הנתונים.</li>'}</ul></div>
       <div><h4>KEY RISKS · סיכונים מרכזיים</h4><ul class="r">${D.risks.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div></div>
@@ -1215,14 +1354,15 @@
     const items = portfolioItems();
     if (!items.length) { box.innerHTML = `<section class="ax-sec">${secHead('', 'פורטפוליו')}<div class="ax-empty"><b>אין עדיין עסקאות בפורטפוליו</b><p>כל עסקה שנשמרת הופכת לשורה כאן, עם המבנה שנבחר לביצוע (או המבנה המועדף לפי האות). עסקאות בארכיון, שנדחו או שמומשו אינן נספרות בחשיפה.</p><button class="ax-btn pri" type="button" data-view-go="deal">לעסקה חדשה</button></div></section>`; return; }
     const P = E.portfolio(items, S.settings, { today: TODAY }), sm = P.summary, st = P.settings;
+    pfDecisions(items, P);
     const strat = (k) => sm.byStrategy.find((x) => x.key === k) || { capital: 0, share: 0 };
     const kp = `<div class="ax-kpis">${kpi('הון מושקע כולל', F.m(sm.capital), sm.fundUse != null ? `${F.pct(sm.fundUse)} מהקרן` : '', { m: 'portfolio', how: 'סכום ההון בסיכון של העסקאות הפעילות, במבנה שנבחר לביצוע או במבנה המועדף.' })}${kpi('שווי נתמך כולל', F.m(sm.smv), `${sm.deals} עסקאות`)}${kpi('IRR משוקלל', F.pct(sm.irr), 'לפי הון', { m: 'portfolio', how: 'ממוצע IRR הבסיס של העסקאות, משוקלל בהון הנדרש' })}${kpi('MOIC משוקלל', F.x(sm.moic), 'לפי הון')}${kpi('משך משוקלל', F.mo(sm.months), 'לפי הון')}${kpi('היציאה הקרובה', sm.upcoming[0] ? F.date(sm.upcoming[0].exitDate) : '—', sm.upcoming[0] ? sm.upcoming[0].name : '')}</div>
       <div class="ax-kpis" style="border-top:none">${E.STRATS.map((k) => kpi(`חשיפת ${SN[k]}`, F.m(strat(k).capital), F.pct(strat(k).share))).join('')}${kpi('ריכוזיות יזם', F.pct(sm.topDeveloperShare), sm.byDeveloper[0] ? sm.byDeveloper[0].key : '')}${kpi('ריכוזיות יישוב', F.pct(sm.topCityShare), sm.byCity[0] ? sm.byCity[0].key : '')}${kpi('נזילות צפויה · 3 / 6 / 12 ח׳', `${F.m(sm.liquidity.m3)}`, `6 ח׳ ${F.m(sm.liquidity.m6)} · 12 ח׳ ${F.m(sm.liquidity.m12)}`, { m: 'portfolio', how: 'סך התקבולים החיוביים (קרן ורווח) המתוארכים בכל חלון מהיום' })}</div>`;
-    const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(r.name)}</button>${S.deals[r.id] && S.deals[r.id].origin === 'illustrative-case' ? ' <span class="ax-tag ill">להמחשה</span>' : ''}</td><td>${esc(r.developer || '—')}</td><td>${esc(r.project || '—')}</td><td>${r.strategy ? `<span class="st" style="--c:${SC[r.strategy]}">${SN[r.strategy]}</span>` : '—'}</td><td class="n">${F.m(r.capital)}</td><td class="n">${F.m(r.smv)}</td><td class="n">${F.pct(r.ltv)}</td><td class="n">${F.pct(r.irr)}</td><td class="n">${F.x(r.moic)}</td><td class="n">${F.mo(r.months)}</td><td class="n">${F.date(r.exitDate)}</td><td class="n">${r.risk ?? '—'}</td><td>${statusSelect(r.id)}</td></tr>`).join('');
+    const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(r.name)}</button>${S.deals[r.id] && S.deals[r.id].origin === 'illustrative-case' ? ' <span class="ax-tag ill">להמחשה</span>' : ''}</td><td>${esc(r.developer || '—')}</td><td>${esc(r.project || '—')}</td><td>${r.strategy ? `<span class="st" style="--c:${SC[r.strategy]}">${SN[r.strategy]}</span>` : '—'}</td><td class="n">${F.m(r.capital)}</td><td class="n">${F.m(r.smv)}</td><td class="n">${F.pct(r.ltv)}</td><td class="n">${F.pct(r.irr)}</td><td class="n">${F.x(r.moic)}</td><td class="n">${F.mo(r.months)}</td><td class="n">${F.date(r.exitDate)}</td><td class="n">${r.risk ?? '—'}</td><td>${statusSelect(r.id)}</td>${pfDecisionCells(r.id)}</tr>`).join('');
     const bars = (list, limit, title) => C.shareBars(list.map((x) => ({ label: x.key === '—' ? 'לא הוזן' : x.key, v: x.capital, share: st.fundSize ? x.ofFund : x.share })), { limit: st.fundSize ? limit / 100 : null, title, question: st.fundSize ? 'שיעור מגודל הקרן מול התקרה שהוגדרה' : 'שיעור מההון בפורטפוליו', w: CW(true) });
     const cal = C.columns(sm.calendar.slice(0, 8).map((x) => ({ label: x.q, v: x.v })), { title: 'לוח החזרי הון', question: 'מתי צפוי ההון (קרן ורווח) לחזור לקרן?', periodLabel: 'רבעון', w: CW(true) });
     box.innerHTML = `<section class="ax-sec">${secHead('', 'פורטפוליו', `${sm.deals} עסקאות פעילות · הגרסה האחרונה של כל עסקה, במבנה שנבחר לביצוע או במבנה המועדף. גודל קרן: ${F.m(st.fundSize)}.`)}${kp}
-      <h3 class="ax-h3">עסקאות</h3><div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="pf"><thead><tr><th>עסקה</th><th>יזם</th><th>פרויקט</th><th>מבנה</th><th class="n">הון</th><th class="n">שווי נתמך</th><th class="n">LTV</th><th class="n">IRR</th><th class="n">MOIC</th><th class="n">משך</th><th class="n">יציאה צפויה</th><th class="n">סיכון</th><th>סטטוס</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+      <h3 class="ax-h3">עסקאות</h3><div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="pf"><thead><tr><th>עסקה</th><th>יזם</th><th>פרויקט</th><th>מבנה</th><th class="n">הון</th><th class="n">שווי נתמך</th><th class="n">LTV</th><th class="n">IRR</th><th class="n">MOIC</th><th class="n">משך</th><th class="n">יציאה צפויה</th><th class="n">סיכון</th><th>סטטוס</th><th>החלטה</th><th class="n">אטרקטיביות</th><th>מבנה מומלץ</th><th>ראיות</th></tr></thead><tbody>${rows}</tbody></table></div><p class="ax-muted">החלטה · אטרקטיביות · מבנה מומלץ · ראיות — ${esc(DX.VERSION.label.he)}: לפי הגרסה האחרונה של כל עסקה והגדרות הקרן הנוכחיות; לא משנה את חישובי הפורטפוליו.</p></section>
       <section class="ax-sec">${secHead('', 'חשיפה ולוח נזילות')}<div class="ax-res two">${C.shareBars(sm.byStrategy.map((x) => ({ label: SN[x.key] || x.key, v: x.capital, share: x.share, c: SC[x.key] })), { title: 'חשיפה לפי מבנה', question: 'איך ההון מתחלק בין רכישה, מימון ומבנה משולב?', w: CW(true) })}${cal}</div>
       <div class="ax-res two">${bars(sm.byDeveloper.slice(0, 8), st.maxDevExposure, 'חשיפה לפי יזם')}${bars(sm.byCity.slice(0, 8), st.maxGeoExposure, 'חשיפה לפי יישוב')}</div>
       <h3 class="ax-h3">יציאות קרובות</h3>${sm.upcoming.length ? `<div class="ax-ledger">${sm.upcoming.map((u) => lr(`${u.name} · ${SN[u.strategy] || ''}`, `${F.date(u.exitDate)} · ${F.m(u.capital)}`)).join('')}</div>` : '<p class="ax-muted">אין יציאות צפויות.</p>'}</section>`;
@@ -1239,9 +1379,9 @@
     const tools = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button class="ax-btn pri" type="button" data-act="new">עסקה חדשה</button><label class="ax-btn" style="cursor:pointer">ייבוא קובץ עסקה (JSON)<input type="file" accept="application/json,.json" data-act-file="import" hidden></label><label class="ax-switch"><input type="checkbox" data-act-check="arch"${showArch ? ' checked' : ''}> הצגת ארכיון (${all.filter((r) => r.archived).length})</label></div>`;
     let body;
     if (!all.length) body = `<div class="ax-empty"><b>אין עסקאות שמורות</b><p>העסקאות נשמרות בדפדפן הזה בלבד (localStorage). כדי להעביר עסקה לעמית או למחשב אחר — ייצאו קובץ עסקה (JSON) וייבאו אותו שם.</p><button class="ax-btn pri" type="button" data-view-go="deal">לעסקה חדשה</button></div>`;
-    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data" data-axt="saved"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
+    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data" data-axt="saved"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>החלטה בשמירה</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
       const v = r.versions[r.versions.length - 1], info = v.deal.info || {};
-      return `<tr${r.id === S.dealId ? ' class="pick"' : ''}><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(dealName(v.deal))}</button>${r.archived ? ' <span class="ax-tag">ארכיון</span>' : ''}${v.deal.example ? ' <span class="ax-tag">דוגמה</span>' : ''}${fromCase(v.deal) ? ' <span class="ax-tag ill">מבוסס על מקרה להמחשה</span>' : ''}</td><td>${esc(info.developer || '—')}</td><td>${esc(info.city || '—')}</td><td>${esc(v.signal || '—')}</td><td>${statusSelect(r.id)}</td><td class="n">${esc(F.date((r.updatedAt || '').slice(0, 10)))}</td><td class="n">${r.versions.length}</td>
+      return `<tr${r.id === S.dealId ? ' class="pick"' : ''}><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(dealName(v.deal))}</button>${r.archived ? ' <span class="ax-tag">ארכיון</span>' : ''}${v.deal.example ? ' <span class="ax-tag">דוגמה</span>' : ''}${fromCase(v.deal) ? ' <span class="ax-tag ill">מבוסס על מקרה להמחשה</span>' : ''}</td><td>${esc(info.developer || '—')}</td><td>${esc(info.city || '—')}</td><td>${esc(v.signal || '—')}</td><td>${v.decision && v.decision.verdict ? `<span class="ax-dv-${esc(DX.VERDICT[v.decision.verdict] ? DX.VERDICT[v.decision.verdict].tone : 'none')}">${esc(DX.VERDICT[v.decision.verdict] ? DX.VERDICT[v.decision.verdict].label.en : v.decision.verdict)}</span>${isNum(v.decision.score) ? ` <span class="num ax-muted">${v.decision.score}</span>` : ''}` : '<span class="ax-muted">לא סומן (לפני v1)</span>'}</td><td>${statusSelect(r.id)}</td><td class="n">${esc(F.date((r.updatedAt || '').slice(0, 10)))}</td><td class="n">${r.versions.length}</td>
         <td style="white-space:nowrap"><button class="ax-btn" type="button" data-act="dup" data-id="${esc(r.id)}">שכפול</button> <button class="ax-btn" type="button" data-act="archive" data-id="${esc(r.id)}">${r.archived ? 'שחזור' : 'ארכוב'}</button> <button class="ax-btn" type="button" data-act="cmp" data-id="${esc(r.id)}"${r.versions.length < 2 ? ' disabled title="נדרשות לפחות שתי גרסאות"' : ''}>השוואת גרסאות</button></td></tr>`;
     }).join('')}</tbody></table></div>`;
     box.innerHTML = `<section class="ax-sec">${secHead('', 'עסקאות שמורות', 'שמירה יוצרת גרסה חדשה; גרסאות קודמות נשמרות להשוואה. העסקאות נשמרות בדפדפן זה בלבד.')}${tools}${body}</section>${S.cmpVer.id && S.deals[S.cmpVer.id] ? versionsHTML() : ''}`;
@@ -1276,7 +1416,9 @@
     const show = (v) => (v == null ? 'ברירת מחדל / ריק' : typeof v === 'number' ? (Number.isInteger(v) ? F.int(v) : String(v)) : typeof v === 'boolean' ? (v ? 'כן' : 'לא') : String(v));
     const ra = E.run(va.deal, S.settings, { today: TODAY }), rb = E.run(vb.deal, S.settings, { today: TODAY });
     const mver = (v) => (v.methodology === MD.VERSION.id ? `v${MD.VERSION.n}` : v.methodology || 'לא סומן (לפני v1)');
-    const out = [['מתודולוגיית מדדים בשמירה', mver(va), mver(vb)], ['אות מבנה', ra.signal.code, rb.signal.code], ['שווי נתמך', F.nis(ra.facts.smv), F.nis(rb.facts.smv)]]
+    const dver = (v) => (v.decision && v.decision.v === DX.VERSION.id ? `v${DX.VERSION.n} · ${DX.VERDICT[v.decision.verdict] ? DX.VERDICT[v.decision.verdict].label.en : v.decision.verdict}${isNum(v.decision.score) ? ' ' + v.decision.score : ''}` : v.decision && v.decision.v ? v.decision.v : 'לא סומן (לפני v1)');
+    const da = DX.decide(ra, { today: TODAY, deal: va.deal, market: va.deal.market, cbs: cbsCtx(va.deal.info), indicators: (window.PROPX_MARKET || {}).indicators }), db = DX.decide(rb, { today: TODAY, deal: vb.deal, market: vb.deal.market, cbs: cbsCtx(vb.deal.info), indicators: (window.PROPX_MARKET || {}).indicators });
+    const out = [['מתודולוגיית מדדים בשמירה', mver(va), mver(vb)], ['החלטת השקעה בשמירה', dver(va), dver(vb)], ['החלטת השקעה (מחושב עכשיו)', `${DX.VERDICT[da.verdict].label.en}${isNum(da.score) ? ' ' + da.score : ''}`, `${DX.VERDICT[db.verdict].label.en}${isNum(db.score) ? ' ' + db.score : ''}`], ['אות מבנה', ra.signal.code, rb.signal.code], ['שווי נתמך', F.nis(ra.facts.smv), F.nis(rb.facts.smv)]]
       .concat(E.STRATS.flatMap((k) => [[`${SN[k]} · IRR`, F.pct(E.irrOf(ra.strategies[k].base)), F.pct(E.irrOf(rb.strategies[k].base))], [`${SN[k]} · הון בסיכון`, F.m(E.capOf(ra.strategies[k].base)), F.m(E.capOf(rb.strategies[k].base))], [`${SN[k]} · MOIC`, F.x(E.moicOf(ra.strategies[k].base)), F.x(E.moicOf(rb.strategies[k].base))]]));
     const sel = (key, val) => `<select class="ax-status" data-ver="${key}">${rec.versions.map((v) => `<option value="${v.n}"${v.n === val ? ' selected' : ''}>גרסה ${v.n} · ${esc(F.date(v.savedAt.slice(0, 10)))}</option>`).join('')}</select>`;
     return `<section class="ax-sec">${secHead('', `השוואת גרסאות · ${esc(dealName(vb.deal))}`, 'הנחות שהשתנו בין שתי גרסאות, והשפעתן על התוצאות (מחושב מחדש עם הגדרות הקרן הנוכחיות).', `<button class="ax-btn" type="button" data-act="cmp-close">סגירה</button>`)}
@@ -1387,7 +1529,7 @@
     const q1 = `<div class="ax-q"><div class="qn"><b>1</b>מהו השווי הנתמך האמיתי?${mi('supportedValue')}</div><div class="a"><span class="v num">${Fx.smv ? F.m(Fx.smv) : '—'}</span><span class="x">${Fx.chosen ? esc(VSRC[Fx.chosen].l) + ' ' + clsTag(valueOrigin(Fx.chosen, (S.deal.value || {})[Fx.chosen])) : 'לא נבחר שווי לחיתום'}</span></div>
       <div class="s">${Fx.smv ? `הנחת כניסה ${F.pct(Fx.discount)} · בסיס ${F.m(Fx.basis)}${Fx.sqm ? ' · ' + F.int(Fx.smv / Fx.sqm) + ' ₪/מ״ר' : ''}` : 'בחרו מקור שווי במפורש בשלב 2.'}</div></div>`;
     if (!b) {
-      return head + q1 + `<div class="ax-q">${needBox(`<b>${SN[k]}:</b> חסרים ${esc(missingTxt(s.base.missing))}`)}</div>` + sigHTML(sig) + footHTML();
+      return head + decisionCardHTML() + q1 + `<div class="ax-q">${needBox(`<b>${SN[k]}:</b> חסרים ${esc(missingTxt(s.base.missing))}`)}</div>` + sigHTML(sig) + footHTML();
     }
     const q2 = `<div class="ax-q"><div class="qn"><b>2</b>כמה הון ALTARIS מסכנת?${mi('capitalAtRisk', capLive(k, s))}</div><div class="a"><span class="v num">${F.m(E.capOf(b))}</span><span class="x">${SN[k]} · ${SH[k]}</span></div>
       <div class="s">${k === 'buy' ? `חוב ${F.m(b.debt)}${b.debt ? ' · LTV ' + F.pct(b.ltv) : ''} · מחיר ${F.m(b.price)}` : k === 'finance' ? `LTV ${F.pct(b.ltv)} · כיסוי בטוחות ${F.x(b.coverage)}` : `הון בסיכון מקסימלי ${F.m(b.maxAtRisk)} · כיסוי ${F.x(b.coverage)}`}</div></div>`;
@@ -1398,7 +1540,7 @@
       <div class="row"><div><div class="k">IRR שלילי</div><div class="v2 num${d && E.irrOf(d) < 0 ? ' neg' : ''}">${d ? F.pct(E.irrOf(d)) : '—'}</div></div><div><div class="k">רווח שלילי</div><div class="v2 num${d && d.profit < 0 ? ' neg' : ''}">${d ? F.m(d.profit) : '—'}</div></div><div><div class="k">מרווח ביטחון${mi('mos')}</div><div class="v2 num${s.mos < 0 ? ' neg' : ''}">${F.pct(s.mos)}</div></div></div>
       <div class="s">${k === 'buy' ? `נקודת איזון ${F.m(base.breakEvenExit)} · השווי יכול לרדת ${F.pct(base.maxHaircut)} מהשווי הנתמך לפני הפסד` : d && d.recovery ? `כשל בחודש ${d.recovery.defaultMonth}, גבייה בחודש ${d.recovery.recoveryMonth}: ${F.pct(d.recovery.rate, 0)} מהתביעה${d.recovery.principalLoss > 0 ? ' · פגיעה בקרן ' + F.m(d.recovery.principalLoss) : ' · הקרן מוחזרת'}` : 'ירידת שווי מקסימלית לפני פגיעה בהון'}</div></div>`;
     const risk = s.risk ? `<div class="ax-q"><div class="qn">ציון סיכון · ${SN[k]}${mi('riskScore')}${modelTag()}</div><div class="ax-risk"><span class="v2 num" style="font-family:var(--f-display);font-weight:800;font-size:16px">${s.risk.overall}</span><span class="bar"><i style="width:${s.risk.overall}%"></i></span><span class="x ax-muted">/ 100 · גבוה = סיכון נמוך</span></div></div>` : '';
-    return head + q1 + q2 + q3 + q4 + sigHTML(sig) + risk + footHTML();
+    return head + decisionCardHTML() + q1 + q2 + q3 + q4 + sigHTML(sig) + risk + footHTML();
   }
   const sigHTML = (sig) => `<div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="qn" style="font-size:10.5px;font-weight:700;color:var(--ink-3)"><b style="font-family:var(--f-display);color:var(--brass)">5</b> BUY, FINANCE או HYBRID?${mi('signal')}</div><div class="code"><i></i>${esc(sig.code)}</div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul><button class="ax-link" type="button" data-view-go="compare">ההסבר המלא בהשוואת המבנים</button></div>`;
   const footHTML = () => (isCase(S.deal) ? `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="case-copy">יצירת עותק עבודה</button><button class="ax-btn" type="button" data-act="pdf-ic">PDF ועדה</button><span class="ax-muted" style="align-self:center">מקרה להמחשה — אינו נשמר בעסקאות</span></div>` : `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="save">${S.dealId ? 'שמירת גרסה' : 'שמירת עסקה'}</button><button class="ax-btn" type="button" data-act="pdf-ic">PDF ועדה</button><span class="ax-muted" style="align-self:center">${S.dealId ? (S.dirty ? 'שינויים שלא נשמרו' : 'נשמר') : 'טיוטה — נשמרת אוטומטית בדפדפן'}</span></div>`);
@@ -1407,7 +1549,8 @@
     if (a) a.innerHTML = S.view === 'deal' ? `<div class="ax-ldg">${ledgerHTML()}</div>` : '';
     const m = $('#axMbar'); if (!m || S.view !== 'deal') return;
     const R = S.R, s = R.strategies[S.strat], b = s.base.ok ? s.base : null;
-    m.innerHTML = `<div class="ax-mbar-in"><div><div class="k">אות מבנה</div><div class="v sig">${esc(R.signal.code)}</div></div><div><div class="k">IRR ${SN[S.strat]}</div><div class="v num${b && E.irrOf(b) < 0 ? ' neg' : ''}">${b ? F.pct(E.irrOf(b)) : '—'}</div></div><div><div class="k">הון בסיכון</div><div class="v num">${b ? F.m(E.capOf(b)) : '—'}</div></div><div><div class="k">מרווח ביטחון</div><div class="v num">${b ? F.pct(s.mos) : '—'}</div></div>
+    const D = S.D;
+    m.innerHTML = `<div class="ax-mbar-in"><div><div class="k">החלטה</div><div class="v sig ax-dv-${D ? D.tone : 'none'}">${esc(D ? DX.VERDICT[D.verdict].label.en : '—')}${D && isNum(D.score) ? ` <span class="num">${D.score}</span>` : ''}</div></div><div><div class="k">אות מבנה</div><div class="v sig">${esc(R.signal.code)}</div></div><div><div class="k">IRR ${SN[S.strat]}</div><div class="v num${b && E.irrOf(b) < 0 ? ' neg' : ''}">${b ? F.pct(E.irrOf(b)) : '—'}</div></div><div><div class="k">הון בסיכון</div><div class="v num">${b ? F.m(E.capOf(b)) : '—'}</div></div><div><div class="k">מרווח ביטחון</div><div class="v num">${b ? F.pct(s.mos) : '—'}</div></div>
       <button class="ax-btn" type="button" data-act="mbar" aria-expanded="${S.mbarOpen}">${S.mbarOpen ? 'סגירה' : 'פרטים'}</button></div>${S.mbarOpen ? `<div class="ax-mbar-sheet"><div class="ax-ldg">${ledgerHTML()}</div></div>` : ''}`;
   }
   function paintSteps() {
@@ -1423,12 +1566,14 @@
   function recompute(full) {
     const ctx = { today: TODAY, portfolio: isCase(S.deal) ? [] : portfolioCtx(), marketDepth: S.deal.market && S.deal.market.tx ? { deals: S.deal.market.tx.n, from: S.deal.market.tx.from, to: S.deal.market.tx.to } : null };
     S.R = E.run(S.deal, S.settings, ctx);
+    S.D = DX.decide(S.R, dctx()); scheduleFlips(ctx);
     if (S.view === 'deal') {
       if (full) renderStratInputs();
       paintUnits(); paintValue(); paintCards(); syncDefaults(); paintStratInfo(); paintStratRes(); paintScenarios(); paintDecide(); paintSteps();
     } else if (S.view === 'compare') paintCompare();
     else if (S.view === 'portfolio') paintPortfolio();
     else if (S.view === 'saved') paintSaved();
+    else if (S.view === 'decision') paintDecision();
     paintLedger();
     if (POP.trigger && !POP.trigger.isConnected) closePop(false);
     store.set(KEY.draft, { deal: S.deal, dealId: S.dealId, dirty: S.dirty });
@@ -1445,7 +1590,7 @@
     if (!rec) { const id = uid(); rec = S.deals[id] = { id, status: 'draft', archived: false, createdAt: now, versions: [] }; S.dealId = id; }
     const snap = clone(S.deal), last = rec.versions[rec.versions.length - 1];
     if (last && JSON.stringify(last.deal) === JSON.stringify(snap)) { toast('אין שינויים מאז הגרסה האחרונה'); return; }
-    rec.versions.push({ n: rec.versions.length + 1, savedAt: now, deal: snap, signal: S.R.signal.code, strategy: S.R.ic.strategy, methodology: MD.VERSION.id });
+    rec.versions.push({ n: rec.versions.length + 1, savedAt: now, deal: snap, signal: S.R.signal.code, decision: S.D ? S.D.stamp : null, strategy: S.R.ic.strategy, methodology: MD.VERSION.id });
     rec.updatedAt = now;
     persistDeals(); S.dirty = false;
     toast(`נשמר · גרסה ${rec.versions.length}`); renderShell(); recompute(false);
@@ -1568,6 +1713,7 @@
     const sections = [{ title: 'ALTARIS', rows: m.meta }, { title: 'סיכום ועדת השקעות', rows: m.summary }, { title: 'פרטי העסקה', rows: m.dealRows }, { title: 'יחידות', rows: m.unitRows },
       { title: 'שווי נתמך', rows: m.valRows }, { title: 'הנחות', rows: m.assum }, { title: 'תוצאות לפי תרחיש', rows: m.M }, { title: 'מדדים נוספים', rows: m.extra }, { title: 'מבחני לחץ', rows: m.stress }, { title: 'ציון סיכון', rows: m.risk }]
       .concat(Object.entries(m.flows).map(([k, rows]) => ({ title: 'תזרים חודשי · ' + SN[k], rows })))
+      .concat([{ title: 'Investment Decision', rows: decisionRows() }])
       .concat([{ title: 'Metric Conventions', rows: methodRows() }]);
     X.download(fileBase() + '.csv', X.csv(sections), 'text/csv;charset=utf-8');
   }
@@ -1578,18 +1724,19 @@
       { name: 'שווי נתמך', rows: B(m.valRows), widths: [30, 16, 30, 60, 8] }, { name: 'הנחות', rows: B(m.assum), widths: [16, 34, 18, 20] },
       { name: 'תוצאות', rows: B(m.M).concat([['']], B(m.extra)), widths: [30, 14, 14, 14, 14, 14, 14, 14, 14, 14] }, { name: 'מבחני לחץ', rows: B(m.stress), widths: [24, 12, 14, 12, 14, 12, 14] },
       { name: 'סיכון', rows: B(m.risk), widths: [12, 16, 8, 90] }].concat(Object.entries(m.flows).map(([k, rows]) => ({ name: 'תזרים ' + SN[k], rows: B(rows), widths: [8, 12, 16, 16, 16] })))
+      .concat([{ name: 'Investment Decision', rows: decisionRows(), widths: [30, 28, 60, 60], ltr: mlang() === 'en' }])
       .concat([{ name: 'Metric Conventions', rows: methodRows(), widths: [22, 30, 60, 80, 44, 26, 24, 70, 50], ltr: mlang() === 'en' }]);
     if (illusKind()) sheets.forEach((sh, i) => { if (i > 0) sh.rows = [[{ v: illusMark(), b: true }], ['']].concat(sh.rows); });   // the summary sheet already opens with it
     X.download(fileBase() + '.xlsx', new Blob([X.xlsx(sheets)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
   }
-  function exportJSON() { X.download(fileBase() + '.altaris.json', JSON.stringify({ kind: 'altaris-deal', schema: 1, methodology: MD.VERSION.id, illustrative: illusKind() ? illusMark() : undefined, exportedAt: new Date().toISOString(), deal: S.deal, record: S.dealId ? S.deals[S.dealId] : null }, null, 1), 'application/json'); }
+  function exportJSON() { X.download(fileBase() + '.altaris.json', JSON.stringify({ kind: 'altaris-deal', schema: 1, methodology: MD.VERSION.id, decision: S.D ? S.D.stamp : null, illustrative: illusKind() ? illusMark() : undefined, exportedAt: new Date().toISOString(), deal: S.deal, record: S.dealId ? S.deals[S.dealId] : null }, null, 1), 'application/json'); }
   async function importJSON(file) {
     try {
       const o = JSON.parse(await file.text());
       if (!o || o.kind !== 'altaris-deal' || !o.deal || typeof o.deal !== 'object') throw new Error('not an ALTARIS deal file');
       const now = new Date().toISOString(), id = uid();
       const deCase = (d) => { if (d && d.case) { d.origin = { kind: 'illustrative-case', id: d.case.id, v: d.case.v, importedAt: TODAY }; delete d.case; } return d; };   // an imported case is a working copy, never an unmarked deal
-      const versions = o.record && Array.isArray(o.record.versions) && o.record.versions.length ? o.record.versions.map((v, i) => ({ n: i + 1, savedAt: v.savedAt || now, deal: deCase(normalizeDeal(v.deal)), signal: v.signal || null, methodology: typeof v.methodology === 'string' ? v.methodology : null })) : [];
+      const versions = o.record && Array.isArray(o.record.versions) && o.record.versions.length ? o.record.versions.map((v, i) => ({ n: i + 1, savedAt: v.savedAt || now, deal: deCase(normalizeDeal(v.deal)), signal: v.signal || null, decision: v.decision && typeof v.decision === 'object' ? v.decision : null, methodology: typeof v.methodology === 'string' ? v.methodology : null })) : [];
       const working = deCase(normalizeDeal(o.deal)), lastV = versions[versions.length - 1];
       if (!lastV || JSON.stringify(lastV.deal) !== JSON.stringify(working)) versions.push({ n: versions.length + 1, savedAt: o.exportedAt || now, deal: working, note: 'עותק העבודה מהקובץ', methodology: typeof o.methodology === 'string' ? o.methodology : null });
       S.deals[id] = { id, status: (o.record && o.record.status) || 'draft', archived: false, createdAt: now, updatedAt: now, versions };
@@ -1604,7 +1751,7 @@
     const R = S.R, keep = S.strat;
     const m = exportModel();
     const tbl = (rows) => `<table class="ax-tbl data"><thead><tr>${rows[0].map((c, i) => `<th${i ? ' class="n"' : ''}>${esc(c && typeof c === 'object' ? c.v : c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((r) => `<tr>${r.map((c, i) => { const v = c && typeof c === 'object' ? c.v : c; const f = c && typeof c === 'object' ? c.f : null; return `<td${i ? ' class="n"' : ''}>${esc(isNum(v) ? (f === 'pct' ? F.pct(v) : f === 'x' ? F.x(v) : f === 'n' ? String(v) : F.int(v)) : v == null ? '' : v)}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
-    let html = `<div class="ax-pp">${icHTML(true)}${printFoot()}</div><div class="ax-pp"><section class="ax-sec"><h2>פרטי העסקה</h2>${tbl(m.dealRows)}<h3 class="ax-h3">יחידות</h3>${tbl(m.unitRows)}<h3 class="ax-h3">שווי נתמך</h3>${tbl(m.valRows)}</section></div>`;
+    let html = `<div class="ax-pp">${icHTML(true)}${printFoot()}</div><div class="ax-pp">${decisionPrintHTML()}</div><div class="ax-pp"><section class="ax-sec"><h2>פרטי העסקה</h2>${tbl(m.dealRows)}<h3 class="ax-h3">יחידות</h3>${tbl(m.unitRows)}<h3 class="ax-h3">שווי נתמך</h3>${tbl(m.valRows)}</section></div>`;
     for (const k of E.STRATS) {
       const s = R.strategies[k]; S.strat = k;
       html += `<div class="ax-pp"><section class="ax-sec"><h2>${SN[k]} · ${SH[k]}</h2>${s.base.ok ? `<div class="ax-res">${kpiStrip(k, s)}${k === 'buy' ? resBuy(s) : k === 'finance' ? resFin(s) : resHyb(s)}</div>` : needBox(missingTxt(s.base.missing))}</section></div>`;

@@ -53,6 +53,7 @@ The only PROPX key ALTARIS reads and writes is the shared theme preference
 | `altaris/engine.js` | the calculation engine: pure functions, no DOM, loadable in Node (`test/altaris.test.js`) |
 | `altaris/methodology.js` | the metric conventions (pure bilingual data, versioned; documents the engine, computes nothing) |
 | `altaris/cases.js` | five illustrative investment cases (synthetic inputs only; the engine computes every figure) |
+| `altaris/decision.js` | the investment decision layer: deterministic policy over the engine output + PROPX context (verdict, attractiveness, evidence quality, structure, gates, conditions, flips, breakdown, narrative) |
 | `altaris/app.js` | UI: inputs, live underwriting ledger, compare, stress, portfolio, saved deals, settings |
 | `altaris/charts.js` | inline-SVG institutional charts with hover tooltips and table twins |
 | `altaris/export.js` | CSV, XLSX (dependency-free writer), print-to-PDF views, JSON import/export |
@@ -126,6 +127,50 @@ written from the engine as implemented; the engine stays the source of truth and
   from equity; stresses, solvers, the extension case and the attribution start from the deal's own base scenario; the
   portfolio concentration context repeats until stable and unnamed developers / localities are not one counterparty.
   `MD.CHANGES` lists the same in both languages; the baseline fixture was regenerated (its `generatedWith.note` says so).
+
+## Investment decision (altaris/decision.js — ALTARIS Investment Decision Methodology v1)
+
+A deterministic decision layer ON TOP of the engine (16.10.2026). It consumes `run(...)` — facts, the three structures'
+base / downside / stress results, hurdles, risk components, solvers — and the PROPX context the page already loaded
+(read-only), and never recalculates a return: every figure it judges is read through `irrOf` / `moicOf` / `capOf`.
+The engine stays the source of truth; `test/altaris-decision.test.js` proves the frozen baseline and the engine hash
+are unchanged.
+
+* **Four verdicts** — TAKE (לקחת) · TAKE WITH CONDITIONS (לקחת בכפוף לתנאים) · PASS (לא לקחת) · INSUFFICIENT EVIDENCE
+  (אין מספיק מידע להחלטה). The policy is `POLICY` / `POLICY_TEXT`: TAKE = every critical gate met, no near miss or open
+  non-critical gate, attractiveness ≥ 65, downside protection ≥ 45, evidence ≥ MEDIUM; TAKE WITH CONDITIONS = no critical
+  failure, attractiveness ≥ 50 and at least one of a near miss (within 20% of a threshold), an open non-critical gate,
+  downside < 45, LOW evidence or attractiveness < 65; PASS = a critical gate clearly failed (IRR, MOIC, coverage, LTV,
+  concentration, downside capital loss > 50% of capital at risk) or attractiveness < 50; INSUFFICIENT EVIDENCE = no
+  independent underwriting value (the developer's price is never one), no structure computed, or an evidence score < 25.
+  A high IRR alone is never a TAKE; a missing value is never zero and never raises a rating.
+* **Two separate ratings.** INVESTMENT ATTRACTIVENESS 0–100 (≥80 VERY ATTRACTIVE · 65 ATTRACTIVE · 50 MARGINAL · <50 WEAK)
+  = the weighted mean of the available factor groups (return 30 · downside 30 · structure 15 · execution 15 · market 10)
+  minus 5 per near-miss / open non-critical gate; a group without data is left out, never replaced by a neutral value.
+  EVIDENCE QUALITY HIGH / MEDIUM / LOW (≥70 / ≥45 / below) = 100 minus documented deductions — value source, appraisal,
+  source spread, status, developer, material defaults, PROPX data, observation age, retrieval age, conflicts, CBS
+  freshness. It is the quality of the information, never a probability.
+* **Gates** = the fund hurdles (existing) with pass / near miss / fail, plus the downside-loss gate and the supported-value
+  evidence gate. **Factor groups** reuse the engine's own figures and tables (COVERAGE, VALUE_BASIS, risk components)
+  and state every sub-score's map. **Structure** = the eligible structure with the highest attractiveness (ties on
+  downside protection); the comparison explains why not the other two on consistent dimensions.
+* **Conditions** come only from the gates and the engine's solvers (`buyPriceLimits` max price, the coverage formula, the
+  entered status, the fund caps). **Flip points** (`flips`, on demand, ~1 s) re-run the engine on modified copies of the
+  deal and bisect on the verdict: "PASS if the supported value falls below ₪X", "TAKE WITH CONDITIONS if the loan rate
+  exceeds Y%". **Source / assumption breakdown** counts OFFICIAL · OBSERVED · DERIVED · MODEL · USER ASSUMPTION · USER
+  OVERRIDE · MISSING facts; **source conflicts** (value sources > 15% apart; the PROPX median vs the chosen value) are shown
+  side by side, never silently resolved; **freshness** keeps observation, publication and PROPX-check dates apart.
+* **Rental** context stays context: a rental-track tender is a pipeline fact, never an operating project; the CBS rent
+  index is a general benchmark; no rent assumption is read or written.
+* **Narrative** (`narrative`) is deterministic text from the decision object — the AI role is explanation only, and the
+  page makes no model call. The disclaimer sits under every card.
+* **Page.** The compact card at the top of the ledger (and the mobile bar); "הצגת בסיס ההחלטה" opens `#decision`
+  (Hebrew RTL / English LTR) with DECISION · WHY THIS STRUCTURE · comparison · RETURN · DOWNSIDE · STRUCTURE · MARKET ·
+  EXECUTION · gates · EVIDENCE · CONDITIONS · WHAT WOULD CHANGE THE DECISION · SOURCE / ASSUMPTION · CONFLICTS · FRESHNESS
+  · THE POLICY · narrative. The IC snapshot gains a seven-row block, the full PDF an executive "Investment Decision" page,
+  Excel / CSV an "Investment Decision" sheet / section, the portfolio and saved deals four sortable columns; saved
+  versions, JSON exports and imports carry `decision` = `{ v, verdict, score, evidence, structure, at }` (older versions
+  read "not stamped").
 
 ## Investment cases (illustrative, synthetic)
 

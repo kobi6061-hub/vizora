@@ -548,7 +548,7 @@ t('the local dev server mirrors the rewrite', () => {
   assert.match(SRC('scripts/kobix-dev-server.mjs'), /p === '\/altaris' \|\| p === '\/altaris\/' \? '\/altaris\/index\.html'/);
 });
 const APP = SRC('altaris/app.js');
-const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/cases.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
+const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/decision.js', 'altaris/cases.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
 t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else', () => {
   assert.ok(!/method\s*:/.test(APP), 'a request with an explicit method');
   assert.equal((APP.match(/\bfetch\(/g) || []).length, 1, 'fetch used outside getJSON');
@@ -786,7 +786,7 @@ t('level 2 — popover: hover/click on desktop, tap → bottom sheet on a phone,
   assert.match(html, /id="axMethodBtn" type="button" data-view="method"/);
 });
 t('level 3 — Metric Conventions view: route, Hebrew RTL / English LTR, bidi isolation, formulas left-to-right', () => {
-  assert.match(APP_SRC, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method'\];/);
+  assert.match(APP_SRC, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision'\];/);
   for (const s of ["h: 'מתודולוגיית מדדים', sub: 'בסיס חישוב והגדרות השקעה'", "h: 'Metric Conventions', sub: 'Calculation Basis & Investment Definitions'", 'dir="${dir}" lang="${L}"', '<code class="ax-fx" dir="ltr">']) assert.ok(APP_SRC.includes(s), s);
   // the bidi helper, run on real methodology text
   const re = new RegExp(/he: (\/\(\?<!.*?\/g), en: (\/.*?\/g) \};/.exec(APP_SRC)[1].slice(1, -2), 'g');
