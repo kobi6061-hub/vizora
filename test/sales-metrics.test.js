@@ -100,7 +100,7 @@ t('the official figure is the CBS 12-month total: OFFICIAL, an exact count, its 
     assert.equal(months, g.metrics.t12.value, id + ' T12 = the sum of the 12 published months');
   }
 });
-t('national 34,000 audited: CBS 2025 = 33,833 (same population) — the board shows the fresher CBS 12 months; offline falls back to the cited 2025 figure', () => {
+t('national 34,000 audited: CBS 2025 = the series total as published (CBS revises months; the page never pins it) — the board shows the fresher CBS 12 months; offline falls back to the cited 2025 figure', () => {
   assert.equal(PAY.reconciliation.year.year, '2025');
   assert.equal(PAY.reconciliation.year.taxAuthority, 34000);
   assert.ok(Math.abs(PAY.reconciliation.year.cbsAnnual - 34000) / 34000 < 0.01, 'the populations match within 1%');
@@ -118,7 +118,9 @@ t('national reconciliation: the national 12 months vs the sum of the 7 districts
   assert.equal(sum, R.t12.districtSum);
   assert.equal(R.t12.national, PAY.geos.il.metrics.t12.value);
   const e = P.txEvidence(P.LOC.il);
-  assert.match(plain(e.model), /התאמה: 2025 — למ״ס 33,833 · רשות המסים \/ הכלכלן הראשי 34,000/);
+  const live = PAY.reconciliation.year.cbsAnnual.toLocaleString('en-US');   // the official total as currently published (CBS revised 33,833 → 33,762 in 10.2026)
+  assert.match(plain(e.model), new RegExp(`התאמה: 2025 — למ״ס ${live} · רשות המסים \\/ הכלכלן הראשי 34,000`));
+  assert.ok(!/33,833|33,762/.test(INDEX), 'the page pins no revisable CBS annual total — the figure is read from the series');
   assert.match(plain(e.model), /= מחוז לא ידוע \(לא נכפה איזון\)/);
 });
 t('Tel Aviv: the one transcribed city figure — release 252/2026 Table B (820 + 1,236), a MODEL rate "~N לשנה" with its formula', () => {
