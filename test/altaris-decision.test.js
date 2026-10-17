@@ -46,7 +46,8 @@ t('versioned: ALTARIS Investment Decision Methodology v1, pinned to the engine v
   assert.ok(Object.isFrozen(DX.VERSION) && Object.isFrozen(DX.POLICY));
 });
 t('the policy is documented in both languages and its thresholds are the ones the code uses', () => {
-  assert.equal(DX.POLICY_TEXT.length, 7);
+  assert.equal(DX.POLICY_TEXT.length, 8, 'seven policy lines + the FINAL DECISION rules F0–F5 (18.10.2026)');
+  assert.match(DX.POLICY_TEXT[7].en, /F0–F5/); assert.ok(DX.POLICY.final && DX.POLICY.final.neverUpgrades === true);
   for (const p of DX.POLICY_TEXT) assert.ok(p.he && p.en);
   assert.ok(DX.POLICY_TEXT[0].en.includes(`attractiveness ≥ ${DX.POLICY.takeMin}`) && DX.POLICY_TEXT[1].en.includes(`attractiveness ≥ ${DX.POLICY.conditionsMin}`));
   assert.deepEqual(Object.keys(V), ['TAKE', 'TAKE_WITH_CONDITIONS', 'PASS', 'INSUFFICIENT_EVIDENCE']);
@@ -294,7 +295,7 @@ t('versioning: saved versions, JSON exports and imports carry the decision stamp
   assert.match(APP, /kind: 'altaris-deal', schema: 1, methodology: MD\.VERSION\.id, decision: S\.D \? S\.D\.stamp : null,/);
   assert.match(APP, /decision: v\.decision && typeof v\.decision === 'object' \? v\.decision : null/);
   assert.match(APP, /'לא סומן \(לפני v1\)'/);
-  const { D } = park(); assert.deepEqual(Object.keys(D.stamp), ['v', 'verdict', 'score', 'evidence', 'structure', 'at']); assert.equal(D.stamp.v, 'altaris-investment-decision-v1');
+  const { D } = park(); assert.deepEqual(Object.keys(D.stamp), ['v', 'verdict', 'score', 'evidence', 'structure', 'at', 'final', 'market'], 'the stamp gains the final verdict and the market status (18.10.2026); old stamps stay readable'); assert.equal(D.stamp.v, 'altaris-investment-decision-v1'); assert.equal(D.stamp.final, D.verdict, 'without an assessment the final verdict equals the economic one'); assert.equal(D.stamp.market, null);
 });
 t('the AI role is explanation only: the page has no model call; the narrative function is deterministic text from the decision object', () => {
   assert.ok(!/anthropic|openai|chat\/completions|messages\.create|\bllm\b|language model/i.test((APP + SRC('altaris/decision.js')).replace(/\/\*[\s\S]*?\*\//g, '')), 'a model call in the page or the decision layer');

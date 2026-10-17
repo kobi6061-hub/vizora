@@ -252,3 +252,42 @@ class and source) and the **Land Economics 2.0** line (`lib/land/economics.js`: 
 decided in 36 months with p25 / p75 and the unit-weighted figure, the change vs the prior window with the lot-mix warning, the
 failed-tender ratio and re-tenders) — "nominal state-land consideration, not a land value and not a deal input". Both arrive in
 the one `view=dossier` GET the panel already makes.
+
+## Final decision & Market / Execution Assessment (altaris/market-assessment.js — 18.10.2026)
+
+**The audit (BEFORE evidence, `scratchpad/before-altaris.json` of the night ledger).** Before this layer the market reached ALTARIS by
+three paths, none of them named on the page: (1) `altaris/decision.js` reads the deal's PROPX context (transaction depth, the developer
+registry, the CBS district series and the indicators) through the documented "market" factor group (weight 10 of the attractiveness
+index) and through the evidence deductions (−10 when the market was not loaded, −10 on a source conflict …) — so loading the market
+could move INVESTMENT ATTRACTIVENESS and EVIDENCE QUALITY by design; (2) the dossier, the radar, the "Why this market?" narrative and
+Land Economics are display-only (byte-identical verdict with and without them — `test/altaris-decision.test.js`); (3) the engine's
+explained risk score reads the observed deal count for its exit-liquidity component (±5 / −10 — pre-existing, documented in the
+methodology). The ambiguity was that the page said "read-only" for (2) while (1) moved the number. Nothing in (1)–(3) was changed.
+
+**The layer (additive).** `altaris/market-assessment.js` (UMD `AltarisMarket`, `altaris-market-assessment-v1`) turns the context the
+page already holds (the locality's dossier watch / risk signals, the radar's opportunity / risk items, transaction depth, land
+economics, the developer registry, the dossier's evidence quality) into a MARKET & EXECUTION ASSESSMENT beside the economics:
+twelve dimensions (demand · supply · land market · transaction liquidity · planning · permits · construction · execution ·
+developer · rental · macro · data quality), every factor with value · comparison · period · source · class · rule · scope ·
+material? · impact. A factor is MATERIAL only when all hold: a direction (a count alone is context), class OFFICIAL / OBSERVED,
+evidence HIGH / MEDIUM, the deal's own locality or its district (a national figure is context), a read ≤ 30 days old, materiality ≥ 2.
+Status: CAUTION = ≥ 2 material negatives from ≥ 2 independent source families (CBS · ILA · MoCH · register · planning · PROPX
+ledgers); STRONG = ≥ 2 material positives from 2 families and no material negative; otherwise NEUTRAL (a single negative is noted,
+never enough alone); INSUFFICIENT when neither dossier nor radar is loaded. District data stays district data (scope "district",
+the text names the district). It computes no return, no probability and no score.
+
+**The final policy (`POLICY.final`, rules F0–F5 in `altaris/decision.js`).** FINAL = ECONOMIC VERDICT (unchanged, now `D.economic`)
+∘ MARKET & EXECUTION ∘ EVIDENCE QUALITY ∘ FUND HARD GATES: F0 no / INSUFFICIENT assessment → the economic verdict stands (evidence
+quality already deducts the missing market); F1 economic INSUFFICIENT EVIDENCE → unchanged; F2 PASS → PASS (a good market never
+rescues bad economics); F3 TAKE + CAUTION → TAKE WITH CONDITIONS with a named market condition (its factors, the rule, what would
+remove it); F4 TAKE WITH CONDITIONS + CAUTION → the condition is added; F5 STRONG / NEUTRAL → unchanged. Never an upgrade. `D.final`
+(verdict · changed · from · to · rule · reason · marketCondition · whatWouldRemove · conditions), `D.marketImpact` (the explanation),
+`stamp.final` / `stamp.market`. IRR, MOIC, cash flows, repayment, capital at risk and the economic verdict are byte-identical with
+and without the assessment (`test/altaris-market.test.js`, §72 gates); the engine hash and the frozen baseline are unchanged.
+
+**UI.** The decision card and the basis head show ECONOMIC · MARKET / EXECUTION · FINAL side by side (`.ax-dec-fin`, "changed by
+rule F3" when it moved); the basis view gains "MARKET IMPACT ON DECISION" (he RTL / en LTR: the three verdicts, the factor table with
+why a factor is not material, the conditions added, what would remove them, the policy note); the IC block and the Excel / CSV sheet
+carry the final decision, the economic verdict and the assessment; the registry terms `market_execution_assessment`,
+`final_decision`, `market_impact_on_decision` explain them (ⓘ). The acceptance set (§73, 5 cases × none / STRONG / CAUTION + a
+conflicting read) is written by the test to `test/fixtures/altaris-acceptance-2026-10-18.json`.

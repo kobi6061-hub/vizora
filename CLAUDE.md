@@ -253,6 +253,17 @@
   page, Excel / CSV sheet, portfolio + saved-deal columns, the `decision` stamp on saved versions. Rental context
   stays context (a tender is not an operating project; the rent index is a benchmark). Zero drift: the engine hash and
   the frozen baseline are unchanged.
+  `altaris/market-assessment.js` + `test/altaris-market.test.js` = the intelligence → decision loop (18.10.2026): a deterministic
+  MARKET & EXECUTION ASSESSMENT (`altaris-market-assessment-v1`) beside the economics — twelve dimensions, every factor value ·
+  comparison · period · source · class · rule · scope · material? · impact; material only with a direction, class OFFICIAL /
+  OBSERVED, evidence HIGH / MEDIUM, own locality or district, read ≤ 30 days, materiality ≥ 2; CAUTION = ≥ 2 material negatives from
+  ≥ 2 independent source families, STRONG = 2 material positives and none negative, else NEUTRAL, INSUFFICIENT without dossier +
+  radar. `decision.js` `POLICY.final` rules F0–F5 compose the FINAL verdict (`D.economic` unchanged, `D.final`, `D.marketImpact`,
+  `stamp.final` / `stamp.market`): PASS stays PASS, TAKE + CAUTION → TAKE WITH CONDITIONS with the market condition and what would
+  remove it, never an upgrade; IRR / MOIC / flows / capital at risk / the economic verdict byte-identical with and without it (§72
+  gates; engine hash + baseline unchanged). UI: ECONOMIC · MARKET / EXECUTION · FINAL on the card and the basis head, the "MARKET
+  IMPACT ON DECISION" basis section, IC + Excel rows; registry terms `market_execution_assessment` / `final_decision` /
+  `market_impact_on_decision`; acceptance set `test/fixtures/altaris-acceptance-2026-10-18.json` (§73).
   `altaris/cases.js` = five illustrative, synthetic investment cases (inputs only, fictional names, real localities as
   setting); loaded into the ordinary deal screen via "מקרי השקעה"; never saved / in the portfolio / in any PROPX dataset
   unless the user creates a working copy; exports marked ILLUSTRATIVE CASE.

@@ -61,6 +61,15 @@
     staleCheckDays: 90, oldObservationDays: 365,
     /* factor-group weights in the attractiveness score (a group without data is left out — never substituted) */
     weights: Object.freeze({ returns: 30, downside: 30, structure: 15, execution: 15, market: 10 }),
+    /* FINAL DECISION (18.10.2026): the economic verdict combined with the Market & Execution Assessment (altaris/market-assessment.js,
+       passed in as ctx.marketAssessment) through these rules only — nothing hidden, no upgrade ever:
+       F0 no assessment / INSUFFICIENT → the economic verdict stands (the evidence quality already deducts missing market data)
+       F1 economic INSUFFICIENT EVIDENCE → INSUFFICIENT EVIDENCE (the market cannot supply the missing underwriting evidence)
+       F2 economic PASS → PASS (a good market never rescues bad economics)
+       F3 economic TAKE + assessment CAUTION → TAKE WITH CONDITIONS, with a named market condition and what would remove it
+       F4 economic TAKE WITH CONDITIONS + CAUTION → TAKE WITH CONDITIONS, the market condition added beside the economic ones
+       F5 assessment STRONG or NEUTRAL → the economic verdict stands (never an upgrade, never a downgrade) */
+    final: Object.freeze({ cautionDowngrades: ['TAKE'], cautionAddsCondition: ['TAKE', 'TAKE_WITH_CONDITIONS'], neverUpgrades: true, requires: { materialNegatives: 2, independentFamilies: 2 } }),
   });
 
   /* ----------------------------------------------------------------- helpers */
@@ -475,6 +484,28 @@
    * ({ ok, scope, level, momentum, small, latest, freshness, sourceUpdate, checkedAt, inventory, inventoryPeriod }),
    * indicators (PROPX_MARKET.indicators), indicatorsCheckedAt }.
    */
+  /* the FINAL verdict: the economic verdict and the market & execution assessment combined through POLICY.final — the only path by which
+     PROPX market intelligence reaches a verdict. Returns the final verdict, whether it changed, the rule that fired, the market condition
+     (when CAUTION applies) and what would remove it. Never recomputes a return; never touches the economic verdict or its basis. */
+  function finalOf(verdict, basis, MA) {
+    const V = (v) => ({ verdict: v, verdictLabel: VERDICT[v].label, tone: VERDICT[v].tone });
+    const same = (rule, reason) => ({ ...V(verdict), changed: false, from: verdict, to: verdict, rule, reason, marketCondition: null, whatWouldRemove: [] });
+    if (!MA || MA.status === 'INSUFFICIENT') return same('F0', bi('אין הערכת שוק וביצוע (ההקשר לא נטען) — ההכרעה הכלכלית עומדת; איכות הראיות כבר מנכה נתוני שוק חסרים', 'no market & execution assessment (context not loaded) — the economic verdict stands; evidence quality already deducts missing market data'));
+    if (verdict === 'INSUFFICIENT_EVIDENCE') return same('F1', bi('ראיות החיתום אינן מספיקות — השוק אינו יכול להשלים אותן', 'the underwriting evidence is insufficient — the market cannot supply it'));
+    if (verdict === 'PASS') return same('F2', bi(`הכלכלה אינה עומדת בספים — שוק ${T(MA.statusLabel, 'he')} אינו מציל כלכלה חלשה`, `the economics fail the hurdles — a ${T(MA.statusLabel, 'en')} market never rescues weak economics`));
+    if (MA.status === 'CAUTION') {
+      const neg = MA.material.negative || [];
+      const list = (L) => neg.map((f) => T(f.text, L)).join('; ');
+      const remove = neg.map((f) => f.remove).filter(Boolean);
+      const cond = { id: 'market-caution', source: 'market', text: bi(`זהירות שוק וביצוע: ${list('he')}`, `market & execution caution: ${list('en')}`),
+        basis: bi(`${neg.length} גורמים שליליים מהותיים מ-${(MA.convergence.negativeFamilies || []).length} משפחות מקור בלתי תלויות (${(MA.convergence.negativeFamilies || []).join(', ')}) — כלל F${verdict === 'TAKE' ? 3 : 4}`, `${neg.length} material negative factors from ${(MA.convergence.negativeFamilies || []).length} independent source families (${(MA.convergence.negativeFamilies || []).join(', ')}) — rule F${verdict === 'TAKE' ? 3 : 4}`),
+        factors: neg.map((f) => ({ id: f.id, signal: f.signal, dimension: f.dimension, text: f.text, value: f.value, comparison: f.comparison, period: f.period, source: f.source, cls: f.cls, evidence: f.evidence, geoScope: f.geoScope, remove: f.remove || null })), remove };
+      if (verdict === 'TAKE') return { ...V('TAKE_WITH_CONDITIONS'), changed: true, from: 'TAKE', to: 'TAKE_WITH_CONDITIONS', rule: 'F3', reason: bi('הכלכלה עומדת בכל הספים, אך ראיות שוק וביצוע באיכות גבוהה מתכנסות לזהירות — ההחלטה מתקדמת בתנאי', 'the economics pass every hurdle, but high-quality market & execution evidence converges on caution — the decision proceeds with a condition'), marketCondition: cond, whatWouldRemove: remove };
+      return { ...V('TAKE_WITH_CONDITIONS'), changed: false, from: verdict, to: verdict, rule: 'F4', reason: bi('ההכרעה הכלכלית כבר בתנאים; תנאי השוק מתווסף לצידם', 'the economic verdict is already conditional; the market condition is added beside the economic ones'), marketCondition: cond, whatWouldRemove: remove };
+    }
+    return same('F5', bi(`הערכת השוק ${T(MA.statusLabel, 'he')} אינה משנה הכרעה כלכלית — לעולם לא שדרוג, לעולם לא הורדה ללא התכנסות`, `a ${T(MA.statusLabel, 'en')} assessment never moves an economic verdict — no upgrade, no downgrade without convergence`));
+  }
+  const slimFactor = (f) => ({ id: f.id, signal: f.signal, kind: f.kind, dimension: f.dimension, dimensionLabel: f.dimensionLabel, direction: f.direction, material: f.material, text: f.text, value: f.value, comparison: f.comparison, period: f.period, source: f.source, family: f.family, cls: f.cls, evidence: f.evidence, geoScope: f.geoScope, fresh: f.fresh, m: f.m, rule: f.rule, impact: f.impact, whyNotMaterial: f.whyNotMaterial || null, remove: f.remove || null, via: f.via });
   function decide(R, ctx) {
     ctx = ctx || {};
     const A = {}; for (const k of STRATS) A[k] = assess(k, R, ctx);
@@ -505,6 +536,16 @@
       flips: null,   // filled by flips(...) on demand
       stamp: { v: VERSION.id, verdict, score: a && scoreOk ? a.score : null, evidence: evidence.level, structure: recommended, at: ctx.today || null },
     };
+    /* ---- the FINAL decision (additive): the economic verdict above is untouched; the market & execution assessment reaches the verdict
+       only through POLICY.final. ctx.marketAssessment is computed by altaris/market-assessment.js (the page) — the layer itself imports only the engine. */
+    const MA = ctx.marketAssessment || null;
+    D.economic = { verdict, verdictLabel: VERDICT[verdict].label, tone: VERDICT[verdict].tone, basis };
+    D.marketAssessment = MA ? { version: MA.version, status: MA.status, statusLabel: MA.statusLabel, statusBasis: MA.statusBasis, convergence: MA.convergence, factors: (MA.factors || []).map(slimFactor), material: { positive: (MA.material.positive || []).map(slimFactor), negative: (MA.material.negative || []).map(slimFactor) }, informational: (MA.informational || []).length, notes: MA.notes || [], freshness: MA.freshness || null, rules: MA.rules || [], basis: MA.basis || null } : null;
+    D.final = finalOf(verdict, basis, MA);
+    D.final.conditions = D.final.marketCondition ? conds.concat([D.final.marketCondition]) : conds.slice();
+    D.marketImpact = { economic: D.economic, assessment: D.marketAssessment ? { status: D.marketAssessment.status, statusLabel: D.marketAssessment.statusLabel, convergence: D.marketAssessment.convergence } : null, final: { verdict: D.final.verdict, verdictLabel: D.final.verdictLabel, changed: D.final.changed, rule: D.final.rule, reason: D.final.reason },
+      primaryFactors: D.marketAssessment ? D.marketAssessment.material.negative.concat(D.marketAssessment.material.positive) : [], conditionsAdded: D.final.marketCondition ? [D.final.marketCondition] : [], whatWouldRemove: D.final.whatWouldRemove || [], policy: POLICY.final };
+    D.stamp.final = D.final.verdict; D.stamp.market = MA ? MA.status : null;
     return D;
   }
 
@@ -621,6 +662,8 @@
     if (D.strengths.length) P.push((en ? 'Working for the deal: ' : 'לטובת העסקה: ') + D.strengths.map((s) => `${t(s.text)} (${s.score})`).join('; ') + '.');
     if (D.risks.length) P.push((en ? 'Working against it: ' : 'נגד העסקה: ') + D.risks.map((r) => `${t(r.text)}${r.why ? ' — ' + t(r.why) : ''}`).join('; ') + '.');
     if (D.conditions.length) P.push((en ? 'Conditions to proceed: ' : 'תנאים להתקדמות: ') + D.conditions.map((c) => t(c.text)).join('; ') + '.');
+    if (D.final && D.marketAssessment) P.push(en ? `Market & execution assessment: ${t(D.marketAssessment.statusLabel)}${D.final.changed ? ` — final decision ${t(D.final.verdictLabel)} (rule ${D.final.rule}: ${t(D.final.reason)})` : ` — the economic verdict stands (rule ${D.final.rule}).`}${D.final.marketCondition ? ` Market condition: ${t(D.final.marketCondition.text)}.${D.final.whatWouldRemove.length ? ` It is removed when: ${D.final.whatWouldRemove.map((r) => t(r)).join('; ')}.` : ''}` : ''}`
+      : `הערכת שוק וביצוע: ${t(D.marketAssessment.statusLabel)}${D.final.changed ? ` — ההחלטה הסופית ${t(D.final.verdictLabel)} (כלל ${D.final.rule}: ${t(D.final.reason)})` : ` — ההכרעה הכלכלית עומדת (כלל ${D.final.rule}).`}${D.final.marketCondition ? ` תנאי השוק: ${t(D.final.marketCondition.text)}.${D.final.whatWouldRemove.length ? ` יוסר כאשר: ${D.final.whatWouldRemove.map((r) => t(r)).join('; ')}.` : ''}` : ''}`);
     if (D.flips && D.flips.length) P.push((en ? 'What would change the decision: ' : 'מה ישנה את ההחלטה: ') + D.flips.map((f) => t(f.text)).join('; ') + '.');
     if (D.conflicts.length) P.push((en ? 'Source conflicts: ' : 'סתירות בין מקורות: ') + D.conflicts.map((c) => `${t(c.label)} — ${c.values.map((v) => `${v.source} ${nisM(v.value)}`).join(' / ')}; ${t(c.treatment)}`).join(' '));
     const bd = D.breakdown.counts;
@@ -643,6 +686,8 @@
     bi(`אטרקטיביות = ממוצע משוקלל של קבוצות הגורמים הזמינות (תשואה ${POLICY.weights.returns} · הגנה ${POLICY.weights.downside} · מבנה ${POLICY.weights.structure} · ביצוע ${POLICY.weights.execution} · שוק ${POLICY.weights.market}) פחות 5 לכל סף בהחמצה קלה / לא קריטי פתוח (עד 20). קבוצה ללא נתונים אינה נספרת ואינה מוחלפת בערך ניטרלי. תיאור: ≥80 אטרקטיבית מאוד · 65–79 אטרקטיבית · 50–64 שולית · <50 חלשה.`, `Attractiveness = the weighted mean of the available factor groups (return ${POLICY.weights.returns} · downside ${POLICY.weights.downside} · structure ${POLICY.weights.structure} · execution ${POLICY.weights.execution} · market ${POLICY.weights.market}) minus 5 per near-miss / open non-critical gate (max 20). A group without data is left out, never replaced by a neutral value. Descriptor: ≥80 VERY ATTRACTIVE · 65–79 ATTRACTIVE · 50–64 MARGINAL · <50 WEAK.`),
     bi(`איכות ראיות = 100 פחות ניכויים מתועדים (מקור השווי, שומה, פער בין מקורות, סטטוס, יזם, ברירות מחדל מהותיות, נתוני PROPX, גיל התצפית, גיל השליפה, סתירות, רעננות למ״ס): ≥${POLICY.evidence.high} גבוהה · ${POLICY.evidence.medium}–${POLICY.evidence.high - 1} בינונית · <${POLICY.evidence.medium} נמוכה. אינה הסתברות.`, `Evidence quality = 100 minus documented deductions (value source, appraisal, source spread, status, developer, material defaults, PROPX data, observation age, retrieval age, conflicts, CBS freshness): ≥${POLICY.evidence.high} HIGH · ${POLICY.evidence.medium}–${POLICY.evidence.high - 1} MEDIUM · <${POLICY.evidence.medium} LOW. Not a probability.`),
     bi('מבנה מומלץ = המבנה הכשיר (TAKE / בכפוף לתנאים) עם האטרקטיביות הגבוהה ביותר; שוויון נשבר לפי ההגנה בתרחיש השלילי. המבנה השני = הבא אחריו.', 'Recommended structure = the eligible structure (TAKE / WITH CONDITIONS) with the highest attractiveness; ties break on downside protection. Second best = the next one.'),
+    bi('החלטה סופית = ההכרעה הכלכלית ⊕ הערכת שוק וביצוע (altaris-market-assessment-v1) ⊕ איכות ראיות ⊕ ספי הקרן, דרך הכללים F0–F5 בלבד: אין הערכה → הכלכלה עומדת; INSUFFICIENT כלכלי → INSUFFICIENT; PASS כלכלי → PASS (שוק טוב אינו מציל כלכלה חלשה); TAKE + זהירות → TAKE WITH CONDITIONS עם תנאי שוק מפורש ומה יסיר אותו; TAKE WITH CONDITIONS + זהירות → התנאי מתווסף; חזק / ניטרלי → ללא שינוי. זהירות = ≥ 2 גורמים שליליים מהותיים מ-≥ 2 משפחות מקור בלתי תלויות; אות חלש / ישן / מודל / ארצי לעולם אינו יוצר זהירות לבדו. השוק לעולם אינו משנה IRR, MOIC, תזרים, פירעון או הון בסיכון.',
+      'FINAL DECISION = the economic verdict ⊕ the Market & Execution Assessment (altaris-market-assessment-v1) ⊕ evidence quality ⊕ fund gates, through rules F0–F5 only: no assessment → the economics stand; economic INSUFFICIENT → INSUFFICIENT; economic PASS → PASS (a good market never rescues weak economics); TAKE + CAUTION → TAKE WITH CONDITIONS with an explicit market condition and what would remove it; TAKE WITH CONDITIONS + CAUTION → the condition is added; STRONG / NEUTRAL → unchanged. CAUTION = ≥ 2 material negative factors from ≥ 2 independent source families; a weak / stale / model / national signal never creates CAUTION alone. The market never changes IRR, MOIC, cash flows, repayment or capital at risk.'),
   ]);
 
   return { VERSION, POLICY, POLICY_TEXT, VERDICT, DESCRIPTOR, EVIDENCE, GROUP_LABEL, GATE_LABEL, DISCLAIMER, decide, flips, narrative, assess, t: T, fmtV };

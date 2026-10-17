@@ -679,6 +679,7 @@ input.dflt{border-style:dashed!important}
 .ax-q-high{color:var(--up);border-color:var(--up)} .ax-q-medium{color:var(--conf-med);border-color:var(--conf-med)} .ax-q-low{color:var(--down);border-color:var(--down)}
 .ax-rd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 18px}
 .ax-rd-h{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:6px 0 4px;border-bottom:1px solid var(--hairline)} .ax-rd-h.opp{color:var(--up)} .ax-rd-h.risk{color:var(--down)}
+.ax-dec-fin{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;margin:4px 0 6px} .ax-dec-fin b{font-weight:800} .ax-dv-mi .ax-ledger{margin-bottom:8px} .mi-tbl td{vertical-align:top} .mi-tbl tr.mi-mat.dir-negative td:first-child{border-inline-start:3px solid var(--down)} .mi-tbl tr.mi-mat.dir-positive td:first-child{border-inline-start:3px solid var(--up)}
 .ax-rd-l{list-style:none;margin:0;padding:0} .ax-rd-i{padding:6px 0;border-bottom:1px solid var(--hairline);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
 .ax-rd-miss summary{cursor:pointer} .ax-rd-miss ul{padding-inline-start:16px;margin:4px 0 0}
 
