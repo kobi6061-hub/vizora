@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "builtAt": "2026-10-17T07:44:53.838Z",
- "since": "2026-06-19T07:44:53.838Z",
+ "builtAt": "2026-10-17T07:56:47.381Z",
+ "since": "2026-06-19T07:56:47.381Z",
  "days": 120,
  "events": 312,
  "counts": {
@@ -14,6 +14,6 @@
   "developers": 41
  },
  "rules": 25,
- "ms": 885,
+ "ms": 1387,
  "generator": "scripts/radar-build.js"
 }

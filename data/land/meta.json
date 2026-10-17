@@ -10,7 +10,7 @@
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
  "snapshotHash": "e45f5b41742d60c0d5aca0f70eea5096049ff83e29a17d6a9988dcfc2a314b45",
  "snapshotFetchedAt": "2026-10-16T08:10:57.164Z",
- "checkedAt": "2026-10-16T08:10:57.164Z",
+ "checkedAt": "2026-10-17T07:48:13.122Z",
  "normalizerVersion": 5,
  "rows": 10649,
  "records": 10649,
@@ -305,8 +305,8 @@
  "detail": {
   "withDetail": 10649,
   "withGeometry": 24,
-  "oldestDetailFetchedAt": "2026-10-06T10:28:56.610Z",
-  "newestDetailFetchedAt": "2026-10-16T08:20:57.507Z",
+  "oldestDetailFetchedAt": "2026-10-08T10:46:37.223Z",
+  "newestDetailFetchedAt": "2026-10-17T07:56:35.651Z",
   "activeWithDetail": 445,
   "active": 445,
   "detailUnavailable": 0,
@@ -317,7 +317,7 @@
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 1175
+  "lastRunFetched": 1188
  },
  "byLifecycle": {
   "published": 165,
@@ -362,9 +362,9 @@
  },
  "joins": {
   "xplan": {
-   "asked": 1,
-   "requests": 1,
-   "found": 1,
+   "asked": 0,
+   "requests": 0,
+   "found": 0,
    "complete": true,
    "known": 445,
    "errors": []
@@ -384,5 +384,5 @@
   }
  },
  "historyEvents": 93861,
- "lastRun": "land-20261016T081041Z"
+ "lastRun": "land-20261017T074755Z"
 }
