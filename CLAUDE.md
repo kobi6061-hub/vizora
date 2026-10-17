@@ -138,6 +138,9 @@
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.
+- `lib/radar/verbs.js` + `test/verbs.test.js` = "What changed?" verbs (17.10.2026): every radar event carries NEW · ADVANCED · CHANGED ·
+  REVISED · STALE · RECOVERED · CONFLICT — a constant per event rule, a source-state event by its recorded transition; never a
+  judgement. `view=radar&verb=` narrows; `verbs` counts; the Pulse chip + filter; registry term `change_verb`.
 - `lib/land/economics.js` + `test/land-economics.test.js` = Land Economics 2.0 (17.10.2026): the dossier's `sections.landEconomics`
   (additive) — ₪/unit quartiles of competitive-bid open-market lots decided in 36 months (the land read model's own
   `landPerUnitOver`, quartiles only over ≥ 5 lots) vs the prior 36 with a lot-mix warning; ₪/m² bids apart (an empty window

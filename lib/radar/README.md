@@ -43,6 +43,19 @@ events. Nothing in the pulse is estimated.
 Tests: `test/radar.test.js` (a synthetic data directory proves every rule and every exclusion; the live repository
 builds; the API, the Vercel bundle and the six workflows are wired).
 
+## "What changed?" — the seven verbs (`lib/radar/verbs.js`, 17.10.2026)
+
+Every event carries one **verb** — `NEW` · `ADVANCED` · `CHANGED` · `REVISED` · `STALE` · `RECOVERED` · `CONFLICT` — a
+deterministic classification by its rule id (a first publication → NEW; a move in the source's own lifecycle — opened,
+closed, awarded, declared, a lottery due — → ADVANCED; a value or status change with no direction PROPX can assert — decided
+without a winner, cancelled, frozen, a plan status, a notice, a rate — → CHANGED; an official revision → REVISED; stale
+source content → STALE) and, for a `source-state` event, by the transition the run logs recorded (→ SCHEMA_CHANGED =
+CONFLICT; → STALE = STALE; from REFUSED / FAILED / SCHEMA_CHANGED to SUCCESS / UNCHANGED = RECOVERED; else CHANGED). The
+verb says what kind of change PROPX observed — never whether it is good or bad (materiality 1–3 carries the weight).
+`GET /api/intel?view=radar&verb=<VERB>` narrows the feed; the response carries `verb`, `verbs` (counts over the set the
+group facet describes), `verbLabels`, `verbOrder`; the Pulse shows the verb on every event and a verb filter. Registry term
+`change_verb`. Gates: `test/verbs.test.js`.
+
 ## Opportunity Radar / Risk Radar (`lib/radar/scan.js`)
 
 NOT an investment recommendation. `build()` runs the Market Dossier's explainable signals over Israel, the seven CBS

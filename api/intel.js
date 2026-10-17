@@ -18,6 +18,7 @@
 //                     inventory (national), ILA tenders, lotteries, renewal + XPlan, rental, developers, macro, recent changes, signals, freshness, evidence quality
 //                     + `narrative` — "Why this market?": ordered deterministic sentences, each with class · source · period · scope · term (lib/dossier/narrative.js)
 //   view=dossierIndex the geographies the page can ask for (districts + localities with ILA tenders)
+//                     (+ verb=NEW|ADVANCED|CHANGED|REVISED|STALE|RECOVERED|CONFLICT — the "what changed" verb of every event, lib/radar/verbs.js)
 //   view=scan         OPPORTUNITY RADAR / RISK RADAR — the dossier signals over every geography (kind=opportunity|risk, level, city, district, m, limit; lib/radar/scan.js) — never a recommendation
 //   view=scanGeo      the opportunity / risk items of one geography (city= | district= | none = national)
 //   view=revisions    REVISION INTELLIGENCE — official CBS figures revised, old value beside new, by release (window=30d|90d|365d|all, material=1, measure, geo; lib/radar/revisions.js)

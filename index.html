@@ -1400,6 +1400,8 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .pu-feed{display:flex;flex-direction:column;padding:0 15px}
 .pu-ev{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:4px 10px;padding:8px 0;border-bottom:1px solid var(--hairline);align-items:start}
 .pu-ev.m3 .pu-t{font-weight:800} .pu-ev.m1 .pu-t{font-weight:600;color:var(--ink-2)}
+.pu-verb{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:4px;padding:1px 6px;margin-top:3px;border:1px solid var(--hairline);color:var(--ink-2)}
+.pu-verb.v-NEW{color:var(--up);border-color:var(--up)} .pu-verb.v-ADVANCED{color:var(--accent-deep);border-color:var(--accent-deep)} .pu-verb.v-REVISED{color:var(--conf-med);border-color:var(--conf-med)} .pu-verb.v-STALE,.pu-verb.v-CONFLICT{color:var(--down);border-color:var(--down)} .pu-verb.v-RECOVERED{color:var(--up);border-color:var(--up)}
 .pu-l{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
 .pu-d{font-size:11px;font-weight:700;color:var(--ink-2)}
 .pu-m3{font-size:9px;font-weight:800;letter-spacing:.06em;color:var(--brass)}
@@ -2626,7 +2628,7 @@ he:{
     unitsFirst:"יח״ד בהגרלות ראשונות",lotteries:"הגרלות",stages:{marketed:"שווקו",permitted:"עם היתר",occupied:"אוכלסו","land-awarded":"קרקע נזכתה"},started:"מבנים שהחלו",completed:"הושלמו",lotsJoined:"מגרשים מצורפים",units:"יח״ד",indT:"מדדים נגזרים — כל מדד עם נוסחה, תקופה ומגבלות",why:"נוסחה ומגבלות",formula:"נוסחה",inputs:"קלט",month:"חודש",months:"חודשים",missT:"מה חסר בצנרת"},
   dsCols:{name:"יזם",lotsHere:"מגרשים כאן",unitsHere:"יח״ד כאן",projHere:"פרויקטי הגרלה כאן",last:"פעילות אחרונה כאן",total:"מגרשים סה״כ"}, dsMeta:{value:"ערך",threshold:"סף",period:"תקופה",source:"מקור",cls:"סיווג"}, dsScope:{district:"הקשר מחוזי — לא נתון היישוב",national:"הקשר ארצי — לא נתון הגאוגרפיה"}, dsFreshT:["מקור","תצפית","פרסום","נבדק ב-PROPX","מצב"],
   navPulse:"דופק", lyrPulse:"L1 · שוק · מה השתנה", puTitle:"דופק השוק — מה השתנה בשוק הדירות החדשות?", puSub:"אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות",
-  puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
+  puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puVerbAll:"כל סוגי השינוי", puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
   puProv:(n,built,served)=>`${n} אירועים · נבנה ${built}${served==="built-on-read"?" · חושב בקריאה":""}`, puCls:{OFFICIAL:"רשמי",OBSERVED:"נצפה",DERIVED:"נגזר"}, puFactsT:"עובדות — השבוע והחודש", puM3:"מהותי",
   puRadarT:"רדאר הזדמנויות · רדאר סיכונים — לא המלצת השקעה", puOppT:"שווה לבדוק", puRiskT:"סימני סיכון", puWhy:"למה סומן?", puLvl:{all:"הכול",il:"ארצי",district:"מחוזות",locality:"יישובים"}, puNoItems:"אין פריטים ברמה הזו",
   puMoreDs:"עוד פריטים — בתיק השוק של כל גאוגרפיה", puTrig:"טריגר", puVal:"ערך", puThr:"סף", puCmp:"השוואה", puPer:"תקופה", puSrc:"מקור", puEv:"איכות ראיות", puDerived:"נגזר משני כללים", puBuilt:"נבנה",
@@ -3186,7 +3188,7 @@ en:{
     unitsFirst:"units in first lotteries",lotteries:"lotteries",stages:{marketed:"marketed",permitted:"permitted",occupied:"occupied","land-awarded":"land awarded"},started:"buildings started",completed:"completed",lotsJoined:"lots joined",units:"units",indT:"Derived indicators — each with its formula, period and limitations",why:"Formula and limitations",formula:"formula",inputs:"inputs",month:"month",months:"months",missT:"What is missing in the pipeline"},
   dsCols:{name:"Developer",lotsHere:"Lots here",unitsHere:"Units here",projHere:"Lottery projects here",last:"Last activity here",total:"Lots in total"}, dsMeta:{value:"value",threshold:"threshold",period:"period",source:"source",cls:"class"}, dsScope:{district:"district context — not the locality's figure",national:"national context — not this geography's figure"}, dsFreshT:["Source","Observation","Publication","Checked by PROPX","State"],
   navPulse:"Pulse", lyrPulse:"L1 · Market · What changed", puTitle:"Market Pulse — what changed in the Israeli new-home market?", puSub:"Deterministic events from official sources: what changed, when PROPX observed it and the source's own date — no interpretation",
-  puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
+  puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puVerbAll:"All change kinds", puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
   puProv:(n,built,served)=>`${n} events · built ${built}${served==="built-on-read"?" · computed on read":""}`, puCls:{OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED",DERIVED:"DERIVED"}, puFactsT:"Facts — this week and month", puM3:"material",
   puRadarT:"Opportunity Radar · Risk Radar — not an investment recommendation", puOppT:"Worth investigating", puRiskT:"Risk signals", puWhy:"Why was this flagged?", puLvl:{all:"All",il:"National",district:"Districts",locality:"Localities"}, puNoItems:"No items at this level",
   puMoreDs:"More items — in each geography's market dossier", puTrig:"trigger", puVal:"value", puThr:"threshold", puCmp:"comparison", puPer:"period", puSrc:"source", puEv:"evidence quality", puDerived:"derived from two rules", puBuilt:"built",
@@ -8589,12 +8591,12 @@ initMapZoom();
    MARKET PULSE — lib/radar over the committed histories (GET /api/intel?view=radar|pulse).
    An event is a change between two PROPX reads, a new published period, an official
    revision or a source-state change — never a first ingestion or a parser upgrade. */
-const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",page:1,data:null,acc:[],pulse:null,scan:null,scanLevel:"",rev:null,req:0};
+const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",verb:"",page:1,data:null,acc:[],pulse:null,scan:null,scanLevel:"",rev:null,req:0};
 const puDay=iso=>iso?String(iso).slice(0,10).split("-").reverse().join("."):"—";
 function puLoad(){
   puState.started=true;const id=++puState.req;puState.status="loading";renderPulse();
   const qs=new URLSearchParams({view:"radar",window:puState.win,page:String(puState.page),size:"40"});
-  if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);if(puState.q)qs.set("q",puState.q);
+  if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);if(puState.q)qs.set("q",puState.q);if(puState.verb)qs.set("verb",puState.verb);
   const jobs=[inGet(qs.toString()).then(d=>{if(id!==puState.req)return;puState.data=d;puState.acc=puState.page>1?puState.acc.concat(d.rows):d.rows})];
   if(!puState.pulse)jobs.push(inGet("view=pulse").then(d=>{if(id!==puState.req)return;puState.pulse=d}).catch(()=>{}));
   /* the Opportunity / Risk scan and the revision ledger — read once; independent of the feed's filters */
@@ -8612,13 +8614,14 @@ function renderPulse(){
   const wins=Object.keys(t.puWin).map(w=>`<button type="button" class="ho-chip${puState.win===w?" on":""}" data-puwin="${w}" aria-pressed="${puState.win===w}">${t.puWin[w]}</button>`).join("");
   const groups=D?`<select class="ho-sel" data-pugroup aria-label="${t.puAllG}"><option value="">${t.puAllG}</option>${Object.keys(D.groups).map(g=>`<option value="${g}"${puState.group===g?" selected":""}>${ldE(D.groups[g][L])}${D.counts[g]?` (${D.counts[g]})`:""}</option>`).join("")}</select>`:"";
   const cities=D?`<select class="ho-sel" data-pucity aria-label="${t.puAllC}"><option value="">${t.puAllC}</option>${D.cities.map(c=>`<option value="${ldE(c.code)}"${puState.city===c.code?" selected":""}>${ldE(he?c.city:(c.cityEn||c.city))} (${c.n})</option>`).join("")}</select>`:"";
-  bar.innerHTML=`<div class="pu-wins" role="group" aria-label="${t.puWin["7d"]}">${wins}</div>${groups}${cities}<input class="ho-in pu-q" type="search" data-puq value="${ldE(puState.q)}" placeholder="${t.puQ}" aria-label="${t.puQ}">`;
+  const verbs=D&&D.verbOrder?`<select class="ho-sel" data-puverb aria-label="${t.puVerbAll}"><option value="">${t.puVerbAll}</option>${D.verbOrder.map(v=>`<option value="${v}"${puState.verb===v?" selected":""}>${ldE(D.verbLabels[v][L])}${D.verbs&&D.verbs[v]?` (${D.verbs[v]})`:""}</option>`).join("")}</select>`:"";
+  bar.innerHTML=`<div class="pu-wins" role="group" aria-label="${t.puWin["7d"]}">${wins}</div>${groups}${verbs}${cities}<input class="ho-in pu-q" type="search" data-puq value="${ldE(puState.q)}" placeholder="${t.puQ}" aria-label="${t.puQ}">`;
   if(puState.status==="error"){feed.innerHTML=`<p class="ho-note">${t.puErr}</p>`;note.textContent="";return}
   if(!D){feed.innerHTML=`<p class="ho-note">${t.puLoading}</p>`;note.textContent="";return}
   const rows=puState.acc.map(e=>{const cls=e.cls==="OFFICIAL"?"raw":e.cls==="DERIVED"?"der":"obs",ent=e.entity||{};
     const go=(ent.type==="tender"&&ent.id)||(ent.type==="developer"&&ent.tenderId)?`<button type="button" class="pu-go" data-pugo="tender" data-puid="${ldE(ent.type==="tender"?ent.id:ent.tenderId)}">${t.puOpen}</button>`
       :ent.link?`<a class="pu-go" href="${ldE(ent.link)}" target="_blank" rel="noopener">${t.puLink} ↗</a>`:(ent.type==="renewal"||ent.type==="plan")?`<a class="pu-go" href="#intel">${t.puOpen}</a>`:(ent.type==="source")?`<a class="pu-go" href="#sources">${t.puOpen}</a>`:"";
-    return `<div class="pu-ev m${e.m}"><div class="pu-l"><span class="pu-d num">${ldE(puDay(e.at))}</span><span class="vc ${cls}">${ldE(t.puCls[e.cls]||e.cls)}</span>${e.m===3?`<span class="pu-m3">${t.puM3}</span>`:""}</div>
+    return `<div class="pu-ev m${e.m}"><div class="pu-l"><span class="pu-d num">${ldE(puDay(e.at))}</span><span class="vc ${cls}">${ldE(t.puCls[e.cls]||e.cls)}</span>${e.verb?`<span class="pu-verb v-${ldE(e.verb)}" title="${ldE((D.verbLabels&&D.verbLabels[e.verb]||{})[L]||e.verb)}">${ldE((D.verbLabels&&D.verbLabels[e.verb]||{})[L]||e.verb)}</span> ${xpBtn("change_verb")}`:""}${e.m===3?`<span class="pu-m3">${t.puM3}</span>`:""}</div>
       <div class="pu-b"><div class="pu-t">${ldE(e.title[L])}${e.geo&&e.geo.city?` <span class="pu-geo">· ${ldE(he?e.geo.city:(e.geo.cityEn||e.geo.city))}</span>`:""}</div>${e.detail&&e.detail[L]?`<div class="pu-x">${ldE(e.detail[L])}</div>`:""}
       <div class="pu-meta">${t.puObs} ${ldE(puDay(e.at))}${e.sourceDate?` · ${t.puSrcD} ${ldE(puDay(e.sourceDate))}`:""} · ${ldE(e.source)}</div></div>${go}</div>`}).join("");
   feed.innerHTML=rows||`<p class="ho-note">${t.puNone}</p>`;
@@ -8655,7 +8658,7 @@ function initPulse(){
     if(b.dataset.pumore!==undefined){puState.page++;puLoad();return}
     if(b.dataset.pugo==="tender"){ldOpen(b.dataset.puid,b)}
   });
-  sec.addEventListener("change",e=>{const x=e.target;if(x.dataset.pugroup!==undefined){puState.group=x.value;puState.page=1;puLoad()}else if(x.dataset.pucity!==undefined){puState.city=x.value;puState.page=1;puLoad()}});
+  sec.addEventListener("change",e=>{const x=e.target;if(x.dataset.puverb!==undefined){puState.verb=x.value;puState.page=1;puLoad()}else if(x.dataset.pugroup!==undefined){puState.group=x.value;puState.page=1;puLoad()}else if(x.dataset.pucity!==undefined){puState.city=x.value;puState.page=1;puLoad()}});
   let qt;sec.addEventListener("input",e=>{if(e.target.dataset.puq===undefined)return;clearTimeout(qt);const v=e.target.value.trim();qt=setTimeout(()=>{if(puState.q===v)return;puState.q=v;puState.page=1;puLoad()},350)});
   if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();if(!puState.started)puLoad()}},{rootMargin:"600px 0px"});io.observe(sec)}else puLoad();
 }
