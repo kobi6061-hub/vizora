@@ -1,0 +1,87 @@
+# PROPX · CBS construction — daily check of the official series (building permits · construction starts · completions ·
+# active construction; national + 7 districts).
+#
+# CBS publishes construction figures in a quarterly release about ten weeks after the quarter ends (the monthly figures
+# appear with the quarter), on a working day (Sun–Thu). This job checks every working day, so a release — or a revision
+# of earlier periods — reaches the site the same day. scripts/construction-sync.js resolves the geography nodes from the
+# catalogue every run, keeps every published value (append-only, with revisions), the raw responses per content hash,
+# the resolution evidence and the payload; a failed source keeps its last data, marked. Nothing outside
+# data/construction/ is touched. `dry-run` prints the catalogue nodes, the resolution table and the series found
+# (read-only) — the mode to dispatch first.
+
+name: CBS construction sync
+
+on:
+  schedule:
+    - cron: '41 12 * * 0-4'   # Sun–Thu 12:41 UTC = 15:41 Israel (summer) / 14:41 (winter) — after the sales sync
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'sync (write + commit) · dry-run (resolve, fetch and print — read-only)'
+        type: choice
+        options: [sync, dry-run]
+        default: sync
+
+permissions:
+  contents: write
+
+concurrency:
+  group: construction-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MODE: ${{ inputs.mode || 'sync' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline tests (must pass before any data is written)
+        run: node test/construction.test.js
+
+      - name: Read the official series
+        id: sync
+        run: |
+          set +e
+          case "$MODE" in
+            dry-run) node scripts/construction-sync.js --dry-run ;;
+            *)       node scripts/construction-sync.js --summary-file "$RUNNER_TEMP/summary.txt" ;;
+          esac
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Gates over the written data
+        if: env.MODE == 'sync'
+        run: |
+          node test/construction.test.js
+          node test/integrity.test.js
+
+      - name: Commit the data
+        if: env.MODE == 'sync'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/construction
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'CBS construction: run log' > "$RUNNER_TEMP/summary.txt"
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if the source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "construction-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1

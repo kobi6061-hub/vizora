@@ -46,6 +46,24 @@
   release 283/2026 (end-July 2026), else "—"; never split by a filter. The capital model reads no sales pace (liquidity, months of
   supply, pressure and leverage are MISSING). `scripts/cbs-sales-discover.js` + `.github/workflows/cbs-sales-discover.yml` =
   read-only discovery (catalogue, series, release PDFs). See `lib/cbs-sales/README.md`.
+- `lib/construction/` + `scripts/construction-sync.js` + `.github/workflows/construction-sync.yml` + `data/construction/` +
+  `test/construction.test.js` (+ `test/fixtures/cbs-construction-sample.json`, a labelled TEST FIXTURE never read by the product)
+  = official construction series (17.10.2026; integrates discovery candidate `cbs:series:construction-by-district`): the same CBS
+  time-series API, subject 44 — building permits (44,11,2), construction starts (44,2,3), completions (44,3,3) and active
+  construction (44,4,3 — a STOCK at period end, never summed over periods) — dwellings, for the country and its 7 districts ONLY
+  (no locality series exists; a district figure is never allocated to a city). Geography codes differ per branch (level-4 codes
+  1–7 + 8 total; permits name_id 271–277 + 1): `lib/construction/resolve.js` walks the catalogue EVERY run, finds the node by NAME,
+  verifies its CODE against `series.js` and resolves the level-5 leaf — a mismatch / unresolved node is never requested (PARTIAL,
+  last data kept); data is keyed by the code, the name is a label; the resolution is written to `geo-resolution.json`. The period
+  kind comes from each series (month / quarter / year), stored with every observation, never assumed. Append-only ledger with
+  every revision (sales ledger logic reused), raw responses per content hash, `latest.json` per measure × geography: latest
+  period (OFFICIAL), T3 / T12 or T4, YTD vs prior YTD, change (DERIVED, periods named; stock: level vs previous / year earlier),
+  national-vs-districts reconciliation (residual reported, never forced), quarter-based freshness CURRENT /
+  EXPECTED_REPORTING_LAG / STALE on a DOCUMENTED lag assumption (~10 weeks after the quarter; 60 / 120 days —
+  `SOURCE.lagAssumption`). A measure without observations is MISSING with its reason, never 0. Run states SUCCESS / UNCHANGED /
+  PARTIAL / FAILED / REFUSED / SCHEMA_CHANGED in `sync-runs.jsonl`; Trust Center `cbs:construction` (NO_RUN until the first run).
+  Four universes never summed; NOT wired to the dossier / supply pipeline / pulse / page yet — the hook is
+  `data/construction/latest.json` (shape in `lib/construction/README.md`). `data/construction/` is bot-written.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index; optional monthly
   CBS series found by name: construction inputs 200010, CPI 120010, CPI rent component 120460 — a failure there is
