@@ -49,3 +49,19 @@ window → null with its reason) and supply pressure (awarded state-land units �
 district only — null for a locality). Every indicator opens its formula, period and limitations. See `lib/supply/README.md`.
 
 Tests: `test/dossier.test.js`, `test/supply.test.js`.
+
+## "Why this market?" — `lib/dossier/narrative.js` (17.10.2026)
+
+`narrative(D, { scan, supply })` composes ordered bilingual sentences from a dossier already computed, the geography's
+Opportunity / Risk radar items (`lib/radar/scan.js` `forGeo`) and its supply pipeline (`lib/supply/pipeline.js`). The
+dossier view carries it as `narrative` (`lead` = the 2–3 sentence ids that open: position · demand · the radar line that
+fired, risks first; `sentences` = the full read in order; `counts`). Every sentence: `kind` (fact · derived · watch · risk ·
+context · gap), `cls` (OFFICIAL · OBSERVED · DERIVED · MISSING), `source` (Trust Center ids / module aliases), `period`,
+`geoScope` (own · district · national) and `term` — the explainability-registry id its ⓘ opens. Rules: only figures the read
+models hold (a missing input makes the sentence a *gap* — never a default); universes never summed (tenders, renewal and
+lotteries each in their own sentence, the renewal sentence says so); a locality's demand sentence names the DISTRICT
+series and is scoped `district`; comparisons only inside one series (district vs national momentum of the same CBS series,
+share of the national figure of the same universe — the scan's own comparisons); exact developer names; Hebrew signed numbers
+isolated (LRI … PDI); never a recommendation, probability or attractiveness score. Pure and deterministic — no model call.
+The page renders it as the "למה השוק הזה?" block at the top of `#dossier` (the lead open, the full read in a `<details>`);
+the offline build has no server narrative. Gates: `test/narrative.test.js`.

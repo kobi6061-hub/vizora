@@ -48,3 +48,21 @@ catalogue or be a PROPX / ALTARIS module alias); a DERIVED / MODEL term states i
 emits (dossier, scan, developer intelligence) has a rule; every missing-data id a read model prints has a reason; no
 recommendation / probability wording; a do-not-interpret-as on every term; the page, ALTARIS and the offline build load
 the registry.
+
+## Independent review (17.10.2026) — what moved
+
+The registry was reviewed against the code it documents (read-only, every formula and threshold traced). Corrections:
+`months_of_supply` is the **CBS series 44,10,5** ("months of supply, new dwellings — average based on trend data"), class
+OFFICIAL, no PROPX formula (inventory ÷ a 12-month pace would give 28.8, CBS says 26.7 for August 2026); `unsold_inventory`
+no longer describes that ratio; `probable_new_transaction` states the register rule as coded (build year = deal year or
+deal year − 1 → probably new; 2+ years earlier → second-hand; a deal-nature text → confirmed new; a later build year →
+unclassified); `evidence_quality`, `decision_verdict`, `investment_attractiveness` and `capital_at_risk` formulas restate the
+dossier's and ALTARIS's own rules and order; `momentum_12m` carries the 6-month anchoring rule; `land_per_unit` names the
+open-market track; `sales_momentum_3m` names the 30-sale small-sample rule; `source_freshness` names the CBS state boundaries;
+`materiality` matches the event rules; the `developer-concentration` and `sales-momentum-up` rules read as coded; the
+`cbs:price-index` alias is the market sync's umbrella id (`propx:market-sync`), not one index, and the construction-inputs
+signal cites `cbs:constructionInputsIndex`. Rendering: every signed number in a Hebrew string is isolated (LRI … PDI) at the
+one place every string is born (`bi`) — a Hebrew prefix hyphen (ב-12) is never wrapped; "why am I seeing this?" shows a
+formatted value (the dossier and developer-intelligence signals carry `valueLabel`; never a raw fraction), labels every source
+segment, and carries the dossier's evidence quality on dossier signals; the page's evidence pointer is a `<bdi>`; the runtime
+map is pruned; ALTARIS's popover follows the module language (he RTL / en LTR). Gates in `test/explain.test.js`.

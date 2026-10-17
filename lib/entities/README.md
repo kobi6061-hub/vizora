@@ -127,3 +127,14 @@ where the sources carry it, null otherwise (a share with a zero denominator is n
 Tests: `node test/entities-intel.test.js` (rules at and just below their thresholds on synthetic entities, he/en
 parity, shares, trend, the committed data read-only).
 
+
+## Search 2.0 (17.10.2026)
+
+`search(q)` also routes **geographies with a dossier**: a district by its official name — exact, with or without the
+prefix (`מחוז תל אביב`, `הצפון`, `Northern district`); a substring only when the query itself says `מחוז` / `district` — and
+the country (`ישראל` / `Israel`, full name only) → `{ type: 'district' | 'country', route: { section: 'dossier', district } }`.
+A bare district name that is also a city name (`תל אביב`, `חיפה`) ranks AFTER the locality hits. A locality hit the
+Opportunity / Risk scan covers carries `radar: { opportunities, risks, quality, builtAt }` — the counts of rules that fired
+and the dossier's evidence level, never a score. The page shows them under the hit and opens the Market Dossier for a
+district / country hit (`inRoute`); the command bar lets the two new types through. Names still match by string and are
+never merged.

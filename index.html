@@ -1435,6 +1435,9 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .ds-ch{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .ds-ch li{padding:4px 0;border-bottom:1px solid var(--hairline)} .ds-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
 .ds-miss{font-size:11.5px;color:var(--ink-2);line-height:1.5;padding-inline-start:16px}
 .ds-ind li{font-size:12px} .num.up{color:var(--up)} .num.down{color:var(--down)}
+.ds-why{border:1px solid var(--hairline);border-inline-start:3px solid var(--brass);border-radius:9px;padding:10px 13px;margin:10px 0 2px;background:var(--panel)}
+.ds-why .ds-ft{margin-top:0} .ds-why ol{margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.6} .ds-why li{padding:3px 0} .ds-why li .ds-m{display:inline}
+.ds-why details{margin-top:6px} .ds-why summary{cursor:pointer;font-size:11.5px;font-weight:700;color:var(--accent-deep)}
 /* ---- explainability: ⓘ marks and the one popover ---- */
 .xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0}
 .xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
@@ -2611,6 +2614,7 @@ he:{
   dsPick:"גאוגרפיה", dsNat:"ישראל (ארצי)", dsDistricts:"מחוזות", dsLocs:"יישובים (עם מכרזי רמ״י)", dsQuality:"איכות ראיות", dsFacts:"עובדות מפתח", dsWatch:"למה לעקוב", dsRisk:"מה עלול להשתבש", dsChanges:"שינויים אחרונים", dsDevs:"יזמים מובילים כאן (נצפה)", dsFresh:"רעננות המקורות", dsMissing:"מה אין בתיק — ולמה", dsLoading:"טוען תיק…", dsErr:"לא ניתן לטעון את התיק כעת", dsNoSig:"אין טריגר שנדלק", dsGen:(d)=>`הופק ${d}`, dsDistrictOf:"מחוז", dsToPulse:"לכל האירועים",
   dsT:{sales:"מכירות דירות חדשות (למ״ס)",inv:"מלאי שטרם נמכר (ארצי)",mos:"חודשי היצע",land:"מכרזי רמ״י · היקף נוכחי",open:"יח״ד במכרזים פתוחים",aw:"יח״ד במגרשים שנזכו",pend:"יח״ד ממתינות להחלטה",lot:"הגרלות דיור מסובסד",lotU:"דירות בהגרלות ראשונות",apu:"מבקשים ליחידה",rn:"מתחמי התחדשות",rnU:"יח״ד מוצעות (כפי שפורסם)",rt:"מכרזי דיור להשכרה (נוכחי)",rtU:"יח״ד להשכרה (לפי דירה להשכיר)",dev:"יזמים שנצפו כאן",ent:"כניסות יזמים · 24 ח׳",boi:"ריבית בנק ישראל",nhi:"מדד דירות חדשות · שנתי",cii:"תשומות בנייה · שנתי"},
   dsS:{t12:"12 חודשים",mom:"מומנטום 3 ח׳",nat:"ארצי",dist:"רמת מחוז — לא נתון היישוב",byLoc:"סכום על יישובי המחוז",of:"מתוך",total:"סה״כ המכרז — לא יח״ד להשכרה",declared:"מוכרזים",small:"מדגם קטן — ללא מגמה",context:"הקשר ארצי"},
+  dsWhy:{title:"למה השוק הזה?",sub:"קריאה דטרמיניסטית של נתוני התיק — תיאור, לא המלצה",more:"הקריאה המלאה",scope:{district:"רמת מחוז",national:"הקשר ארצי"},kinds:{fact:"עובדה",derived:"נגזר",watch:"למעקב",risk:"סיכון",context:"הקשר",gap:"חסר"},q:{HIGH:"גבוהה",MEDIUM:"בינונית",LOW:"נמוכה"}},
   dsSup:{title:"צנרת היצע — שישה יקומים מקבילים, לעולם לא מסוכמים",none:"צנרת ההיצע אינה זמינה כרגע",u:{planning:"תכנון · יח״ד בתוכניות (XPlan)",land:"קרקע · יח״ד במכרזי רמ״י",renewal:"התחדשות · יח״ד מוצעות במתחמים",rental:"דיור להשכרה · מסלול רמ״י",lotteries:"דיור מסובסד · הגרלות משב״ש",construction:"בנייה · דיווחי התקדמות (משב״ש)"},
     of:"מתוך",momL:"מומנטום 12 ח׳",vs:"מול",small:"מדגם קטן — ללא מגמה",uncovered:"המקור לא מכסה את החלון",renewalPlans:"תוכניות של מתחמי התחדשות",approvedEff:"מאושרות / בתוקף",unitsAfter:"יח״ד אחרי התוכנית",delta:"תוספת",tenderPlans:"תוכניות שמכרזים מפנים אליהן",inventory:"מלאי תכנוני (קרקע מדינה)",stale:"ישן ·",
     open:"יח״ד במכרזים פתוחים",pending:"ממתינות להחלטה",awarded:"נזכו",failed:"נכשלו / בוטלו",published:"יח״ד שפורסמו לשיווק · 12 ח׳",awardedMom:"יח״ד שנזכו · 12 ח׳",complexes:"מתחמים",declared:"מוכרזים",proposed:"יח״ד מוצעות",additional:"תוספת",notNet:"תוספת ≠ נטו",rentalTenders:"מכרזי השכרה נוכחיים",tenderTotal:"יח״ד סה״כ במכרז",stated:"להשכרה כפי שנכתב",comparable:"מכרזים",
@@ -3169,6 +3173,7 @@ en:{
   dsPick:"Geography", dsNat:"Israel (national)", dsDistricts:"Districts", dsLocs:"Localities (with ILA tenders)", dsQuality:"Evidence quality", dsFacts:"Key facts", dsWatch:"What to watch", dsRisk:"What could go wrong", dsChanges:"Recent changes", dsDevs:"Leading developers here (observed)", dsFresh:"Source freshness", dsMissing:"What is not in the dossier — and why", dsLoading:"Loading dossier…", dsErr:"The dossier could not be loaded", dsNoSig:"No trigger fired", dsGen:(d)=>`generated ${d}`, dsDistrictOf:"district", dsToPulse:"all events",
   dsT:{sales:"New-home sales (CBS)",inv:"Unsold inventory (national)",mos:"months of supply",land:"ILA tenders · current scope",open:"units in open tenders",aw:"units in awarded lots",pend:"units awaiting decision",lot:"Subsidized-housing lotteries",lotU:"units in first lotteries",apu:"applicants per unit",rn:"Renewal complexes",rnU:"proposed units (as published)",rt:"Rental-track tenders (current)",rtU:"rental units (per Dira Lehaskir)",dev:"Developers observed here",ent:"developer entries · 24 mo",boi:"Bank of Israel rate",nhi:"new-homes index · y/y",cii:"construction inputs · y/y"},
   dsS:{t12:"12 months",mom:"3-month momentum",nat:"national",dist:"district level — not the locality's figure",byLoc:"summed over the district's localities",of:"of",total:"tender total — not rental units",declared:"declared",small:"small sample — no trend",context:"national context"},
+  dsWhy:{title:"Why this market?",sub:"a deterministic read of the dossier's figures — a description, not a recommendation",more:"the full read",scope:{district:"district level",national:"national context"},kinds:{fact:"fact",derived:"derived",watch:"watch",risk:"risk",context:"context",gap:"missing"},q:{HIGH:"HIGH",MEDIUM:"MEDIUM",LOW:"LOW"}},
   dsSup:{title:"Supply pipeline — six parallel universes, never summed",none:"The supply pipeline is not available right now",u:{planning:"Planning · plan units (XPlan)",land:"Land · ILA tender units",renewal:"Renewal · proposed units in complexes",rental:"Long-term rental · ILA track",lotteries:"Subsidized housing · MoCH lotteries",construction:"Construction · progress reports (MoCH)"},
     of:"of",momL:"12-month momentum",vs:"vs",small:"small sample — no trend",uncovered:"the source does not cover the window",renewalPlans:"plans of renewal complexes",approvedEff:"approved / effective",unitsAfter:"units after plan",delta:"delta",tenderPlans:"plans the tenders reference",inventory:"planning inventory (state land)",stale:"stale ·",
     open:"units in open tenders",pending:"awaiting decision",awarded:"awarded",failed:"failed / cancelled",published:"units published to tender · 12 m",awardedMom:"units awarded · 12 m",complexes:"complexes",declared:"declared",proposed:"proposed units",additional:"additional",notNet:"additional ≠ net",rentalTenders:"current rental-track tenders",tenderTotal:"tender units (total)",stated:"rental units as stated",comparable:"tenders",
@@ -7750,7 +7755,7 @@ he:{
   filterPh:{developers:"סינון לפי שם יזם",projects:"סינון לפי שם · יזם · שכונה"},cityPh:"עיר (שם או סמל)",
   searchPh:"חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר",searchL:"חיפוש ישויות",
   searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchErr:"החיפוש אינו זמין כרגע (השרת לא ענה) — זו אינה תוצאה ריקה; נסו שוב",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
-  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב"},
+  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב",district:"מחוז",country:"ארצי"},
   kDevs:"יזמים ברישום",kDevsS:n=>`${n} מופיעים בשני המקורות (שם משפטי זהה)`,kSites:"מגרשי מגורים שנזכו",kSitesS:"מכרזי רמ״י · זוכה עם סימון צורה משפטית",
   kProjects:"פרויקטי הגרלה",kProjectsS:(a,b)=>`משב״ש · הגרלות ${a}–${b}`,kUnmarked:"זוכים ללא סימון משפטי",kUnmarkedS:n=>`${n} מגרשים — בדרך כלל אנשים פרטיים; נספרים, לא מוצגים`,
   basis:"פעילות שנצפתה במקורות PROPX — לא עתודת קרקע, לא צבר כולל ולא רשימת יזמים מלאה",
@@ -7792,7 +7797,7 @@ he:{
   joinIla:"אין מפתח רשמי משותף עם רשומות ההגרלות של משרד הבינוי — לא צורף",joinMoch:"רשומת ההגרלה אינה נושאת מכרז, תכנית או גוש/חלקה — לא צורפה למגרש במכרז",
   meth:["יזם = שם קנוני אחד מהרשומות הרשמיות (הבדלי הקלדה בלבד: מירכאות ורווחים); אין מיזוג לפי דמיון","שם משפטי זהה (עם סימון צורה משפטית) בשני מקורות הוא ישות אחת — רשם החברות אינו רושם שתי חברות באותו שם","שם חתוך או אותן אותיות בפיסוק שונה מקושרים כ״ייתכן שזהה״ ואינם ממוזגים","זוכים ללא סימון צורה משפטית (בדרך כלל אנשים פרטיים) נספרים ואינם מוצגים","יח״ד ברמ״י = קיבולת מגרשים שנזכו; יח״ד במשב״ש = יח״ד בהגרלה הראשונה — לעולם לא מחוברות בין מקורות","סכומי קרקע: מגרשים בתחרות מחיר בלבד; הצעות ₪/מ״ר והקצאות במחיר קבוע נספרות בנפרד","ראיית בנייה: דיווחי התקדמות של משרד הבינוי (2024, ישן) בצירוף גוש וחלקה מדויקים למגרש שנזכה בלבד","24 חודשים = הוכרע/הוגרל ב-24 החודשים שלפני תאריך הבנייה (שעון ישראל)"],
   pipeT:"צבר שנצפה לפי שלב מתועד (כל הרשומות)",pipeS:"מספר · יח״ד לפי מקור — לא מחוברות בין רמ״י למשב״ש · השלב המתקדם ביותר שיש לו ראיה: מגרש ותיק שנזכה עשוי להיות בנוי מזמן ללא ראיה כאן",pipeIla:"רמ״י",pipeMoch:"משב״ש",
-  hitDev:(l,p,c)=>`${l} מגרשים · ${p} פרויקטי הגרלה · ${c} ערים`,hitN:n=>`${n} מכרזים`,showAll:n=>`הצגת כל ${n} התוצאות`,showLess:"פחות תוצאות",
+  hitDev:(l,p,c)=>`${l} מגרשים · ${p} פרויקטי הגרלה · ${c} ערים`,hitRadar:(o,r,q)=>`${o} הזדמנויות · ${r} סיכונים ברדאר · ראיות ${q} · תיק שוק`,hitDossier:"תיק שוק",hitN:n=>`${n} מכרזים`,showAll:n=>`הצגת כל ${n} התוצאות`,showLess:"פחות תוצאות",
 },
 en:{
   tabsL:"View",tab:{developers:"Developers",projects:"Projects & sites",entries:"Market entries",renewal:"Urban renewal"},
@@ -7843,7 +7848,7 @@ en:{
   filterPh:{developers:"Filter by developer name",projects:"Filter by name · developer · neighbourhood"},cityPh:"City (name or code)",
   searchPh:"Search: developer · project · tender 158/2026 · plan · block/parcel · city · street and number",searchL:"Entity search",
   searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchErr:"Search is unavailable right now (the server did not answer) — this is not an empty result; try again",searchBasis:"a result routes to an entity — names match by string and are never merged",
-  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street"},
+  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street",district:"District",country:"Country"},
   kDevs:"Developers in the registry",kDevsS:n=>`${n} appear in both sources (identical legal name)`,kSites:"Residential lots won",kSitesS:"ILA tenders · winner with a legal-form marker",
   kProjects:"Lottery projects",kProjectsS:(a,b)=>`MoCH · lotteries ${a}–${b}`,kUnmarked:"Winners without a legal form",kUnmarkedS:n=>`${n} lots — usually private persons; counted, not listed`,
   basis:"Activity observed in PROPX's sources — not a land bank, not a total pipeline, not a complete developer list",
@@ -7885,7 +7890,7 @@ en:{
   joinIla:"no shared official key with the MoCH lottery records — not joined",joinMoch:"the lottery record carries no tender, plan or parcel — not joined to a tender lot",
   meth:["developer = one canonical name from the official records (typographic variants only: quotes, spacing); no similarity merge","an identical legal name (with a legal-form marker) in two sources is one entity — the Registrar of Companies does not register two companies under one name","a cut name or the same letters with different punctuation are linked as \"possibly the same\" and never merged","winners without a legal-form marker (usually private persons) are counted, never listed","ILA units = capacity of lots won; MoCH units = units in the first lottery — never added across sources","land sums: price-competition lots only; ₪/m² bids and fixed-price allocations are counted apart","construction evidence: MoCH progress reports (2024, stale) joined to an awarded lot by exact block and parcel only","24 months = decided / lotteried in the 24 months before the build date (Israel time)"],
   pipeT:"Observed pipeline by evidenced stage (all records)",pipeS:"count · units per source — never added across ILA and MoCH · the furthest stage with evidence: an old awarded lot may long be built without evidence here",pipeIla:"ILA",pipeMoch:"MoCH",
-  hitDev:(l,p,c)=>`${l} lots · ${p} lottery projects · ${c} cities`,hitN:n=>`${n} tenders`,showAll:n=>`Show all ${n} results`,showLess:"Fewer results",
+  hitDev:(l,p,c)=>`${l} lots · ${p} lottery projects · ${c} cities`,hitRadar:(o,r,q)=>`${o} ${o==="1"?"opportunity":"opportunities"} · ${r} ${r==="1"?"risk":"risks"} on the radar · evidence ${q} · market dossier`,hitDossier:"market dossier",hitN:n=>`${n} tenders`,showAll:n=>`Show all ${n} results`,showLess:"Fewer results",
 }};
 const IT=()=>IN_I18N[state.lang];
 const inState={tab:"developers",period:"all",page:1,q:"",city:"",kind:"",
@@ -8090,12 +8095,14 @@ function inHitSub(h){
   if(h.type==="developer")return t.hitDev(fmtInt(M.lots||0),fmtInt(M.projects||0),fmtInt(M.cities||0));
   if(h.type==="plan"||h.type==="parcel")return t.hitN(fmtInt(M.tenders||0));
   if(h.type==="project"||h.type==="renewal")return h.sub||"";
+  if(h.type==="district"||h.type==="country")return t.hitDossier;
+  if(h.type==="locality"&&h.radar)return t.hitRadar(fmtInt(h.radar.opportunities||0),fmtInt(h.radar.risks||0),(T().dsWhy&&T().dsWhy.q&&T().dsWhy.q[h.radar.quality])||h.radar.quality||"—");
   return "";
 }
 function inHitHTML(h,i){
   const t=IT(),sb=inHitSub(h),sub=sb?`<span class="sb">${inE(sb)}</span>`:"";
   const kids=(h.type==="plan"||h.type==="parcel")&&inState.sopen===i&&h.tenders?`<div class="in-kids">${h.tenders.map(x=>`<button type="button" class="in-kid" data-ldtender="${inE(x.id)}">${inE(t.ty.tender)} <span class="num">${inE(x.name||x.michrazId)}</span>${x.publishedDate?` · ${inDate(x.publishedDate)}`:""}</button>`).join("")}</div>`:"";
-  return `<div class="in-hitw"><button type="button" class="in-hit" data-inhit="${i}"><span class="ty">${inE(t.ty[h.type]||h.type)}</span><span class="lb"><bdi>${inE(h.label)}</bdi> ${sub}</span></button>${kids}</div>`;
+  return `<div class="in-hitw"><button type="button" class="in-hit" data-inhit="${i}"><span class="ty">${inE(t.ty[h.type]||h.type)}</span><span class="lb"><bdi>${inE(state.lang==="en"&&h.meta&&h.meta.en&&(h.type==="district"||h.type==="country")?h.meta.en:h.label)}</bdi> ${sub}</span></button>${kids}</div>`;
 }
 function renderInSearch(){
   const box=el("inRes");if(!box)return;
@@ -8114,6 +8121,7 @@ function inRoute(h,from){
   if(h.type==="developer"){inOpen("developer",h.id,from);return}
   if(h.type==="project"){inOpen("project",h.id,from);return}
   if(h.type==="renewal"){inOpen("renewal",h.id,from);return}
+  if(h.type==="district"||h.type==="country"){dsState.level=h.type==="district"?"district":"il";dsState.code=h.type==="district"?h.id:null;dsLoad();inGoSection("dossier");return}
   if((h.type==="address"||h.type==="street"||h.type==="locality")&&h.geo){
     const g=Object.assign({},h.geo);if(h.type==="address")g.house=h.route.house;
     openGeoView(g);if(h.type==="address")setTimeout(()=>inGoSection("txSection"),420);return}
@@ -8392,7 +8400,7 @@ function intelSug(q){
     intelTimer=setTimeout(async()=>{
       let list=[];
       try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        list=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal"].includes(h.type)).slice(0,6)}
+        list=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal","district","country"].includes(h.type)).slice(0,6)}
       catch(e){/* offline/standalone: no entity layer */}
       intelLast={q:qq,list};
       const inp=el("searchInput");
@@ -8644,11 +8652,11 @@ const XP_T={he:{info:"הסבר",whyBtn:"למה אני רואה את זה?",whyMi
 const xpT=()=>XP_T[state.lang==="en"?"en":"he"];
 const xpRT=new Map();let xpSeq=0,xpTrig=null;
 const xpBtn=id=>XP()&&XP().term(id)?`<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${xpT().info}" title="${xpT().info}">ⓘ</button>`:"";
-const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";const k="s"+(++xpSeq);xpRT.set(k,rt||{});return `<button type="button" class="xp xp-why" data-xps="${ldE(id)}" data-xpk="${k}">${xpT().whyBtn}</button>`};
+const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";if(xpRT.size>1500)xpRT.clear();const k="s"+(++xpSeq);xpRT.set(k,rt||{});return `<button type="button" class="xp xp-why" data-xps="${ldE(id)}" data-xpk="${k}">${xpT().whyBtn}</button>`};
 const xpMiss=id=>XP()&&XP().missing(id)?`<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${xpT().whyMissing}" title="${xpT().whyMissing}">ⓘ</button>`:"";
 function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
 function xpL2HTML(id){const L=state.lang==="en"?"en":"he",x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
-  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.evid,ldE(x.evidence))}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
+  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
 function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let html="",more="";
   const head=(title,chip)=>`<div class="xp-h"><b>${title}</b>${chip||""}<button type="button" class="ho-x" data-xpclose aria-label="${t.close}">×</button></div>`;
   if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;html=head(ldE(x.title),xpClsChip(x.cls))+`<p class="xp-s">${ldE(x.short)}</p>`;more=xpL2HTML(trigger.dataset.xp)}
@@ -8713,19 +8721,29 @@ function renderDossier(){
   if(S.developers)tiles.push(tile(t.dsT.dev,n(S.developers.total),`${t.dsT.ent} ${n(S.developers.entries&&S.developers.entries.total)} ${xpBtn("market_entry")}`,"OBSERVED","developer_observed_activity"));
   if(S.macro&&S.macro.boiRate)tiles.push(tile(t.dsT.boi,S.macro.boiRate.value!=null?S.macro.boiRate.value+"%":"—",`${t.dsT.nhi} ${pc(S.macro.newHomesIndex&&S.macro.newHomesIndex.yoy)} · ${t.dsT.cii} ${pc(S.macro.constructionInputsIndex&&S.macro.constructionInputsIndex.yoy)} · ${t.dsS.context} ${xpBtn("construction_inputs_index")}`,"OFFICIAL","boi_rate"));
   const sig=k=>D.signals.filter(x=>x.kind===k),bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):v;
-  const sigList=k=>{const a=sig(k);return a.length?`<ul class="ds-sig">${a.map(x=>`<li>${x.geoScope&&x.geoScope!=="own"?`<span class="ho-chip cont">${t.dsScope[x.geoScope]||x.geoScope}</span> `:""}<b>${ldE(x.text[L])}</b> ${xpSig(x.id,x)}<div class="ds-m">${t.dsMeta.threshold} <span class="num">${ldE(bl(x.threshold))}</span>${x.period?` · ${t.dsMeta.period} ${ldE(String(bl(x.period)))}`:""} · ${t.dsMeta.source} ${ldE(x.source)} · ${cls(x.cls)}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.dsNoSig}</p>`};
+  const sigList=k=>{const a=sig(k);return a.length?`<ul class="ds-sig">${a.map(x=>`<li>${x.geoScope&&x.geoScope!=="own"?`<span class="ho-chip cont">${t.dsScope[x.geoScope]||x.geoScope}</span> `:""}<b>${ldE(x.text[L])}</b> ${xpSig(x.id,Object.assign({evidence:{level:D.quality.level,score:D.quality.score}},x))}<div class="ds-m">${t.dsMeta.threshold} <span class="num">${ldE(bl(x.threshold))}</span>${x.period?` · ${t.dsMeta.period} ${ldE(String(bl(x.period)))}`:""} · ${t.dsMeta.source} ${ldE(x.source)} · ${cls(x.cls)}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.dsNoSig}</p>`};
   const ch=S.changes&&S.changes.rows.length?`<ul class="ds-ch">${S.changes.rows.slice(0,8).map(e=>`<li><span class="num ds-d">${ldE(puDay(e.at))}</span> ${ldE(e.title[L])}</li>`).join("")}</ul><p class="ho-note"><a class="ld-link" href="#pulse">${t.dsToPulse} (${n(S.changes.total)} · ${ldE(S.changes.window)})</a></p>`:`<p class="ho-note">${t.puNone}</p>`;
   const devs=S.developers&&S.developers.top.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.dsCols.name}</th><th>${t.dsCols.lotsHere}</th><th>${t.dsCols.unitsHere}</th><th>${t.dsCols.projHere}</th><th>${t.dsCols.last}</th><th>${t.dsCols.total}</th></tr></thead><tbody>${S.developers.top.map(d=>`<tr><td>${ldE(d.name)}${d.possibleSame?` <span class="ho-chip cont" title="${he?"שמות דומים מקושרים ואינם ממוזגים":"similar names linked, never merged"}">${d.possibleSame}</span>`:""}</td><td class="num">${n(d.lotsHere)}</td><td class="num">${n(d.unitsHere)}</td><td class="num">${n(d.projectsHere)}</td><td class="num">${ldE(puDay(d.lastHere))}</td><td class="num">${n(d.lots)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${ldE(S.developers.basis[L])}</p>`:`<p class="ho-note">—</p>`;
   const fresh=`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.dsFreshT.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.freshness.map(f=>`<tr><td>${ldE(f.label[L])}</td><td class="num">${ldE(f.observed?puDay(f.observed):"—")}</td><td class="num">${ldE(f.published?puDay(f.published):"—")}</td><td class="num">${ldE(f.checked?puDay(f.checked):"—")}</td><td>${ldE(f.state||"—")}</td></tr>`).join("")}</tbody></table></div>`;
   const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])} · ${D.quality.score}/100</b> ${xpBtn("evidence_quality")} — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
   const miss=D.missing.length?`<ul class="ds-miss">${D.missing.map(m=>`<li>${ldE(m[L])} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
   body.innerHTML=`<div class="ds-head"><h3>${ldE(D.geo.name[L])}${D.geo.districtName&&D.geo.level==="locality"?` <span class="ax-muted">· ${t.dsDistrictOf}: ${ldE(D.geo.districtName[L])}</span>`:""}</h3><p class="ho-note">${ldE(D.basis[L])}</p></div>
+    ${dsWhyHTML(D)}
     <div class="ds-ft">${t.dsFacts}</div><div class="ds-grid">${tiles.join("")}</div>
     <div class="ds-two"><div><div class="ds-ft">${t.dsWatch}</div>${sigList("watch")}</div><div><div class="ds-ft">${t.dsRisk}</div>${sigList("risk")}</div></div>
     ${dsSupplyHTML()}
     <div class="ds-two"><div><div class="ds-ft">${t.dsChanges}</div>${ch}</div><div><div class="ds-ft">${t.dsDevs}</div>${devs}</div></div>
     <div class="ds-ft">${t.dsFresh} ${xpBtn("source_freshness")}</div>${fresh}${q}
     <div class="ds-ft">${t.dsMissing}</div>${miss}`;
+}
+/* "WHY THIS MARKET?" (lib/dossier/narrative.js): ordered deterministic sentences over the dossier, the geography's radar items and its
+   supply indicators — each with its class, source, period, scope and ⓘ term; the lead (3 sentences) opens, the full read is a <details> */
+function dsWhyHTML(D){
+  const t=T(),w=t.dsWhy,N=D&&D.narrative,he=state.lang==="he",L=he?"he":"en";if(!w||!N||!Array.isArray(N.sentences)||!N.sentences.length)return"";
+  const cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${ldE(t.puCls&&t.puCls[c]||c)}</span>`,bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):v;
+  const li=s=>`<li data-ns="${ldE(s.id)}"><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(w.kinds[s.kind]||s.kind)}</span> ${s.geoScope&&s.geoScope!=="own"?`<span class="ho-chip cont">${ldE(w.scope[s.geoScope]||s.geoScope)}</span> `:""}${ldE(s[L])} ${s.term?xpBtn(s.term):""}<div class="ds-m">${cls(s.cls)} · ${ldE(s.source)}${s.period?` · ${t.dsMeta.period} ${ldE(String(bl(s.period)))}`:""}</div></li>`;
+  const lead=N.sentences.filter(s=>(N.lead||[]).includes(s.id)),rest=N.sentences.filter(s=>!(N.lead||[]).includes(s.id));
+  return `<div class="ds-why"><div class="ds-ft">${w.title} ${xpBtn("evidence_quality")}</div><p class="ho-note" style="margin-top:0">${w.sub}</p><ol>${lead.map(li).join("")}</ol>${rest.length?`<details><summary>${w.more} (${rest.length})</summary><ol start="${lead.length+1}">${rest.map(li).join("")}</ol></details>`:""}<p class="ho-note" style="margin-bottom:0">${ldE(bl(N.basis))}</p></div>`;
 }
 /* SUPPLY PIPELINE (lib/supply/pipeline.js): six parallel universes of housing supply — plan units ≠ tender units ≠ renewal units ≠ lottery units ≠ rental units ≠ construction buildings — never summed; DERIVED momentum indicators with their formula, period and limitations */
 function dsSupplyHTML(){

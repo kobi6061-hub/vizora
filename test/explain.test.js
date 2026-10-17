@@ -48,6 +48,7 @@ t('no invented source: every source id a term cites exists in the Trust Center c
   for (const T of X.TERMS) for (const s of T.source.ids) assert.ok(X.canonicalSource(s), T.id + ' cites an unknown source ' + s);
   for (const alias of ['cbs:timeseries:44,10', 'datagov:moch:urban-renewal', 'dira-lehaskir:wp', 'lib/entities', 'boi:interest', 'cbs:price-index']) assert.ok(X.canonicalSource(alias), alias);
   assert.equal(X.canonicalSource('made-up:source'), null);
+  assert.equal(X.canonicalSource('cbs:price-index'), 'propx:market-sync', 'the market sync umbrella id is not one index'); assert.match(X.sourceLabel('cbs:constructionInputsIndex', 'en'), /construction-inputs/);
   assert.ok(X.sourceLabel('cbs:timeseries:44,10', 'en').includes('CBS'));
 });
 t('a DERIVED or MODEL term states its formula and inputs; an OFFICIAL / OBSERVED term never claims a formula it does not have', () => {
@@ -66,6 +67,12 @@ t('every signal id the product emits has a rule here (dossier signals, scan rule
   const w = X.signal('failed-tenders', 'en', { text: { he: 'א', en: 'a' }, value: 0.4, valueLabel: '40%', threshold: '≥ 30% of ≥ 5 tenders', period: { he: 'היקף', en: 'current scope' }, source: 'rmi:michrazim', cls: 'OFFICIAL', evidence: { level: 'HIGH', score: 80 } });
   assert.equal(w.kind, 'risk'); assert.equal(w.value, '40%'); assert.equal(w.period, 'current scope'); assert.ok(w.sourceLabel && w.notAs && w.term.title);
   assert.equal(X.signal('nonexistent'), null);
+  /* every source segment is labelled; the dossier and developer-intelligence signals carry a formatted value (never a raw fraction); dossier signals get the dossier's evidence on the page */
+  assert.match(X.signal('demand-with-supply', 'en', { source: 'cbs:timeseries:44,10 · rmi:michrazim' }).sourceLabel, /CBS.*·.*Israel Land Authority/);
+  for (const s of D.dossier({ level: 'il' }).signals) { assert.ok(typeof s.valueLabel === 'string', s.id + ' valueLabel'); assert.ok(!/^0\.\d/.test(s.valueLabel), s.id + ' raw fraction'); assert.equal(X.signal(s.id, 'en', s).value, s.valueLabel); }
+  { const Q = require('../lib/entities/query'); const dev = Q.developers({ limit: 1 }).rows[0]; for (const s of Q.developer(dev.id).intel.signals) assert.ok(s.valueLabel === null || (typeof s.valueLabel === 'string' && !/^0\.\d/.test(s.valueLabel)), s.id); }
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.match(page, /xpSig\(x\.id,Object\.assign\(\{evidence:\{level:D\.quality\.level,score:D\.quality\.score\}\},x\)\)/);
+  assert.match(X.term('probable_new_transaction').formula.en, /second-hand/); assert.match(X.term('probable_new_transaction').formula.en, /= transaction year or transaction year − 1/);
 });
 t('every missing-data id a read model prints has a reason here (the dossier and the supply pipeline), with what would make the figure available', () => {
   const D = require('../lib/dossier/query'), SU = require('../lib/supply/pipeline');
@@ -82,9 +89,18 @@ t('HE / EN parity and the registry\'s own rules: no recommendation, no probabili
     assert.ok(!/\b\d{1,3}% (confidence|probability)\b/i.test(all), T.id + ' no probability wording');
   }
   for (const T of X.TERMS) assert.ok(/not|never|לא|≠/i.test(T.notAs.en + T.notAs.he), T.id + ' do-not-interpret-as must negate');
+  /* RTL: every signed number in a Hebrew string is isolated (LRI … PDI) so its sign stays on its left; a Hebrew prefix hyphen (ב-12) is never wrapped */
+  const heStrings = [];
+  for (const T of X.TERMS) { for (const k of ['title', 'short', 'why', 'unit', 'geography', 'period', 'methodology', 'interpretation', 'notAs']) heStrings.push([T.id + '.' + k, T[k].he]); for (const l of T.limitations) heStrings.push([T.id + '.lim', l.he]); if (T.formula) heStrings.push([T.id + '.formula', T.formula.he]); }
+  for (const [id, r] of Object.entries(X.SIGNAL_RULES)) heStrings.push(['rule ' + id, r.rule.he]);
+  for (const [id, m] of Object.entries(X.MISSING)) heStrings.push(['missing ' + id, m.why.he + ' ' + m.unlock.he]);
+  let signed = 0;
+  for (const [id, s] of heStrings) { for (const m of s.matchAll(/[+\u2212]\d/g)) { signed++; assert.equal(s[m.index - 1], '\u2066', id + ' unisolated signed number: ' + s.slice(Math.max(0, m.index - 8), m.index + 6)); } assert.ok(!/[\u0590-\u05FF]\u2066-/.test(s), id + ' a prefix hyphen was wrapped'); }
+  assert.ok(signed >= 10, 'the registry carries signed thresholds (' + signed + ')');
+  assert.ok(HE_SIGN_FIX.test(X.SIGNAL_RULES['sales-momentum-up'].rule.he));
   const l1 = X.level1('months_of_supply', 'en'), l2 = X.level2('months_of_supply', 'he');
   assert.ok(l1.short.length < l2.methodology.length + l2.interpretation.length, 'level 1 is shorter than level 2');
-  assert.equal(l2.cls, 'DERIVED'); assert.equal(l2.sources[0].id, 'cbs:new-home-sales'); assert.ok(l2.freshness.observation && l2.freshness.publication && l2.freshness.check);
+  assert.equal(l2.cls, 'OFFICIAL', 'months of supply is the CBS series 44,10,5 — PROPX does not compute it'); assert.equal(l2.formula, null); assert.match(l2.methodology, /44,10,5/); assert.equal(l2.sources[0].id, 'cbs:new-home-sales'); assert.ok(l2.freshness.observation && l2.freshness.publication && l2.freshness.check);
   assert.equal(X.level1('nope'), null); assert.equal(X.level2('nope'), null);
   assert.ok(X.ids().includes('irr') && X.ids().includes('decision_verdict') && X.ids().includes('evidence_quality') && X.ids().includes('source_freshness'));
 });

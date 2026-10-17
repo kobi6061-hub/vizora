@@ -16,6 +16,7 @@
 //   view=radar        MARKET RADAR — the deterministic "what changed" feed (window=today|7d|30d|90d|all, group, kind, city, district, q, m, page, size; lib/radar)
 //   view=dossier      MARKET DOSSIER — one geography (city=<locality code> | district=<d-…> | none = national): official sales (district / national),
 //                     inventory (national), ILA tenders, lotteries, renewal + XPlan, rental, developers, macro, recent changes, signals, freshness, evidence quality
+//                     + `narrative` — "Why this market?": ordered deterministic sentences, each with class · source · period · scope · term (lib/dossier/narrative.js)
 //   view=dossierIndex the geographies the page can ask for (districts + localities with ILA tenders)
 //   view=scan         OPPORTUNITY RADAR / RISK RADAR — the dossier signals over every geography (kind=opportunity|risk, level, city, district, m, limit; lib/radar/scan.js) — never a recommendation
 //   view=scanGeo      the opportunity / risk items of one geography (city= | district= | none = national)
@@ -36,6 +37,7 @@ const { catalog } = require('../lib/trust/catalog');
 const RN = require('../lib/renewal/query');
 const RADAR = require('../lib/radar/query');
 const DOSSIER = require('../lib/dossier/query');
+let NARR = null; try { NARR = require('../lib/dossier/narrative'); } catch { /* the narrative ships separately */ }
 const SCAN = require('../lib/radar/scan');
 const REV = require('../lib/radar/revisions');
 let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /* the supply read model ships separately */ }
@@ -53,7 +55,9 @@ module.exports = async (req, res) => {
     if (view === 'sources') return send(res, 200, catalog());
     if (view === 'radar') return send(res, 200, RADAR.feed(p));
     if (view === 'pulse') return send(res, 200, RADAR.pulse());
-    if (view === 'dossier') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = DOSSIER.dossier({ level, code: p.city || p.district || null }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
+    if (view === 'dossier') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = DOSSIER.dossier({ level, code: p.city || p.district || null }); if (!out) return send(res, 404, { error: 'unknown geography' });
+      if (NARR) { let scan = null, supply = null; try { scan = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); } catch { /* scan unavailable */ } try { supply = SUPPLY ? SUPPLY.supply({ level, code: p.city || p.district || null }) : null; } catch { /* supply unavailable */ } out.narrative = NARR.narrative(out, { scan, supply }); }
+      return send(res, 200, out); }
     if (view === 'dossierIndex') return send(res, 200, DOSSIER.index());
     if (view === 'scan') return send(res, 200, SCAN.scan(p));
     if (view === 'scanGeo') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }

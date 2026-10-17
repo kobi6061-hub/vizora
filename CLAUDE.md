@@ -138,6 +138,14 @@
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.
+- `lib/dossier/narrative.js` + `test/narrative.test.js` = "Why this market?" (17.10.2026): a deterministic narrative over one dossier
+  (`view=dossier` → `narrative`: `lead` 2–3 sentence ids + ordered `sentences`, each with kind · class · source · period · geoScope ·
+  registry term); composed only from the dossier, the geography's radar items and its supply indicators; a missing input is a
+  *gap* sentence (never a default); universes never summed; a locality's demand sentence names the DISTRICT series; comparisons
+  only inside one series; never a recommendation / probability / attractiveness score; no model call. Rendered at the top of
+  `#dossier`. Search 2.0 (`lib/entities/query.js` `search`): district / country by exact official name → the dossier (a bare
+  district name that is also a city name ranks after the locality hits); a scan-covered locality hit carries the radar's rule
+  counts + evidence level (never a score).
 - `lib/radar/` + `scripts/radar-build.js` + `data/radar/` + `test/radar.test.js` = MARKET RADAR / MARKET PULSE (16.10.2026): the
   deterministic "what changed" engine over the ledgers the syncs already commit (land history, renewal + planning history,
   rental history, CBS observations incl. revisions, indicator snapshots, lotteries, Trust run logs). An event = a change
