@@ -132,7 +132,12 @@
   explainable watch / risk signals (trigger · value · threshold · period · source · class — never a recommendation),
   freshness (observation ≠ publication ≠ check), evidence quality HIGH / MEDIUM / LOW from documented deductions, and what
   is missing (transactions are a live source — never fetched here; no permits source). Unit universes are never added.
-  See `lib/dossier/README.md`.
+  `lib/supply/pipeline.js` + `test/supply.test.js` = SUPPLY PIPELINE (17.10.2026, `view=supply`, the dossier's "צנרת היצע" block):
+  six parallel universes — XPlan plan units, ILA tender units, renewal complex units, rental-track units, lottery units,
+  construction evidence — NEVER summed (the module exposes no total); DERIVED momentum (last 12 vs prior 12 months, small
+  sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
+  pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
+  See `lib/dossier/README.md`, `lib/supply/README.md`.
 - `lib/radar/` + `scripts/radar-build.js` + `data/radar/` + `test/radar.test.js` = MARKET RADAR / MARKET PULSE (16.10.2026): the
   deterministic "what changed" engine over the ledgers the syncs already commit (land history, renewal + planning history,
   rental history, CBS observations incl. revisions, indicator snapshots, lotteries, Trust run logs). An event = a change

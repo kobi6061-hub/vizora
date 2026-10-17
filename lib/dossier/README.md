@@ -39,4 +39,13 @@ sales −8, stale series −8, no inventory −5, tender details read for < 70% 
 −3, a source checked more than 7 days ago −4 each, transactions not included −5, no permits source −6). Not a
 probability. **Freshness** keeps observation, publication and PROPX-check dates apart per source.
 
-Tests: `test/dossier.test.js`.
+**Supply pipeline (`lib/supply/pipeline.js`, `view=supply`):** the page's dossier also shows the geography's six parallel
+supply universes — plan units (XPlan: units after plan, delta; the plans of the renewal complexes and the plans the tenders
+reference; the stale 2022 state-land inventory), ILA tender units (open · awaiting decision · awarded · failed), renewal
+complex units (proposed, additional ≠ net, by stage), rental-track tender units (total; stated rental units only as the
+company wrote), lottery units (first lotteries; projects by stage), construction evidence (buildings started / completed,
+stale 2024) — never summed — plus DERIVED momentum indicators (last 12 vs prior 12 months; a small sample or an uncovered
+window → null with its reason) and supply pressure (awarded state-land units ÷ official monthly sales pace; national and
+district only — null for a locality). Every indicator opens its formula, period and limitations. See `lib/supply/README.md`.
+
+Tests: `test/dossier.test.js`, `test/supply.test.js`.
