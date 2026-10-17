@@ -98,5 +98,16 @@ t('the API routes scan, scanGeo, revisions and supply; the radar build writes sc
   const f = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/radar/scan.json'), 'utf8')); assert.equal(f.schema, 1); assert.ok(f.counts.geographies >= 8);
 });
 
+t('review fixes: RECOVERED expires — anchored on the FIRST good check after the failure; the net change by geography sums MONTHLY revisions only; rank never compares values across rules', () => {
+  const r = (at, status, error) => ({ id: 'x', finishedAt: at, status, error, retrievalMethod: 'live-api' });
+  const now = Date.parse('2026-10-17T12:00:00Z');
+  const runs = [r('2026-09-07T08:00:00Z', 'failed', 'HTTP 500')]; for (let i = 1; i <= 40; i++) runs.push(r(new Date(Date.parse('2026-09-07T08:00:00Z') + i * 86400e3).toISOString(), 'ok'));
+  const s = T.runSummary(runs, { staleAfterHours: 50, now }); assert.equal(s.recovered, false, 'a recovery 40 days ago is not "this week"'); assert.equal(s.latestFailureAt, '2026-09-07T08:00:00Z');
+  const fresh = T.runSummary([r('2026-10-14T08:00:00Z', 'failed', 'x'), r('2026-10-15T08:00:00Z', 'ok'), r('2026-10-16T08:00:00Z', 'ok')], { staleAfterHours: 50, now }); assert.equal(fresh.recovered, true); assert.equal(fresh.recoveredAt, '2026-10-15T08:00:00Z', 'the first good check after the failure, not the latest');
+  const v = REV.revisions({ window: 'all' }, { now: NOW }); for (const x of v.rows) assert.ok(x.freq === 'M' || x.freq === 'Y' || x.freq == null, x.id);
+  const allRows = REV.items(); for (const R of v.releases) for (const g of R.byGeo) { const monthly = allRows.filter((x) => x.publishedAt === R.publishedAt && x.geo === g.geo && x.measure === 'new_sold' && x.freq === 'M').reduce((s, x) => s + x.delta, 0); assert.equal(g.netDelta, monthly, g.geo + ' monthly net'); assert.ok(!/^\d{4}$/.test(g.to) || !/\d{4}-\d{2}/.test(g.from), 'from/to never mix annual and monthly keys'); }
+  assert.equal(REV.revisions({ window: 'all' }, { now: NOW }).since, null);
+  const P = S.load({ now: NOW }); const ms = P.opportunities.map((x) => x.m); assert.deepEqual(ms, [...ms].sort((a, b) => b - a), 'materiality first');
+});
 console.log(`scan · revisions · trust 2.0: ${passed} passed${failed ? `, ${failed} FAILED` : ''}`);
 process.exit(failed ? 1 : 0);

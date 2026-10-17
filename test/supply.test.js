@@ -33,7 +33,7 @@ const WARM = Date.now() - T0;
 const DTA = S.supply({ level: 'district', code: 'd-ta', now: NOW }), TLV = S.supply({ level: 'locality', code: '5000', now: NOW });
 t('three levels resolve from the registry; an unknown geography (or level) is null; schema 1 with a bilingual basis', () => {
   assert.equal(IL.geo.level, 'il'); assert.equal(IL.geo.code, 'il'); assert.equal(TLV.geo.level, 'locality'); assert.equal(TLV.geo.district, 'd-ta'); assert.equal(TLV.geo.name.en, 'Tel Aviv - Yafo');
-  assert.equal(DTA.geo.level, 'district'); assert.equal(DTA.geo.localities, 14); assert.equal(S.supply({ level: 'district', code: 'js-area', now: NOW }).geo.name.en, 'Judea & Samaria');
+  assert.equal(DTA.geo.level, 'district'); assert.equal(DTA.geo.localities, 14); assert.equal(S.supply({ level: 'district', code: 'js-area', now: NOW }).geo.name.en, 'Judea and Samaria Area');
   assert.equal(S.supply({ level: 'locality', code: '999999', now: NOW }), null); assert.equal(S.supply({ level: 'district', code: 'd-nowhere', now: NOW }), null); assert.equal(S.supply({ level: 'nowhere', code: 'x', now: NOW }), null);
   for (const d of [IL, DTA, TLV]) { assert.equal(d.schema, 1); isBi(d.basis, 'basis'); assert.equal(d.today, '2026-10-17'); assert.equal(d.generatedAt, new Date(NOW).toISOString()); }
 });
@@ -179,5 +179,14 @@ t('speed: after warm-up a locality or district computation takes well under a se
   assert.ok(times.every((ms) => ms < 1000), 'ms: ' + times.join(', ') + ' (warm-up ' + WARM + ')');
 });
 
+t('review fix: a source that stops before today anchors both momentum windows on its coverage date — no partial last-12 window against a full prior-12', () => {
+  const items = []; for (let i = 0; i < 40; i++) items.push({ d: `2025-${String((i % 12) + 1).padStart(2, '0')}-10` }); for (let i = 0; i < 20; i++) items.push({ d: `2024-${String((i % 12) + 1).padStart(2, '0')}-10` });
+  const W = S.windowsOf('2026-10-17');
+  const m = S.momentum(items, { dateOf: (x) => x.d, W, coveredFrom: '2020-01-01', coveredTo: '2026-08-15', what: { he: 'x', en: 'x' } });
+  assert.equal(m.anchoredOn, '2026-08-15'); assert.equal(m.window.last12.to, '2026-08-15'); assert.equal(m.coverage.last12, 'within');
+  const far = S.momentum(items, { dateOf: (x) => x.d, W, coveredFrom: '2020-01-01', coveredTo: '2025-01-27', what: { he: 'x', en: 'x' } }); assert.equal(far.anchoredOn, null, 'a source that stopped 21 months ago is not anchored'); assert.equal(far.last12, null, 'its last-12 window stays null');
+  const il = S.supply({ level: 'il', fresh: true }); const rm = il.universes.renewal.momentum.declarations; assert.ok(rm.anchoredOn && rm.coverage.last12 === 'within', 'renewal windows anchored on the MoCH publication date');
+  const ind = il.indicators.find((i) => i.id === 'renewal-declaration-momentum'); assert.match(ind.period.en, /anchored on the source's coverage date/);
+});
 console.log(`supply: ${passed} passed${failed ? `, ${failed} FAILED` : ''}`);
 process.exit(failed ? 1 : 0);

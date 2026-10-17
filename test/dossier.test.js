@@ -97,5 +97,16 @@ t('the index lists the districts and the localities with live ILA tenders; the A
   assert.match(api, /if \(view === 'dossier'\) \{ const level = p\.city \? 'locality' : p\.district \? 'district' : 'il';/); assert.match(api, /if \(view === 'dossierIndex'\) return send\(res, 200, DOSSIER\.index\(\)\);/);
 });
 
+t('review fixes: a district is not deducted for "district-only sales"; a district emits its own land signals; a locality tags district / national context signals; the concentration denominator is every listed developer here; land freshness = latest publication, no fake publication date', () => {
+  assert.ok(!DTA.quality.items.some((i) => i.id === 'salesGeo'), 'district: the district series IS its figure'); assert.ok(TLV.quality.items.some((i) => i.id === 'salesGeo'));
+  const dc = D.dossier({ level: 'district', code: 'd-center', now: NOW }); assert.ok(dc.signals.some((s) => ['open-land', 'awarded-pipeline', 'pending-decision', 'failed-tenders'].includes(s.id)), 'd-center has 15k open units — a land signal must fire');
+  for (const s of TLV.signals) { if (/^sales-momentum/.test(s.id)) assert.equal(s.geoScope, 'district', s.id); if (s.id === 'construction-inputs') assert.equal(s.geoScope, 'national'); }
+  for (const s of IL.signals) if (/^sales-momentum/.test(s.id) || s.id === 'construction-inputs') assert.equal(s.geoScope, 'own', s.id);
+  assert.ok(Number.isInteger(TLV.sections.developers.lotsHereTotal) && TLV.sections.developers.lotsHereTotal >= TLV.sections.developers.top.reduce((s, x) => s + x.lotsHere, 0));
+  const land = IL.freshness.find((f) => f.id === 'land'); assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(land.observed) && land.published === null && land.checked, 'observation = latest tender publication; the ILA site has no release date');
+  assert.equal(DTA.sections.renewal.planning, null, 'a district never carries the national XPlan join');
+  assert.equal(D.dossier({ level: 'nowhere' }), null);
+  const ci = IL.signals.find((s) => s.id === 'construction-inputs'); if (ci) assert.match(String(ci.period), /^\d{4}-\d{2}$/);
+});
 console.log(`dossier: ${passed} passed${failed ? `, ${failed} FAILED` : ''}`);
 process.exit(failed ? 1 : 0);

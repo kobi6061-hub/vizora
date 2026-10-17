@@ -93,15 +93,15 @@ t('land per unit by track: only competitive-bid lots with both a sum and units; 
     site({ track: 'open-market', priceBasis: 'fixed-price-allocation', landPrice: 5000000, units: 20 }), site({ track: 'mixed-use', landPrice: 3000000, units: null })] }).intel.landBasis;
   assert.deepEqual(Object.keys(w.byTrack), ['subsidized']); assert.equal(w.byTrack.subsidized.landPerUnit, 200000); assert.equal(w.byTrack.subsidized.lots, 2);
 });
-t('the trend rule: inactive (a = b = 0) · insufficient (a < 2 and b < 2) · accelerating (a ≥ 2b) · slowing (a ≤ b/2) · steady', () => {
+t('the trend rule: inactive (a = b = 0) · insufficient (max(a, b) < 3 — 2-vs-0 is not a trend) · accelerating (a ≥ 2b) · slowing (a ≤ b/2) · steady', () => {
   const tr = (last12, prior12, lotteries = 0) => world({ sites: [...Array(last12)].map(() => site({ decisionDate: D.last12 })).concat([...Array(prior12)].map(() => site({ decisionDate: D.prior12 }))),
     projects: lotteries ? [project({ lotteries: [...Array(lotteries)].map(() => ({ type: 'first', date: D.last12, units: 10, applicants: 100 })) })] : [] }).intel.activity;
   assert.equal(tr(0, 0).trend, 'inactive'); assert.equal(world({ sites: [site({ decisionDate: D.old })] }).intel.activity.trend, 'inactive', 'old activity only: nothing in 24 months');
   assert.equal(tr(1, 0).trend, 'insufficient'); assert.equal(tr(0, 1).trend, 'insufficient'); assert.equal(tr(1, 1).trend, 'insufficient');
-  assert.equal(tr(2, 0).trend, 'accelerating'); assert.equal(tr(2, 1).trend, 'accelerating'); assert.equal(tr(4, 2).trend, 'accelerating');
-  assert.equal(tr(3, 2).trend, 'steady'); assert.equal(tr(2, 2).trend, 'steady'); assert.equal(tr(3, 4).trend, 'steady');
-  assert.equal(tr(1, 2).trend, 'slowing'); assert.equal(tr(0, 2).trend, 'slowing'); assert.equal(tr(2, 5).trend, 'slowing');
-  const x = tr(1, 0, 1); assert.equal(x.trend, 'accelerating', 'lotteries count with lots'); assert.deepEqual(x.trendComponents, { last12: 2, prior12: 0 }); assert.equal(x.windows.last12.lotteries, 1); assert.equal(x.windows.last12.firstLotteries, 1);
+  assert.equal(tr(2, 0).trend, 'insufficient', '2 vs 0 is not a trend'); assert.equal(tr(2, 1).trend, 'insufficient'); assert.equal(tr(4, 2).trend, 'accelerating'); assert.equal(tr(3, 0).trend, 'accelerating'); assert.equal(tr(6, 3).trend, 'accelerating');
+  assert.equal(tr(3, 2).trend, 'steady'); assert.equal(tr(2, 2).trend, 'insufficient'); assert.equal(tr(3, 4).trend, 'steady');
+  assert.equal(tr(1, 2).trend, 'insufficient'); assert.equal(tr(0, 3).trend, 'slowing'); assert.equal(tr(2, 5).trend, 'slowing');
+  const x = tr(2, 0, 1); assert.equal(x.trend, 'accelerating', 'lotteries count with lots'); assert.deepEqual(x.trendComponents, { last12: 3, prior12: 0 }); assert.equal(x.windows.last12.lotteries, 1); assert.equal(x.windows.last12.firstLotteries, 1);
   parity(x.trendRule, 'trendRule'); parity(x.basis, 'activity basis'); assert.match(x.basis.en, /not a statement about the company/);
   const w = tr(2, 1); assert.equal(w.windows.last12.residentialUnits, 100); assert.equal(w.windows.prior12.lotsWon, 1); assert.equal(w.windows.prior24to36.lotsWon, 0); assert.equal(w.windows.prior24to36.residentialUnits, null, 'no lot in the window → null, not 0');
   assert.equal(w.monthsSinceLast, 9); assert.equal(I.monthsBetween('2026-04-27', '2026-10-17'), 5); assert.equal(I.monthsBetween(null, NOW), null);
