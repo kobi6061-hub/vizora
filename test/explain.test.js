@@ -62,6 +62,7 @@ t('every signal id the product emits has a rule here (dossier signals, scan rule
   const emitted = new Set(Object.keys(S.RULES));
   for (const g of [{ level: 'il' }, { level: 'district', code: 'd-ta' }, { level: 'district', code: 'd-north' }, { level: 'district', code: 'd-center' }, { level: 'locality', code: '5000' }, { level: 'locality', code: '4000' }, { level: 'locality', code: '3000' }]) for (const s of D.dossier(g).signals) emitted.add(s.id);
   for (const s of I.SIGNALS) emitted.add(s.id);
+  for (const s of require('../lib/entities/project-intel').SIGNALS) emitted.add(s.id);
   emitted.add('demand-with-supply'); emitted.add('inventory-plus-pipeline');
   for (const id of emitted) { const r = X.SIGNAL_RULES[id]; assert.ok(r, 'no rule for signal ' + id); assert.ok(X.term(r.term), id + ' → unknown term ' + r.term); isBi(r.rule, id + ' rule'); assert.ok(['watch', 'risk', 'info'].includes(r.kind), id); }
   const w = X.signal('failed-tenders', 'en', { text: { he: 'א', en: 'a' }, value: 0.4, valueLabel: '40%', threshold: '≥ 30% of ≥ 5 tenders', period: { he: 'היקף', en: 'current scope' }, source: 'rmi:michrazim', cls: 'OFFICIAL', evidence: { level: 'HIGH', score: 80 } });
@@ -78,6 +79,7 @@ t('every missing-data id a read model prints has a reason here (the dossier and 
   const D = require('../lib/dossier/query'), SU = require('../lib/supply/pipeline');
   const ids = new Set();
   for (const g of [{ level: 'il' }, { level: 'district', code: 'd-ta' }, { level: 'locality', code: '5000' }]) { for (const m of D.dossier(g).missing) ids.add(m.id); for (const m of SU.supply(g).missing) ids.add(m.id); }
+  { const Q = require('../lib/entities/query'); const c = Q.load(); const ila = [...c.projById.values()].find((p) => p.kind === 'ila-awarded-lot' && !p.construction), moch = [...c.projById.values()].find((p) => p.kind !== 'ila-awarded-lot'); for (const p of [ila, moch]) for (const m of Q.project(p.id).intel.missing) ids.add(m.id); }
   for (const id of ids) { const m = X.missing(id, 'he'); assert.ok(m, 'no missing-data reason for ' + id); assert.ok(m.label && m.why && m.unlock, id); }
   for (const [id, m] of Object.entries(X.MISSING)) { isBi(m.label, id); isBi(m.why, id); isBi(m.unlock, id); }
   assert.equal(X.missing('permits', 'en').id, 'no_permits_source'); assert.equal(X.missing('nope'), null);

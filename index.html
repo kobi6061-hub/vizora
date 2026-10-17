@@ -1438,6 +1438,10 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .ds-why{border:1px solid var(--hairline);border-inline-start:3px solid var(--brass);border-radius:9px;padding:10px 13px;margin:10px 0 2px;background:var(--panel)}
 .ds-why .ds-ft{margin-top:0} .ds-why ol{margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.6} .ds-why li{padding:3px 0} .ds-why li .ds-m{display:inline}
 .ds-why details{margin-top:6px} .ds-why summary{cursor:pointer;font-size:11.5px;font-weight:700;color:var(--accent-deep)}
+/* ---- Project Intelligence 2.0 (lib/entities/project-intel.js) ---- */
+.pi-tl{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .pi-tl li{padding:4px 0;border-bottom:1px solid var(--hairline)} .pi-tl .pi-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
+.pi-rungs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0} .pi-rung{font-size:11px;border:1px solid var(--hairline);border-radius:99px;padding:2px 9px;color:var(--ink-3)} .pi-rung.ok{color:var(--up);border-color:var(--up);font-weight:700} .pi-rung.partial{color:var(--conf-med);border-color:var(--conf-med)}
+.pi-ctx{font-size:12px;line-height:1.55} .pi-ctx b{color:var(--ink)}
 /* ---- explainability: ⓘ marks and the one popover ---- */
 .xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0}
 .xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
@@ -7788,6 +7792,7 @@ he:{
   tracks:"מסלולים",noneYet:"אין רשומות",more:n=>`עוד ${n}`,
   pDev:"יזם",pPlace:"מיקום",pProgram:"תכנית",pLots:"הגרלות",pUnits:"יח״ד בהגרלה הראשונה",pLatestU:"יח״ד בהגרלה האחרונה",pPsm:"מחיר למ״ר (מחיר התכנית)",pPsmNote:"מחיר התכנית הרשמי — אינו עסקת שוק",
   pPermit:"היתר",pStage:"שלב בפרויקט",pDemand:"נרשמים ליח״ד (הגרלה ראשונה)",pEvidence:"ראיות שלב",pJoin:"צירופים",pProv:"מקור ומועדים",
+  pi:{title:"מודיעין פרויקט",tl:"ציר זמן (מהמקורות)",ladder:"סולם שלבים — ראיה ישירה בלבד",land:"₪/יח״ד מול מגרשי היישוב",demand:"נרשמים ליח״ד מול הגרלות היישוב",sig:"אותות",miss:"מה אין — ולמה",none:"אף כלל לא נדלק",pos:{"above-p75":"מעל הרבעון העליון","below-p25":"מתחת לרבעון התחתון",within:"בתוך הטווח"},median:"חציון",p25:"p25",p75:"p75",lots:"מגרשים",lotteries:"הגרלות",period:"תקופה",undated:"ללא תאריך — נכון לעדכון המקור",stale:"ישן",noEv:"אין ראיה",kinds:{watch:"למעקב",risk:"סיכון",info:"מידע"}},
   lt:{date:"תאריך",type:"סוג",units:"יח״ד",apps:"נרשמים",winners:"זוכים",status:"סטטוס"},ltype:{first:"ראשונה",continuation:"המשך"},
   sTender:"מכרז",sLot:"מגרש",sUnits:"יח״ד",sLand:"סכום זכייה",sLpu:"קרקע ליח״ד",sBid:"הצעה ₪/מ״ר",sPlans:"תכנית|מגרש",sParcels:"גוש/חלקה",sDecision:"החלטה",sOpenTender:"פתיחת המכרז",
   srcUpd:"עודכן במקור",fetched:"נשלף",checked:"נבדק",
@@ -7881,6 +7886,7 @@ en:{
   tracks:"Tracks",noneYet:"No records",more:n=>`${n} more`,
   pDev:"Developer",pPlace:"Location",pProgram:"Program",pLots:"Lotteries",pUnits:"Units in the first lottery",pLatestU:"Units in the latest lottery",pPsm:"Price per m² (program price)",pPsmNote:"the official program price — not a market sale",
   pPermit:"Permit",pStage:"Project stage",pDemand:"Applicants per unit (first lottery)",pEvidence:"Stage evidence",pJoin:"Joins",pProv:"Source and dates",
+  pi:{title:"Project intelligence",tl:"Timeline (from the sources)",ladder:"Stage ladder — direct evidence only",land:"Land ₪/unit vs the locality's lots",demand:"Applicants per unit vs the locality's lotteries",sig:"Signals",miss:"What is missing — and why",none:"No rule fired",pos:{"above-p75":"above the upper quartile","below-p25":"below the lower quartile",within:"within the range"},median:"median",p25:"p25",p75:"p75",lots:"lots",lotteries:"lotteries",period:"period",undated:"undated — as of the source update",stale:"stale",noEv:"no evidence",kinds:{watch:"watch",risk:"risk",info:"info"}},
   lt:{date:"Date",type:"Type",units:"Units",apps:"Applicants",winners:"Winners",status:"Status"},ltype:{first:"First",continuation:"Continuation"},
   sTender:"Tender",sLot:"Lot",sUnits:"Units",sLand:"Winning sum",sLpu:"Land per unit",sBid:"Bid ₪/m²",sPlans:"Plan|lot",sParcels:"Block/parcel",sDecision:"Decision",sOpenTender:"Open the tender",
   srcUpd:"Updated at source",fetched:"Fetched",checked:"Checked",
@@ -8160,6 +8166,20 @@ function diHTML(I){
   const ent=(E.rows||[]).length?`<p class="ho-note">${di.entries}: ${E.rows.map(x=>`<bdi>${inE(he?x.city:(x.cityEn||x.city))}</bdi> ${inDate(x.date)}`).join(" · ")}</p>`:"";
   return `<p class="ho-note">${xpBtn("developer_observed_activity")} ${inE(bl(I.basis))}</p>${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p>`;
 }
+/* PROJECT INTELLIGENCE 2.0 (lib/entities/project-intel.js): timeline from the sources, the stage ladder with direct evidence only,
+   the lot's ₪/unit (or the lottery's applicants per unit) beside the locality's own figures of the same universe, explainable
+   signals and what is missing — additive to the project drawer; a description, never a judgement */
+function piHTML(d){
+  const t=IT(),w=t.pi,I=d&&d.intel,he=state.lang==="he",L=he?"he":"en";if(!w||!I)return"";
+  const bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):(v==null?"":String(v)),n=v=>v==null?"—":fmtInt(v);
+  const cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${inE((T().puCls||{})[c]||c)}</span>`;
+  const tl=(I.timeline||[]).length?`<ol class="pi-tl">${I.timeline.map(e=>`<li><span class="pi-d">${e.date?inDate(e.date):"—"}</span>${inE(bl(e.label))}${e.stale?` <span class="ho-chip cont">${w.stale}</span>`:""} ${cls(e.cls)} <span class="ho-na num">${inE(e.source)}</span></li>`).join("")}</ol>`:`<p class="ho-note">—</p>`;
+  const rungs=`<div class="pi-rungs">${(I.ladder.rungs||[]).map(r=>`<span class="pi-rung ${r.evidenced?(r.partial?"partial":"ok"):""}" title="${inE(r.evidenced?(r.date||"")+(r.source?" · "+r.source:""):bl(r.reason))}">${inE(IT().stages[r.stage]||r.stage)} ${r.evidenced?"✓":"—"}</span>`).join("")}</div><ul class="ho-note ld-ul">${(I.ladder.rungs||[]).filter(r=>!r.evidenced).map(r=>`<li><b>${inE(IT().stages[r.stage]||r.stage)}</b>: ${inE(bl(r.reason))}</li>`).join("")}</ul><p class="ho-note">${inE(bl(I.ladder.basis))}</p>`;
+  const ctx=(C,lab,unitLab,xp)=>{if(!C)return"";const Lc=C.locality;return `<div class="pi-ctx"><b>${C.value!=null?(unitLab==="₪"?"₪"+fmtInt(C.value):fmtInt(C.value)):"—"}</b>${C.position?` · <span class="ho-chip ${C.position==="within"?"cont":"on"}">${w.pos[C.position]}</span>`:""} ${xpBtn(xp)}${Lc?`<div class="ds-m">${w.median} <span class="num">${n(Lc.median)}</span> · ${w.p25} <span class="num">${n(Lc.p25)}</span> · ${w.p75} <span class="num">${n(Lc.p75)}</span> · <span class="num">${n(Lc.lots!=null?Lc.lots:Lc.lotteries)}</span> ${Lc.lots!=null?w.lots:w.lotteries}${Lc.period&&(Lc.period.from||Lc.period.to)?` · ${w.period} <span class="num">${inE((Lc.period.from||"—")+" → "+(Lc.period.to||"—"))}</span>`:""} ${cls("DERIVED")}</div>`:""}${C.reason?`<div class="ds-m">${inE(bl(C.reason))}</div>`:""}${Lc&&Lc.formula?`<div class="ds-m">${inE(Lc.formula)}${Lc.consideration?` · ${inE(Lc.consideration)}`:""}</div>`:""}</div>`};
+  const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${w.kinds[s.kind]||s.kind}</span> <b>${inE(bl(s.text))}</b> ${xpSig(s.id,s)}<div class="ds-m">${t.pi.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${cls(s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${inE(T().dsMeta?T().dsMeta.limits||"":"")||(he?"מגבלות":"limitations")}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${w.none}</p>`;
+  const miss=(I.missing||[]).length?`<ul class="ds-miss">${I.missing.map(m=>`<li>${inE(bl(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
+  return `<p class="ho-note">${inE(bl(I.basis))}</p><div class="ds-ft">${w.tl}</div>${tl}<div class="ds-ft">${w.ladder} ${xpBtn("project_stage")}</div>${rungs}${I.land?`<div class="ds-ft">${w.land}</div>${ctx(I.land,w.land,"₪","land_cost_position")}`:""}${I.demand?`<div class="ds-ft">${w.demand}</div>${ctx(I.demand,w.demand,"","lottery_demand_position")}`:""}<div class="ds-ft">${w.sig}</div>${sig}<div class="ds-ft">${w.miss}</div>${miss}`;
+}
 function renderInDrawer(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
   const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
@@ -8227,6 +8247,7 @@ function renderInDrawer(){
   p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${inE(t.pkinds[d.kind]||d.kind)} · <span class="num">${inE(d.id)}</span></span>
       <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}</div></div>${close}</div>
     ${body}
+    ${d.intel&&t.pi?sec(t.pi.title,D,piHTML(d)):""}
     ${sec(t.pEvidence,D,ev)}
     ${sec(t.pJoin,"",`<p class="ho-note">${inE(ila?t.joinIla:t.joinMoch)}</p>`)}
     ${sec(t.pProv,"",`<div class="ho-dl">${kv(t.srcUpd,inDate(prov.sourceUpdatedAt))}${kv(t.fetched,inDate(prov.fetchedAt||prov.detailFetchedAt))}</div><ul class="ho-note ld-ul">${srcList}</ul>`)}`;

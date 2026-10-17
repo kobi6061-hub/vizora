@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="8bbd9b4e05d3533929f6435fdafdd9c817882edeb889c563af7c65785d6764b6">
+<meta name="propx-source-sha256" content="d62f877321d59418beafa91c391e68bd00d81c9d28a583044673af21936d83f3">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -1432,6 +1432,10 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .ds-why{border:1px solid var(--hairline);border-inline-start:3px solid var(--brass);border-radius:9px;padding:10px 13px;margin:10px 0 2px;background:var(--panel)}
 .ds-why .ds-ft{margin-top:0} .ds-why ol{margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.6} .ds-why li{padding:3px 0} .ds-why li .ds-m{display:inline}
 .ds-why details{margin-top:6px} .ds-why summary{cursor:pointer;font-size:11.5px;font-weight:700;color:var(--accent-deep)}
+/* ---- Project Intelligence 2.0 (lib/entities/project-intel.js) ---- */
+.pi-tl{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .pi-tl li{padding:4px 0;border-bottom:1px solid var(--hairline)} .pi-tl .pi-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
+.pi-rungs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0} .pi-rung{font-size:11px;border:1px solid var(--hairline);border-radius:99px;padding:2px 9px;color:var(--ink-3)} .pi-rung.ok{color:var(--up);border-color:var(--up);font-weight:700} .pi-rung.partial{color:var(--conf-med);border-color:var(--conf-med)}
+.pi-ctx{font-size:12px;line-height:1.55} .pi-ctx b{color:var(--ink)}
 /* ---- explainability: ⓘ marks and the one popover ---- */
 .xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0}
 .xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
@@ -2344,6 +2348,54 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
   /* ---- the terms ---- */
   const T = (o) => Object.freeze(Object.assign({ formula: null, inputs: [], limitations: [] }, o));
   const TERMS = [
+    /* ---- PROJECT INTELLIGENCE 2.0 (lib/entities/project-intel.js) ---- */
+    T({ id: 'project_stage', group: 'developers', title: bi('שלב הפרויקט (סולם ראיות)', 'Project stage (evidence ladder)'),
+      short: bi('השלב הרחוק ביותר שיש לו ראיה ישירה במקורות PROPX: קרקע נזכתה → שווק → היתר → תחילת בנייה → גמר → אכלוס.', 'The furthest stage with direct evidence in PROPX sources: land awarded → marketed → permitted → construction started → completed → occupied.'),
+      why: bi('מגדיר מה PROPX יודעת על הפרויקט — ומה אינה יודעת.', 'States what PROPX knows about the project — and what it does not.'),
+      unit: bi('שלב', 'a stage'), geography: bi('פרויקט / מגרש', 'Project / lot'), period: bi('תאריך כל ראיה; סטטוס ללא תאריך — נכון לעדכון המקור', 'The date of each piece of evidence; an undated status — as of the source update'),
+      source: { ids: ['rmi:michrazim', 'datagov:moch:dira-behanacha-lotteries', 'datagov:moch:construction-progress'] }, cls: 'DERIVED',
+      methodology: bi('כל שלב מסומן רק עם ראיה ישירה מהמקור שלו: זכייה (רמ״י, תאריך החלטה), הגרלה (משב״ש, תאריך), היתר מלא (שדה ההיתר של משב״ש, ללא תאריך), תחילת בנייה / גמר (דיווחי ההתקדמות של משב״ש בגוש/חלקה מדויקים, נכון ל-2024-03).', 'Every stage is marked only with direct evidence from its source: award (ILA, decision date), lottery (MoCH, date), full permit (MoCH permit field, undated), construction start / completion (MoCH progress reports by exact block/parcel, as of 2024-03).'),
+      formula: bi('השלב הרחוק ביותר בסולם שיש לו ראיה ישירה', 'the furthest rung on the ladder with direct evidence'), inputs: [bi('תאריכי ההחלטה, ההגרלה, ההיתר והבנייה כפי שהמקורות נותנים', 'the decision, lottery, permit and construction dates as the sources give them')],
+      interpretation: bi('שלב ללא ראיה אינו שלב שלא קרה — PROPX אינה מסיקה; היתר ובנייה אינם במקורות המצורפים לרוב המגרשים.', 'A rung without evidence is not a stage that did not happen — PROPX does not infer; permits and construction are not in the joined sources for most lots.'),
+      notAs: bi('לא התקדמות בפועל, לא לוח זמנים, לא "תקוע" — היעדר ראיה אינו עצירה.', 'Not actual progress, not a schedule, not "stalled" — absent evidence is not a halt.'),
+      limitations: [bi('רשומות ההגרלה אינן מצורפות למגרשי רמ״י (אין מפתח משותף)', 'lottery records are not joined to ILA lots (no shared key)'), bi('דיווחי הבנייה נעצרים ב-2024-03', 'construction reports stop at 2024-03')],
+      evidence: bi('view=project → stage.evidence · intel.ladder', 'view=project → stage.evidence · intel.ladder'),
+      freshness: { observation: bi('תאריך הראיה האחרונה', 'the latest evidence date'), publication: bi('עדכון המקור', 'the source update'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'land_cost_position', group: 'land', title: bi('₪/יח״ד מול מגרשי היישוב', 'Land ₪/unit vs the locality\'s lots'),
+      short: bi('₪/יח״ד של המגרש לצד הרבעונים של מגרשי הצעה תחרותית אחרים באותו יישוב ומסלול ב-36 חודשים.', 'The lot\'s ₪/unit beside the quartiles of other competitive-bid lots in the same locality and track over 36 months.'),
+      why: bi('ממקם את תמורת הקרקע ששולמה בתוך מה שהיישוב עצמו שילם — ללא אומדן.', 'Places the land consideration paid inside what the locality itself paid — no estimate.'),
+      unit: bi('₪ ליח״ד; מיקום: מעל p75 / בתוך / מתחת p25', '₪ per unit; position: above p75 / within / below p25'), geography: bi('יישוב (אותו מסלול)', 'Locality (same track)'), period: bi('36 חודשים לפי תאריך החלטה', '36 months by decision date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('מגרשי הצעה תחרותית בלבד, אותו יישוב ואותו מסלול, המכרז הזה מוחרג; סכום הזכייה ÷ יח״ד לכל מגרש; חציון ורבעונים של אותם יחסים; מיקום רק עם ≥ 5 מגרשים.', 'Competitive-bid lots only, same locality and track, this tender excluded; winning sum ÷ units per lot; the median and quartiles of those ratios; a position only with ≥ 5 lots.'),
+      formula: bi('מיקום = מעל p75 אם ₪/יח״ד ≥ p75; מתחת p25 אם ≤ p25; אחרת בתוך', 'position = above p75 if ₪/unit ≥ p75; below p25 if ≤ p25; else within'), inputs: [bi('סכומי הזכייה ויח״ד של מגרשי היישוב (רמ״י)', 'the locality\'s lot winning sums and units (ILA)')],
+      interpretation: bi('תמורה נומינלית של קרקע מדינה; מגרשים נושאים זכויות, מיקום ותנאים שונים.', 'A nominal state-land consideration; lots carry different rights, location and terms.'),
+      notAs: bi('לא שווי קרקע, לא "יקר / זול", לא עלות כוללת (הוצאות פיתוח ומע״מ בנפרד), לא השוואה בין מסלולים.', 'Not a land value, not "expensive / cheap", not an all-in cost (development costs and VAT apart), not a cross-track comparison.'),
+      limitations: [LIM.smallSample, bi('תמורה נומינלית ללא הצמדה', 'nominal consideration, not indexed')],
+      evidence: bi('view=project → intel.land', 'view=project → intel.land'),
+      freshness: { observation: bi('תאריכי ההחלטה של המגרשים', 'the lots\' decision dates'), publication: bi('רציף (אתר המכרזים)', 'continuous (the tender site)'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'lottery_demand_position', group: 'developers', title: bi('נרשמים ליח״ד מול הגרלות היישוב', 'Applicants per unit vs the locality\'s lotteries'),
+      short: bi('נרשמים ליח״ד בהגרלה הראשונה של הפרויקט לצד הרבעונים של הגרלות ראשונות אחרות באותו יישוב.', 'Applicants per unit in the project\'s first lottery beside the quartiles of other first lotteries in the same locality.'),
+      why: bi('ביקוש להגרלה מסובסדת נקרא רק מול הגרלות דומות — לא מול השוק החופשי.', 'Subsidized-lottery demand is read only against similar lotteries — never against the open market.'),
+      unit: bi('נרשמים ליח״ד; מיקום: מעל p75 / בתוך / מתחת p25', 'applicants per unit; position: above p75 / within / below p25'), geography: bi('יישוב', 'Locality'), period: bi('כל ההגרלות הראשונות האחרות ביישוב במקור', 'All other first lotteries in the locality in the source'),
+      source: { ids: ['datagov:moch:dira-behanacha-lotteries'] }, cls: 'DERIVED',
+      methodology: bi('לכל הגרלה ראשונה אחרת ביישוב: נרשמים ÷ יח״ד; חציון ורבעונים של היחסים; הפרויקט הזה מוחרג; מיקום רק עם ≥ 5 הגרלות.', 'For every other first lottery in the locality: applicants ÷ units; the median and quartiles of those ratios; this project excluded; a position only with ≥ 5 lotteries.'),
+      formula: bi('מיקום = מעל p75 אם נרשמים/יח״ד ≥ p75; מתחת p25 אם ≤ p25; אחרת בתוך', 'position = above p75 if applicants/unit ≥ p75; below p25 if ≤ p25; else within'), inputs: [bi('נרשמים ויח״ד של ההגרלות הראשונות ביישוב (משב״ש)', 'applicants and units of the locality\'s first lotteries (MoCH)')],
+      interpretation: bi('הגרלות מתקופות ותוכניות שונות (מחיר למשתכן, מחיר מטרה) עם תנאי זכאות שונים.', 'Lotteries of different periods and programmes (Mechir LaMishtaken, Mechir Matara) with different eligibility.'),
+      notAs: bi('לא ביקוש בשוק החופשי, לא קצב מכירה, לא מחיר.', 'Not open-market demand, not a sales pace, not a price.'),
+      limitations: [LIM.smallSample, bi('המקור נעצר ב-2025-01', 'the source stops at 2025-01')],
+      evidence: bi('view=project → intel.demand', 'view=project → intel.demand'),
+      freshness: { observation: bi('תאריכי ההגרלות', 'the lottery dates'), publication: bi('עדכון המקור (data.gov.il)', 'the source update (data.gov.il)'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'construction_progress_report', group: 'land', title: bi('דיווח התקדמות בנייה (משב״ש)', 'Construction progress report (MoCH)'),
+      short: bi('מבנים שהחלו / הושלמו לפי דיווחי ההתקדמות של משב״ש, מצורפים למגרש בגוש/חלקה מדויקים — נכון ל-2024-03.', 'Buildings started / completed per MoCH progress reports, joined to a lot by exact block/parcel — as of 2024-03.'),
+      why: bi('הראיה היחידה לבנייה במקורות PROPX — וישנה.', 'The only construction evidence in PROPX sources — and stale.'),
+      unit: bi('מבנים', 'buildings'), geography: bi('מגרש (גוש/חלקה)', 'Lot (block/parcel)'), period: bi('נכון ל-2024-03-01', 'As of 2024-03-01'),
+      source: { ids: ['datagov:moch:construction-progress'] }, cls: 'OFFICIAL',
+      methodology: bi('צירוף רק בגוש/חלקה זהים; ללא צירוף — "—"; המקור לא התעדכן מאז 2024-03.', 'Joined only on identical block/parcel; without a join — "—"; the source has not updated since 2024-03.'),
+      interpretation: bi('מבנים, לא דירות; ראיה ל"החל" — לא לקצב או לגמר.', 'Buildings, not homes; evidence of "started" — not of pace or completion.'),
+      notAs: bi('לא היתר, לא מכירות, לא אכלוס, לא מצב עדכני.', 'Not a permit, not sales, not occupancy, not a current state.'),
+      limitations: [bi('ישן: המקור נעצר ב-2024-03; מבנים ולא דירות', 'stale: the source stopped at 2024-03; buildings, not homes')],
+      evidence: bi('view=project → construction · intel.timeline', 'view=project → construction · intel.timeline'),
+      freshness: { observation: bi('תאריך תחילת הבנייה / הגמר בדיווח', 'the start / completion date in the report'), publication: bi('2024-03 (המקור נעצר)', '2024-03 (the source stopped)'), check: bi('הסנכרון היומי (ללא שינוי)', 'the daily sync (unchanged)') } }),
     /* ---------------- sales & inventory ---------------- */
     T({ id: 'official_new_home_sales', group: 'sales', title: bi('מכירות דירות חדשות (רשמי)', 'Official new-home sales'),
       short: bi('מספר הדירות החדשות שנמכרו בחודש, כפי שהלמ״ס מפרסמת — ארצי ולפי מחוז.', 'The number of new dwellings sold in a month, as CBS publishes it — national and by district.'),
@@ -2748,6 +2800,16 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 
   /* ---- signal rules: every signal id the product emits → the term it belongs to and how to read it ---- */
   const SIGNAL_RULES = Object.freeze({
+    /* project intelligence (lib/entities/project-intel.js) */
+    'LAND_COST_ABOVE_LOCALITY': { term: 'land_cost_position', kind: 'risk', rule: bi('₪/יח״ד של המגרש ≥ הרבעון העליון של ≥ 5 מגרשי הצעה תחרותית באותו יישוב ומסלול ב-36 חודשים (המכרז הזה מוחרג)', 'the lot\'s ₪/unit ≥ the upper quartile of ≥ 5 competitive-bid lots in the same locality and track over 36 months (this tender excluded)') },
+    'LAND_COST_BELOW_LOCALITY': { term: 'land_cost_position', kind: 'watch', rule: bi('₪/יח״ד של המגרש ≤ הרבעון התחתון של ≥ 5 מגרשי הצעה תחרותית באותו יישוב ומסלול ב-36 חודשים (המכרז הזה מוחרג)', 'the lot\'s ₪/unit ≤ the lower quartile of ≥ 5 competitive-bid lots in the same locality and track over 36 months (this tender excluded)') },
+    'STAGE_EVIDENCE_STALE': { term: 'project_stage', kind: 'info', rule: bi('מגרש רמ״י: הראיה המתוארכת האחרונה ישנה מ-24 חודשים והשלב הרחוק ביותר לפני "גמר" — היעדר ראיה, לא עצירה', 'an ILA lot: the latest dated evidence is older than 24 months and the furthest stage is before "completed" — absent evidence, not a halt') },
+    'LOTTERY_DEMAND_ABOVE_LOCALITY': { term: 'lottery_demand_position', kind: 'watch', rule: bi('נרשמים ליח״ד בהגרלה הראשונה ≥ הרבעון העליון של ≥ 5 הגרלות ראשונות אחרות ביישוב', 'applicants per unit in the first lottery ≥ the upper quartile of ≥ 5 other first lotteries in the locality') },
+    'LOTTERY_DEMAND_BELOW_LOCALITY': { term: 'lottery_demand_position', kind: 'watch', rule: bi('נרשמים ליח״ד בהגרלה הראשונה ≤ הרבעון התחתון של ≥ 5 הגרלות ראשונות אחרות ביישוב', 'applicants per unit in the first lottery ≤ the lower quartile of ≥ 5 other first lotteries in the locality') },
+    'LOTTERY_UNDERSUBSCRIBED': { term: 'applicants_per_unit', kind: 'risk', rule: bi('פחות מנרשם אחד ליח״ד בהגרלה ראשונה של ≥ 20 יח״ד', 'fewer than one applicant per unit in a first lottery of ≥ 20 units') },
+    'PLAN_JOINED': { term: 'units_after_plan', kind: 'info', rule: bi('תוכנית מאושרת ומתוארכת מצורפת למכרז במספר תוכנית מדויק (לעולם לא לפי שם או גאומטריה)', 'a dated approved plan joined to the tender by exact plan number (never by name or geometry)') },
+    'CONSTRUCTION_EVIDENCE': { term: 'construction_progress_report', kind: 'info', rule: bi('דיווח התקדמות של משב״ש מצורף בגוש/חלקה מדויקים עם מבנה שהחל או הושלם (נכון ל-2024-03)', 'a MoCH progress report joined by exact block/parcel with a building started or completed (as of 2024-03)') },
+    'RE_TENDERED_LOT': { term: 'tender_units_awarded', kind: 'info', rule: bi('מכרז קודם ברשימה החיה שיווק את אותו תיק מגרש (TikID של רמ״י) — שיווק חוזר', 'an earlier tender in the live list marketed the same lot file (the Authority\'s TikID) — a re-tender') },
     /* market dossier / scan */
     'sales-momentum-up': { term: 'sales_momentum_3m', kind: 'watch', rule: bi('מומנטום 3 חודשים ≥ +10% בסדרה הרשמית (ארצי / מחוז; יישוב מציג את אות המחוז שלו מסומן "רמת מחוז" — ברדאר לעולם לא מיוחס ליישוב; לא במדגם קטן)', '3-month momentum ≥ +10 % in the official series (national / district; a locality shows its district\'s signal labelled "district level" — in the radar never attributed to a locality; not on a small sample)') },
     'sales-momentum-down': { term: 'sales_momentum_3m', kind: 'risk', rule: bi('מומנטום 3 חודשים ≤ −10%', '3-month momentum ≤ −10 %') },
@@ -2780,6 +2842,12 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 
   /* ---- missing-data reasons: why "—" is shown, and what would make the figure available ---- */
   const MISSING = Object.freeze({
+    /* project intelligence */
+    no_construction_join: { label: bi('אין דיווח בנייה מצורף', 'No construction report joined'), why: bi('דיווחי ההתקדמות של משב״ש מצורפים רק בגוש/חלקה זהים, והמקור נעצר ב-2024-03.', 'MoCH progress reports join only on identical block/parcel, and the source stops at 2024-03.'), unlock: bi('דיווח עם הגוש/חלקה של המגרש, או מקור היתרים / התחלות עדכני.', 'A report carrying the lot\'s block/parcel, or a current permits / starts source.'), ids: ['construction'] },
+    no_lottery_join: { label: bi('הגרלות משב״ש אינן מצורפות למגרש', 'MoCH lotteries are not joined to the lot'), why: bi('רשומת ההגרלה אינה נושאת מכרז, תוכנית או חלקה — אין מפתח רשמי משותף; PROPX לעולם אינה מצרפת לפי שם.', 'The lottery record carries no tender, plan or parcel — no shared official key; PROPX never joins by name.'), unlock: bi('משב״ש מפרסם מזהה מכרז / מגרש ברשומת ההגרלה.', 'MoCH publishes a tender / lot id on the lottery record.'), ids: ['lottery-join', 'tender-join'] },
+    no_permit_date: { label: bi('היתר ללא תאריך', 'Permit without a date'), why: bi('המקור מציין שלב היתר (למשל "היתר מלא") ללא תאריך — מוצג נכון לעדכון המקור.', 'The source states a permit stage (e.g. "full permit") without a date — shown as of the source update.'), unlock: bi('שדה תאריך היתר במקור.', 'A permit-date field in the source.'), ids: ['permit-date'] },
+    no_project_sales: { label: bi('אין מכירות ברמת פרויקט', 'No project-level sales'), why: bi('הלמ״ס מפרסמת מכירות ארציות ולפי מחוז; מרשם העסקאות אינו מצרף פרויקט או יזם.', 'CBS publishes national and district sales; the transaction register joins no project or developer.'), unlock: bi('מקור מכירות עם מזהה פרויקט.', 'A sales source with a project id.'), ids: ['project-sales'] },
+    no_occupancy_source: { label: bi('אין מקור אכלוס / שכר דירה', 'No occupancy / rent source'), why: bi('אף מקור רשמי מצורף אינו מדווח אכלוס או שכר דירה של פרויקט; PROPX לעולם אינה אומדת.', 'No joined official source reports a project\'s occupancy or rent; PROPX never estimates.'), unlock: bi('מקור רשמי ברמת פרויקט.', 'An official project-level source.'), ids: ['occupancy'] },
     no_locality_sales_series: { label: bi('אין סדרת מכירות רשמית ליישוב', 'No official locality sales series'), why: bi('הלמ״ס מפרסמת ארצי ו-7 מחוזות בממשק קריא למכונה; נתוני יישוב קיימים רק ב-PDF (חלונות 3 חודשים, > 150 מכירות, שמות).', 'CBS publishes national and 7 districts machine-readably; city figures exist only in a PDF (3-month windows, > 150 sales, names).'), unlock: bi('סדרת יישובים רשמית קריאה למכונה — או תמלול מתויג של ההודעה לתקשורת (קיים לתל אביב-יפו).', 'A machine-readable official locality series — or a labelled transcription of the media release (exists for Tel Aviv-Yafo).'), ids: ['sales', 'supply-pressure'] },
     inventory_national_only: { label: bi('מלאי: ארצי בלבד', 'Inventory: national only'), why: bi('סדרת המלאי הרשמית אינה מפוצלת לפי מחוז או יישוב; PROPX לעולם אינה מקצה.', 'The official inventory series is not split by district or locality; PROPX never allocates.'), unlock: bi('פרסום רשמי של מלאי לפי מחוז.', 'An official inventory figure by district.'), ids: ['inventory'] },
     no_permits_source: { label: bi('אין מקור היתרים / התחלות / גמר לפי יישוב', 'No permits / starts / completions source by locality'), why: bi('לא נמצא מקור רשמי קריא למכונה שמצטרף לפי קוד יישוב; דיווחי ההתקדמות של משב״ש נעצרים ב-2024 ומכסים מגרשים שנזכו בלבד.', 'No joined machine-readable official source by locality code was found; MoCH progress reports stop in 2024 and cover awarded lots only.'), unlock: bi('סדרת הלמ״ס לבנייה לפי יישוב בממשק ה-API, או מאגר היתרים עירוני עם קוד יישוב.', 'The CBS construction series by locality in the API, or a municipal permits dataset with a locality code.'), ids: ['permits'] },
@@ -8645,6 +8713,7 @@ he:{
   tracks:"מסלולים",noneYet:"אין רשומות",more:n=>`עוד ${n}`,
   pDev:"יזם",pPlace:"מיקום",pProgram:"תכנית",pLots:"הגרלות",pUnits:"יח״ד בהגרלה הראשונה",pLatestU:"יח״ד בהגרלה האחרונה",pPsm:"מחיר למ״ר (מחיר התכנית)",pPsmNote:"מחיר התכנית הרשמי — אינו עסקת שוק",
   pPermit:"היתר",pStage:"שלב בפרויקט",pDemand:"נרשמים ליח״ד (הגרלה ראשונה)",pEvidence:"ראיות שלב",pJoin:"צירופים",pProv:"מקור ומועדים",
+  pi:{title:"מודיעין פרויקט",tl:"ציר זמן (מהמקורות)",ladder:"סולם שלבים — ראיה ישירה בלבד",land:"₪/יח״ד מול מגרשי היישוב",demand:"נרשמים ליח״ד מול הגרלות היישוב",sig:"אותות",miss:"מה אין — ולמה",none:"אף כלל לא נדלק",pos:{"above-p75":"מעל הרבעון העליון","below-p25":"מתחת לרבעון התחתון",within:"בתוך הטווח"},median:"חציון",p25:"p25",p75:"p75",lots:"מגרשים",lotteries:"הגרלות",period:"תקופה",undated:"ללא תאריך — נכון לעדכון המקור",stale:"ישן",noEv:"אין ראיה",kinds:{watch:"למעקב",risk:"סיכון",info:"מידע"}},
   lt:{date:"תאריך",type:"סוג",units:"יח״ד",apps:"נרשמים",winners:"זוכים",status:"סטטוס"},ltype:{first:"ראשונה",continuation:"המשך"},
   sTender:"מכרז",sLot:"מגרש",sUnits:"יח״ד",sLand:"סכום זכייה",sLpu:"קרקע ליח״ד",sBid:"הצעה ₪/מ״ר",sPlans:"תכנית|מגרש",sParcels:"גוש/חלקה",sDecision:"החלטה",sOpenTender:"פתיחת המכרז",
   srcUpd:"עודכן במקור",fetched:"נשלף",checked:"נבדק",
@@ -8738,6 +8807,7 @@ en:{
   tracks:"Tracks",noneYet:"No records",more:n=>`${n} more`,
   pDev:"Developer",pPlace:"Location",pProgram:"Program",pLots:"Lotteries",pUnits:"Units in the first lottery",pLatestU:"Units in the latest lottery",pPsm:"Price per m² (program price)",pPsmNote:"the official program price — not a market sale",
   pPermit:"Permit",pStage:"Project stage",pDemand:"Applicants per unit (first lottery)",pEvidence:"Stage evidence",pJoin:"Joins",pProv:"Source and dates",
+  pi:{title:"Project intelligence",tl:"Timeline (from the sources)",ladder:"Stage ladder — direct evidence only",land:"Land ₪/unit vs the locality's lots",demand:"Applicants per unit vs the locality's lotteries",sig:"Signals",miss:"What is missing — and why",none:"No rule fired",pos:{"above-p75":"above the upper quartile","below-p25":"below the lower quartile",within:"within the range"},median:"median",p25:"p25",p75:"p75",lots:"lots",lotteries:"lotteries",period:"period",undated:"undated — as of the source update",stale:"stale",noEv:"no evidence",kinds:{watch:"watch",risk:"risk",info:"info"}},
   lt:{date:"Date",type:"Type",units:"Units",apps:"Applicants",winners:"Winners",status:"Status"},ltype:{first:"First",continuation:"Continuation"},
   sTender:"Tender",sLot:"Lot",sUnits:"Units",sLand:"Winning sum",sLpu:"Land per unit",sBid:"Bid ₪/m²",sPlans:"Plan|lot",sParcels:"Block/parcel",sDecision:"Decision",sOpenTender:"Open the tender",
   srcUpd:"Updated at source",fetched:"Fetched",checked:"Checked",
@@ -9017,6 +9087,20 @@ function diHTML(I){
   const ent=(E.rows||[]).length?`<p class="ho-note">${di.entries}: ${E.rows.map(x=>`<bdi>${inE(he?x.city:(x.cityEn||x.city))}</bdi> ${inDate(x.date)}`).join(" · ")}</p>`:"";
   return `<p class="ho-note">${xpBtn("developer_observed_activity")} ${inE(bl(I.basis))}</p>${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p>`;
 }
+/* PROJECT INTELLIGENCE 2.0 (lib/entities/project-intel.js): timeline from the sources, the stage ladder with direct evidence only,
+   the lot's ₪/unit (or the lottery's applicants per unit) beside the locality's own figures of the same universe, explainable
+   signals and what is missing — additive to the project drawer; a description, never a judgement */
+function piHTML(d){
+  const t=IT(),w=t.pi,I=d&&d.intel,he=state.lang==="he",L=he?"he":"en";if(!w||!I)return"";
+  const bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):(v==null?"":String(v)),n=v=>v==null?"—":fmtInt(v);
+  const cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${inE((T().puCls||{})[c]||c)}</span>`;
+  const tl=(I.timeline||[]).length?`<ol class="pi-tl">${I.timeline.map(e=>`<li><span class="pi-d">${e.date?inDate(e.date):"—"}</span>${inE(bl(e.label))}${e.stale?` <span class="ho-chip cont">${w.stale}</span>`:""} ${cls(e.cls)} <span class="ho-na num">${inE(e.source)}</span></li>`).join("")}</ol>`:`<p class="ho-note">—</p>`;
+  const rungs=`<div class="pi-rungs">${(I.ladder.rungs||[]).map(r=>`<span class="pi-rung ${r.evidenced?(r.partial?"partial":"ok"):""}" title="${inE(r.evidenced?(r.date||"")+(r.source?" · "+r.source:""):bl(r.reason))}">${inE(IT().stages[r.stage]||r.stage)} ${r.evidenced?"✓":"—"}</span>`).join("")}</div><ul class="ho-note ld-ul">${(I.ladder.rungs||[]).filter(r=>!r.evidenced).map(r=>`<li><b>${inE(IT().stages[r.stage]||r.stage)}</b>: ${inE(bl(r.reason))}</li>`).join("")}</ul><p class="ho-note">${inE(bl(I.ladder.basis))}</p>`;
+  const ctx=(C,lab,unitLab,xp)=>{if(!C)return"";const Lc=C.locality;return `<div class="pi-ctx"><b>${C.value!=null?(unitLab==="₪"?"₪"+fmtInt(C.value):fmtInt(C.value)):"—"}</b>${C.position?` · <span class="ho-chip ${C.position==="within"?"cont":"on"}">${w.pos[C.position]}</span>`:""} ${xpBtn(xp)}${Lc?`<div class="ds-m">${w.median} <span class="num">${n(Lc.median)}</span> · ${w.p25} <span class="num">${n(Lc.p25)}</span> · ${w.p75} <span class="num">${n(Lc.p75)}</span> · <span class="num">${n(Lc.lots!=null?Lc.lots:Lc.lotteries)}</span> ${Lc.lots!=null?w.lots:w.lotteries}${Lc.period&&(Lc.period.from||Lc.period.to)?` · ${w.period} <span class="num">${inE((Lc.period.from||"—")+" → "+(Lc.period.to||"—"))}</span>`:""} ${cls("DERIVED")}</div>`:""}${C.reason?`<div class="ds-m">${inE(bl(C.reason))}</div>`:""}${Lc&&Lc.formula?`<div class="ds-m">${inE(Lc.formula)}${Lc.consideration?` · ${inE(Lc.consideration)}`:""}</div>`:""}</div>`};
+  const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${w.kinds[s.kind]||s.kind}</span> <b>${inE(bl(s.text))}</b> ${xpSig(s.id,s)}<div class="ds-m">${t.pi.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${cls(s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${inE(T().dsMeta?T().dsMeta.limits||"":"")||(he?"מגבלות":"limitations")}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${w.none}</p>`;
+  const miss=(I.missing||[]).length?`<ul class="ds-miss">${I.missing.map(m=>`<li>${inE(bl(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
+  return `<p class="ho-note">${inE(bl(I.basis))}</p><div class="ds-ft">${w.tl}</div>${tl}<div class="ds-ft">${w.ladder} ${xpBtn("project_stage")}</div>${rungs}${I.land?`<div class="ds-ft">${w.land}</div>${ctx(I.land,w.land,"₪","land_cost_position")}`:""}${I.demand?`<div class="ds-ft">${w.demand}</div>${ctx(I.demand,w.demand,"","lottery_demand_position")}`:""}<div class="ds-ft">${w.sig}</div>${sig}<div class="ds-ft">${w.miss}</div>${miss}`;
+}
 function renderInDrawer(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
   const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
@@ -9084,6 +9168,7 @@ function renderInDrawer(){
   p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${inE(t.pkinds[d.kind]||d.kind)} · <span class="num">${inE(d.id)}</span></span>
       <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}</div></div>${close}</div>
     ${body}
+    ${d.intel&&t.pi?sec(t.pi.title,D,piHTML(d)):""}
     ${sec(t.pEvidence,D,ev)}
     ${sec(t.pJoin,"",`<p class="ho-note">${inE(ila?t.joinIla:t.joinMoch)}</p>`)}
     ${sec(t.pProv,"",`<div class="ho-dl">${kv(t.srcUpd,inDate(prov.sourceUpdatedAt))}${kv(t.fetched,inDate(prov.fetchedAt||prov.detailFetchedAt))}</div><ul class="ho-note ld-ul">${srcList}</ul>`)}`;

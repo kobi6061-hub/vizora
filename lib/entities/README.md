@@ -138,3 +138,23 @@ Opportunity / Risk scan covers carries `radar: { opportunities, risks, quality, 
 and the dossier's evidence level, never a score. The page shows them under the hit and opens the Market Dossier for a
 district / country hit (`inRoute`); the command bar lets the two new types through. Names still match by string and are
 never merged.
+
+## Project Intelligence 2.0 — `lib/entities/project-intel.js` (17.10.2026)
+
+`project(id).intel` (additive — every existing field unchanged) is a deterministic read of ONE project / awarded lot from its
+stored official records: a **timeline** (ILA: tender published → bid deadline → lot awarded with units and the winning sum,
+the exact XPlan plan join with its dated approval and units after the plan, the MoCH construction-progress join by
+block/parcel; MoCH: every lottery with units / applicants / winners, the permit and project stage as published — undated,
+shown as of the source update), the **stage ladder** (`land-awarded → marketed → permitted → construction-started →
+completed → occupied`: every rung with its direct evidence or the reason PROPX has none — a rung without evidence is not a
+stage that did not happen), the lot's **₪/unit beside the locality's own competitive-bid lots** of the same track over 36
+months by decision date (the land read model's quartiles, this tender excluded, a position only with ≥ 5 lots), the
+project's **applicants per unit beside the locality's other first lotteries** (this project excluded, ≥ 5), **signals**
+(`LAND_COST_ABOVE_LOCALITY` · `LAND_COST_BELOW_LOCALITY` · `LOTTERY_DEMAND_ABOVE_LOCALITY` · `LOTTERY_DEMAND_BELOW_LOCALITY` ·
+`LOTTERY_UNDERSUBSCRIBED` · `STAGE_EVIDENCE_STALE` (ILA lots only — a MoCH record carries a current status) · `PLAN_JOINED` ·
+`CONSTRUCTION_EVIDENCE` · `RE_TENDERED_LOT` (through the Authority's lot file id only) — each with trigger · value ·
+threshold · period · source · class · limitations; a description, never a judgement), **what is missing** (permits, a
+construction join, the lottery ↔ lot join, a permit date, project sales, occupancy / rent — each with its registry reason)
+and freshness. Never a join by name or geometry, never an estimate, never a project sales / occupancy / rent figure. Shown
+as the "מודיעין פרויקט" block of the project drawer; every signal and gap opens its registry entry. Gates:
+`test/project-intel.test.js`.

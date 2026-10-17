@@ -138,6 +138,12 @@
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.
+- `lib/entities/project-intel.js` + `test/project-intel.test.js` = Project Intelligence 2.0 (17.10.2026): `project(id).intel`
+  (additive) — timeline from the stored records (ILA tender dates + awarded lot + exact XPlan plan approval + MoCH construction
+  join; MoCH lotteries + undated permit / stage as of the source update), the stage ladder with direct evidence or the reason
+  there is none, the lot's ₪/unit beside the locality's competitive-bid lots of the same track (36 months, this tender
+  excluded, ≥ 5 lots), applicants per unit beside the locality's other first lotteries (≥ 5), explainable signals (never a
+  judgement), what is missing with registry reasons. Rendered in the project drawer. No join by name / geometry, no estimate.
 - `lib/dossier/narrative.js` + `test/narrative.test.js` = "Why this market?" (17.10.2026): a deterministic narrative over one dossier
   (`view=dossier` → `narrative`: `lead` 2–3 sentence ids + ordered `sentences`, each with kind · class · source · period · geoScope ·
   registry term); composed only from the dossier, the geography's radar items and its supply indicators; a missing input is a
