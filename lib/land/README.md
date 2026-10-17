@@ -124,3 +124,20 @@ attached only to an awarded tender and only from rows whose contract year is not
 `city` (CBS code or name) · `region` · `track` · `lifecycle` · `type` · `purpose` · `basis` · `winner` (exact) · `plan` ·
 `residential=1` · `awarded=1` · `q`. Every answer carries `freshness` (checked at, latest publication, detail coverage) and
 `summary.methodology`. Missing values are null → "—" on the page.
+
+## Land Economics 2.0 — `lib/land/economics.js` (17.10.2026)
+
+`economics({ level, code, now, months = 36 })` is the land-cost read of one geography (Israel, a district, a locality), carried
+by the Market Dossier as `sections.landEconomics` and stated in its narrative. Three universes, never averaged together:
+**competitive-bid lots on the open-market track** — the land read model's own `landPerUnitOver` over the lots DECIDED in 36
+months: p25 · median · p75 of the winning sum ÷ units per lot (quartiles only over ≥ 5 lots) beside the unit-weighted figure,
+and the prior 36 months with a change stated only when both windows hold ≥ 5 lots, with a **lot-mix warning** when the mean
+units per lot doubles or halves between the windows (self-build plots vs multi-storey lots); **₪/m² bids** on subsidized tracks
+(their own quartiles; an empty window names the track's latest decision — the programme was last decided in 2022 nationally);
+**outcomes** of the tenders published in the window by the Authority's lifecycle (the dossier's failed-tender rule — "decided,
+not read" never fails); **re-tenders** only through the Authority's lot file id (`lineage.js`, same-parcel excluded) by relation;
+the **largest winner** by exact legal name (typographic variants only) with its share of the competitive-bid lots. A locality
+carries its district's competitive-bid block of the same universe as context — never the reverse. Nominal consideration:
+development costs and VAT are outside it (missing-data reason `development-costs`); private land is not observed. Registry
+terms: `land_cost_quartiles` · `land_cost_change` · `per_sqm_bid_level` · `tender_outcomes` · `re_tender_share`. Gates:
+`test/land-economics.test.js`.

@@ -138,6 +138,12 @@
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.
+- `lib/land/economics.js` + `test/land-economics.test.js` = Land Economics 2.0 (17.10.2026): the dossier's `sections.landEconomics`
+  (additive) — ₪/unit quartiles of competitive-bid open-market lots decided in 36 months (the land read model's own
+  `landPerUnitOver`, quartiles only over ≥ 5 lots) vs the prior 36 with a lot-mix warning; ₪/m² bids apart (an empty window
+  names the track's latest decision); outcomes of the tenders published in the window (the failed-tender rule); re-tenders
+  through the lot file only; the largest winner by exact name; a locality carries its district's block of the same universe.
+  One narrative sentence; the dossier block "כלכלת קרקע". Nominal consideration — never a land value or an all-in cost.
 - `lib/entities/project-intel.js` + `test/project-intel.test.js` = Project Intelligence 2.0 (17.10.2026): `project(id).intel`
   (additive) — timeline from the stored records (ILA tender dates + awarded lot + exact XPlan plan approval + MoCH construction
   join; MoCH lotteries + undated permit / stage as of the source update), the stage ladder with direct evidence or the reason

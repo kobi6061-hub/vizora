@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="d62f877321d59418beafa91c391e68bd00d81c9d28a583044673af21936d83f3">
+<meta name="propx-source-sha256" content="c58bb0a7dd96ee190ccb845226ad8b8ec0dad3035aee82cb7fcccd3b8aa0987a">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2348,6 +2348,66 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
   /* ---- the terms ---- */
   const T = (o) => Object.freeze(Object.assign({ formula: null, inputs: [], limitations: [] }, o));
   const TERMS = [
+    /* ---- LAND ECONOMICS 2.0 (lib/land/economics.js) ---- */
+    T({ id: 'land_cost_quartiles', group: 'land', title: bi('₪/יח״ד — רבעוני המגרשים', 'Land ₪/unit — lot quartiles'),
+      short: bi('p25 · חציון · p75 של סכום הזכייה ÷ יח״ד לכל מגרש הצעה תחרותית בשוק החופשי שנדון ב-36 חודשים — לצד הממוצע משוקלל-היחידות.', 'p25 · median · p75 of the winning sum ÷ units per competitive-bid open-market lot decided in 36 months — beside the unit-weighted figure.'),
+      why: bi('מראה את טווח תמורת הקרקע ששולמה בפועל בגאוגרפיה — לא ממוצע אחד שמסתיר את הפיזור.', 'Shows the range of land consideration actually paid in the geography — not one average that hides the spread.'),
+      unit: bi('₪ ליח״ד (נומינלי)', '₪ per unit (nominal)'), geography: bi('ארצי · מחוז · יישוב (קרקע מדינה בלבד)', 'National · district · locality (state land only)'), period: bi('36 חודשים לפי תאריך החלטה', '36 months by decision date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('מגרשי הצעה תחרותית במסלול שוק חופשי בלבד; לכל מגרש: סכום הזכייה ÷ יח״ד; רבעונים של היחסים; רבעונים רק עם ≥ 5 מגרשים; הממוצע משוקלל-היחידות = Σ סכומים ÷ Σ יח״ד.', 'Competitive-bid lots on the open-market track only; per lot: winning sum ÷ units; the quartiles of those ratios; quartiles only with ≥ 5 lots; the unit-weighted figure = Σ sums ÷ Σ units.'),
+      formula: bi('p25 / חציון / p75 של (סכום הזכייה ÷ יח״ד) לכל מגרש; משוקלל = Σ סכומי זכייה ÷ Σ יח״ד', 'p25 / median / p75 of (winning sum ÷ units) per lot; weighted = Σ winning sums ÷ Σ units'), inputs: [bi('סכומי הזכייה ויח״ד של המגרשים (רמ״י)', 'the lots\' winning sums and units (ILA)')],
+      interpretation: bi('תמורה נומינלית לרשות — ללא הוצאות פיתוח, מע״מ והצמדה; מגרשים נושאים זכויות ומיקומים שונים.', 'A nominal consideration to the Authority — without development costs, VAT and indexation; lots carry different rights and locations.'),
+      notAs: bi('לא שווי קרקע, לא עלות כוללת ליח״ד, לא מחיר דירה, לא קרקע פרטית.', 'Not a land value, not an all-in cost per unit, not a home price, not private land.'),
+      limitations: [LIM.smallSample, bi('מסלולים מסובסדים (₪/מ״ר) והקצאות במחיר קבוע מוחרגים', 'subsidized (₪/m²) tracks and fixed-price allocations excluded')],
+      evidence: bi('view=dossier → sections.landEconomics.competitiveBid', 'view=dossier → sections.landEconomics.competitiveBid'),
+      freshness: { observation: bi('תאריכי ההחלטה של המגרשים', 'the lots\' decision dates'), publication: bi('רציף (אתר המכרזים)', 'continuous (the tender site)'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'land_cost_change', group: 'land', title: bi('שינוי ₪/יח״ד מול החלון הקודם', 'Land ₪/unit change vs the prior window'),
+      short: bi('החציון (והמשוקלל) של 36 החודשים האחרונים מול 36 הקודמים — רק כששני החלונות מחזיקים ≥ 5 מגרשים, ועם אזהרת תמהיל.', 'The median (and the weighted figure) of the last 36 months vs the prior 36 — only when both windows hold ≥ 5 lots, with a lot-mix warning.'),
+      why: bi('כיוון של תמורת הקרקע ששולמה — עם הסיבה האפשרית שאינה מחיר.', 'The direction of the land consideration paid — with the non-price reason it may carry.'),
+      unit: bi('%', '%'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('36 החודשים האחרונים מול 36 הקודמים (תאריך החלטה)', 'The last 36 months vs the prior 36 (decision date)'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('אותו יקום בשני החלונות; אזהרת תמהיל כשממוצע יח״ד למגרש גדל פי 2 או קטן לחצי בין החלונות (למשל מגרשי בנייה עצמית מול מגרשי רב-קומות).', 'The same universe in both windows; a mix warning when the mean units per lot doubles or halves between the windows (e.g. self-build plots vs multi-storey lots).'),
+      formula: bi('(חציון נוכחי − חציון קודם) ÷ חציון קודם × 100', '(current median − prior median) ÷ prior median × 100'), inputs: [bi('רבעוני שני החלונות', 'the quartiles of both windows')],
+      interpretation: bi('שינוי יכול לשקף סוג מגרש, מיקום ותנאי מכרז אחרים — לא רק מחיר.', 'A change may reflect a different kind of lot, location and tender terms — not only price.'),
+      notAs: bi('לא מדד מחירי קרקע, לא תחזית, לא "עליית מחירים".', 'Not a land price index, not a forecast, not "prices rose".'),
+      limitations: [LIM.smallSample], evidence: bi('view=dossier → sections.landEconomics.competitiveBid.change', 'view=dossier → sections.landEconomics.competitiveBid.change'),
+      freshness: { observation: bi('תאריכי ההחלטה', 'the decision dates'), publication: bi('רציף', 'continuous'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'per_sqm_bid_level', group: 'land', title: bi('הצעות ₪/מ״ר (מסלולים מסובסדים)', '₪/m² bids (subsidized tracks)'),
+      short: bi('רבעוני הצעות ה-₪/מ״ר הזוכות במכרזי מחיר למשתכן / מופחת שנדונו בחלון — מדד אחר מ-₪/יח״ד של קרקע.', 'The quartiles of winning ₪/m² bids in Mechir LaMishtaken / reduced-price tenders decided in the window — a different measure from land ₪/unit.'),
+      why: bi('מפריד את היקום המסובסד מהשוק החופשי — לעולם לא ממוצע אחד.', 'Keeps the subsidized universe apart from the open market — never one average.'),
+      unit: bi('₪ למ״ר בנוי', '₪ per built m²'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('36 חודשים לפי תאריך החלטה; כשהחלון ריק — תאריך ההחלטה האחרון במסלול', '36 months by decision date; when the window is empty — the track\'s latest decision date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('מגרשים בבסיס "הצעת ₪/מ״ר" עם זוכה; רבעונים רק עם ≥ 5 מגרשים.', 'Lots on the "₪/m² bid" basis with a winner; quartiles only with ≥ 5 lots.'),
+      formula: bi('p25 / חציון / p75 של ההצעה הזוכה למ״ר', 'p25 / median / p75 of the winning bid per m²'), inputs: [bi('הצעות ₪/מ״ר זוכות (רמ״י)', 'winning ₪/m² bids (ILA)')],
+      interpretation: bi('מחיר מכירה מחייב למ״ר בתוכנית מסובסדת — לא מחיר קרקע.', 'A binding sale price per m² under a subsidized programme — not a land price.'),
+      notAs: bi('לא ₪/יח״ד של קרקע, לא מחיר שוק, לא השוואה לשוק החופשי.', 'Not land ₪/unit, not a market price, not a comparison with the open market.'),
+      limitations: [LIM.smallSample, bi('המסלול נדון לאחרונה ב-2022 — חלון של 36 חודשים יכול להיות ריק', 'the track was last decided in 2022 — a 36-month window can be empty')],
+      evidence: bi('view=dossier → sections.landEconomics.perSqmBid', 'view=dossier → sections.landEconomics.perSqmBid'),
+      freshness: { observation: bi('תאריכי ההחלטה', 'the decision dates'), publication: bi('רציף', 'continuous'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 'tender_outcomes', group: 'land', title: bi('תוצאות מכרזים בחלון', 'Tender outcomes in the window'),
+      short: bi('מכרזים שפורסמו ב-36 חודשים לפי מחזור החיים של הרשות: נזכו · נדונו ללא זוכה · בוטלו · ממתינים · פתוחים — ויחס הכישלון.', 'Tenders published in 36 months by the Authority\'s lifecycle: awarded · decided without a winner · cancelled · pending · open — and the failed ratio.'),
+      why: bi('כמה מהשיווק בגאוגרפיה הסתיים בלי זוכה — אות היצע-ביקוש על קרקע מדינה.', 'How much of the geography\'s marketing ended without a winner — a state-land supply-demand signal.'),
+      unit: bi('מכרזים; יחס', 'tenders; a ratio'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('36 חודשים לפי תאריך פרסום', '36 months by publication date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('ספירה לפי קודי הסטטוס של הרשות; "נדונו — הפרטים לא נקראו" אינם כישלון.', 'Counted by the Authority\'s status codes; "decided — details not read" is not a failure.'),
+      formula: bi('(נדונו ללא זוכה + בוטלו) ÷ פורסמו', '(decided without a winner + cancelled) ÷ published'), inputs: [bi('מחזור החיים של כל מכרז (רמ״י)', 'every tender\'s lifecycle (ILA)')],
+      interpretation: bi('מכרז שנכשל יכול לחזור לשיווק — ראו שיווקים חוזרים.', 'A failed tender may be re-marketed — see re-tenders.'),
+      notAs: bi('לא ביקוש בשוק החופשי, לא "השוק קפוא".', 'Not open-market demand, not "the market froze".'),
+      limitations: [bi('רק מכרזים שפרטיהם נקראו יודעים אם היה זוכה', 'only detail-read tenders know whether there was a winner')],
+      evidence: bi('view=dossier → sections.landEconomics.outcomes', 'view=dossier → sections.landEconomics.outcomes'),
+      freshness: { observation: bi('תאריכי הפרסום וההחלטה', 'the publication and decision dates'), publication: bi('רציף', 'continuous'), check: bi('הסנכרון היומי', 'the daily sync') } }),
+    T({ id: 're_tender_share', group: 'land', title: bi('שיווקים חוזרים (דרך תיק המגרש)', 'Re-tenders (through the lot file)'),
+      short: bi('מכרזים בחלון שמשווקים מחדש תיק מגרש (TikID) שמכרז קודם נשא — לפי סוג הקשר.', 'Tenders in the window that re-market a lot file (TikID) an earlier tender carried — by relation type.'),
+      why: bi('מראה כמה מההיצע "החדש" הוא קרקע שכבר שווקה.', 'Shows how much of the "new" supply is land already marketed.'),
+      unit: bi('מכרזים', 'tenders'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('36 חודשים לפי תאריך פרסום', '36 months by publication date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('קשרים רק דרך מזהה תיק המגרש של הרשות (lib/land/lineage.js); "אותו גוש/חלקה" אינו נספר; לעולם לא לפי שם או גאומטריה.', 'Links only through the Authority\'s lot file id (lib/land/lineage.js); "same block/parcel" is not counted; never by name or geometry.'),
+      formula: bi('מכרזים עם ≥ 1 קודם דרך תיק מגרש ÷ מכרזים שפורסמו בחלון', 'tenders with ≥ 1 predecessor through a lot file ÷ tenders published in the window'), inputs: [bi('תיקי המגרש של כל מכרז (רמ״י)', 'every tender\'s lot files (ILA)')],
+      interpretation: bi('שיווק חוזר אחרי כישלון ≠ מגרש שנזכה ושווק שוב — סוג הקשר מוצג.', 'A re-tender after a failure ≠ an awarded lot marketed again — the relation type is shown.'),
+      notAs: bi('לא "היצע כפול" ולא ספירת יח״ד — יח״ד נספרות פעם אחת בצנרת הייחודית.', 'Not "double supply" and not a unit count — units count once in the unique pipeline.'),
+      limitations: [bi('רק מכרזים שפרטיהם (תיקי מגרש) נקראו', 'only detail-read tenders (lot files)')],
+      evidence: bi('view=dossier → sections.landEconomics.reTenders', 'view=dossier → sections.landEconomics.reTenders'),
+      freshness: { observation: bi('תאריכי הפרסום', 'the publication dates'), publication: bi('רציף', 'continuous'), check: bi('הסנכרון היומי', 'the daily sync') } }),
     /* ---- PROJECT INTELLIGENCE 2.0 (lib/entities/project-intel.js) ---- */
     T({ id: 'project_stage', group: 'developers', title: bi('שלב הפרויקט (סולם ראיות)', 'Project stage (evidence ladder)'),
       short: bi('השלב הרחוק ביותר שיש לו ראיה ישירה במקורות PROPX: קרקע נזכתה → שווק → היתר → תחילת בנייה → גמר → אכלוס.', 'The furthest stage with direct evidence in PROPX sources: land awarded → marketed → permitted → construction started → completed → occupied.'),
@@ -2842,6 +2902,8 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 
   /* ---- missing-data reasons: why "—" is shown, and what would make the figure available ---- */
   const MISSING = Object.freeze({
+    /* land economics */
+    no_all_in_land_cost: { label: bi('אין עלות קרקע כוללת ליח״ד', 'No all-in land cost per unit'), why: bi('הוצאות הפיתוח מדווחות בנפרד (לא לכל מגרש), מע״מ אינו מצוין במקור, והתמורה נומינלית — PROPX אינה מחברת.', 'Development costs are reported apart (not for every lot), VAT is not stated by the source, and the consideration is nominal — PROPX does not add them up.'), unlock: bi('מקור שמפרסם הוצאות פיתוח ומע״מ לכל מגרש.', 'A source publishing development costs and VAT per lot.'), ids: ['development-costs'] },
     /* project intelligence */
     no_construction_join: { label: bi('אין דיווח בנייה מצורף', 'No construction report joined'), why: bi('דיווחי ההתקדמות של משב״ש מצורפים רק בגוש/חלקה זהים, והמקור נעצר ב-2024-03.', 'MoCH progress reports join only on identical block/parcel, and the source stops at 2024-03.'), unlock: bi('דיווח עם הגוש/חלקה של המגרש, או מקור היתרים / התחלות עדכני.', 'A report carrying the lot\'s block/parcel, or a current permits / starts source.'), ids: ['construction'] },
     no_lottery_join: { label: bi('הגרלות משב״ש אינן מצורפות למגרש', 'MoCH lotteries are not joined to the lot'), why: bi('רשומת ההגרלה אינה נושאת מכרז, תוכנית או חלקה — אין מפתח רשמי משותף; PROPX לעולם אינה מצרפת לפי שם.', 'The lottery record carries no tender, plan or parcel — no shared official key; PROPX never joins by name.'), unlock: bi('משב״ש מפרסם מזהה מכרז / מגרש ברשומת ההגרלה.', 'MoCH publishes a tender / lot id on the lottery record.'), ids: ['lottery-join', 'tender-join'] },
@@ -3539,6 +3601,7 @@ he:{
   dsPick:"גאוגרפיה", dsNat:"ישראל (ארצי)", dsDistricts:"מחוזות", dsLocs:"יישובים (עם מכרזי רמ״י)", dsQuality:"איכות ראיות", dsFacts:"עובדות מפתח", dsWatch:"למה לעקוב", dsRisk:"מה עלול להשתבש", dsChanges:"שינויים אחרונים", dsDevs:"יזמים מובילים כאן (נצפה)", dsFresh:"רעננות המקורות", dsMissing:"מה אין בתיק — ולמה", dsLoading:"טוען תיק…", dsErr:"לא ניתן לטעון את התיק כעת", dsNoSig:"אין טריגר שנדלק", dsGen:(d)=>`הופק ${d}`, dsDistrictOf:"מחוז", dsToPulse:"לכל האירועים",
   dsT:{sales:"מכירות דירות חדשות (למ״ס)",inv:"מלאי שטרם נמכר (ארצי)",mos:"חודשי היצע",land:"מכרזי רמ״י · היקף נוכחי",open:"יח״ד במכרזים פתוחים",aw:"יח״ד במגרשים שנזכו",pend:"יח״ד ממתינות להחלטה",lot:"הגרלות דיור מסובסד",lotU:"דירות בהגרלות ראשונות",apu:"מבקשים ליחידה",rn:"מתחמי התחדשות",rnU:"יח״ד מוצעות (כפי שפורסם)",rt:"מכרזי דיור להשכרה (נוכחי)",rtU:"יח״ד להשכרה (לפי דירה להשכיר)",dev:"יזמים שנצפו כאן",ent:"כניסות יזמים · 24 ח׳",boi:"ריבית בנק ישראל",nhi:"מדד דירות חדשות · שנתי",cii:"תשומות בנייה · שנתי"},
   dsS:{t12:"12 חודשים",mom:"מומנטום 3 ח׳",nat:"ארצי",dist:"רמת מחוז — לא נתון היישוב",byLoc:"סכום על יישובי המחוז",of:"מתוך",total:"סה״כ המכרז — לא יח״ד להשכרה",declared:"מוכרזים",small:"מדגם קטן — ללא מגמה",context:"הקשר ארצי"},
+  dsLe:{title:"כלכלת קרקע — קרקע מדינה (רמ״י)",bid:"₪/יח״ד · הצעה תחרותית · שוק חופשי",median:"חציון",p25:"p25",p75:"p75",weighted:"משוקלל-יחידות",lots:"מגרשים",tenders:"מכרזים",units:"יח״ד",prior:"מול 36 הקודמים",mix:"תמהיל המגרשים השתנה",small:"מדגם קטן — ללא רבעונים",psm:"הצעות ₪/מ״ר · מסלולים מסובסדים",outcomes:"תוצאות מכרזים שפורסמו בחלון",awarded:"נזכו",noWinner:"ללא זוכה",cancelled:"בוטלו",pending:"ממתינים",open:"פתוחים",failed:"יחס כישלון",re:"שיווקים חוזרים (תיק מגרש)",conc:"הזוכה הגדול (שם מדויק)",share:"מהמגרשים",district:"המחוז — אותו יקום",window:"36 חודשים",none:"אין נתון"},
   dsWhy:{title:"למה השוק הזה?",sub:"קריאה דטרמיניסטית של נתוני התיק — תיאור, לא המלצה",more:"הקריאה המלאה",scope:{district:"רמת מחוז",national:"הקשר ארצי"},kinds:{fact:"עובדה",derived:"נגזר",watch:"למעקב",risk:"סיכון",context:"הקשר",gap:"חסר"},q:{HIGH:"גבוהה",MEDIUM:"בינונית",LOW:"נמוכה"}},
   dsSup:{title:"צנרת היצע — שישה יקומים מקבילים, לעולם לא מסוכמים",none:"צנרת ההיצע אינה זמינה כרגע",u:{planning:"תכנון · יח״ד בתוכניות (XPlan)",land:"קרקע · יח״ד במכרזי רמ״י",renewal:"התחדשות · יח״ד מוצעות במתחמים",rental:"דיור להשכרה · מסלול רמ״י",lotteries:"דיור מסובסד · הגרלות משב״ש",construction:"בנייה · דיווחי התקדמות (משב״ש)"},
     of:"מתוך",momL:"מומנטום 12 ח׳",vs:"מול",small:"מדגם קטן — ללא מגמה",uncovered:"המקור לא מכסה את החלון",renewalPlans:"תוכניות של מתחמי התחדשות",approvedEff:"מאושרות / בתוקף",unitsAfter:"יח״ד אחרי התוכנית",delta:"תוספת",tenderPlans:"תוכניות שמכרזים מפנים אליהן",inventory:"מלאי תכנוני (קרקע מדינה)",stale:"ישן ·",
@@ -4098,6 +4161,7 @@ en:{
   dsPick:"Geography", dsNat:"Israel (national)", dsDistricts:"Districts", dsLocs:"Localities (with ILA tenders)", dsQuality:"Evidence quality", dsFacts:"Key facts", dsWatch:"What to watch", dsRisk:"What could go wrong", dsChanges:"Recent changes", dsDevs:"Leading developers here (observed)", dsFresh:"Source freshness", dsMissing:"What is not in the dossier — and why", dsLoading:"Loading dossier…", dsErr:"The dossier could not be loaded", dsNoSig:"No trigger fired", dsGen:(d)=>`generated ${d}`, dsDistrictOf:"district", dsToPulse:"all events",
   dsT:{sales:"New-home sales (CBS)",inv:"Unsold inventory (national)",mos:"months of supply",land:"ILA tenders · current scope",open:"units in open tenders",aw:"units in awarded lots",pend:"units awaiting decision",lot:"Subsidized-housing lotteries",lotU:"units in first lotteries",apu:"applicants per unit",rn:"Renewal complexes",rnU:"proposed units (as published)",rt:"Rental-track tenders (current)",rtU:"rental units (per Dira Lehaskir)",dev:"Developers observed here",ent:"developer entries · 24 mo",boi:"Bank of Israel rate",nhi:"new-homes index · y/y",cii:"construction inputs · y/y"},
   dsS:{t12:"12 months",mom:"3-month momentum",nat:"national",dist:"district level — not the locality's figure",byLoc:"summed over the district's localities",of:"of",total:"tender total — not rental units",declared:"declared",small:"small sample — no trend",context:"national context"},
+  dsLe:{title:"Land economics — state land (ILA)",bid:"₪/unit · competitive bid · open market",median:"median",p25:"p25",p75:"p75",weighted:"unit-weighted",lots:"lots",tenders:"tenders",units:"units",prior:"vs the prior 36",mix:"the lot mix changed",small:"small sample — no quartiles",psm:"₪/m² bids · subsidized tracks",outcomes:"outcomes of tenders published in the window",awarded:"awarded",noWinner:"no winner",cancelled:"cancelled",pending:"pending",open:"open",failed:"failed ratio",re:"re-tenders (lot file)",conc:"largest winner (exact name)",share:"of the lots",district:"the district — the same universe",window:"36 months",none:"no figure"},
   dsWhy:{title:"Why this market?",sub:"a deterministic read of the dossier's figures — a description, not a recommendation",more:"the full read",scope:{district:"district level",national:"national context"},kinds:{fact:"fact",derived:"derived",watch:"watch",risk:"risk",context:"context",gap:"missing"},q:{HIGH:"HIGH",MEDIUM:"MEDIUM",LOW:"LOW"}},
   dsSup:{title:"Supply pipeline — six parallel universes, never summed",none:"The supply pipeline is not available right now",u:{planning:"Planning · plan units (XPlan)",land:"Land · ILA tender units",renewal:"Renewal · proposed units in complexes",rental:"Long-term rental · ILA track",lotteries:"Subsidized housing · MoCH lotteries",construction:"Construction · progress reports (MoCH)"},
     of:"of",momL:"12-month momentum",vs:"vs",small:"small sample — no trend",uncovered:"the source does not cover the window",renewalPlans:"plans of renewal complexes",approvedEff:"approved / effective",unitsAfter:"units after plan",delta:"delta",tenderPlans:"plans the tenders reference",inventory:"planning inventory (state land)",stale:"stale ·",
@@ -9674,6 +9738,7 @@ function renderDossier(){
     <div class="ds-ft">${t.dsFacts}</div><div class="ds-grid">${tiles.join("")}</div>
     <div class="ds-two"><div><div class="ds-ft">${t.dsWatch}</div>${sigList("watch")}</div><div><div class="ds-ft">${t.dsRisk}</div>${sigList("risk")}</div></div>
     ${dsSupplyHTML()}
+    ${dsLandEconHTML(D)}
     <div class="ds-two"><div><div class="ds-ft">${t.dsChanges}</div>${ch}</div><div><div class="ds-ft">${t.dsDevs}</div>${devs}</div></div>
     <div class="ds-ft">${t.dsFresh} ${xpBtn("source_freshness")}</div>${fresh}${q}
     <div class="ds-ft">${t.dsMissing}</div>${miss}`;
@@ -9686,6 +9751,24 @@ function dsWhyHTML(D){
   const li=s=>`<li data-ns="${ldE(s.id)}"><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(w.kinds[s.kind]||s.kind)}</span> ${s.geoScope&&s.geoScope!=="own"?`<span class="ho-chip cont">${ldE(w.scope[s.geoScope]||s.geoScope)}</span> `:""}${ldE(s[L])} ${s.term?xpBtn(s.term):""}<div class="ds-m">${cls(s.cls)} · ${ldE(s.source)}${s.period?` · ${t.dsMeta.period} ${ldE(String(bl(s.period)))}`:""}</div></li>`;
   const lead=N.sentences.filter(s=>(N.lead||[]).includes(s.id)),rest=N.sentences.filter(s=>!(N.lead||[]).includes(s.id));
   return `<div class="ds-why"><div class="ds-ft">${w.title} ${xpBtn("evidence_quality")}</div><p class="ho-note" style="margin-top:0">${w.sub}</p><ol>${lead.map(li).join("")}</ol>${rest.length?`<details><summary>${w.more} (${rest.length})</summary><ol start="${lead.length+1}">${rest.map(li).join("")}</ol></details>`:""}<p class="ho-note" style="margin-bottom:0">${ldE(bl(N.basis))}</p></div>`;
+}
+/* LAND ECONOMICS 2.0 (lib/land/economics.js): ₪/unit quartiles of competitive-bid open-market lots decided in 36 months vs the prior
+   36 (lot-mix warning), ₪/m² bids apart, outcomes of the tenders published in the window, re-tenders through the lot file,
+   the largest winner — every figure with n, period, basis; a locality carries its district's block of the same universe as context */
+function dsLandEconHTML(D){
+  const t=T(),w=t.dsLe,E=D&&D.sections&&D.sections.landEconomics,he=state.lang==="he",L=he?"he":"en";if(!w||!E)return"";
+  const bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):(v==null?"":String(v)),n=v=>v==null?"—":fmtInt(v),nis=v=>v==null?"—":"₪"+fmtInt(v),pc=v=>v==null?"—":`<span class="num ${v>0?"up":v<0?"down":""}">${(v>0?"+":"")+Number(v).toFixed(1)}%</span>`;
+  const cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${ldE(t.puCls&&t.puCls[c]||c)}</span>`;
+  const tile=(k,v,sub,c,xp)=>`<div class="ds-k"><div class="k">${k}${xp?" "+xpBtn(xp):""}</div><div class="v num">${v}</div><div class="s">${sub||""}${c?" "+cls(c):""}</div></div>`;
+  const B=E.competitiveBid||{},c=B.current||{},p=B.prior||{},ch=B.change||{},O=E.outcomes||{},R=E.reTenders||{},K=E.concentration||{},P=E.perSqmBid||{},DC=E.districtContext;
+  const tiles=[];
+  tiles.push(tile(w.bid,c.median!=null?nis(c.median):(c.lots?nis(c.unitWeighted):"—"),`${c.median!=null?`${w.p25} ${nis(c.p25)} · ${w.p75} ${nis(c.p75)} · ${w.weighted} ${nis(c.unitWeighted)}`:(c.lots?w.small:w.none)} · <span class="num">${n(c.lots)}</span> ${w.lots} · <span class="num">${n(c.tenders)}</span> ${w.tenders} · ${w.window}${!ch.small&&ch.medianPct!=null?`<br>${w.prior}: ${w.median} ${pc(ch.medianPct)} · ${w.weighted} ${pc(ch.unitWeightedPct)} (<span class="num">${n(p.lots)}</span> ${w.lots})${ch.mixWarning?` · <b>${w.mix}</b>`:""}`:""}`,"DERIVED","land_cost_quartiles"));
+  if(DC&&DC.current)tiles.push(tile(`${w.district} · ${ldE(bl(DC.name))}`,DC.current.median!=null?nis(DC.current.median):"—",`${DC.current.median!=null?`${w.p25} ${nis(DC.current.p25)} · ${w.p75} ${nis(DC.current.p75)}`:w.small} · <span class="num">${n(DC.current.lots)}</span> ${w.lots}`,"DERIVED","land_cost_quartiles"));
+  tiles.push(tile(w.outcomes,n(O.tenders),`${w.awarded} <span class="num">${n(O.awarded)}</span> · ${w.noWinner} <span class="num">${n(O.decidedWithoutWinner)}</span> · ${w.cancelled} <span class="num">${n(O.cancelled)}</span> · ${w.pending} <span class="num">${n(O.pending)}</span> · ${w.open} <span class="num">${n(O.open)}</span><br>${w.failed} <span class="num">${O.failedRatio!=null?Math.round(O.failedRatio*100)+"%":"—"}</span> · ${w.re} <span class="num">${n(R.tenders)}</span>`,"DERIVED","tender_outcomes"));
+  tiles.push(tile(w.psm,P.median!=null?nis(P.median)+"/m²":"—",P.lots?`${w.p25} ${nis(P.p25)} · ${w.p75} ${nis(P.p75)} · <span class="num">${n(P.lots)}</span> ${w.lots}`:ldE(bl(P.reason)),"DERIVED","per_sqm_bid_level"));
+  if(K.top)tiles.push(tile(w.conc,`<bdi>${ldE(K.top.name)}</bdi>`,`<span class="num">${n(K.top.lots)}</span> ${w.lots} · <span class="num">${K.top.share!=null?K.top.share+"%":"—"}</span> ${w.share} (<span class="num">${n(K.lots)}</span>) · <span class="num">${n(K.top.units)}</span> ${w.units}`,"OBSERVED","geographic_concentration"));
+  const miss=(E.missing||[]).length?`<ul class="ds-miss">${E.missing.map(m=>`<li>${ldE(bl(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
+  return `<div class="ds-ft">${w.title} ${xpBtn("land_cost_quartiles")}</div><p class="ho-note">${ldE(bl(E.basis))}</p><div class="ds-grid">${tiles.join("")}</div>${miss}`;
 }
 /* SUPPLY PIPELINE (lib/supply/pipeline.js): six parallel universes of housing supply — plan units ≠ tender units ≠ renewal units ≠ lottery units ≠ rental units ≠ construction buildings — never summed; DERIVED momentum indicators with their formula, period and limitations */
 function dsSupplyHTML(){
