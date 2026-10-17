@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="1cb618747955a326d98580e84e0b27a15fba16093605b5eb347bbc2714a3bc06">
+<meta name="propx-source-sha256" content="b4783b948f67a8ae245c24d14266b309a9a7e5dcaa772c35dbbc4a4bfd1b6587">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -1298,6 +1298,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 #tcBody{padding:0 15px 14px}
 .tc-counts{font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:4px 0 10px}
 .ho-chip.bad{color:var(--down);border-color:var(--down)}
+.tc-det,.tc-n .sub{overflow-wrap:anywhere;min-width:0} .tc-det .num{white-space:normal}
 .tc-alerts{margin:0 0 10px;padding:8px 11px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper)}
 .tc-al-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px} .tc-al{font-size:12px;line-height:1.5;overflow-wrap:anywhere;padding-inline-start:10px;border-inline-start:3px solid var(--hairline)}
 .tc-al.bad{border-color:var(--down)} .tc-al.warn{border-color:var(--conf-med)} .tc-al.ok{border-color:var(--up)}
@@ -1428,6 +1429,20 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .ds-ch{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .ds-ch li{padding:4px 0;border-bottom:1px solid var(--hairline)} .ds-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
 .ds-miss{font-size:11.5px;color:var(--ink-2);line-height:1.5;padding-inline-start:16px}
 .ds-ind li{font-size:12px} .num.up{color:var(--up)} .num.down{color:var(--down)}
+/* ---- explainability: ⓘ marks and the one popover ---- */
+.xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0}
+.xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
+.xp.xp-why{width:auto;height:18px;border-radius:99px;padding:0 8px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.xp-pop{position:fixed;z-index:1200;background:var(--paper);border:1px solid var(--hairline);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:12px 14px;font-size:12px;line-height:1.5;max-height:min(70vh,560px);overflow:auto}
+.xp-pop[hidden]{display:none}
+.xp-h{display:flex;align-items:center;gap:6px;margin-bottom:4px} .xp-h b{font-size:13px;flex:1;min-width:0;overflow-wrap:anywhere} .xp-h .ho-x{margin-inline-start:auto}
+.xp-s{margin:0 0 6px;overflow-wrap:anywhere}
+.xp-why-l{list-style:none;margin:0 0 6px;padding:0} .xp-why-l li{padding:3px 0;border-bottom:1px solid var(--hairline);overflow-wrap:anywhere}
+.xp-more{font-size:11.5px;font-weight:700}
+.xp-l2 dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 10px;margin:8px 0 0}
+.xp-l2 dt{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase;padding-top:2px} .xp-l2 dd{margin:0;overflow-wrap:anywhere}
+.xp-l2 dt.xp-not,.xp-l2 dd.xp-not{color:var(--down)} .xp-l2 ul{margin:0;padding-inline-start:16px}
+@media(max-width:560px){.xp-pop{left:8px!important;right:8px;top:auto!important;bottom:8px}.xp-l2 dl{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.pu-ev{grid-template-columns:minmax(0,1fr) auto}.pu-l{flex-direction:row;gap:8px;grid-column:1/-1;align-items:center}.pu-rd-grid,.ds-two,.ax-rd-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* offline build: no server session — hide logout controls, and the ALTARIS
@@ -2205,6 +2220,601 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
   return { TYPES, isMissing, toNumber, toDateKey, textKey, toBool, keyOf, primaryDir, reverse, compareValues, sortRows, nextSort,
     parseFilter, formatFilter, matchFilter, filtersFromParams, filtersToParams, applyFilters, query, collator };
 }));
+</script>
+<script>
+/* PROPX · Explainability & Context — the one registry of terms, methodologies, signal rules and missing-data reasons.
+ *
+ * Pure bilingual data (he + en) with stable ids. It documents what PROPX shows — it never computes. The page (window.PropxExplain,
+ * loaded from /lib/explain/registry.js and inlined in the offline build), ALTARIS and the API modules read the same registry, so
+ * every ⓘ mark, every "why am I seeing this?" and every "—" explanation comes from one place.
+ *
+ *   LEVEL 1  short         one sentence a professional reads in two seconds
+ *   LEVEL 2  definition · why it matters · unit · geography · period · source · data class · methodology · formula · inputs ·
+ *            interpretation · do-not-interpret-as · limitations · evidence (where the figure's evidence lives) · freshness (the three
+ *            dates: observation ≠ publication ≠ PROPX check)
+ *
+ * Data classes are the vocabulary PROPX uses everywhere: OFFICIAL · OBSERVED · DERIVED · MODEL · USER ASSUMPTION · USER OVERRIDE ·
+ * MISSING. A term's `source.ids` name sources that exist in the Trust Center (or a PROPX module); test/explain.test.js refuses an
+ * invented source, an invented period, a missing language, a term without a do-not-interpret-as, and a signal id used by the
+ * product that has no rule here. Nothing in this file is a recommendation, a probability or a score.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.PropxExplain = api;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  const bi = (he, en) => ({ he, en });
+  const VERSION = Object.freeze({ id: 'propx-explain-v1', n: 1, effective: '2026-10-17', label: bi('שכבת ההסבר וההקשר של PROPX · גרסה 1', 'PROPX Explainability & Context v1') });
+
+  /* ---- the data classes (one vocabulary) ---- */
+  const CLASSES = Object.freeze({
+    OFFICIAL: { code: 'OFFICIAL', label: bi('רשמי', 'OFFICIAL'), d: bi('פורסם על ידי גוף ממשלתי; המקור, התקופה ומועד הבדיקה של PROPX נשמרו.', 'Published by a government body; the source, the period and PROPX\'s check date are kept.') },
+    OBSERVED: { code: 'OBSERVED', label: bi('נצפה', 'OBSERVED'), d: bi('מה ש-PROPX ראתה במקורותיה — פעילות שנצפתה, לא מצבת מלאה ולא נתח שוק.', 'What PROPX saw in its sources — observed activity, never a complete census or a market share.') },
+    DERIVED: { code: 'DERIVED', label: bi('נגזר', 'DERIVED'), d: bi('חושב מנתונים רשמיים או שנצפו בנוסחה מוצהרת; הנוסחה והקלט מוצגים.', 'Computed from official or observed figures by a stated formula; the formula and inputs are shown.') },
+    MODEL: { code: 'MODEL', label: bi('מודל', 'MODEL'), d: bi('תוצאת מנוע חישוב על קלטים והנחות — משתנה כשההנחות משתנות; אינו תצפית.', 'The output of a calculation engine over inputs and assumptions — changes when the assumptions change; not an observation.') },
+    USER_ASSUMPTION: { code: 'USER_ASSUMPTION', label: bi('הנחת משתמש', 'USER ASSUMPTION'), d: bi('ערך שהמשתמש הזין — הנחה, לא נתון.', 'A value the user entered — an assumption, not a datum.') },
+    USER_OVERRIDE: { code: 'USER_OVERRIDE', label: bi('עקיפת משתמש', 'USER OVERRIDE'), d: bi('ערך שהמשתמש קבע במקום ערך נגזר; קופא ואינו מתעדכן; מחייב נימוק.', 'A value the user set in place of a derived one; frozen, never refreshed; requires a reason.') },
+    MISSING: { code: 'MISSING', label: bi('חסר', 'MISSING'), d: bi('אין נתון שתומך בערך — מוצג "—", לעולם לא 0.', 'No datum supports a value — shown as "—", never 0.') },
+  });
+
+  /* ---- sources the registry may cite: the Trust Center ids plus the runtime aliases the read models print ---- */
+  const SOURCES = Object.freeze({
+    'cbs:new-home-sales': { aliases: ['cbs:timeseries:44,10'], label: bi('הלמ״ס — דירות חדשות שנמכרו (סדרה 44,10)', 'CBS — new dwellings sold (series 44,10)') },
+    'cbs:newHomesIndex': { aliases: ['cbs:price-index'], label: bi('הלמ״ס — מדד מחירי דירות חדשות', 'CBS — new-homes price index') },
+    'cbs:dwellingsIndex': { aliases: [], label: bi('הלמ״ס — מדד מחירי דירות (כל הדירות)', 'CBS — dwelling-price index (all dwellings)') },
+    'cbs:dwellingsByDistrict': { aliases: [], label: bi('הלמ״ס — מדד מחירי דירות לפי מחוז', 'CBS — dwelling-price index by district') },
+    'cbs:constructionInputsIndex': { aliases: [], label: bi('הלמ״ס — מדד תשומות הבנייה למגורים', 'CBS — residential construction-inputs index') },
+    'cbs:cpi': { aliases: [], label: bi('הלמ״ס — מדד המחירים לצרכן', 'CBS — consumer price index') },
+    'cbs:rentIndex': { aliases: [], label: bi('הלמ״ס — רכיב שכר הדירה במדד המחירים לצרכן', 'CBS — the rent component of the CPI') },
+    'cbs:new-home-sales-by-city-pdf': { aliases: [], label: bi('הלמ״ס — טבלת היישובים בהודעה לתקשורת (PDF)', 'CBS — the localities table of the media release (PDF)') },
+    'cbs:average-rent': { aliases: [], label: bi('הלמ״ס — שכר דירה ממוצע (לא קריא למכונה)', 'CBS — average rent (not machine-readable)') },
+    'boi:policy-rate': { aliases: ['boi:interest'], label: bi('בנק ישראל — ריבית', 'Bank of Israel — policy rate') },
+    'rmi:michrazim': { aliases: [], label: bi('רשות מקרקעי ישראל — אתר המכרזים', 'Israel Land Authority — tender site') },
+    'iplan:xplan': { aliases: ['iplan:xplan:renewal', 'xplan'], label: bi('מינהל התכנון — שכבת התוכניות המקוונות (XPlan)', 'Planning Administration — online plans layer (XPlan)') },
+    'datagov:rmi:planning-inventory': { aliases: [], label: bi('רמ״י — מלאי תכנוני (2022, קרקע מדינה)', 'ILA — planning inventory (2022, state land)') },
+    'datagov:moch:construction-progress': { aliases: [], label: bi('משרד הבינוי והשיכון — דיווחי התקדמות בנייה (2024)', 'MoCH — construction progress reports (2024)') },
+    'datagov:moch:development-costs': { aliases: [], label: bi('משרד הבינוי והשיכון — עלויות פיתוח', 'MoCH — development costs') },
+    'datagov:moch:dira-behanacha-lotteries': { aliases: ['datagov:moch'], label: bi('משרד הבינוי והשיכון — הגרלות דירה בהנחה / מחיר מטרה', 'MoCH — Dira Behanacha / Mechir Matara lotteries') },
+    'datagov:moch:urban-renewal-complexes': { aliases: ['datagov:moch:urban-renewal'], label: bi('משרד הבינוי והשיכון — מתחמי התחדשות עירונית', 'MoCH — urban-renewal complexes') },
+    'dira-lehaskir:tenders': { aliases: ['dira-lehaskir:wp'], label: bi('דירה להשכיר — הודעות מכרזי יזמים', 'Dira Lehaskir — developer-tender notices') },
+    'dira-lehaskir:planning': { aliases: [], label: bi('דירה להשכיר — אתרים בקידום תכנון', 'Dira Lehaskir — sites in planning promotion') },
+    'dira-lehaskir:projects': { aliases: [], label: bi('דירה להשכיר — דפי פרויקטים', 'Dira Lehaskir — project pages') },
+    'govmap:tax-authority-deals': { aliases: [], label: bi('רשות המסים באמצעות GovMap', 'Tax Authority via GovMap') },
+    'over:deals-republication': { aliases: ['over.org.il'], label: bi('גרסאות לעם — פרסום מחדש של מאגר רשות המסים (לא ערוץ ממשלתי)', 'over.org.il — republication of the Tax Authority register (not a government channel)') },
+    'datagov:geo-registry': { aliases: [], label: bi('data.gov.il — יישובים ורחובות', 'data.gov.il — localities and streets') },
+    'propx:entities': { aliases: ['lib/entities'], label: bi('PROPX — רישום היזמים והפרויקטים (נגזר)', 'PROPX — the developer & project registry (derived)') },
+    'propx:dossier': { aliases: ['lib/dossier'], label: bi('PROPX — תיק השוק (קריאה של המודלים הקיימים)', 'PROPX — the Market Dossier (a read of the existing models)') },
+    'propx:radar': { aliases: ['lib/radar', 'lib/radar/scan'], label: bi('PROPX — רדאר השוק / רדאר ההזדמנויות והסיכונים', 'PROPX — the Market Radar / Opportunity-Risk radar') },
+    'propx:supply': { aliases: ['lib/supply'], label: bi('PROPX — צנרת ההיצע (יקומים מקבילים)', 'PROPX — the supply pipeline (parallel universes)') },
+    'propx:trust': { aliases: ['lib/trust', 'lib/trust/catalog'], label: bi('PROPX — מרכז הנתונים והאמון (יומני הריצה)', 'PROPX — the Data & Trust Center (run logs)') },
+    'altaris:engine': { aliases: ['altaris/engine'], label: bi('ALTARIS — מנוע החיתום (תזרים חודשי מתוארך)', 'ALTARIS — the underwriting engine (dated monthly cash flows)') },
+    'altaris:decision': { aliases: ['altaris/decision'], label: bi('ALTARIS — שכבת ההחלטה (מדיניות דטרמיניסטית)', 'ALTARIS — the decision layer (deterministic policy)') },
+  });
+  const SOURCE_INDEX = (() => { const m = new Map(); for (const [id, s] of Object.entries(SOURCES)) { m.set(id, id); for (const a of s.aliases) m.set(a, id); } return m; })();
+  const canonicalSource = (id) => SOURCE_INDEX.get(String(id || '').trim()) || null;
+
+  /* ---- the three dates every figure carries ---- */
+  const FRESHNESS = Object.freeze({
+    observation: bi('תצפית — התקופה או התאריך שהנתון מתאר (למשל חודש המכירות, תאריך ההחלטה במכרז)', 'observation — the period or date the figure describes (the sales month, the tender decision date)'),
+    publication: bi('פרסום — מתי המקור פרסם או עדכן את הערך (תאריך העדכון של סדרת הלמ״ס, "עודכן" במאגר)', 'publication — when the source published or updated the value (the CBS series update date, "modified" in the dataset)'),
+    check: bi('בדיקה — מתי PROPX קראה את המקור לאחרונה; בדיקה היום אינה הופכת תצפית ישנה ל"עדכנית"', 'check — when PROPX last read the source; a check today never makes an old observation "current"'),
+  });
+
+  /* ---- groups ---- */
+  const GROUPS = Object.freeze([
+    { id: 'sales', label: bi('מכירות ומלאי רשמיים', 'Official sales & inventory') },
+    { id: 'transactions', label: bi('עסקאות', 'Transactions') },
+    { id: 'land', label: bi('קרקע ומכרזים', 'Land & tenders') },
+    { id: 'planning', label: bi('תכנון והתחדשות', 'Planning & renewal') },
+    { id: 'rental', label: bi('דיור להשכרה', 'Long-term rental') },
+    { id: 'housing', label: bi('דיור מסובסד', 'Subsidized housing') },
+    { id: 'developers', label: bi('יזמים', 'Developers') },
+    { id: 'supply', label: bi('צנרת היצע', 'Supply pipeline') },
+    { id: 'market', label: bi('מאקרו', 'Macro context') },
+    { id: 'quality', label: bi('איכות, עדכניות ותיקונים', 'Quality, freshness & revisions') },
+    { id: 'radar', label: bi('אותות ורדאר', 'Signals & radar') },
+    { id: 'altaris', label: bi('ALTARIS — חיתום והחלטה', 'ALTARIS — underwriting & decision') },
+  ]);
+
+  /* ---- shared limitation sentences ---- */
+  const LIM = {
+    noLocalitySeries: bi('הלמ״ס מפרסמת ארצי ו-7 מחוזות בלבד בממשק קריא למכונה; נתוני יישוב קיימים רק ב-PDF של ההודעה לתקשורת (חלונות של 3 חודשים, מעל 150 מכירות, שמות ולא קודים).', 'CBS publishes national and 7 districts only in a machine-readable interface; city figures exist only in the media-release PDF (3-month windows, > 150 sales, names not codes).'),
+    revised: bi('חודשים אחרונים מתוקנים בפרסומים מאוחרים; PROPX שומרת כל גרסה (יומן תיקונים).', 'Recent months are revised in later releases; PROPX keeps every version (the revision ledger).'),
+    stateLand: bi('קרקע מדינה בלבד — קרקע פרטית אינה נצפית בערוץ זה.', 'State land only — private land is not observed through this channel.'),
+    tenderUnits: bi('יח״ד של מכרז = YechidotDiur כפי שרשות מקרקעי ישראל פרסמה — קיבולת, לא דירות שנבנו.', 'Tender units = YechidotDiur as the Authority published them — capacity, not homes built.'),
+    detailBudget: bi('פרטי מכרז נקראים בתקציב יומי; מכרז "נדון" בלי פרטים — תוצאה לא ידועה.', 'Tender details are read on a daily budget; a "decided" tender without details has an unknown outcome.'),
+    noMerge: bi('שמות כפי שפורסמו; וריאציות טיפוגרפיות בלבד מאוחדות; דמיון לעולם אינו ממזג ("ייתכן שזהה" מסומן, לא ממוזג).', 'Names as published; only typographic variants are unified; similarity never merges ("possibly the same" is flagged, never merged).'),
+    publicChannels: bi('PROPX צופה בערוצים ציבוריים בלבד (מכרזי רמ״י, הגרלות משב״ש) — פעילות על קרקע פרטית אינה נצפית.', 'PROPX observes public channels only (ILA tenders, MoCH lotteries) — private-land activity is not observed.'),
+    xplanScope: bi('רק תוכניות המנוהלות במערכת התכנון המקוונת; תוכניות ישנות שלא הועברו אינן בשכבה.', 'Only plans managed in the online planning system; older plans never moved online are not in the layer.'),
+    notRecommendation: bi('לא המלצת השקעה ולא תחזית.', 'Not an investment recommendation and not a forecast.'),
+    smallSample: bi('מדגם קטן (פחות מהסף שנקבע) — ללא מגמה, ללא אחוז.', 'A small sample (below the stated threshold) — no trend, no percentage.'),
+  };
+  const dash = bi('—', '—');
+  const computed = bi('מחושב בכל קריאה', 'computed on every read');
+  const dailySync = bi('הסנכרון היומי', 'the daily sync');
+
+  /* ---- the terms ---- */
+  const T = (o) => Object.freeze(Object.assign({ formula: null, inputs: [], limitations: [] }, o));
+  const TERMS = [
+    /* ---------------- sales & inventory ---------------- */
+    T({ id: 'official_new_home_sales', group: 'sales', title: bi('מכירות דירות חדשות (רשמי)', 'Official new-home sales'),
+      short: bi('מספר הדירות החדשות שנמכרו בחודש, כפי שהלמ״ס מפרסמת — ארצי ולפי מחוז.', 'The number of new dwellings sold in a month, as CBS publishes it — national and by district.'),
+      why: bi('הנתון הרשמי היחיד על קצב המכירות של דירות חדשות; בסיס למומנטום, לחודשי ההיצע וללחץ ההיצע.', 'The only official figure for the pace of new-home sales; the basis of momentum, months of supply and supply pressure.'),
+      unit: bi('דירות לחודש', 'dwellings per month'), geography: bi('ארצי + 7 מחוזות הלמ״ס (קוד 5069–5076) — אין סדרת יישוב', 'National + the 7 CBS districts (codes 5069–5076) — no locality series'), period: bi('חודשי, 2016 → החודש האחרון שפורסם (פיגור של כ-6 שבועות)', 'Monthly, 2016 → the latest published month (about six weeks of lag)'),
+      source: { ids: ['cbs:new-home-sales'] }, cls: 'OFFICIAL',
+      methodology: bi('הסדרה 44,10,2,1 (דירות חדשות שנמכרו, מקור: רשות המסים) נקראת כל יום עבודה; כל ערך נשמר עם מספר גרסה; הלוח מציג את הגרסה האחרונה.', 'Series 44,10,2,1 (new dwellings sold; source: the Tax Authority) is read every working day; every value is kept with its revision number; the board shows the latest revision.'),
+      interpretation: bi('מכירה ראשונה של דירה חדשה, כולל מכירות בסבסוד ממשלתי. השוו תקופות שוות (12 חודשים, מתחילת השנה) ולא חודש בודד.', 'A first sale of a new dwelling, including government-subsidized sales. Compare equal periods (12 months, year-to-date), not a single month.'),
+      notAs: bi('לא מחירון יזמים, לא יד שנייה, לא נתון יישוב (יישוב מציג את סדרת המחוז עם תווית), לא תחזית.', 'Not developer price lists, not second-hand sales, not a locality figure (a locality shows its district series, labelled), not a forecast.'),
+      limitations: [LIM.noLocalitySeries, LIM.revised, bi('הסך הארצי כולל מחוז לא ידוע: ארצי − Σ מחוזות = השארית, לא שגיאה.', 'The national total includes an unknown district: national − Σ districts is that residual, not an error.')],
+      evidence: bi('data/cbs-sales/observations.jsonl (יומן הוסף-בלבד) · GET /api/intel?view=dossier · הלוח: "מקור הנתון"', 'data/cbs-sales/observations.jsonl (append-only ledger) · GET /api/intel?view=dossier · the board\'s "data source"'),
+      freshness: { observation: bi('חודש המכירות', 'the sales month'), publication: bi('תאריך העדכון של הסדרה בלמ״ס', 'the CBS series update date'), check: bi('הקריאה האחרונה של PROPX (כל יום עבודה)', 'PROPX\'s latest read (every working day)') } }),
+    T({ id: 'unsold_inventory', group: 'sales', title: bi('מלאי דירות חדשות שטרם נמכרו', 'Unsold new-dwelling inventory'),
+      short: bi('כמה דירות חדשות עמדו למכירה בסוף החודש ולא נמכרו — ארצי בלבד.', 'How many new dwellings were for sale at month-end and unsold — national only.'),
+      why: bi('המונה של חודשי ההיצע; עליית מלאי לצד ירידת מכירות היא אות סיכון ארצי.', 'The numerator of months of supply; rising inventory beside falling sales is a national risk signal.'),
+      unit: bi('דירות', 'dwellings'), geography: bi('ארצי בלבד בסדרה הרשמית', 'National only in the official series'), period: bi('חודשי, סוף חודש', 'Monthly, month-end'),
+      source: { ids: ['cbs:new-home-sales'] }, cls: 'OFFICIAL',
+      methodology: bi('סדרת המלאי של הלמ״ס (דירות חדשות למכירה) באותו ממשק; לא מפוצלת לפי מחוז או יישוב ולא מוקצית.', 'The CBS inventory series (new dwellings for sale) in the same interface; never split by district or locality, never allocated.'),
+      interpretation: bi('יחד עם קצב המכירות (12 חודשים) — כמה חודשים ייקח למכור את המלאי בקצב הנוכחי.', 'With the sales pace (12 months) — how many months the stock would take to sell at the current pace.'),
+      notAs: bi('לא מלאי של מחוז או יישוב (אין נתון רשמי), לא "היצע עתידי" (זה בצנרת ההיצע), לא מלאי יזם.', 'Not a district or locality stock (no official figure), not "future supply" (that is the supply pipeline), not a developer\'s stock.'),
+      limitations: [bi('ארצי בלבד; מחוז ויישוב מציגים "—".', 'National only; a district or locality shows "—".'), LIM.revised],
+      evidence: bi('data/cbs-sales/latest.json → inventory · הלוח: כרטיס המלאי', 'data/cbs-sales/latest.json → inventory · the board\'s inventory card'),
+      freshness: { observation: bi('סוף החודש', 'the month-end'), publication: bi('תאריך העדכון של הסדרה', 'the series update date'), check: bi('הקריאה האחרונה של PROPX', 'PROPX\'s latest read') } }),
+    T({ id: 'months_of_supply', group: 'sales', title: bi('חודשי היצע', 'Months of supply'),
+      short: bi('המלאי שטרם נמכר חלקי קצב המכירות החודשי הממוצע ב-12 החודשים שעד התצפית האחרונה — ארצי.', 'Unsold inventory divided by the average monthly sales of the last 12 months — national.'),
+      why: bi('מודד כמה זמן ייקח לספוג את המלאי הקיים; מעל 18 חודשים הוא סף אות סיכון ב-PROPX.', 'Measures how long the existing stock would take to absorb; above 18 months is a PROPX risk-signal threshold.'),
+      unit: bi('חודשים', 'months'), geography: bi('ארצי בלבד', 'National only'), period: bi('המלאי של החודש האחרון ÷ (Σ מכירות 12 חודשים ÷ 12)', 'The latest month\'s inventory ÷ (Σ sales of 12 months ÷ 12)'),
+      source: { ids: ['cbs:new-home-sales'] }, cls: 'DERIVED',
+      methodology: bi('PROPX מחשבת מהסדרות הרשמיות; הלמ״ס מפרסמת גם סדרת "חודשי היצע" משלה — שתיהן מוצגות עם התקופה.', 'Computed by PROPX from the official series; CBS also publishes its own "months of supply" series — both are shown with their period.'),
+      formula: bi('מלאי(חודש אחרון) ÷ (Σ מכירות ב-12 החודשים שעד התצפית האחרונה ÷ 12)', 'inventory(latest month) ÷ (Σ sales of the last 12 months ÷ 12)'), inputs: [bi('מלאי שטרם נמכר (רשמי)', 'unsold inventory (OFFICIAL)'), bi('מכירות דירות חדשות 12 חודשים (רשמי)', 'new-home sales, 12 months (OFFICIAL)')],
+      interpretation: bi('יחס ארצי; תנועה של כמה חודשים בין שני פרסומים היא בדרך כלל תוצאה של תיקון מכירות, לא של שינוי מלאי.', 'A national ratio; a move of several months between two releases is usually a sales revision, not an inventory change.'),
+      notAs: bi('לא זמן המכירה של פרויקט, לא נתון מחוז/יישוב, לא תחזית מחירים.', 'Not a project\'s sell-out time, not a district / locality figure, not a price forecast.'),
+      limitations: [bi('ארצי בלבד; קצב של 12 חודשים מחליק עונתיות אך מפגר אחרי מפנה.', 'National only; a 12-month pace smooths seasonality but lags a turning point.'), LIM.revised],
+      evidence: bi('data/cbs-sales/latest.json → monthsSupply · תיק השוק הארצי', 'data/cbs-sales/latest.json → monthsSupply · the national dossier'),
+      freshness: { observation: bi('חודש המלאי וחלון המכירות', 'the inventory month and the sales window'), publication: bi('תאריך העדכון של הסדרה', 'the series update date'), check: bi('הקריאה האחרונה של PROPX', 'PROPX\'s latest read') } }),
+    T({ id: 'sales_momentum_3m', group: 'sales', title: bi('מומנטום מכירות (3 חודשים)', 'Sales momentum (3 months)'),
+      short: bi('שינוי באחוזים של 3 החודשים האחרונים מול 3 החודשים שלפניהם, בסדרה הרשמית.', 'The percentage change of the last 3 months against the 3 before them, in the official series.'),
+      why: bi('האות הרשמי המהיר ביותר לכיוון הביקוש; ±10% הם ספי האותות של PROPX.', 'The fastest official signal of demand direction; ±10 % are PROPX\'s signal thresholds.'),
+      unit: bi('%', '%'), geography: bi('ארצי ומחוז — לא יישוב', 'National and district — not locality'), period: bi('3 חודשים אחרונים מול 3 הקודמים', 'Last 3 months vs the prior 3'),
+      source: { ids: ['cbs:new-home-sales'] }, cls: 'DERIVED',
+      formula: bi('(Σ 3 אחרונים − Σ 3 קודמים) ÷ Σ 3 קודמים × 100', '(Σ last 3 − Σ prior 3) ÷ Σ prior 3 × 100'), inputs: [bi('מכירות חודשיות רשמיות', 'official monthly sales')],
+      methodology: bi('מחושב מהגרסה האחרונה של כל חודש; מדגם קטן (מחוז עם מעט מכירות) → ללא מומנטום.', 'Computed from the latest revision of every month; a small sample (a district with few sales) → no momentum.'),
+      interpretation: bi('תנודתי מטבעו; קראו יחד עם 12 חודשים ומתחילת השנה.', 'Volatile by nature; read it with the 12-month and year-to-date figures.'),
+      notAs: bi('לא מומנטום של יישוב (יישוב מציג את מחוזו עם תווית), לא תחזית, לא המלצה.', 'Not a locality\'s momentum (a locality shows its district, labelled), not a forecast, not a recommendation.'),
+      limitations: [LIM.revised, LIM.smallSample], evidence: bi('data/cbs-sales/latest.json → geos[*].metrics.momentum.m3', 'data/cbs-sales/latest.json → geos[*].metrics.momentum.m3'),
+      freshness: { observation: bi('שני חלונות של 3 חודשים', 'two 3-month windows'), publication: bi('תאריך העדכון של הסדרה', 'the series update date'), check: bi('הקריאה האחרונה של PROPX', 'PROPX\'s latest read') } }),
+    T({ id: 'district_series_for_locality', group: 'sales', title: bi('סדרת המחוז עבור יישוב', 'The district series shown for a locality'),
+      short: bi('ליישוב אין סדרת מכירות רשמית; PROPX מציגה את סדרת המחוז שלו ומסמנת "רמת מחוז, לא נתון היישוב".', 'A locality has no official sales series; PROPX shows its district\'s series and labels it "district level, not the locality\'s figure".'),
+      why: bi('כדי שלא תיקראו נתון מחוזי כנתון עירוני — הטעות הנפוצה ביותר בניתוחי שוק.', 'So a district figure is never read as a city figure — the most common error in market analysis.'),
+      unit: bi('דירות לחודש', 'dwellings per month'), geography: bi('המחוז של היישוב (מרשם היישובים)', 'The locality\'s district (from the locality registry)'), period: bi('כסדרת המחוז', 'As the district series'),
+      source: { ids: ['cbs:new-home-sales', 'datagov:geo-registry'] }, cls: 'OFFICIAL',
+      methodology: bi('קוד היישוב → מחוז לפי מרשם היישובים הרשמי; לא הקצאה, לא אומדן.', 'Locality code → district by the official locality registry; no allocation, no estimate.'),
+      interpretation: bi('הקשר אזורי בלבד. נתון עירוני אחד קיים כתמלול מתויג (תל אביב-יפו, מחצית 2026, הודעה 252/2026).', 'Regional context only. One city figure exists as a labelled transcription (Tel Aviv-Yafo, H1 2026, release 252/2026).'),
+      notAs: bi('לא מכירות העיר, לא נתח העיר במחוז.', 'Not the city\'s sales, not the city\'s share of the district.'),
+      limitations: [LIM.noLocalitySeries], evidence: bi('תיק השוק → "מכירות דירות חדשות" עם התווית', 'the dossier → "new-home sales" with its label'),
+      freshness: { observation: bi('חודש המכירות של המחוז', 'the district\'s sales month'), publication: bi('תאריך העדכון של הסדרה', 'the series update date'), check: bi('הקריאה האחרונה של PROPX', 'PROPX\'s latest read') } }),
+    /* ---------------- transactions ---------------- */
+    T({ id: 'probable_new_transaction', group: 'transactions', title: bi('עסקה "כנראה חדשה"', '"Probably new" transaction'),
+      short: bi('עסקה במרשם ששנת הבנייה שלה קרובה לשנת העסקה — סימן לדירה חדשה, לא אישור של מכירת יזם.', 'A register transaction whose build year is close to its transaction year — a sign of a new dwelling, not a confirmed developer sale.'),
+      why: bi('מאפשר חציון ₪/מ״ר של דירות חדשות מתוך עסקאות — בסיס השווי ב-ALTARIS, עם התווית.', 'Enables a new-dwelling ₪/m² median from transactions — ALTARIS\'s value basis, labelled.'),
+      unit: bi('סיווג (כן/לא)', 'a classification (yes / no)'), geography: bi('יישוב / רחוב / בית (כתובת דרך הצלבת חלקות)', 'Locality / street / house (address via the parcel crosswalk)'), period: bi('כחלון העסקאות שנבחר', 'As the chosen transaction window'),
+      source: { ids: ['over:deals-republication'] }, cls: 'DERIVED',
+      formula: bi('שנת בנייה ≥ שנת העסקה − 1 → "כנראה חדשה"', 'build year ≥ transaction year − 1 → "probably new"'), inputs: [bi('שנת הבנייה ושנת העסקה כפי שהמרשם מציין', 'the build year and transaction year as the register states')],
+      methodology: bi('המרשם אינו מסמן "מכירת יזם"; הסיווג הוא כלל מוצהר על שנת הבנייה; מכירה חלקית לעולם אינה מתומחרת למ״ר.', 'The register does not flag "developer sale"; the class is a stated rule on the build year; a partial sale is never priced per m².'),
+      interpretation: bi('מדגם של פחות מ-10 עסקאות הוא קטן; השוו תקופה ומיקום זהים.', 'Fewer than 10 transactions is a small sample; compare the same period and place.'),
+      notAs: bi('לא "מכירת יזם מאושרת", לא מחיר יזם, לא כל העסקאות (העותק מתוארך).', 'Not a "confirmed developer sale", not a developer price, not all transactions (the copy is dated).'),
+      limitations: [bi('פרסום מחדש עצמאי של מאגר רשות המסים (over.org.il) — לא ערוץ ממשלתי; עותק מתוארך לפי scraped_at.', 'An independent republication of the Tax Authority register (over.org.il) — not a government channel; a copy dated by scraped_at.')],
+      evidence: bi('סעיף העסקאות: RAW · DERIVED · DISPLAY · ALTARIS: בסיס השווי', 'the Transactions section: RAW · DERIVED · DISPLAY · ALTARIS: the value basis'),
+      freshness: { observation: bi('תאריך העסקה', 'the transaction date'), publication: bi('scraped_at של העותק', 'the copy\'s scraped_at'), check: bi('הקריאה בכל טעינת עמוד', 'the read on each page load') } }),
+    /* ---------------- land ---------------- */
+    T({ id: 'tender_units_open', group: 'land', title: bi('יח״ד במכרזים פתוחים', 'Units in open tenders'),
+      short: bi('סך יחידות הדיור שרשות מקרקעי ישראל פרסמה במכרזים שפורסמו או פתוחים להצעות כעת (מסלולי מגורים).', 'The housing units the Israel Land Authority published in tenders now published or open for bids (residential tracks).'),
+      why: bi('קרקע מדינה שעומדת להימכר ליזמים — ההיצע העתידי המוקדם ביותר שניתן לצפות בו רשמית.', 'State land about to be sold to developers — the earliest officially observable future supply.'),
+      unit: bi('יח״ד', 'housing units'), geography: bi('ארצי · מחוז (סכום על יישוביו) · יישוב', 'National · district (summed over its localities) · locality'), period: bi('ההיקף הנוכחי של רשימת המכרזים (24 חודשים)', 'The current scope of the tender list (24 months)'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'OFFICIAL',
+      methodology: bi('סטטוס הרשות (פורסם / פתוח) × YechidotDiur; "נסגר" ו"נזכה" נספרים בנפרד — ארבעה מובנים של יח״ד שאינם מסוכמים.', 'The Authority\'s status (published / open) × YechidotDiur; "closed" and "awarded" are counted apart — four meanings of units that are never summed.'),
+      interpretation: bi('קיבולת מתוכננת של מגרשים; בין פרסום לדירה מאוכלסת עוברות שנים.', 'Planned capacity of lots; years pass between publication and an occupied home.'),
+      notAs: bi('לא דירות בבנייה, לא היתרים, לא "יח״ד להשכרה" (מכרז השכרה נספר בסך המכרז).', 'Not homes under construction, not permits, not "rental units" (a rental tender counts as its total).'),
+      limitations: [LIM.stateLand, LIM.tenderUnits], evidence: bi('GET /api/land?view=summary → kpis.unitsOpen · קרקעות ומכרזים', 'GET /api/land?view=summary → kpis.unitsOpen · the Land section'),
+      freshness: { observation: bi('תאריך הפרסום / הפתיחה', 'the publication / opening date'), publication: bi('תוכן הרשימה השתנה (PROPX צפתה)', 'the list content changed (PROPX observed)'), check: dailySync } }),
+    T({ id: 'tender_units_awarded', group: 'land', title: bi('יח״ד במגרשים שנזכו', 'Units in awarded lots'),
+      short: bi('יחידות של מגרשים שיש להם זוכה רשום וסכום זכייה — קרקע שעברה לידי יזם.', 'Units of lots with a recorded winner and an award sum — land that passed to a developer.'),
+      why: bi('ההיצע העתידי הקרוב ביותר על קרקע מדינה; מונה "לחץ ההיצע" ו"צנרת הזכיות".', 'The nearest future supply on state land; the numerator of "supply pressure" and the "awarded pipeline".'),
+      unit: bi('יח״ד', 'housing units'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('ההיקף הנוכחי (24 חודשים)', 'The current scope (24 months)'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'OFFICIAL',
+      methodology: bi('"נזכה" רק עם שם זוכה וסכום או הצעה זוכה; "נדון" בלי פרטים אינו נזכה; יחידות ברמת המגרש מפרטי המכרז.', '"Awarded" only with a winner name and a sum or winning bid; "decided" without details is not awarded; lot-level units from the tender details.'),
+      interpretation: bi('קרקע שנרכשה — בנייה בפועל תלויה בהיתר ובשוק.', 'Land acquired — actual construction depends on a permit and the market.'),
+      notAs: bi('לא התחלות בנייה, לא דירות שנמכרו, לא סכום עם יח״ד של תוכניות או מתחמים.', 'Not construction starts, not homes sold, never a sum with plan or complex units.'),
+      limitations: [LIM.detailBudget, LIM.stateLand], evidence: bi('GET /api/land?view=summary → kpis.unitsAwarded · מגירת המכרז: זוכים', 'GET /api/land?view=summary → kpis.unitsAwarded · the tender drawer: winners'),
+      freshness: { observation: bi('תאריך ההחלטה', 'the decision date'), publication: bi('עדכון המכרז באתר הרשות', 'the tender update on the Authority site'), check: bi('הסנכרון היומי (פרטים בתקציב)', 'the daily sync (details on a budget)') } }),
+    T({ id: 'failed_tender_ratio', group: 'land', title: bi('שיעור מכרזים שנכשלו', 'Failed-tender ratio'),
+      short: bi('כמה מהמכרזים הנוכחיים נדונו ללא זוכה או בוטלו, מתוך כלל המכרזים הנוכחיים.', 'How many of the current tenders were decided without a winner or cancelled, out of all current tenders.'),
+      why: bi('כישלונות חוזרים מעידים על מחיר מינימום שהשוק לא מקבל — ≥ 30% מתוך ≥ 5 מכרזים הוא סף אות סיכון.', 'Repeated failures point to a minimum price the market rejects — ≥ 30 % of ≥ 5 tenders is a risk-signal threshold.'),
+      unit: bi('%', '%'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('ההיקף הנוכחי', 'The current scope'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      formula: bi('(נדונו − נדונו ללא פרטים + בוטלו) ÷ מכרזים', '(decided − decided without details + cancelled) ÷ tenders'), inputs: [bi('סטטוסי הרשות', 'the Authority\'s status codes')],
+      methodology: bi('"נדון ללא זוכה" הוא קוד סטטוס של הרשות; מכרז קפוא אינו נכשל.', '"Decided without a winner" is an Authority status code; a frozen tender is not a failure.'),
+      interpretation: bi('קראו עם מספר המכרזים (מכנה קטן = יחס רועש) ועם היסטוריית מכרזים חוזרים.', 'Read with the tender count (a small denominator = a noisy ratio) and the re-tender history.'),
+      notAs: bi('לא "ביקוש חלש" בהכרח — לעיתים מחיר מינימום או תנאים; לא נתון על קרקע פרטית.', 'Not necessarily "weak demand" — sometimes the minimum price or terms; nothing about private land.'),
+      limitations: [LIM.detailBudget], evidence: bi('תיק השוק → "מה יכול להשתבש" → הסף והערך', 'the dossier → "what could go wrong" → threshold and value'),
+      freshness: { observation: bi('תאריכי ההחלטה', 'the decision dates'), publication: bi('עדכוני הרשות', 'the Authority\'s updates'), check: dailySync } }),
+    T({ id: 'land_per_unit', group: 'land', title: bi('₪ קרקע ליח״ד', 'Land ₪ per unit'),
+      short: bi('Σ סכומי הזכייה ÷ Σ יחידות על אותם מגרשי מגורים במכרז תחרותי שמפרסמים יחידות.', 'Σ winning sums ÷ Σ units over the same residential competitive-bid lots that publish units.'),
+      why: bi('בסיס הקרקע של השוק — ההשוואה הישירה ביותר בין מכרזים ובין יזמים.', 'The market\'s land basis — the most direct comparison between tenders and between developers.'),
+      unit: bi('₪ ליח״ד (מע״מ לא צוין במקור)', '₪ per unit (VAT not stated by the source)'), geography: bi('לפי מכרז · יישוב · יזם', 'Per tender · locality · developer'), period: bi('תאריך ההחלטה', 'The decision date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      formula: bi('Σ סכומי זכייה ÷ Σ יח״ד (אותם מגרשים בשני הצדדים)', 'Σ winning sums ÷ Σ units (the same lots on both sides)'), inputs: [bi('סכום הזכייה למגרש', 'the lot\'s winning sum'), bi('יח״ד למגרש', 'units per lot')],
+      methodology: bi('רק בסיס "הצעה תחרותית"; הצעות ₪/מ״ר והקצאות במחיר קבוע נספרות בנפרד ולעולם אינן מעורבבות.', 'Competitive-bid basis only; ₪/m² bids and fixed-price allocations are counted apart and never mixed.'),
+      interpretation: bi('השוו מסלולים תואמים (שוק חופשי מול שוק חופשי); מסלול מסובסד נושא מחיר קרקע מופחת.', 'Compare compatible tracks (open market with open market); a subsidized track carries a reduced land price.'),
+      notAs: bi('לא עלות הקרקע הכוללת (הוצאות פיתוח בנפרד), לא מחיר דירה, לא שומה.', 'Not the total land cost (development costs are separate), not a home price, not an appraisal.'),
+      limitations: [bi('מע״מ אינו מצוין במקור; מגרש ללא יח״ד שפורסמו אינו נכנס לממוצע.', 'VAT is not stated by the source; a lot without published units is left out of the average.')],
+      evidence: bi('GET /api/land?view=summary → kpis.landBasis · מגירת המכרז', 'GET /api/land?view=summary → kpis.landBasis · the tender drawer'),
+      freshness: { observation: bi('תאריך ההחלטה', 'the decision date'), publication: bi('עדכון המכרז', 'the tender update'), check: dailySync } }),
+    /* ---------------- planning & renewal ---------------- */
+    T({ id: 'units_after_plan', group: 'planning', title: bi('יח״ד אחרי התוכנית (XPlan)', 'Units after the plan (XPlan)'),
+      short: bi('המצב המאושר לפני התוכנית + השינוי שהתוכנית עושה = יח״ד אחרי התוכנית (נגזר); לעולם לא "יח״ד מאושרות".', 'The authorised state before the plan + the plan\'s change = units after the plan (derived); never "approved units".'),
+      why: bi('ההגדרה היחידה של זוג שדות יח״ד ב-XPlan — הטעות הישנה הייתה להציג את המצב הקודם כ"מאושר בתוכנית".', 'The one definition of the XPlan unit pair — the old error was to show the prior state as "approved in the plan".'),
+      unit: bi('יח״ד', 'housing units'), geography: bi('תוכנית (שטחה רחב בדרך כלל ממגרש או ממתחם)', 'A plan (usually wider than one lot or complex)'), period: bi('מצב השכבה בקריאה האחרונה', 'The layer\'s state at the latest read'),
+      source: { ids: ['iplan:xplan'] }, cls: 'DERIVED',
+      formula: bi('pq_authorised_quantity_120 (לפני) + quantity_delta_120 (שינוי) = אחרי', 'pq_authorised_quantity_120 (before) + quantity_delta_120 (change) = after'), inputs: [bi('שני השדות הגולמיים של השכבה', 'the layer\'s two raw fields')],
+      methodology: bi('ביקורת 13.10.2026 על כל תוכניות השכבה: טקסט המטרות ("מ-X ל-Y יח״ד") מסכים ב-265/312 ו-267/312. צירוף לפי מספר תוכנית מדויק או מזהה מבא״ת בלבד.', 'Audit 13.10.2026 over every plan of the layer: the objectives text ("from X to Y units") agrees in 265/312 and 267/312. Joined by exact plan number or Mavat id only.'),
+      interpretation: bi('אישור תוכנית אינו היתר ואינו בנייה; תוספת (delta) היא מה שהתוכנית מוסיפה למצב הקודם.', 'Plan approval is not a permit and not construction; the delta is what the plan adds to the prior state.'),
+      notAs: bi('לא "יח״ד מאושרות לבנייה", לא יח״ד של מכרז או מתחם, לא סכום עם יקומים אחרים.', 'Not "units approved for construction", not tender or complex units, never summed with the other universes.'),
+      limitations: [LIM.xplanScope, bi('מספרי תוכנית ישנים/מקומיים אינם נמצאים בשכבה (825 מתוך 1,270 הפניות של מכרזים).', 'Older / local plan numbers are not in the layer (825 of 1,270 tender references).')],
+      evidence: bi('lib/planning/xplan-units.js · סטטוס תכנוני במגירת המתחם / המכרז', 'lib/planning/xplan-units.js · PLANNING STATUS in the complex / tender drawer'),
+      freshness: { observation: bi('תאריכי התוכנית (הפקדה, אישור, תוקף)', 'the plan\'s dates (deposit, approval, effect)'), publication: bi('מצב השכבה', 'the layer\'s state'), check: bi('הקריאה היומית אחרי המתחמים', 'the daily read after the complexes') } }),
+    T({ id: 'renewal_proposed_units', group: 'planning', title: bi('יח״ד מוצעות במתחמי התחדשות', 'Proposed units in renewal complexes'),
+      short: bi('מספר היחידות המוצעות במתחם כפי שמשרד הבינוי והשיכון פרסם — תוספת ≠ נטו בכל שורה.', 'The units proposed in a complex as the Ministry published — "additional" is not net in every row.'),
+      why: bi('הצנרת הגדולה ביותר במספרים — ולכן הדורשת הכי הרבה זהירות: מתחם מוכרז אינו בנייה.', 'The largest pipeline in numbers — and so the one needing the most care: a declared complex is not construction.'),
+      unit: bi('יח״ד', 'housing units'), geography: bi('מתחם · יישוב · מחוז · ארצי', 'Complex · locality · district · national'), period: bi('כפי שפורסם; תאריך ההכרזה לכל מתחם', 'As published; the declaration date per complex'),
+      source: { ids: ['datagov:moch:urban-renewal-complexes'] }, cls: 'OFFICIAL',
+      methodology: bi('המאגר נקרא בשלמותו מדי יום, מעודכן לפי מספר המתחם, לא נמחק; הסטטוס של המשרד נשמר כלשונו לצד שלב ממופה.', 'The dataset is read whole daily, upserted on the complex number, never deleted; the Ministry\'s status is kept verbatim beside a mapped stage.'),
+      interpretation: bi('קראו עם השלב (תכנון ראשוני / סטטוטורי / מאושר / רישוי) ועם מצב ה-XPlan של התוכנית כשיש צירוף מדויק.', 'Read with the stage (initial / statutory / approved / licensing) and the plan\'s XPlan state where there is an exact join.'),
+      notAs: bi('לא יח״ד נטו, לא היתרים, לא התחלות בנייה, לא סכום עם יח״ד תוכניות או מכרזים (אותן דירות עשויות להופיע בכמה יקומים).', 'Not net units, not permits, not starts, never summed with plan or tender units (the same homes can appear in several universes).'),
+      limitations: [bi('עמודת התוספת אינה נטו בכל שורה (מוצג כפי שפורסם).', 'The additional-units column is not net in every row (shown as published).'), bi('מתחם מוכרז ≠ בנייה; מתחם לעולם אינו מיוחס ליזם.', 'A declared complex ≠ construction; a complex is never attributed to a developer.')],
+      evidence: bi('GET /api/intel?view=renewal · התחדשות עירונית', 'GET /api/intel?view=renewal · the Urban Renewal tab'),
+      freshness: { observation: bi('תאריך ההכרזה', 'the declaration date'), publication: bi('עדכון המשאב ב-data.gov.il', 'the resource\'s last modified on data.gov.il'), check: dailySync } }),
+    /* ---------------- rental ---------------- */
+    T({ id: 'rental_tender_units_vs_stated', group: 'rental', title: bi('יח״ד של מכרז השכרה מול יח״ד להשכרה כפי שנכתב', 'Rental-tender units vs stated rental units'),
+      short: bi('יח״ד של מכרז במסלול ההשכרה = סך המכרז; "יח״ד להשכרה ארוכת טווח" רק כשדירה להשכיר כתבה את המספר.', 'A rental-track tender\'s units = the tender total; "long-term rental units" only where Dira Lehaskir wrote the number.'),
+      why: bi('מכרז השכרה מוכר גם דירות; ערבוב בין השניים מנפח את "היצע ההשכרה".', 'A rental tender also sells homes; mixing the two inflates "rental supply".'),
+      unit: bi('יח״ד', 'housing units'), geography: bi('מכרז · יישוב · ארצי (מחוז: סך המכרזים בלבד)', 'Tender · locality · national (district: tender totals only)'), period: bi('ההיקף הנוכחי; ההודעה כפי שפורסמה', 'The current scope; the notice as published'),
+      source: { ids: ['rmi:michrazim', 'dira-lehaskir:tenders'] }, cls: 'OFFICIAL',
+      methodology: bi('צירוף רק לפי מספר המכרז המודפס (אזור/מספר/שנה → MichrazID); מספר שנכתב בכמה ניסוחים → לא נבחר; המילים נשמרות כראיה.', 'Joined only by the printed tender number (region/number/year → MichrazID); several stated figures → none picked; the words are kept as evidence.'),
+      interpretation: bi('צנרת מכרזים — לא פרויקטים מאוכלסים; תקופת ההשכרה (10–25 שנה) כפי שנכתבה.', 'A tender pipeline — not operating projects; the rental period (10–25 years) as written.'),
+      notAs: bi('לא דירות להשכרה מאוכלסות, לא שכר דירה, לא תפוסה, לא תשואה.', 'Not occupied rental homes, not rent, not occupancy, not yield.'),
+      limitations: [bi('אין שכר דירה, תפוסה או מפעיל במקורות — לא מוצגים ולא נאמדים; מדד שכר הדירה של הלמ״ס הוא רף שוק כללי.', 'No rent, occupancy or operator figure is published as data — none is shown or estimated; the CBS rent index is a general market benchmark.')],
+      evidence: bi('GET /api/land?view=rental · פאנל ההשכרה ומגירת המכרז', 'GET /api/land?view=rental · the rental panel and the tender drawer'),
+      freshness: { observation: bi('תאריך המכרז / ההודעה', 'the tender / notice date'), publication: bi('"עודכן" בהודעה', '"modified" on the notice'), check: bi('כל יום עבודה', 'every working day') } }),
+    T({ id: 'rent_index_benchmark', group: 'rental', title: bi('מדד שכר הדירה — רף שוק כללי', 'Rent index — a general market benchmark'),
+      short: bi('רכיב שכר הדירה במדד המחירים לצרכן, ארצי — שינוי שנתי, לא שכר דירה בש״ח.', 'The rent component of the CPI, national — a yearly change, not a rent in ₪.'),
+      why: bi('ההקשר הרשמי היחיד הקריא למכונה למגמת שכר הדירה; לעולם אינו שכר דירה של פרויקט.', 'The only machine-readable official context for the rent trend; never a project\'s rent.'),
+      unit: bi('% שנתי', '% y/y'), geography: bi('ארצי', 'National'), period: bi('חודש המדד', 'The index month'),
+      source: { ids: ['cbs:rentIndex'] }, cls: 'OFFICIAL',
+      methodology: bi('הסדרה נמצאת לפי שם בקטלוג הלמ״ס (120460); שינוי שם נכשל בגלוי ולעולם אינו מתחלף בשקט.', 'The series is found by name in the CBS catalogue (120460); a renamed series fails visibly and never silently swaps.'),
+      interpretation: bi('מגמה כללית של שוק השכירות (פרטי, ציבורי ומוסדי יחד).', 'A general rental-market trend (private, public and institutional together).'),
+      notAs: bi('לא שכר דירה בש״ח, לא שכר דירה של עיר, לא שכר דירה "מוסדי" או של דירה להשכיר.', 'Not a rent in ₪, not a city rent, not "institutional" or Dira Lehaskir rent.'),
+      limitations: [bi('שכר דירה ממוצע בש״ח אינו קריא למכונה בלמ״ס (נבדק 13.10.2026).', 'CBS average rent in ₪ is not machine-readable (audited 13.10.2026).')],
+      evidence: bi('data/market/latest.json → rentIndex · סרגל השוק', 'data/market/latest.json → rentIndex · the market tape'),
+      freshness: { observation: bi('חודש המדד', 'the index month'), publication: bi('פרסום הלמ״ס', 'the CBS release'), check: bi('הבדיקה היומית', 'the daily check') } }),
+    /* ---------------- housing ---------------- */
+    T({ id: 'applicants_per_unit', group: 'housing', title: bi('מבקשים ליחידה (הגרלה ראשונה)', 'Applicants per unit (first lottery)'),
+      short: bi('Σ נרשמים ÷ Σ יחידות על ההגרלות הראשונות שמפרסמות את שניהם — מדד ביקוש לדיור מסובסד.', 'Σ applicants ÷ Σ units over the first lotteries that publish both — a demand gauge for subsidized housing.'),
+      why: bi('הנתון הרשמי היחיד על עודף ביקוש לדירה בהנחה לפי פרויקט ויישוב.', 'The only official figure for excess demand for subsidized homes by project and locality.'),
+      unit: bi('מבקשים ליחידה', 'applicants per unit'), geography: bi('פרויקט · יישוב · ארצי (מחוז: ספירת הגרלות בלבד)', 'Project · locality · national (district: lottery counts only)'), period: bi('תאריך ההגרלה', 'The lottery date'),
+      source: { ids: ['datagov:moch:dira-behanacha-lotteries'] }, cls: 'DERIVED',
+      formula: bi('Σ נרשמים ÷ Σ יחידות (הגרלות ראשונות עם שני הנתונים)', 'Σ applicants ÷ Σ units (first lotteries with both figures)'), inputs: [bi('נרשמים ויחידות להגרלה כפי שפורסמו', 'applicants and units per lottery as published')],
+      methodology: bi('הגרלות המשך אינן נספרות (אותם מבקשים); יחידות בלי נרשמים אינן נכנסות.', 'Continuation lotteries are not counted (the same applicants); units without applicants are left out.'),
+      interpretation: bi('מבקש יכול להירשם לכמה הגרלות; היחס מודד עניין, לא כוח קנייה.', 'An applicant may register for several lotteries; the ratio measures interest, not buying power.'),
+      notAs: bi('לא ביקוש בשוק החופשי, לא תחזית מכירות של פרויקט.', 'Not open-market demand, not a project sales forecast.'),
+      limitations: [bi('ההגרלה האחרונה במקור היא 27.01.2025 — המשאב עצמו מפגר.', 'The newest lottery in the source is 27.01.2025 — the resource itself lags.')],
+      evidence: bi('GET /api/housing?view=summary → kpis.applicantsPerUnit', 'GET /api/housing?view=summary → kpis.applicantsPerUnit'),
+      freshness: { observation: bi('תאריך ההגרלה', 'the lottery date'), publication: bi('עדכון המשאב ב-data.gov.il', 'the resource\'s last modified'), check: dailySync } }),
+    /* ---------------- developers ---------------- */
+    T({ id: 'developer_observed_activity', group: 'developers', title: bi('פעילות יזם שנצפתה', 'Observed developer activity'),
+      short: bi('מה ש-PROPX ראתה ליזם בערוצים ציבוריים: מגרשים שנזכו (רמ״י) ופרויקטי הגרלה (משב״ש) — בשם מדויק, ללא מיזוג.', 'What PROPX saw for a developer in public channels: lots won (ILA) and lottery projects (MoCH) — by exact name, never merged.'),
+      why: bi('מאפשר לשאול "מה היזם עושה?" בלי להמציא מצבת קרקעות.', 'Lets one ask "what is the developer doing?" without inventing a land bank.'),
+      unit: bi('מגרשים · יח״ד · פרויקטים', 'lots · units · projects'), geography: bi('לפי יישוב (שווקים) · ארצי', 'By locality (markets) · national'), period: bi('כל הפעילות שנצפתה; חלונות 12 / 24 חודשים', 'All observed activity; 12 / 24-month windows'),
+      source: { ids: ['rmi:michrazim', 'datagov:moch:dira-behanacha-lotteries', 'propx:entities'] }, cls: 'OBSERVED',
+      methodology: bi('יזם אחד = שם קנוני אחד (וריאציות טיפוגרפיות בלבד); שם קטוע או אותיות זהות → "ייתכן שזהה", לא ממוזג; זוכים ללא סימון תאגיד נספרים ואינם מוצגים.', 'One developer = one canonical name (typographic variants only); a cut name or same letters → "possibly the same", never merged; winners without a legal-form marker are counted, never listed.'),
+      interpretation: bi('פעילות, לא גודל חברה; יזם פעיל על קרקע פרטית ייראה "שקט" כאן.', 'Activity, not company size; a developer active on private land looks "quiet" here.'),
+      notAs: bi('לא מצבת קרקעות, לא צנרת כוללת, לא נתח שוק, לא רשימת יזמים מלאה, לא דירוג.', 'Not a land bank, not a total pipeline, not a market share, not a complete developer list, not a ranking.'),
+      limitations: [LIM.publicChannels, LIM.noMerge], evidence: bi('GET /api/intel?view=developer · מגירת היזם', 'GET /api/intel?view=developer · the developer drawer'),
+      freshness: { observation: bi('תאריכי ההחלטה וההגרלה', 'the decision and lottery dates'), publication: bi('עדכוני המקורות', 'the sources\' updates'), check: bi('נבנה מחדש בכל שינוי נתונים', 'rebuilt on every data change') } }),
+    T({ id: 'market_entry', group: 'developers', title: bi('כניסת יזם ליישוב', 'Developer market entry'),
+      short: bi('יישוב שבו הפעילות הראשונה שנצפתה של יזם נופלת ב-24 החודשים האחרונים — ליזם שפעל קודם במקום אחר.', 'A locality where a developer\'s first observed activity falls within the last 24 months — for a developer already active elsewhere before.'),
+      why: bi('יזם מבוסס שנכנס לשוק חדש הוא אות ביקוש של "כסף חכם" — נגזר, לא רשמי.', 'An established developer entering a new market is a "smart money" demand signal — derived, not official.'),
+      unit: bi('כניסות', 'entries'), geography: bi('יישוב', 'Locality'), period: bi('24 חודשים', '24 months'),
+      source: { ids: ['propx:entities'] }, cls: 'DERIVED',
+      formula: bi('פעילות ראשונה ביישוב ≥ היום − 24 חודשים ∧ פעילות ראשונה בכלל < היום − 24 חודשים', 'first activity in the locality ≥ today − 24 months ∧ first activity anywhere < today − 24 months'), inputs: [bi('תאריכי הפעילות שנצפתה לפי יישוב', 'the observed activity dates per locality')],
+      methodology: bi('"ראשונה" = ראשונה במקורות PROPX; יזם עם פעילות קודמת לא-ציבורית ביישוב ייחשב "נכנס".', '"First" = first in PROPX\'s sources; a developer with earlier non-public activity in the locality will count as "entering".'),
+      interpretation: bi('קראו עם מספר הכניסות ליישוב (≥ 2 הוא סף אות) ועם היזמים עצמם.', 'Read with the number of entries into the locality (≥ 2 is a signal threshold) and the developers themselves.'),
+      notAs: bi('לא "היזם מעולם לא פעל שם", לא המלצה.', 'Not "the developer never worked there", not a recommendation.'),
+      limitations: [LIM.publicChannels], evidence: bi('GET /api/intel?view=signals · תיק השוק → "מה לעקוב"', 'GET /api/intel?view=signals · the dossier → "what to watch"'),
+      freshness: { observation: bi('תאריך הפעילות הראשונה', 'the first-activity date'), publication: bi('עדכוני המקורות', 'the sources\' updates'), check: bi('נבנה מחדש בכל שינוי', 'rebuilt on every change') } }),
+    T({ id: 'geographic_concentration', group: 'developers', title: bi('ריכוז גאוגרפי של יזם', 'Developer geographic concentration'),
+      short: bi('חלק מגרשי המגורים שנזכו ביישוב המוביל מתוך כל מגרשי המגורים שנזכו (רמ״י).', 'The share of residential lots won in the top market out of all residential lots won (ILA).'),
+      why: bi('ריכוז גבוה = חשיפה לשוק אחד; ≥ 70% מתוך ≥ 5 מגרשים הוא סף אות (על הפעילות שנצפתה — לא שיפוט על החברה).', 'High concentration = exposure to one market; ≥ 70 % of ≥ 5 lots is a signal threshold (about observed activity — not a judgement on the company).'),
+      unit: bi('% (0–100)', '% (0–100)'), geography: bi('יזם', 'Developer'), period: bi('כל הפעילות שנצפתה', 'All observed activity'),
+      source: { ids: ['propx:entities', 'rmi:michrazim'] }, cls: 'DERIVED',
+      formula: bi('מגרשי מגורים ביישוב המוביל ÷ כל מגרשי המגורים שנזכו', 'residential lots in the top market ÷ all residential lots won'), inputs: [bi('מגרשים שנזכו לפי יישוב', 'lots won by locality')],
+      methodology: bi('הגרלות אינן נספרות (יקום אחר); מגרשי מסחר אינם נספרים.', 'Lotteries are not counted (another universe); commercial lots are not counted.'),
+      interpretation: bi('יזם מקומי מטבעו מרוכז; המשמעות תלויה בגודל ובאסטרטגיה.', 'A local developer is concentrated by nature; the meaning depends on size and strategy.'),
+      notAs: bi('לא סיכון אשראי, לא דירוג, לא אמירה על קרקע פרטית.', 'Not a credit risk, not a rating, nothing about private land.'),
+      limitations: [LIM.publicChannels], evidence: bi('developer().intel.markets.geographicConcentration', 'developer().intel.markets.geographicConcentration'),
+      freshness: { observation: bi('תאריכי ההחלטה', 'the decision dates'), publication: bi('עדכוני הרשות', 'the Authority\'s updates'), check: bi('נבנה מחדש בכל שינוי', 'rebuilt on every change') } }),
+    /* ---------------- supply ---------------- */
+    T({ id: 'supply_universes', group: 'supply', title: bi('יקומי ההיצע המקבילים', 'The parallel supply universes'),
+      short: bi('שישה מקורות של "יח״ד" שמתארים שלבים ומושאים שונים — אותן דירות עשויות להופיע בכמה מהם, ולכן לעולם אינם מסוכמים.', 'Six sources of "units" describing different stages and objects — the same homes can appear in several, so they are never summed.'),
+      why: bi('סכום של תוכניות + מכרזים + מתחמים היה סופר את אותה דירה שלוש פעמים.', 'A sum of plans + tenders + complexes would count the same home three times.'),
+      unit: bi('יח״ד לכל יקום בנפרד', 'units per universe, apart'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('לכל יקום התקופה שלו', 'Each universe its own period'),
+      source: { ids: ['iplan:xplan', 'rmi:michrazim', 'datagov:moch:urban-renewal-complexes', 'dira-lehaskir:tenders', 'datagov:moch:dira-behanacha-lotteries', 'datagov:moch:construction-progress', 'propx:supply'] }, cls: 'OFFICIAL',
+      methodology: bi('תכנון (XPlan) · קרקע (מכרזי רמ״י) · התחדשות (מתחמי משב״ש) · השכרה (מסלול רמ״י) · הגרלות (משב״ש) · בנייה (דיווחי התקדמות) — כל אחד עם מקורו, סיווגו ותאריכיו; המודול אינו חושף סכום.', 'Planning (XPlan) · land (ILA tenders) · renewal (MoCH complexes) · rental (ILA track) · lotteries (MoCH) · construction (progress reports) — each with its source, class and dates; the module exposes no total.'),
+      interpretation: bi('קראו כל יקום לפי שלבו: תוכנית מאושרת ≠ קרקע שנזכתה ≠ היתר ≠ בנייה.', 'Read each universe by its stage: an approved plan ≠ awarded land ≠ a permit ≠ construction.'),
+      notAs: bi('לא "סך ההיצע העתידי", לא דירות שייבנו, לא תחזית.', 'Not "total future supply", not homes that will be built, not a forecast.'),
+      limitations: [bi('היתרים, התחלות בנייה וגמר לפי יישוב: אין מקור רשמי קריא למכונה שהצטרף.', 'Permits, starts and completions by locality: no joined machine-readable official source.'), LIM.stateLand],
+      evidence: bi('GET /api/intel?view=supply · תיק השוק → צנרת היצע', 'GET /api/intel?view=supply · the dossier → supply pipeline'),
+      freshness: { observation: bi('לכל יקום', 'per universe'), publication: bi('לכל מקור', 'per source'), check: bi('הסנכרונים היומיים', 'the daily syncs') } }),
+    T({ id: 'supply_pressure', group: 'supply', title: bi('לחץ היצע — חודשי קרקע מדינה שנזכתה', 'Supply pressure — months of awarded state land'),
+      short: bi('יח״ד מגורים שנזכו ב-24 החודשים האחרונים ÷ קצב המכירות החודשי הרשמי (12 חודשים) — ארצי ומחוז בלבד.', 'Residential units awarded in the last 24 months ÷ the official monthly sales pace (12 months) — national and district only.'),
+      why: bi('מעמיד את ההיצע העתידי על קרקע מדינה מול הביקוש הרשמי — ביחידות של חודשים.', 'Puts future state-land supply against official demand — in months.'),
+      unit: bi('חודשים', 'months'), geography: bi('ארצי · מחוז (סדרת המחוז); יישוב → "—"', 'National · district (the district series); locality → "—"'), period: bi('זכיות 24 חודשים; מכירות 12 חודשים', 'Awards 24 months; sales 12 months'),
+      source: { ids: ['rmi:michrazim', 'cbs:new-home-sales', 'propx:supply'] }, cls: 'DERIVED',
+      formula: bi('יח״ד שנזכו (24 ח׳) ÷ (Σ מכירות 12 ח׳ ÷ 12)', 'units awarded (24 m) ÷ (Σ sales 12 m ÷ 12)'), inputs: [bi('יח״ד במגרשים שנזכו (רשמי, קרקע מדינה)', 'units in awarded lots (OFFICIAL, state land)'), bi('מכירות דירות חדשות 12 חודשים (רשמי)', 'official new-home sales, 12 months')],
+      methodology: bi('שני יקומים שונים במכוון: קרקע שנזכתה (קיבולת) מול דירות שנמכרו (עסקאות); מדגם מכירות קטן → "—".', 'Two different universes on purpose: awarded land (capacity) vs homes sold (transactions); a small sales sample → "—".'),
+      interpretation: bi('ערך גבוה = הרבה קרקע ביחס לביקוש; קראו עם חודשי ההיצע של המלאי הקיים.', 'A high value = much land relative to demand; read with the months of supply of the existing stock.'),
+      notAs: bi('לא זמן בנייה, לא "שנות היצע" (קרקע פרטית אינה נספרת), לא תחזית מחיר.', 'Not a construction time, not "years of supply" (private land is not counted), not a price forecast.'),
+      limitations: [LIM.stateLand, LIM.tenderUnits, LIM.noLocalitySeries], evidence: bi('view=supply → indicators[supply-pressure] (נוסחה, קלט, חלונות)', 'view=supply → indicators[supply-pressure] (formula, inputs, windows)'),
+      freshness: { observation: bi('תאריכי ההחלטה וחודשי המכירות', 'the decision dates and the sales months'), publication: bi('עדכוני הרשות והלמ״ס', 'the Authority\'s and CBS\'s updates'), check: bi('הסנכרונים היומיים', 'the daily syncs') } }),
+    T({ id: 'momentum_12m', group: 'supply', title: bi('מומנטום 12 חודשים (צנרת)', '12-month momentum (pipeline)'),
+      short: bi('(12 החודשים שעד התצפית האחרונה − 12 הקודמים) ÷ 12 הקודמים × 100, על ספירה או על יח״ד; מדגם קטן או חלון לא מכוסה → "—".', '(last 12 months − prior 12) ÷ prior 12 × 100, on a count or on units; a small sample or an uncovered window → "—".'),
+      why: bi('מפריד בין צנרת שמתמלאת לצנרת שמתרוקנת — בכל יקום בנפרד.', 'Separates a filling pipeline from an emptying one — per universe.'),
+      unit: bi('%', '%'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('(היום − 12 ח׳, היום] מול (היום − 24, היום − 12]', '(today − 12 m, today] vs (today − 24, today − 12]'),
+      source: { ids: ['propx:supply'] }, cls: 'DERIVED',
+      formula: bi('(אחרונים − קודמים) ÷ קודמים × 100', '(last − prior) ÷ prior × 100'), inputs: [bi('תאריכי הפרסום / ההחלטה / ההכרזה / ההגרלה / האישור כפי שהמקור נותן', 'the publication / decision / declaration / lottery / approval dates as the source gives them')],
+      methodology: bi('קודמים < 3 רשומות (או < 100 יח״ד, < 3 מתחמים, < 3 הגרלות) → מדגם קטן; חלון שהמקור אינו מכסה → "—" עם הסיבה.', 'Prior < 3 records (or < 100 units, < 3 complexes, < 3 lotteries) → small sample; a window the source does not cover → "—" with the reason.'),
+      interpretation: bi('חלון שמסתיים היום מסומן "חלקי" כשהמקור מפגר; ההשוואה הוגנת רק בין חלונות מכוסים.', 'A window ending today is flagged "partial" when the source lags; the comparison is fair only between covered windows.'),
+      notAs: bi('לא תחזית, לא "צמיחת שוק", לא נתון רשמי.', 'Not a forecast, not "market growth", not an official figure.'),
+      limitations: [LIM.smallSample], evidence: bi('view=supply → universes[*].momentum · indicators', 'view=supply → universes[*].momentum · indicators'),
+      freshness: { observation: bi('שני החלונות', 'the two windows'), publication: bi('לכל מקור', 'per source'), check: bi('הסנכרונים היומיים', 'the daily syncs') } }),
+    /* ---------------- market ---------------- */
+    T({ id: 'construction_inputs_index', group: 'market', title: bi('מדד תשומות הבנייה למגורים', 'Residential construction-inputs index'),
+      short: bi('השינוי השנתי בעלות תשומות הבנייה (הלמ״ס) — הקשר ארצי לעלויות יזמים; +3% הוא סף אות סיכון.', 'The yearly change in construction-input costs (CBS) — national context for developer costs; +3 % is a risk-signal threshold.'),
+      why: bi('עליית תשומות שוחקת שולי יזם ומייקרת צנרת שטרם נבנתה.', 'Rising inputs erode developer margins and make an unbuilt pipeline dearer.'),
+      unit: bi('% שנתי', '% y/y'), geography: bi('ארצי — הקשר, לא נתון מקומי', 'National — context, not a local figure'), period: bi('חודש המדד', 'The index month'),
+      source: { ids: ['cbs:constructionInputsIndex'] }, cls: 'OFFICIAL',
+      methodology: bi('סדרה 200010, נמצאת לפי שם בקטלוג; כישלון נרשם, לעולם אינו קטלני.', 'Series 200010, found by name in the catalogue; a failure is recorded, never fatal.'),
+      interpretation: bi('קראו עם ריבית בנק ישראל ועם מדד מחירי הדירות החדשות.', 'Read with the Bank of Israel rate and the new-homes price index.'),
+      notAs: bi('לא עלות בנייה של פרויקט, לא נתון מחוז או יישוב.', 'Not a project\'s construction cost, not a district or locality figure.'),
+      evidence: bi('data/market/latest.json → constructionInputsIndex · סרגל השוק · כלי ההצמדה', 'data/market/latest.json → constructionInputsIndex · the market tape · the indexation tool'),
+      freshness: { observation: bi('חודש המדד', 'the index month'), publication: bi('פרסום הלמ״ס', 'the CBS release'), check: bi('הבדיקה היומית', 'the daily check') } }),
+    T({ id: 'boi_rate', group: 'market', title: bi('ריבית בנק ישראל', 'Bank of Israel rate'),
+      short: bi('ריבית המדיניות הנוכחית ומועד ההחלטה הבא — הקשר ארצי למימון; לעולם אינה ריבית ההלוואה של עסקה.', 'The current policy rate and the next decision date — national financing context; never a deal\'s loan rate.'),
+      why: bi('מגדירה את עלות הכסף שמאחורי כל מבנה מימון; שינוי ריבית הוא אירוע מהותי ברדאר.', 'Sets the cost of money behind every financing structure; a rate change is a material radar event.'),
+      unit: bi('%', '%'), geography: bi('ארצי', 'National'), period: bi('מועד ההחלטה האחרון', 'The latest decision date'),
+      source: { ids: ['boi:policy-rate'] }, cls: 'OFFICIAL',
+      methodology: bi('PublicApi/GetInterest נקרא מדי יום; ההיסטוריה נשמרת בצילומי PROPX.', 'PublicApi/GetInterest is read daily; history is kept in PROPX snapshots.'),
+      interpretation: bi('ריבית ייחוס — ריבית ההלוואה ב-ALTARIS היא הנחת משתמש.', 'A reference rate — the loan rate in ALTARIS is a user assumption.'),
+      notAs: bi('לא ריבית משכנתא, לא ריבית הלוואת יזם, לא הנחה של ALTARIS.', 'Not a mortgage rate, not a developer loan rate, not an ALTARIS assumption.'),
+      evidence: bi('data/market/latest.json → boiRate · סרגל השוק', 'data/market/latest.json → boiRate · the market tape'),
+      freshness: { observation: bi('מועד ההחלטה', 'the decision date'), publication: bi('פרסום בנק ישראל', 'the Bank of Israel release'), check: bi('הבדיקה היומית', 'the daily check') } }),
+    /* ---------------- quality, freshness, revisions ---------------- */
+    T({ id: 'evidence_quality', group: 'quality', title: bi('איכות ראיות', 'Evidence quality'),
+      short: bi('HIGH / MEDIUM / LOW = 100 פחות ניכויים מתועדים על מה שחסר, ישן או ברמת גאוגרפיה אחרת — לא הסתברות ולא ציון שוק.', 'HIGH / MEDIUM / LOW = 100 minus documented deductions for what is missing, stale or at another geographic level — not a probability and not a market score.'),
+      why: bi('אומר כמה אפשר לסמוך על התמונה — לפני שמפרשים אותה.', 'Says how far the picture can be trusted — before it is interpreted.'),
+      unit: bi('רמה + ניקוד 0–100', 'a level + a 0–100 score'), geography: bi('לכל תיק / החלטה', 'Per dossier / decision'), period: bi('בזמן הקריאה', 'At read time'),
+      source: { ids: ['propx:dossier', 'altaris:decision'] }, cls: 'DERIVED',
+      formula: bi('100 − Σ ניכויים (למשל: אין סדרת מכירות ליישוב −8, אין מלאי −5, פרטי מכרזים < 70% −8, מקור נבדק לפני > 7 ימים −4, אין עסקאות −5, אין מקור היתרים −6); HIGH ≥ 70, MEDIUM ≥ 45', '100 − Σ deductions (e.g. no locality sales series −8, no inventory −5, tender details < 70 % −8, a source checked > 7 days ago −4, no transactions −5, no permits source −6); HIGH ≥ 70, MEDIUM ≥ 45'),
+      inputs: [bi('רשימת החוסרים, התאריכים ורמת הגאוגרפיה של כל מקור', 'the list of gaps, the dates and the geographic level of every source')],
+      methodology: bi('כללים קבועים ומפורסמים; נתון חסר לעולם אינו מעלה את האיכות; ב-ALTARIS: ראיות חסרות לעולם אינן מעלות דירוג.', 'Fixed, published rules; a missing datum never raises the quality; in ALTARIS: missing evidence never raises a rating.'),
+      interpretation: bi('LOW אינו "שוק רע" — הוא "אנחנו יודעים מעט"; פתחו את הניכויים.', 'LOW is not "a bad market" — it is "we know little"; open the deductions.'),
+      notAs: bi('לא הסתברות, לא ביטחון סטטיסטי, לא דירוג השקעה.', 'Not a probability, not statistical confidence, not an investment rating.'),
+      limitations: [bi('הניכויים הם קבועים מוסכמים, לא אומדן טעות.', 'The deductions are agreed constants, not an error estimate.')],
+      evidence: bi('תיק השוק → "איכות ראיות" עם הניכויים · ALTARIS → הצגת בסיס ההחלטה', 'the dossier → "evidence quality" with its deductions · ALTARIS → the decision basis view'),
+      freshness: { observation: dash, publication: dash, check: computed } }),
+    T({ id: 'source_freshness', group: 'quality', title: bi('עדכניות מקור — שלושה תאריכים', 'Source freshness — the three dates'),
+      short: bi('תצפית (מה הנתון מתאר) ≠ פרסום (מתי המקור עדכן) ≠ בדיקה (מתי PROPX קראה). בדיקה היום אינה הופכת תצפית ישנה לעדכנית.', 'Observation (what the figure describes) ≠ publication (when the source updated) ≠ check (when PROPX read). A check today does not make an old observation current.'),
+      why: bi('רוב הטעויות על "נתון עדכני" נובעות מערבוב שלושת התאריכים.', 'Most "current figure" errors come from mixing the three dates.'),
+      unit: bi('תאריכים', 'dates'), geography: bi('לכל מקור', 'Per source'), period: dash,
+      source: { ids: ['propx:trust'] }, cls: 'DERIVED',
+      methodology: bi('CURRENT / EXPECTED_REPORTING_LAG / STALE לפי לוח הפרסום של המקור (למשל הלמ״ס: כ-6 שבועות); מצב הבדיקה (SUCCESS / UNCHANGED / PARTIAL / REFUSED / FAILED / SCHEMA_CHANGED / STALE / NO_RUN) מיומני הריצה.', 'CURRENT / EXPECTED_REPORTING_LAG / STALE by the source\'s publication calendar (e.g. CBS: about six weeks); the check state (SUCCESS / UNCHANGED / PARTIAL / REFUSED / FAILED / SCHEMA_CHANGED / STALE / NO_RUN) from the run logs.'),
+      interpretation: bi('מקור שנדחה או נכשל שומר את הנתון התקין האחרון, מתוארך — לעולם לא 0.', 'A refused or failed source keeps its last valid data, dated — never 0.'),
+      notAs: bi('"נבדק היום" ≠ "נתון של היום"; UNCHANGED ≠ כישלון.', '"Checked today" ≠ "today\'s figure"; UNCHANGED ≠ a failure.'),
+      evidence: bi('מרכז הנתונים והאמון · טבלת העדכניות בתיק השוק', 'the Data & Trust Center · the dossier\'s freshness table'),
+      freshness: { observation: FRESHNESS.observation, publication: FRESHNESS.publication, check: FRESHNESS.check } }),
+    T({ id: 'data_revision', group: 'quality', title: bi('תיקון נתון רשמי', 'Official figure revised'),
+      short: bi('מקור רשמי פרסם מחדש ערך אחר לאותה תקופה; PROPX שומרת את הישן לצד החדש; |Δ| ≥ 5% = מהותי (קבוע).', 'An official source re-published a different value for the same period; PROPX keeps the old beside the new; |Δ| ≥ 5 % = material (a constant).'),
+      why: bi('תיקונים משנים מומנטום וחודשי היצע בדיעבד — מודיעין, לא רעש.', 'Revisions change momentum and months of supply in hindsight — intelligence, not noise.'),
+      unit: bi('ערך ישן → חדש, Δ%', 'old → new value, Δ %'), geography: bi('כסדרה המתוקנת', 'As the revised series'), period: bi('תקופת התצפית; תאריך הפרסום המתקן; מועד הקריאה', 'The observation period; the revising publication date; the read date'),
+      source: { ids: ['cbs:new-home-sales'] }, cls: 'OFFICIAL',
+      methodology: bi('יומן הוסף-בלבד: כל ערך עם מספר גרסה והערך שהחליף; לעולם לא נמחק; תצפיות שהמקור הפסיק להחזיר מדווחות, לא מאופסות.', 'An append-only ledger: every value with its revision number and the value it replaced; never deleted; periods the source stops returning are reported, never zeroed.'),
+      interpretation: bi('תיקון של החודשים האחרונים הוא שגרה בלמ״ס; תיקון מהותי של חודש ישן ראוי לבדיקה.', 'Revising recent months is CBS routine; a material revision of an old month deserves a look.'),
+      notAs: bi('לא שגיאה של PROPX, לא "נתון לא אמין".', 'Not a PROPX error, not "unreliable data".'),
+      evidence: bi('data/cbs-sales/observations.jsonl · דופק השוק → תיקוני נתונים', 'data/cbs-sales/observations.jsonl · the Market Pulse → revisions'),
+      freshness: { observation: bi('התקופה המתוקנת', 'the revised period'), publication: bi('תאריך עדכון הסדרה המתקן', 'the revising series update date'), check: bi('מתי PROPX קראה את התיקון', 'when PROPX read the revision') } }),
+    T({ id: 'source_conflict', group: 'quality', title: bi('סתירה בין מקורות', 'Source conflict'),
+      short: bi('שני מקורות נותנים ערכים שונים לאותו דבר (יח״ד של משב״ש מול XPlan, בסיס שווי מעסקאות מול שומה) — שניהם מוצגים זה לצד זה, אף אחד אינו נבחר בשקט.', 'Two sources give different values for the same thing (MoCH vs XPlan units, a transaction-based value vs an appraisal) — both are shown side by side, neither is picked silently.'),
+      why: bi('מריחה של סתירה היא הדרך המהירה ביותר למספר מומצא.', 'Smoothing a conflict is the fastest route to an invented number.'),
+      unit: dash, geography: dash, period: dash, source: { ids: ['propx:dossier', 'altaris:decision', 'iplan:xplan', 'datagov:moch:urban-renewal-complexes'] }, cls: 'DERIVED',
+      methodology: bi('פער ≥ 15% בין בסיסי שווי מסומן ב-ALTARIS; אי-הסכמות משב״ש ↔ XPlan מסומנות בכל שורה.', 'A ≥ 15 % spread between value bases is flagged in ALTARIS; MoCH ↔ XPlan disagreements are flagged on every row.'),
+      interpretation: bi('בדקו תקופה, הגדרה והיקף של כל מקור לפני שמעדיפים אחד.', 'Check each source\'s period, definition and scope before preferring one.'), notAs: bi('לא "נתון שגוי", לא ממוצע של השניים.', 'Not "a wrong datum", not an average of the two.'),
+      evidence: bi('הצגת בסיס ההחלטה → סתירות · מגירת המתחם → משב״ש ↔ XPlan', 'the decision basis view → conflicts · the complex drawer → MoCH ↔ XPlan'), freshness: { observation: dash, publication: dash, check: dash } }),
+    /* ---------------- radar ---------------- */
+    T({ id: 'opportunity_signal', group: 'radar', title: bi('אות הזדמנות — "שווה לבדוק"', 'Opportunity signal — "worth investigating"'),
+      short: bi('גאוגרפיה שבה נתון רשמי או שנצפה חצה סף מתועד בכיוון שקונה היה רוצה לבחון — לא המלצה.', 'A geography where an official or observed figure crossed a documented threshold in a direction a buyer would want to examine — not a recommendation.'),
+      why: bi('מכוון תשומת לב; ההחלטה נשארת של המשקיע ושל חיתום מלא.', 'Directs attention; the decision stays with the investor and a full underwriting.'),
+      unit: bi('פריט עם מהותיות 1–3', 'an item with materiality 1–3'), geography: bi('ארצי · מחוז · יישוב — קפדני', 'National · district · locality — strict'), period: bi('לפי הכלל', 'Per rule'),
+      source: { ids: ['propx:radar', 'propx:dossier'] }, cls: 'DERIVED',
+      methodology: bi('כללים: מומנטום מכירות ≥ +10% (מחוז/ארצי), ≥ 500 יח״ד במכרזים פתוחים, ≥ 1,000 יח״ד שנזכו, ≥ 500 ממתינות להחלטה, ≥ 2,000 יח״ד מוצעות בהתחדשות, ≥ 3 מכרזי השכרה, ≥ 2 כניסות יזמים; מהותיות קבועה לכל כלל; שני פריטי "התכנסות" נגזרים משני כללים.', 'Rules: sales momentum ≥ +10 % (district / national), ≥ 500 units in open tenders, ≥ 1,000 awarded units, ≥ 500 awaiting decision, ≥ 2,000 proposed renewal units, ≥ 3 rental tenders, ≥ 2 developer entries; a constant materiality per rule; two "convergence" items derived from two rules.'),
+      interpretation: bi('"למה סומן?" מציג טריגר · ערך · סף · השוואה · תקופה · מקור · סיווג · איכות ראיות — אפשר לערער על כל אחד.', '"Why was this flagged?" shows trigger · value · threshold · comparison · period · source · class · evidence quality — each can be challenged.'),
+      notAs: bi('לא "שוק אטרקטיבי", לא "לקנות", לא תחזית.', 'Not "an attractive market", not "buy", not a forecast.'),
+      limitations: [LIM.notRecommendation, bi('יישוב לעולם אינו נושא סדרה מחוזית/ארצית כאות משלו.', 'A locality never carries a district / national series as its own signal.')],
+      evidence: bi('data/radar/scan.json · דופק השוק → רדאר ההזדמנויות', 'data/radar/scan.json · the Market Pulse → Opportunity Radar'),
+      freshness: { observation: bi('לפי הכלל', 'per rule'), publication: bi('לפי המקור', 'per source'), check: bi('הסריקה נבנית בכל סנכרון', 'the scan is built on every sync') } }),
+    T({ id: 'risk_signal', group: 'radar', title: bi('אות סיכון', 'Risk signal'),
+      short: bi('התמונה ההפוכה: נתון שחצה סף מתועד בכיוון שמצריך זהירות — תיאור של תצפית, לא כישלון ולא שיפוט.', 'The mirror: a figure that crossed a documented threshold in a direction that calls for care — a description of an observation, not a failure and not a judgement.'),
+      why: bi('מראה היכן הראיות חלשות או ההיצע גדול — לפני ולא אחרי.', 'Shows where evidence is weak or supply is large — before, not after.'),
+      unit: bi('פריט עם מהותיות 1–3', 'an item with materiality 1–3'), geography: bi('ארצי · מחוז · יישוב — קפדני', 'National · district · locality — strict'), period: bi('לפי הכלל', 'Per rule'),
+      source: { ids: ['propx:radar', 'propx:dossier'] }, cls: 'DERIVED',
+      methodology: bi('כללים: מומנטום ≤ −10%, חודשי היצע ≥ 18 (ארצי), ≥ 30% מכרזים ללא זוכה/בוטלו מתוך ≥ 5, ≥ 3 מכרזי השכרה בסטטוס ישן, יזם אחד ≥ 50% מתוך ≥ 5 מגרשים, אין אירועים בחלון, תשומות בנייה ≥ +3% (ארצי).', 'Rules: momentum ≤ −10 %, months of supply ≥ 18 (national), ≥ 30 % of ≥ 5 tenders without a winner / cancelled, ≥ 3 stale rental statuses, one developer ≥ 50 % of ≥ 5 lots, no events in the window, construction inputs ≥ +3 % (national).'),
+      interpretation: bi('"סיכון" כאן = משהו לבדוק; אינו אומר כשל, חדלות פירעון או השקעה גרועה.', '"Risk" here = something to check; it does not mean failure, default or a bad investment.'),
+      notAs: bi('לא שיפוט על חברה, לא תחזית ירידת מחירים.', 'Not a judgement on a company, not a price-decline forecast.'),
+      limitations: [LIM.notRecommendation], evidence: bi('data/radar/scan.json · דופק השוק → רדאר הסיכונים', 'data/radar/scan.json · the Market Pulse → Risk Radar'),
+      freshness: { observation: bi('לפי הכלל', 'per rule'), publication: bi('לפי המקור', 'per source'), check: bi('הסריקה נבנית בכל סנכרון', 'the scan is built on every sync') } }),
+    T({ id: 'materiality', group: 'radar', title: bi('מהותיות (1–3)', 'Materiality (1–3)'),
+      short: bi('קבוע לכל כלל אירוע או אות: 3 = מהותי (זכייה ≥ 100 יח״ד, ביטול, תיקון ≥ 5%, שינוי ריבית, דחיית מקור), 1 = תחזוקה. לעולם לא מודל.', 'A constant per event or signal rule: 3 = material (an award ≥ 100 units, a cancellation, a ≥ 5 % revision, a rate change, a source refusal), 1 = housekeeping. Never a model.'),
+      why: bi('ממיין את הפיד בלי לדרג שווקים.', 'Sorts the feed without ranking markets.'),
+      unit: bi('1–3', '1–3'), geography: dash, period: dash, source: { ids: ['propx:radar'] }, cls: 'DERIVED',
+      methodology: bi('טבלת כללים בקוד (lib/radar/events.js RULES, lib/radar/scan.js RULES).', 'A rule table in code (lib/radar/events.js RULES, lib/radar/scan.js RULES).'),
+      interpretation: bi('מהותי = ראוי לקריאה היום, לא "חשוב להשקעה".', 'Material = worth reading today, not "important for an investment".'),
+      notAs: bi('לא ציון, לא עוצמת אות, לא הסתברות.', 'Not a score, not signal strength, not a probability.'), evidence: bi('הפיד והרדאר', 'the feed and the radar'),
+      freshness: { observation: dash, publication: dash, check: dash } }),
+    /* ---------------- ALTARIS ---------------- */
+    T({ id: 'irr', group: 'altaris', title: bi('IRR — שיעור תשואה פנימי', 'IRR — internal rate of return'),
+      short: bi('השיעור השנתי שמאפס את הערך הנוכחי של תזרים ALTARIS המתוארך (XIRR על ההון שהועמד; כשיש כמה פתרונות — הקרוב ל-0%).', 'The yearly rate that zeroes the present value of ALTARIS\'s dated cash flow (XIRR on the capital invested; with several solutions — the one nearest 0 %).'),
+      why: bi('מדד התשואה הראשי של הקרן; סף הקרן (hurdle) נבחן עליו.', 'The fund\'s primary return metric; the fund hurdle is tested on it.'),
+      unit: bi('% שנתי', '% per year'), geography: bi('עסקה', 'Deal'), period: bi('מהעמדת ההון (T0) עד היציאה', 'From capital deployment (T0) to exit'),
+      source: { ids: ['altaris:engine'] }, cls: 'MODEL',
+      formula: bi('Σ CFᵢ ÷ (1 + r)^(tᵢ/365) = 0', 'Σ CFᵢ ÷ (1 + r)^(tᵢ/365) = 0'), inputs: [bi('תזרים חודשי מתוארך לפי מבנה (BUY / FINANCE / HYBRID)', 'the dated monthly cash flow per structure (BUY / FINANCE / HYBRID)'), bi('הנחות המשתמש (מחיר, שווי, ריבית, עמלות, מועדים)', 'the user\'s assumptions (price, value, rate, fees, dates)')],
+      methodology: bi('מתודולוגיית המדדים ALTARIS v2 (מנוע 2, נעול ב-sha256); תרחיש הבסיס, downside, upside ומבחני לחץ מוצגים בנפרד.', 'ALTARIS Metric Methodology v2 (engine 2, pinned by sha256); base, downside, upside and stress cases are shown apart.'),
+      interpretation: bi('תלוי בהנחות — השוו עם MOIC ועם נקודות ההיפוך.', 'Assumption-dependent — read with MOIC and the flip points.'),
+      notAs: bi('לא תשואה מובטחת, לא תשואת שוק, לא נתון רשמי.', 'Not a guaranteed return, not a market return, not an official figure.'),
+      limitations: [bi('תזרים ללא פתרון → "—" (אין IRR), לא 0.', 'A cash flow without a solution → "—" (no IRR), not 0.')], evidence: bi('ALTARIS → מתודולוגיית מדדים (ⓘ) · altaris/engine.js', 'ALTARIS → Metric Conventions (ⓘ) · altaris/engine.js'),
+      freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי קלט', 'computed on every input change') } }),
+    T({ id: 'moic', group: 'altaris', title: bi('MOIC — מכפיל על ההון', 'MOIC — multiple on invested capital'),
+      short: bi('סך החלוקות ÷ סך ההון שהושקע — כמה פעמים ההון חזר, בלי מימד זמן.', 'Total distributions ÷ total capital invested — how many times the capital came back, with no time dimension.'),
+      why: bi('משלים את ה-IRR: IRR גבוה על תקופה קצרה יכול להסתיר מכפיל נמוך.', 'Complements IRR: a high IRR over a short period can hide a low multiple.'),
+      unit: bi('×', '×'), geography: bi('עסקה', 'Deal'), period: bi('כל תקופת ההחזקה', 'The whole holding period'),
+      source: { ids: ['altaris:engine'] }, cls: 'MODEL',
+      formula: bi('Σ חלוקות ÷ Σ הון שהושקע', 'Σ distributions ÷ Σ invested capital'), inputs: [bi('תזרים ALTARIS', 'the ALTARIS cash flow')],
+      methodology: bi('על ההון המחויב כשלא הועמד הון; עלויות משפטיות ומעקב אינן הון.', 'On committed capital when none was deployed; legal and monitoring costs are not capital.'),
+      interpretation: bi('קראו עם IRR ועם משך ההחזקה.', 'Read with IRR and the holding period.'), notAs: bi('לא רווח נטו, לא תשואה שנתית.', 'Not net profit, not a yearly return.'),
+      evidence: bi('ALTARIS → מתודולוגיית מדדים', 'ALTARIS → Metric Conventions'), freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי', 'computed on every change') } }),
+    T({ id: 'capital_at_risk', group: 'altaris', title: bi('הון בסיכון', 'Capital at risk'),
+      short: bi('ההון שאינו מכוסה בתרחיש הירידה (downside) של המבנה — מה עלול להימחק, לא מה צפוי.', 'The capital not covered in the structure\'s downside case — what could be lost, not what is expected.'),
+      why: bi('הגבול התחתון של ההחלטה; מדיניות הקרן מגבילה הפסד downside ל-50% (קרוב: 65%).', 'The decision\'s floor; the fund policy caps the downside loss at 50 % (near miss: 65 %).'),
+      unit: bi('₪ · % מההון', '₪ · % of capital'), geography: bi('עסקה', 'Deal'), period: bi('תרחיש הירידה', 'The downside case'),
+      source: { ids: ['altaris:engine', 'altaris:decision'] }, cls: 'MODEL',
+      formula: bi('הון שהושקע − מה שחוזר בתרחיש הירידה', 'invested capital − what returns in the downside case'), inputs: [bi('תרחיש הירידה (ירידת שווי, עיכוב, ריבית)', 'the downside case (value drop, delay, rate)')],
+      methodology: bi('תרחיש הירידה יוצא מתרחיש הבסיס של העסקה; מבחני הלחץ (−5/−10/−15/−20% שווי, +6/+12 חודשים, +1/+2% ריבית) מוצגים בנפרד.', 'The downside case starts from the deal\'s base case; the stress tests (−5/−10/−15/−20 % value, +6/+12 months, +1/+2 % rate) are shown apart.'),
+      interpretation: bi('הפסד מלא ב-downside אינו "סביר" — הוא "אפשרי במודל".', 'A full loss in the downside is not "likely" — it is "possible in the model".'), notAs: bi('לא הסתברות הפסד, לא VaR.', 'Not a loss probability, not VaR.'),
+      evidence: bi('ALTARIS → downside · הצגת בסיס ההחלטה → שערים', 'ALTARIS → downside · the decision basis view → gates'), freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי', 'computed on every change') } }),
+    T({ id: 'investment_attractiveness', group: 'altaris', title: bi('אטרקטיביות השקעה (0–100)', 'Investment attractiveness (0–100)'),
+      short: bi('ניקוד מדיניות דטרמיניסטי של העסקה: תשואה 30 · ירידה 30 · מבנה 15 · ביצוע 15 · שוק 10 — נפרד מאיכות הראיות ולעולם לא הסתברות.', 'A deterministic policy score of the deal: returns 30 · downside 30 · structure 15 · execution 15 · market 10 — separate from evidence quality and never a probability.'),
+      why: bi('ממיין עסקאות באותם כללים; VERY ATTRACTIVE / ATTRACTIVE / MARGINAL / WEAK.', 'Ranks deals by the same rules; VERY ATTRACTIVE / ATTRACTIVE / MARGINAL / WEAK.'),
+      unit: bi('0–100', '0–100'), geography: bi('עסקה', 'Deal'), period: bi('בזמן ההחלטה', 'At decision time'),
+      source: { ids: ['altaris:decision'] }, cls: 'MODEL',
+      formula: bi('Σ קבוצות משוקללות (תשואה, ירידה, מבנה, ביצוע, שוק) על תוצאות המנוע; TAKE ≥ 65, בתנאים ≥ 50; ראיות חסרות לעולם אינן מעלות', 'Σ weighted groups (returns, downside, structure, execution, market) over engine outputs; TAKE ≥ 65, with conditions ≥ 50; missing evidence never raises'),
+      inputs: [bi('IRR, MOIC, כיסוי, LTV, חשיפות, downside, תוצאות השערים', 'IRR, MOIC, coverage, LTV, exposures, downside, gate results')],
+      methodology: bi('מדיניות ההחלטה altaris-investment-decision-v1 (מתועדת ב-POLICY_TEXT); המספר מתאפס ב-INSUFFICIENT EVIDENCE.', 'The decision policy altaris-investment-decision-v1 (documented in POLICY_TEXT); nulled on INSUFFICIENT EVIDENCE.'),
+      interpretation: bi('גבוה = עומד בכללי הקרן במרווח; אינו תחזית.', 'High = meets the fund rules with margin; not a forecast.'), notAs: bi('לא הסתברות הצלחה, לא דירוג אשראי, לא דירוג סוכנות.', 'Not a success probability, not a credit rating, not an agency rating.'),
+      limitations: [LIM.notRecommendation], evidence: bi('ALTARIS → הצגת בסיס ההחלטה → פירוט הניקוד', 'ALTARIS → the decision basis view → score breakdown'), freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי', 'computed on every change') } }),
+    T({ id: 'decision_verdict', group: 'altaris', title: bi('הכרעת ההשקעה', 'Investment verdict'),
+      short: bi('TAKE / TAKE WITH CONDITIONS / PASS / INSUFFICIENT EVIDENCE — לפי שערי הקרן (IRR, MOIC, כיסוי, LTV, חשיפות), הפסד downside וראיות שווי נתמכות; דטרמיניסטי ומוסבר.', 'TAKE / TAKE WITH CONDITIONS / PASS / INSUFFICIENT EVIDENCE — by the fund gates (IRR, MOIC, coverage, LTV, exposures), the downside loss and supported value evidence; deterministic and explained.'),
+      why: bi('הופך חיתום למסקנה שאפשר לערער עליה: למה, מה נגד, מה ההנחה המכרעת, מה יהפוך אותה.', 'Turns underwriting into a conclusion one can challenge: why, what weighs against, the decisive assumption, what would flip it.'),
+      unit: bi('ארבע הכרעות', 'four verdicts'), geography: bi('עסקה', 'Deal'), period: bi('בזמן ההחלטה', 'At decision time'),
+      source: { ids: ['altaris:decision'] }, cls: 'MODEL',
+      formula: bi('שער קריטי נכשל → PASS; כמעט-נכשל → בתנאים; ראיות < סף → INSUFFICIENT; אחרת לפי הניקוד', 'a critical gate failed → PASS; a near miss → with conditions; evidence below threshold → INSUFFICIENT; else by the score'),
+      inputs: [bi('תוצאות המנוע לכל מבנה, ספי הקרן, בסיס השווי וסיווג הקלטים', 'engine results per structure, the fund hurdles, the value basis and the inputs\' classes')],
+      methodology: bi('התנאים נובעים רק מהשערים ומפותרי המנוע; נקודות ההיפוך מריצות את המנוע מחדש על עותקים; הנרטיב הוא הסבר בלבד ולעולם אינו סותר.', 'Conditions come only from gates and engine solvers; flip points re-run the engine on copies; the narrative is explanation only and never contradicts.'),
+      interpretation: bi('הציגו את בסיס ההחלטה: שערים, פירוט, סתירות בין מקורות, עדכניות, מה רשמי / מודל / הנחת משתמש.', 'Open the decision basis: gates, breakdown, source conflicts, freshness, what is official / model / user assumption.'),
+      notAs: bi('לא המלצת AI, לא ייעוץ השקעות, לא דירוג סוכנות.', 'Not an AI recommendation, not investment advice, not an agency rating.'),
+      limitations: [bi('ההכרעה היא מדיניות הקרן כפי שהוגדרה; שינוי ספי הקרן משנה את ההכרעה.', 'The verdict is the fund policy as configured; changing the hurdles changes the verdict.')],
+      evidence: bi('altaris/decision.js POLICY_TEXT · הצגת בסיס ההחלטה · חותמת המתודולוגיה על עסקאות שמורות', 'altaris/decision.js POLICY_TEXT · the decision basis view · the methodology stamp on saved deals'),
+      freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי', 'computed on every change') } }),
+    T({ id: 'flip_point', group: 'altaris', title: bi('נקודת היפוך', 'Flip point'),
+      short: bi('השינוי הקטן ביותר בקלט אחד (מחיר, שווי, ריבית, עיכוב) שמשנה את ההכרעה — מחושב בהרצה חוזרת של המנוע.', 'The smallest change in one input (price, value, rate, delay) that changes the verdict — computed by re-running the engine.'),
+      why: bi('אומר איזו הנחה באמת מכריעה.', 'Says which assumption really decides.'),
+      unit: bi('ערך קלט', 'an input value'), geography: bi('עסקה', 'Deal'), period: dash, source: { ids: ['altaris:decision', 'altaris:engine'] }, cls: 'MODEL',
+      formula: bi('חיפוש על עותק של העסקה עד שההכרעה משתנה', 'a search over a copy of the deal until the verdict changes'), inputs: [bi('העסקה וההגדרות', 'the deal and the settings')],
+      methodology: bi('2–4 נקודות; אינן משנות את העסקה.', '2–4 points; they never modify the deal.'), interpretation: bi('היפוך קרוב = החלטה רגישה.', 'A near flip = a sensitive decision.'), notAs: bi('לא תחזית, לא טווח ביטחון.', 'Not a forecast, not a confidence interval.'),
+      evidence: bi('הצגת בסיס ההחלטה → "מה ישנה את ההחלטה"', 'the decision basis view → "what would change the decision"'), freshness: { observation: dash, publication: dash, check: bi('מחושב אחרי שהקלטים נחים', 'computed after the inputs settle') } }),
+    T({ id: 'decision_condition', group: 'altaris', title: bi('תנאי להחלטה', 'Decision condition'),
+      short: bi('דרישה שנובעת רק משער שכמעט נכשל או מפותר המנוע (מחיר מרבי, שווי לאיזון) — לעולם לא מהנרטיב.', 'A requirement that comes only from a near-missed gate or an engine solver (max price, break-even value) — never from the narrative.'),
+      why: bi('מפריד "לקחת בכפוף לתנאים" מ"לקחת": התנאי הוא המספר שצריך להשתנות.', 'Separates "take with conditions" from "take": the condition is the number that must change.'),
+      unit: bi('ערך של קלט או שער', 'an input or gate value'), geography: bi('עסקה', 'Deal'), period: bi('בזמן ההחלטה', 'At decision time'), source: { ids: ['altaris:decision', 'altaris:engine'] }, cls: 'MODEL',
+      methodology: bi('תנאי = עובדה שהמודל תומך בה (שער ליד הסף, פותר); אין תנאים מומצאים.', 'A condition = a fact the model supports (a gate near its limit, a solver); no invented conditions.'),
+      interpretation: bi('תנאי שאינו ניתן להשגה הופך את ההכרעה ל-PASS בפועל.', 'An unattainable condition makes the verdict a PASS in practice.'), notAs: bi('לא עצה כללית, לא רשימת בדיקה.', 'Not general advice, not a checklist.'),
+      evidence: bi('הצגת בסיס ההחלטה → תנאים', 'the decision basis view → conditions'), freshness: { observation: dash, publication: dash, check: bi('מחושב בכל שינוי', 'computed on every change') } }),
+  ];
+  const TERM_INDEX = new Map(TERMS.map((t) => [t.id, t]));
+
+  /* ---- signal rules: every signal id the product emits → the term it belongs to and how to read it ---- */
+  const SIGNAL_RULES = Object.freeze({
+    /* market dossier / scan */
+    'sales-momentum-up': { term: 'sales_momentum_3m', kind: 'watch', rule: bi('מומנטום 3 חודשים ≥ +10% בסדרה הרשמית (ארצי / מחוז; לא יישוב; לא במדגם קטן)', '3-month momentum ≥ +10 % in the official series (national / district; never a locality; not on a small sample)') },
+    'sales-momentum-down': { term: 'sales_momentum_3m', kind: 'risk', rule: bi('מומנטום 3 חודשים ≤ −10%', '3-month momentum ≤ −10 %') },
+    'months-of-supply': { term: 'months_of_supply', kind: 'risk', rule: bi('חודשי היצע ארציים ≥ 18', 'national months of supply ≥ 18') },
+    'open-land': { term: 'tender_units_open', kind: 'watch', rule: bi('≥ 500 יח״ד במכרזים פתוחים / שפורסמו בהיקף הנוכחי', '≥ 500 units in open / published tenders in the current scope') },
+    'awarded-pipeline': { term: 'tender_units_awarded', kind: 'watch', rule: bi('≥ 1,000 יח״ד במגרשים שנזכו (24 חודשים)', '≥ 1,000 units in awarded lots (24 months)') },
+    'pending-decision': { term: 'tender_units_open', kind: 'watch', rule: bi('≥ 500 יח״ד במכרזים שנסגרו וממתינים להחלטה', '≥ 500 units in closed tenders awaiting a decision') },
+    'failed-tenders': { term: 'failed_tender_ratio', kind: 'risk', rule: bi('≥ 30% מתוך ≥ 5 מכרזים נוכחיים נדונו ללא זוכה / בוטלו', '≥ 30 % of ≥ 5 current tenders decided without a winner / cancelled') },
+    'renewal-pipeline': { term: 'renewal_proposed_units', kind: 'watch', rule: bi('≥ 2,000 יח״ד מוצעות במתחמי התחדשות (כפי שפורסם)', '≥ 2,000 proposed units in renewal complexes (as published)') },
+    'rental-pipeline': { term: 'rental_tender_units_vs_stated', kind: 'watch', rule: bi('≥ 3 מכרזי דיור להשכרה נוכחיים', '≥ 3 current rental-track tenders') },
+    'stale-rental-status': { term: 'rental_tender_units_vs_stated', kind: 'risk', rule: bi('≥ 3 מכרזי השכרה שסטטוס הרשות שלהם לא התקדם מעל 36 חודשים', '≥ 3 rental tenders whose Authority status has not advanced for over 36 months') },
+    'developer-entries': { term: 'market_entry', kind: 'watch', rule: bi('≥ 2 כניסות יזמים ליישוב ב-24 חודשים', '≥ 2 developer entries into the locality in 24 months') },
+    'developer-concentration': { term: 'developer_observed_activity', kind: 'risk', rule: bi('יזם אחד מחזיק ≥ 50% מתוך ≥ 5 מגרשים מובילים בגאוגרפיה', 'one developer holds ≥ 50 % of ≥ 5 leading lots in the geography') },
+    'no-recent-changes': { term: 'source_freshness', kind: 'risk', rule: bi('אין אירועים שנצפו בחלון (30 יום; 7 ארצי) — צנרת שקטה או מקור שלא התעדכן', 'no observed events in the window (30 days; 7 nationally) — a quiet pipeline or a source that did not update') },
+    'construction-inputs': { term: 'construction_inputs_index', kind: 'risk', rule: bi('מדד תשומות הבנייה ≥ +3% שנתי (ארצי)', 'construction-inputs index ≥ +3 % y/y (national)') },
+    'demand-with-supply': { term: 'opportunity_signal', kind: 'watch', rule: bi('נגזר משני כללים: מומנטום מכירות חיובי ∧ קרקע פתוחה ≥ 500 יח״ד', 'derived from two rules: positive sales momentum ∧ open land ≥ 500 units') },
+    'inventory-plus-pipeline': { term: 'risk_signal', kind: 'risk', rule: bi('נגזר משני כללים: חודשי היצע ≥ 18 ∧ צנרת זכיות ≥ 1,000 יח״ד (יקומים שונים, לא סכום)', 'derived from two rules: months of supply ≥ 18 ∧ awarded pipeline ≥ 1,000 units (different universes, not a sum)') },
+    /* developer intelligence */
+    NEW_MARKET_ENTRY: { term: 'market_entry', kind: 'watch', rule: bi('≥ 1 כניסה ליישוב ב-24 חודשים', '≥ 1 market entry in 24 months') },
+    ACCELERATING_LAND_ACTIVITY: { term: 'developer_observed_activity', kind: 'watch', rule: bi('≥ 3 מגרשי מגורים ב-12 החודשים שעד התצפית האחרונה ולפחות פי 2 מ-12 הקודמים', '≥ 3 residential lots in the last 12 months and ≥ 2 × the prior 12') },
+    RECENT_WIN_MOMENTUM: { term: 'developer_observed_activity', kind: 'watch', rule: bi('≥ 3 מגרשי מגורים שנזכו ב-6 חודשים', '≥ 3 residential lots won in 6 months') },
+    HIGH_GEOGRAPHIC_CONCENTRATION: { term: 'geographic_concentration', kind: 'risk', rule: bi('≥ 70% מתוך ≥ 5 מגרשי מגורים ביישוב אחד', '≥ 70 % of ≥ 5 residential lots in one locality') },
+    PROGRAM_CONCENTRATION: { term: 'developer_observed_activity', kind: 'info', rule: bi('מסלול אחד ≥ 70% מתוך ≥ 5 מגרשים', 'one track ≥ 70 % of ≥ 5 lots') },
+    LOW_RECENT_PUBLIC_ACTIVITY: { term: 'developer_observed_activity', kind: 'info', rule: bi('≥ 3 מגרשים + הגרלות בסך הכול ואין פעילות שנצפתה ב-24 חודשים — בערוצים הציבוריים בלבד', '≥ 3 lifetime lots + lotteries and none observed in 24 months — in the public channels only') },
+    RENTAL_EXPANSION: { term: 'rental_tender_units_vs_stated', kind: 'watch', rule: bi('≥ 1 מגרש במסלול ההשכרה ב-24 חודשים', '≥ 1 rental-track lot in 24 months') },
+    PLANNING_EVIDENCE: { term: 'units_after_plan', kind: 'info', rule: bi('≥ 2 תוכניות עם צירוף XPlan מדויק בין מגרשי היזם', '≥ 2 plans with an exact XPlan join among the developer\'s lots') },
+    CONSTRUCTION_EVIDENCE: { term: 'supply_universes', kind: 'info', rule: bi('≥ 1 מבנה שהחל לפי דיווחי ההתקדמות (ישן, 2024)', '≥ 1 building started per the progress reports (stale, 2024)') },
+    POSSIBLE_SAME_ENTITY: { term: 'developer_observed_activity', kind: 'info', rule: bi('≥ 1 ישות "ייתכן שזהה" — מסומנת, לא ממוזגת', '≥ 1 "possibly the same" entity — flagged, not merged') },
+  });
+
+  /* ---- missing-data reasons: why "—" is shown, and what would make the figure available ---- */
+  const MISSING = Object.freeze({
+    no_locality_sales_series: { label: bi('אין סדרת מכירות רשמית ליישוב', 'No official locality sales series'), why: bi('הלמ״ס מפרסמת ארצי ו-7 מחוזות בממשק קריא למכונה; נתוני יישוב קיימים רק ב-PDF (חלונות 3 חודשים, > 150 מכירות, שמות).', 'CBS publishes national and 7 districts machine-readably; city figures exist only in a PDF (3-month windows, > 150 sales, names).'), unlock: bi('סדרת יישובים רשמית קריאה למכונה — או תמלול מתויג של ההודעה לתקשורת (קיים לתל אביב-יפו).', 'A machine-readable official locality series — or a labelled transcription of the media release (exists for Tel Aviv-Yafo).'), ids: ['sales', 'supply-pressure'] },
+    inventory_national_only: { label: bi('מלאי: ארצי בלבד', 'Inventory: national only'), why: bi('סדרת המלאי הרשמית אינה מפוצלת לפי מחוז או יישוב; PROPX לעולם אינה מקצה.', 'The official inventory series is not split by district or locality; PROPX never allocates.'), unlock: bi('פרסום רשמי של מלאי לפי מחוז.', 'An official inventory figure by district.'), ids: ['inventory'] },
+    no_permits_source: { label: bi('אין מקור היתרים / התחלות / גמר לפי יישוב', 'No permits / starts / completions source by locality'), why: bi('לא נמצא מקור רשמי קריא למכונה שמצטרף לפי קוד יישוב; דיווחי ההתקדמות של משב״ש נעצרים ב-2024 ומכסים מגרשים שנזכו בלבד.', 'No joined machine-readable official source by locality code was found; MoCH progress reports stop in 2024 and cover awarded lots only.'), unlock: bi('סדרת הלמ״ס לבנייה לפי יישוב בממשק ה-API, או מאגר היתרים עירוני עם קוד יישוב.', 'The CBS construction series by locality in the API, or a municipal permits dataset with a locality code.'), ids: ['permits'] },
+    transactions_live_only: { label: bi('עסקאות אינן בתיק', 'Transactions are not in the dossier'), why: bi('העסקאות נקראות בזמן אמת מפרסום מחדש (over.org.il) בסעיף העסקאות; התיק אינו שולף.', 'Transactions are read live from a republication (over.org.il) in the Transactions section; the dossier never fetches.'), unlock: bi('ערוץ ממשלתי שעונה לשרת (GovMap מחזיר 403) או מאגר מתוארך משלנו.', 'A government channel that answers the server (GovMap returns 403) or a dated store of our own.'), ids: ['transactions'] },
+    lotteries_window_uncovered: { label: bi('הגרלות: החלון אינו מכוסה', 'Lotteries: the window is not covered'), why: bi('ההגרלה האחרונה במקור היא 27.01.2025 — 12 החודשים שעד התצפית האחרונה אינם מכוסים; מוצג "—", לא 0.', 'The source\'s newest lottery is 27.01.2025 — the last 12 months are not covered; "—" is shown, not 0.'), unlock: bi('עדכון של משאב ההגרלות ב-data.gov.il.', 'An update of the lotteries resource on data.gov.il.'), ids: ['lotteries-window'] },
+    private_land_unobserved: { label: bi('קרקע פרטית אינה נצפית', 'Private land is not observed'), why: bi('מכרזי רמ״י ודיווחי משב״ש מכסים קרקע מדינה ותוכניות ממשלתיות; היצע על קרקע פרטית אינו בערוצים אלה.', 'ILA tenders and MoCH reports cover state land and government programs; private-land supply is not in these channels.'), unlock: bi('מקור היתרים או התחלות בנייה כלל-ארצי לפי יישוב.', 'A nationwide permits or starts source by locality.'), ids: ['private-land'] },
+    rental_stated_district: { label: bi('יח״ד להשכרה כפי שנכתב: אין ברמת מחוז', 'Stated rental units: not at district level'), why: bi('הנתון נקרא מהודעות לפי מכרז; ברמת מחוז מוצגים רק סכומי המכרזים.', 'The figure is read from notices per tender; at district level only tender totals are shown.'), unlock: dash, ids: ['rental-stated'] },
+    small_sample: { label: bi('מדגם קטן', 'Small sample'), why: bi('פחות מהסף שנקבע (למשל < 10 עסקאות, < 3 רשומות בחלון) — ללא חציון, מגמה או אחוז.', 'Below the stated threshold (e.g. < 10 transactions, < 3 records in a window) — no median, trend or percentage.'), unlock: bi('יותר תצפיות באותו היקף.', 'More observations in the same scope.'), ids: [] },
+    source_unavailable: { label: bi('המקור אינו זמין', 'The source is unavailable'), why: bi('המקור דחה את הבדיקה (401/403/429) או נכשל; הנתון התקין האחרון נשמר ומתוארך — לעולם לא 0.', 'The source refused the check (401/403/429) or failed; the last valid data is kept and dated — never 0.'), unlock: bi('המקור עונה שוב (מצוין RECOVERED במרכז הנתונים).', 'The source answers again (RECOVERED in the Trust Center).'), ids: [] },
+    stale_observation: { label: bi('התצפית ישנה', 'Stale observation'), why: bi('התצפית האחרונה ישנה מלוח הפרסום הצפוי (למשל דיווחי בנייה 2024, מלאי תכנוני 2022) — מוצגת עם תאריכה.', 'The latest observation is older than the expected publication calendar (e.g. construction reports 2024, planning inventory 2022) — shown with its date.'), unlock: bi('פרסום חדש של המקור.', 'A new release by the source.'), ids: [] },
+    no_exact_join: { label: bi('אין צירוף מדויק', 'No exact join'), why: bi('אין מפתח רשמי משותף (מספר תוכנית, MichrazID, קוד יישוב, ProjectID, גוש/חלקה) — PROPX לעולם אינה מצרפת לפי שם או גאומטריה.', 'No shared official key (plan number, MichrazID, locality code, ProjectID, block/parcel) — PROPX never joins by name or geometry.'), unlock: bi('המקור מפרסם את המפתח.', 'The source publishes the key.'), ids: [] },
+    not_machine_readable: { label: bi('לא קריא למכונה', 'Not machine-readable'), why: bi('הנתון קיים רק כ-PDF או כדף אינטרנט (למשל טבלת היישובים של הלמ״ס, שכר דירה ממוצע) — נבדק ולא נקרא.', 'The figure exists only as a PDF or a web page (e.g. the CBS localities table, average rent) — audited, not read.'), unlock: bi('קובץ או API רשמי.', 'An official file or API.'), ids: [] },
+  });
+  const MISSING_BY_RUNTIME = (() => { const m = new Map(); for (const [id, x] of Object.entries(MISSING)) for (const r of x.ids) m.set(r, id); return m; })();
+
+  /* ---- API ---- */
+  const pick = (v, L) => (v == null ? null : typeof v === 'object' && ('he' in v || 'en' in v) ? (v[L] != null ? v[L] : v.en) : v);
+  const term = (id) => TERM_INDEX.get(String(id || '')) || null;
+  const sourceLabel = (id, L) => { const c = canonicalSource(id); return c ? pick(SOURCES[c].label, L) : null; };
+  /** level 1: one sentence */
+  function level1(id, L = 'he') { const t = term(id); return t ? { id: t.id, title: pick(t.title, L), short: pick(t.short, L), cls: t.cls, clsLabel: pick(CLASSES[t.cls].label, L) } : null; }
+  /** level 2: the institutional detail */
+  function level2(id, L = 'he') {
+    const t = term(id); if (!t) return null;
+    return { id: t.id, group: t.group, groupLabel: pick((GROUPS.find((g) => g.id === t.group) || {}).label, L), title: pick(t.title, L), short: pick(t.short, L), why: pick(t.why, L), unit: pick(t.unit, L), geography: pick(t.geography, L), period: pick(t.period, L),
+      sources: t.source.ids.map((s) => ({ id: s, label: sourceLabel(s, L) })), cls: t.cls, clsLabel: pick(CLASSES[t.cls].label, L), clsDefinition: pick(CLASSES[t.cls].d, L), methodology: pick(t.methodology, L), formula: pick(t.formula, L), inputs: t.inputs.map((x) => pick(x, L)),
+      interpretation: pick(t.interpretation, L), notAs: pick(t.notAs, L), limitations: t.limitations.map((x) => pick(x, L)), evidence: pick(t.evidence, L), freshness: { observation: pick(t.freshness.observation, L), publication: pick(t.freshness.publication, L), check: pick(t.freshness.check, L) } };
+  }
+  /** "why am I seeing this?" for a signal id: the rule, the term, and the runtime values the caller passes */
+  function signal(id, L = 'he', runtime) {
+    const r = SIGNAL_RULES[String(id || '')]; if (!r) return null;
+    const rt = runtime || {};
+    return { id, kind: r.kind, rule: pick(r.rule, L), term: level1(r.term, L), trigger: pick(rt.text || rt.trigger, L) || null, value: rt.valueLabel != null ? rt.valueLabel : rt.value != null ? rt.value : null, threshold: pick(rt.threshold, L), comparison: pick(rt.comparison, L), period: pick(rt.period, L),
+      source: rt.source || null, sourceLabel: rt.source ? sourceLabel(String(rt.source).split(' · ')[0], L) : null, cls: rt.cls || null, evidence: rt.evidence || null, notAs: pick((term(r.term) || {}).notAs, L) };
+  }
+  /** why "—": by registry id or by the runtime id a read model prints (e.g. 'permits') */
+  function missing(id, L = 'he') { const key = MISSING[id] ? id : MISSING_BY_RUNTIME.get(String(id || '')); const m = key ? MISSING[key] : null; return m ? { id: key, label: pick(m.label, L), why: pick(m.why, L), unlock: pick(m.unlock, L) } : null; }
+  const ids = () => TERMS.map((t) => t.id);
+  const classLabel = (code, L = 'he') => (CLASSES[code] ? pick(CLASSES[code].label, L) : code);
+
+  return Object.freeze({ VERSION, CLASSES, SOURCES, FRESHNESS, GROUPS, TERMS, SIGNAL_RULES, MISSING, canonicalSource, sourceLabel, term, level1, level2, signal, missing, ids, classLabel, pick });
+});
 </script>
 <script>
 /* generated by scripts/market-sync.js — do not edit by hand */
@@ -8384,16 +8994,16 @@ function diHTML(I){
   const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const trend=`<div class="ho-dl">${kv(di.trend,`<b>${inE(di.trends[A.trend]||A.trend||"—")}</b> <span class="ho-na">(${di.l12}: <span class="num">${fmtInt(l12.lotsWon||0)}</span> ${di.lots} · <span class="num">${fmtInt(l12.lotteries||0)}</span> ${di.lotteries} · ${di.p12}: <span class="num">${fmtInt(p12.lotsWon||0)}</span> · <span class="num">${fmtInt(p12.lotteries||0)}</span>)</span>`)}
     ${kv(di.last,`${inDate(A.lastActivity)}${A.monthsSinceLast!=null?` <span class="ho-na">(${fmtInt(A.monthsSinceLast)} ${di.monthsAgo})</span>`:""}`)}${kv(di.first,inDate(A.firstActivity))}
-    ${G?kv(di.geoConc,`<span class="num">${pc(G.share)}</span> ${di.inTop} <bdi>${inE(he?G.topMarket.city:(G.topMarket.cityEn||G.topMarket.city))}</bdi> <span class="ho-na">(${fmtInt(G.lots)} / ${fmtInt(G.residentialLots)} ${di.resLots} · ${fmtInt(G.markets)} ${di.markets})</span>`):""}
+    ${G?kv(di.geoConc+" "+xpBtn("geographic_concentration"),`<span class="num">${pc(G.share)}</span> ${di.inTop} <bdi>${inE(he?G.topMarket.city:(G.topMarket.cityEn||G.topMarket.city))}</bdi> <span class="ho-na">(${fmtInt(G.lots)} / ${fmtInt(G.residentialLots)} ${di.resLots} · ${fmtInt(G.markets)} ${di.markets})</span>`):""}
     ${Pg.topTrack?kv(di.progConc,`<span class="num">${pc(Pg.topTrack.share)}</span> ${inE(T().ldTracks&&T().ldTracks[Pg.topTrack.track]||Pg.topTrack.track)} <span class="ho-na">(${fmtInt(Pg.topTrack.lots)} / ${fmtInt(Pg.lots)})${Pg.subsidizedShare!=null?` · ${di.subsidized} <span class="num">${pc(Pg.subsidizedShare)}</span>`:""}</span>`):""}
     ${kv(di.rental,R.rentalTrackLots?`<span class="num">${fmtInt(R.rentalTrackLots)}</span> ${di.rentalLots} · <span class="num">${fmtInt(R.rentalTrackUnits)}</span> ${di.tenderTotal} · ${fmtInt(R.noticesJoined)} ${di.notices}${R.statedRentalUnits!=null?` · ${di.stated} <span class="num">${fmtInt(R.statedRentalUnits)}</span>`:""}`:inDash())}
     ${kv(di.planning,Pl.plans?`<span class="num">${fmtInt(Pl.xplanJoined)}</span> / <span class="num">${fmtInt(Pl.plans)}</span> ${di.plansJoined}${Pl.byStation&&Object.keys(Pl.byStation).length?` · ${Object.entries(Pl.byStation).map(([k,n])=>`${inE(k)} ${fmtInt(n)}`).join(" · ")}`:""}`:inDash())}
     ${kv(di.housing,H.lotteries?`<span class="num">${fmtInt(H.projects)}</span> ${di.projects} · <span class="num">${fmtInt(H.unitsFirstLotteries)}</span> ${di.unitsFirst}${H.applicantsPerUnit!=null?` · ${di.apu} <span class="num">${H.applicantsPerUnit}</span> <span class="ho-na">(${fmtInt(H.applicantsPerUnitProjects)} ${di.projects})</span>`:""}${H.permittedProjects?` · ${di.permitted} ${fmtInt(H.permittedProjects)}`:""}`:inDash())}
     ${kv(di.construction,C&&C.lots?`<span class="num">${fmtInt(C.started)}</span> ${di.started} · <span class="num">${fmtInt(C.completed)}</span> ${di.completed} <span class="ho-na">(${fmtInt(C.lots)} ${di.lotsJoined} · ${di.asOf} ${inE(C.asOf||"")} · ${di.stale})</span>`:inDash())}</div>`;
   const land=LB.byTrack&&Object.keys(LB.byTrack).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${di.track}</th><th>${di.lots}</th><th>${di.units}</th><th>${di.landTotal}</th><th>${di.lpu}</th></tr></thead><tbody>${Object.entries(LB.byTrack).map(([k,x])=>`<tr><td>${inE(T().ldTracks&&T().ldTracks[k]||k)}</td><td class="num">${fmtInt(x.lots)}</td><td class="num">${fmtInt(x.units)}</td><td class="num">${inNIS(x.landTotal)}</td><td class="num">${inNIS(x.landPerUnit)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(bl(LB.byTrackBasis))} · ${inE(t.vatNote)}</p>`:"";
-  const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${di.kinds[s.kind]||s.kind}</span> <b>${inE(s.text[L])}</b><div class="ds-m">${di.trigger}: ${inE(bl(s.trigger))} · ${di.value}: ${s.value!=null?`<span class="num">${typeof s.value==="number"&&s.value<=1&&s.value>0&&/CONCENTRATION/.test(s.id)?pc(s.value):fmtInt(s.value)}</span>`:"—"} · ${di.threshold}: ${inE(bl(s.threshold))} · ${di.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${inE((T().puCls||{})[s.cls]||s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${di.limits}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${di.noSignals}</p>`;
+  const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${di.kinds[s.kind]||s.kind}</span> <b>${inE(s.text[L])}</b> ${xpSig(s.id,s)}<div class="ds-m">${di.trigger}: ${inE(bl(s.trigger))} · ${di.value}: ${s.value!=null?`<span class="num">${typeof s.value==="number"&&s.value<=1&&s.value>0&&/CONCENTRATION/.test(s.id)?pc(s.value):fmtInt(s.value)}</span>`:"—"} · ${di.threshold}: ${inE(bl(s.threshold))} · ${di.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${inE((T().puCls||{})[s.cls]||s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${di.limits}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${di.noSignals}</p>`;
   const ent=(E.rows||[]).length?`<p class="ho-note">${di.entries}: ${E.rows.map(x=>`<bdi>${inE(he?x.city:(x.cityEn||x.city))}</bdi> ${inDate(x.date)}`).join(" · ")}</p>`:"";
-  return `${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p><p class="ho-note">${inE(bl(I.basis))}</p>`;
+  return `<p class="ho-note">${xpBtn("developer_observed_activity")} ${inE(bl(I.basis))}</p>${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p>`;
 }
 function renderInDrawer(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
@@ -8664,14 +9274,14 @@ he:{loading:"טוען את מצב המקורות…",err:"מצב המקורות 
   vert:{land:"קרקעות",renewal:"התחדשות עירונית",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
   ch:{official:"ערוץ רשמי","independent-republication":"פרסום מחדש עצמאי",derived:"נגזר ב-PROPX"},
   c:{src:"מקור",vert:"תחום",cls:"סיווג",state:"מצב",last:"בדיקה אחרונה",obs:"תצפית אחרונה",upd:"עדכון במקור"},
-  d:{fresh:"עדכניות לפי לוח הפרסום",freshSt:{CURRENT:"עדכני",EXPECTED_REPORTING_LAG:"פיגור דיווח צפוי",STALE:"ישן"},method:"מתודולוגיה — שדות המקור והחישוב",used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן",alerts:"התראות מקורות — מיומני הריצה, לא מהערכה",noAlerts:"אין התראות: כל מקור ש-PROPX קוראת ענה בבדיקה האחרונה בתוך התדירות הצפויה",after:"אחרי",lastSuccess:"הצלחה אחרונה",lastFailure:"כישלון אחרון",tally:"בדיקות תקינות / סה״כ",tallyNote:"(ביומן)",cadenceH:"תדירות צפויה",hours:"שעות"},
+  d:{fresh:"עדכניות לפי לוח הפרסום",freshSt:{CURRENT:"עדכני",EXPECTED_REPORTING_LAG:"פיגור דיווח צפוי",STALE:"ישן"},method:"מתודולוגיה — שדות המקור והחישוב",used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן",alerts:"התראות מקורות — מיומני הריצה, לא מהערכה",disc:"גילוי מקורות (קריאה בלבד)",verdicts:{INTEGRATE:"מועמד לשילוב","DOCUMENT-ONLY":"תיעוד בלבד",REJECT:"נדחה"},prio:"עדיפות",join:"מפתח צירוף",audited:"נבדק",contains:"מכיל",access:"גישה",noAlerts:"אין התראות: כל מקור ש-PROPX קוראת ענה בבדיקה האחרונה בתוך התדירות הצפויה",after:"אחרי",lastSuccess:"הצלחה אחרונה",lastFailure:"כישלון אחרון",tally:"בדיקות תקינות / סה״כ",tallyNote:"(ביומן)",cadenceH:"תדירות צפויה",hours:"שעות"},
   legend:"מילון מצבים",principles:"עקרונות",count:n=>`${n} מקורות`},
 en:{loading:"Loading source status…",err:"Source status is unavailable right now",offline:"The data center is available on the server version only",
   st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check",RECOVERED:"Recovered",SOURCE_STALE:"Source content stale"},
   vert:{land:"Land",renewal:"Urban renewal",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
   ch:{official:"Official channel","independent-republication":"Independent republication",derived:"Derived in PROPX"},
   c:{src:"Source",vert:"Area",cls:"Class",state:"State",last:"Last check",obs:"Latest observation",upd:"Updated at source"},
-  d:{fresh:"Freshness by the publication calendar",freshSt:{CURRENT:"current",EXPECTED_REPORTING_LAG:"expected reporting lag",STALE:"stale"},method:"Methodology — source fields and derivation",used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old",alerts:"Source alerts — from the run logs, never an estimate",noAlerts:"No alerts: every source PROPX reads answered its last check within the expected cadence",after:"after",lastSuccess:"Latest success",lastFailure:"Latest failure",tally:"Good checks / total",tallyNote:"(in the log)",cadenceH:"Expected cadence",hours:"hours"},
+  d:{fresh:"Freshness by the publication calendar",freshSt:{CURRENT:"current",EXPECTED_REPORTING_LAG:"expected reporting lag",STALE:"stale"},method:"Methodology — source fields and derivation",used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old",alerts:"Source alerts — from the run logs, never an estimate",disc:"Source discovery (read-only)",verdicts:{INTEGRATE:"candidate for integration","DOCUMENT-ONLY":"documented only",REJECT:"rejected"},prio:"priority",join:"join key",audited:"audited",contains:"contains",access:"access",noAlerts:"No alerts: every source PROPX reads answered its last check within the expected cadence",after:"after",lastSuccess:"Latest success",lastFailure:"Latest failure",tally:"Good checks / total",tallyNote:"(in the log)",cadenceH:"Expected cadence",hours:"hours"},
   legend:"State vocabulary",principles:"Principles",count:n=>`${n} sources`}};
 const TT=()=>TC_I18N[state.lang];
 const tcState={data:null,status:"idle",started:false,open:null};
@@ -8707,6 +9317,7 @@ function renderTrust(){
         .map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}</div>
       ${(S.history||S.recent)&&(S.history||S.recent).length?`<p class="ho-note">${t.d.recent}: ${(S.history||S.recent).map(r=>`${tcSt(r.state)} ${inDate(r.at)}`).join(" · ")}</p>`:""}
       ${S.lastError?`<p class="ho-note">${t.d.err}: <span class="num">${inE(S.lastError)}</span></p>`:""}
+      ${s.discovery?`<p class="ho-note"><b>${t.d.disc}:</b> ${inE(t.d.verdicts[s.discovery.verdict]||s.discovery.verdict||"—")}${s.discovery.priority!=null?` · ${t.d.prio} <span class="num">${inE(String(s.discovery.priority))}</span>`:""}${s.discovery.joinKey?` · ${t.d.join}: ${inE(s.discovery.joinKey)}`:""}${s.discovery.auditedAt?` · ${t.d.audited} ${inDate(s.discovery.auditedAt)}`:""}</p>${s.discovery.contains?`<p class="ho-note">${t.d.contains}: ${inE(String(s.discovery.contains).slice(0,400))}</p>`:""}${s.discovery.accessMethod?`<p class="ho-note">${t.d.access}: ${inE(String(s.discovery.accessMethod).slice(0,300))}</p>`:""}`:""}
       ${S.note?`<p class="ho-note">${inE(S.note)}</p>`:""}
       ${s.freshness&&s.freshness.state?`<p class="ho-note"><b>${t.d.fresh}:</b> ${inE(t.d.freshSt[s.freshness.state]||s.freshness.state)} · ${inE(s.latestObservation||"—")}${s.freshness.next?` → ${inE(s.freshness.next)} (${inE(s.freshness.nextDueFrom)} – ${inE(s.freshness.staleAfter)})`:""}</p>`:""}
       ${s.sourceStale?`<p class="ho-note"><b>${t.d.stale}</b></p>`:""}
@@ -8716,14 +9327,14 @@ function renderTrust(){
     return `<div class="tc-row${s.inProduct===false?" off":""}"><button type="button" class="tc-sum" data-tcrow="${i}" aria-expanded="${tcState.open===i}">
       <span class="tc-n"><b>${inE(name||"")}</b><span class="sub">${inE(s.name||"")}</span></span>
       <span class="tc-v">${inE(t.vert[s.vertical]||s.vertical)}</span>
-      <span class="tc-c"><span class="ho-chip">${inE(s.classification||"")}</span>${s.channel&&s.channel!=="official"?` <span class="ho-chip cont">${inE(t.ch[s.channel]||s.channel)}</span>`:""}${s.inProduct===false?` <span class="ho-chip cont">${t.d.notRead}</span>`:""}</span>
+      <span class="tc-c"><span class="ho-chip">${inE(s.classification||"")}</span>${s.channel&&s.channel!=="official"?` <span class="ho-chip cont">${inE(t.ch[s.channel]||s.channel)}</span>`:""}${s.inProduct===false?` <span class="ho-chip cont">${t.d.notRead}</span>`:""}${s.discovery&&s.discovery.verdict?` <span class="ho-chip ${s.discovery.verdict==="INTEGRATE"?"on":"cont"}">${inE(t.d.verdicts[s.discovery.verdict]||s.discovery.verdict)}</span>`:""}</span>
       <span class="tc-s">${tcSt(S.state||"NO_RUN")}${S.recovered?" "+tcSt("RECOVERED"):""}</span>
       <span class="tc-d"><span class="k">${t.c.last}</span> ${inDate(S.lastCheckAt)}</span>
       <span class="tc-d"><span class="k">${t.c.obs}</span> ${s.latestObservation!=null?`<span class="num">${inE(s.latestObservation)}</span>`:inDash()}</span>
       <span class="tc-d"><span class="k">${t.c.upd}</span> ${inDate(s.sourceUpdatedAt)}</span></button>${det}</div>`};
   const alerts=(d.alerts||[]);const alertRow=a=>{const nm=state.lang==="en"&&a.publisherEn?a.publisherEn:a.publisher;const k=a.kind;
     return `<li class="tc-al ${k==="RECOVERED"?"ok":k==="SOURCE_STALE"||k==="PARTIAL"?"warn":"bad"}">${tcSt(k)} <b>${inE(nm||"")}</b> — ${inE(a.name||"")}${a.at?` · ${inDate(a.at)}`:""}${k==="RECOVERED"&&a.failedAt?` (${t.d.after} ${tcSt(a.failedState)} ${inDate(a.failedAt)})`:""}${a.lastGoodAt&&k!=="RECOVERED"&&k!=="SOURCE_STALE"?` · ${t.d.lastGood}: ${inDate(a.lastGoodAt)}`:""}${a.error?` · <span class="num">${inE(a.error.slice(0,90))}</span>`:""}${a.note?` · ${inE(a.note)}`:""}</li>`};
-  const alertBox=`<div class="tc-alerts"><div class="pu-ft">${t.d.alerts}</div>${alerts.length?`<ul class="tc-al-l">${alerts.map(alertRow).join("")}</ul>`:`<p class="ho-note">${t.d.noAlerts}</p>`}</div>`;
+  const alertBox=`<div class="tc-alerts"><div class="pu-ft">${t.d.alerts} ${xpBtn("source_freshness")}</div>${alerts.length?`<ul class="tc-al-l">${alerts.map(alertRow).join("")}</ul>`:`<p class="ho-note">${t.d.noAlerts}</p>`}</div>`;
   box.innerHTML=alertBox+`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
     ${ptBar("tc",tcCols(),ptLoad("tc"),{all:true,note:shown.length<all.length?T().ptKept(fmtInt(shown.length),fmtInt(all.length)):""})}
     <div class="tc-list">${shown.map(x=>row(x.s,x.i)).join("")}</div>
@@ -8845,12 +9456,12 @@ function renderPuRadar(){
   const item=x=>{const cls=x.cls==="OFFICIAL"?"raw":x.cls==="DERIVED"?"der":"obs",g=x.geo,gn=ldE(g.name[L]),lvl=ldE(g.levelLabel?g.levelLabel[L]:g.level);
     return `<li class="pu-ri m${x.m}"><div class="pu-ri-h"><button type="button" class="ld-link pu-ri-g" data-pugeo="${ldE(g.level)}:${ldE(g.code)}">${gn}</button><span class="pu-ri-l">${lvl}</span>${x.m===3?`<span class="pu-m3">${t.puM3}</span>`:""}<span class="vc ${cls}">${ldE(t.puCls[x.cls]||x.cls)}</span></div>
       <div class="pu-ri-t">${ldE(x.text[L])}</div>
-      <details class="pu-why"><summary>${t.puWhy}</summary><div class="ds-m">${t.puTrig}: ${ldE(x.signal)} · ${t.puVal}: <span class="num">${ldE(x.valueLabel||"—")}</span> · ${t.puThr}: <span class="num">${ldE(bl(x.threshold))}</span>${x.comparison?` · ${t.puCmp}: ${ldE(x.comparison[L])}`:""} · ${t.puPer}: ${ldE(bl(x.period))} · ${t.puSrc}: ${ldE(x.source)} · ${ldE(t.puCls[x.cls]||x.cls)} · ${t.puEv}: ${ldE(x.evidence.level)} ${x.evidence.score}/100${x.derived?` · ${t.puDerived}`:""}</div></details></li>`};
-  const col=(title,arr,k)=>`<div><div class="pu-rd-h ${k}">${title} <span class="num">(${fmtInt(arr.length)})</span></div>${arr.length?`<ul class="pu-rd-l">${pick(arr).map(item).join("")}</ul>${arr.filter(x=>!lv||x.geo.level===lv).length>8?`<p class="ho-note">${t.puMoreDs}</p>`:""}`:`<p class="ho-note">${t.puNoItems}</p>`}</div>`;
+      <details class="pu-why"><summary>${t.puWhy}</summary><div class="ds-m">${xpSig(x.signal,x)} ${t.puTrig}: ${ldE(x.signal)} · ${t.puVal}: <span class="num">${ldE(x.valueLabel||"—")}</span> · ${t.puThr}: <span class="num">${ldE(bl(x.threshold))}</span>${x.comparison?` · ${t.puCmp}: ${ldE(x.comparison[L])}`:""} · ${t.puPer}: ${ldE(bl(x.period))} · ${t.puSrc}: ${ldE(x.source)} · ${ldE(t.puCls[x.cls]||x.cls)} · ${t.puEv}: ${ldE(x.evidence.level)} ${x.evidence.score}/100${x.derived?` · ${t.puDerived}`:""}</div></details></li>`};
+  const col=(title,arr,k)=>`<div><div class="pu-rd-h ${k}">${title} <span class="num">(${fmtInt(arr.length)})</span> ${xpBtn(k==="opp"?"opportunity_signal":"risk_signal")}</div>${arr.length?`<ul class="pu-rd-l">${pick(arr).map(item).join("")}</ul>${arr.filter(x=>!lv||x.geo.level===lv).length>8?`<p class="ho-note">${t.puMoreDs}</p>`:""}`:`<p class="ho-note">${t.puNoItems}</p>`}</div>`;
   const radar=Sc?`<div class="pu-rd-head"><div class="pu-ft">${t.puRadarT}</div><div class="pu-wins" role="group">${chips}</div></div><div class="pu-rd-grid">${col(t.puOppT,Sc.opportunities,"opp")}${col(t.puRiskT,Sc.risks,"risk")}</div><p class="ho-note">${ldE(Sc.basis[L])} · ${ldE(Sc.scope.localityRule[L])}: ${fmtInt(Sc.scope.localities)} · ${t.puBuilt} ${ldE(puDay(Sc.builtAt))}</p>`:"";
   const rev=Rv?(()=>{const mat=Rv.rows.filter(x=>x.material),rel=Rv.releases[0];
     const rows=mat.slice(0,12).map(x=>`<tr><td>${ldE(x.geoName[L])}</td><td>${ldE(x.measureLabel[L])}</td><td class="num">${ldE(x.period)}</td><td class="num">${fmtInt(x.oldValue)} → ${fmtInt(x.newValue)}</td><td class="num">${x.pct>0?"+":""}${x.pct}%</td><td class="num">${ldE(puDay(x.publishedAt))}</td><td class="num">${ldE(puDay(x.observedAt))}</td></tr>`).join("");
-    return `<details class="pu-rev"><summary><span class="pu-ft" style="display:inline">${t.puRevT}</span> — ${t.puRevSum(fmtInt(Rv.totals.inWindow),fmtInt(Rv.totals.material),rel?ldE(puDay(rel.publishedAt)):"—")}</summary>
+    return `<details class="pu-rev"><summary><span class="pu-ft" style="display:inline">${t.puRevT}</span> ${xpBtn("data_revision")} — ${t.puRevSum(fmtInt(Rv.totals.inWindow),fmtInt(Rv.totals.material),rel?ldE(puDay(rel.publishedAt)):"—")}</summary>
       ${mat.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.puRevCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="ho-note">${t.puRevNone}</p>`}
       ${rel&&rel.byGeo.length?`<p class="ho-note">${t.puRevNet}: ${rel.byGeo.slice(0,8).map(g=>`${ldE(g.name[L])} <span class="num">${g.netDelta>0?"+":""}${fmtInt(g.netDelta)}</span> (<span class="num">${ldE(g.from)}–${ldE(g.to)}</span>)`).join(" · ")}</p>`:""}
       <p class="ho-note">${ldE(Rv.basis[L])}</p></details>`})():"";
@@ -8873,6 +9484,47 @@ function initPulse(){
 /* =====================================================================
    MARKET DOSSIER — lib/dossier over the existing read models (GET /api/intel?view=dossier).
    One geography; every figure with its source, class and dates; unit universes never added. */
+
+/* =====================================================================
+   EXPLAINABILITY (lib/explain/registry.js → window.PropxExplain): one ⓘ system for every figure, signal and "—".
+   Level 1 = one sentence; level 2 = definition · why it matters · unit · geography · period · source · class · methodology ·
+   formula · inputs · interpretation · do-not-interpret-as · limitations · evidence · the three dates. A signal opens
+   "why am I seeing this?" = the rule + trigger · value · threshold · comparison · period · source · class · evidence quality.
+   Nothing here computes; the registry documents. */
+const XP=()=>window.PropxExplain||null;
+const XP_T={he:{info:"הסבר",whyBtn:"למה אני רואה את זה?",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
+  en:{info:"Explain",whyBtn:"Why am I seeing this?",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
+const xpT=()=>XP_T[state.lang==="en"?"en":"he"];
+const xpRT=new Map();let xpSeq=0,xpTrig=null;
+const xpBtn=id=>XP()&&XP().term(id)?`<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${xpT().info}" title="${xpT().info}">ⓘ</button>`:"";
+const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";const k="s"+(++xpSeq);xpRT.set(k,rt||{});return `<button type="button" class="xp xp-why" data-xps="${ldE(id)}" data-xpk="${k}">${xpT().whyBtn}</button>`};
+const xpMiss=id=>XP()&&XP().missing(id)?`<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${xpT().whyMissing}" title="${xpT().whyMissing}">ⓘ</button>`:"";
+function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
+function xpL2HTML(id){const L=state.lang==="en"?"en":"he",x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
+  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.evid,ldE(x.evidence))}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
+function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let html="",more="";
+  const head=(title,chip)=>`<div class="xp-h"><b>${title}</b>${chip||""}<button type="button" class="ho-x" data-xpclose aria-label="${t.close}">×</button></div>`;
+  if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;html=head(ldE(x.title),xpClsChip(x.cls))+`<p class="xp-s">${ldE(x.short)}</p>`;more=xpL2HTML(trigger.dataset.xp)}
+  else if(trigger.dataset.xps){const rt=xpRT.get(trigger.dataset.xpk)||{},s=X.signal(trigger.dataset.xps,L,rt);if(!s)return;const kind={watch:{he:"מעקב",en:"watch"},risk:{he:"סיכון",en:"risk"},info:{he:"מידע",en:"info"}}[s.kind];
+    const line=[s.trigger?`<b>${ldE(s.trigger)}</b>`:"",`${t.rule}: ${ldE(s.rule)}`,s.value!=null?`${t.value}: <span class="num">${ldE(String(s.value))}</span>`:"",s.threshold?`${t.threshold}: <span class="num">${ldE(s.threshold)}</span>`:"",s.comparison?`${t.comparison}: ${ldE(s.comparison)}`:"",s.period?`${t.period}: ${ldE(s.period)}`:"",s.source?`${t.source}: ${ldE(s.sourceLabel||s.source)} <span class="num">${ldE(s.source)}</span>`:"",s.cls?`${t.cls}: ${xpClsChip(s.cls)}`:"",s.evidence?`${t.evidence}: ${ldE(s.evidence.level)} ${s.evidence.score!=null?s.evidence.score+"/100":""}`:""].filter(Boolean);
+    html=head(`${t.whyBtn} <span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(kind[L])}</span>`)+`<ul class="xp-why-l">${line.map(x=>`<li>${x}</li>`).join("")}</ul><p class="xp-s"><b>${t.notAs}:</b> ${ldE(s.notAs||"")}</p>`;more=s.term?xpL2HTML(s.term.id):""}
+  else if(trigger.dataset.xpm){const m=X.missing(trigger.dataset.xpm,L);if(!m)return;html=head(ldE(m.label),xpClsChip("MISSING"))+`<p class="xp-s">${ldE(m.why)}</p><p class="xp-s"><b>${t.unlock}:</b> ${ldE(m.unlock)}</p>`}
+  else return;
+  let pop=el("xpPop");if(!pop){pop=document.createElement("div");pop.id="xpPop";pop.className="xp-pop";pop.setAttribute("role","dialog");document.body.appendChild(pop)}
+  pop.innerHTML=html+(more?`<button type="button" class="ld-link xp-more" data-xpmore aria-expanded="false">${t.more} ↓</button>`+more:"");pop.hidden=false;xpTrig=trigger;xpPlace();
+  const f=pop.querySelector("[data-xpclose]");if(f)f.focus();
+}
+function xpPlace(){const pop=el("xpPop");if(!pop||pop.hidden||!xpTrig)return;if(window.innerWidth<=560){pop.style.top="";pop.style.left="";return}
+  const r=xpTrig.getBoundingClientRect(),w=Math.min(440,window.innerWidth-24);pop.style.maxWidth=w+"px";const ph=pop.offsetHeight||200;
+  let top=r.bottom+6;if(top+ph>window.innerHeight-8)top=Math.max(8,r.top-ph-6);let left=state.lang==="en"?r.left:r.right-w;left=Math.max(12,Math.min(left,window.innerWidth-w-12));pop.style.top=top+"px";pop.style.left=left+"px"}
+function xpClose(){const pop=el("xpPop");if(!pop||pop.hidden)return;pop.hidden=true;const t=xpTrig;xpTrig=null;if(t&&document.contains(t))t.focus()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-xp],[data-xps],[data-xpm]");if(b){e.preventDefault();e.stopPropagation();if(xpTrig===b){xpClose();return}xpOpen(b);return}
+  if(e.target.closest("[data-xpclose]")){xpClose();return}
+  const m=e.target.closest("[data-xpmore]");if(m){const l2=m.parentElement.querySelector(".xp-l2");if(l2){l2.hidden=!l2.hidden;m.setAttribute("aria-expanded",String(!l2.hidden));m.textContent=(l2.hidden?xpT().more+" ↓":xpT().less+" ↑");xpPlace()}return}
+  if(!e.target.closest("#xpPop"))xpClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")xpClose()});
+window.addEventListener("resize",xpPlace);window.addEventListener("scroll",()=>{if(xpTrig)xpPlace()},{passive:true});
+
 const dsState={started:false,status:"idle",level:"il",code:null,data:null,index:null,supply:null,req:0};
 function dsLoad(){
   dsState.started=true;const id=++dsState.req;dsState.status="loading";renderDossier();
@@ -8903,29 +9555,29 @@ function renderDossier(){
   if(dsState.status==="error"){body.innerHTML=`<p class="ho-note">${t.dsErr}</p>`;return}
   if(!D){body.innerHTML=`<p class="ho-note">${t.dsLoading}</p>`;return}
   const S=D.sections,n=v=>v==null?"—":fmtInt(v),pc=v=>v==null?"—":`<span class="num">${(v>0?"+":"")+Number(v).toFixed(1)}%</span>`,cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${ldE(t.puCls&&t.puCls[c]||c)}</span>`;
-  const tile=(k,v,sub,c)=>`<div class="ds-k"><div class="k">${ldE(k)}</div><div class="v num">${v}</div><div class="s">${sub||""}${c?" "+cls(c):""}</div></div>`;
+  const tile=(k,v,sub,c,xp)=>`<div class="ds-k"><div class="k">${ldE(k)}${xp?" "+xpBtn(xp):""}</div><div class="v num">${v}</div><div class="s">${sub||""}${c?" "+cls(c):""}</div></div>`;
   const tiles=[];
-  if(S.sales&&S.sales.latest)tiles.push(tile(t.dsT.sales,n(S.sales.latestValue),`${ldE(S.sales.latest)} · ${t.dsS.t12} ${n(S.sales.t12&&S.sales.t12.value)}${S.sales.momentum&&S.sales.momentum.ok&&!S.sales.small?` · ${t.dsS.mom} ${pc(S.sales.momentum.pct)}`:S.sales.small?` · ${t.dsS.small}`:""}<br>${ldE(S.sales.scope?S.sales.scope[L]:"")}`,"OFFICIAL"));
-  if(S.inventory)tiles.push(tile(t.dsT.inv,n(S.inventory.value),`${ldE(S.inventory.period)}${S.inventory.monthsSupply!=null?` · ${Number(S.inventory.monthsSupply).toFixed(1)} ${t.dsT.mos}`:""}`,"OFFICIAL"));
-  if(S.land&&S.land.kpis){const K=S.land.kpis;tiles.push(tile(t.dsT.land,n(K.tenders),`${t.dsT.open} ${n(K.unitsOpen)} · ${t.dsT.aw} ${n(K.unitsAwarded)} · ${t.dsT.pend} ${n(K.unitsPendingDecision)}${K.byLocalities?` · ${t.dsS.byLoc}`:""}`,"OFFICIAL"))}
-  if(S.housing&&S.housing.kpis){const K=S.housing.kpis;tiles.push(tile(t.dsT.lot,n(K.lotteries),`${t.dsT.lotU} ${n(K.unitsFirst)} · ${t.dsT.apu} ${K.applicantsPerUnit!=null?Number(K.applicantsPerUnit).toFixed(0):"—"}${K.byLocalities?` · ${t.dsS.byLoc}`:""}`,"OFFICIAL"))}
-  if(S.renewal&&S.renewal.kpis){const K=S.renewal.kpis,pu=K.proposedUnits&&typeof K.proposedUnits==="object"?K.proposedUnits:{sum:K.proposedUnits,of:null};tiles.push(tile(t.dsT.rn,n(K.complexes),`${t.dsT.rnU} ${n(pu.sum)}${pu.of!=null?` (${t.dsS.of} ${n(pu.of)})`:""}${S.renewal.declaration?` · ${t.dsS.declared} ${n(S.renewal.declaration.declared)}`:""}`,"OFFICIAL"))}
-  if(S.rental&&S.rental.pipeline){const P=S.rental.pipeline,Tm=S.rental.terms;tiles.push(tile(t.dsT.rt,n(P.tenders),`${n(P.tenderUnits)} ${t.dsS.total}${Tm&&Tm.rentalUnitsStated!=null?` · ${t.dsT.rtU} ${n(Tm.rentalUnitsStated)} (${n(Tm.comparable)} ${he?"מכרזים":"tenders"})`:""}`,"OFFICIAL"))}
-  if(S.developers)tiles.push(tile(t.dsT.dev,n(S.developers.total),`${t.dsT.ent} ${n(S.developers.entries&&S.developers.entries.total)}`,"OBSERVED"));
-  if(S.macro&&S.macro.boiRate)tiles.push(tile(t.dsT.boi,S.macro.boiRate.value!=null?S.macro.boiRate.value+"%":"—",`${t.dsT.nhi} ${pc(S.macro.newHomesIndex&&S.macro.newHomesIndex.yoy)} · ${t.dsT.cii} ${pc(S.macro.constructionInputsIndex&&S.macro.constructionInputsIndex.yoy)} · ${t.dsS.context}`,"OFFICIAL"));
+  if(S.sales&&S.sales.latest)tiles.push(tile(t.dsT.sales,n(S.sales.latestValue),`${ldE(S.sales.latest)} · ${t.dsS.t12} ${n(S.sales.t12&&S.sales.t12.value)}${S.sales.momentum&&S.sales.momentum.ok&&!S.sales.small?` · ${t.dsS.mom} ${pc(S.sales.momentum.pct)}`:S.sales.small?` · ${t.dsS.small}`:""}<br>${ldE(S.sales.scope?S.sales.scope[L]:"")}`,"OFFICIAL",D.geo.level==="locality"?"district_series_for_locality":"official_new_home_sales"));
+  if(S.inventory)tiles.push(tile(t.dsT.inv,n(S.inventory.value),`${ldE(S.inventory.period)}${S.inventory.monthsSupply!=null?` · ${Number(S.inventory.monthsSupply).toFixed(1)} ${t.dsT.mos} ${xpBtn("months_of_supply")}`:""}`,"OFFICIAL","unsold_inventory"));
+  if(S.land&&S.land.kpis){const K=S.land.kpis;tiles.push(tile(t.dsT.land,n(K.tenders),`${t.dsT.open} ${n(K.unitsOpen)} · ${t.dsT.aw} ${n(K.unitsAwarded)} · ${t.dsT.pend} ${n(K.unitsPendingDecision)}${K.byLocalities?` · ${t.dsS.byLoc}`:""}`,"OFFICIAL","tender_units_open"))}
+  if(S.housing&&S.housing.kpis){const K=S.housing.kpis;tiles.push(tile(t.dsT.lot,n(K.lotteries),`${t.dsT.lotU} ${n(K.unitsFirst)} · ${t.dsT.apu} ${K.applicantsPerUnit!=null?Number(K.applicantsPerUnit).toFixed(0):"—"}${K.byLocalities?` · ${t.dsS.byLoc}`:""}`,"OFFICIAL","applicants_per_unit"))}
+  if(S.renewal&&S.renewal.kpis){const K=S.renewal.kpis,pu=K.proposedUnits&&typeof K.proposedUnits==="object"?K.proposedUnits:{sum:K.proposedUnits,of:null};tiles.push(tile(t.dsT.rn,n(K.complexes),`${t.dsT.rnU} ${n(pu.sum)}${pu.of!=null?` (${t.dsS.of} ${n(pu.of)})`:""}${S.renewal.declaration?` · ${t.dsS.declared} ${n(S.renewal.declaration.declared)}`:""}`,"OFFICIAL","renewal_proposed_units"))}
+  if(S.rental&&S.rental.pipeline){const P=S.rental.pipeline,Tm=S.rental.terms;tiles.push(tile(t.dsT.rt,n(P.tenders),`${n(P.tenderUnits)} ${t.dsS.total}${Tm&&Tm.rentalUnitsStated!=null?` · ${t.dsT.rtU} ${n(Tm.rentalUnitsStated)} (${n(Tm.comparable)} ${he?"מכרזים":"tenders"})`:""}`,"OFFICIAL","rental_tender_units_vs_stated"))}
+  if(S.developers)tiles.push(tile(t.dsT.dev,n(S.developers.total),`${t.dsT.ent} ${n(S.developers.entries&&S.developers.entries.total)} ${xpBtn("market_entry")}`,"OBSERVED","developer_observed_activity"));
+  if(S.macro&&S.macro.boiRate)tiles.push(tile(t.dsT.boi,S.macro.boiRate.value!=null?S.macro.boiRate.value+"%":"—",`${t.dsT.nhi} ${pc(S.macro.newHomesIndex&&S.macro.newHomesIndex.yoy)} · ${t.dsT.cii} ${pc(S.macro.constructionInputsIndex&&S.macro.constructionInputsIndex.yoy)} · ${t.dsS.context} ${xpBtn("construction_inputs_index")}`,"OFFICIAL","boi_rate"));
   const sig=k=>D.signals.filter(x=>x.kind===k),bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):v;
-  const sigList=k=>{const a=sig(k);return a.length?`<ul class="ds-sig">${a.map(x=>`<li>${x.geoScope&&x.geoScope!=="own"?`<span class="ho-chip cont">${t.dsScope[x.geoScope]||x.geoScope}</span> `:""}<b>${ldE(x.text[L])}</b><div class="ds-m">${t.dsMeta.threshold} <span class="num">${ldE(bl(x.threshold))}</span>${x.period?` · ${t.dsMeta.period} ${ldE(String(bl(x.period)))}`:""} · ${t.dsMeta.source} ${ldE(x.source)} · ${cls(x.cls)}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.dsNoSig}</p>`};
+  const sigList=k=>{const a=sig(k);return a.length?`<ul class="ds-sig">${a.map(x=>`<li>${x.geoScope&&x.geoScope!=="own"?`<span class="ho-chip cont">${t.dsScope[x.geoScope]||x.geoScope}</span> `:""}<b>${ldE(x.text[L])}</b> ${xpSig(x.id,x)}<div class="ds-m">${t.dsMeta.threshold} <span class="num">${ldE(bl(x.threshold))}</span>${x.period?` · ${t.dsMeta.period} ${ldE(String(bl(x.period)))}`:""} · ${t.dsMeta.source} ${ldE(x.source)} · ${cls(x.cls)}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.dsNoSig}</p>`};
   const ch=S.changes&&S.changes.rows.length?`<ul class="ds-ch">${S.changes.rows.slice(0,8).map(e=>`<li><span class="num ds-d">${ldE(puDay(e.at))}</span> ${ldE(e.title[L])}</li>`).join("")}</ul><p class="ho-note"><a class="ld-link" href="#pulse">${t.dsToPulse} (${n(S.changes.total)} · ${ldE(S.changes.window)})</a></p>`:`<p class="ho-note">${t.puNone}</p>`;
   const devs=S.developers&&S.developers.top.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.dsCols.name}</th><th>${t.dsCols.lotsHere}</th><th>${t.dsCols.unitsHere}</th><th>${t.dsCols.projHere}</th><th>${t.dsCols.last}</th><th>${t.dsCols.total}</th></tr></thead><tbody>${S.developers.top.map(d=>`<tr><td>${ldE(d.name)}${d.possibleSame?` <span class="ho-chip cont" title="${he?"שמות דומים מקושרים ואינם ממוזגים":"similar names linked, never merged"}">${d.possibleSame}</span>`:""}</td><td class="num">${n(d.lotsHere)}</td><td class="num">${n(d.unitsHere)}</td><td class="num">${n(d.projectsHere)}</td><td class="num">${ldE(puDay(d.lastHere))}</td><td class="num">${n(d.lots)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${ldE(S.developers.basis[L])}</p>`:`<p class="ho-note">—</p>`;
   const fresh=`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.dsFreshT.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.freshness.map(f=>`<tr><td>${ldE(f.label[L])}</td><td class="num">${ldE(f.observed?puDay(f.observed):"—")}</td><td class="num">${ldE(f.published?puDay(f.published):"—")}</td><td class="num">${ldE(f.checked?puDay(f.checked):"—")}</td><td>${ldE(f.state||"—")}</td></tr>`).join("")}</tbody></table></div>`;
-  const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])} · ${D.quality.score}/100</b> — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
-  const miss=D.missing.length?`<ul class="ds-miss">${D.missing.map(m=>`<li>${ldE(m[L])}</li>`).join("")}</ul>`:"";
+  const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])} · ${D.quality.score}/100</b> ${xpBtn("evidence_quality")} — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
+  const miss=D.missing.length?`<ul class="ds-miss">${D.missing.map(m=>`<li>${ldE(m[L])} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
   body.innerHTML=`<div class="ds-head"><h3>${ldE(D.geo.name[L])}${D.geo.districtName&&D.geo.level==="locality"?` <span class="ax-muted">· ${t.dsDistrictOf}: ${ldE(D.geo.districtName[L])}</span>`:""}</h3><p class="ho-note">${ldE(D.basis[L])}</p></div>
     <div class="ds-ft">${t.dsFacts}</div><div class="ds-grid">${tiles.join("")}</div>
     <div class="ds-two"><div><div class="ds-ft">${t.dsWatch}</div>${sigList("watch")}</div><div><div class="ds-ft">${t.dsRisk}</div>${sigList("risk")}</div></div>
     ${dsSupplyHTML()}
     <div class="ds-two"><div><div class="ds-ft">${t.dsChanges}</div>${ch}</div><div><div class="ds-ft">${t.dsDevs}</div>${devs}</div></div>
-    <div class="ds-ft">${t.dsFresh}</div>${fresh}${q}
+    <div class="ds-ft">${t.dsFresh} ${xpBtn("source_freshness")}</div>${fresh}${q}
     <div class="ds-ft">${t.dsMissing}</div>${miss}`;
 }
 /* SUPPLY PIPELINE (lib/supply/pipeline.js): six parallel universes of housing supply — plan units ≠ tender units ≠ renewal units ≠ lottery units ≠ rental units ≠ construction buildings — never summed; DERIVED momentum indicators with their formula, period and limitations */
@@ -8943,10 +9595,10 @@ function dsSupplyHTML(){
   if(U.rental)cards.push(card("rental",n(U.rental.tenders),`${ts.rentalTenders} · ${n(U.rental.tenderUnits)} ${ts.tenderTotal}${U.rental.rentalUnitsStated!=null?` · ${ts.stated} ${n(U.rental.rentalUnitsStated)} (${n(U.rental.comparable)} ${ts.comparable})`:` · ${ts.stated}: —`}`,null));
   if(U.lotteries){const Lo=U.lotteries,ps=(Lo.projectsByStage||[]).filter(x=>x.stage!=="no-evidence").map(x=>`${ts.stages[x.stage]||x.stage} ${n(x.projects)}`).join(" · ");cards.push(card("lotteries",of(Lo.unitsFirstLotteries),`${ts.unitsFirst} · ${n(Lo.lotteries)} ${ts.lotteries}${ps?`<br>${ps}`:""}`,Lo.firstLotteryUnits))}
   if(U.construction){const C=U.construction;cards.push(card("construction",n(C.started),`${ts.started} · ${ts.completed} ${n(C.completed)} · ${n(C.lots)} ${ts.lotsJoined}${C.units?` · ${of(C.units)} ${ts.units}`:""} <span class="ho-na">(${ts.stale} ${ldE(C.asOf||"")})</span>`,null))}
-  const ind=(S.indicators||[]).map(i=>`<li><b>${ldE(bl(i.label))}</b>: <span class="num ${i.value>0&&i.unit==="%"?"up":i.value<0&&i.unit==="%"?"down":""}">${i.value==null?"—":(i.unit==="%"?pc(i.value):Number(i.value).toFixed(1)+" "+(ts.months))}</span> <span class="vc der">${t.puCls.DERIVED}</span>${i.value==null&&i.reason?` <span class="ho-na">— ${ldE(bl(i.reason))}</span>`:""}
+  const ind=(S.indicators||[]).map(i=>`<li><b>${ldE(bl(i.label))}</b> ${xpBtn(i.id==="supply-pressure"?"supply_pressure":"momentum_12m")}: <span class="num ${i.value>0&&i.unit==="%"?"up":i.value<0&&i.unit==="%"?"down":""}">${i.value==null?"—":(i.unit==="%"?pc(i.value):Number(i.value).toFixed(1)+" "+(ts.months))}</span> <span class="vc der">${t.puCls.DERIVED}</span>${i.value==null&&i.reason?` <span class="ho-na">— ${ldE(bl(i.reason))}</span>`:""}
     <details class="pu-why"><summary>${ts.why}</summary><div class="ds-m">${ts.formula}: ${ldE(bl(i.formula))}${i.period?` · ${t.dsMeta.period}: ${ldE(bl(i.period))}`:""}${i.inputs&&i.inputs.unitsAwarded24!=null?` · ${ts.inputs}: ${n(i.inputs.unitsAwarded24)} ÷ ${n(i.inputs.monthlyPace&&Math.round(i.inputs.monthlyPace))}/${ts.month} (${ldE(i.inputs.salesScope||"")})`:""}${(i.limitations||[]).length?`<ul class="ho-note ld-ul">${i.limitations.map(x=>`<li>${ldE(bl(x))}</li>`).join("")}</ul>`:""}</div></details></li>`).join("");
-  const miss=(S.missing||[]).length?`<ul class="ds-miss">${S.missing.map(m=>`<li>${ldE(bl(m))}</li>`).join("")}</ul>`:"";
-  return `<div class="ds-ft">${ts.title}</div><p class="ho-note">${ldE(bl(S.basis))}</p><div class="ds-grid">${cards.join("")}</div>
+  const miss=(S.missing||[]).length?`<ul class="ds-miss">${S.missing.map(m=>`<li>${ldE(bl(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
+  return `<div class="ds-ft">${ts.title} ${xpBtn("supply_universes")}</div><p class="ho-note">${ldE(bl(S.basis))}</p><div class="ds-grid">${cards.join("")}</div>
     <div class="ds-ft">${ts.indT}</div><ul class="ds-sig ds-ind">${ind}</ul>${miss?`<p class="ho-note"><b>${ts.missT}</b></p>${miss}`:""}`;
 }
 function initDossier(){

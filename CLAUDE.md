@@ -164,6 +164,27 @@
   RECENT_WIN_MOMENTUM, HIGH_GEOGRAPHIC_CONCENTRATION, PROGRAM_CONCENTRATION, LOW_RECENT_PUBLIC_ACTIVITY, RENTAL_EXPANSION,
   PLANNING_EVIDENCE, CONSTRUCTION_EVIDENCE, POSSIBLE_SAME_ENTITY) each with trigger · value · threshold · period · source ·
   class · limitations — no score; shown as the first section of the developer drawer. See `lib/entities/README.md`.
+- `lib/explain/registry.js` + `lib/explain/README.md` + `test/explain.test.js` = EXPLAINABILITY & CONTEXT (17.10.2026): the ONE registry
+  of terms (stable ids: months_of_supply, official_new_home_sales, unsold_inventory, sales_momentum_3m, district_series_for_locality,
+  probable_new_transaction, tender_units_open / awarded, failed_tender_ratio, land_per_unit, units_after_plan, renewal_proposed_units,
+  rental_tender_units_vs_stated, rent_index_benchmark, applicants_per_unit, developer_observed_activity, market_entry,
+  geographic_concentration, supply_universes, supply_pressure, momentum_12m, construction_inputs_index, boi_rate, evidence_quality,
+  source_freshness, data_revision, source_conflict, opportunity_signal, risk_signal, materiality, irr, moic, capital_at_risk,
+  investment_attractiveness, decision_verdict, flip_point, decision_condition), each with level 1 (one sentence) and level 2
+  (why · unit · geography · period · source · class · methodology · formula · inputs · interpretation · DO NOT INTERPRET AS ·
+  limitations · evidence · the three dates), SIGNAL_RULES for every signal id the product emits ("why am I seeing this?" =
+  rule + trigger · value · threshold · comparison · period · source · class · evidence quality), MISSING reasons for every "—"
+  a read model prints (+ what would unlock it), CLASSES and SOURCES (Trust ids + runtime aliases). UMD: the page loads
+  `/lib/explain/registry.js` (window.PropxExplain, inlined in the offline build), ALTARIS too. The page's ⓘ system
+  (`xpBtn` / `xpSig` / `xpMiss`, one popover `#xpPop`) marks the dossier tiles, signals, quality, freshness, missing list,
+  the supply block, the pulse radar + revisions, the Trust alerts and the developer drawer; ALTARIS marks the decision card and
+  the basis view sections. The registry documents — it never computes; nothing in it is a recommendation or a probability.
+- `lib/trust/discovery/<date>.json` (+ `findings-<date>.md`) = the read-only DATA DISCOVERY ledger (17.10.2026: 25 candidates
+  classified CONFIRMED_STRUCTURED_API / CONFIRMED_GIS / CONFIRMED_STRUCTURED_FILE / OFFICIAL_PUBLIC_CMS / OFFICIAL_PAGE_ONLY / STALE /
+  PARTIAL / RESTRICTED / UNUSABLE with a verdict INTEGRATE / DOCUMENT-ONLY / REJECT, a join key and the evidence); `lib/trust/catalog.js`
+  lists them as "audited, not read" sources (`discovery:<id>`, NO_RUN) so the Trust Center says what exists and why it is not
+  read. Nothing discovered is integrated until a sync, a ledger, tests and a label exist for it. The sandbox denies every
+  Israeli host; discovery runs through the repository's own read-only discovery workflows.
 - `lib/table/core.js` + `lib/table/README.md` + `test/table.test.js` = the one table standard (audit 14.10.2026): first click
   = the column's primary order (high → low, newest first, yes first, א → ת, lifecycle), second = reverse, third = the
   default; missing values ALWAYS last (never 0); typed column filters (contains · any of · min..max · from..to · yes/no ·

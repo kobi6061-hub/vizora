@@ -414,6 +414,31 @@
   /* =================================================== investment decision (altaris/decision.js) */
   /* The deterministic decision layer sits on top of the engine output: the page only passes the engine's result and
      the PROPX context it already holds (read-only) and renders what the layer returns. Nothing here computes a return. */
+  /* EXPLAINABILITY — lib/explain/registry.js (window.PropxExplain): the same ⓘ system as the PROPX page, in Hebrew. Documents; never computes. */
+  const XPR = () => window.PropxExplain || null;
+  const xpBtn = (id) => (XPR() && XPR().term(id) ? `<button type="button" class="xp" data-xp="${esc(id)}" aria-label="הסבר" title="הסבר">ⓘ</button>` : '');
+  const XP_SEC = { decision: 'decision_verdict', evidence: 'evidence_quality', conds: 'decision_condition', flips: 'flip_point', conflicts: 'source_conflict', fresh: 'source_freshness', returns: 'irr', downside: 'capital_at_risk' };
+  let xpTrig = null;
+  function xpClsChip(c) { return `<span class="ax-tag">${esc(XPR().classLabel(c, 'he'))}</span>`; }
+  function xpOpen(trigger) {
+    const X = XPR(); if (!X) return; const x = X.level2(trigger.dataset.xp, 'he'); if (!x) return;
+    const row = (k, v) => (v ? `<dt>${k}</dt><dd>${v}</dd>` : '');
+    const l2 = `<div class="xp-l2" hidden><dl>${row('למה זה חשוב', esc(x.why))}${row('יחידה', esc(x.unit))}${row('גאוגרפיה', esc(x.geography))}${row('תקופה', esc(x.period))}${row('מקור', x.sources.map((s) => `${esc(s.label || s.id)} <span class="num">${esc(s.id)}</span>`).join('<br>'))}${row('סיווג', `${xpClsChip(x.cls)} ${esc(x.clsDefinition)}`)}${row('מתודולוגיה', esc(x.methodology))}${row('נוסחה', x.formula ? `<span class="num">${esc(x.formula)}</span>` : '')}${row('קלט', x.inputs.length ? `<ul>${x.inputs.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '')}${row('פירוש', esc(x.interpretation))}<dt class="xp-not">לא לפרש כ</dt><dd class="xp-not">${esc(x.notAs)}</dd>${row('מגבלות', x.limitations.length ? `<ul>${x.limitations.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '')}${row('איפה הראיות', esc(x.evidence))}${row('שלושת התאריכים', `תצפית: ${esc(x.freshness.observation)} · פרסום: ${esc(x.freshness.publication)} · בדיקת PROPX: ${esc(x.freshness.check)}`)}</dl><p class="ax-muted">מרשם ההסברים ${esc(X.VERSION.id)} · אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן</p></div>`;
+    let pop = document.getElementById('axXp'); if (!pop) { pop = document.createElement('div'); pop.id = 'axXp'; pop.className = 'xp-pop'; pop.setAttribute('role', 'dialog'); document.body.appendChild(pop); }
+    pop.innerHTML = `<div class="xp-h"><b>${esc(x.title)}</b>${xpClsChip(x.cls)}<button type="button" class="ax-pop-x" data-xpclose aria-label="סגירה">×</button></div><p class="xp-s">${esc(x.short)}</p><button type="button" class="ax-link xp-more" data-xpmore aria-expanded="false">פירוט מוסדי ↓</button>${l2}`;
+    pop.hidden = false; xpTrig = trigger; xpPlace(); const f = pop.querySelector('[data-xpclose]'); if (f) f.focus();
+  }
+  function xpPlace() { const pop = document.getElementById('axXp'); if (!pop || pop.hidden || !xpTrig) return; if (window.innerWidth <= 560) { pop.style.top = ''; pop.style.left = ''; return; }
+    const r = xpTrig.getBoundingClientRect(), w = Math.min(440, window.innerWidth - 24); pop.style.maxWidth = w + 'px'; const ph = pop.offsetHeight || 200;
+    let top = r.bottom + 6; if (top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 6); let left = r.right - w; left = Math.max(12, Math.min(left, window.innerWidth - w - 12)); pop.style.top = top + 'px'; pop.style.left = left + 'px'; }
+  function xpClose() { const pop = document.getElementById('axXp'); if (!pop || pop.hidden) return; pop.hidden = true; const t = xpTrig; xpTrig = null; if (t && document.contains(t)) t.focus(); }
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-xp]'); if (b) { e.preventDefault(); e.stopPropagation(); if (xpTrig === b) { xpClose(); return; } xpOpen(b); return; }
+    if (e.target.closest('[data-xpclose]')) { xpClose(); return; }
+    const m = e.target.closest('[data-xpmore]'); if (m) { const l2 = m.parentElement.querySelector('.xp-l2'); if (l2) { l2.hidden = !l2.hidden; m.setAttribute('aria-expanded', String(!l2.hidden)); m.textContent = l2.hidden ? 'פירוט מוסדי ↓' : 'פחות ↑'; xpPlace(); } return; }
+    if (!e.target.closest('#axXp')) xpClose(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') xpClose(); });
+  window.addEventListener('resize', xpPlace); window.addEventListener('scroll', () => { if (xpTrig) xpPlace(); }, { passive: true });
+
   const DT = {
     he: { kick: 'ALTARIS INVESTMENT DECISION', h: 'החלטת השקעה — בסיס ההחלטה', sub: 'מדיניות דטרמיניסטית על תוצאות החיתום וראיות PROPX', basis: 'הצגת בסיס ההחלטה', why: 'למה', risk: 'הסיכון העיקרי', cond: 'תנאי', struct: 'מבנה מומלץ', ev: 'איכות ראיות', score: 'אטרקטיביות',
       s: { decision: 'החלטה', whyStruct: 'למה המבנה הזה', cmp: 'השוואת מבנים', returns: 'איכות התשואה', downside: 'הגנה בתרחיש השלילי', structure: 'איכות המבנה', market: 'ראיות שוק', execution: 'סיכון ביצוע', gates: 'ספי הקרן וספי ההחלטה', evidence: 'איכות הראיות', conds: 'תנאים להתקדמות', flips: 'מה ישנה את ההחלטה', sources: 'מקורות והנחות', conflicts: 'סתירות בין מקורות', fresh: 'רעננות', policy: 'המדיניות', narr: 'תקציר לוועדה' },
@@ -464,9 +489,9 @@
     const risk = D.mainRisk ? dT(D.mainRisk, L) : '';
     const insuff = D.verdict === 'INSUFFICIENT_EVIDENCE';
     return `<div class="ax-dec tone-${dvTone(D)}" role="group" aria-label="${esc(DT.he.kick)}">
-      <div class="ax-dec-k">${DT.he.kick}<span class="v">v${DX.VERSION.n}</span></div>
+      <div class="ax-dec-k">${DT.he.kick}<span class="v">v${DX.VERSION.n}</span>${xpBtn('decision_verdict')}</div>
       <div class="ax-dec-v"><i></i><span class="code">${esc(DX.VERDICT[D.verdict].label.en)}</span><span class="he">${esc(DX.VERDICT[D.verdict].label.he)}</span></div>
-      <div class="ax-dec-row">${isNum(D.score) ? `<span><b class="num">${D.score} / 100</b> · ${esc(D.descriptorLabel ? D.descriptorLabel.en : '')}</span>` : ''}<span>${DT.he.struct}: <b>${D.recommended ? SN[D.recommended] : '—'}</b></span><span>${DT.he.ev}: <b>${esc(D.evidence.label.en)}</b></span></div>
+      <div class="ax-dec-row">${isNum(D.score) ? `<span><b class="num">${D.score} / 100</b> · ${esc(D.descriptorLabel ? D.descriptorLabel.en : '')}${xpBtn('investment_attractiveness')}</span>` : ''}<span>${DT.he.struct}: <b>${D.recommended ? SN[D.recommended] : '—'}</b></span><span>${DT.he.ev}${xpBtn('evidence_quality')}: <b>${esc(D.evidence.label.en)}</b></span></div>
       <dl class="ax-dec-dl">${insuff ? `<dt>${DT.he.why}</dt><dd>${esc(dT(D.basis, L))}</dd>` : why ? `<dt>${DT.he.why}</dt><dd>${esc(why)}</dd>` : ''}${risk ? `<dt>${DT.he.risk}</dt><dd>${esc(risk)}</dd>` : ''}${cond ? `<dt>${DT.he.cond}</dt><dd>${esc(cond)}</dd>` : D.flips && D.flips[0] ? `<dt>${DT.he.s.flips}</dt><dd>${esc(dT(D.flips[0].text, L))}</dd>` : ''}</dl>
       <button class="ax-link ax-dec-go" type="button" data-view-go="decision">${DT.he.basis} ←</button>
       <p class="ax-dec-disc">${esc(DX.DISCLAIMER.he)}</p></div>`;
@@ -525,7 +550,7 @@
   function decisionBasisHTML(print) {
     const D = S.D, L = dlang(), T = DT[L], t = (v) => dT(v, L), en = L === 'en';
     if (!D) return '';
-    const sec = (id, title, body) => `<section class="ax-dv-s" id="dv-${id}"><h3 class="ax-dv-h">${esc(title)}</h3>${body}</section>`;
+    const sec = (id, title, body) => `<section class="ax-dv-s" id="dv-${id}"><h3 class="ax-dv-h">${esc(title)}${!print && XP_SEC[id] ? ' ' + xpBtn(XP_SEC[id]) : ''}</h3>${body}</section>`;
     const bar = (score) => (isNum(score) ? `<span class="ax-dv-bar" aria-hidden="true"><i style="width:${score}%"></i></span><b class="num">${score}</b>` : '<span class="ax-muted">—</span>');
     const a = D.lead ? D.structures[D.lead] : null;
     const head = `<div class="ax-dec tone-${dvTone(D)} big"><div class="ax-dec-v"><i></i><span class="code">${esc(DX.VERDICT[D.verdict].label.en)}</span><span class="he">${esc(DX.VERDICT[D.verdict].label.he)}</span></div>

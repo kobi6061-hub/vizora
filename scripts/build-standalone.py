@@ -60,6 +60,13 @@ core = (ROOT / "lib" / "table" / "core.js").read_text(encoding="utf-8")
 assert "</script" not in core.lower(), "table core must not close the script element"
 s = s.replace(TAG3, "<script>\n" + core + "</script>", 1)
 
+# the explainability registry (lib/explain/registry.js) — pure bilingual data, inlined the same way
+TAG4 = '<script src="/lib/explain/registry.js"></script>'
+assert s.count(TAG4) == 1
+xp = (ROOT / "lib" / "explain" / "registry.js").read_text(encoding="utf-8")
+assert "</script" not in xp.lower(), "explain registry must not close the script element"
+s = s.replace(TAG4, "<script>\n" + xp + "</script>", 1)
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

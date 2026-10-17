@@ -681,3 +681,15 @@ input.dflt{border-style:dashed!important}
 .ax-rd-h{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:6px 0 4px;border-bottom:1px solid var(--hairline)} .ax-rd-h.opp{color:var(--up)} .ax-rd-h.risk{color:var(--down)}
 .ax-rd-l{list-style:none;margin:0;padding:0} .ax-rd-i{padding:6px 0;border-bottom:1px solid var(--hairline);font-size:12px;line-height:1.45;overflow-wrap:anywhere}
 .ax-rd-miss summary{cursor:pointer} .ax-rd-miss ul{padding-inline-start:16px;margin:4px 0 0}
+
+/* ---- explainability (lib/explain/registry.js): ⓘ marks and the one popover ---- */
+.xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 inherit;cursor:pointer;vertical-align:middle;margin-inline-start:4px;padding:0}
+.xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
+.xp-pop{position:fixed;z-index:1200;background:var(--panel);border:1px solid var(--hairline);border-radius:12px;box-shadow:0 12px 32px var(--ring);padding:12px 14px;font-size:12px;line-height:1.5;max-height:min(70vh,560px);overflow:auto;color:var(--ink)}
+.xp-pop[hidden]{display:none}
+.xp-h{display:flex;align-items:center;gap:6px;margin-bottom:4px} .xp-h b{font-size:13px;flex:1;min-width:0;overflow-wrap:anywhere} .xp-h .ax-pop-x{margin-inline-start:auto}
+.xp-s{margin:0 0 6px;overflow-wrap:anywhere} .xp-more{font-size:11.5px;font-weight:700}
+.xp-l2 dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 10px;margin:8px 0 0}
+.xp-l2 dt{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase;padding-top:2px} .xp-l2 dd{margin:0;overflow-wrap:anywhere}
+.xp-l2 dt.xp-not,.xp-l2 dd.xp-not{color:var(--down)} .xp-l2 ul{margin:0;padding-inline-start:16px}
+@media(max-width:560px){.xp-pop{left:8px!important;right:8px;top:auto!important;bottom:8px}.xp-l2 dl{grid-template-columns:minmax(0,1fr)}}
