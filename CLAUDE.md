@@ -109,6 +109,19 @@
   entity (also in the command bar). `lib/trust/catalog.js` = every source with its latest check from the run logs in
   one vocabulary (SUCCESS / UNCHANGED / PARTIAL / REFUSED / FAILED / SCHEMA_CHANGED / STALE / NO_RUN). See
   `lib/entities/README.md`.
+- `lib/graph/` + `test/graph.test.js` = the PROPX KNOWLEDGE GRAPH (17.10.2026): a canonical, deterministic graph VIEW over the
+  read models that already exist (entities registry, land, renewal + its exact XPlan join, rental, geo registry, DISTRICTS) —
+  it creates no fact. Entity types country · district · locality · developer · project (moch) · site (ILA lot) · tender · plan ·
+  parcel · renewal_complex · rental_project · source, with the ids the read models already use (`il`, `d-…`, `loc:<code>`,
+  `dev-…`, `moch:…`, `ila:<MichrazID>:<lot>`, `rmi:<MichrazID>`, `plan:<key>`, `parcel:<block>/<parcel>`, `renewal:<n>`,
+  `rental:<MichrazID>`, `source:<id>`). Relations CONTAINS · IN · LOCATED_IN · HAS_WINNER · WON · DEVELOPS · REFERENCES ·
+  ON_PARCEL · AFFECTS · RE_MARKETS · JOINED_TO · POSSIBLY_SAME · SOURCED_FROM — each ONLY where a stored record carries the
+  exact key, and every edge carries `{ key, value, source }`. Never an edge: a name match, geometry, an ambiguous XPlan join
+  (a conflict), district data on a locality, a cross-source join without a key; POSSIBLY_SAME is the registry's own link,
+  flagged and never merged. `stats()` = counts, join coverage with the store's denominators, unmatched counts (private-person
+  winners, plan references XPlan has not, complexes without a join …), conflicts, basis. Memoised per data stamp (≈ 1.6 s,
+  ≈ 111 k nodes / 198 k edges); `node()` O(1), `edges()` O(degree). `GET /api/intel?view=graph&entity=|graphStats`. See
+  `lib/graph/README.md`.
 
 - `lib/renewal/` + `scripts/renewal-sync.js` + `.github/workflows/renewal-sync.yml` + `data/renewal/` + `test/renewal.test.js`
   = urban renewal: the Ministry of Construction and Housing's urban-renewal complexes (data.gov.il `urban_renewal`,

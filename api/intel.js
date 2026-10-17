@@ -30,6 +30,10 @@
 //                     sort=declared|proposed|city|name|maturity, page, size)
 //   view=renewalComplex  one complex (id=renewal:<complex number>) with its history and its planning: match + diagnostics, the XPlan plan,
 //                     MoCH ↔ XPlan pairs, DERIVED metrics, complexes on the same plan, the plan boundary, the plan's observed history
+//   view=graph        KNOWLEDGE GRAPH — one entity (entity=<id>: il | d-… | loc:<code> | dev-… | moch:… | ila:<MichrazID>:<lot> | rmi:<MichrazID> |
+//                     plan:<key> | parcel:<block>/<parcel> | renewal:<n> | rental:<MichrazID> | source:<id>) → { node, edges, neighbours } — every edge
+//                     with the exact key it rests on (relation=<RELATION> filter, limit= default 200 max 1000; 404 for an unknown id; lib/graph)
+//   view=graphStats   the graph's counts per type / relation, join coverage, unmatched counts, conflicts, basis + the vocabulary
 
 'use strict';
 
@@ -42,6 +46,7 @@ let NARR = null; try { NARR = require('../lib/dossier/narrative'); } catch { /* 
 const SCAN = require('../lib/radar/scan');
 const REV = require('../lib/radar/revisions');
 let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /* the supply read model ships separately */ }
+let GRAPH = null; try { GRAPH = require('../lib/graph'); } catch { /* the knowledge graph ships separately */ }
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -64,6 +69,16 @@ module.exports = async (req, res) => {
     if (view === 'scanGeo') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'revisions') return send(res, 200, REV.revisions(p));
     if (view === 'supply') { if (!SUPPLY) return send(res, 404, { error: 'supply read model not available' }); const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SUPPLY.supply({ level, code: p.city || p.district || null }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
+    if (view === 'graph') {
+      if (!GRAPH) return send(res, 404, { error: 'graph read model not available' });
+      const id = String(p.entity || '').trim(); if (!id) return send(res, 400, { error: 'entity required' });
+      if (p.relation && !GRAPH.RELATIONS[p.relation]) return send(res, 400, { error: 'unknown relation', relations: Object.keys(GRAPH.RELATIONS) });
+      const node = GRAPH.node(id); if (!node) return send(res, 404, { error: 'unknown entity' });
+      const q = { relation: p.relation || null, limit: p.limit };
+      const edges = GRAPH.edges(id, q);
+      return send(res, 200, { node, edges, edgesTotal: GRAPH.degree(id, q), neighbours: GRAPH.neighbours(id, q), relation: q.relation, limit: edges.length, basis: GRAPH.BASIS });
+    }
+    if (view === 'graphStats') { if (!GRAPH) return send(res, 404, { error: 'graph read model not available' }); return send(res, 200, { ...GRAPH.stats(), vocabulary: GRAPH.vocabulary() }); }
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));
     if (view === 'projects') return send(res, 200, Q.projects(p));
