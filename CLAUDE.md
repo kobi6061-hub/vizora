@@ -123,6 +123,16 @@
   strings only (approval ≠ permit ≠ construction); MoCH and XPlan values side by side with every disagreement flagged;
   `data/renewal/planning*.json` + `plan-geometry.json`; shown as the tab's planning strip and the drawer's PLANNING STATUS.
 
+- `lib/dossier/` + `test/dossier.test.js` = MARKET DOSSIER (16.10.2026): one institutional read of a geography — Israel, a
+  district or a locality — composed only from the existing read models (`GET /api/intel?view=dossier&city=|district=`,
+  `view=dossierIndex`; the page's `#dossier` section, rail "תיק"; a locality picked in the geo search opens its dossier):
+  official sales (national or the DISTRICT series, labelled "not the locality's figure"), inventory (national only), ILA
+  tenders (district = the same KPI function over the live records of its localities), lotteries, renewal + XPlan, rental,
+  developers (per-geography figures from their markets, exact names), macro (national context), recent changes (radar),
+  explainable watch / risk signals (trigger · value · threshold · period · source · class — never a recommendation),
+  freshness (observation ≠ publication ≠ check), evidence quality HIGH / MEDIUM / LOW from documented deductions, and what
+  is missing (transactions are a live source — never fetched here; no permits source). Unit universes are never added.
+  See `lib/dossier/README.md`.
 - `lib/radar/` + `scripts/radar-build.js` + `data/radar/` + `test/radar.test.js` = MARKET RADAR / MARKET PULSE (16.10.2026): the
   deterministic "what changed" engine over the ledgers the syncs already commit (land history, renewal + planning history,
   rental history, CBS observations incl. revisions, indicator snapshots, lotteries, Trust run logs). An event = a change
