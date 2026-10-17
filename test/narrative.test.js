@@ -93,7 +93,7 @@ t('the radar sentences carry the geography\'s rule counts and the scan\'s own co
 });
 t('Hebrew signed numbers are isolated (LRI … PDI) so a minus keeps its side; English never carries the isolates', () => {
   for (const { n } of ALL) for (const s of n.sentences) {
-    for (const m of s.he.matchAll(/[+\-−]\d+(\.\d+)?%/g)) { const i = m.index; assert.ok(s.he[i - 1] === '⁦' || /[(:]\s?$/.test(s.he.slice(Math.max(0, i - 2), i)), s.id + ' unisolated signed number in Hebrew: ' + s.he.slice(Math.max(0, i - 12), i + 8)); }
+    for (const m of s.he.matchAll(/[+\-−]\d+(\.\d+)?%/g)) { const i = m.index; assert.ok(s.he[i - 1] === '⁦', s.id + ' unisolated signed number in Hebrew: ' + s.he.slice(Math.max(0, i - 12), i + 8)); }
     assert.ok(!/[⁦⁩]/.test(s.en), s.id + ' isolates in English');
   }
 });
@@ -128,7 +128,9 @@ t('a district by its official name (he / en, with or without "מחוז") and the
   const tlv = EQ.search('תל אביב').results; const loc = tlv.find((r) => r.type === 'locality' && r.geo && String(r.geo.code) === '5000');
   assert.ok(loc && loc.radar && Number.isInteger(loc.radar.opportunities) && Number.isInteger(loc.radar.risks) && ['HIGH', 'MEDIUM', 'LOW'].includes(loc.radar.quality), 'covered locality radar counts');
   assert.ok(!('score' in (loc.radar || {})), 'never a score');
-  const bare = tlv.map((r) => r.type); assert.ok(bare.indexOf('district') > bare.indexOf('locality'), 'a bare district name that is also a city name: the localities lead, the district follows: ' + bare.join(','));
+  const bare = tlv.map((r) => r.type); assert.equal(bare[0], 'locality', 'a bare district name that is also a city name: the locality leads: ' + bare.join(',')); assert.equal(bare[1], 'district', 'then the district: ' + bare.join(','));
+  const north = EQ.search('הצפון').results.map((r) => r.type); assert.equal(north[0], 'district', 'a bare district name with no such locality ranks as a district: ' + north.join(','));
+  assert.ok(!EQ.search('district').results.some((r) => r.type === 'district') && !EQ.search('מחוז').results.some((r) => r.type === 'district'), 'a keyword alone matches no district');
   const od = EQ.search('מחוז תל אביב').results.map((r) => r.type); assert.equal(od[0], 'district', 'the district leads its own name: ' + od.join(','));
   const oc = EQ.search('ישראל').results.map((r) => r.type); assert.equal(oc[0], 'country', 'the country leads its own name: ' + oc.join(','));
   const ex = EQ.search('תל אביב יפו').results.map((r) => r.type); assert.equal(ex[0], 'locality', 'an exact locality name leads: ' + ex.join(','));

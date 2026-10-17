@@ -63,17 +63,21 @@ t('applicants-per-unit context: the locality\'s OTHER first lotteries (this proj
   if (D.locality.lotteries >= 5) assert.ok(['above-p75', 'within', 'below-p25'].includes(D.position)); else assert.equal(D.position, null);
   assert.equal(intel(ilaBid).demand, null);
 });
-t('every signal has a registry rule, a bilingual text, a formatted value, a threshold, a period, a source, a class and limitations; STAGE_EVIDENCE_STALE fires on ILA lots only; lottery demand signals are relative to the locality (never an absolute "hot" threshold)', () => {
+t('every signal has a registry rule, a bilingual text, a formatted value, a threshold, a period, a source, a class and limitations; a land-cost position only for a lot awarded inside the window; lottery demand signals are relative to the locality (never an absolute "hot" threshold); the project construction signal has its own id', () => {
   let n = 0, stale = 0;
   for (const p of ALL.slice(0, 600)) { const I = intel(p); for (const s of I.signals) { n++;
     assert.ok(X.SIGNAL_RULES[s.id], 'no rule for ' + s.id); assert.ok(s.text.he && s.text.en && s.trigger.he, s.id); assert.ok(typeof s.valueLabel === 'string' && s.valueLabel.length, s.id + ' value ' + s.valueLabel); if (/^LAND_COST_/.test(s.id)) assert.match(s.valueLabel, /^₪[\d,]+$/, s.id);
     assert.ok(s.threshold && s.period && s.source && ['OFFICIAL', 'DERIVED'].includes(s.cls) && Array.isArray(s.limitations) && s.limitations.length, s.id);
-    if (s.id === 'STAGE_EVIDENCE_STALE') { stale++; assert.equal(p.kind, 'ila-awarded-lot'); }
-    if (/^LOTTERY_DEMAND_/.test(s.id)) { assert.equal(p.kind, 'moch-lottery-project'); assert.ok(I.demand.locality.lotteries >= 5); }
-    if (/^LAND_COST_/.test(s.id)) assert.ok(I.land.locality.lots >= 5); } }
+    assert.notEqual(s.id, 'STAGE_EVIDENCE_STALE', 'staleness is a missing-data reason, not a signal'); assert.notEqual(s.id, 'CONSTRUCTION_EVIDENCE', 'the project signal has its own id');
+    if (/^LOTTERY_DEMAND_/.test(s.id)) { assert.equal(p.kind, 'moch-lottery-project'); assert.ok(I.demand.locality.lotteries >= 5); assert.match(s.text.en, /first lottery \d{4}-\d{2}-\d{2}/); }
+    if (/^LAND_COST_/.test(s.id)) { assert.ok(I.land.locality.lots >= 5); assert.ok(p.decisionDate >= I.land.locality.period.from, s.id + ' own award inside the window'); assert.match(s.text.en, /\(awarded \d{4}-\d{2}-\d{2}\)/); stale++; } } }
   assert.ok(n > 0, 'signals fire on the sample');
   const src = fs.readFileSync(path.join(ROOT, 'lib/entities/project-intel.js'), 'utf8'); assert.ok(!/OVERSUBSCRIBED = \d/.test(src), 'no absolute demand threshold');
-  const old = intel(ilaCons); assert.ok(old.signals.some((s) => s.id === 'STAGE_EVIDENCE_STALE') && old.signals.find((s) => s.id === 'STAGE_EVIDENCE_STALE').kind === 'info');
+  const old = intel(ilaCons); assert.ok(old.missing.some((m) => m.id === 'later-evidence') && X.missing('later-evidence'), 'an old lot says no source can carry a later stage'); assert.ok(!old.signals.some((s) => s.id === 'STAGE_EVIDENCE_STALE'));
+  assert.ok(old.signals.some((s) => s.id === 'PROJECT_CONSTRUCTION_REPORT') && X.SIGNAL_RULES.PROJECT_CONSTRUCTION_REPORT.term === 'construction_progress_report');
+  const oldBid = ALL.find((p) => p.kind === 'ila-awarded-lot' && p.landPerUnit && p.priceBasis === 'competitive-bid' && p.decisionDate < '2022-01-01'); if (oldBid) { const Lc = intel(oldBid).land; assert.equal(Lc.position, null); assert.match(Lc.reason.en, /own decision date .* outside the 36-month window/); }
+  /* XPlan units after the plan resolve from the land store's plan-units map */
+  const withPlan = ALL.filter((p) => p.kind === 'ila-awarded-lot').map((p) => intel(p)).find((I) => I.timeline.some((e) => e.event === 'plan-approved' && e.units && Number.isFinite(e.units.unitsAfterPlan))); assert.ok(withPlan, 'at least one site prints units after the plan'); assert.match(withPlan.timeline.find((e) => e.event === 'plan-approved' && e.units && Number.isFinite(e.units.unitsAfterPlan)).label.en, /units after the plan/);
 });
 t('what is missing resolves to a registry reason (permits, construction join, lottery ↔ lot join, permit date, project sales, occupancy); never a sales / occupancy / rent figure', () => {
   for (const p of [ilaBid, ilaCons, moch]) { const I = intel(p); for (const m of I.missing) assert.ok(X.missing(m.id), 'no reason for ' + m.id); const ids = I.missing.map((m) => m.id); assert.ok(ids.includes('project-sales') && ids.includes('occupancy'), ids.join(','));

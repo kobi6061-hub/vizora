@@ -60,6 +60,8 @@ t('a DERIVED or MODEL term states its formula and inputs; an OFFICIAL / OBSERVED
 t('every signal id the product emits has a rule here (dossier signals, scan rules, developer-intelligence signals), with the term it belongs to and a bilingual rule', () => {
   const D = require('../lib/dossier/query'), S = require('../lib/radar/scan'), I = require('../lib/entities/intel');
   const emitted = new Set(Object.keys(S.RULES));
+  /* a duplicate key inside the SIGNAL_RULES literal would silently win — refuse it at the source */
+  const src = fs.readFileSync(path.join(ROOT, 'lib/explain/registry.js'), 'utf8'); const block = src.slice(src.indexOf('const SIGNAL_RULES'), src.indexOf('const MISSING')); const keys = [...block.matchAll(/^\s+'([A-Za-z0-9_\-]+)': \{ term:/gm)].map((m) => m[1]); const dup = keys.filter((k, i) => keys.indexOf(k) !== i); assert.deepEqual(dup, [], 'duplicate SIGNAL_RULES keys');
   for (const g of [{ level: 'il' }, { level: 'district', code: 'd-ta' }, { level: 'district', code: 'd-north' }, { level: 'district', code: 'd-center' }, { level: 'locality', code: '5000' }, { level: 'locality', code: '4000' }, { level: 'locality', code: '3000' }]) for (const s of D.dossier(g).signals) emitted.add(s.id);
   for (const s of I.SIGNALS) emitted.add(s.id);
   for (const s of require('../lib/entities/project-intel').SIGNALS) emitted.add(s.id);

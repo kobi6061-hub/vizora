@@ -133,7 +133,9 @@ parity, shares, trend, the committed data read-only).
 `search(q)` also routes **geographies with a dossier**: a district by its official name — exact, with or without the
 prefix (`מחוז תל אביב`, `הצפון`, `Northern district`); a substring only when the query itself says `מחוז` / `district` — and
 the country (`ישראל` / `Israel`, full name only) → `{ type: 'district' | 'country', route: { section: 'dossier', district } }`.
-A bare district name that is also a city name (`תל אביב`, `חיפה`) ranks AFTER the locality hits. A locality hit the
+A bare district name that is also a city name (`תל אביב`, `חיפה`) follows the exact locality hit and precedes everything else; a bare
+district name with no such locality (`הצפון`) ranks as a district; `district` / `מחוז` alone match nothing; the country also
+answers to `ארצי` / `national`. The command bar keeps district / country hits ahead of its six-item slice. A locality hit the
 Opportunity / Risk scan covers carries `radar: { opportunities, risks, quality, builtAt }` — the counts of rules that fired
 and the dossier's evidence level, never a score. The page shows them under the hit and opens the Market Dossier for a
 district / country hit (`inRoute`); the command bar lets the two new types through. Names still match by string and are
@@ -151,8 +153,11 @@ stage that did not happen), the lot's **₪/unit beside the locality's own compe
 months by decision date (the land read model's quartiles, this tender excluded, a position only with ≥ 5 lots), the
 project's **applicants per unit beside the locality's other first lotteries** (this project excluded, ≥ 5), **signals**
 (`LAND_COST_ABOVE_LOCALITY` · `LAND_COST_BELOW_LOCALITY` · `LOTTERY_DEMAND_ABOVE_LOCALITY` · `LOTTERY_DEMAND_BELOW_LOCALITY` ·
-`LOTTERY_UNDERSUBSCRIBED` · `STAGE_EVIDENCE_STALE` (ILA lots only — a MoCH record carries a current status) · `PLAN_JOINED` ·
-`CONSTRUCTION_EVIDENCE` · `RE_TENDERED_LOT` (through the Authority's lot file id only) — each with trigger · value ·
+`LOTTERY_UNDERSUBSCRIBED` · `PLAN_JOINED` · `PROJECT_CONSTRUCTION_REPORT` · `RE_TENDERED_LOT` (through the Authority's lot file id
+only, parallel marketing excluded); a lot awarded > 24 months ago before completion gets the missing-data reason `later-evidence`
+(no joined source can carry a newer stage — a gap in the sources, never a halted project); a land-cost position only when the
+lot's OWN award is inside the 36-month window (a nominal sum from another period is never positioned), the signal prints the award
+date and the comparison period; the demand signal prints the first-lottery date and the locality lotteries' date range — each with trigger · value ·
 threshold · period · source · class · limitations; a description, never a judgement), **what is missing** (permits, a
 construction join, the lottery ↔ lot join, a permit date, project sales, occupancy / rent — each with its registry reason)
 and freshness. Never a join by name or geometry, never an estimate, never a project sales / occupancy / rent figure. Shown
