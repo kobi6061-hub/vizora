@@ -243,3 +243,12 @@ the distinctiveness is carried by the ledger: results are written as credit-memo
 (label · figure · how it is calculated) under PROPX's broadsheet rule, not as a grid of
 KPI tiles — the first draft used tiles and was revised. Step numbers are used only for
 the underwriting workflow, which is a real sequence.
+
+## Market context 2.0 (17.10.2026)
+
+The deal's market panel also shows, read-only (altaris/decision.js reads none of it — no verdict, rating or number can move):
+the locality's **"Why this market?"** lead sentences from the PROPX dossier narrative (`lib/dossier/narrative.js`, each with its
+class and source) and the **Land Economics 2.0** line (`lib/land/economics.js`: median ₪/unit of competitive-bid open-market lots
+decided in 36 months with p25 / p75 and the unit-weighted figure, the change vs the prior window with the lot-mix warning, the
+failed-tender ratio and re-tenders) — "nominal state-land consideration, not a land value and not a deal input". Both arrive in
+the one `view=dossier` GET the panel already makes.
