@@ -42,3 +42,36 @@ events. Nothing in the pulse is estimated.
 
 Tests: `test/radar.test.js` (a synthetic data directory proves every rule and every exclusion; the live repository
 builds; the API, the Vercel bundle and the six workflows are wired).
+
+## Opportunity Radar / Risk Radar (`lib/radar/scan.js`)
+
+NOT an investment recommendation. `build()` runs the Market Dossier's explainable signals over Israel, the seven CBS
+districts and the localities with the most live ILA tenders (40) and sorts them by rule into OPPORTUNITIES (worth
+investigating: official sales momentum ≥ +10 % at district / national level, ≥ 500 units in open tenders, ≥ 1,000 awarded
+units, ≥ 500 units awaiting decision, ≥ 2,000 proposed renewal units, ≥ 3 rental-track tenders, ≥ 2 developer entries) and
+RISKS (momentum ≤ −10 %, national months of supply ≥ 18, ≥ 30 % of ≥ 5 tenders without a winner / cancelled, ≥ 3 stale
+rental statuses, one developer ≥ 50 % of ≥ 5 lots, no observed events, construction inputs ≥ +3 %). Every item answers
+"why was this flagged?": trigger · value · threshold · comparison (the national figure of the same rule, or the share of
+it) · period · source · class · the dossier's evidence quality. Geography is strict: a locality never carries a district
+or national series; macro rules are national only. Materiality is a constant per rule (1–3). Two DERIVED convergence
+items are named as such (demand-with-supply; inventory-plus-pipeline). `scripts/radar-build.js` writes
+`data/radar/scan.json` with the events; `GET /api/intel?view=scan` (kind, level, city, district, m, limit) and
+`view=scanGeo` (one geography; an uncovered locality is computed with the same rules) serve it. The page shows the two
+lists at the top of the Market Pulse; a geography opens its dossier.
+
+## Revision Intelligence (`lib/radar/revisions.js`)
+
+CBS revises recent months in later releases; PROPX appends every published value with its revision number and the value
+it replaces (`data/cbs-sales/observations.jsonl`). `revisions()` (`view=revisions`: window=30d|90d|365d|all, material=1,
+measure, geo) lists each revision as OLD VALUE · NEW VALUE · OBSERVATION PERIOD · PUBLICATION (the CBS series update date) ·
+PROPX CHECK (when the revision was read), grouped by release with the net change per geography; "material" = |Δ| ≥ 5 %,
+a constant. The Market Pulse shows the window's count, the material rows and the net change by geography.
+
+## Trust 2.0 (`lib/trust/catalog.js`)
+
+Each source's run summary now also states its latest success and latest failure (state + error) apart, a RECOVERED flag
+(a good check after a failure, shown for 7 days), the last 14 check states, a good / total tally and the expected
+cadence; the catalogue carries `alerts` — every source PROPX reads whose shown state is REFUSED / FAILED / SCHEMA_CHANGED /
+STALE / PARTIAL, every source that recovered this week, and every source whose own content is stale — ordered by
+severity. A run that answered and found nothing new (`status: unchanged`) is UNCHANGED, never FAILED; the working-day
+syncs (CBS sales, Dira Lehaskir) are stale only after 100 hours, so a weekend is not a missed check.

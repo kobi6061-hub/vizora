@@ -806,6 +806,18 @@
         out.rental = { tenders: P.tenders, tenderUnits: P.tenderUnits, withNotice: Q.withNotice, comparable: Q.comparable, rentalUnits: Q.rentalUnitsStated, tenderUnitsOfStated: Q.tenderUnitsOfStated,
           saleUnits: Q.saleUnitsStated, years: Q.rentalYears || {}, checkedAt: d.freshness && d.freshness.dira ? d.freshness.dira.fetchedAt : null };
       }).catch((e) => { out.rentalError = e.message; }));
+      /* the PROPX Market Dossier of the locality (evidence quality, what to watch / what could go wrong, what is missing) and the
+         Opportunity / Risk radar items for it — read-only context: altaris/decision.js reads none of these fields, so a dossier
+         can never move a verdict, a rating or a number */
+      jobs.push(getJSON(`/api/intel?view=dossier&city=${encodeURIComponent(info.cityCode)}`).then((d) => {
+        const sig = (k) => (d.signals || []).filter((s) => s.kind === k).map((s) => ({ id: s.id, text: s.text, threshold: s.threshold, period: s.period, source: s.source, cls: s.cls }));
+        out.dossier = { geo: d.geo, quality: d.quality ? { level: d.quality.level, score: d.quality.score, items: (d.quality.items || []).map((i) => i.he) } : null, watch: sig('watch'), risk: sig('risk'),
+          missing: (d.missing || []).map((m) => m.he), salesScope: d.sections && d.sections.sales && d.sections.sales.scope ? d.sections.sales.scope.he : null, generatedAt: d.generatedAt };
+      }).catch((e) => { out.dossierError = e.message; }));
+      jobs.push(getJSON(`/api/intel?view=scanGeo&city=${encodeURIComponent(info.cityCode)}`).then((d) => {
+        const it = (x) => ({ signal: x.signal, text: x.text, valueLabel: x.valueLabel, threshold: x.threshold, comparison: x.comparison, period: x.period, source: x.source, cls: x.cls, evidence: x.evidence, m: x.m, derived: !!x.derived });
+        out.radar = { opportunities: (d.opportunities || []).map(it), risks: (d.risks || []).map(it), served: d.served, builtAt: d.builtAt };
+      }).catch((e) => { out.radarError = e.message; }));
       jobs.push(getJSON(`/api/intel?view=signals&city=${encodeURIComponent(info.cityCode)}&limit=5`).then((d) => {
         out.entries = { total: d.total, rows: (d.rows || []).map((r) => ({ developer: r.developer, date: r.date, via: r.via })), definition: d.definition };
       }).catch((e) => { out.entriesError = e.message; }));
@@ -902,10 +914,24 @@
         facts.push(`<div class="ax-fact"><div class="k">פרויקטים ואתרים ביישוב · נצפו</div><div class="v num">${F.int(P.total)}</div><div class="s">${Object.entries(st).filter(([k]) => stH[k]).map(([k, n]) => `${stH[k]} ${F.int(n)}`).join(' · ') || '—'} · פרויקטי הגרלה ומגרשי מגורים שנזכו — לא כל הבנייה ביישוב, ללא צירוף בין המקורות <span class="ax-tag der">נגזר</span></div></div>`);
       }
       if (m.entries && m.entries.total) facts.push(`<div class="ax-fact"><div class="k">יזמים שנכנסו ליישוב · 24 חודשים</div><div class="v num">${F.int(m.entries.total)}</div><div class="s">${m.entries.rows.map((r) => `${esc(r.developer)} (${F.date(r.date)})`).join(' · ')} · פעילות ראשונה שנצפתה ביישוב, ליזם שפעל במקום אחר לפני כן <span class="ax-tag der">נגזר</span></div></div>`);
-      const errs = [m.txError && `עסקאות: ${m.txError}`, m.landError && `קרקע: ${m.landError}`, m.housingError && `דיור: ${m.housingError}`, m.devWinsError && `זכיות יזם: ${m.devWinsError}`,
+      const bl = (v) => (v == null ? '—' : typeof v === 'object' ? (v.he != null ? v.he : v.en) : String(v));
+      let dossierHTML = '';
+      if (m.dossier) {
+        const Dq = m.dossier, R = m.radar || { opportunities: [], risks: [] };
+        const row = (x, k) => `<li class="ax-rd-i ${k}"><b>${esc(x.text.he)}</b><div class="ax-muted">למה סומן? טריגר ${esc(x.signal)} · ערך ${esc(x.valueLabel || '—')} · סף ${esc(bl(x.threshold))}${x.comparison ? ' · השוואה ' + esc(x.comparison.he) : ''} · תקופה ${esc(bl(x.period))} · ${esc(x.source)} · ${esc(x.cls)} · איכות ראיות ${esc(x.evidence.level)} ${x.evidence.score}/100${x.derived ? ' · נגזר משני כללים' : ''}</div></li>`;
+        const sigRow = (s) => `<li><b>${esc(s.text.he)}</b><div class="ax-muted">סף ${esc(bl(s.threshold))} · תקופה ${esc(bl(s.period))} · ${esc(s.source)} · ${esc(s.cls)}</div></li>`;
+        dossierHTML = `<div class="ax-dossier"><div class="ax-dossier-h"><span class="ax-tag">תיק שוק PROPX · ${esc(Dq.geo && Dq.geo.name ? Dq.geo.name.he : m.city)}</span>${Dq.quality ? `<span class="ax-tag ax-q-${Dq.quality.level.toLowerCase()}">איכות ראיות ${esc(Dq.quality.level)} · ${Dq.quality.score}/100</span>` : ''}<span class="ax-muted">הקשר לקריאה בלבד — לא משנה אף מספר, דירוג או הכרעה של ALTARIS; לא המלצת השקעה</span></div>
+          <div class="ax-rd-grid"><div><div class="ax-rd-h opp">רדאר הזדמנויות — שווה לבדוק (${R.opportunities.length})</div>${R.opportunities.length ? `<ul class="ax-rd-l">${R.opportunities.slice(0, 5).map((x) => row(x, 'opp')).join('')}</ul>` : '<p class="ax-muted">אין פריטים ליישוב</p>'}</div>
+          <div><div class="ax-rd-h risk">רדאר סיכונים (${R.risks.length})</div>${R.risks.length ? `<ul class="ax-rd-l">${R.risks.slice(0, 5).map((x) => row(x, 'risk')).join('')}</ul>` : '<p class="ax-muted">אין סימני סיכון ליישוב</p>'}</div></div>
+          ${Dq.salesScope ? `<p class="ax-muted">מכירות רשמיות: ${esc(Dq.salesScope)}</p>` : ''}
+          ${Dq.quality && Dq.quality.items.length ? `<p class="ax-muted">ניכויים באיכות הראיות: ${Dq.quality.items.map(esc).join(' · ')}</p>` : ''}
+          ${Dq.missing.length ? `<details class="ax-rd-miss"><summary class="ax-muted">מה חסר בתיק (${Dq.missing.length})</summary><ul class="ax-muted">${Dq.missing.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}
+          <p class="ax-muted">מקור: lib/dossier · lib/radar/scan — כללים דטרמיניסטיים מתועדים; "למה סומן?" מפרט טריגר · ערך · סף · השוואה · תקופה · מקור · סיווג · איכות ראיות${R.builtAt ? ' · הסריקה נבנתה ' + esc(F.date(String(R.builtAt).slice(0, 10))) : ''}</p></div>`;
+      }
+      const errs = [m.txError && `עסקאות: ${m.txError}`, m.dossierError && `תיק שוק: ${m.dossierError}`, m.radarError && `רדאר: ${m.radarError}`, m.landError && `קרקע: ${m.landError}`, m.housingError && `דיור: ${m.housingError}`, m.devWinsError && `זכיות יזם: ${m.devWinsError}`,
         m.devIntelError && `רישום יזמים: ${m.devIntelError}`, m.pipelineError && `פרויקטים: ${m.pipelineError}`, m.entriesError && `כניסות יזמים: ${m.entriesError}`].filter(Boolean);
       if (!m.cityCode) errs.push('ליישוב לא נבחר קוד רשמי — בחרו אותו מרשימת החיפוש כדי לקבל נתוני קרקע ודיור');
-      body += `<div class="ax-facts">${facts.join('')}</div>`;
+      body += `<div class="ax-facts">${facts.join('')}</div>` + dossierHTML;
       if (tx) body += `<p class="ax-muted">${esc(viaTxt(tx))}${tx.snapshotAt ? ' · עותק המרשם מיום ' + esc(F.date(String(tx.snapshotAt).slice(0, 10))) : ''} · היקף: ${esc(tx.scope || '—')} · ${tx.nAll} רשומות מגורים נשלפו (${tx.more ? 'עמוד ראשון מתוך יותר' : 'כל הרשומות בהיקף'}) · נשלף ${esc(F.date(m.retrievedAt.slice(0, 10)))}. השווי המוערך הוא חציון — לא שומה.</p>`;
       if (tx && tx.comps.length) body += `<div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="comps"><thead><tr><th>תאריך</th><th>כתובת</th><th class="n">חדרים</th><th class="n">שטח</th><th class="n">מחיר</th><th class="n">₪/מ״ר</th></tr></thead><tbody>${tx.comps.map((c) => `<tr><td class="num">${esc(F.date(c.date))}</td><td>${esc([c.street, c.house].filter(Boolean).join(' ') || '—')}${c.isNew ? ' <span class="ax-tag">חדשה</span>' : ''}</td><td class="n">${esc(c.rooms || '—')}</td><td class="n">${F.int(c.area)}</td><td class="n">${F.nis(c.price)}</td><td class="n">${F.int(c.psm)}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted">עסקאות השוואה: חדרים כמו ביחידות העסקה (±0.5) ושטח בטווח ±20% — ${tx.compsN} נמצאו${tx.compsN < 5 ? ' (פחות מ-5: לא הוצע שווי השוואה)' : ''}.</p>`;
       if (errs.length) body += `<p class="ax-muted" style="color:var(--down)">${errs.map(esc).join(' · ')}</p>`;

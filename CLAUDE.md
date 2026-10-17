@@ -141,6 +141,24 @@
   DERIVED), `at` (PROPX observed) ≠ `sourceDate`, materiality 1–3 a constant per rule. `data/radar/events.json` (120 days) is
   written by every sync workflow before it commits (bot-written); `GET /api/intel?view=radar|pulse`; the page's `#pulse`
   section (rail "דופק"). See `lib/radar/README.md`.
+  `lib/radar/scan.js` + `data/radar/scan.json` + `test/scan.test.js` = OPPORTUNITY RADAR / RISK RADAR (17.10.2026): the dossier
+  signals over Israel, the 7 districts and the 40 localities with the most live tenders, sorted by rule into "worth
+  investigating" / "risk signals" — NEVER a recommendation; every item: trigger · value · threshold · comparison (national
+  figure or share of it) · period · source · class · evidence quality; strict geography (no district / national series on a
+  locality); materiality a constant per rule; two named DERIVED convergence items. `view=scan` / `view=scanGeo`; the top of
+  `#pulse`; the ALTARIS market panel shows the deal locality's items READ-ONLY (the decision layer reads none of them —
+  proved in `test/altaris-decision.test.js`). `lib/radar/revisions.js` = REVISION INTELLIGENCE: the CBS ledger's revisions
+  (old value · new value · period · publication · PROPX check, by release; material = |Δ| ≥ 5 %), `view=revisions`, shown
+  in `#pulse`. Trust 2.0 (`lib/trust/catalog.js`): latest success ≠ latest failure, RECOVERED (7 days), 14-check history,
+  tally, expected cadence, `alerts` (REFUSED / FAILED / SCHEMA_CHANGED / STALE / PARTIAL / RECOVERED / SOURCE_STALE) shown
+  as the strip at the top of the Trust Center; `status: unchanged` is UNCHANGED, working-day syncs are stale after 100 h.
+  `lib/entities/intel.js` + `test/entities-intel.test.js` = DEVELOPER INTELLIGENCE 2.0: `developer().intel` — activity
+  windows + trend rule, markets + geographic concentration, program concentration + subsidized share + the observation-channel
+  statement (public channels only — "public-land dependence" cannot be measured), land basis by track, rental, planning
+  (exact XPlan joins), construction, housing, entries, and ten deterministic signals (NEW_MARKET_ENTRY, ACCELERATING_LAND_ACTIVITY,
+  RECENT_WIN_MOMENTUM, HIGH_GEOGRAPHIC_CONCENTRATION, PROGRAM_CONCENTRATION, LOW_RECENT_PUBLIC_ACTIVITY, RENTAL_EXPANSION,
+  PLANNING_EVIDENCE, CONSTRUCTION_EVIDENCE, POSSIBLE_SAME_ENTITY) each with trigger · value · threshold · period · source ·
+  class · limitations — no score; shown as the first section of the developer drawer. See `lib/entities/README.md`.
 - `lib/table/core.js` + `lib/table/README.md` + `test/table.test.js` = the one table standard (audit 14.10.2026): first click
   = the column's primary order (high → low, newest first, yes first, א → ת, lifecycle), second = reverse, third = the
   default; missing values ALWAYS last (never 0); typed column filters (contains · any of · min..max · from..to · yes/no ·

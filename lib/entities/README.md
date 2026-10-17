@@ -67,3 +67,63 @@ coverage, latest observation, source update date, limitations, retention — wit
 STALE` (last good check older than 50 h for a daily job) `· NO_RUN`. A source that is unavailable never becomes 0.
 
 Tests: `node test/entities.test.js`.
+
+## Developer Intelligence 2.0 (`lib/entities/intel.js`, `developer(id).intel`)
+
+`devIntel(entity, cache, { now })` — one institutional read of a developer entity, composed only from what the
+registry already built (the entity, its `ila:` sites and `moch:` projects) plus two exact joins PROPX already
+stores: the tender record's XPlan plans (exact plan number) and Dira Lehaskir's notice for a tender (printed tender
+number). Pure: nothing fetched, nothing random, never a merge, **no score of any kind**. `query.js` `developer(id)`
+adds it as one new field `intel`; every pre-existing field is unchanged.
+
+Minimal cache: `{ projById: Map<id, site | project>, landById: Map<tenderId, tender record> (optional — empty →
+no XPlan join), R: { entries: [] } }`; `opt.diraFor(tenderId)` may replace the rental read model (tests).
+
+Every block carries `source` + `cls` (OFFICIAL / OBSERVED / DERIVED) and a bilingual `basis`; a number appears only
+where the sources carry it, null otherwise (a share with a zero denominator is null, never 0):
+
+* **identity** — canonical, kind, roles, aliases, `possibleSame` (each with its evidence and `merged: false`),
+  `companyId: null` + note.
+* **activity** — windows from `now`: `last6 · last12 · prior12 · prior24to36` → `{ lotsWon, residentialUnits,
+  lotteries, firstLotteries }` from the sites' decision dates and the developer's projects' lottery dates; first /
+  last activity, `monthsSinceLast`, `lotsOutsideWindows` (lots on non-residential tracks have no site). `trend`:
+  a = last-12 lots + lotteries, b = prior-12 → `inactive` (a = b = 0 — nothing observed in PROPX's public channels,
+  not a statement about the company) · `insufficient` (a < 2 and b < 2) · `accelerating` (a ≥ 2b) · `slowing`
+  (a ≤ b/2) · `steady`.
+* **markets** — the entity's markets ranked by lots + lotteries; `geographicConcentration` = top market's residential
+  lots ÷ all residential lots won (ILA sites; lotteries are a different universe).
+* **programs** — tracks + shares, `subsidizedShare` = subsidized + residential-lottery + special-population lots ÷
+  all residential-track lots, and the **observation-channel statement**: PROPX observes public channels only (ILA
+  tenders, MoCH lotteries); private-land activity is not observed, so "public-land dependence" cannot be measured —
+  only stated.
+* **landBasis** — the entity's competitive totals, land per unit (+ basis), ₪/m² and fixed-price lot counts,
+  `vat: 'not-stated-by-source'`, `byTrack` land per unit over competitive-bid lots with both a sum and units.
+* **rental** — rental-track lots (tender units = the tender total, never "rental units"), Dira Lehaskir notices joined
+  by tender id, `statedRentalUnits` summed only where the notice states them; a rental-track lot is not an operating
+  rental project; no rent, occupancy or yield.
+* **planning** — distinct plans over the sites' `plan|lot` keys, `xplanJoined` through the stored tender record only,
+  `byStation`; exact plan number, never name or geometry; a plan's status is the plan's, not the lot's.
+* **construction** — the entity's exact block/parcel joins (STALE, as of 2024-03-01) or null.
+* **housing** — lotteries, projects, first-lottery units / applicants, `applicantsPerUnit` (Σ applicants ÷ Σ units
+  over first lotteries that publish both), permitted / occupied project counts from MoCH's published stage.
+* **entries** — the developer's market entries in the last 24 months.
+* **signals** — `SIGNALS`, the deterministic rule table; each fired signal = `{ id, kind, text, trigger, value,
+  threshold, period, source, cls, limitations[], components }` in Hebrew and English. A risk signal describes
+  observed activity — never a judgement on the company, never a recommendation.
+
+| id | kind | fires when | cls |
+|---|---|---|---|
+| NEW_MARKET_ENTRY | watch | ≥ 1 market entry in 24 months | DERIVED |
+| ACCELERATING_LAND_ACTIVITY | watch | last-12 residential lots ≥ 3 and ≥ 2 × prior-12 | DERIVED |
+| RECENT_WIN_MOMENTUM | watch | ≥ 3 residential lots in the last 6 months | OBSERVED |
+| HIGH_GEOGRAPHIC_CONCENTRATION | risk | top market ≥ 70% of ≥ 5 residential lots | DERIVED |
+| PROGRAM_CONCENTRATION | info | one track ≥ 70% of ≥ 5 lots | DERIVED |
+| LOW_RECENT_PUBLIC_ACTIVITY | info | ≥ 3 lifetime lots + lotteries and none in 24 months ("no activity observed in PROPX's public channels") | DERIVED |
+| RENTAL_EXPANSION | watch | ≥ 1 rental-track lot in 24 months | OBSERVED |
+| PLANNING_EVIDENCE | info | ≥ 2 distinct XPlan-joined plans | OBSERVED |
+| CONSTRUCTION_EVIDENCE | info | construction started on ≥ 1 joined lot (period = the rows' as-of date, STALE) | OBSERVED |
+| POSSIBLE_SAME_ENTITY | info | ≥ 1 possible-same link — "possibly the same entity — not merged" | DERIVED |
+
+Tests: `node test/entities-intel.test.js` (rules at and just below their thresholds on synthetic entities, he/en
+parity, shares, trend, the committed data read-only).
+

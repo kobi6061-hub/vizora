@@ -301,5 +301,21 @@ t('the AI role is explanation only: the page has no model call; the narrative fu
   assert.match(SRC('altaris/decision.js'), /function narrative\(D, L\)/);
 });
 
+
+console.log('read-only context: the Market Dossier / Opportunity-Risk fields never move a decision');
+t('decide() is byte-identical with and without the dossier / radar context fields on ctx.market (they are display-only in the ALTARIS market panel)', () => {
+  for (const c of CS.CASES.slice(0, 3)) {
+    const d = clone(c.deal);
+    const R = E.run(d, null, { today: TODAY });
+    const base = { ...(d.market || {}), tx: d.market && d.market.tx };
+    const plain = DX.decide(R, { today: TODAY, deal: d, market: base });
+    const withCtx = DX.decide(R, { today: TODAY, deal: d, market: { ...base,
+      dossier: { geo: { level: 'locality', code: '7900' }, quality: { level: 'LOW', score: 10, items: ['x'] }, watch: [{ id: 'open-land', text: { he: 'א', en: 'a' } }], risk: [{ id: 'failed-tenders', text: { he: 'ב', en: 'b' } }], missing: ['permits'], salesScope: 'district' },
+      radar: { opportunities: [{ signal: 'open-land', m: 3, evidence: { level: 'LOW', score: 10 } }], risks: [{ signal: 'failed-tenders', m: 3, evidence: { level: 'LOW', score: 10 } }], served: 'file' } } });
+    const strip = (D) => JSON.stringify(D, (k, v) => (k === 'generatedAt' || k === 'at' ? undefined : v));
+    assert.equal(strip(withCtx), strip(plain), c.id);
+  }
+});
+
 console.log(`altaris decision: ${passed} passed${failed ? `, ${failed} FAILED` : ', all green'}`);
 process.exit(failed ? 1 : 0);

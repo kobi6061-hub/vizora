@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="a4b604443c1d0085c2350ded4dc1bc4d4d68c2d83c8c702bfdc8f3096ce40cfb">
+<meta name="propx-source-sha256" content="fe4966fb116c47c27f38c1c7cdc959fdcd4ad83cd42330e817bc0b3c6b11e115">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -1297,6 +1297,10 @@ details.ci-more>.in{padding:2px 13px 12px}
 .tc-head .tx-note{max-width:640px}
 #tcBody{padding:0 15px 14px}
 .tc-counts{font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:4px 0 10px}
+.ho-chip.bad{color:var(--down);border-color:var(--down)}
+.tc-alerts{margin:0 0 10px;padding:8px 11px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper)}
+.tc-al-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px} .tc-al{font-size:12px;line-height:1.5;overflow-wrap:anywhere;padding-inline-start:10px;border-inline-start:3px solid var(--hairline)}
+.tc-al.bad{border-color:var(--down)} .tc-al.warn{border-color:var(--conf-med)} .tc-al.ok{border-color:var(--up)}
 .tc-list{display:grid;gap:6px}
 .tc-row{border:1px solid var(--hairline);border-radius:10px;background:var(--paper)}
 .tc-row.off{opacity:.78}
@@ -1397,6 +1401,15 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .pu-meta{font-size:10px;color:var(--ink-3);margin-top:3px}
 .pu-go{font-size:11px;font-weight:700;color:var(--accent-deep);border:1px solid var(--hairline);border-radius:7px;padding:3px 8px;background:var(--panel);white-space:nowrap;text-decoration:none;align-self:center}
 .pu-note{padding:8px 15px 12px}
+.pu-radar{padding:4px 15px 8px;border-top:1px solid var(--hairline)}
+.pu-rd-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 6px}
+.pu-rd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 22px}
+.pu-rd-h{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:6px 0 4px;border-bottom:1px solid var(--hairline)} .pu-rd-h.opp{color:var(--up)} .pu-rd-h.risk{color:var(--down)}
+.pu-rd-l{list-style:none;margin:0;padding:0} .pu-ri{padding:7px 0;border-bottom:1px solid var(--hairline)}
+.pu-ri-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap} .pu-ri-g{font-size:12.5px;font-weight:800} .pu-ri-l{font-size:9.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+.pu-ri-t{font-size:12px;line-height:1.45;color:var(--ink-2);margin-top:2px;overflow-wrap:anywhere} .pu-ri.m3 .pu-ri-t{color:var(--ink)}
+.pu-why summary{font-size:10.5px;font-weight:700;color:var(--accent-deep);cursor:pointer;margin-top:3px} .pu-why .ds-m{overflow-wrap:anywhere}
+.pu-rev{margin:8px 0 2px} .pu-rev summary{font-size:12px;cursor:pointer;line-height:1.5} .pu-rev table{font-size:11.5px;margin-top:6px}
 .vc.obs{color:var(--conf-med)}
 /* ---- Market Dossier (lib/dossier) ---- */
 .ds-pick{display:flex;align-items:center;gap:8px}
@@ -1539,6 +1552,7 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
     </div>
     <div class="card ho-card">
       <div class="pu-facts" id="puFacts"></div>
+      <div class="pu-radar" id="puRadar"></div>
       <div class="ho-bar pu-bar" id="puBar"></div>
       <div class="pu-feed" id="puFeed" aria-live="polite"></div>
       <p class="ho-note pu-note" id="puNote"></p>
@@ -2843,6 +2857,9 @@ he:{
   navPulse:"דופק", lyrPulse:"L1 · שוק · מה השתנה", puTitle:"דופק השוק — מה השתנה בשוק הדירות החדשות?", puSub:"אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות",
   puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
   puProv:(n,built,served)=>`${n} אירועים · נבנה ${built}${served==="built-on-read"?" · חושב בקריאה":""}`, puCls:{OFFICIAL:"רשמי",OBSERVED:"נצפה",DERIVED:"נגזר"}, puFactsT:"עובדות — השבוע והחודש", puM3:"מהותי",
+  puRadarT:"רדאר הזדמנויות · רדאר סיכונים — לא המלצת השקעה", puOppT:"שווה לבדוק", puRiskT:"סימני סיכון", puWhy:"למה סומן?", puLvl:{all:"הכול",il:"ארצי",district:"מחוזות",locality:"יישובים"}, puNoItems:"אין פריטים ברמה הזו",
+  puMoreDs:"עוד פריטים — בתיק השוק של כל גאוגרפיה", puTrig:"טריגר", puVal:"ערך", puThr:"סף", puCmp:"השוואה", puPer:"תקופה", puSrc:"מקור", puEv:"איכות ראיות", puDerived:"נגזר משני כללים", puBuilt:"נבנה",
+  puRevT:"תיקוני נתונים רשמיים (למ״ס)", puRevSum:(n,m,d)=>`${n} תיקונים ב-90 יום · ${m} מהותיים (|Δ| ≥ 5%) · פרסום אחרון ${d}`, puRevNone:"אין תיקונים מהותיים בחלון", puRevCols:["גאוגרפיה","מדד","תקופה","ישן → חדש","Δ","פורסם","נצפה"], puRevNet:"שינוי נטו לפי גאוגרפיה (דירות חדשות שנמכרו)",
   navHousing:"דיור", lyrHo:"L1 · שוק · דיור ממשלתי", hoTitle:"דיור מסובסד", hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה",
   hoSrcName:"משרד הבינוי והשיכון · data.gov.il",
   hoProv:src=>`מקור: ${src}`,
@@ -3394,6 +3411,9 @@ en:{
   navPulse:"Pulse", lyrPulse:"L1 · Market · What changed", puTitle:"Market Pulse — what changed in the Israeli new-home market?", puSub:"Deterministic events from official sources: what changed, when PROPX observed it and the source's own date — no interpretation",
   puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
   puProv:(n,built,served)=>`${n} events · built ${built}${served==="built-on-read"?" · computed on read":""}`, puCls:{OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED",DERIVED:"DERIVED"}, puFactsT:"Facts — this week and month", puM3:"material",
+  puRadarT:"Opportunity Radar · Risk Radar — not an investment recommendation", puOppT:"Worth investigating", puRiskT:"Risk signals", puWhy:"Why was this flagged?", puLvl:{all:"All",il:"National",district:"Districts",locality:"Localities"}, puNoItems:"No items at this level",
+  puMoreDs:"More items — in each geography's market dossier", puTrig:"trigger", puVal:"value", puThr:"threshold", puCmp:"comparison", puPer:"period", puSrc:"source", puEv:"evidence quality", puDerived:"derived from two rules", puBuilt:"built",
+  puRevT:"Official figures revised (CBS)", puRevSum:(n,m,d)=>`${n} revisions in 90 days · ${m} material (|Δ| ≥ 5%) · latest release ${d}`, puRevNone:"No material revisions in the window", puRevCols:["Geography","Measure","Period","Old → new","Δ","Published","Observed"], puRevNet:"Net change by geography (new dwellings sold)",
   navHousing:"Housing", lyrHo:"L1 · Market · Government housing", hoTitle:"Government Housing / Subsidized Housing Intelligence",
   hoSub:"מחיר למשתכן · מחיר מטרה · דירה בהנחה — Mechir LaMishtaken · Mechir Matara · Dira BeHanacha",
   hoSrcName:"Ministry of Construction and Housing · data.gov.il",
@@ -7986,6 +8006,10 @@ he:{
   foot:"מקורות: רשות מקרקעי ישראל — אתר המכרזים · משרד הבינוי והשיכון — הגרלות דירה בהנחה ודיווחי התקדמות הבנייה (2024, ישן) · שמות כפי שפורסמו; ללא מיזוג לפי דמיון; יח״ד לפי מקור, לעולם לא מחוברות בין מקורות",
   dClose:"סגירה",dDev:"פרופיל יזם",dProj:"פרויקט",dIds:"זהות ושמות",dCanon:"שם קנוני",dAliases:"גרסאות שם במקור",dCompany:"מספר חברה",dCompanyV:"לא מתפרסם במקורות אלה",dPossible:"ייתכן שזהה (לא ממוזג)",
   ev:{"same-letters":"אותן אותיות, פיסוק/רווח שונה","strict-prefix":"השם חתוך במקור ומהווה תחילית של שם אחד בלבד"},
+  di:{title:"מודיעין יזם 2.0 — פעילות שנצפתה, אותות דטרמיניסטיים",trend:"מגמת פעילות",trends:{accelerating:"מאיצה",steady:"יציבה",slowing:"מאטה",inactive:"ללא פעילות שנצפתה",insufficient:"מעט מדי תצפיות"},l12:"12 חודשים אחרונים",p12:"12 הקודמים",lots:"מגרשים",lotteries:"הגרלות",last:"פעילות אחרונה שנצפתה",first:"פעילות ראשונה שנצפתה",monthsAgo:"חודשים",
+    geoConc:"ריכוז גאוגרפי",inTop:"מהמגרשים ביישוב המוביל",resLots:"מגרשי מגורים",markets:"יישובים",progConc:"ריכוז לפי מסלול",subsidized:"מסובסד",rental:"דיור להשכרה",rentalLots:"מגרשים במסלול השכרה",tenderTotal:"יח״ד סה״כ במכרז",notices:"הודעות דירה להשכיר",stated:"יח״ד להשכרה כפי שנכתב",
+    planning:"ראיות תכנון",plansJoined:"תוכניות עם צירוף XPlan מדויק",housing:"דיור מסובסד",projects:"פרויקטים",unitsFirst:"יח״ד בהגרלות ראשונות",apu:"נרשמים ליחידה",permitted:"עם היתר",construction:"ראיות בנייה",started:"מבנים שהחלו",completed:"הושלמו",lotsJoined:"מגרשים מצורפים",asOf:"נכון ל",stale:"ישן",
+    signals:"אותות — כל אות אומר למה",kinds:{watch:"מעקב",risk:"סיכון",info:"מידע"},trigger:"טריגר",value:"ערך",threshold:"סף",period:"תקופה",limits:"מגבלות",noSignals:"אין אותות — לא נחצה סף מתועד",entries:"כניסות ליישובים (24 חודשים)",landByTrack:"בסיס קרקע לפי מסלול",track:"מסלול",units:"יח״ד",landTotal:"סכום זכייה",lpu:"₪ ליח״ד"},
   dIla:"מכרזי רמ״י — מגרשים שנזכו",dMoch:"הגרלות משב״ש",dCons:"ראיית בנייה (דיווחי התקדמות 2024 — ישן)",dMarkets:"שווקים (ערים)",dSites:"מגרשים שנזכו",dProjects:"פרויקטי הגרלה",dEntries:"כניסה לשווקים חדשים",dSrc:"מקורות",dMeth:"מתודולוגיה",
   dAll:"כל התקופה",dRecent:"24 חודשים",kv:{lots:"מגרשים",tenders:"מכרזים",units:"יח״ד במגרשי מגורים",land:"סכומי זכייה תחרותיים",landLots:"מגרשים בתחרות מחיר",lpu:"קרקע ליח״ד",psm:"מגרשים בהצעת ₪/מ״ר",fixed:"הקצאה במחיר קבוע",first:"זכייה ראשונה",lastw:"זכייה אחרונה",
      projects:"פרויקטים",lotteries:"הגרלות",ufirst:"יח״ד בהגרלות ראשונות",apps:"נרשמים בהגרלות ראשונות",firstl:"הגרלה ראשונה",lastl:"הגרלה אחרונה",
@@ -8075,6 +8099,10 @@ en:{
   foot:"Sources: Israel Land Authority — tender site · Ministry of Construction and Housing — discounted-housing lotteries and construction-progress reports (2024, stale) · names as published; no similarity merge; units per source, never added across sources",
   dClose:"Close",dDev:"Developer profile",dProj:"Project",dIds:"Identity & names",dCanon:"Canonical name",dAliases:"Name variants in the source",dCompany:"Company number",dCompanyV:"not published by these sources",dPossible:"Possibly the same (not merged)",
   ev:{"same-letters":"same letters, different punctuation / spacing","strict-prefix":"the name is cut by its source and is a prefix of exactly one other name"},
+  di:{title:"Developer Intelligence 2.0 — observed activity, deterministic signals",trend:"Activity trend",trends:{accelerating:"accelerating",steady:"steady",slowing:"slowing",inactive:"no observed activity",insufficient:"too few observations"},l12:"last 12 months",p12:"prior 12",lots:"lots",lotteries:"lotteries",last:"Latest observed activity",first:"First observed activity",monthsAgo:"months ago",
+    geoConc:"Geographic concentration",inTop:"of lots in the top market",resLots:"residential lots",markets:"markets",progConc:"Program concentration",subsidized:"subsidized",rental:"Long-term rental",rentalLots:"rental-track lots",tenderTotal:"tender units (total)",notices:"Dira Lehaskir notices",stated:"rental units as stated",
+    planning:"Planning evidence",plansJoined:"plans with an exact XPlan join",housing:"Subsidized housing",projects:"projects",unitsFirst:"units in first lotteries",apu:"applicants per unit",permitted:"permitted",construction:"Construction evidence",started:"buildings started",completed:"completed",lotsJoined:"lots joined",asOf:"as of",stale:"stale",
+    signals:"Signals — every signal says why",kinds:{watch:"watch",risk:"risk",info:"info"},trigger:"trigger",value:"value",threshold:"threshold",period:"period",limits:"Limitations",noSignals:"No signals — no documented threshold was crossed",entries:"Market entries (24 months)",landByTrack:"Land basis by track",track:"Track",units:"Units",landTotal:"Winning sums",lpu:"₪ per unit"},
   dIla:"ILA tenders — lots won",dMoch:"MoCH lotteries",dCons:"Construction evidence (progress reports 2024 — stale)",dMarkets:"Markets (cities)",dSites:"Lots won",dProjects:"Lottery projects",dEntries:"New-market entries",dSrc:"Sources",dMeth:"Methodology",
   dAll:"All time",dRecent:"24 months",kv:{lots:"Lots",tenders:"Tenders",units:"Units in residential lots",land:"Competitive winning sums",landLots:"Lots in price competition",lpu:"Land per unit",psm:"Lots bid in ₪/m²",fixed:"Fixed-price allocations",first:"First win",lastw:"Latest win",
      projects:"Projects",lotteries:"Lotteries",ufirst:"Units in first lotteries",apps:"Applicants in first lotteries",firstl:"First lottery",lastl:"Latest lottery",
@@ -8340,6 +8368,24 @@ function inClose(){
   const f=inState.returnFocus;inState.returnFocus=null;
   if(f&&document.contains(f))f.focus();
 }
+/* DEVELOPER INTELLIGENCE 2.0 — deterministic blocks and signals over the entity's observed activity (lib/entities/intel.js). No score; every signal says why. */
+function diHTML(I){
+  const t=IT(),di=t.di,he=state.lang==="he",L=he?"he":"en",bl=v=>v==null?"—":typeof v==="object"?(v[L]!=null?v[L]:v.en):String(v),pc=v=>v==null?"—":Math.round(v*100)+"%";
+  const A=I.activity||{},W=A.windows||{},l12=W.last12||{},p12=W.prior12||{},G=I.markets&&I.markets.geographicConcentration,Pg=I.programs||{},LB=I.landBasis||{},R=I.rental||{},Pl=I.planning||{},H=I.housing||{},C=I.construction,E=I.entries||{};
+  const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const trend=`<div class="ho-dl">${kv(di.trend,`<b>${inE(di.trends[A.trend]||A.trend||"—")}</b> <span class="ho-na">(${di.l12}: <span class="num">${fmtInt(l12.lotsWon||0)}</span> ${di.lots} · <span class="num">${fmtInt(l12.lotteries||0)}</span> ${di.lotteries} · ${di.p12}: <span class="num">${fmtInt(p12.lotsWon||0)}</span> · <span class="num">${fmtInt(p12.lotteries||0)}</span>)</span>`)}
+    ${kv(di.last,`${inDate(A.lastActivity)}${A.monthsSinceLast!=null?` <span class="ho-na">(${fmtInt(A.monthsSinceLast)} ${di.monthsAgo})</span>`:""}`)}${kv(di.first,inDate(A.firstActivity))}
+    ${G?kv(di.geoConc,`<span class="num">${pc(G.share)}</span> ${di.inTop} <bdi>${inE(he?G.topMarket.city:(G.topMarket.cityEn||G.topMarket.city))}</bdi> <span class="ho-na">(${fmtInt(G.lots)} / ${fmtInt(G.residentialLots)} ${di.resLots} · ${fmtInt(G.markets)} ${di.markets})</span>`):""}
+    ${Pg.topTrack?kv(di.progConc,`<span class="num">${pc(Pg.topTrack.share)}</span> ${inE(T().ldTracks&&T().ldTracks[Pg.topTrack.track]||Pg.topTrack.track)} <span class="ho-na">(${fmtInt(Pg.topTrack.lots)} / ${fmtInt(Pg.lots)})${Pg.subsidizedShare!=null?` · ${di.subsidized} <span class="num">${pc(Pg.subsidizedShare)}</span>`:""}</span>`):""}
+    ${kv(di.rental,R.rentalTrackLots?`<span class="num">${fmtInt(R.rentalTrackLots)}</span> ${di.rentalLots} · <span class="num">${fmtInt(R.rentalTrackUnits)}</span> ${di.tenderTotal} · ${fmtInt(R.noticesJoined)} ${di.notices}${R.statedRentalUnits!=null?` · ${di.stated} <span class="num">${fmtInt(R.statedRentalUnits)}</span>`:""}`:inDash())}
+    ${kv(di.planning,Pl.plans?`<span class="num">${fmtInt(Pl.xplanJoined)}</span> / <span class="num">${fmtInt(Pl.plans)}</span> ${di.plansJoined}${Pl.byStation&&Object.keys(Pl.byStation).length?` · ${Object.entries(Pl.byStation).map(([k,n])=>`${inE(k)} ${fmtInt(n)}`).join(" · ")}`:""}`:inDash())}
+    ${kv(di.housing,H.lotteries?`<span class="num">${fmtInt(H.projects)}</span> ${di.projects} · <span class="num">${fmtInt(H.unitsFirstLotteries)}</span> ${di.unitsFirst}${H.applicantsPerUnit!=null?` · ${di.apu} <span class="num">${H.applicantsPerUnit}</span>`:""}${H.permittedProjects?` · ${di.permitted} ${fmtInt(H.permittedProjects)}`:""}`:inDash())}
+    ${kv(di.construction,C&&C.lots?`<span class="num">${fmtInt(C.started)}</span> ${di.started} · <span class="num">${fmtInt(C.completed)}</span> ${di.completed} <span class="ho-na">(${fmtInt(C.lots)} ${di.lotsJoined} · ${di.asOf} ${inE(C.asOf||"")} · ${di.stale})</span>`:inDash())}</div>`;
+  const land=LB.byTrack&&Object.keys(LB.byTrack).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${di.track}</th><th>${di.lots}</th><th>${di.units}</th><th>${di.landTotal}</th><th>${di.lpu}</th></tr></thead><tbody>${Object.entries(LB.byTrack).map(([k,x])=>`<tr><td>${inE(T().ldTracks&&T().ldTracks[k]||k)}</td><td class="num">${fmtInt(x.lots)}</td><td class="num">${fmtInt(x.units)}</td><td class="num">${inNIS(x.landTotal)}</td><td class="num">${inNIS(x.landPerUnit)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(bl(LB.byTrackBasis))} · ${inE(t.vatNote)}</p>`:"";
+  const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${di.kinds[s.kind]||s.kind}</span> <b>${inE(s.text[L])}</b><div class="ds-m">${di.trigger}: ${inE(bl(s.trigger))} · ${di.value}: ${s.value!=null?`<span class="num">${typeof s.value==="number"&&s.value<=1&&s.value>0&&/CONCENTRATION/.test(s.id)?pc(s.value):fmtInt(s.value)}</span>`:"—"} · ${di.threshold}: ${inE(bl(s.threshold))} · ${di.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${inE((T().puCls||{})[s.cls]||s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${di.limits}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${di.noSignals}</p>`;
+  const ent=(E.rows||[]).length?`<p class="ho-note">${di.entries}: ${E.rows.map(x=>`<bdi>${inE(he?x.city:(x.cityEn||x.city))}</bdi> ${inDate(x.date)}`).join(" · ")}</p>`:"";
+  return `${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p><p class="ho-note">${inE(bl(I.basis))}</p>`;
+}
 function renderInDrawer(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
   const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
@@ -8372,6 +8418,7 @@ function renderInDrawer(){
         <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}</div></div>${close}</div>
       ${sec(t.dIds,O,`<div class="ho-dl">${kv(t.dCanon,`<bdi>${inE(d.canonical)}</bdi>`)}${kv(t.dCompany,inE(t.dCompanyV))}${kv(t.c.cities,inN((d.markets||[]).length))}${kv(t.c.last,inDate(d.lastActivity))}</div>
         <p class="ho-note">${t.dAliases}: ${(d.aliases||[]).map(a=>`<bdi>${inE(a.name)}</bdi> <span class="num">(${fmtInt(a.occurrences)})</span>`).join(" · ")}</p>${ps?`<h4 class="ld-h4">${t.dPossible}</h4>${ps}`:""}`)}
+      ${d.intel?sec(t.di.title,D,diHTML(d.intel)):""}
       ${(d.roles||[]).includes("ila-tender-winner")?sec(t.dIla,D,ila):""}
       ${(d.roles||[]).includes("moch-lottery-developer")?sec(t.dMoch,D,moch):""}
       ${sec(t.dCons,D,cons)}
@@ -8604,18 +8651,18 @@ function intelPick(h,from){
    ===================================================================== */
 const TC_I18N={
 he:{loading:"טוען את מצב המקורות…",err:"מצב המקורות אינו זמין כרגע",offline:"מרכז הנתונים זמין בגרסת השרת בלבד",
-  st:{SUCCESS:"תקין",UNCHANGED:"ללא שינוי",PARTIAL:"חלקי",REFUSED:"נדחה",FAILED:"נכשל",SCHEMA_CHANGED:"מבנה השתנה",STALE:"לא עדכני",NO_RUN:"ללא בדיקה מתוזמנת"},
+  st:{SUCCESS:"תקין",UNCHANGED:"ללא שינוי",PARTIAL:"חלקי",REFUSED:"נדחה",FAILED:"נכשל",SCHEMA_CHANGED:"מבנה השתנה",STALE:"לא עדכני",NO_RUN:"ללא בדיקה מתוזמנת",RECOVERED:"התאושש",SOURCE_STALE:"תוכן המקור ישן"},
   vert:{land:"קרקעות",renewal:"התחדשות עירונית",planning:"תכנון",construction:"בנייה",housing:"דיור ממשלתי",market:"שוק ומימון",transactions:"עסקאות",geo:"גאוגרפיה",derived:"נגזר"},
   ch:{official:"ערוץ רשמי","independent-republication":"פרסום מחדש עצמאי",derived:"נגזר ב-PROPX"},
   c:{src:"מקור",vert:"תחום",cls:"סיווג",state:"מצב",last:"בדיקה אחרונה",obs:"תצפית אחרונה",upd:"עדכון במקור"},
-  d:{fresh:"עדכניות לפי לוח הפרסום",freshSt:{CURRENT:"עדכני",EXPECTED_REPORTING_LAG:"פיגור דיווח צפוי",STALE:"ישן"},method:"מתודולוגיה — שדות המקור והחישוב",used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן"},
+  d:{fresh:"עדכניות לפי לוח הפרסום",freshSt:{CURRENT:"עדכני",EXPECTED_REPORTING_LAG:"פיגור דיווח צפוי",STALE:"ישן"},method:"מתודולוגיה — שדות המקור והחישוב",used:"משמש ל",cadence:"תדירות",geo:"כיסוי גאוגרפי",hist:"כיסוי היסטורי",lim:"מגבלות",snap:"שמירה והיסטוריה",recent:"בדיקות אחרונות",err:"שגיאה אחרונה",url:"כתובת המקור",notRead:"נבדק — לא נקרא",lastGood:"בדיקה תקינה אחרונה",stale:"תוכן המקור עצמו ישן",alerts:"התראות מקורות — מיומני הריצה, לא מהערכה",noAlerts:"אין התראות: כל מקור ש-PROPX קוראת ענה בבדיקה האחרונה בתוך התדירות הצפויה",after:"אחרי",lastSuccess:"הצלחה אחרונה",lastFailure:"כישלון אחרון",tally:"בדיקות תקינות / סה״כ",tallyNote:"(ביומן)",cadenceH:"תדירות צפויה",hours:"שעות"},
   legend:"מילון מצבים",principles:"עקרונות",count:n=>`${n} מקורות`},
 en:{loading:"Loading source status…",err:"Source status is unavailable right now",offline:"The data center is available on the server version only",
-  st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check"},
+  st:{SUCCESS:"OK",UNCHANGED:"Unchanged",PARTIAL:"Partial",REFUSED:"Refused",FAILED:"Failed",SCHEMA_CHANGED:"Schema changed",STALE:"Stale",NO_RUN:"No scheduled check",RECOVERED:"Recovered",SOURCE_STALE:"Source content stale"},
   vert:{land:"Land",renewal:"Urban renewal",planning:"Planning",construction:"Construction",housing:"Gov. housing",market:"Market & finance",transactions:"Transactions",geo:"Geography",derived:"Derived"},
   ch:{official:"Official channel","independent-republication":"Independent republication",derived:"Derived in PROPX"},
   c:{src:"Source",vert:"Area",cls:"Class",state:"State",last:"Last check",obs:"Latest observation",upd:"Updated at source"},
-  d:{fresh:"Freshness by the publication calendar",freshSt:{CURRENT:"current",EXPECTED_REPORTING_LAG:"expected reporting lag",STALE:"stale"},method:"Methodology — source fields and derivation",used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old"},
+  d:{fresh:"Freshness by the publication calendar",freshSt:{CURRENT:"current",EXPECTED_REPORTING_LAG:"expected reporting lag",STALE:"stale"},method:"Methodology — source fields and derivation",used:"Used for",cadence:"Cadence",geo:"Geographic coverage",hist:"Historical coverage",lim:"Limitations",snap:"Retention & history",recent:"Recent checks",err:"Last error",url:"Source URL",notRead:"Audited — not read",lastGood:"Last good check",stale:"The source content itself is old",alerts:"Source alerts — from the run logs, never an estimate",noAlerts:"No alerts: every source PROPX reads answered its last check within the expected cadence",after:"after",lastSuccess:"Latest success",lastFailure:"Latest failure",tally:"Good checks / total",tallyNote:"(in the log)",cadenceH:"Expected cadence",hours:"hours"},
   legend:"State vocabulary",principles:"Principles",count:n=>`${n} sources`}};
 const TT=()=>TC_I18N[state.lang];
 const tcState={data:null,status:"idle",started:false,open:null};
@@ -8645,9 +8692,11 @@ function renderTrust(){
   const row=(s,i)=>{const S=s.sync||{};const name=state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher;
     const used=s.usedFor?(state.lang==="en"?s.usedFor.en:s.usedFor.he):"";
     const det=tcState.open===i?`<div class="tc-det">
-      <div class="ho-dl">${[[t.d.used,inE(used)],[t.d.cadence,inE(s.cadence||"—")],[t.d.geo,inE(s.geography||"—")],[t.d.hist,inE(s.history||"—")],[t.d.lastGood,inDate(S.lastGoodAt)],[t.d.snap,inE(s.snapshots||"—")]]
+      <div class="ho-dl">${[[t.d.used,inE(used)],[t.d.cadence,inE(s.cadence||"—")],[t.d.geo,inE(s.geography||"—")],[t.d.hist,inE(s.history||"—")],[t.d.lastGood,inDate(S.lastGoodAt)],[t.d.snap,inE(s.snapshots||"—")],
+        [t.d.lastSuccess,inDate(S.latestSuccessAt)],[t.d.lastFailure,S.latestFailureAt?`${tcSt(S.latestFailureState)} ${inDate(S.latestFailureAt)}${S.latestFailureError?` · <span class="num">${inE(S.latestFailureError.slice(0,80))}</span>`:""}`:inDash()],
+        [t.d.tally,S.tally?`<span class="num">${fmtInt(S.tally.good)} / ${fmtInt(S.tally.total)}</span> ${t.d.tallyNote}`:inDash()],[t.d.cadenceH,S.expectedCadenceHours?`<span class="num">${S.expectedCadenceHours}</span> ${t.d.hours}`:inDash()]]
         .map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}</div>
-      ${S.recent&&S.recent.length?`<p class="ho-note">${t.d.recent}: ${S.recent.map(r=>`${tcSt(r.state)} ${inDate(r.at)}`).join(" · ")}</p>`:""}
+      ${(S.history||S.recent)&&(S.history||S.recent).length?`<p class="ho-note">${t.d.recent}: ${(S.history||S.recent).map(r=>`${tcSt(r.state)} ${inDate(r.at)}`).join(" · ")}</p>`:""}
       ${S.lastError?`<p class="ho-note">${t.d.err}: <span class="num">${inE(S.lastError)}</span></p>`:""}
       ${S.note?`<p class="ho-note">${inE(S.note)}</p>`:""}
       ${s.freshness&&s.freshness.state?`<p class="ho-note"><b>${t.d.fresh}:</b> ${inE(t.d.freshSt[s.freshness.state]||s.freshness.state)} · ${inE(s.latestObservation||"—")}${s.freshness.next?` → ${inE(s.freshness.next)} (${inE(s.freshness.nextDueFrom)} – ${inE(s.freshness.staleAfter)})`:""}</p>`:""}
@@ -8659,11 +8708,14 @@ function renderTrust(){
       <span class="tc-n"><b>${inE(name||"")}</b><span class="sub">${inE(s.name||"")}</span></span>
       <span class="tc-v">${inE(t.vert[s.vertical]||s.vertical)}</span>
       <span class="tc-c"><span class="ho-chip">${inE(s.classification||"")}</span>${s.channel&&s.channel!=="official"?` <span class="ho-chip cont">${inE(t.ch[s.channel]||s.channel)}</span>`:""}${s.inProduct===false?` <span class="ho-chip cont">${t.d.notRead}</span>`:""}</span>
-      <span class="tc-s">${tcSt(S.state||"NO_RUN")}</span>
+      <span class="tc-s">${tcSt(S.state||"NO_RUN")}${S.recovered?" "+tcSt("RECOVERED"):""}</span>
       <span class="tc-d"><span class="k">${t.c.last}</span> ${inDate(S.lastCheckAt)}</span>
       <span class="tc-d"><span class="k">${t.c.obs}</span> ${s.latestObservation!=null?`<span class="num">${inE(s.latestObservation)}</span>`:inDash()}</span>
       <span class="tc-d"><span class="k">${t.c.upd}</span> ${inDate(s.sourceUpdatedAt)}</span></button>${det}</div>`};
-  box.innerHTML=`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
+  const alerts=(d.alerts||[]);const alertRow=a=>{const nm=state.lang==="en"&&a.publisherEn?a.publisherEn:a.publisher;const k=a.kind;
+    return `<li class="tc-al ${k==="RECOVERED"?"ok":k==="SOURCE_STALE"||k==="PARTIAL"?"warn":"bad"}">${tcSt(k)} <b>${inE(nm||"")}</b> — ${inE(a.name||"")}${a.at?` · ${inDate(a.at)}`:""}${k==="RECOVERED"&&a.failedAt?` (${t.d.after} ${tcSt(a.failedState)} ${inDate(a.failedAt)})`:""}${a.lastGoodAt&&k!=="RECOVERED"&&k!=="SOURCE_STALE"?` · ${t.d.lastGood}: ${inDate(a.lastGoodAt)}`:""}${a.error?` · <span class="num">${inE(a.error.slice(0,90))}</span>`:""}${a.note?` · ${inE(a.note)}`:""}</li>`};
+  const alertBox=`<div class="tc-alerts"><div class="pu-ft">${t.d.alerts}</div>${alerts.length?`<ul class="tc-al-l">${alerts.map(alertRow).join("")}</ul>`:`<p class="ho-note">${t.d.noAlerts}</p>`}</div>`;
+  box.innerHTML=alertBox+`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
     ${ptBar("tc",tcCols(),ptLoad("tc"),{all:true,note:shown.length<all.length?T().ptKept(fmtInt(shown.length),fmtInt(all.length)):""})}
     <div class="tc-list">${shown.map(x=>row(x.s,x.i)).join("")}</div>
     <details class="tc-leg"><summary>${t.legend} · ${t.principles}</summary><ul class="ho-note ld-ul">${Object.entries(d.vocabulary||{}).map(([k,v])=>`<li>${tcSt(k)} ${inE(v)}</li>`).join("")}</ul>
@@ -8739,7 +8791,7 @@ initMapZoom();
    MARKET PULSE — lib/radar over the committed histories (GET /api/intel?view=radar|pulse).
    An event is a change between two PROPX reads, a new published period, an official
    revision or a source-state change — never a first ingestion or a parser upgrade. */
-const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",page:1,data:null,acc:[],pulse:null,req:0};
+const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",page:1,data:null,acc:[],pulse:null,scan:null,scanLevel:"",rev:null,req:0};
 const puDay=iso=>iso?String(iso).slice(0,10).split("-").reverse().join("."):"—";
 function puLoad(){
   puState.started=true;const id=++puState.req;puState.status="loading";renderPulse();
@@ -8747,6 +8799,9 @@ function puLoad(){
   if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);if(puState.q)qs.set("q",puState.q);
   const jobs=[inGet(qs.toString()).then(d=>{if(id!==puState.req)return;puState.data=d;puState.acc=puState.page>1?puState.acc.concat(d.rows):d.rows})];
   if(!puState.pulse)jobs.push(inGet("view=pulse").then(d=>{if(id!==puState.req)return;puState.pulse=d}).catch(()=>{}));
+  /* the Opportunity / Risk scan and the revision ledger — read once; independent of the feed's filters */
+  if(!puState.scan)jobs.push(inGet("view=scan&limit=80").then(d=>{puState.scan=d}).catch(()=>{}));
+  if(!puState.rev)jobs.push(inGet("view=revisions&window=90d").then(d=>{puState.rev=d}).catch(()=>{}));
   Promise.all(jobs).then(()=>{if(id!==puState.req)return;puState.status="ok";renderPulse()}).catch(()=>{if(id!==puState.req)return;puState.status="error";renderPulse()});
 }
 function renderPulse(){
@@ -8755,6 +8810,7 @@ function renderPulse(){
   if(!facts||!t.puWin)return;
   prov.textContent=D?t.puProv(fmtInt(D.total),puDay(D.builtAt),D.served):"";
   facts.innerHTML=P?`<div class="pu-ft">${t.puFactsT}</div><ul class="pu-fl">${P.facts.map(f=>`<li><span class="pu-fk">${ldE(P.groups[f.k]?P.groups[f.k][L]:f.k)}</span>${ldE(f[L])}</li>`).join("")}</ul>`:"";
+  renderPuRadar();
   const wins=Object.keys(t.puWin).map(w=>`<button type="button" class="ho-chip${puState.win===w?" on":""}" data-puwin="${w}" aria-pressed="${puState.win===w}">${t.puWin[w]}</button>`).join("");
   const groups=D?`<select class="ho-sel" data-pugroup aria-label="${t.puAllG}"><option value="">${t.puAllG}</option>${Object.keys(D.groups).map(g=>`<option value="${g}"${puState.group===g?" selected":""}>${ldE(D.groups[g][L])}${D.counts[g]?` (${D.counts[g]})`:""}</option>`).join("")}</select>`:"";
   const cities=D?`<select class="ho-sel" data-pucity aria-label="${t.puAllC}"><option value="">${t.puAllC}</option>${D.cities.map(c=>`<option value="${ldE(c.code)}"${puState.city===c.code?" selected":""}>${ldE(he?c.city:(c.cityEn||c.city))} (${c.n})</option>`).join("")}</select>`:"";
@@ -8770,9 +8826,32 @@ function renderPulse(){
   feed.innerHTML=rows||`<p class="ho-note">${t.puNone}</p>`;
   note.innerHTML=`${ldE(D.basis[L])}${D.page<D.pages?` <button type="button" class="ld-link" data-pumore>${t.puMore} (${D.page}/${D.pages})</button>`:""}`;
 }
+/* OPPORTUNITY RADAR / RISK RADAR (lib/radar/scan.js) + REVISION INTELLIGENCE (lib/radar/revisions.js) — never a recommendation; every row explains why it was flagged */
+function renderPuRadar(){
+  const t=T(),box=el("puRadar"),he=state.lang==="he",L=he?"he":"en",Sc=puState.scan,Rv=puState.rev;if(!box||!t.puRadarT)return;
+  if(!Sc&&!Rv){box.innerHTML="";return}
+  const bl=v=>v==null?"—":typeof v==="object"?(v[L]!=null?v[L]:v.en):String(v);
+  const lv=puState.scanLevel,pick=a=>a.filter(x=>!lv||x.geo.level===lv).slice(0,8);
+  const chips=["","il","district","locality"].map(k=>`<button type="button" class="ho-chip${lv===k?" on":""}" data-pulvl="${k}" aria-pressed="${lv===k}">${t.puLvl[k||"all"]}</button>`).join("");
+  const item=x=>{const cls=x.cls==="OFFICIAL"?"raw":x.cls==="DERIVED"?"der":"obs",g=x.geo,gn=ldE(g.name[L]),lvl=ldE(g.levelLabel?g.levelLabel[L]:g.level);
+    return `<li class="pu-ri m${x.m}"><div class="pu-ri-h"><button type="button" class="ld-link pu-ri-g" data-pugeo="${ldE(g.level)}:${ldE(g.code)}">${gn}</button><span class="pu-ri-l">${lvl}</span>${x.m===3?`<span class="pu-m3">${t.puM3}</span>`:""}<span class="vc ${cls}">${ldE(t.puCls[x.cls]||x.cls)}</span></div>
+      <div class="pu-ri-t">${ldE(x.text[L])}</div>
+      <details class="pu-why"><summary>${t.puWhy}</summary><div class="ds-m">${t.puTrig}: ${ldE(x.signal)} · ${t.puVal}: ${ldE(x.valueLabel||"—")} · ${t.puThr}: ${ldE(bl(x.threshold))}${x.comparison?` · ${t.puCmp}: ${ldE(x.comparison[L])}`:""} · ${t.puPer}: ${ldE(bl(x.period))} · ${t.puSrc}: ${ldE(x.source)} · ${ldE(t.puCls[x.cls]||x.cls)} · ${t.puEv}: ${ldE(x.evidence.level)} ${x.evidence.score}/100${x.derived?` · ${t.puDerived}`:""}</div></details></li>`};
+  const col=(title,arr,k)=>`<div><div class="pu-rd-h ${k}">${title} <span class="num">(${fmtInt(arr.length)})</span></div>${arr.length?`<ul class="pu-rd-l">${pick(arr).map(item).join("")}</ul>${arr.filter(x=>!lv||x.geo.level===lv).length>8?`<p class="ho-note">${t.puMoreDs}</p>`:""}`:`<p class="ho-note">${t.puNoItems}</p>`}</div>`;
+  const radar=Sc?`<div class="pu-rd-head"><div class="pu-ft">${t.puRadarT}</div><div class="pu-wins" role="group">${chips}</div></div><div class="pu-rd-grid">${col(t.puOppT,Sc.opportunities,"opp")}${col(t.puRiskT,Sc.risks,"risk")}</div><p class="ho-note">${ldE(Sc.basis[L])} · ${ldE(Sc.scope.localityRule[L])}: ${fmtInt(Sc.scope.localities)} · ${t.puBuilt} ${ldE(puDay(Sc.builtAt))}</p>`:"";
+  const rev=Rv?(()=>{const mat=Rv.rows.filter(x=>x.material),rel=Rv.releases[0];
+    const rows=mat.slice(0,12).map(x=>`<tr><td>${ldE(x.geoName[L])}</td><td>${ldE(x.measureLabel[L])}</td><td class="num">${ldE(x.period)}</td><td class="num">${fmtInt(x.oldValue)} → ${fmtInt(x.newValue)}</td><td class="num">${x.pct>0?"+":""}${x.pct}%</td><td class="num">${ldE(puDay(x.publishedAt))}</td><td class="num">${ldE(puDay(x.observedAt))}</td></tr>`).join("");
+    return `<details class="pu-rev"><summary><span class="pu-ft" style="display:inline">${t.puRevT}</span> — ${t.puRevSum(fmtInt(Rv.totals.inWindow),fmtInt(Rv.totals.material),rel?ldE(puDay(rel.publishedAt)):"—")}</summary>
+      ${mat.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.puRevCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="ho-note">${t.puRevNone}</p>`}
+      ${rel&&rel.byGeo.length?`<p class="ho-note">${t.puRevNet}: ${rel.byGeo.slice(0,8).map(g=>`${ldE(g.name[L])} ${g.netDelta>0?"+":""}${fmtInt(g.netDelta)} (${ldE(g.from)}–${ldE(g.to)})`).join(" · ")}</p>`:""}
+      <p class="ho-note">${ldE(Rv.basis[L])}</p></details>`})():"";
+  box.innerHTML=radar+rev;
+}
 function initPulse(){
   const sec=el("pulse");if(!sec)return;
   sec.addEventListener("click",e=>{
+    const g=e.target.closest("[data-pugeo]");if(g){const [lv,code]=g.dataset.pugeo.split(":");dsOpen(lv,lv==="il"?null:code);const d=el("dossier");if(d)d.scrollIntoView({behavior:"smooth",block:"start"});return}
+    const l=e.target.closest("[data-pulvl]");if(l){puState.scanLevel=l.dataset.pulvl;renderPuRadar();return}
     const b=e.target.closest("[data-puwin],[data-pumore],[data-pugo]");if(!b)return;
     if(b.dataset.puwin){puState.win=b.dataset.puwin;puState.page=1;puLoad();return}
     if(b.dataset.pumore!==undefined){puState.page++;puLoad();return}
