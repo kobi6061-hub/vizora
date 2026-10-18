@@ -304,7 +304,23 @@ section.blk{padding-block:22px}
 .kpi .lbl{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .val{font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
 .kpi .cmp{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tp{position:relative}
+.tp .tp-xp{position:absolute;top:2px;inset-inline-end:2px}
 .kpi .kb{display:block;font-size:10.5px;line-height:1.4;color:var(--ink-3);margin-top:4px}
+/* clarity (STEP 2A): orientation line · entity badge · drawer trail · labels that open the legend · five questions */
+.orient{font-size:12px;color:var(--ink-3);margin-top:4px;line-height:1.5}
+.xp-how{font:inherit;font-size:11.5px;font-weight:700;color:var(--accent-deep);background:none;border:0;padding:0 2px;cursor:pointer;white-space:nowrap}
+.ent-badge{display:inline-block;font:inherit;font-size:10px;font-weight:800;letter-spacing:.04em;line-height:1.5;padding:0 7px;border-radius:99px;border:1px solid var(--accent);color:var(--accent-deep);background:var(--accent-wash);margin-inline-end:6px;cursor:help;vertical-align:1px}
+.ent-line{margin:0 0 8px}
+.ent-trail{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;color:var(--ink-3);margin-bottom:8px}
+.ent-trail .ld-link{font-size:11.5px}
+.ent-poss{border:1px dashed var(--ink-3);border-radius:99px;padding:0 6px;font-size:10.5px}
+.vc,.dd-pc,.dd-m{cursor:help}
+.dd-sumt tr.dd-q th{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-deep);padding-top:8px;text-align:start}
+.xp-leg{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.xp-leg td{padding:4px 5px;border-bottom:1px solid var(--hairline);vertical-align:top}
+.xp-leg tr.on td{background:var(--accent-wash)}
+.xp-leg-h{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 2px}
 .kpi.skel .val{color:transparent;background:linear-gradient(100deg,var(--panel-2) 40%,var(--hairline) 50%,var(--panel-2) 60%);
   background-size:200% 100%;border-radius:4px;animation:shimmer 1.1s linear infinite}
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
@@ -1625,12 +1641,12 @@ tr.dd-off td{opacity:.72}
     </div>
     <nav class="crumbs" aria-label="מיקום" data-ia="aCrumbs" id="crumbs"></nav>
     <div class="tape" aria-label="נתוני שוק ארציים" data-ia="aTape">
-      <div class="tp"><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn" id="tpNhV" data-i="blt1v">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
-      <div class="tp"><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num" id="tpInvV">84,990</span><span class="tp-s" id="tpInvS" data-i="blt2s">סטטי · למ״ס, סוף יולי 2026 · 26.9 חודשי היצע</span></div>
-      <div class="tp"><span class="tp-k" id="tpTxK" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num" id="tpTxV">~34,000</span><span class="tp-s" id="tpTxS" data-i="blt3s">סטטי · סיכום 2025 · 37.5% מהעסקאות</span></div>
+      <div class="tp"><button type="button" class="xp tp-xp" data-xp="new_homes_price_index_change" data-ia="xpInfo" aria-label="ⓘ">ⓘ</button><span class="tp-k" data-i="blt1k">מדד הדירות החדשות</span><span class="tp-v num dn" id="tpNhV" data-i="blt1v">-2.0%</span><span class="tp-s" data-i="blt1s">למ״ס · מאי–יוני 2026</span></div>
+      <div class="tp"><button type="button" class="xp tp-xp" data-xp="unsold_inventory" data-ia="xpInfo" aria-label="ⓘ">ⓘ</button><span class="tp-k" data-i="blt2k">מלאי שטרם נמכר</span><span class="tp-v num" id="tpInvV">84,990</span><span class="tp-s" id="tpInvS" data-i="blt2s">סטטי · למ״ס, סוף יולי 2026 · 26.9 חודשי היצע</span></div>
+      <div class="tp"><button type="button" class="xp tp-xp" data-xp="official_new_home_sales" data-ia="xpInfo" aria-label="ⓘ">ⓘ</button><span class="tp-k" id="tpTxK" data-i="blt3k">מכירות קבלנים 2025</span><span class="tp-v num" id="tpTxV">~34,000</span><span class="tp-s" id="tpTxS" data-i="blt3s">סטטי · סיכום 2025 · 37.5% מהעסקאות</span></div>
       <div class="tp"><span class="tp-k" data-i="blt4k">מגמת מאי 2026</span><span class="tp-v up-t" data-i="blt4v">התאוששות ↗</span><span class="tp-s" data-i="blt4s">סטטי · הכלכלן הראשי · חזרת מבצעי המימון</span></div>
-      <div class="tp"><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num" data-i="tapeBoiV">3.25%</span><span class="tp-s" data-i="tapeBoiS">הורדה ל-3.25% · 1.9.2026</span></div>
-      <div class="tp meta"><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num" data-i="tapeRetV">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
+      <div class="tp"><button type="button" class="xp tp-xp" data-xp="boi_rate" data-ia="xpInfo" aria-label="ⓘ">ⓘ</button><span class="tp-k" data-i="tapeBoi">ריבית בנק ישראל</span><span class="tp-v num" data-i="tapeBoiV">3.25%</span><span class="tp-s" data-i="tapeBoiS">הורדה ל-3.25% · 1.9.2026</span></div>
+      <div class="tp meta"><button type="button" class="xp tp-xp" data-xp="source_freshness" data-ia="xpInfo" aria-label="ⓘ">ⓘ</button><span class="tp-k" data-i="tapeRet">נתונים נשלפו</span><span class="tp-v num" data-i="tapeRetV">30.08.2026</span><span class="tp-s" data-i="tapeSrc">מקור עדכני: אוג׳ 2026</span></div>
     </div>
   </div>
 </div>
@@ -2442,7 +2458,7 @@ he:{
   vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"חסר",usr:"הנחת משתמש"},
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
-  nhIdxLbl:"מדד מחירי דירות חדשות · שינוי שנתי",
+  nhIdxLbl:"מדד מחירי דירות חדשות · שינוי שנתי",xpInfo:"הסבר",
   basisIl:(v,p)=>`ישראל — כלל הארץ (לא מחוז) · ממוצע הלמ״ס לכל הדירות, חדשות ויד שנייה: ${v}, רבעון ב׳ 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
   basisIlPsm:(v,p)=>`ישראל — כלל הארץ · ${v} למ״ר, כל הדירות, אמצע 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
   basisArea:"ממוצע הלמ״ס של האזור לכל הדירות × 1.12 פרמיית דירה חדשה (הנחה)",basisEst:"אומדן מעוגן לעיר / למחוז — אין פרסום ישיר לאזור",
@@ -3007,7 +3023,7 @@ en:{
   vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Missing",usr:"User assumption"},
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
-  nhIdxLbl:"New-homes price index · annual change",
+  nhIdxLbl:"New-homes price index · annual change",xpInfo:"Explain",
   basisIl:(v,p)=>`Israel — total (not a district) · CBS average of all dwellings, new and second-hand: ${v}, Q2 2026 · × ${p} new-build premium (assumption)`,
   basisIlPsm:(v,p)=>`Israel — total · ${v} per m², all dwellings, mid-2026 · × ${p} new-build premium (assumption)`,
   basisArea:"CBS area average of all dwellings × 1.12 new-build premium (assumption)",basisEst:"An estimate anchored to the city / district — no direct publication for the area",
@@ -7055,7 +7071,7 @@ function hoBarHTML(){
 
 function hoKpisHTML(S){
   const t=T(),K=S.kpis,D=vcTag("der");
-  const tile=(l,v,sub)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  const tile=(l,v,sub,xp="gov_housing_lottery")=>`<div class="ho-k"><div class="l">${l} ${D} ${typeof xpBtn==="function"?xpBtn(xp):""}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
   if(!K)return["hoKLot","hoKProj","hoKUnits","hoKMkt","hoKWin","hoKApp","hoKPrice"].map(k=>tile(t[k],hoDash(),"")).join("");
   return [
     tile(t.hoKLot,hoN(K.lotteries),K.lotteries?t.hoKLotS(fmtInt(K.firstLotteries),fmtInt(K.continuationLotteries)):""),
@@ -7064,8 +7080,8 @@ function hoKpisHTML(S){
     tile(t.hoKUnits,hoN(K.unitsFirst),K.unitsReoffered?t.hoKUnitsS(fmtInt(K.unitsReoffered)):""),
     tile(t.hoKMkt,hoN(K.unitsAtSignupFirst),t.hoKMktS),
     tile(t.hoKWin,hoN(K.winners),t.hoKWinS),
-    tile(t.hoKApp,hoN(K.applicants),K.applicantsPerUnit!=null?t.hoKAppS(K.applicantsPerUnit.toFixed(1)):""),
-    tile(t.hoKPrice,K.medianPricePerSqm!=null?`<span class="num">${fmtNIS(K.medianPricePerSqm)}</span>`:hoDash(),K.pricedLotteries?t.hoKPriceS(fmtInt(K.pricedLotteries)):""),
+    tile(t.hoKApp,hoN(K.applicants),K.applicantsPerUnit!=null?t.hoKAppS(K.applicantsPerUnit.toFixed(1)):"","applicants_per_unit"),
+    tile(t.hoKPrice,K.medianPricePerSqm!=null?`<span class="num">${fmtNIS(K.medianPricePerSqm)}</span>`:hoDash(),K.pricedLotteries?t.hoKPriceS(fmtInt(K.pricedLotteries)):"","lottery_price_per_sqm"),
   ].join("");
 }
 
@@ -7269,7 +7285,7 @@ function renderHoDrawer(){
       ${kv(t.hoDRow,P.sourceRowId!=null?`<span class="num">${hoE(String(P.sourceRowId))}</span>`:hoDash())}${kv(t.hoDSrcUpd,hoDate(P.sourceUpdatedAt))}
       ${kv(t.hoDFirst,hoDate(r.firstSeenAt))}${kv(t.hoDChecked,hoDate(r.lastSeenAt))}${kv(t.hoDInSrc,r.inLatestSource===false?t.hoDNo:t.hoDYes)}
       ${kv(t.hoDSnap,`<span class="num" style="font-size:11px">${hoE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
-  ptDomAll(el("hoPanel"));
+  ptDomAll(el("hoPanel"));entMark(el("hoPanel"),"lottery");
 }
 
 function initHousing(){
@@ -7467,7 +7483,9 @@ function ldBarHTML(){
 }
 function ldKpisHTML(S){
   const t=T(),K=S.kpis,D=vcTag("der");
-  const tile=(l,v,sub,cov)=>`<div class="ho-k"><div class="l">${l} ${D}${cov?ldTag(cov):""}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
+  const LDXP={[t.ldKTenders]:"ila_tender_lifecycle",[t.ldKOpen]:"tender_units_open",[t.ldKClosed]:"ila_tender_lifecycle",[t.ldKAwarded]:"tender_units_awarded",[t.ldKCancelled]:"failed_tender_ratio",
+    [t.ldKUnits]:"published_tender_units",[t.ldKUnique]:"re_tender_share",[t.ldKLand]:"land_per_unit",[t.ldKPsm]:"per_sqm_bid_level",[t.ldKBids]:"tender_outcomes",[t.ldKWinners]:"developer_observed_activity"};
+  const tile=(l,v,sub,cov)=>`<div class="ho-k"><div class="l">${l} ${D}${cov?ldTag(cov):""} ${LDXP[l]?xpBtn(LDXP[l]):""}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
   if(!K)return["ldKTenders","ldKOpen","ldKClosed","ldKAwarded","ldKCancelled","ldKUnits","ldKUnique","ldKLand","ldKPsm","ldKBids"].map(k=>tile(t[k],ldDash(),"")).join("");
   const U=K.unique||null,LB=K.landBasis||{};
   const nd=K.decidedWithoutDetail?t.ldKAwardedD(fmtInt(K.decidedWithoutDetail)):"";
@@ -7778,7 +7796,7 @@ function renderLdDrawer(){
     ${sec(t.ldDHist,"",hist?`<ul class="ho-note ld-ul">${hist}</ul>`:`<p class="ho-note">${t.ldDHistNone}</p>`)}
     ${sec(t.ldDProv,"",`<div class="ho-dl">${kv(t.ldDSrc,ldE(t.ldSrcName))}${kv(t.ldDListAt,ldDate(P.fetchedAt))}${kv(t.ldDDetailAt,P.detail?ldDate(P.detail.fetchedAt):ldDash())}${kv(t.ldDMapAt,P.map?ldDate(P.map.fetchedAt):ldDash())}
       ${kv(t.ldDFirst,ldDate(r.firstSeenAt))}${kv(t.ldDChecked,ldDate(r.lastSeenAt))}${kv(t.ldDInSrc,r.inLatestSource===false?t.ldDNo:t.ldDYes)}${kv(t.ldDSnap,`<span class="num" style="font-size:11px">${ldE(String(P.snapshotHash||"").slice(0,12))}</span>`)}</div>`)}`;
-  ptDomAll(el("ldPanel"));
+  ptDomAll(el("ldPanel"));entMark(el("ldPanel"),"tender");
 }
 function initLand(){
   const sec=el("land");if(!sec)return;
@@ -8134,10 +8152,10 @@ function inCovHTML(C){
 }
 function inKpisHTML(C){
   const t=IT(),D=vcTag("der");
-  const tile=(l,v,s)=>`<div class="ho-k"><div class="l">${l} ${D}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const tile=(l,v,s,xp="developer_observed_activity")=>`<div class="ho-k"><div class="l">${l} ${D} ${xpBtn(xp)}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
   if(!C)return "";
-  return [tile(t.kDevs,inN(C.developers),t.kDevsS(fmtInt(C.inBothSources||0))),tile(t.kSites,inN(C.projects.ilaSites),t.kSitesS),
-    tile(t.kProjects,inN(C.projects.mochProjects),t.kProjectsS(inDate(C.moch.lotteryDateFrom),inDate(C.moch.lotteryDateTo))),
+  return [tile(t.kDevs,inN(C.developers),t.kDevsS(fmtInt(C.inBothSources||0))),tile(t.kSites,inN(C.projects.ilaSites),t.kSitesS,"tender_units_awarded"),
+    tile(t.kProjects,inN(C.projects.mochProjects),t.kProjectsS(inDate(C.moch.lotteryDateFrom),inDate(C.moch.lotteryDateTo)),"gov_housing_lottery"),
     tile(t.kUnmarked,inN(C.ila.unmarkedWinnerStrings),t.kUnmarkedS(fmtInt(C.ila.unmarkedLots||0)))].join("");
 }
 const inRoles=e=>(e.roles||[]).map(r=>inChip(inE(IT().roles[r]||r),r==="ila-tender-winner"?"in-r-ila":"in-r-moch")).join(" ");
@@ -8284,6 +8302,7 @@ function inRoute(h,from){
 }
 /* ---------------- entity drawer (developer · project) ---------------- */
 async function inOpen(kind,id,from){
+  if(inState.trailNext)inState.trailNext=false;else{inState.trail=[];inState.curRel=null}   /* opened from outside the drawer: a new path */
   inState.open={kind,id};inState.detail=null;inState.detailErr=null;
   if(from)inState.returnFocus=from;
   el("inDrawer").hidden=false;document.body.style.overflow="hidden";
@@ -8331,7 +8350,22 @@ function piHTML(d){
   const miss=(I.missing||[]).length?`<ul class="ds-miss">${I.missing.map(m=>`<li>${inE(bl(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
   return `<p class="ho-note">${inE(bl(I.basis))}</p><div class="ds-ft">${w.tl}</div>${tl}<div class="ds-ft">${w.ladder} ${xpBtn("project_stage")}</div>${rungs}${I.land?`<div class="ds-ft">${w.land}</div>${ctx(I.land,w.land,"₪","land_cost_position")}`:""}${I.demand?`<div class="ds-ft">${w.demand}</div>${ctx(I.demand,w.demand,"","lottery_demand_position")}`:""}<div class="ds-ft">${w.sig}</div>${sig}<div class="ds-ft">${w.miss}</div>${miss}`;
 }
-function renderInDrawer(){
+const inEntType=()=>{const o=inState.open,d=inState.detail||{};if(!o)return null;
+  return o.kind==="developer"?"developer":o.kind==="project"?(d.kind==="ila-awarded-lot"?"lot":"project"):o.kind==="company"?(d.kind==="contractor"?"contractor":"company"):o.kind==="permit"?"permit":o.kind==="renewal"?"renewal":null};
+/* the path the user took between entity drawers: a step reached through a POSSIBLE / AMBIGUOUS link carries that mark */
+function inTrailPush(b){const o=inState.open;if(!o||!inState.detail)return;
+  const row=b.closest("tr,li,p"),poss=b.dataset.rel==="possible"||!!(row&&row.querySelector(".dd-m-POSSIBLE_MATCH,.dd-m-AMBIGUOUS"));
+  const title=((el("inDTitle")||{}).textContent||"").trim().slice(0,48);
+  inState.trail=(inState.trail||[]).concat([{kind:o.kind,id:o.id,type:inEntType(),label:title,rel:inState.curRel||null}]).slice(-6);
+  inState.curRel=poss?"possible":null;inState.trailNext=true}
+function inDecor(){const p=el("inPanel");if(!p||!inState.open)return;const type=inEntType();entMark(p,type);
+  const tr=inState.trail||[];if(!tr.length||p.querySelector(".ent-trail"))return;const X=XP(),L=state.lang==="en"?"en":"he",t=xpT();
+  const lab=ty=>{const E=X&&X.entityType?X.entityType(ty,L):null;return E?E.label:ty};
+  const sep=rel=>rel==="possible"?` <span class="ent-poss" title="${ldE(t.possTitle)}">› ${ldE(t.possible)} ›</span> `:" › ";
+  const html=tr.map((it,i)=>(i?sep(it.rel):"")+`<button type="button" class="ld-link" data-intrail="${i}">${ldE(lab(it.type))}: <bdi>${ldE(it.label)}</bdi></button>`).join("")+sep(inState.curRel)+`<span>${ldE(lab(type))}</span>`;
+  p.insertAdjacentHTML("afterbegin",`<nav class="ent-trail" aria-label="${ldE(t.trailAria)}">${html}</nav>`)}
+function renderInDrawer(){renderInDrawerBody();inDecor()}
+function renderInDrawerBody(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
   const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
   if(!o)return;
@@ -8359,7 +8393,7 @@ function renderInDrawer(){
     const mk=(d.markets||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="indm"><thead><tr><th>${t.c.ecity}</th><th>${K.lots}</th><th>${K.units}</th><th>${K.projects}</th><th>${t.c.edate}</th><th>${t.c.last}</th></tr></thead><tbody>${d.markets.map(m=>`<tr><td>${inCity(m)}</td><td class="num">${inN(m.lotsWon)}</td><td class="num">${inN(m.residentialUnitsWon)}</td><td class="num">${inN(m.projects)}</td><td class="num">${inDate(m.first)}</td><td class="num">${inDate(m.last)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
     const sites=(d.sites||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="inds"${d.sitesTotal>d.sites.length?` data-ptnote="${inE(T().ptShown(fmtInt(d.sites.length),fmtInt(d.sitesTotal)))}"`:""}><thead><tr><th>${t.sTender}</th><th>${t.c.ecity}</th><th>${t.sUnits}</th><th>${t.sLand}</th><th>${t.c.stage}</th><th>${t.sDecision}</th></tr></thead><tbody>${d.sites.map(s=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(s.id)}"><span class="num">${inE(s.tender||"")}</span> · <span class="num">${inE(s.lotId)}</span></button></td><td>${inCity(s)}</td><td class="num">${inN(s.units)}</td><td class="num">${s.bidPerSqm!=null?`<span class="num">${fmtNIS(s.bidPerSqm)}/m²</span>`:inNIS(s.landPrice)}</td><td>${inStage(s.stage)}</td><td class="num">${inDate(s.decisionDate)}</td></tr>`).join("")}</tbody></table></div>${d.sitesTotal>d.sites.length?`<p class="ho-note">${t.more(fmtInt(d.sitesTotal-d.sites.length))}</p>`:""}`:`<p class="ho-note">${t.noneYet}</p>`;
     const projs=(d.projects||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="indp"${d.projectsTotal>d.projects.length?` data-ptnote="${inE(T().ptShown(fmtInt(d.projects.length),fmtInt(d.projectsTotal)))}"`:""}><thead><tr><th>${t.c.pname}</th><th>${t.c.ecity}</th><th>${t.pUnits}</th><th>${t.pPsm}</th><th>${t.c.stage}</th><th>${t.lt.date}</th></tr></thead><tbody>${d.projects.map(x=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(x.id)}"><bdi>${inE(x.name||x.projectId)}</bdi></button></td><td>${inCity(x)}</td><td class="num">${inN(x.unitsFirstLottery)}</td><td class="num">${x.pricePerSqm!=null?`<span class="num">${fmtNIS(x.pricePerSqm)}</span>`:inDash()}</td><td>${inStage(x.stage)}</td><td class="num">${inDate(x.lastLotteryDate)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">${t.noneYet}</p>`;
-    const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
+    const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}" data-rel="possible"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
     const ent=(d.entries||[]).length?`<ul class="ho-note ld-ul">${d.entries.map(x=>`<li>${inCity(x)} · ${inDate(x.date)} · ${inE(t.via[x.via]||x.via)}</li>`).join("")}</ul>`:"";
     p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.dDev} · ${inE(t.basisShort)}</span><h3 id="inDTitle"><bdi>${inE(d.name)}</bdi></h3>
         <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}</div></div>${close}</div>
@@ -8612,7 +8646,7 @@ function ddProjHTML(X){
    financial profile, the corporate structure, legal exposure (publicly disclosed only), sales, the execution coverage map and
    the user's own evidence (USER DOCUMENT — the file never leaves the browser; the facts the user enters travel only in the
    body of POST view=dd, are re-validated by the server, used for that read and never stored) ---- */
-const DDP_I18N={he:{sum:"סיכום בדיקת נאותות מוסדית",sumNote:"כל שורה משפט אחד עם סיווג ראיה אחד; ללא ציון וללא המלצה",
+const DDP_I18N={he:{whyRole:{LAND_WINNER:"זוכה הקרקע (תיק המגרש ברמ״י)",PROGRAMME_DEVELOPER:"יזם התכנית (רשומת ההגרלה)",PERMIT_HOLDER:"בעל ההיתר",PROJECT_COMPANY_PER_DOCUMENT:"חברת הפרויקט לפי מסמך"},sum:"סיכום בדיקת נאותות מוסדית",sumNote:"כל שורה משפט אחד עם סיווג ראיה אחד; ללא ציון וללא המלצה",
   cls:{VERIFIED:"מאומת",DERIVED:"נגזר",SELF_REPORTED:"דיווח עצמי",USER_DOCUMENT:"מסמך משתמש",MISSING:"חסר",CONFLICT:"סתירה",OFFICIAL:"רשמי",OBSERVED:"נצפה"},
   pco:"חברת הפרויקט ותפקידים",roles:{developerBrand:"מותג היזם",landWinner:"זוכה הקרקע",programmeDeveloper:"יזם התכנית",projectCompany:"חברת הפרויקט",permitHolder:"בעל ההיתר",executingContractor:"קבלן מבצע",parent:"חברת אם",guarantor:"ערב"},
   role:"תפקיד",who:"מי",state:"מצב",cls_:"סיווג",basis:"על מה זה נשען",resolving:"מסמכים שיכריעו",provide:"הוספת מסמך",conflict:"סתירה",notVerified:"לא מאומת",notInCov:"לא בכיסוי",
@@ -8625,7 +8659,7 @@ const DDP_I18N={he:{sum:"סיכום בדיקת נאותות מוסדית",sumNot
   ud:"ראיות שסיפק המשתמש",udNote:"מסמך משתמש ≠ מקור רשמי. הקובץ אינו עוזב את הדפדפן — נשמרים טביעת אצבע (SHA-256), שם, גודל וסוג; העובדות שתזינו נשלחות לקריאה זו בלבד ואינן נשמרות בשרת.",
   udNone:"לא נוספו מסמכים",udAdd:"הוספת מסמך",udType:"סוג המסמך",udFile:"קובץ (נשאר בדפדפן — לטביעת אצבע בלבד)",udIssuer:"מנפיק / מקור המסמך",udSave:"שמירה ושימוש בקריאה",udCancel:"ביטול",udDel:"הסרה",udCsv:"ייבוא CSV (שדה,ערך בכל שורה)",udCsvBtn:"מילוי מה-CSV",udTpl:"תבנית CSV",udList:"שורה לכל רשומה, מופרדת בפסיקים:",
   udUsed:"בשימוש בקריאה זו",udNotUsed:"אינו נוגע לישות זו",udRejected:"נדחה בבדיקה",udErr:"המסמך לא נשמר:",udSaved:"נשמר — הקריאה מתעדכנת",udBlocked:"האחסון בדפדפן חסום — המסמך ישמש לקריאה זו בלבד",udHash:"טביעת אצבע",udReq:"חובה"},
-en:{sum:"Institutional diligence summary",sumNote:"every row one sentence with one evidence class; no score and no recommendation",
+en:{whyRole:{LAND_WINNER:"Land winner (the ILA lot file)",PROGRAMME_DEVELOPER:"Programme developer (the lottery record)",PERMIT_HOLDER:"Permit holder",PROJECT_COMPANY_PER_DOCUMENT:"Project company per a document"},sum:"Institutional diligence summary",sumNote:"every row one sentence with one evidence class; no score and no recommendation",
   cls:{VERIFIED:"VERIFIED",DERIVED:"DERIVED",SELF_REPORTED:"SELF-REPORTED",USER_DOCUMENT:"USER DOCUMENT",MISSING:"MISSING",CONFLICT:"CONFLICT",OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED"},
   pco:"Project company and roles",roles:{developerBrand:"Developer brand",landWinner:"Land winner",programmeDeveloper:"Programme developer",projectCompany:"Project company",permitHolder:"Permit holder",executingContractor:"Executing contractor",parent:"Parent company",guarantor:"Guarantor"},
   role:"Role",who:"Who",state:"State",cls_:"Class",basis:"What it rests on",resolving:"Documents that would resolve it",provide:"Add a document",conflict:"Conflict",notVerified:"not verified",notInCov:"not in coverage",
@@ -8655,9 +8689,14 @@ const ddDocsSig=()=>ddDocsNorm().map(x=>x.n.doc.id).join(",");
 const ddPCls=c=>c?`<span class="dd-pc dd-pc-${inE(c)}">${inE(DP().cls[c]||c)}</span>`:"";
 const ddNum=v=>v==null?inDash():`<span class="num">${inE(typeof v==="number"?v.toLocaleString(state.lang==="en"?"en-US":"he-IL",{maximumFractionDigits:2}):String(v))}</span>`;
 /* the summary — at the top of the developer / project read */
+/* the five questions every diligence read answers first (STEP 2A §13): the summary's fixed rows grouped under them */
+const DD_FIVEQ={he:["מה אני רואה?","מה PROPX יודעת?","למה זה חשוב?","מה PROPX לא יודעת?","מה לבדוק הלאה?"],
+  en:["What am I looking at?","What does PROPX know?","Why does it matter?","What does PROPX not know?","What should I verify next?"]};
+const DD_FIVEQ_OF={identity:1,resolution:1,projectStage:2,execution:2,financial:2,corporateLegal:2,sales:2,risks:3,gaps:4,nextBest:5,watch:5};
 function ddSumHTML(S){
   const t=DP();if(!S||!S.rows)return"";
-  return `<div class="dd-sum"><h5 class="dd-h5">${t.sum} ${xpBtn("institutional_diligence_summary")}</h5><table class="dd-sumt"><tbody>${S.rows.map(r=>`<tr data-sumrow="${inE(r.id)}"><th scope="row">${inE(ddL(r.label))}</th><td>${r.cls?ddPCls(r.cls):""}</td><td>${inE(state.lang==="en"?r.en:r.he)} ${r.term?xpBtn(r.term):""}</td></tr>`).join("")}</tbody></table><p class="ho-note">${t.sumNote}</p></div>`;
+  const Q=DD_FIVEQ[state.lang==="en"?"en":"he"];let q0=0;
+  return `<div class="dd-sum"><h5 class="dd-h5">${t.sum} ${xpBtn("institutional_diligence_summary")}</h5><table class="dd-sumt"><tbody>${S.rows.map(r=>{const q=DD_FIVEQ_OF[r.id]||q0,qh=q&&q!==q0?`<tr class="dd-q"><th colspan="3" scope="colgroup">${q} · ${Q[q-1]}</th></tr>`:"";q0=q;return qh+`<tr data-sumrow="${inE(r.id)}"><th scope="row">${inE(ddL(r.label))}</th><td>${r.cls?ddPCls(r.cls):""}</td><td>${inE(state.lang==="en"?r.en:r.he)} ${r.term?xpBtn(r.term):""}</td></tr>`}).join("")}</tbody></table><p class="ho-note">${t.sumNote}</p></div>`;
 }
 const ddNotA=xs=>(xs||[]).length?`<p class="ho-note dd-nota">${xs.map(x=>`<span class="ho-chip cont">${inE(ddL(x))}</span>`).join(" ")}</p>`:"";
 function ddCoLabel(c){return c?`<bdi>${inE(c.name||"—")}</bdi> <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(c.number)}"><span class="num">${inE(c.number)}</span></button>`:inDash()}
@@ -8682,7 +8721,9 @@ function ddPcoHTML(PC,rec){
   const reasons=(PC.reasons||[]).length?`<ul class="dd-rs">${PC.reasons.map(r=>`<li><span class="dd-code">${inE(r.code)}</span> ${inE(ddL(r))}</li>`).join("")}</ul>`:"";
   const recBlock=rec&&rec.company?`<p class="ho-note">${state.lang==="en"?"The project company's own registry record":"הרשומה של חברת הפרויקט עצמה ברשם"}: ${inE(ddStatus(rec.corporate&&rec.corporate.registeredStatus))}${rec.liveRead?` <span class="ho-chip">${DP().live}</span>`:""} · ${inE(ddL(rec.corporate&&rec.corporate.insolvency&&rec.corporate.insolvency.statement))}${rec.corporate&&rec.corporate.filings&&rec.corporate.filings.notChecked?` · ${inE(ddL(rec.corporate.filings.interpretation))}`:""}${rec.corporate&&rec.corporate.liveRead?` · ${ddDate(rec.corporate.liveRead.checkedAt)}`:""}</p>`:"";
   const res=(PC.resolvingDocuments||[]).length?`<h5 class="dd-h5">${t.resolving}</h5><ul class="dd-rs">${PC.resolvingDocuments.map(d=>`<li>${inE(ddL(d.label))}${ddProvideBtn({"purchase-agreement":"purchase_agreement","bank-guarantee":"bank_guarantee",permit:"permit","land-rights":"land_rights","financing-agreement":"financing_agreement","developer-declaration":"developer_declaration","company-number":"developer_declaration"}[d.id])}</li>`).join("")}</ul>`:"";
-  return `<p><b>${ddM(PC.state)}</b> ${inE(ddL(PC.statement))} ${xpBtn("project_company_status")}</p>${reasons}${conf}${recBlock}<div class="ld-scroll"><table class="ho-dt dd-tbl dd-roles"><thead><tr><th>${t.role}</th><th>${t.who}</th><th>${t.state}</th><th>${t.cls_}</th><th>${t.basis}</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>${res}${ddNotA(PC.notA)}`;
+  const W=PC.whyThis,en=state.lang==="en";
+  const why=W&&(W.support||[]).length?`<h5 class="dd-h5">${en?"Why PROPX thinks this":"למה PROPX חושבת כך"} <span class="ho-na">(${en?`${fmtInt(W.records)} record${W.records===1?"":"s"} · ${fmtInt(W.independentRecords)} independent`:`${fmtInt(W.records)} רשומות · ${fmtInt(W.independentRecords)} בלתי תלויות`})</span></h5><ul class="dd-rs">${W.support.map(x=>`<li>${ddPCls(x.cls)} <b>${inE(DP().whyRole[x.role]||x.role)}</b> — <bdi>${inE(x.name||"—")}</bdi>${x.key?` · ${inE(ddL(x.key))}`:""}${x.site?` · <span class="num">${inE(x.site)}</span>`:""}${x.document&&x.document.date?` · ${ddDate(x.document.date)}`:""} · ${x.independent?(en?"independent record":"רשומה בלתי תלויה"):(en?"not independent (part of the link itself)":"לא בלתי תלויה (חלק מהקישור עצמו)")}</li>`).join("")}</ul>`:"";
+  return `<p><b>${ddM(PC.state)}</b> ${inE(ddL(PC.statement))} ${xpBtn("project_company_status")}</p>${why}${reasons}${conf}${recBlock}<div class="ld-scroll"><table class="ho-dt dd-tbl dd-roles"><thead><tr><th>${t.role}</th><th>${t.who}</th><th>${t.state}</th><th>${t.cls_}</th><th>${t.basis}</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>${res}${ddNotA(PC.notA)}`;
 }
 /* the public financial profile — every figure with its period, report date, source, currency, units, class */
 function ddFinProfileHTML(F){
@@ -8867,6 +8908,7 @@ function initIntel(){
     const b=e.target.closest("[data-dd],[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
     if(!b)return;
     const d=b.dataset;
+    if(b.closest("#inPanel")&&(d.indev||d.inproj||d.inrn||(d.dd==="company"&&d.ddco)||(d.dd==="permit"&&d.ddp)))inTrailPush(b);
     if(d.dd){ddClick(b);return}
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
@@ -8883,6 +8925,8 @@ function initIntel(){
       inRoute(h,b);return}
   };
   sec.addEventListener("click",onClick);
+  if(drawer)drawer.addEventListener("click",e=>{const b=e.target.closest("[data-intrail]");if(!b)return;e.stopPropagation();const i=+b.dataset.intrail,it=(inState.trail||[])[i];if(!it)return;
+    inState.trail=inState.trail.slice(0,i);inState.curRel=it.rel||null;inState.trailNext=true;inOpen(it.kind,it.id,inState.returnFocus)},true);
   if(drawer)drawer.addEventListener("click",onClick);
   if(drawer)drawer.addEventListener("change",e=>{const tp=e.target.closest("[data-udtype]");if(tp){ddUdKeep(()=>{ddUd.type=tp.value;ddUd.errors=null;ddUd.lists=null;ddPaint()});return}const fi=e.target.closest("[data-udfile]");if(fi)ddUdFile(fi)});
   sec.addEventListener("change",e=>{
@@ -9175,6 +9219,7 @@ function setLang(lang){
   el("langHe").setAttribute("aria-pressed",String(lang==="he"));
   el("langEn").setAttribute("aria-pressed",String(lang==="en"));
   setStatics();refresh(false);
+  if(typeof renderOrient==="function")renderOrient();   /* section orientation follows the language (defined later; runs only after load) */
 }
 
 document.querySelectorAll("#modeToggle button,#modeToggleM button").forEach(b=>
@@ -9278,14 +9323,14 @@ function initPulse(){
    "why am I seeing this?" = the rule + trigger · value · threshold · comparison · period · source · class · evidence quality.
    Nothing here computes; the registry documents. */
 const XP=()=>window.PropxExplain||null;
-const XP_T={he:{info:"הסבר",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",population:"אוכלוסייה / יקום",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
-  en:{info:"Explain",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",population:"Population / universe",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
+const XP_T={he:{info:"הסבר",howToRead:"איך לקרוא את זה",q1:"מה אני רואה?",qKind:"איזה סוג ישות / גאוגרפיה",qHelps:"במה זה עוזר להבין",qScope:"היקף הנתונים",qCurrent:"עד כמה עדכני",legClass:"סיווג ראיה",legMatch:"מצב התאמה",legClasses:"סיווגי ראיה",legMatches:"מצבי התאמה בין ישויות",possible:"התאמה אפשרית",possTitle:"הקישור בשלב הזה הוא התאמה אפשרית / רב-משמעית — לא אותה ישות ולא היררכיה",trailAria:"המסלול בין הישויות",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",population:"אוכלוסייה / יקום",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
+  en:{info:"Explain",howToRead:"How to read this",q1:"What am I looking at?",qKind:"What kind of entity / geography",qHelps:"What it helps me understand",qScope:"Data scope",qCurrent:"How current",legClass:"evidence class",legMatch:"match state",legClasses:"Evidence classes",legMatches:"Match states between entities",possible:"possible match",possTitle:"This step was reached through a POSSIBLE / AMBIGUOUS link — not the same entity and not a hierarchy",trailAria:"The path between entities",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",population:"Population / universe",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
 const xpT=()=>XP_T[state.lang==="en"?"en":"he"];
 const xpRT=new Map();let xpSeq=0,xpTrig=null;
 const xpBtn=id=>XP()&&XP().term(id)?`<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${xpT().info}" title="${xpT().info}">ⓘ</button>`:"";
 const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";if(xpRT.size>1500)xpRT.clear();const k="s"+(++xpSeq);xpRT.set(k,rt||{});return `<button type="button" class="xp xp-why" data-xps="${ldE(id)}" data-xpk="${k}">${xpT().whyBtn}</button>`};
 const xpMiss=id=>XP()&&XP().missing(id)?`<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${xpT().whyMissing}" title="${xpT().whyMissing}">ⓘ</button>`:"";
-function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
+function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}" data-cls="${ldE(c)}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
 function xpL2HTML(id){const L=state.lang==="en"?"en":"he",x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
   return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.population,ldE(x.population))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
 function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let html="",more="";
@@ -9295,20 +9340,48 @@ function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en
     const line=[s.trigger?`<b>${ldE(s.trigger)}</b>`:"",`${t.rule}: ${ldE(s.rule)}`,s.value!=null?`${t.value}: <span class="num">${ldE(String(s.value))}</span>`:"",s.threshold?`${t.threshold}: <span class="num">${ldE(s.threshold)}</span>`:"",s.comparison?`${t.comparison}: ${ldE(s.comparison)}`:"",s.period?`${t.period}: ${ldE(s.period)}`:"",s.source?`${t.source}: ${ldE(s.sourceLabel||s.source)} <span class="num">${ldE(s.source)}</span>`:"",s.cls?`${t.cls}: ${xpClsChip(s.cls)}`:"",s.evidence?`${t.evidence}: ${ldE(s.evidence.level)} ${s.evidence.score!=null?s.evidence.score+"/100":""}`:""].filter(Boolean);
     html=head(`${t.whyBtn} <span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(kind[L])}</span>`)+`<ul class="xp-why-l">${line.map(x=>`<li>${x}</li>`).join("")}</ul><p class="xp-s"><b>${t.notAs}:</b> ${ldE(s.notAs||"")}</p>`;more=s.term?xpL2HTML(s.term.id):""}
   else if(trigger.dataset.xpm){const m=X.missing(trigger.dataset.xpm,L);if(!m)return;html=head(ldE(m.label),xpClsChip("MISSING"))+`<p class="xp-s">${ldE(m.why)}</p><p class="xp-s"><b>${t.unlock}:</b> ${ldE(m.unlock)}</p>`}
+  else if(trigger.dataset.xpsec&&X.section){const S=X.section(trigger.dataset.xpsec,L);if(!S)return;
+    html=head(t.howToRead)+`<dl class="xp-orient"><dt>${t.q1}</dt><dd>${ldE(S.what)}</dd><dt>${t.qKind}</dt><dd>${ldE(S.kind)}</dd><dt>${t.qHelps}</dt><dd>${ldE(S.helps)}</dd><dt>${t.qScope}</dt><dd>${ldE(S.scope)}</dd><dt>${t.qCurrent}</dt><dd>${ldE(S.current)}</dd></dl><ul class="xp-why-l">${S.read.map(r=>`<li>${ldE(r)}</li>`).join("")}</ul>`;more=xpLegendAllHTML(null)}
+  else if(trigger.dataset.xpleg&&X.legend){const g=X.legend(trigger.dataset.xpleg,L);if(!g)return;
+    html=head(`${ldE(g.label)} <span class="ho-chip">${g.group==="match"?t.legMatch:t.legClass}</span>`)+`<p class="xp-s">${ldE(g.means)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(g.notMeans)}</p>`;more=xpLegendAllHTML(g.code)}
+  else if(trigger.dataset.xpent&&X.entityType){const E=X.entityType(trigger.dataset.xpent,L);if(!E)return;
+    html=head(ldE(E.label))+`<p class="xp-s">${ldE(E.what)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(E.notA)}</p>`;more=xpLegendAllHTML(null)}
   else return;
   let pop=el("xpPop");if(!pop){pop=document.createElement("div");pop.id="xpPop";pop.className="xp-pop";pop.setAttribute("role","dialog");document.body.appendChild(pop)}
   pop.innerHTML=html+(more?`<button type="button" class="ld-link xp-more" data-xpmore aria-expanded="false">${t.more} ↓</button>`+more:"");pop.hidden=false;xpTrig=trigger;xpPlace();
   const f=pop.querySelector("[data-xpclose]");if(f)f.focus();
 }
+/* the ONE evidence legend (registry LEGEND): every label PROPX prints, what it means and what it does not mean */
+function xpLegendAllHTML(cur){const X=XP();if(!X||!X.legendAll)return"";const L=state.lang==="en"?"en":"he",t=xpT(),A=X.legendAll(L);
+  const rows=xs=>xs.map(g=>`<tr${g.code===cur?' class="on"':""}><td><b>${ldE(g.label)}</b></td><td>${ldE(g.means)}<div class="ho-na">${t.notAs}: ${ldE(g.notMeans)}</div></td></tr>`).join("");
+  return `<div class="xp-l2" hidden><p class="xp-leg-h">${t.legClasses}</p><table class="xp-leg"><tbody>${rows(A.classes)}</tbody></table><p class="xp-leg-h">${t.legMatches}</p><table class="xp-leg"><tbody>${rows(A.matches)}</tbody></table></div>`}
 function xpPlace(){const pop=el("xpPop");if(!pop||pop.hidden||!xpTrig)return;if(window.innerWidth<=560){pop.style.top="";pop.style.left="";return}
   const r=xpTrig.getBoundingClientRect(),w=Math.min(440,window.innerWidth-24);pop.style.maxWidth=w+"px";const ph=pop.offsetHeight||200;
   let top=r.bottom+6;if(top+ph>window.innerHeight-8)top=Math.max(8,r.top-ph-6);let left=state.lang==="en"?r.left:r.right-w;left=Math.max(12,Math.min(left,window.innerWidth-w-12));pop.style.top=top+"px";pop.style.left=left+"px"}
 function xpClose(){const pop=el("xpPop");if(!pop||pop.hidden)return;pop.hidden=true;const t=xpTrig;xpTrig=null;if(t&&document.contains(t))t.focus()}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-xp],[data-xps],[data-xpm]");if(b){e.preventDefault();e.stopPropagation();if(xpTrig===b){xpClose();return}xpOpen(b);return}
+/* an evidence label (the board's chip, a diligence class, a match state) opens its legend entry — before any row under it acts */
+const XP_LEG_OF={raw:"OFFICIAL",static:"STATIC",der:"DERIVED",obs:"OBSERVED",mod:"MODEL",na:"MISSING",usr:"USER_ASSUMPTION"};
+function xpLegCode(c){if(c.dataset.cls)return c.dataset.cls;if(c.classList.contains("vc")){for(const k in XP_LEG_OF)if(c.classList.contains(k))return XP_LEG_OF[k];return null}
+  const m=/\bdd-(?:pc|m)-([A-Z_]+)/.exec(c.className);return m?m[1]:null}
+document.addEventListener("click",e=>{const c=e.target.closest(".vc,.dd-pc,.dd-m");if(!c||c.closest("button,a,select,label"))return;const X=XP(),code=xpLegCode(c);if(!X||!X.legend||!code||!X.legend(code))return;
+  e.preventDefault();e.stopPropagation();if(xpTrig===c){xpClose();return}c.dataset.xpleg=code;xpOpen(c)},true);
+document.addEventListener("click",e=>{const b=e.target.closest("[data-xp],[data-xps],[data-xpm],[data-xpsec],[data-xpleg],[data-xpent]");if(b){e.preventDefault();e.stopPropagation();if(xpTrig===b){xpClose();return}xpOpen(b);return}
   if(e.target.closest("[data-xpclose]")){xpClose();return}
   const m=e.target.closest("[data-xpmore]");if(m){const l2=m.parentElement.querySelector(".xp-l2");if(l2){l2.hidden=!l2.hidden;m.setAttribute("aria-expanded",String(!l2.hidden));m.textContent=(l2.hidden?xpT().more+" ↓":xpT().less+" ↑");xpPlace()}return}
   if(!e.target.closest("#xpPop"))xpClose()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")xpClose()});
+/* CLARITY (STEP 2A) — every major section says what it is, with "how to read this" (registry SECTIONS); every drawer carries a
+   standard entity badge (registry ENTITY_TYPES); the entity drawer shows the path the user took, and a step reached through a
+   POSSIBLE / AMBIGUOUS link is marked as such — a trail, never a hierarchy */
+const ORIENT_IDS=["overview","pulse","dossier","map","prices","table","compare","txSection","housing","intel","land","sources"];
+function renderOrient(){const X=XP();if(!X||!X.section)return;const L=state.lang==="en"?"en":"he";
+  for(const id of ORIENT_IDS){const sec=el(id),S=X.section(id,L);if(!sec||!S)continue;
+    let o=sec.querySelector(".orient[data-orient]");
+    if(!o){o=document.createElement("p");o.className="orient";o.dataset.orient=id;const hd=sec.querySelector(".blk-head");   /* after the static section header; never inside content that re-renders */
+      if(hd)hd.insertAdjacentElement("afterend",o);else sec.insertAdjacentElement("afterbegin",o)}
+    o.innerHTML=`${ldE(S.what)} <button type="button" class="xp-how" data-xpsec="${id}">${xpT().howToRead} ⓘ</button>`}}
+const entBadge=type=>{const X=XP(),E=X&&X.entityType?X.entityType(type,state.lang==="en"?"en":"he"):null;return E?`<button type="button" class="ent-badge" data-xpent="${type}">${ldE(E.label)}</button>`:""};
+function entMark(panel,type){if(!panel||!type)return;const lyr=panel.querySelector(".ho-dh .lyr");if(lyr&&!lyr.querySelector(".ent-badge"))lyr.insertAdjacentHTML("afterbegin",entBadge(type))}
 window.addEventListener("resize",xpPlace);window.addEventListener("scroll",()=>{if(xpTrig)xpPlace()},{passive:true});
 
 const dsState={started:false,status:"idle",level:"il",code:null,data:null,index:null,supply:null,scan:null,req:0};
@@ -9333,7 +9406,8 @@ function dsFollow(id){const l=LOC[id];if(!l||_geoNav)return;
   const nz=s=>String(s||"").replace(/[״"'’]/g,"").replace(/\s*-\s*/g,"-").replace(/\s+/g," ").trim();
   const go=()=>{if(state.locId!==id||!dsState.index)return;const m=(dsState.index.localities||[]).filter(x=>nz(x.he)===nz(l.he));if(m.length===1)dsOpen("locality",m[0].code)};
   if(dsState.index)go();else inGet("view=dossierIndex").then(d=>{dsState.index=d;go()}).catch(()=>{})}
-function renderDossier(){
+function renderDossier(){renderDossierBody();const b=el("dsBody");if(b&&dsState.data&&!b.querySelector(":scope > .ent-line"))b.insertAdjacentHTML("afterbegin",`<p class="ent-line">${entBadge(dsState.level==="il"?"country":dsState.level==="district"?"district":"locality")}</p>`)}
+function renderDossierBody(){
   const t=T(),D=dsState.data,he=state.lang==="he",L=he?"he":"en",bar=el("dsBar"),body=el("dsBody"),prov=el("dsProv");
   if(!bar||!t.dsT)return;
   const ix=dsState.index,cur=dsState.level==="il"?"il":`${dsState.level}:${dsState.code}`;
@@ -9682,6 +9756,7 @@ initIntel();
 initTrust();
 initPulse();
 initDossier();
+renderOrient();
 initNewHome();
 refresh(true);
 </script>

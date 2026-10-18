@@ -282,6 +282,16 @@
   (`xpBtn` / `xpSig` / `xpMiss`, one popover `#xpPop`) marks the dossier tiles, signals, quality, freshness, missing list,
   the supply block, the pulse radar + revisions, the Trust alerts and the developer drawer; ALTARIS marks the decision card and
   the basis view sections. The registry documents — it never computes; nothing in it is a recommendation or a probability.
+- PRODUCT CLARITY (STEP 2A, 19.10.2026; `test/clarity.test.js`) — still ONE explanation system: `lib/explain/registry.js` now also
+  carries `LEGEND` (the one evidence legend: OFFICIAL · STATIC · OBSERVED · DERIVED · MODEL · SELF-REPORTED · USER DOCUMENT · USER
+  ASSUMPTION · USER OVERRIDE · MISSING · CONFLICT + match states VERIFIED · STRONG MATCH · POSSIBLE · AMBIGUOUS · UNRESOLVED · PARCEL
+  HISTORY, each with what it does NOT mean), `SECTIONS` (orientation: what · kind · helps · scope · how current · how to read) and
+  `ENTITY_TYPES` (DEVELOPER — BRAND ≠ LEGAL COMPANY ≠ PROJECT ≠ LAND LOT …), the `board` group and a `population` level-2 field. The
+  page: an orientation line + "how to read this" on 12 sections; every evidence label (board chip, diligence class, match state)
+  opens its legend entry (capture phase); a standard entity badge in every drawer and on the dossier; the entity drawer's trail of
+  the navigation actually taken (a step through a POSSIBLE / AMBIGUOUS link marked — never a hierarchy); the diligence summary's
+  rows grouped under the five questions; the project-company statement follows the INDEPENDENT record count and lists WHY PROPX
+  THINKS THIS (`projectCompany().whyThis`); ⓘ on the headline tiles of the overview, ticker, land, housing and developers.
 - `lib/trust/discovery/<date>.json` (+ `findings-<date>.md`) = the read-only DATA DISCOVERY ledger (17.10.2026: 25 candidates
   classified CONFIRMED_STRUCTURED_API / CONFIRMED_GIS / CONFIRMED_STRUCTURED_FILE / OFFICIAL_PUBLIC_CMS / OFFICIAL_PAGE_ONLY / STALE /
   PARTIAL / RESTRICTED / UNUSABLE with a verdict INTEGRATE / DOCUMENT-ONLY / REJECT, a join key and the evidence); `lib/trust/catalog.js`

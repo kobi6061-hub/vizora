@@ -403,7 +403,10 @@ console.log('dd-premium: the live registry lookup');
     assert.equal(pc.state, 'STRONG_MATCH'); assert.equal(pc.company.number, NUM_NET);
     assert.ok(pc.reasons.some((r) => r.code === 'INDEPENDENT_RECORDS_AGREE') && pc.reasons.some((r) => r.code === 'NO_OFFICIAL_PROJECT_COMPANY_IDENTIFIER'));
     assert.ok(pc.evidence.some((e) => e.cls === 'USER_DOCUMENT' && e.registryCheck === 'REGISTRY_ROW_FOUND'));
-    assert.equal(pc.statement.en, 'multiple independent records point to this legal company as the project company, but PROPX does not yet have a definitive official identifier proving it');
+    assert.equal(pc.statement.en, '2 independent records point to this legal company as the project company (listed under WHY PROPX THINKS THIS), but PROPX does not yet have a definitive official project-level company identifier');
+    /* STEP 2A §16: the wording follows the actual evidence count, and the records behind it are listed */
+    assert.equal(pc.whyThis.records, 2); assert.equal(pc.whyThis.independentRecords, 2);
+    assert.deepEqual(pc.whyThis.support.map((x) => [x.role, x.cls, x.independent]).sort(), [['LAND_WINNER', 'OFFICIAL', true], ['PROJECT_COMPANY_PER_DOCUMENT', 'USER_DOCUMENT', true]]);
     kase({ id: 5, title: 'verified project company', knows: [`the land winner (ILA record) resolves to ${NUM_NET}`, 'the user\'s purchase agreement names the same company; its number is in the registry with a consistent name'], unknown: ['an official project-level record carrying the company number (none exists in public coverage)'], classes: { landWinner: 'OFFICIAL', document: 'USER_DOCUMENT', relation: 'STRONG MATCH (DERIVED)' }, sees: 'PROJECT COMPANY · STRONG MATCH — "multiple independent records point to this legal company … but PROPX does not yet have a definitive official identifier proving it"', refuses: ['VERIFIED from a user document', 'a parent or a guarantor'], verifyNext: ['the Sale-Law guarantee (obligor)', 'the ILA development agreement (rights holder)'] });
   });
   /* 6 · strong but unverified project company */
