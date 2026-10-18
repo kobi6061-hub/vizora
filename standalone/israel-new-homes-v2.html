@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="ff0da273d8d0545a78c9e72afa9f7e0fb049ec5ec67d7c315eecb72cd62cdc8d">
+<meta name="propx-source-sha256" content="b79b1c23f6cbcd027595be04324e7c73ea6436b482058a3b109614fe4144c7aa">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -9710,6 +9710,8 @@ const ddRs=rs=>(rs||[]).length?`<ul class="dd-rs">${rs.map(r=>`<li><span class="
 const ddKV=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
 const ddSec=(title,body,open,cls)=>`<details class="dd-sec${cls?" "+cls:""}"${open?" open":""}><summary>${title}</summary><div class="dd-b">${body}</div></details>`;
 const ddDate=d=>d?inDate(d):inDash();
+const ddBasis=b=>({"normalized-name":["שם משפטי מנורמל","normalized legal name"],skeleton:["שלד עיצורים (כתיב)","consonant skeleton (spelling)"],letters:["אותן אותיות","same letters"],"exact-key":["מפתח רשמי מדויק","exact official key"],"user-provided-key":["מפתח שסופק על ידי המשתמש","user-provided key"]}[b]||[b||"—",b||"—"])[state.lang==="en"?1:0];
+const ddStatus=st=>st?(state.lang==="en"&&st.label&&st.label.en?`${st.label.en} (${st.verbatim||"—"})`:(st.verbatim||"—")):"—";
 function ddSlot(kind,id){return `<section class="ho-dsec dd-wrap" id="inDD" data-ddkind="${inE(kind)}" data-ddid="${inE(id)}" aria-live="polite">${ddBody()}</section>`}
 function ddEnsure(kind,id){
   if(kind!=="developer"&&kind!=="project")return;
@@ -9758,7 +9760,7 @@ const ddTruthsHTML=H=>(H||[]).length?`<ul class="dd-rs">${H.map(h=>`<li>${inE(dd
 const ddMissHTML=M=>(M||[]).length?`<ul class="ds-miss">${M.map(m=>`<li>${inE(ddL(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
 function ddFreshHTML(F){const t=DT();if(!F)return"";const rows=Object.entries(F).filter(([,v])=>v);return rows.length?`<div class="ho-dl">${rows.map(([k,v])=>ddKV(inE(k),`${v.checkedAt?ddDate(v.checkedAt):""}${v.sourceModified?` · ${ddDate(v.sourceModified)}`:""}${v.imported?` · ${inE(v.imported)}`:""}`)).join("")}</div><p class="ho-note">${state.lang==="en"?"PROPX check · the source's own modification / import":"בדיקת PROPX · עדכון / ייבוא המקור עצמו"}</p>`:""}
 /* ---- identity ---- */
-function ddCoFacts(c){const t=DT();if(!c)return"";return `<div class="ho-dl">${ddKV(t.legal,`<bdi>${inE(c.name)}</bdi>`)}${ddKV(t.number,`<span class="num">${inE(c.number)}</span>`)}${ddKV(t.status,`${inE(c.status&&c.status.verbatim||"—")} ${xpBtn("registry_status")}`)}${ddKV(t.type,inE(c.type||"—"))}${ddKV(t.breach,`${inE(ddL(c.violating&&c.violating.label))} ${xpBtn("breach_flag")}`)}${ddKV(t.lastReport,c.lastAnnualReportYear!=null?`<span class="num">${c.lastAnnualReportYear}</span>`:inDash())}${ddKV(t.incorporated,ddDate(c.incorporated))}</div>`}
+function ddCoFacts(c){const t=DT();if(!c)return"";return `<div class="ho-dl">${ddKV(t.legal,`<bdi>${inE(c.name)}</bdi>`)}${ddKV(t.number,`<span class="num">${inE(c.number)}</span>`)}${ddKV(t.status,`<bdi>${inE(ddStatus(c.status))}</bdi> ${xpBtn("registry_status")}`)}${ddKV(t.type,inE(c.type||"—"))}${ddKV(t.breach,`${inE(ddL(c.violating&&c.violating.label))} ${xpBtn("breach_flag")}`)}${ddKV(t.lastReport,c.lastAnnualReportYear!=null?`<span class="num">${c.lastAnnualReportYear}</span>`:inDash())}${ddKV(t.incorporated,ddDate(c.incorporated))}</div>`}
 function ddIdentityHTML(D,devId){
   const t=DT(),I=D.identity,r=I.resolution,co=ddUserCo(devId);
   const cand=(r.candidates||[]).length&&!r.chosen?`<h5 class="dd-h5">${t.candidates}</h5><ul class="dd-rs">${r.candidates.map(c=>`<li><bdi>${inE(c.name)}</bdi> · <span class="num">${inE(c.number)}</span> · ${inE(c.status&&c.status.verbatim||"—")} <button type="button" class="ld-link" data-dd="useco" data-ddi="${inE(devId)}" data-ddco="${inE(c.number)}">${t.useCand}</button> <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(c.number)}">↗</button></li>`).join("")}</ul>`:"";
@@ -9851,7 +9853,7 @@ function ddCompanyDrawerHTML(d,close){
   if(d.kind==="contractor")return `<div class="ho-dh"><div><span class="lyr">${state.lang==="en"?"Contractor":"קבלן"} · <span class="num">${inE(d.kablan)}</span></span><h3 id="inDTitle"><bdi>${inE(d.name||"")}</bdi></h3></div>${close}</div><p class="ho-note">${inE(ddL(d.note))}</p><ul class="dd-rs">${(d.branches||[]).map(b=>`<li>${inE(b.branch||"—")} · ${inE(b.group||"")} · ${inE(b.sivug||"")}</li>`).join("")}</ul>`;
   if(!d.inCoverage)return `<div class="ho-dh"><div><span class="lyr">${t.company}</span><h3 id="inDTitle"><span class="num">${inE(d.number)}</span></h3><div class="sub">${t.notInCov}</div></div>${close}</div><p class="ho-note">${inE(ddL(d.note))}</p>`;
   const c=d.company;
-  const devs=(d.developers||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddcodevs"><thead><tr><th>${t.brand}</th><th>${state.lang==="en"?"Match":"התאמה"}</th><th>${state.lang==="en"?"Basis":"בסיס"}</th></tr></thead><tbody>${d.developers.map(x=>`<tr><td><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>${x.note?` <span class="ho-na">${inE(ddL(x.note))}</span>`:""}</td><td>${ddM(x.state)}</td><td>${inE(x.basis||"—")}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">—</p>`;
+  const devs=(d.developers||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddcodevs"><thead><tr><th>${t.brand}</th><th>${state.lang==="en"?"Match":"התאמה"}</th><th>${state.lang==="en"?"Basis":"בסיס"}</th></tr></thead><tbody>${d.developers.map(x=>`<tr><td><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>${x.note?` <span class="ho-na">${inE(ddL(x.note))}</span>`:""}</td><td>${ddM(x.state)}</td><td>${inE(ddBasis(x.basis))}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">—</p>`;
   const sites=(d.sites.list||[]).length?`<ul class="dd-rs">${d.sites.list.map(s=>`<li><bdi>${inE(s.name||s.id)}</bdi> · ${inE(s.city||"")} · ${t.firstSeen} ${ddDate(s.firstSeen)}</li>`).join("")}</ul>`:"";
   return `<div class="ho-dh"><div><span class="lyr">${t.company} · ${t.number} <span class="num">${inE(c.number)}</span></span><h3 id="inDTitle"><bdi>${inE(c.name)}</bdi></h3><div class="sub">${inE(c.status&&c.status.verbatim||"—")} · ${inE(c.type||"")}</div></div>${close}</div>
     ${ddSec(t.legal,ddCoFacts(c),true)}${ddSec(`${t.devsOf} <span class="num">(${fmtInt((d.developers||[]).length)})</span>`,devs+`<p class="ho-note">${xpBtn("entity_match_state")} ${xpBtn("developer_brand")}</p>`,true)}${ddSec(t.corporate,ddCorpHTML(d.corporate),true)}${ddSec(t.financial,ddFinHTML(d.financial))}

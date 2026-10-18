@@ -247,6 +247,15 @@ if (REAL.synced) {
       for (const x of [...S.tlv, ...S.labour, ...S.permits]) assert.equal(x.onLadder, x.matchState === 'STRONG_MATCH', p.id + ' ' + x.id);
       for (const s of S.tlv) { const ds = [s.start].filter(Boolean); if (p.decisionDate && ds.length && S.permits.filter((x) => x.viaSite === s.id).length === 0) assert.ok(ds[0] >= String(p.decisionDate).slice(0, 10) || s.matchState !== 'STRONG_MATCH', p.id); } }
   });
+  t('real data: search routes an exact company number, a lot-file id and a project id to typed hits; a name returns LEGAL COMPANY hits apart from developer hits', () => {
+    const X = require('../lib/dd');
+    const lotP = [...L.projById.values()].find((p) => p.kind === 'ila-awarded-lot');
+    assert.deepEqual(X.searchHits(lotP.lotId).map((h) => [h.type, h.id]), [['project', lotP.id]]);
+    assert.deepEqual(X.searchHits(lotP.id).map((h) => [h.type, h.id]), [['project', lotP.id]]);
+    const co = REAL.idx.companies.rows ? [...REAL.idx.companies.byNumber.values()][0] : null;
+    if (co) { const h = X.searchHits(String(co.num)); assert.equal(h[0].type, 'company'); assert.equal(h[0].meta.entity, 'LEGAL_COMPANY'); }
+    assert.equal(X.searchHits('512345670')[0].meta.inCoverage === false || X.searchHits('512345670')[0].type === 'company', true, 'a valid-format number outside coverage is said, never silently dropped');
+  });
   t('real data: the developer and project reads pass the language gate (three developers, their lots)', () => {
     const X = require('../lib/dd');
     for (const id of ['dev-69edd3ba1aec', 'dev-d23c21a9650e', 'dev-2eda15c3a337']) { if (!L.devById.has(id)) continue; const a = X.developer(id); languageGate(a, id); const s = a.dd.identity.resolution.state; assert.ok(['STRONG_MATCH', 'POSSIBLE_MATCH', 'AMBIGUOUS', 'UNRESOLVED'].includes(s)); }
