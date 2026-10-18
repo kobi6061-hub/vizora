@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="f5e1deaa35824d2ac42d426abb4c6491afa112d69cd58dfe7a182f86d970f84f">
+<meta name="propx-source-sha256" content="0fbcbea09a982579aa86ae5bd8dfb80f29683b7dc4ec913c9238af52903eeb9e">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -3513,9 +3513,14 @@ tr.dd-off td{opacity:.72}
     bi('הקובץ לא יצא מהדפדפן — נשמרה טביעת אצבע (SHA-256), שם, גודל וסוג', 'the file never left the browser — its fingerprint (SHA-256), name, size and type are kept'),
   ];
 
-  const isDate = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v + 'T00:00:00Z'));
+  /* a real calendar date: 2025-02-31 is refused (Date.parse would roll it over to March) */
+  const isDate = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v + 'T00:00:00Z')) && new Date(v + 'T00:00:00Z').toISOString().slice(0, 10) === v;
   const trimText = (v) => String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, MAX_TEXT);
-  const num = (v) => { if (v === '' || v == null) return null; const x = typeof v === 'number' ? v : Number(String(v).replace(/[,\s₪$€]/g, '')); return Number.isFinite(x) ? x : NaN; };
+  /* a number: '.' is the decimal mark; ',' only as a thousands separator in groups of three (1,234,567) — '1,5' is refused, never
+     read as 15 */
+  const num = (v) => { if (v === '' || v == null) return null; if (typeof v === 'number') return Number.isFinite(v) ? v : NaN;
+    const t = String(v).replace(/[\s₪$€]/g, ''); if (t.includes(',') && !/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(t)) return NaN;
+    const x = Number(t.replace(/,/g, '')); return Number.isFinite(x) ? x : NaN; };
 
   /** one field value → { ok, value } or { ok:false, error } */
   function fieldValue(f, v, today) {
@@ -3523,7 +3528,7 @@ tr.dd-off td{opacity:.72}
     switch (f.kind) {
       case 'text': { const t = trimText(v); return t ? { ok: true, value: t } : { ok: !f.req, value: null, error: f.req ? `${f.k}: required` : null }; }
       case 'date': { const d = String(v).slice(0, 10); if (!isDate(d)) return { ok: false, error: `${f.k}: not a date (yyyy-mm-dd)` }; if (!f.future && today && d > today) return { ok: false, error: `${f.k}: in the future` }; return { ok: true, value: d }; }
-      case 'amount': { const x = num(v); return Number.isNaN(x) ? { ok: false, error: `${f.k}: not a number` } : { ok: true, value: x }; }
+      case 'amount': { const x = num(v); return Number.isNaN(x) ? { ok: false, error: `${f.k}: not a number (use . for decimals; , only between thousands)` } : { ok: true, value: x }; }
       case 'int': { const x = num(v); return Number.isNaN(x) || (x != null && (!Number.isInteger(x) || x < 0)) ? { ok: false, error: `${f.k}: not a whole number` } : { ok: true, value: x }; }
       case 'percent': { const x = num(v); return Number.isNaN(x) || (x != null && (x < 0 || x > 100)) ? { ok: false, error: `${f.k}: not a percentage 0–100` } : { ok: true, value: x }; }
       case 'companyNumber': { const t = String(v).replace(/\D/g, ''); return /^\d{8,9}$/.test(t) ? { ok: true, value: t } : { ok: false, error: `${f.k}: not a company number (8–9 digits)` }; }
@@ -3545,12 +3550,13 @@ tr.dd-off td{opacity:.72}
     return { values, errors };
   }
   const hex = /^[0-9a-f]{64}$/;
-  /** a stable id: the file's fingerprint when there is one, else a hash of the entered facts (FNV-1a, deterministic) */
+  /** a stable id: the file's fingerprint (when there is one) + a hash of the type and the entered facts (FNV-1a, deterministic) —
+      several documents entered from ONE file (consolidated and separate, two years) stay distinct; the same facts twice dedupe */
   function idOf(type, provenance, values) {
-    if (provenance.sha256) return 'udoc:' + provenance.sha256.slice(0, 20);
     let h = 0x811c9dc5; const s = type + JSON.stringify(values);
     for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
-    return 'udoc:f' + h.toString(16).padStart(8, '0');
+    const fh = ('0000000' + h.toString(16)).slice(-8);
+    return provenance.sha256 ? 'udoc:' + provenance.sha256.slice(0, 16) + '-' + fh : 'udoc:f' + fh;
   }
   /** validate one raw document → { ok, errors, doc } — the doc is the ONLY shape the read models accept */
   function normalize(raw, { today = new Date().toISOString().slice(0, 10) } = {}) {
@@ -3571,7 +3577,7 @@ tr.dd-off td{opacity:.72}
   }
   function normalizeAll(list, opt) {
     const docs = [], rejected = [], seen = new Set();
-    for (const raw of (Array.isArray(list) ? list : []).slice(0, MAX_DOCS)) { const r = normalize(raw, opt); if (!r.ok) { rejected.push({ type: raw && raw.type, errors: r.errors }); continue; } if (seen.has(r.doc.id)) continue; seen.add(r.doc.id); docs.push(r.doc); }
+    for (const raw of (Array.isArray(list) ? list : []).slice(0, MAX_DOCS)) { const r = normalize(raw, opt); if (!r.ok) { rejected.push({ type: raw && raw.type, errors: r.errors }); continue; } if (seen.has(r.doc.id)) { rejected.push({ type: raw.type, errors: [`duplicate of ${r.doc.id} (the same facts from the same file)`] }); continue; } seen.add(r.doc.id); docs.push(r.doc); }
     return { docs, rejected };
   }
   /** the documents that concern an entity: a project by its PROPX id; a company by any company number the document carries */
@@ -10147,7 +10153,7 @@ const DDP_I18N={he:{sum:"סיכום בדיקת נאותות מוסדית",sumNot
   cls:{VERIFIED:"מאומת",DERIVED:"נגזר",SELF_REPORTED:"דיווח עצמי",USER_DOCUMENT:"מסמך משתמש",MISSING:"חסר",CONFLICT:"סתירה",OFFICIAL:"רשמי",OBSERVED:"נצפה"},
   pco:"חברת הפרויקט ותפקידים",roles:{developerBrand:"מותג היזם",landWinner:"זוכה הקרקע",programmeDeveloper:"יזם התכנית",projectCompany:"חברת הפרויקט",permitHolder:"בעל ההיתר",executingContractor:"קבלן מבצע",parent:"חברת אם",guarantor:"ערב"},
   role:"תפקיד",who:"מי",state:"מצב",cls_:"סיווג",basis:"על מה זה נשען",resolving:"מסמכים שיכריעו",provide:"הוספת מסמך",conflict:"סתירה",notVerified:"לא מאומת",notInCov:"לא בכיסוי",
-  fin:"פרופיל פיננסי ציבורי",figure:"שדה",value:"ערך",period:"תקופה",reportDate:"תאריך דוח",units:"יחידות",ratio:"יחס",formula:"נוסחה",inputs:"קלט",withheld:"לא חושב",flags:"דגלים",restated:"הצגה מחדש",restatements:"הצגות מחדש",conflicts:"סתירות",comparable:"תקופה מקבילה",thresholds:"ספים",noFlag:"לא הופעל אף דגל (≠ \"חוסן\")",
+  fin:"פרופיל פיננסי",figure:"שדה",value:"ערך",period:"תקופה",reportDate:"תאריך דוח",units:"יחידות",ratio:"יחס",formula:"נוסחה",inputs:"קלט",withheld:"לא חושב",flags:"דגלים",restated:"הצגה מחדש",restatements:"הצגות מחדש",conflicts:"סתירות",comparable:"תקופה מקבילה",thresholds:"ספים",noFlag:"לא הופעל אף דגל (≠ \"חוסן\")",
   str:"מבנה תאגידי",edge:"קשר",from:"מ",to:"אל",share:"אחזקה",proves:"מה זה מוכיח",notProves:"מה זה לא מוכיח",docDate:"תאריך המסמך",rules:"כללים",
   legal:"חשיפה משפטית — רק מה שגולה בפומבי",covered:"מה בכיסוי",
   sales:"התקדמות מכירות",offered:"הוצעו",applicants:"נרשמים",winners:"זוכים",planned:"מתוכננות",marketed:"שווקו",sold:"נמכרו",remaining:"נותרו",rate:"קצב (נגזר)",reportedBy:"מדווח",
@@ -10160,7 +10166,7 @@ en:{sum:"Institutional diligence summary",sumNote:"every row one sentence with o
   cls:{VERIFIED:"VERIFIED",DERIVED:"DERIVED",SELF_REPORTED:"SELF-REPORTED",USER_DOCUMENT:"USER DOCUMENT",MISSING:"MISSING",CONFLICT:"CONFLICT",OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED"},
   pco:"Project company and roles",roles:{developerBrand:"Developer brand",landWinner:"Land winner",programmeDeveloper:"Programme developer",projectCompany:"Project company",permitHolder:"Permit holder",executingContractor:"Executing contractor",parent:"Parent company",guarantor:"Guarantor"},
   role:"Role",who:"Who",state:"State",cls_:"Class",basis:"What it rests on",resolving:"Documents that would resolve it",provide:"Add a document",conflict:"Conflict",notVerified:"not verified",notInCov:"not in coverage",
-  fin:"Public financial profile",figure:"Field",value:"Value",period:"Period",reportDate:"Report date",units:"Units",ratio:"Ratio",formula:"Formula",inputs:"Inputs",withheld:"not computed",flags:"Flags",restated:"restated",restatements:"Restatements",conflicts:"Conflicts",comparable:"Comparable period",thresholds:"Thresholds",noFlag:"no flag fired (≠ \"resilient\")",
+  fin:"Financial profile",figure:"Field",value:"Value",period:"Period",reportDate:"Report date",units:"Units",ratio:"Ratio",formula:"Formula",inputs:"Inputs",withheld:"not computed",flags:"Flags",restated:"restated",restatements:"Restatements",conflicts:"Conflicts",comparable:"Comparable period",thresholds:"Thresholds",noFlag:"no flag fired (≠ \"resilient\")",
   str:"Corporate structure",edge:"Relation",from:"From",to:"To",share:"Share",proves:"What it proves",notProves:"What it does NOT prove",docDate:"Document date",rules:"Rules",
   legal:"Legal exposure — publicly disclosed only",covered:"What is in coverage",
   sales:"Sales progress",offered:"offered",applicants:"applicants",winners:"winners",planned:"planned",marketed:"marketed",sold:"sold",remaining:"remaining",rate:"Pace (derived)",reportedBy:"Reported by",
@@ -10208,10 +10214,10 @@ function ddPcoHTML(PC,rec){
   for(const c of R.executingContractor||[])rows.push(row("executingContractor",`<bdi>${inE(c.name||c.kablan)}</bdi>${c.company?` → ${ddCoLabel(c.company)}`:""}`,ddM(c.matchState),c.cls,state.lang==="en"?"contractor on a STRONG-linked site":"קבלן באתר בקישור חזק"));
   if(!(R.executingContractor||[]).length)rows.push(row("executingContractor",inDash(),"","MISSING",""));
   const P=R.parent||{};rows.push(row("parent",P.number||P.name?`<bdi>${inE(P.name||"")}</bdi> <span class="num">${inE(P.number||"")}</span>${P.sharePct!=null?` · ${ddNum(P.sharePct)}%`:""}`:inDash(),P.registryCheck?`<span class="dd-code">${inE(P.registryCheck)}</span>`:t.notInCov,P.cls||"MISSING",P.document?`${inE(state.lang==="en"?"user document":"מסמך משתמש")} · ${ddDate(P.document.date)}`:inE(ddL(P.note))));
-  const G=R.guarantor||{};rows.push(row("guarantor",G.name?`<bdi>${inE(G.name)}</bdi>${G.number?` <span class="num">${inE(G.number)}</span>`:""}${G.guaranteeKind?` · ${inE(G.guaranteeKind)}`:""}`:inDash(),G.kind?`<span class="dd-code">${inE(G.kind)}</span>`:t.notVerified,G.cls||"MISSING",G.document?`${inE(state.lang==="en"?"user document":"מסמך משתמש")} · ${ddDate(G.document.date)}`:inE(ddL(G.note))));
+  const G=R.guarantor||{};rows.push(row("guarantor",G.name?`<bdi>${inE(G.name)}</bdi>${G.number?` <span class="num">${inE(G.number)}</span>`:""}${G.guaranteeKind?` · ${inE(G.guaranteeKind)}`:""}`:inDash(),G.kind?`<span class="dd-code">${inE(G.kind)}</span>${G.expired?` <span class="ho-chip bad">${state.lang==="en"?"expired":"פג תוקף"}</span>`:""}`:t.notVerified,G.cls||"MISSING",G.document?`${inE(state.lang==="en"?"user document":"מסמך משתמש")} · ${ddDate(G.document.date)}${G.note?` · ${inE(ddL(G.note))}`:""}`:inE(ddL(G.note))));
   const conf=(PC.conflicts||[]).map(c=>`<p class="dd-conf">${ddPCls("CONFLICT")} ${inE(ddL(c.statement))}</p><ul class="dd-rs">${c.companies.map(x=>`<li>${ddCoLabel({name:x.name,number:x.number})}${x.registryCheck?` <span class="dd-code">${inE(x.registryCheck)}</span>`:""} · ${x.by.map(b=>`${inE(b.role)} ${ddPCls(b.cls)}`).join(" · ")}</li>`).join("")}</ul>`).join("");
   const reasons=(PC.reasons||[]).length?`<ul class="dd-rs">${PC.reasons.map(r=>`<li><span class="dd-code">${inE(r.code)}</span> ${inE(ddL(r))}</li>`).join("")}</ul>`:"";
-  const recBlock=rec&&rec.company?`<p class="ho-note">${state.lang==="en"?"The project company's own registry record":"הרשומה של חברת הפרויקט עצמה ברשם"}: ${inE(ddStatus(rec.corporate&&rec.corporate.registeredStatus))}${rec.liveRead?` <span class="ho-chip">${DP().live}</span>`:""} · ${inE(ddL(rec.corporate&&rec.corporate.insolvency&&rec.corporate.insolvency.statement))}</p>`:"";
+  const recBlock=rec&&rec.company?`<p class="ho-note">${state.lang==="en"?"The project company's own registry record":"הרשומה של חברת הפרויקט עצמה ברשם"}: ${inE(ddStatus(rec.corporate&&rec.corporate.registeredStatus))}${rec.liveRead?` <span class="ho-chip">${DP().live}</span>`:""} · ${inE(ddL(rec.corporate&&rec.corporate.insolvency&&rec.corporate.insolvency.statement))}${rec.corporate&&rec.corporate.filings&&rec.corporate.filings.notChecked?` · ${inE(ddL(rec.corporate.filings.interpretation))}`:""}${rec.corporate&&rec.corporate.liveRead?` · ${ddDate(rec.corporate.liveRead.checkedAt)}`:""}</p>`:"";
   const res=(PC.resolvingDocuments||[]).length?`<h5 class="dd-h5">${t.resolving}</h5><ul class="dd-rs">${PC.resolvingDocuments.map(d=>`<li>${inE(ddL(d.label))}${ddProvideBtn({"purchase-agreement":"purchase_agreement","bank-guarantee":"bank_guarantee",permit:"permit","land-rights":"land_rights","financing-agreement":"financing_agreement","developer-declaration":"developer_declaration","company-number":"developer_declaration"}[d.id])}</li>`).join("")}</ul>`:"";
   return `<p><b>${ddM(PC.state)}</b> ${inE(ddL(PC.statement))} ${xpBtn("project_company_status")}</p>${reasons}${conf}${recBlock}<div class="ld-scroll"><table class="ho-dt dd-tbl dd-roles"><thead><tr><th>${t.role}</th><th>${t.who}</th><th>${t.state}</th><th>${t.cls_}</th><th>${t.basis}</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>${res}${ddNotA(PC.notA)}`;
 }
@@ -10226,13 +10232,13 @@ function ddFinProfileHTML(F){
   const stHead=`<p class="dd-sthead">${t.period}: <b>${inE(ddEn(L.period.kind))} ${ddDate(L.period.end)}</b> · ${t.reportDate}: ${ddDate(L.reportDate)} · ${t.units}: <b>${inE(L.currency)} · ${inE(ddEn(L.units))}</b>${L.restated?` · <span class="ho-chip">${t.restated}</span>`:""}${L.supersedes?` · ${state.lang==="en"?"supersedes":"מחליף את"} <span class="num">${inE(L.supersedes)}</span>`:""}</p>`;
   const dlab={totalFinancialDebt:state.lang==="en"?"Total financial debt":"סך החוב הפיננסי",netDebt:state.lang==="en"?"Net debt":"חוב נטו"};
   const der=["totalFinancialDebt","netDebt"].map(k=>{const x=L.derived&&L.derived[k];return x?`<li>${inE(dlab[k])}: ${ddNum(x.value)} ${inE(x.currency)} · ${inE(ddEn(x.units))} ${ddPCls(x.cls)} — ${inE(ddL(x.basis))}</li>`:""}).join("");
-  const rat=(F.ratios||[]).map(r=>{const pr=(F.priorRatios||[]).find(x=>x.id===r.id);return `<tr><td>${inE(ddTermTitle(r.id))} ${xpBtn(r.id)}</td><td class="num">${r.valid?ddNum(r.value):`<span class="ho-na">${t.withheld}</span>`}</td><td class="num">${pr&&pr.valid?ddNum(pr.value):inDash()}</td><td>${inE(ddTermFormula(r.id,r.formula))}${r.basis?`<div class="ho-note">${inE(ddL(r.basis))}</div>`:""}${!r.valid&&r.reason?`<div class="ho-note">${inE(ddL(r.reason))}</div>`:""}${r.note?`<div class="ho-note">${inE(ddL(r.note))}</div>`:""}</td><td>${(r.inputs||[]).map(i=>`<span class="dd-code">${inE(i)}</span>`).join(" ")}</td></tr>`}).join("");
+  const rat=(F.ratios||[]).map(r=>{const pr=(F.priorRatios||[]).find(x=>x.id===r.id);return `<tr><td>${inE(ddTermTitle(r.id))} ${xpBtn(r.id)}</td><td class="num">${r.valid?ddNum(r.value):`<span class="ho-na">${t.withheld}</span>`}</td><td class="num">${pr&&pr.valid?ddNum(pr.value):inDash()}</td><td>${inE(ddTermFormula(r.id,r.formula))}${r.basis?`<div class="ho-note">${inE(ddL(r.basis))}</div>`:""}${!r.valid&&r.reason?`<div class="ho-note">${inE(ddL(r.reason))}</div>`:""}${r.note?`<div class="ho-note">${inE(ddL(r.note))}</div>`:""}${(r.inputs||[]).length?`<div class="ho-note">${t.inputs}: ${r.inputs.map(i=>inE(lab(i))).join(", ")}</div>`:""}</td></tr>`}).join("");
   const flags=(F.flags||[]).filter(f=>f.id!=="INSUFFICIENT_FINANCIAL_DATA");
   const fl=flags.length?`<ul class="ds-sig">${flags.map(f=>`<li><span class="ho-chip on" title="${inE(f.id)}">${inE(ddEn((XP()&&XP().SIGNAL_RULES[f.id]||{}).kind||"watch"))}</span> <b>${inE(ddL(f.text))}</b> ${xpSig(f.id,{text:f.text,value:(f.inputs||[]).map(i=>`${i.field}=${i.value==null?"—":i.value}${i.units?" "+ddEn(i.units):""} (${i.period||"—"})`).join(" · "),threshold:f.threshold,period:(f.periods||[]).join(" → "),cls:"DERIVED",source:"propx:user-documents"})}<div class="ho-note">${inE(f.rule)} · ${t.thresholds}: ${inE(f.threshold||"—")} · ${t.period}: ${inE((f.periods||[]).join(" → "))}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.noFlag}</p>`;
-  const rs=(F.restatements||[]).length?`<h5 class="dd-h5">${t.restatements} ${xpBtn("financial_restatement")}</h5><ul class="dd-rs">${F.restatements.map(r=>`<li>${inE(r.period.kind)} ${ddDate(r.period.end)} · ${ddDate(r.original.reportDate)} ${ddArr()} ${ddDate(r.restated.reportDate)} · ${r.changed.map(c=>`${inE(lab(c.field))}: ${ddNum(c.original)} ${ddArr()} ${ddNum(c.restated)}`).join(" · ")}</li>`).join("")}</ul>`:"";
+  const rs=(F.restatements||[]).length?`<h5 class="dd-h5">${t.restatements} ${xpBtn("financial_restatement")}</h5><ul class="dd-rs">${F.restatements.map(r=>`<li>${inE(r.period.kind)} ${ddDate(r.period.end)} · ${ddDate(r.original.reportDate)} ${ddArr()} ${ddDate(r.restated.reportDate)} · ${r.changed.map(c=>`${inE(lab(c.field))}: ${ddNum(c.original)} ${inE(ddEn(c.originalUnits))} ${ddArr()} ${ddNum(c.restated)} ${inE(ddEn(c.restatedUnits))}`).join(" · ")}${r.earlierVersionsDisagree?` <span class="ho-chip">${state.lang==="en"?"earlier versions also disagree":"גם הגרסאות הקודמות סותרות"}</span>`:""}</li>`).join("")}</ul>`:"";
   const cf=(F.conflicts||[]).length?`<h5 class="dd-h5">${t.conflicts}</h5>${F.conflicts.map(c=>`<p class="dd-conf">${ddPCls("CONFLICT")} ${inE(ddL(c.statement))} · ${inE(c.period.kind)} ${ddDate(c.period.end)} · ${c.fields.map(f=>`<span class="dd-code">${inE(f)}</span>`).join(" ")}</p>`).join("")}`:"";
   const prov=L.provenance?`<p class="ho-note">${ddPCls("USER_DOCUMENT")} ${inE(L.provenance.fileName||L.provenance.issuer||"")}${L.provenance.sha256?` · ${t.udHash} <span class="num">${inE(L.provenance.sha256.slice(0,12))}…</span>`:""} · ${inE(ddEn(L.audited))} · ${inE(ddEn(L.basis))}</p>`:"";
-  return head+prov+stHead+`<div class="ld-scroll"><table class="ho-dt dd-tbl dd-fint"><thead><tr><th>${t.figure}</th><th>${t.value}</th><th>${t.cls_}</th></tr></thead><tbody>${figs}</tbody></table></div>${der?`<ul class="dd-rs">${der}</ul>`:""}<h5 class="dd-h5">${t.ratio}</h5><div class="ld-scroll"><table class="ho-dt dd-tbl"><thead><tr><th>${t.ratio}</th><th>${t.value}</th><th>${t.comparable}${F.comparable?` (${inE(F.comparable.period.end)})`:""}</th><th>${t.formula}</th><th>${t.inputs}</th></tr></thead><tbody>${rat}</tbody></table></div><h5 class="dd-h5">${t.flags}</h5>${fl}${rs}${cf}${ddNotA(F.notA)}`;
+  return head+prov+stHead+`<div class="ld-scroll"><table class="ho-dt dd-tbl dd-fint"><thead><tr><th>${t.figure}</th><th>${t.value}</th><th>${t.cls_}</th></tr></thead><tbody>${figs}</tbody></table></div>${der?`<ul class="dd-rs">${der}</ul>`:""}<h5 class="dd-h5">${t.ratio}</h5><div class="ld-scroll"><table class="ho-dt dd-tbl"><thead><tr><th>${t.ratio}</th><th>${t.value}</th><th>${t.comparable}${F.comparable?` <span class="num">${ddDate(F.comparable.period.end)}</span>`:""}</th><th>${t.formula}</th></tr></thead><tbody>${rat}</tbody></table></div><h5 class="dd-h5">${t.flags}</h5>${fl}${rs}${cf}${ddNotA(F.notA)}`;
 }
 function ddStructHTML(S){
   const t=DP();if(!S)return"";
@@ -10262,6 +10268,11 @@ function ddCovMapHTML(C){
 }
 function ddLiveHTML(L){if(!(L||[]).length)return"";return `<p class="ho-note"><span class="ho-chip">${DP().live}</span> ${L.map(x=>`<span class="num">${inE(x.number)}</span> · ${ddDate(x.checkedAt)} · ${inE(ddL(x.statement))}`).join(" · ")} ${xpBtn("live_registry_lookup")}</p>`}
 /* ---- the user-evidence panel ---- */
+/* the validator's messages (field: problem) in the page language — the field by its label */
+function ddUdErr(e){const U=UDX(),m=String(e).match(/^([A-Za-z]+)(?:\[\d+\]\.[A-Za-z]+)?: (.*)$/);if(!m)return e;
+  const f=U&&Object.values(U.TYPES).flatMap(T=>T.fields).find(x=>x.k===m[1]),lab=f?ddL(f.label):m[1];if(state.lang==="en")return `${lab}: ${m[2]}`;
+  const he=[[/^required$/,"שדה חובה"],[/^in the future$/,"תאריך עתידי"],[/^not a date/,"אינו תאריך תקין (yyyy-mm-dd)"],[/^not a number/,"אינו מספר (נקודה לעשרוניות; פסיק רק בין אלפים)"],[/^not a whole number$/,"אינו מספר שלם"],[/^not a percentage/,"אינו אחוז בין 0 ל-100"],[/^not a company number/,"אינו מספר חברה (8–9 ספרות)"],[/^one of /,"ערך מחוץ לרשימה"],[/^a file name or an issuer is required/,"חסר מקור המסמך — שם קובץ או מנפיק"],[/^not a SHA-256/,"טביעת האצבע אינה תקינה"],[/^at least one row$/,"נדרשת שורה אחת לפחות"],[/^a list$/,"נדרשת רשימה"]];
+  const h=he.find(([re])=>re.test(m[2]));return `${m[1]==="provenance"?"מקור":lab}: ${h?h[1]:m[2]}`}
 function ddUdFieldHTML(f,pref){
   const t=DP(),lab=`${inE(ddL(f.label))}${f.req?` <span class="dd-req">*</span>`:""}`,v=pref&&pref[f.k]!=null?String(pref[f.k]):"";
   if(f.kind==="enum")return `<label class="dd-udf"><span>${lab}</span><select data-udf="${inE(f.k)}"><option value=""></option>${f.values.map(x=>`<option value="${inE(x)}"${v===x?" selected":""}>${inE(x)}</option>`).join("")}</select></label>`;
@@ -10279,14 +10290,15 @@ function ddUdPanelHTML(X){
   if(ddUd.open){
     const type=ddUd.type&&U.TYPES[ddUd.type]?ddUd.type:"financial_statements",T=U.TYPES[type];
     const pref={};if(X.kind==="project")pref.projectId=X.id;
-    const num=X.kind==="developer"?(X.dd&&X.dd.identity&&X.dd.identity.resolution&&X.dd.identity.resolution.chosen&&X.dd.identity.resolution.chosen.number):(X.premium&&X.premium.projectCompany&&X.premium.projectCompany.company&&X.premium.projectCompany.company.number);
+    /* the developer's own company only — a project read never pre-fills a number (the project company may be an SPV) */
+    const num=X.kind==="developer"?(X.dd&&X.dd.identity&&X.dd.identity.resolution&&X.dd.identity.resolution.chosen&&X.dd.identity.resolution.chosen.number):null;
     if(num)pref.entityNumber=num;
     form=`<div class="dd-udform" data-udform="1"><label class="dd-udf"><span>${t.udType}</span><select data-udtype="1">${Object.entries(U.TYPES).map(([k,v])=>`<option value="${inE(k)}"${k===type?" selected":""}>${inE(ddL(v.label))}</option>`).join("")}</select></label>
       <label class="dd-udf"><span>${t.udFile}</span><input type="file" data-udfile="1"></label>${ddUd.pending?`<p class="ho-note">${t.udHash} <span class="num">${inE(ddUd.pending.sha256.slice(0,16))}…</span> · <bdi>${inE(ddUd.pending.fileName)}</bdi></p>`:""}
       <label class="dd-udf"><span>${t.udIssuer}</span><input type="text" data-udiss="1"></label>
       <div class="dd-udgrid">${T.fields.map(f=>ddUdFieldHTML(f,pref)).join("")}</div>
       ${type==="financial_statements"||type==="sales_report"?`<label class="dd-udf dd-udl"><span>${t.udCsv}</span><textarea rows="3" data-udcsv="1" dir="ltr"></textarea></label><div><button type="button" class="ho-more" data-dd="udoc-csv">${t.udCsvBtn}</button> <button type="button" class="ld-link" data-dd="udoc-tpl" data-ddt="${inE(type)}">${t.udTpl}</button></div>`:""}
-      ${ddUd.errors?`<p class="dd-warn">${t.udErr} ${ddUd.errors.map(e=>inE(e)).join(" · ")}</p>`:""}
+      ${ddUd.errors?`<p class="dd-warn">${t.udErr} ${ddUd.errors.map(e=>inE(ddUdErr(e))).join(" · ")}</p>`:""}
       <div class="dd-udact"><button type="button" class="ho-more" data-dd="udoc-save" data-ddk="${inE(X.kind)}" data-ddi="${inE(X.id)}">${t.udSave}</button> <button type="button" class="ld-link" data-dd="udoc-cancel">${t.udCancel}</button></div></div>`;
   }
   return `<p class="ho-note">${t.udNote} ${xpBtn("user_document")}</p>${ddUd.msg?`<p class="ho-note"><b>${inE(ddUd.msg)}</b></p>`:""}${items}${rej}${ddUd.open?form:`<button type="button" class="ho-more" data-dd="udoc-add" data-ddt="">${t.udAdd}</button>`}`;
