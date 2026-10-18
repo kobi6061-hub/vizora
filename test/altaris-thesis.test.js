@@ -31,7 +31,7 @@ const caseDeal = (id) => clone(CS.CASES.find((c) => c.id === id).deal);
 const item = (signal, kind, over) => Object.assign({ id: signal, signal, text: { he: 'אות ' + signal, en: 'signal ' + signal }, valueLabel: '44%', threshold: '≥ 30%', comparison: { he: 'ארצי: 18%', en: 'national: 18%' }, period: 'current scope', source: 'rmi:michrazim', cls: 'OFFICIAL', evidence: { level: 'HIGH', score: 76 }, m: 3, derived: false }, over || {});
 const momentumDown = { id: 'sales-momentum-down', text: { he: 'מומנטום המחוז −10.5%', en: 'district momentum −10.5%' }, threshold: '≤ −10%', period: '2026-08', source: 'cbs:timeseries:44,10', cls: 'OFFICIAL' };
 const momentumUp = { id: 'sales-momentum-up', text: { he: 'מומנטום המחוז +32%', en: 'district momentum +32%' }, threshold: '≥ +10%', period: '2026-08', source: 'cbs:timeseries:44,10', cls: 'OFFICIAL' };
-const dossierOf = (risk, watch, at, over) => Object.assign({ geo: { level: 'locality', code: '7900', name: { he: 'פתח תקווה', en: 'Petah Tiqwa' } }, quality: { level: 'HIGH', score: 76, items: [] }, risk: risk || [], watch: watch || [], missing: ['מלאי: ארצי בלבד'], missingIds: ['inventory'], salesScope: 'district', generatedAt: at || FRESH, narrative: [], landEconomics: null }, over || {});
+const dossierOf = (risk, watch, at, over) => Object.assign({ geo: { level: 'locality', code: '7900', name: { he: 'פתח תקווה', en: 'Petah Tiqwa' } }, quality: { level: 'HIGH', score: 76, items: [] }, risk: clone(risk || []), watch: clone(watch || []), missing: ['מלאי: ארצי בלבד'], missingEn: ['inventory: national only'], missingIds: ['inventory'], salesScope: 'district', generatedAt: at || FRESH, narrative: [], landEconomics: null }, over || {});   // items cloned: a gate may mutate its own read, never the shared constants
 const base = (at) => ({ retrievedAt: at || FRESH, city: 'פתח תקווה', cityCode: '7900', street: null, tx: { n: 57, newN: 12, median: 30000, newMedian: 31000, from: '2025-10-01', to: '2026-09-30', via: 'over.org.il' }, land: { tenders: 12, unitsOpen: 400, unitsAwarded: 1545, unitsPendingDecision: 120 }, housing: { lotteries: 3, projects: 2, units: 300 },
   pipeline: { total: 9, stageCounts: { awarded: 5, lottery: 4 }, recent: [] }, rental: { tenders: 2, tenderUnits: 240, withNotice: 1, checkedAt: at || FRESH }, entries: { total: 1 }, devIntel: { id: 'dev-1', name: 'אורון מגורים', lots: 4, units: 320, lastWin: '2026-03-02', projects: 1, lotteryUnits: 120, lastLottery: '2025-11-11', cities: 2, construction: { buildings: 3, started: 2, completed: 1, asOf: '2026-06-30' }, possibleSame: 0 } });
 const NEUTRAL = (at) => Object.assign(base(at), { dossier: dossierOf([], [item('open-land', 'opportunity', { m: 2 })], at), radar: { opportunities: [item('open-land', 'opportunity', { m: 2 })], risks: [], builtAt: at || FRESH, served: 'file' } });
@@ -172,7 +172,7 @@ t('a condition can be resolved only by documented evidence / rule: TAKE WITH CON
 });
 t('a condition cannot disappear because data is missing: TAKE WITH CONDITIONS (F3) + no new read / a read without dossier and radar → INSUFFICIENT NEW EVIDENCE, the market condition stays, the decision stays, the status is kept', () => {
   const B = decided('park-18', CAUTION());
-  for (const m of [null, Object.assign(base(FRESH2), { dossier: null, radar: null })]) { const r = TH.reassess(B.snap, now(B.snap, m)); assert.equal(r.state, 'INSUFFICIENT_NEW_EVIDENCE'); assert.equal(r.rule, 'TH-NOREAD'); assert.equal(r.status, null); assert.equal(r.current.verdict, 'TAKE_WITH_CONDITIONS'); assert.ok(r.current.conditions.some((c) => c.id === 'market-caution')); assert.equal(r.retrospective.answer, 'CANNOT_DETERMINE'); assert.match(r.narrative[0].en, /absence of evidence is not positive evidence/i); }
+  for (const m of [null, Object.assign(base(FRESH2), { dossier: null, radar: null })]) { const r = TH.reassess(B.snap, now(B.snap, m)); assert.equal(r.state, 'INSUFFICIENT_NEW_EVIDENCE'); assert.equal(r.rule, m ? 'TH-PARTIAL' : 'TH-NOREAD'); assert.equal(r.status, null); assert.equal(r.current.verdict, 'TAKE_WITH_CONDITIONS'); assert.ok(r.current.conditions.some((c) => c.id === 'market-caution')); assert.equal(r.retrospective.answer, 'CANNOT_DETERMINE'); assert.match(r.narrative[0].en, /absence of evidence is not positive evidence/i); }
 });
 t('weak evidence cannot create a strong override: a LOW-evidence negative, a DERIVED negative or a national figure never adds a condition or moves the verdict; one material negative alone is THESIS WEAKENED with no decision impact', () => {
   const A = decided('park-18', NEUTRAL());
@@ -184,7 +184,7 @@ t('stale evidence cannot masquerade as current: a new read older than 30 days �
   const B = decided('park-18', CAUTION());
   const stale = NEUTRAL('2026-08-20T00:00:00Z'); const r = TH.reassess(B.snap, now(B.snap, stale)); assert.equal(r.state, 'INSUFFICIENT_NEW_EVIDENCE'); assert.ok(r.current.conditions.some((c) => c.id === 'market-caution'), 'a stale NEUTRAL read must not resolve the condition'); assert.match(r.changes[0].text.en, /older than 30 days/);
   const A = decided('park-18', NEUTRAL()); const a = TH.reassess(A.snap, now(A.snap, NEUTRAL('2027-02-10T00:00:00Z'), { today: '2027-02-12' }));
-  const ag = a.changes.find((c) => c.rule === 'TH-AGING'); assert.ok(ag && ag.category === 'SOURCE_EVIDENCE' && ag.impact === 'EVIDENCE' && ag.materiality === 'RELEVANT'); assert.equal(a.state, 'NO_MATERIAL_THESIS_CHANGE'); assert.equal(a.attention.key, 'SOURCE_ISSUE'); assert.match(a.narrative.map((p) => p.en).join(' '), /evidence aging, not a negative signal/);
+  const ag = a.changes.find((c) => c.rule === 'TH-AGING'); assert.ok(ag && ag.category === 'SOURCE_EVIDENCE' && ag.impact === 'EVIDENCE' && ag.materiality === 'RELEVANT'); assert.equal(a.state, 'NO_MATERIAL_THESIS_CHANGE'); assert.equal(a.attention.key, 'NEW_INFORMATION', 'aging alone never parks a deal in the sources bucket'); assert.match(a.narrative.map((p) => p.en).join(' '), /evidence aging, not a negative signal/);
 });
 t('a source that turns STALE is "source stale", not a new negative; a recovered source is noted; a CBS period / value move is informational', () => {
   const A = decided('park-18', NEUTRAL());
@@ -214,7 +214,7 @@ t('district-to-city leakage: the district series factor keeps geoScope "district
 });
 t('then-vs-now is historically correct: THEN carries the original verdict, market status, evidence and conditions from the snapshot; NOW the decision under the same policy; what changed (material first) and what did not; why it matters; next to watch', () => {
   const B = decided('park-18', CAUTION()); const r = TH.reassess(B.snap, now(B.snap, NEUTRAL(FRESH2))); const v = r.thenVsNow;
-  assert.equal(v.status, 'REVIEW_REQUIRED'); assert.equal(v.original.verdict, 'TAKE_WITH_CONDITIONS'); assert.equal(v.original.market, 'CAUTION'); assert.equal(v.original.evidence, 'HIGH'); assert.equal(v.original.conditions.length, 1); assert.equal(v.original.decidedAt, TODAY);
+  assert.equal(v.status, 'CHANGED'); assert.equal(r.status, 'CHANGED'); assert.equal(v.original.verdict, 'TAKE_WITH_CONDITIONS'); assert.equal(v.original.market, 'CAUTION'); assert.equal(v.original.evidence, 'HIGH'); assert.equal(v.original.conditions.length, 1); assert.equal(v.original.decidedAt, TODAY);
   assert.equal(v.current.verdict, 'TAKE'); assert.equal(v.current.market, 'NEUTRAL'); assert.equal(v.current.conditions.length, 0); assert.equal(v.current.rule, 'F5');
   assert.ok(v.whatChanged.length >= 1 && v.whatChanged[0].materiality.en === 'DECISION-IMPACTING CHANGE'); assert.ok(v.whatDidNotChange.length === 6); assert.match(v.whyItMatters.en, /resolved the condition/); assert.equal(v.resolved.length, 1);
   assert.ok(v.nextToWatch && v.nextToWatch.fact);
@@ -244,6 +244,41 @@ t('dossier history integration: the geography\'s own changes since the decision 
   const r = TH.reassess(A.snap, now(A.snap, NEUTRAL(FRESH2), { dossierHistory: hist })); assert.equal(r.geoChanges.length, 2); assert.ok(r.geoChanges.every((g) => g.category === 'GEOGRAPHY' && g.impact === 'NONE')); assert.match(r.geoChanges[0].text.en, /1,545 → 2,140/); assert.equal(r.state, 'NO_MATERIAL_THESIS_CHANGE');
   const rc = TH.reassess(A.snap, now(A.snap, CAUTION(FRESH2), { dossierHistory: hist })); const g = rc.geoChanges.find((x) => x.id === 'geo:sales.momentum3m'); assert.equal(g.impact, 'ASSESSMENT_MOVED'); assert.equal(g.contributes, 'sales-momentum-down');
   const rn = TH.reassess(A.snap, now(A.snap, NEUTRAL(FRESH2), { dossierHistory: { status: 'NO_SNAPSHOT', reason: { he: 'אין', en: 'no snapshots yet' } } })); assert.deepEqual(rn.geoChanges, []); assert.ok(rn.notes.some((n) => /NO_SNAPSHOT/.test(n.en)));
+});
+
+t('REVIEW M1 · a partial read never resolves a condition: an unanswered source (radarError / txError) or a source the snapshot had and the new read lacks → INSUFFICIENT NEW EVIDENCE (rule TH-PARTIAL), the market condition stays, nothing is "resolved"', () => {
+  const B = decided('park-18', CAUTION());
+  const noRadar = NEUTRAL(FRESH2); delete noRadar.radar; noRadar.radarError = 'HTTP 502';
+  const r = TH.reassess(B.snap, now(B.snap, noRadar)); assert.equal(r.state, 'INSUFFICIENT_NEW_EVIDENCE'); assert.equal(r.rule, 'TH-PARTIAL'); assert.ok(r.current.conditions.some((c) => c.id === 'market-caution')); assert.equal(r.current.verdict, 'TAKE_WITH_CONDITIONS'); assert.match(r.changes[0].text.en, /unanswered \/ missing: radar/); assert.deepEqual(r.conditions, undefined);
+  const noTx = NEUTRAL(FRESH2); delete noTx.tx; noTx.txError = 'timeout'; const r2 = TH.reassess(B.snap, now(B.snap, noTx)); assert.equal(r2.rule, 'TH-PARTIAL');
+  const silent = NEUTRAL(FRESH2); delete silent.radar; const r3 = TH.reassess(B.snap, now(B.snap, silent)); assert.equal(r3.rule, 'TH-PARTIAL', 'a missing source without an error flag is still partial against a snapshot that had it');
+  const okRead = TH.reassess(B.snap, now(B.snap, NEUTRAL(FRESH2))); assert.equal(okRead.state, 'CONDITION_RESOLVED', 'the complete fresh read still resolves');
+});
+t('REVIEW M2 · weaker evidence never resolves a condition: the same negative facts with a lower evidence quality → INSUFFICIENT NEW EVIDENCE (rule TH-NEG-UNCOUNTABLE), the condition stays, retrospective CANNOT DETERMINE; a changed class (OFFICIAL → DERIVED) likewise', () => {
+  const B = decided('park-18', CAUTION());
+  const low = CAUTION(FRESH2); low.dossier.quality = { level: 'LOW', score: 30, items: [] }; low.radar.risks[0].evidence = { level: 'LOW', score: 20 };
+  const r = TH.reassess(B.snap, now(B.snap, low)); assert.equal(r.state, 'INSUFFICIENT_NEW_EVIDENCE'); assert.equal(r.rule, 'TH-NEG-UNCOUNTABLE'); assert.ok(r.current.conditions.some((c) => c.id === 'market-caution')); assert.equal(r.current.verdict, 'TAKE_WITH_CONDITIONS'); assert.equal(r.retrospective.answer, 'CANNOT_DETERMINE');
+  assert.ok(r.changes.filter((c) => c.rule === 'TH-NEG-UNCOUNTABLE').length >= 1); assert.ok(r.changes.every((c) => c.impact !== 'CONDITION_RESOLVED')); assert.match(r.narrative[0].en, /Weaker evidence never resolves a condition/);
+  const derived = CAUTION(FRESH2); derived.radar.risks[0].cls = 'DERIVED'; derived.dossier.risk[0].cls = 'DERIVED'; const r2 = TH.reassess(B.snap, now(B.snap, derived)); assert.equal(r2.rule, 'TH-NEG-UNCOUNTABLE'); assert.equal(r2.current.verdict, 'TAKE_WITH_CONDITIONS');
+});
+t('REVIEW M4 · a thesis without a market assessment at decision time (context not loaded / a baseline on a stale read): the first fresh read is a FIRST ASSESSMENT — its factors are TH-FIRST-ASSESSMENT (informational), nothing is "new versus then", no status move, retrospective CANNOT DETERMINE; a CAUTION first read still adds the market condition under F3 (the policy)', () => {
+  const M = decided('park-18', null); assert.equal(M.snap.market.status, 'INSUFFICIENT');
+  const n = TH.reassess(M.snap, now(M.snap, NEUTRAL(FRESH2))); assert.equal(n.state, 'NO_MATERIAL_THESIS_CHANGE'); assert.ok(n.changes.filter((c) => c.category === 'MARKET_EVIDENCE').every((c) => c.rule === 'TH-FIRST-ASSESSMENT' && c.materiality === 'INFORMATIONAL')); assert.ok(!n.changes.some((c) => c.id === 'status')); assert.equal(n.retrospective.answer, 'CANNOT_DETERMINE'); assert.match(n.narrative.map((p) => p.en).join(' '), /this is the first assessment/);
+  const c = TH.reassess(M.snap, now(M.snap, CAUTION(FRESH2))); assert.equal(c.state, 'DECISION_REQUIRES_REVIEW'); assert.equal(c.current.rule, 'F3'); assert.ok(!c.changes.some((x) => x.rule === 'TH-NEG-NEW')); assert.equal(c.retrospective.answer, 'CANNOT_DETERMINE');
+  const stale = decided('park-18', NEUTRAL('2026-06-01T00:00:00Z')); assert.ok(stale.snap.market.factors.every((f) => !f.material), 'a stale read at save time: every factor informational');
+});
+t('REVIEW m3 · the portfolio next-best-evidence aggregation has a total order: the same list in any order gives the same ranking, ties included', () => {
+  const A = decided('park-18', NEUTRAL()), B = decided('park-18', CAUTION()), G = decided('ganei-hapark', NEUTRAL()), P = decided('park-18', NEUTRAL(), { deal: (d) => { d.info.constructionStatus = 'planning'; d.info.developerRating = 'unassessed'; } });
+  const items = [A, B, G, P].map((x, i) => ({ dealId: 'd' + i, snapshot: x.snap, nbe: TH.nextBestEvidence(x.snap), lastCheck: null }));
+  const key = (l) => JSON.stringify(TH.portfolio(l).nbe.map((x) => [x.id, x.fact.en, x.deals]));
+  assert.equal(key(items), key(items.slice().reverse())); assert.equal(key(items), key([items[2], items[0], items[3], items[1]]));
+});
+t('REVIEW m6 · a store written by a newer / unknown schema is read as empty and never overwritten; a failed persist of a check is reported', () => {
+  const ad = TH.memoryAdapter(); ad.set('altaris:thesis:v1', { schema: 2, records: { x: 1 } });
+  const repo = TH.createRepository(ad); const A = decided('park-18', NEUTRAL());
+  const r = repo.init('d1', A.snap, { contract: TH.contract(A.snap), watch: TH.watchlist(A.snap), nbe: TH.nextBestEvidence(A.snap) }); assert.equal(r.ok, false); assert.match(r.reason, /schema 2/);
+  assert.deepEqual(ad.get('altaris:thesis:v1'), { schema: 2, records: { x: 1 } }, 'the foreign blob is untouched');
+  assert.equal(repo.get('d1'), null); assert.equal(repo.recordCheck('d1', TH.reassess(A.snap, now(A.snap, null))).ok, false);
 });
 
 console.log('live thesis: contract, next best evidence, watchtower');
@@ -285,10 +320,10 @@ t('portfolio attention ordering is deterministic (review > new condition > worse
   const A = decided('park-18', NEUTRAL()), B = decided('park-18', CAUTION()), G = decided('ganei-hapark', NEUTRAL()), H = decided('hanassi-42', NEUTRAL());
   const mk = (id, X0, lc, monitor) => ({ dealId: id, name: id, monitor: monitor || 'LIVE', snapshot: X0.snap, nbe: TH.nextBestEvidence(X0.snap), lastCheck: lc, status: 'SUPPORTED' });
   const list = [mk('p-ok', A, TH.reassess(A.snap, now(A.snap, NEUTRAL(FRESH2)))), mk('p-review', A, TH.reassess(A.snap, now(A.snap, CAUTION(FRESH2)))), mk('p-resolved', B, TH.reassess(B.snap, now(B.snap, NEUTRAL(FRESH2)))), mk('p-newcond', G, TH.reassess(G.snap, now(G.snap, CAUTION(FRESH2)))), mk('p-weak', A, TH.reassess(A.snap, now(A.snap, ONE_NEG(FRESH2)))),
-    mk('p-info', A, TH.reassess(A.snap, now(A.snap, WEAK_NEG(FRESH2)))), mk('p-none', A, null), mk('p-paused', A, null, 'PAUSED'), mk('p-pass', H, TH.reassess(H.snap, now(H.snap, CAUTION(FRESH2)))), mk('p-deal', A, TH.reassess(A.snap, now(A.snap, NEUTRAL(FRESH2), { dealHash: 'x' }))), mk('p-aging', A, TH.reassess(A.snap, now(A.snap, NEUTRAL('2027-02-10T00:00:00Z'), { today: '2027-02-12' })))];
+    mk('p-info', A, TH.reassess(A.snap, now(A.snap, WEAK_NEG(FRESH2)))), mk('p-none', A, null), mk('p-paused', A, null, 'PAUSED'), mk('p-pass', H, TH.reassess(H.snap, now(H.snap, CAUTION(FRESH2)))), mk('p-deal', A, TH.reassess(A.snap, now(A.snap, NEUTRAL(FRESH2), { dealHash: 'x' }))), mk('p-aging', A, TH.reassess(A.snap, now(A.snap, NEUTRAL('2027-02-10T00:00:00Z'), { today: '2027-02-12' }))), mk('p-conflict', A, (() => { const m = NEUTRAL(FRESH2); m.tx.median = Math.round(A.snap.assumptions.supportedValue / A.snap.assumptions.sqm * 0.7); return TH.reassess(A.snap, now(A.snap, m)); })())];
   const P = TH.portfolio(list);
-  assert.deepEqual(P.rows.map((r) => r.dealId), ['p-review', 'p-newcond', 'p-weak', 'p-deal', 'p-aging', 'p-resolved', 'p-info', 'p-pass', 'p-ok', 'p-none', 'p-paused'], JSON.stringify(P.rows.map((r) => [r.dealId, r.attention.key])));
-  assert.equal(P.summary.total, 11); assert.equal(P.summary.requiresReview, 1); assert.equal(P.summary.newCondition, 1); assert.equal(P.summary.resolved, 1); assert.equal(P.summary.notChecked, 1); assert.equal(P.summary.paused, 1); assert.equal(P.summary.dealChanged, 1); assert.equal(P.summary.sourceIssue, 1);
+  assert.deepEqual(P.rows.map((r) => r.dealId), ['p-review', 'p-newcond', 'p-weak', 'p-deal', 'p-conflict', 'p-resolved', 'p-aging', 'p-info', 'p-pass', 'p-ok', 'p-none', 'p-paused'], JSON.stringify(P.rows.map((r) => [r.dealId, r.attention.key])));
+  assert.equal(P.summary.total, 12); assert.equal(P.summary.requiresReview, 1); assert.equal(P.summary.newCondition, 1); assert.equal(P.summary.resolved, 1); assert.equal(P.summary.notChecked, 1); assert.equal(P.summary.paused, 1); assert.equal(P.summary.dealChanged, 1); assert.equal(P.summary.sourceIssue, 1);
   assert.ok(!('score' in P) && !P.rows.some((r) => 'score' in r), 'no black-box portfolio score');
   assert.ok(P.nbe.length >= 1 && P.nbe.some((x) => x.deals >= 2) && P.nbe.every((x) => x.relevanceLabel) && TH.RELEVANCE[P.nbe[0].relevance].rank >= TH.RELEVANCE[P.nbe[P.nbe.length - 1].relevance].rank); assert.equal(JSON.stringify(TH.portfolio(list.slice().reverse()).rows.map((r) => r.dealId)), JSON.stringify(P.rows.map((r) => r.dealId)));
 });

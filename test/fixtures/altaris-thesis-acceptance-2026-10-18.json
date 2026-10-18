@@ -263,6 +263,8 @@
    "attention": "NO_MATERIAL_THESIS_CHANGE",
    "revision": {
     "id": "44,10:d-center#2",
+    "geo": "d-center",
+    "geoName": null,
     "measure": "new_sold",
     "period": "2026-07",
     "original": 812,
@@ -522,7 +524,7 @@
     "1. verified building permit / construction start — HIGH (CONDITION)",
     "2. a review of the structure's material defaults — LOW (EVIDENCE)",
     "3. an underwriting value from an independent source (appraisal / comparables / PROPX) — LOW (EVIDENCE)",
-    "4. מלאי: ארצי בלבד — INFORMATIONAL (NONE)"
+    "4. inventory: national only — INFORMATIONAL (NONE)"
    ]
   },
   {

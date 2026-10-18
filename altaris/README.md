@@ -199,7 +199,12 @@ decision — and tells you when the facts behind it materially change.*
 - `reassess(snapshot, now)` → the DECISION DELTA. `now` = a fresh page-shaped market read + CBS context + indicators +
   `dealHash` / `settingsHash` + the dossier-history diff since the decision + the district's revision rows. Rules:
   changed assumptions → `DEAL_CHANGED` (TH-DEAL, a re-underwrite, never a reassessment); no fresh read (dossier + radar ≤ 30
-  days) → `INSUFFICIENT_NEW_EVIDENCE`, every condition stays (missing evidence is not positive evidence); otherwise the FROZEN
+  days), a PARTIAL read (an unanswered source, or a source the snapshot had and the new read lacks — TH-PARTIAL) or the same
+  negative facts on weaker evidence (TH-NEG-UNCOUNTABLE: a factor behind the market condition still present, demoted only by its
+  evidence quality / class) → `INSUFFICIENT_NEW_EVIDENCE`, every condition stays (missing or weaker evidence is never positive
+  evidence); a decision taken without a market assessment (context not loaded, or a baseline built on a stale read) treats the
+  first fresh read as a FIRST ASSESSMENT (TH-FIRST-ASSESSMENT: a first read, never "new versus then"; a condition it adds is
+  real under F3 / F4; retrospective CANNOT DETERMINE); otherwise the FROZEN
   economic verdict ∘ the new assessment through `finalOf` → states NO_MATERIAL_THESIS_CHANGE · THESIS_STRENGTHENED ·
   CONDITION_RESOLVED (TH-F5-RESOLVE) · NEW_CONDITION_TRIGGERED (TH-F4) · THESIS_WEAKENED (one material negative, noted) ·
   DECISION_REQUIRES_REVIEW (TH-F3). Every change carries category (DEAL_ASSUMPTION · MARKET_EVIDENCE · PROJECT_EXECUTION ·
@@ -216,8 +221,9 @@ decision — and tells you when the facts behind it materially change.*
   evidence across deals (one count per deal). No score.
 - `createRepository(adapter)` → append-only records over `{ get, set }` (`altaris:thesis:v1`; `memoryAdapter` in tests):
   `init` (created · unchanged · appended REUNDERWRITE / REDECIDE · refused — the original snapshot is never replaced),
-  `recordCheck`, `setMonitor` (LIVE / PAUSED), `integrity`. See `altaris/THESIS_PERSISTENCE.md` for the future store contract
-  (documentation only; Supabase is not activated).
+  `recordCheck`, `setMonitor` (LIVE / PAUSED), `integrity`; a store blob of an unknown schema is read as empty and never
+  overwritten. See `altaris/THESIS_PERSISTENCE.md` for the future store contract (documentation only; Supabase is not activated —
+  and a server adapter will need the repository API to become asynchronous, which is stated there).
 
 **Page wiring (`altaris/app.js`).** Saving a deal that carries a decision keeps its thesis automatically (`thesisOnSave`: the
 saved-deal architecture already stamps the decision on every version). `fetchMarket(info)` is the read-only PROPX read shared
@@ -243,6 +249,16 @@ creates no delta; a material change creates the documented delta; a condition is
 or stale data; weak evidence never overrides; stale reads never masquerade as current; conflicts and revisions preserve both
 values; then-vs-now and the retrospective are historically correct; NBE ranking and the portfolio order are deterministic; no
 Supabase code path; the existing ALTARIS suites (engine hash, frozen baseline, decision, market) are unchanged.
+
+**Independent review (18.10.2026, fixed before release).** M1 a partial read (one endpoint failing) could resolve the market
+condition → TH-PARTIAL fail-closed; M2 the same negative facts on weaker evidence dissolved CAUTION → TH-NEG-UNCOUNTABLE keeps
+the condition; M3 the backfill ran the portfolio engine once per deal (O(N²)) → the portfolio rows are computed once per
+saved-deals revision, failed ensures are memoised, check-all repaints once; M4 a baseline built on a stale stored read reported
+every pre-existing factor as NEW on the first check → such a baseline carries no assessment and the first check is a FIRST
+ASSESSMENT. Minor: then-vs-now status follows the delta state; revisions carry their geography and a softer impact wording;
+the portfolio NBE aggregation has a total order; aging alone is new information, not a source issue; an unknown store schema
+is never overwritten; REDECIDE / REUNDERWRITE events carry the economics of both versions; CHECK events are slim; the
+`thesis_breaker` term exists; the dossier's missing facts travel in both languages; developer-activity keys are named.
 
 **Known limitations.** Theses live in this browser only (like the saved deals) until the PROPX store is connected. Evidence
 quality is frozen in the snapshot: read aging is reported, the deduction applies only on a re-underwrite. Project execution

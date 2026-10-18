@@ -17,7 +17,7 @@ integration contract for the day the PROPX store is connected — so that the mo
 | `live_thesis` (record) | `dealId` (= the saved deal's id, a UUID the page mints) | `records[dealId]` | mutable envelope: `monitor`, `status`, `lastCheck` |
 | `thesis_version` | `(dealId, n)` | `record.versions[]` | append-only (`REUNDERWRITE` / `REDECIDE`) |
 | `thesis_contract` · `thesis_watch` · `next_best_evidence` | with the version | `versions[n].contract / watch / nbe` | derived from the snapshot, frozen with it |
-| `thesis_event` | `(dealId, n)` | `record.events[]` | append-only: `BASELINE` · `REUNDERWRITE` · `REDECIDE` · `CHECK` · `PAUSE` · `RESUME` |
+| `thesis_event` | `(dealId, n)` | `record.events[]` | append-only: `BASELINE` · `REUNDERWRITE` / `REDECIDE` (each with the economics of both versions) · `CHECK` (a slim summary: state · materiality · rule · change ids) · `PAUSE` · `RESUME` |
 | `decision_delta` (a check) | the `CHECK` event + `record.lastCheck` | event summary + the full last result | the event is immutable; `lastCheck` is the latest full result |
 | `thesis_status_history` | `(dealId, i)` | `record.statusHistory[]` | append-only |
 
@@ -123,7 +123,18 @@ create table user_state.thesis_status_history (
 - The adapter contract stays `{ get, set }` on the page (whole-record read / write); a server adapter implements the same
   two calls over PROPX's API with optimistic concurrency on `events.length`.
 
-## 8 · What a server adapter must NOT change
+## 8 · What a server adapter will have to change (honest note, review 18.10.2026)
+
+The browser adapter is **synchronous and whole-blob** (`get(key)` / `set(key, value)`; every write reloads and rewrites the one
+record map). A server store is **asynchronous and per-row** (insert-only versions / events, optimistic concurrency on the
+event count). Moving to it is therefore not a drop-in adapter swap: the repository's public API (`init`, `recordCheck`,
+`setMonitor`, `get`, `all`) must become promise-returning and the page's call sites must await them. The LOGIC does not
+change — `snapshot`, `contract`, `nextBestEvidence`, `watchlist`, `reassess`, `portfolio` stay pure functions over plain
+data — and the gates in `test/altaris-thesis.test.js` that run the repository over the in-memory adapter are the contract
+the async repository must still satisfy. The browser record is also the import source (§7). A store whose stored blob
+carries an unknown `schema` is read as empty and never overwritten by the browser repository (`foreign` guard).
+
+## 9 · What a server adapter must NOT change
 
 The logic. `snapshot`, `contract`, `nextBestEvidence`, `watchlist`, `reassess`, `portfolio` take and return plain data;
 the repository is the only piece that touches storage. The tests in `test/altaris-thesis.test.js` run the repository over
