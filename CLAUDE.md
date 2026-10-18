@@ -13,7 +13,10 @@
   data layer (provider architecture, normalized transaction schema, snapshots; see `lib/gov/README.md`).
 - `lib/geo/` + `api/geo/` + `data/geo/` + `scripts/build-geo-registry.py` + `scripts/geo-audit.js`
   = the national geography registry (every official locality + street, canonical codes, search API,
-  coverage audit).
+  coverage audit). `lib/geo/boundaries.js` + `scripts/build-geo-boundaries.py` + `test/geo-boundaries.test.js` (18.10.2026) = the map's
+  geography: the six CBS district boundaries, the country outline and the West Bank / Gaza areas from Natural Earth 1:10m (public
+  domain; inputs not committed), `[lat, lng]` rings, geometry only — no market value; the page's `#map` draws them with a true-aspect
+  equirectangular projection (the hand-drawn constants stay as the fallback), inlined in the offline build (see `lib/geo/README.md`).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled
@@ -262,7 +265,8 @@
   default; missing values ALWAYS last (never 0); typed column filters (contains · any of · min..max · from..to · yes/no ·
   exact place, `f_<col>=`) that intersect; a column sorts on the value it shows. Paged tables sort/filter on the server
   over the whole filtered set (land tenders + cities/developers `cs`/`ds`, housing, developers/projects/entries, renewal);
-  small tables sort all their rows (`ptRows` / `ptDom`). Per-table state in the URL (`<key>.s/.p/.f.<col>/.x.<facet>`) +
+  small tables sort all their rows (`ptRows` / `ptDom`; since 18.10.2026 also the dossier's freshness + developers tables, the Pulse
+  revisions, the developer drawer's land by track and the capital bulk table — `PT_DOM` keys dsfresh · dsdevs · purev · indl · cibulk). Per-table state in the URL (`<key>.s/.p/.f.<col>/.x.<facet>`) +
   sessionStorage. UMD: the page loads `/lib/table/core.js` (inlined in the offline build), ALTARIS too (state in memory).
   The board keeps `rankable` (official values only) and sorts sales on `txShown`, never `base.tx`.
 - `lib/rental/` + `scripts/rental-sync.js` + `.github/workflows/rental-sync.yml` + `data/rental/` + `test/rental.test.js`

@@ -67,6 +67,13 @@ xp = (ROOT / "lib" / "explain" / "registry.js").read_text(encoding="utf-8")
 assert "</script" not in xp.lower(), "explain registry must not close the script element"
 s = s.replace(TAG4, "<script>\n" + xp + "</script>", 1)
 
+# the map geography (lib/geo/boundaries.js) — Natural Earth boundaries, geometry only, inlined the same way
+TAG5 = '<script src="/lib/geo/boundaries.js"></script>'
+assert s.count(TAG5) == 1
+geo = (ROOT / "lib" / "geo" / "boundaries.js").read_text(encoding="utf-8")
+assert "</script" not in geo.lower(), "geo boundaries must not close the script element"
+s = s.replace(TAG5, "<script>\n" + geo + "</script>", 1)
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

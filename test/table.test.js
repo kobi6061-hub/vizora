@@ -241,4 +241,14 @@ t('the board still ranks only official values; the deals table says when it sort
   assert.match(INDEX, /const more=reg&&txState\.more,note=/); assert.match(INDEX, /async function txLoadAll\(\)/);
 });
 
+t('18.10.2026 — every remaining data table sorts: the dossier freshness + developers tables, the Pulse revisions, the developer drawer land by track and the capital bulk table carry data-ptdom with a PT_DOM spec; mixed period formats sort on a day key the cell carries (data-v), the shown text unchanged', () => {
+  const specs = Object.fromEntries([...INDEX.matchAll(/^  (\w+):"([^"]+)"/gm)].map((m) => [m[1], m[2]]));
+  for (const [k, n] of [['dsfresh', 5], ['dsdevs', 6], ['purev', 7], ['indl', 5], ['cibulk', 5]]) { assert.ok(specs[k], k); assert.equal(specs[k].split(',').length, n, k); assert.ok(INDEX.includes(`data-ptdom="${k}"`), k + ' table'); }
+  assert.match(INDEX, /ptDomAll\(body\);/); assert.match(INDEX, /ptDomAll\(box\);/); assert.match(INDEX, /ptDomAll\(el\("capital"\)\);/); assert.match(INDEX, /ptDomAll\(el\("ciDetailIn"\)\);/);
+  const fn = INDEX.match(/const ptDayKey=v=>\{[^\n]+\};/)[0]; const ptDayKey = new Function(fn + 'return ptDayKey;')();
+  assert.equal(ptDayKey('2026-10-15T08:00:00Z'), '2026-10-15'); assert.equal(ptDayKey('2026-08'), '2026-08-31'); assert.equal(ptDayKey('2026-Q2'), '2026-06-31'); assert.equal(ptDayKey(null), '');
+  assert.ok(['2026-06-31', '2026-08-31', '2026-10-15'].every((v, i, a) => !i || a[i - 1] < v), 'quarter < month < day keys order chronologically');
+  assert.match(INDEX, /data-v="\$\{ptDayKey\(f\.observed\)\}">\$\{ldE\(f\.observed\?puDay\(f\.observed\):"—"\)\}/, 'the shown text is unchanged');
+});
+
 console.log(`\ntables: ${passed} passed${process.exitCode ? ', SOME FAILED' : ''}`);

@@ -30,3 +30,11 @@ button opening a small dialog (labelled fields, Escape closes, focus returns, Ta
 560 px). Card views on narrow screens get a sort select and a filter button; active filters show as removable chips.
 
 Tests: `test/table.test.js`.
+
+**DOM-sorted tables added 18.10.2026** (`PT_DOM` keys): the dossier's source-freshness table (`dsfresh` — observation /
+publication / check columns sort on a day key `data-v` built by `ptDayKey` from the ISO day, the "YYYY-MM" month or the
+"YYYY-Qn" quarter the cell prints; the text stays as shown), the dossier's leading-developers table (`dsdevs`), the Pulse
+revisions table (`purev` — the "old → new" column sorts on the new value), the developer drawer's land basis by track (`indl`)
+and the capital section's bulk-purchase table (`cibulk`). Key / value matrices whose rows carry different units (the capital
+scenario and exit tables, the developer drawer's all / recent stats, the renewal MoCH ↔ XPlan comparison) are not sorted —
+a column there would compare a percent with a sum.

@@ -333,6 +333,10 @@ section.blk{padding-block:22px}
 .geo-dot{cursor:pointer;stroke:var(--panel);transform-box:fill-box;transform-origin:center;
   transition:transform .18s,filter .18s,opacity .12s}
 .geo-dot:hover{transform:translateY(-1px);filter:drop-shadow(0 2px 2px rgba(12,13,15,.3))}
+.map-sea{fill:var(--tint)}
+.map-coast{stroke:var(--baseline);opacity:.9}
+.map-area{fill:url(#mapHatch);stroke:var(--baseline);pointer-events:none}
+.map-area-lbl{font-family:var(--f-body);font-weight:600;fill:var(--ink-3);pointer-events:none;direction:ltr;opacity:.85}
 .map-grid line{stroke:var(--grid-ln);stroke-width:.55;stroke-dasharray:3 5}
 .map-grid text{font-size:5.5px;fill:var(--baseline);direction:ltr;font-family:var(--f-body)}
 .map-scope{display:flex;align-items:baseline;gap:7px;align-self:flex-start;min-width:0;
@@ -1978,6 +1982,7 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 
 <script src="/lib/table/core.js"></script>
 <script src="/lib/explain/registry.js"></script>
+<script src="/lib/geo/boundaries.js"></script>
 <script src="/data/market/latest.js"></script>
 <script src="/data/cbs-sales/latest.js"></script>
 <script>
@@ -3737,7 +3742,14 @@ const el=(id)=>document.getElementById(id);
    5 · MAP GEOMETRY
    ===================================================================== */
 const MAP_W=250,MAP_H=520;
-const proj=(lat,lng)=>[ (lng-34.12)/1.66*MAP_W, (33.38-lat)/3.95*MAP_H ];
+/* equirectangular with the true aspect at Israel's mid-latitude: one degree of longitude = cos(31.45°) ≈ 0.853 of a degree of
+   latitude, so the country keeps its real proportions; the land (29.49°–33.41° N, 34.20°–35.89° E) is centred in the viewBox */
+const MAP_LAT_TOP=33.50,MAP_LAT_SPAN=4.10,MAP_KY=MAP_H/MAP_LAT_SPAN,MAP_KX=MAP_KY*Math.cos(31.45*Math.PI/180),MAP_LNG0=35.045-(MAP_W/2)/MAP_KX;
+const proj=(lat,lng)=>[ (lng-MAP_LNG0)*MAP_KX, (MAP_LAT_TOP-lat)*MAP_KY ];
+/* lib/geo/boundaries.js (Natural Earth 1:10m, public domain): the six district boundaries, the country outline, the West Bank and
+   Gaza as areas. Geometry only. The hand-drawn constants below remain the fallback when the module is absent. */
+const GEO=(typeof window!=="undefined"&&window.PROPX_GEO&&window.PROPX_GEO.districts&&window.PROPX_GEO.land)?window.PROPX_GEO:null;
+const ringPath=pts=>pts.map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join("")+"Z";
 const ISRAEL_PTS=[
   [33.09,35.10],[33.28,35.57],[33.25,35.65],[32.85,35.68],[32.70,35.62],[32.40,35.57],
   [31.90,35.53],[31.50,35.47],[31.15,35.40],[30.60,35.20],[29.95,35.05],[29.55,34.97],
@@ -3745,8 +3757,10 @@ const ISRAEL_PTS=[
   [31.52,34.51],[31.60,34.56],[31.80,34.63],[32.05,34.74],[32.45,34.86],[32.75,34.96],
   [32.92,35.03],[33.05,35.09]
 ];
-const israelPath=ISRAEL_PTS.map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(","))
-  .join(" ")+" Z";
+const israelPath=GEO?ringPath(GEO.land)+ringPath(GEO.areas.westBank)+ringPath(GEO.areas.gaza)   /* the land silhouette: Israel + the West Bank + Gaza, three subpaths */
+  :ISRAEL_PTS.map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join(" ")+" Z";
+const areaPath=k=>(GEO&&GEO.areas[k]?ringPath(GEO.areas[k]):"");
+const AREA_LABEL={westBank:{at:[32.02,35.28],he:"יו״ש",en:"West Bank"},gaza:{at:[31.42,34.38],he:"עזה",en:"Gaza"}};
 /* district bands (lat ranges + optional lng cut), later ones drawn on top */
 const DISTRICT_GEO={
   "d-south":{lat:[28.9,31.78],lng:[33.9,35.8]},
@@ -3770,7 +3784,7 @@ const DIST_ORDER=["d-south","d-center","d-jm","d-north","d-haifa","d-ta"];
 const _distPathCache={};
 function distPath(id){
   if(_distPathCache[id])return _distPathCache[id];
-  const d=DISTRICT_POLY[id].map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join("")+"Z";
+  const d=GEO&&GEO.districts[id]?ringPath(GEO.districts[id]):DISTRICT_POLY[id].map((p,i)=>(i?"L":"M")+proj(p[0],p[1]).map(v=>v.toFixed(1)).join(",")).join("")+"Z";
   _distPathCache[id]=d;return d;
 }
 const DISTRICT_LABEL={ "d-north":[32.9,35.38],"d-haifa":[32.62,34.98],"d-center":[32.14,34.97],
@@ -4122,6 +4136,7 @@ function renderMap(keepVB){
   let fs=ctx.level==="country"?8.2*sf:14.5*vb[3]/520, dotR=ctx.level==="country"?1.9*sf:7.5*vb[3]/520;
   let inner="";
   const defs=`<defs><clipPath id="ilClip"><path d="${israelPath}"/></clipPath>
+    <pattern id="mapHatch" patternUnits="userSpaceOnUse" width="${(3.2*sf).toFixed(2)}" height="${(3.2*sf).toFixed(2)}" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="${(3.2*sf).toFixed(2)}" stroke="var(--baseline)" stroke-width="${(0.55*sf).toFixed(2)}" opacity=".55"/></pattern>
     <filter id="mapShadow" x="-25%" y="-25%" width="150%" height="150%">
       <feDropShadow dx="0" dy="3.2" stdDeviation="4" flood-color="#0c0d0f" flood-opacity="0.14"/>
     </filter></defs>`;
@@ -4142,17 +4157,22 @@ function renderMap(keepVB){
   }
   gridSvg+='</g>';
   const silhouette=`<path d="${israelPath}" fill="var(--panel-2)" stroke="var(--baseline)" stroke-width="1" filter="url(#mapShadow)"/>`;
+  /* the sea behind everything (the viewBox pans and zooms, so the rect is oversized); the areas without a PROPX district value
+     (the West Bank, Gaza) hatched and labelled, never clickable — geography, not a market figure */
+  const sea=`<rect class="map-sea" x="${-MAP_W*2}" y="${-MAP_H*2}" width="${MAP_W*5}" height="${MAP_H*5}"/>`;
+  const areas=GEO?["westBank","gaza"].map(k=>{const A=AREA_LABEL[k],[ax,ay]=proj(A.at[0],A.at[1]),fa=ctx.level==="country"?5.2*sf:fs*0.85;
+    return `<path class="map-area" d="${areaPath(k)}" style="stroke-width:${(0.6*sf).toFixed(2)}"/><text class="map-area-lbl" x="${ax.toFixed(1)}" y="${ay.toFixed(1)}" font-size="${fa.toFixed(2)}" text-anchor="middle">${state.lang==="he"?A.he:A.en}</text>`}).join(""):"";
 
   if(ctx.level==="country"){
-    inner+=gridSvg;
-    inner+=`<path d="${israelPath}" fill="var(--panel-2)" filter="url(#mapShadow)"/>`;
+    inner+=sea+gridSvg;
+    inner+=`<path d="${israelPath}" fill="var(--panel-2)" filter="url(#mapShadow)"/><path class="map-coast" d="${israelPath}" fill="none" style="stroke-width:${(0.8*sf).toFixed(2)}"/>`;
     inner+=`<g clip-path="url(#ilClip)">`;
     const byOrder=[...ctx.items].sort((a,b)=>DIST_ORDER.indexOf(a.id)-DIST_ORDER.indexOf(b.id));
     for(const d of byOrder){
       const tv=norm(mm.get(metricsOf(d.id),d.id));
       inner+=`<path class="geo" data-loc="${d.id}" d="${distPath(d.id)}" fill="${colorOf(tv)}" style="stroke-width:${(0.9*sf).toFixed(2)}"><title>${heName(d)}</title></path>`;
     }
-    inner+=`</g><path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="${(1.4*sf).toFixed(2)}"/>`;
+    inner+=`</g>`+areas+`<path d="${israelPath}" fill="none" stroke="var(--panel)" stroke-width="${(1.4*sf).toFixed(2)}"/>`;
     for(const d of ctx.items){
       const [lx,ly]=proj(...DISTRICT_LABEL[d.id]);
       const tv=norm(mm.get(metricsOf(d.id),d.id));
@@ -4177,7 +4197,7 @@ function renderMap(keepVB){
       }
     }
   }else{
-    inner+=gridSvg+silhouette;
+    inner+=sea+gridSvg+silhouette+areas;
     /* soft tint of the focused district for context */
     if(ctx.level==="district"&&DISTRICT_POLY[ctx.focus.id]){
       inner+=`<g clip-path="url(#ilClip)"><path d="${distPath(ctx.focus.id)}" fill="var(--accent-wash)"/></g>`;
@@ -4604,7 +4624,14 @@ const PT_DOM={
   indp:"text,text,number,currency,status,date",
   inpl:"date,text,number,number,number,text",
   inrc:"text,number,number,number,number,number",
-  dist:"text,percent,text"};
+  dist:"text,percent,text",
+  dsfresh:"text,date,date,date,text",
+  dsdevs:"text,number,number,number,date,number",
+  purev:"text,text,text,number,percent,date,date",
+  indl:"text,number,number,currency,currency",
+  cibulk:"number,currency,currency,percent,text"};
+/* a sortable day key for the periods the dossier prints (ISO day, "YYYY-MM" month, "YYYY-Qn" quarter) — the cell keeps its displayed text */
+const ptDayKey=v=>{if(!v)return "";const s=String(v);let m=s.match(/^(\d{4})-Q([1-4])$/);if(m)return `${m[1]}-${("0"+m[2]*3).slice(-2)}-31`;m=s.match(/^(\d{4})-(\d{2})$/);if(m)return `${m[1]}-${m[2]}-31`;return s.slice(0,10)};
 function ptDomAll(root,o={}){
   if(!root)return;
   for(const tb of root.querySelectorAll("table[data-ptdom]")){const k=tb.dataset.ptdom,spec=PT_DOM[k];if(!spec)continue;
@@ -6400,7 +6427,7 @@ function ciDetailInHTML(id){
 
     <details class="ci-more" data-k="bulk"><summary>${t.ciBulkT2}</summary><div class="in">
       <div class="ci-note" style="margin-top:2px">${t.ciBulkModelled}</div>
-      <div class="ci-tblw"><table class="ci-tbl">
+      <div class="ci-tblw"><table class="ci-tbl" data-ptdom="cibulk">
         <thead><tr><th>${t.ciBulkU}</th><th class="num">${t.ciBulkVal}</th><th class="num">${t.ciBulkEq}</th><th class="num">${t.ciBulkShare}</th><th>${t.ciLevK}</th></tr></thead>
         <tbody>${inv.bulk.map(b=>`<tr><td class="num">${b.u}</td><td class="num">${fmtCompact(b.value)}</td><td class="num">${fmtCompact(b.equity)}</td>
           <td class="num">${b.share.toFixed(1)}%</td><td><span class="ci-lvl l${b.lev}">${lvlTx(b.lev)}</span></td></tr>`).join("")}</tbody>
@@ -6555,11 +6582,13 @@ function ciBody(){
   ciShowDetail();
   el("ciPort").innerHTML=ciPortHTML();
   el("ciAssume").innerHTML=ciAssumeHTML();
+  ptDomAll(el("capital"));
 }
 function ciShowDetail(){
   const ev=ciEval(state.ci.sel,state.ci.h,state.ci.strat);
   el("ciDetailBox").classList.toggle("ci-lowconf",ev.basis.lvl==="l");
   el("ciDetailIn").innerHTML=ciDetailInHTML(state.ci.sel);
+  ptDomAll(el("ciDetailIn"));
 }
 /* re-rendering keeps every open panel open */
 function ciKeep(fn){
@@ -8165,7 +8194,7 @@ function diHTML(I){
     ${kv(di.planning,Pl.plans?`<span class="num">${fmtInt(Pl.xplanJoined)}</span> / <span class="num">${fmtInt(Pl.plans)}</span> ${di.plansJoined}${Pl.byStation&&Object.keys(Pl.byStation).length?` · ${Object.entries(Pl.byStation).map(([k,n])=>`${inE(k)} ${fmtInt(n)}`).join(" · ")}`:""}`:inDash())}
     ${kv(di.housing,H.lotteries?`<span class="num">${fmtInt(H.projects)}</span> ${di.projects} · <span class="num">${fmtInt(H.unitsFirstLotteries)}</span> ${di.unitsFirst}${H.applicantsPerUnit!=null?` · ${di.apu} <span class="num">${H.applicantsPerUnit}</span> <span class="ho-na">(${fmtInt(H.applicantsPerUnitProjects)} ${di.projects})</span>`:""}${H.permittedProjects?` · ${di.permitted} ${fmtInt(H.permittedProjects)}`:""}`:inDash())}
     ${kv(di.construction,C&&C.lots?`<span class="num">${fmtInt(C.started)}</span> ${di.started} · <span class="num">${fmtInt(C.completed)}</span> ${di.completed} <span class="ho-na">(${fmtInt(C.lots)} ${di.lotsJoined} · ${di.asOf} ${inE(C.asOf||"")} · ${di.stale})</span>`:inDash())}</div>`;
-  const land=LB.byTrack&&Object.keys(LB.byTrack).length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${di.track}</th><th>${di.lots}</th><th>${di.units}</th><th>${di.landTotal}</th><th>${di.lpu}</th></tr></thead><tbody>${Object.entries(LB.byTrack).map(([k,x])=>`<tr><td>${inE(T().ldTracks&&T().ldTracks[k]||k)}</td><td class="num">${fmtInt(x.lots)}</td><td class="num">${fmtInt(x.units)}</td><td class="num">${inNIS(x.landTotal)}</td><td class="num">${inNIS(x.landPerUnit)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(bl(LB.byTrackBasis))} · ${inE(t.vatNote)}</p>`:"";
+  const land=LB.byTrack&&Object.keys(LB.byTrack).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="indl"><thead><tr><th>${di.track}</th><th>${di.lots}</th><th>${di.units}</th><th>${di.landTotal}</th><th>${di.lpu}</th></tr></thead><tbody>${Object.entries(LB.byTrack).map(([k,x])=>`<tr><td>${inE(T().ldTracks&&T().ldTracks[k]||k)}</td><td class="num">${fmtInt(x.lots)}</td><td class="num">${fmtInt(x.units)}</td><td class="num">${inNIS(x.landTotal)}</td><td class="num">${inNIS(x.landPerUnit)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(bl(LB.byTrackBasis))} · ${inE(t.vatNote)}</p>`:"";
   const sig=(I.signals||[]).length?`<ul class="ds-sig">${I.signals.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${di.kinds[s.kind]||s.kind}</span> <b>${inE(s.text[L])}</b> ${xpSig(s.id,s)}<div class="ds-m">${di.trigger}: ${inE(bl(s.trigger))} · ${di.value}: ${s.value!=null?`<span class="num">${typeof s.value==="number"&&s.value<=1&&s.value>0&&/CONCENTRATION/.test(s.id)?pc(s.value):fmtInt(s.value)}</span>`:"—"} · ${di.threshold}: ${inE(bl(s.threshold))} · ${di.period}: ${inE(bl(s.period))} · ${inE(s.source)} · ${inE((T().puCls||{})[s.cls]||s.cls)}</div>${(s.limitations||[]).length?`<details class="pu-why"><summary>${di.limits}</summary><ul class="ho-note ld-ul">${s.limitations.map(x=>`<li>${inE(bl(x))}</li>`).join("")}</ul></details>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${di.noSignals} ${xpBtn("no_signal")}</p>`;
   const ent=(E.rows||[]).length?`<p class="ho-note">${di.entries}: ${E.rows.map(x=>`<bdi>${inE(he?x.city:(x.cityEn||x.city))}</bdi> ${inDate(x.date)}`).join(" · ")}</p>`:"";
   return `<p class="ho-note">${xpBtn("developer_observed_activity")} ${inE(bl(I.basis))}</p>${trend}<h4 class="ld-h4">${di.signals}</h4>${sig}${ent}${land?`<h4 class="ld-h4">${di.landByTrack}</h4>${land}`:""}<p class="ho-note">${inE(bl(Pg.observationChannel))}</p>`;
@@ -8641,12 +8670,13 @@ function renderPuRadar(){
   const col=(title,arr,k)=>`<div><div class="pu-rd-h ${k}">${title} <span class="num">(${fmtInt(arr.length)})</span> ${xpBtn(k==="opp"?"opportunity_signal":"risk_signal")}</div>${arr.length?`<ul class="pu-rd-l">${pick(arr).map(item).join("")}</ul>${arr.filter(x=>!lv||x.geo.level===lv).length>8?`<p class="ho-note">${t.puMoreDs}</p>`:""}`:`<p class="ho-note">${t.puNoItems}</p>`}</div>`;
   const radar=Sc?`<div class="pu-rd-head"><div class="pu-ft">${t.puRadarT}</div><div class="pu-wins" role="group">${chips}</div></div><div class="pu-rd-grid">${col(t.puOppT,Sc.opportunities,"opp")}${col(t.puRiskT,Sc.risks,"risk")}</div><p class="ho-note">${ldE(Sc.basis[L])} · ${ldE(Sc.scope.localityRule[L])}: ${fmtInt(Sc.scope.localities)}${Sc.counts&&Sc.counts.states?` · ${t.puStates}: ${Object.entries(Sc.counts.states).map(([k,v])=>`${ldE((Sc.states&&Sc.states[k]&&Sc.states[k][L])||t.puState[k]||k)} <span class="num">${fmtInt(v)}</span>`).join(" · ")} ${xpBtn("no_signal")}`:""} · ${t.puBuilt} ${ldE(puDay(Sc.builtAt))}</p>`:"";
   const rev=Rv?(()=>{const mat=Rv.rows.filter(x=>x.material),rel=Rv.releases[0];
-    const rows=mat.slice(0,12).map(x=>`<tr><td>${ldE(x.geoName[L])}</td><td>${ldE(x.measureLabel[L])}</td><td class="num">${ldE(x.period)}</td><td class="num">${fmtInt(x.oldValue)} → ${fmtInt(x.newValue)}</td><td class="num">${x.pct>0?"+":""}${x.pct}%</td><td class="num">${ldE(puDay(x.publishedAt))}</td><td class="num">${ldE(puDay(x.observedAt))}</td></tr>`).join("");
+    const rows=mat.slice(0,12).map(x=>`<tr><td>${ldE(x.geoName[L])}</td><td>${ldE(x.measureLabel[L])}</td><td class="num">${ldE(x.period)}</td><td class="num" data-v="${x.newValue==null?"":x.newValue}">${fmtInt(x.oldValue)} → ${fmtInt(x.newValue)}</td><td class="num">${x.pct>0?"+":""}${x.pct}%</td><td class="num" data-v="${ptDayKey(x.publishedAt)}">${ldE(puDay(x.publishedAt))}</td><td class="num" data-v="${ptDayKey(x.observedAt)}">${ldE(puDay(x.observedAt))}</td></tr>`).join("");
     return `<details class="pu-rev"><summary><span class="pu-ft" style="display:inline">${t.puRevT}</span> ${xpBtn("data_revision")} — ${t.puRevSum(fmtInt(Rv.totals.inWindow),fmtInt(Rv.totals.material),rel?ldE(puDay(rel.publishedAt)):"—")}</summary>
-      ${mat.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.puRevCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="ho-note">${t.puRevNone}</p>`}
+      ${mat.length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="purev"><thead><tr>${t.puRevCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="ho-note">${t.puRevNone}</p>`}
       ${rel&&rel.byGeo.length?`<p class="ho-note">${t.puRevNet}: ${rel.byGeo.slice(0,8).map(g=>`${ldE(g.name[L])} <span class="num">${g.netDelta>0?"+":""}${fmtInt(g.netDelta)}</span> (<span class="num">${ldE(g.from)}–${ldE(g.to)}</span>)`).join(" · ")}</p>`:""}
       <p class="ho-note">${ldE(Rv.basis[L])}</p></details>`})():"";
   box.innerHTML=radar+rev;
+  ptDomAll(box);
 }
 function initPulse(){
   const sec=el("pulse");if(!sec)return;
@@ -8753,8 +8783,8 @@ function renderDossier(){
   const sig=k=>D.signals.filter(x=>x.kind===k),bl=v=>v&&typeof v==="object"?(v[L]!=null?v[L]:v.en):v;
   const sigList=k=>{const a=sig(k);return a.length?`<ul class="ds-sig">${a.map(x=>`<li>${x.geoScope&&x.geoScope!=="own"?`<span class="ho-chip cont">${t.dsScope[x.geoScope]||x.geoScope}</span> `:""}<b>${ldE(x.text[L])}</b> ${xpSig(x.id,Object.assign({evidence:{level:D.quality.level,score:D.quality.score}},x))}<div class="ds-m">${t.dsMeta.threshold} <span class="num">${ldE(bl(x.threshold))}</span>${x.period?` · ${t.dsMeta.period} ${ldE(String(bl(x.period)))}`:""} · ${t.dsMeta.source} ${ldE(x.source)} · ${cls(x.cls)}</div></li>`).join("")}</ul>`:`<p class="ho-note">${t.dsNoSig}</p>`};
   const ch=S.changes&&S.changes.rows.length?`<ul class="ds-ch">${S.changes.rows.slice(0,8).map(e=>`<li><span class="num ds-d">${ldE(puDay(e.at))}</span> ${ldE(e.title[L])}</li>`).join("")}</ul><p class="ho-note"><a class="ld-link" href="#pulse">${t.dsToPulse} (${n(S.changes.total)} · ${ldE(S.changes.window)})</a></p>`:`<p class="ho-note">${t.puNone}</p>`;
-  const devs=S.developers&&S.developers.top.length?`<div class="ld-scroll"><table class="ho-dt"><thead><tr><th>${t.dsCols.name}</th><th>${t.dsCols.lotsHere}</th><th>${t.dsCols.unitsHere}</th><th>${t.dsCols.projHere}</th><th>${t.dsCols.last}</th><th>${t.dsCols.total}</th></tr></thead><tbody>${S.developers.top.map(d=>`<tr><td>${ldE(d.name)}${d.possibleSame?` <span class="ho-chip cont" title="${he?"שמות דומים מקושרים ואינם ממוזגים":"similar names linked, never merged"}">${d.possibleSame}</span>`:""}</td><td class="num">${n(d.lotsHere)}</td><td class="num">${n(d.unitsHere)}</td><td class="num">${n(d.projectsHere)}</td><td class="num">${ldE(puDay(d.lastHere))}</td><td class="num">${n(d.lots)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${ldE(S.developers.basis[L])}</p>`:`<p class="ho-note">—</p>`;
-  const fresh=`<div class="ld-scroll"><table class="ho-dt"><thead><tr>${t.dsFreshT.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.freshness.map(f=>`<tr><td>${ldE(f.label[L])}</td><td class="num">${ldE(f.observed?puDay(f.observed):"—")}</td><td class="num">${ldE(f.published?puDay(f.published):"—")}</td><td class="num">${ldE(f.checked?puDay(f.checked):"—")}</td><td>${ldE(f.state||"—")}</td></tr>`).join("")}</tbody></table></div>`;
+  const devs=S.developers&&S.developers.top.length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="dsdevs"><thead><tr><th>${t.dsCols.name}</th><th>${t.dsCols.lotsHere}</th><th>${t.dsCols.unitsHere}</th><th>${t.dsCols.projHere}</th><th>${t.dsCols.last}</th><th>${t.dsCols.total}</th></tr></thead><tbody>${S.developers.top.map(d=>`<tr><td>${ldE(d.name)}${d.possibleSame?` <span class="ho-chip cont" title="${he?"שמות דומים מקושרים ואינם ממוזגים":"similar names linked, never merged"}">${d.possibleSame}</span>`:""}</td><td class="num">${n(d.lotsHere)}</td><td class="num">${n(d.unitsHere)}</td><td class="num">${n(d.projectsHere)}</td><td class="num" data-v="${ptDayKey(d.lastHere)}">${ldE(puDay(d.lastHere))}</td><td class="num">${n(d.lots)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${ldE(S.developers.basis[L])}</p>`:`<p class="ho-note">—</p>`;
+  const fresh=`<div class="ld-scroll"><table class="ho-dt" data-ptdom="dsfresh"><thead><tr>${t.dsFreshT.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.freshness.map(f=>`<tr><td>${ldE(f.label[L])}</td><td class="num" data-v="${ptDayKey(f.observed)}">${ldE(f.observed?puDay(f.observed):"—")}</td><td class="num" data-v="${ptDayKey(f.published)}">${ldE(f.published?puDay(f.published):"—")}</td><td class="num" data-v="${ptDayKey(f.checked)}">${ldE(f.checked?puDay(f.checked):"—")}</td><td>${ldE(f.state||"—")}</td></tr>`).join("")}</tbody></table></div>`;
   const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])} · ${D.quality.score}/100</b> ${xpBtn("evidence_quality")} — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
   const miss=D.missing.length?`<ul class="ds-miss">${D.missing.map(m=>`<li>${ldE(m[L])} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
   body.innerHTML=`<div class="ds-head"><h3>${ldE(D.geo.name[L])}${D.geo.districtName&&D.geo.level==="locality"?` <span class="ax-muted">· ${t.dsDistrictOf}: ${ldE(D.geo.districtName[L])}</span>`:""}</h3><p class="ho-note">${ldE(D.basis[L])}</p></div>
@@ -8766,6 +8796,7 @@ function renderDossier(){
     <div class="ds-two"><div><div class="ds-ft">${t.dsChanges}</div>${ch}</div><div><div class="ds-ft">${t.dsDevs}</div>${devs}</div></div>
     <div class="ds-ft">${t.dsFresh} ${xpBtn("source_freshness")}</div>${fresh}${q}
     <div class="ds-ft">${t.dsMissing}</div>${miss}`;
+  ptDomAll(body);
 }
 /* "WHY THIS MARKET?" (lib/dossier/narrative.js): ordered deterministic sentences over the dossier, the geography's radar items and its
    supply indicators — each with its class, source, period, scope and ⓘ term; the lead (3 sentences) opens, the full read is a <details> */

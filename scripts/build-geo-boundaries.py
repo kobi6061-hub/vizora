@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+"""PROPX · build lib/geo/boundaries.js — the map's district and country outlines from Natural Earth (public domain).
+
+Input: a directory holding the Natural Earth 10m GeoJSON files (not committed — ≈ 55 MB):
+  ne_10m_admin_1_states_provinces.geojson   (Israel's six districts, adm0_a3 = ISR)
+  ne_10m_admin_0_countries.geojson           (Israel's country polygon)
+  ne_10m_admin_0_disputed_areas.geojson      (West Bank · Gaza — drawn as areas without a PROPX district value)
+Download them from https://github.com/nvkelso/natural-earth-vector/tree/master/geojson (Natural Earth is public domain).
+
+Output: lib/geo/boundaries.js — `window.PROPX_GEO` (UMD-free: a plain global for the page; inlined in the offline build):
+  { version, source, licence, districts: { 'd-…': [[lat, lng], …] }, land: [[lat, lng], …], areas: { westBank, gaza }, counts }.
+Geometry only — no market value lives here. Coordinates are rounded to 4 decimals (≈ 10 m); rings keep every Natural Earth
+vertex (the 1:10 M generalisation is the detail level). Deterministic: the same input gives the same output.
+
+  python3 scripts/build-geo-boundaries.py <ne-dir> [--out lib/geo/boundaries.js]
+"""
+import json, sys, hashlib, datetime
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+NE_TO_PROPX = {'HaDarom': 'd-south', 'HaMerkaz': 'd-center', 'HaZafon': 'd-north', 'Haifa': 'd-haifa', 'Jerusalem': 'd-jm', 'Tel Aviv': 'd-ta'}
+
+def rings(geom):
+    if geom['type'] == 'Polygon': return geom['coordinates']
+    if geom['type'] == 'MultiPolygon': return [r for poly in geom['coordinates'] for r in poly]
+    raise SystemExit('unexpected geometry ' + geom['type'])
+
+def outer(geom):
+    """the largest outer ring as [lat, lng] pairs (every district / area here is a single polygon; holes are not drawn)"""
+    rs = geom['coordinates'] if geom['type'] == 'Polygon' else [p[0] for p in geom['coordinates']]
+    if geom['type'] == 'Polygon': rs = [rs[0]]
+    best = max(rs, key=len)
+    pts = [[round(c[1], 4), round(c[0], 4)] for c in best]
+    while len(pts) > 1 and pts[0] == pts[-1]: pts = pts[:-1]   # drop every closing duplicate (rings close implicitly)
+    return pts
+
+def main():
+    args = sys.argv[1:]
+    if not args: raise SystemExit(__doc__)
+    ne = Path(args[0]); out = ROOT / 'lib' / 'geo' / 'boundaries.js'
+    if '--out' in args: out = Path(args[args.index('--out') + 1])
+    a1 = json.loads((ne / 'ne_10m_admin_1_states_provinces.geojson').read_text(encoding='utf-8'))
+    a0 = json.loads((ne / 'ne_10m_admin_0_countries.geojson').read_text(encoding='utf-8'))
+    dis = json.loads((ne / 'ne_10m_admin_0_disputed_areas.geojson').read_text(encoding='utf-8'))
+    districts = {}
+    for f in a1['features']:
+        p = f['properties']
+        if p.get('adm0_a3') != 'ISR': continue
+        pid = NE_TO_PROPX.get(p.get('name'))
+        if not pid: raise SystemExit('unmapped Israeli district in Natural Earth: ' + str(p.get('name')))
+        districts[pid] = outer(f['geometry'])
+    missing = [k for k in NE_TO_PROPX.values() if k not in districts]
+    if missing: raise SystemExit('districts missing from Natural Earth: ' + ', '.join(missing))
+    land = None
+    for f in a0['features']:
+        if (f['properties'].get('ADM0_A3') or f['properties'].get('adm0_a3')) == 'ISR': land = outer(f['geometry'])
+    if not land: raise SystemExit('Israel not found in admin-0')
+    areas = {}
+    for f in dis['features']:
+        n = f['properties'].get('NAME') or f['properties'].get('name')
+        if n == 'West Bank': areas['westBank'] = outer(f['geometry'])
+        if n == 'Gaza': areas['gaza'] = outer(f['geometry'])
+    if set(areas) != {'westBank', 'gaza'}: raise SystemExit('West Bank / Gaza not found in the disputed-areas file')
+    counts = {k: len(v) for k, v in districts.items()}; counts['land'] = len(land); counts.update({k: len(v) for k, v in areas.items()})
+    allpts = [pt for v in districts.values() for pt in v] + land + [pt for v in areas.values() for pt in v]
+    bbox = [min(p[0] for p in allpts), min(p[1] for p in allpts), max(p[0] for p in allpts), max(p[1] for p in allpts)]
+    payload = {
+        'version': 1,
+        'source': 'Natural Earth 1:10m (ne_10m_admin_1_states_provinces · ne_10m_admin_0_countries · ne_10m_admin_0_disputed_areas), github.com/nvkelso/natural-earth-vector master, read 2026-10-18',
+        'licence': 'public domain (Natural Earth)',
+        'basis': {'he': 'גבולות מחוזות ומתאר הארץ בלבד — גאוגרפיה, לא נתון שוק; יו״ש ועזה מצוירים כאזורים ללא ערך מחוזי של PROPX', 'en': 'district boundaries and the country outline only — geography, not a market value; the West Bank and Gaza are drawn as areas without a PROPX district value'},
+        'bbox': bbox, 'counts': counts, 'districts': districts, 'land': land, 'areas': areas,
+    }
+    body = json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
+    js = ('// PROPX · map geography — generated by scripts/build-geo-boundaries.py from Natural Earth 1:10m (public domain). Do not edit by hand.\n'
+          '// Geometry only: district boundaries (six CBS districts), the country outline, the West Bank and Gaza as areas. No market value here.\n'
+          '/* eslint-disable */\n(function (root) { root.PROPX_GEO = ' + body + '; })(typeof window !== "undefined" ? window : globalThis);\n')
+    out.parent.mkdir(parents=True, exist_ok=True); out.write_text(js, encoding='utf-8')
+    print(f'wrote {out.relative_to(ROOT)} · {len(js):,} chars · sha256 {hashlib.sha256(js.encode()).hexdigest()[:12]} · counts {counts} · bbox {bbox}')
+
+if __name__ == '__main__': main()
