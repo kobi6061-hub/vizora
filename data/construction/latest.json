@@ -39,9 +39,9 @@
    ]
   }
  },
- "syncedAt": "2026-10-18T00:17:20.307Z",
- "checkedAt": "2026-10-18T00:17:20.307Z",
- "status": "SUCCESS",
+ "syncedAt": "2026-10-18T16:06:50.563Z",
+ "checkedAt": "2026-10-18T16:06:50.563Z",
+ "status": "UNCHANGED",
  "sourceUpdate": "2026-09-10",
  "freshness": {
   "state": "CURRENT",

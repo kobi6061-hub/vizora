@@ -1,11 +1,11 @@
 {
  "schema": 1,
- "builtAt": "2026-10-18T16:01:24.826Z",
- "since": "2026-06-20T16:01:24.826Z",
+ "builtAt": "2026-10-18T16:07:42.390Z",
+ "since": "2026-06-20T16:07:42.390Z",
  "days": 120,
- "events": 319,
+ "events": 320,
  "counts": {
-  "sources": 4,
+  "sources": 5,
   "land": 210,
   "macro": 8,
   "rental": 22,
@@ -14,6 +14,6 @@
   "developers": 41
  },
  "rules": 27,
- "ms": 1507,
+ "ms": 1250,
  "generator": "scripts/radar-build.js"
 }
