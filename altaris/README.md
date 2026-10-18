@@ -172,6 +172,85 @@ are unchanged.
   versions, JSON exports and imports carry `decision` = `{ v, verdict, score, evidence, structure, at }` (older versions
   read "not stamped").
 
+## Live Thesis — post-decision intelligence (altaris/thesis.js — 18.10.2026)
+
+**What it is.** PROPX does not stop helping after an investment decision is made. `altaris/thesis.js` (UMD `AltarisThesis`,
+`altaris-live-thesis-v1`) keeps the ORIGINAL decision and the evidence behind it, derives what had to remain true, ranks the
+missing evidence by decision relevance, names what to watch, and compares THEN against NOW whenever a fresh PROPX read exists —
+through the SAME documented decision policy (`POLICY.final`, rules F0–F5, via the additively exported `DX.finalOf`) and the SAME
+market & execution assessment (`AltarisMarket.assess`). Product copy (one source, `COPY`): *PROPX remembers why you made the
+decision — and tells you when the facts behind it materially change.*
+
+**Architecture (pure module → page wiring).**
+- `snapshot({ D, R, deal, ctx, meta })` → the DECISION SNAPSHOT (`altaris-decision-snapshot-v1`): normalized facts only —
+  verdicts (economic · final · rule), the lead structure's IRR / MOIC / capital at risk / gates / evidence, conditions, flip
+  points (when computed), the market assessment's factors, the context (market read, CBS, indicators) with its dates, conflicts,
+  freshness, missing, rules fired, registry refs; deep-frozen, hashed (`verify`). `basis`: DECISION_SAVE · RECONSTRUCTED ·
+  BASELINE_TODAY (`stampMatches` is the reconstruction gate — never a fabricated past state).
+- `contract(snapshot)` → THESIS CONTRACT: `dependsOn` (every passed gate "moves only with a deal assumption", the evidence
+  level, "no CAUTION" F3 / F4, noted negatives without a partner), `activeConditions` (each with `resolvedBy` and its path
+  REASSESS / RE_UNDERWRITE), `breakers` (flip points, market convergence, evidence drop, condition failure). Nothing invented.
+- `nextBestEvidence(snapshot)` → missing facts ranked HIGH · MEDIUM · LOW · INFORMATIONAL by decision relevance (verdict >
+  condition > evidence level > assessment > informational; ties by id) with "if verified / if not / expected source / path";
+  commercial terms are not evidence; never a probability or a guarantee of availability.
+- `watchlist(snapshot)` → the WATCHTOWER: only the dimensions the thesis depends on (demand · land market · supply ·
+  transactions · execution · developer · macro · freshness · revisions · dossier history); project execution is marked
+  **unwatchable** (no public per-project permit source — `no_permits_source`).
+- `reassess(snapshot, now)` → the DECISION DELTA. `now` = a fresh page-shaped market read + CBS context + indicators +
+  `dealHash` / `settingsHash` + the dossier-history diff since the decision + the district's revision rows. Rules:
+  changed assumptions → `DEAL_CHANGED` (TH-DEAL, a re-underwrite, never a reassessment); no fresh read (dossier + radar ≤ 30
+  days) → `INSUFFICIENT_NEW_EVIDENCE`, every condition stays (missing evidence is not positive evidence); otherwise the FROZEN
+  economic verdict ∘ the new assessment through `finalOf` → states NO_MATERIAL_THESIS_CHANGE · THESIS_STRENGTHENED ·
+  CONDITION_RESOLVED (TH-F5-RESOLVE) · NEW_CONDITION_TRIGGERED (TH-F4) · THESIS_WEAKENED (one material negative, noted) ·
+  DECISION_REQUIRES_REVIEW (TH-F3). Every change carries category (DEAL_ASSUMPTION · MARKET_EVIDENCE · PROJECT_EXECUTION ·
+  DEVELOPER · SOURCE_EVIDENCE · MACRO · GEOGRAPHY), materiality (a constant per TH-* rule: INFORMATIONAL · RELEVANT ·
+  MATERIAL_THESIS · DECISION_IMPACTING), impact, source · period · class · evidence, the rule text and its limitation. A PASS /
+  INSUFFICIENT economic verdict leaves the market no path (F2 / F1): its factor changes are context. Evidence aging
+  (TH-AGING, > 90 days) and a STALE source are reported as aging, never as a negative signal; the PROPX-median conflict keeps
+  both values; revisions of pre-decision periods list original · revised with a retrospective impact judged only through the
+  momentum factor. Output: `changes`, `geoChanges`, `revisions`, `current` (decision under the same policy), `conditions`
+  {active · resolved · added}, `thenVsNow`, `retrospective` (NO · YES · YES_CONDITION · CANNOT_DETERMINE), `narrative`
+  (deterministic sentences, no model call), `attention`.
+- `portfolio(list)` → the PORTFOLIO THESIS MONITOR: counts by state and a deterministic attention order (review > new condition >
+  worsened > assumptions changed > sources > condition resolved > new information > no change > not checked > paused), next best
+  evidence across deals (one count per deal). No score.
+- `createRepository(adapter)` → append-only records over `{ get, set }` (`altaris:thesis:v1`; `memoryAdapter` in tests):
+  `init` (created · unchanged · appended REUNDERWRITE / REDECIDE · refused — the original snapshot is never replaced),
+  `recordCheck`, `setMonitor` (LIVE / PAUSED), `integrity`. See `altaris/THESIS_PERSISTENCE.md` for the future store contract
+  (documentation only; Supabase is not activated).
+
+**Page wiring (`altaris/app.js`).** Saving a deal that carries a decision keeps its thesis automatically (`thesisOnSave`: the
+saved-deal architecture already stamps the decision on every version). `fetchMarket(info)` is the read-only PROPX read shared
+by the market panel (which applies it to the deal) and by the thesis check (which never touches the deal). "Check now" /
+"check all" (`thesisCheck` / `thesisCheckAll`, one read per locality × developer per run) → `reassess` → `recordCheck`.
+Old saved deals are reconstructed on first sight (`thesisEnsure`: the version's decision stamp must match the recomputation,
+else BASELINE CREATED TODAY). UI: the compact LIVE THESIS card under the decision card (status · original · today under the
+same policy · changes since · next evidence · last checked; check / then-vs-now / pause), the "תזה חיה" column of the saved
+deals, the PORTFOLIO THESIS MONITOR at the top of the portfolio (tiles, attention-ordered table, next best evidence across the
+portfolio, check all), and the THEN VS NOW view (`#thesis/<dealId>`, he RTL / en LTR): plain-language narrative, what changed
+(material first, informational folded), what did not change, why it matters, what must remain true, conditions (active /
+resolved, resolved-by), what would break the thesis, next best evidence, the watchtower, geography dossier changes, official
+revisions, the retrospective, the history (events), and the explanatory copy. Registry terms (ⓘ): `live_thesis`,
+`decision_snapshot`, `thesis_contract`, `thesis_status`, `decision_delta`, `next_best_evidence`, `watchtower`,
+`retrospective_decision`, `evidence_aging`, `change_category`, `reassess_vs_reunderwrite`, `portfolio_thesis_monitor`; every
+TH-* rule is a SIGNAL_RULES entry.
+
+**Gates (`test/altaris-thesis.test.js`, 50 + the 20 acceptance cases frozen in
+`test/fixtures/altaris-thesis-acceptance-2026-10-18.json`).** Snapshot immutability; the original never rewritten; a market
+update cannot change IRR / MOIC / capital at risk / gates / cash-flow figures / the economic verdict / economic conditions /
+flip points; a user assumption change creates a new version; same evidence + same rules = same result; an irrelevant change
+creates no delta; a material change creates the documented delta; a condition is resolved only by its rule and never by missing
+or stale data; weak evidence never overrides; stale reads never masquerade as current; conflicts and revisions preserve both
+values; then-vs-now and the retrospective are historically correct; NBE ranking and the portfolio order are deterministic; no
+Supabase code path; the existing ALTARIS suites (engine hash, frozen baseline, decision, market) are unchanged.
+
+**Known limitations.** Theses live in this browser only (like the saved deals) until the PROPX store is connected. Evidence
+quality is frozen in the snapshot: read aging is reported, the deduction applies only on a re-underwrite. Project execution
+cannot be watched (no public per-project permit source); developer construction evidence is developer-level. The register's
+transaction-depth negative (< 10 deals) is LOW evidence by design and never material. Reconstructed baselines read the CBS
+context and the indicators at reconstruction time (labelled). Checks run on request and when the portfolio opens — there is no
+scheduler and no notification channel.
+
 ## Investment cases (illustrative, synthetic)
 
 `altaris/cases.js` holds five fully worked institutional cases — Park 18 (distressed bulk BUY, Petah Tikva),

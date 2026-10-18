@@ -317,6 +317,23 @@
   gates; engine hash + baseline unchanged). UI: ECONOMIC · MARKET / EXECUTION · FINAL on the card and the basis head, the "MARKET
   IMPACT ON DECISION" basis section, IC + Excel rows; registry terms `market_execution_assessment` / `final_decision` /
   `market_impact_on_decision`; acceptance set `test/fixtures/altaris-acceptance-2026-10-18.json` (§73).
+  `altaris/thesis.js` + `test/altaris-thesis.test.js` + `test/fixtures/altaris-thesis-acceptance-2026-10-18.json` +
+  `altaris/THESIS_PERSISTENCE.md` = LIVE THESIS (post-decision intelligence, 18.10.2026): a pure layer beside the decision — the
+  immutable DECISION SNAPSHOT (`altaris-decision-snapshot-v1`, hashed; DECISION_SAVE · RECONSTRUCTED only when the saved version's
+  decision stamp matches · BASELINE_TODAY, never a fabricated past), the THESIS CONTRACT (what must remain true · active conditions
+  with resolved-by / path · breakers — only from documented rules), NEXT BEST EVIDENCE (HIGH · MEDIUM · LOW · INFORMATIONAL by
+  decision relevance; commercial terms are not evidence), the WATCHTOWER (project execution unwatchable: no public permit source),
+  `reassess` → the DECISION DELTA (the FROZEN economic verdict ∘ a fresh market & execution assessment through `DX.finalOf`, rules
+  F0–F5 — IRR / MOIC / capital at risk / gates / economic conditions / flip points never move with market data; a changed
+  assumption = RE-UNDERWRITE, a new version; no fresh read (dossier + radar ≤ 30 d) = INSUFFICIENT NEW EVIDENCE and every condition
+  stays; states NO_MATERIAL · STRENGTHENED · CONDITION_RESOLVED · NEW_CONDITION · WEAKENED · REQUIRES_REVIEW; categories
+  DEAL_ASSUMPTION · MARKET_EVIDENCE · PROJECT_EXECUTION · DEVELOPER · SOURCE_EVIDENCE · MACRO · GEOGRAPHY; materiality a constant per
+  TH-* rule; aging / stale never a negative; conflicts and revisions keep both values; retrospective NO · YES · YES_CONDITION ·
+  CANNOT_DETERMINE), the PORTFOLIO THESIS MONITOR (deterministic attention order, no score) and an append-only repository over a
+  `{ get, set }` adapter (`altaris:thesis:v1` in the browser; Supabase NOT activated — the contract is documentation only).
+  Page: automatic on save (`thesisOnSave`), `fetchMarket` shared read-only read, `thesisCheck` / `thesisCheckAll`, the card under
+  the decision card, the saved-deals column, the portfolio monitor, the `#thesis/<dealId>` THEN VS NOW view; registry terms
+  `live_thesis` … `portfolio_thesis_monitor` + SIGNAL_RULES `TH-*`. Never a prediction, a recommendation or a performance claim.
   `altaris/cases.js` = five illustrative, synthetic investment cases (inputs only, fictional names, real localities as
   setting); loaded into the ordinary deal screen via "מקרי השקעה"; never saved / in the portfolio / in any PROPX dataset
   unless the user creates a working copy; exports marked ILLUSTRATIVE CASE.
