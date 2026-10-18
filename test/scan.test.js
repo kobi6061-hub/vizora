@@ -6,6 +6,7 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 const S = require('../lib/radar/scan');
+const D = require('../lib/dossier/query');
 const REV = require('../lib/radar/revisions');
 const T = require('../lib/trust/catalog');
 const ROOT = path.join(__dirname, '..');
@@ -32,6 +33,36 @@ t('strict geography on the real scan: no locality item carries a CBS or macro se
     if (x.geo.level === 'locality') assert.ok(!/cbs/.test(x.source), x.id);
     if (x.comparison) assert.ok(['national-value', 'share-of-national'].includes(x.comparison.kind) && x.comparison.he && x.comparison.en && x.geo.level !== 'il', x.id);
   }
+});
+t('Radar 2.0: the scan covers every registry locality with a live ILA tender (not a top-N); every geography carries a signal STATE with its reason; NO SIGNAL is a valid, counted state', () => {
+  const P = S.load({ now: NOW });
+  const ix = D.index({ limit: Infinity });
+  assert.equal(P.scope.localities, ix.localities.length, 'every indexed locality is scanned'); assert.ok(P.scope.localities > 400, 'more than the old top-40 / 400 cap');
+  assert.equal(P.scope.localitiesWithLiveTenders, ix.localities.length); assert.match(P.scope.localityRule.en, /every locality/);
+  assert.deepEqual(Object.keys(S.STATES), ['SIGNALS', 'NO_SIGNAL', 'INSUFFICIENT_DATA']);
+  const n = { SIGNALS: 0, NO_SIGNAL: 0, INSUFFICIENT_DATA: 0 };
+  for (const g of P.geographies) { assert.ok(S.STATES[g.signalState], g.code); assert.ok(g.stateReason && g.stateReason.he && g.stateReason.en, g.code); n[g.signalState]++;
+    if (g.signalState === 'SIGNALS') assert.ok(g.opportunities + g.risks > 0, g.code); else assert.equal(g.opportunities + g.risks, 0, g.code);
+    if (g.level === 'locality') assert.ok(Number.isInteger(g.tracked), g.code); else assert.equal(g.tracked, null); }
+  assert.deepEqual(P.counts.states, n); assert.equal(n.SIGNALS + n.NO_SIGNAL + n.INSUFFICIENT_DATA, P.counts.geographies);
+  assert.ok(n.NO_SIGNAL > 0, 'NO SIGNAL exists as a state'); assert.ok(n.INSUFFICIENT_DATA >= 0);
+  for (const g of P.geographies.filter((g) => g.signalState === 'INSUFFICIENT_DATA')) assert.ok(g.quality.level === 'LOW' || g.tracked === 0, 'insufficient only for LOW evidence or no tracked record: ' + g.code);
+  /* the view carries the vocabulary; forGeo answers a state for a covered geography and for a computed one */
+  const V = S.scan({ limit: 5 }); assert.ok(V.states && V.states.NO_SIGNAL.en && V.counts.states);
+  const cov = P.geographies.find((g) => g.level === 'locality' && g.signalState === 'NO_SIGNAL'); const F = S.forGeo({ level: 'locality', code: cov.code });
+  assert.equal(F.signalState, 'NO_SIGNAL'); assert.ok(F.signalStateLabel.he && F.stateReason.en); assert.equal(F.opportunities.length + F.risks.length, 0);
+  const il = S.forGeo({ level: 'il', code: 'il' }); assert.ok(S.STATES[il.signalState]);
+});
+t('the quiet-pipeline rule (no-recent-changes) needs a pipeline: a locality with fewer than 3 tracked records never carries it; a district always may (BEFORE 18.10.2026: 297 of 400 indexed localities carried it with as little as one old tender)', () => {
+  const P = S.load({ now: NOW });
+  for (const x of P.risks.filter((x) => x.signal === 'no-recent-changes' && x.geo.level === 'locality')) { const g = P.geographies.find((g) => g.level === 'locality' && g.code === x.geo.code); assert.ok(g.tracked >= D.TRACKED_MIN, x.id); }
+  const base = { changes: { total: 0, window: '30d' }, land: { kpis: { tenders: 1 } }, renewal: { kpis: { complexes: 1 } }, housing: { kpis: { projects: 0 } }, rental: { pipeline: { tenders: 0, staleStatus: { n: 0 } } } };
+  const ids = (S2, geo) => D.signalsOf(S2, geo, NOW).map((s) => s.id);
+  assert.ok(!ids(base, { level: 'locality' }).includes('no-recent-changes'), '2 tracked records: untracked, not quiet');
+  assert.ok(ids({ ...base, land: { kpis: { tenders: 2 } } }, { level: 'locality' }).includes('no-recent-changes'), '3 tracked records: quiet');
+  assert.ok(ids(base, { level: 'district', district: 'd-center' }).includes('no-recent-changes'), 'a district always has a pipeline');
+  const q = D.signalsOf({ ...base, land: { kpis: { tenders: 2 } } }, { level: 'locality' }, NOW).find((s) => s.id === 'no-recent-changes'); assert.ok(q.limitations && /precondition/.test(q.limitations[0].en));
+  assert.equal(D.TRACKED_MIN, 3); assert.equal(D.trackedRecords(base), 2);
 });
 t('every item answers "why was this flagged?": trigger · value · threshold · period · source · class · evidence quality (HIGH / MEDIUM / LOW, never a probability)', () => {
   const P = S.load({ now: NOW });

@@ -201,8 +201,9 @@
   written by every sync workflow before it commits (bot-written); `GET /api/intel?view=radar|pulse`; the page's `#pulse`
   section (rail "דופק"). See `lib/radar/README.md`.
   `lib/radar/scan.js` + `data/radar/scan.json` + `test/scan.test.js` = OPPORTUNITY RADAR / RISK RADAR (17.10.2026): the dossier
-  signals over Israel, the 7 districts and the 40 localities with the most live tenders, sorted by rule into "worth
-  investigating" / "risk signals" — NEVER a recommendation; every item: trigger · value · threshold · comparison (national
+  signals over Israel, the 7 districts and (Radar 2.0, 18.10.2026) every registry locality with a live tender (441), sorted by rule into "worth
+  investigating" / "risk signals" — NEVER a recommendation; every geography carries `signalState` SIGNALS / NO_SIGNAL (a valid, counted
+  read) / INSUFFICIENT_DATA with its `stateReason`; the quiet-pipeline rule needs ≥ 3 tracked records in a locality (`TRACKED_MIN`); every item: trigger · value · threshold · comparison (national
   figure or share of it) · period · source · class · evidence quality; strict geography (no district / national series on a
   locality); materiality a constant per rule; two named DERIVED convergence items. `view=scan` / `view=scanGeo`; the top of
   `#pulse`; the ALTARIS market panel shows the deal locality's items READ-ONLY (the decision layer reads none of them —

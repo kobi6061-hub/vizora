@@ -28,5 +28,5 @@ fs.writeFileSync(path.join(outDir, 'meta.json'), JSON.stringify(meta, null, 1) +
 const s0 = Date.now();
 const scan = SCAN.build({ dataDir });
 fs.writeFileSync(path.join(outDir, 'scan.json'), JSON.stringify(scan));
-if (!quiet) console.log(`Opportunity / Risk scan: ${scan.counts.geographies} geographies · ${scan.counts.opportunities} opportunities · ${scan.counts.risks} risks · ${Date.now() - s0} ms`);
+if (!quiet) console.log(`Opportunity / Risk scan: ${scan.counts.geographies} geographies (${scan.scope.localities} localities) · ${scan.counts.opportunities} opportunities · ${scan.counts.risks} risks · states ${Object.entries(scan.counts.states || {}).map(([k, v]) => `${k} ${v}`).join(' · ')} · ${Date.now() - s0} ms`);
 if (!quiet) console.log(`Market Radar: ${payload.events.length} events over ${days} days (${Object.entries(payload.counts).map(([k, v]) => `${k} ${v}`).join(' · ')}) · ${meta.ms} ms → ${path.relative(process.cwd(), outDir)}/`);
