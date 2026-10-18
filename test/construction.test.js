@@ -29,13 +29,15 @@ const clone = (x) => JSON.parse(JSON.stringify(x));
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'propx-construction-'));
 const readLines = (f) => fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 
-/* the fake API: catalogue by id, data by id window-filtered as the API would; `fail` = id → HTTP status; `mutate` edits a body */
+/* the fake API: catalogue by id (a catalog/level page as "level:<level>:<subject>:<page>"), data by id window-filtered as the API
+   would; `fail` = id → HTTP status; `mutate` edits a body */
 function fetcherOf({ fail = {}, mutate = null } = {}) {
   return async (url) => {
-    const u = new URL(url), id = u.searchParams.get('id');
+    const u = new URL(url); let id = u.searchParams.get('id');
+    if (u.pathname.endsWith('/catalog/level')) id = `level:${id}:${u.searchParams.get('subject')}:${u.searchParams.get('Page') || 1}`;
     if (fail[id]) { const e = new Error(`HTTP ${fail[id]} from ${url}`); e.status = fail[id]; throw e; }
     let body = null;
-    if (u.pathname.endsWith('/catalog/path')) body = FX.catalogue[id] ? clone(FX.catalogue[id]) : null;
+    if (u.pathname.endsWith('/catalog/path') || u.pathname.endsWith('/catalog/level')) body = FX.catalogue[id] ? clone(FX.catalogue[id]) : null;
     else if (u.pathname.endsWith('/data/path') && FX.data[id]) {
       body = clone(FX.data[id]);
       const [sm, sy] = u.searchParams.get('startperiod').split('-'), [em, ey] = u.searchParams.get('endperiod').split('-');
@@ -58,7 +60,13 @@ t('the fixture is labelled a TEST FIXTURE and is read by nothing in the product'
   assert.match(FX._fixture, /TEST FIXTURE/); assert.match(FX._fixture, /NEVER read by the product/);
   const files = [...fs.readdirSync(path.join(ROOT, 'lib', 'construction')).filter((f) => f.endsWith('.js')).map((f) => path.join('lib', 'construction', f)), 'scripts/construction-sync.js', 'lib/trust/catalog.js', 'index.html'];
   for (const f of files) assert.ok(!fs.readFileSync(path.join(ROOT, f), 'utf8').includes('cbs-construction-sample'), f + ' reads the fixture');
-  assert.strictEqual(Object.keys(FX.data).length, 32); assert.strictEqual(Object.keys(FX.catalogue).length, 28);
+  assert.strictEqual(Object.keys(FX.data).length, 32); assert.strictEqual(Object.keys(FX.catalogue).length, 6, '4 branch listings + 2 level-4 pages');
+  /* the real shapes the runner answered on 18.10.2026 */
+  assert.strictEqual(FX.catalogue['44,11,2'].catalogs.catalog.find((n) => n.path[4] === 1).name, 'סך כולל');
+  assert.strictEqual(FX.catalogue['44,2,3'].catalogs.catalog.length, 16); assert.ok(FX.catalogue['44,2,3'].catalogs.catalog.some((n) => n.path[4] === 4141 && /^-+$/.test(n.name)));
+  assert.ok(FX.catalogue['44,2,3'].catalogs.catalog.every((n) => n.path.length === 5), 'no named level-4 node in the branch listing');
+  assert.strictEqual(FX.catalogue['44,4,3'].catalogs.catalog.length, 8);
+  assert.ok(FX.catalogue['level:4:44:1'].catalogs.paging.next_url && !FX.catalogue['level:4:44:2'].catalogs.paging.next_url, 'the level listing pages');
 });
 
 console.log('source definition');
@@ -87,52 +95,71 @@ t('the board districts are exactly the PROPX district rows (exact code mapping, 
 });
 t('request windows ≤ 6 years from 2016; the plan requests only resolved geographies', () => {
   assert.deepStrictEqual(S.windows(NOW), [[2016, 2021], [2022, 2026]]);
-  const res = { measures: { starts: { ok: true, geos: { il: { status: 'resolved', code: 8, leaf: 2, pathId: '44,2,3,8,2' }, 'd-jm': { status: 'mismatch', code: 2 }, 'd-ta': { status: 'unresolved' } } } } };
+  const res = { measures: { starts: { ok: true, geos: { il: { status: 'resolved', code: 8, leaf: 2, pathId: '44,2,3,8,2' }, 'd-jm': { status: 'mismatch', code: 2 }, 'd-ta': { status: 'unresolved' }, 'd-haifa': { status: 'pending', code: 3, leaf: 2, pathId: '44,2,3,3,2' } } } } };
   const P = S.plan(res, NOW);
-  assert.strictEqual(P.length, 2); assert.ok(P.every((q) => q.geo === 'il' && /id=44,2,3,8,2&/.test(q.url)));
+  assert.strictEqual(P.length, 4, 'resolved and pending are requested; mismatch and unresolved never'); assert.ok(P.every((q) => (q.geo === 'il' && /id=44,2,3,8,2&/.test(q.url)) || (q.geo === 'd-haifa' && /id=44,2,3,3,2&/.test(q.url))));
+  assert.ok(S.nameFits(S.GEO_BY_KEY.il, 'סך כולל') && S.nameFits(S.GEO_BY_KEY.il, 'סך הכל') && !S.nameFits(S.GEO_BY_KEY['d-jm'], 'סך הכל') && S.nameFits(S.GEO_BY_KEY.jsr, 'אזור יהודה והשומרון (עד 2005 כולל חבל עזה)') && !S.nameFits(S.GEO_BY_KEY['d-ta'], 'המרכז'));
+  assert.ok(S.SEPARATOR.test('----------------------------------') && !S.SEPARATOR.test('סך הכל'));
+  assert.match(S.levelUrl(4, 44, 2), /catalog\/level\?id=4&subject=44&.*Page=2&PageSize=100$/);
 });
 
 console.log('catalogue resolution — the name verifies the code, the code keys the data');
 let RES = null;
-await ta('every geography of every measure resolves to the expected code and path from the fixture catalogue', async () => {
+await ta('every geography of every measure resolves to the expected code and path: permits by the named leaves, the by-district branches by the level-4 listing', async () => {
   const bundle = [];
   RES = await R.resolveAll({ fetchJson: fetcherOf(), bundle, now: NOW });
-  assert.strictEqual(RES.requests, 28, '1 branch listing + 8 leaf listings × 3 level-4 branches + 1 permits listing');
+  assert.strictEqual(RES.requests, 6, '2 pages of the level-4 listing + 4 branch listings'); assert.deepStrictEqual([RES.level4.ok, RES.level4.pages, RES.level4.count], [true, 2, 29]);
   for (const m of S.MEASURE_IDS) {
     const M = RES.measures[m]; assert.ok(M.ok, m);
-    for (const g of S.GEOS) { const x = M.geos[g.key]; assert.strictEqual(x.status, 'resolved', `${m} ${g.key}: ${x.reason}`); assert.strictEqual(x.code, S.MEASURES[m].codes[g.key]); }
+    for (const g of S.GEOS) { const x = M.geos[g.key]; assert.strictEqual(x.status, 'resolved', `${m} ${g.key}: ${x.reason}`); assert.strictEqual(x.code, S.MEASURES[m].codes[g.key]); assert.strictEqual(x.nameSource, 'catalogue'); }
   }
+  assert.deepStrictEqual([RES.measures.starts.nodes, RES.measures.starts.separators, RES.measures.completions.separators, RES.measures.active.nodes, RES.measures.active.separators], [16, 8, 8, 8, 0], 'the "----" leaves are listed and never resolved');
   assert.strictEqual(RES.measures.starts.geos['d-ta'].pathId, '44,2,3,5,2'); assert.strictEqual(RES.measures.starts.geos['d-ta'].name, 'תל אביב'); assert.strictEqual(RES.measures.starts.geos['d-ta'].leafName, 'סך הכל');
-  assert.strictEqual(RES.measures.permits.geos['d-ta'].pathId, '44,11,2,,275'); assert.strictEqual(RES.measures.permits.geos.jsr.name, 'אזור יהודה והשומרון');
+  assert.strictEqual(RES.measures.starts.geos.il.name, 'סך הכל'); assert.strictEqual(RES.measures.starts.geos.jsr.name, 'יו"ש');
+  assert.strictEqual(RES.measures.permits.geos['d-ta'].pathId, '44,11,2,,275'); assert.strictEqual(RES.measures.permits.geos.jsr.name, 'אזור יהודה והשומרון (עד 2005 כולל חבל עזה)');
+  assert.strictEqual(RES.measures.permits.geos.il.name, 'סך כולל', 'the permits total is "סך כולל"'); assert.strictEqual(RES.measures.permits.geos.il.pathId, '44,11,2,,1');
   assert.strictEqual(RES.measures.active.geos.il.pathId, '44,4,3,8,2');
+  assert.ok(RES.measures.starts.listed.length === 16 && RES.measures.starts.listed.every((n) => n.pathDesc), 'the listing is kept as evidence, pathDesc included');
   const sum = R.summarize(RES);
-  assert.deepStrictEqual([sum.starts.resolved, sum.starts.mismatch, sum.starts.unresolved], [8, [], []]);
+  assert.deepStrictEqual([sum.starts.resolved, sum.starts.byCatalogue, sum.starts.byResponse, sum.starts.pending, sum.starts.mismatch, sum.starts.unresolved, sum.starts.separators], [8, 8, 0, [], [], [], 8]);
   assert.strictEqual(S.plan(RES, NOW).length, 4 * 8 * 2);
 });
-await ta('a district name found under another code is a MISMATCH — never requested, never re-keyed by the name', async () => {
-  const mutate = (id, b) => { if (id === '44,2,3') { const a = b.catalogs.catalog.find((n) => n.path[3] === 1), c = b.catalogs.catalog.find((n) => n.path[3] === 2); [a.name, c.name] = [c.name, a.name]; } };
-  const res = await R.resolveAll({ fetchJson: fetcherOf({ mutate }), now: NOW });
-  const st = res.measures.starts.geos;
-  assert.strictEqual(st['d-jm'].status, 'mismatch'); assert.strictEqual(st['d-jm'].code, 2); assert.strictEqual(st['d-jm'].expected, 1); assert.match(st['d-jm'].reason, /differs from the expected 1/);
-  assert.strictEqual(st['d-north'].status, 'mismatch'); assert.strictEqual(st['d-haifa'].status, 'resolved');
-  assert.ok(!S.plan(res, NOW).some((q) => q.measure === 'starts' && (q.geo === 'd-jm' || q.geo === 'd-north')));
-  assert.ok(res.measures.completions.geos['d-jm'].status === 'resolved', 'another branch is untouched');
-});
-await ta('an ambiguous or absent name, or no single leaf, is UNRESOLVED — never guessed; the total leaf wins among several', async () => {
+await ta('a district name found under another code is a MISMATCH — never requested, never re-keyed by the name (permits leaves, level-4 listing)', async () => {
   const mutate = (id, b) => {
-    if (id === '44,3,3') b.catalogs.catalog.push({ path: [44, 3, 3, 9], name: 'חיפה', pathDesc: '' });
-    if (id === '44,4,3') b.catalogs.catalog = b.catalogs.catalog.filter((n) => n.path[3] !== 6);
-    if (id === '44,4,3,5') b.catalogs.catalog.push({ path: [44, 4, 3, 5, 3], name: 'בניינים', pathDesc: '' });
-    if (id === '44,4,3,4') { b.catalogs.catalog[0].name = 'בניינים'; b.catalogs.catalog.push({ path: [44, 4, 3, 4, 3], name: 'דירות', pathDesc: '' }); }
-    if (id === '44,4,3,3') b.catalogs.catalog = [];
+    if (id === 'level:4:44:1') { const a = b.catalogs.catalog.find((n) => n.path[1] === 2 && n.path[2] === 3 && n.path[3] === 1), c = b.catalogs.catalog.find((n) => n.path[1] === 2 && n.path[2] === 3 && n.path[3] === 2); [a.name, c.name] = [c.name, a.name]; }
+    if (id === '44,11,2') { const a = b.catalogs.catalog.find((n) => n.path[4] === 273), c = b.catalogs.catalog.find((n) => n.path[4] === 274); [a.name, c.name] = [c.name, a.name]; }
   };
   const res = await R.resolveAll({ fetchJson: fetcherOf({ mutate }), now: NOW });
-  assert.strictEqual(res.measures.completions.geos['d-haifa'].status, 'unresolved'); assert.match(res.measures.completions.geos['d-haifa'].reason, /ambiguous/);
-  assert.strictEqual(res.measures.active.geos['d-south'].status, 'unresolved'); assert.match(res.measures.active.geos['d-south'].reason, /no node named like Southern District/);
-  assert.strictEqual(res.measures.active.geos['d-ta'].status, 'resolved'); assert.strictEqual(res.measures.active.geos['d-ta'].leaf, 2);
-  assert.strictEqual(res.measures.active.geos['d-center'].status, 'unresolved'); assert.match(res.measures.active.geos['d-center'].reason, /none is the total/);
-  assert.strictEqual(res.measures.active.geos['d-haifa'].status, 'unresolved'); assert.match(res.measures.active.geos['d-haifa'].reason, /no level-5 node/);
+  const st = res.measures.starts.geos;
+  assert.strictEqual(st['d-jm'].status, 'mismatch'); assert.strictEqual(st['d-jm'].code, 1); assert.strictEqual(st['d-jm'].name, 'הצפון'); assert.match(st['d-jm'].reason, /is named "הצפון", not Jerusalem District; "ירושלים" is 44,2,3,2/);
+  assert.strictEqual(st['d-north'].status, 'mismatch'); assert.strictEqual(st['d-haifa'].status, 'resolved');
+  const pe = res.measures.permits.geos;
+  assert.strictEqual(pe['d-haifa'].status, 'mismatch'); assert.strictEqual(pe['d-haifa'].code, 274); assert.match(pe['d-haifa'].reason, /differs from the expected 273/); assert.strictEqual(pe['d-center'].status, 'mismatch');
+  assert.ok(!S.plan(res, NOW).some((q) => (q.measure === 'starts' && (q.geo === 'd-jm' || q.geo === 'd-north')) || (q.measure === 'permits' && (q.geo === 'd-haifa' || q.geo === 'd-center'))));
+  assert.ok(res.measures.completions.geos['d-jm'].status === 'resolved', 'another branch is untouched');
+});
+await ta('without a catalogue name a by-district geography is PENDING (requested, applied only once a response names it); no leaf / no single total leaf / an ambiguous permits name is UNRESOLVED', async () => {
+  const mutate = (id, b) => {
+    if (id === 'level:4:44:2') b.catalogs.catalog = b.catalogs.catalog.filter((n) => !(n.path[1] === 4 && n.path[3] === 3));   /* active d-haifa unnamed */
+    if (id === '44,11,2') b.catalogs.catalog.push({ path: [44, 11, 2, null, 999], name: 'חיפה', pathDesc: '' });
+    if (id === '44,4,3') b.catalogs.catalog = b.catalogs.catalog.filter((n) => n.path[3] !== 6);
+    if (id === '44,2,3') { b.catalogs.catalog.push({ path: [44, 2, 3, 5, 3], name: 'בניינים', pathDesc: '' }); b.catalogs.catalog.find((n) => n.path[3] === 4 && n.path[4] === 2).name = 'בניינים'; b.catalogs.catalog.push({ path: [44, 2, 3, 4, 3], name: 'דירות', pathDesc: '' }); }
+  };
+  const res = await R.resolveAll({ fetchJson: fetcherOf({ mutate }), now: NOW });
+  const ah = res.measures.active.geos['d-haifa'];
+  assert.strictEqual(ah.status, 'pending'); assert.strictEqual(ah.pathId, '44,4,3,3,2'); assert.strictEqual(ah.nameSource, null); assert.match(ah.reason, /no level-4 node 44,4,3,3 in the level listing .* the data response must name it/);
+  assert.ok(S.plan(res, NOW).some((q) => q.measure === 'active' && q.geo === 'd-haifa'), 'a pending geography is requested');
+  assert.strictEqual(res.measures.permits.geos['d-haifa'].status, 'unresolved'); assert.match(res.measures.permits.geos['d-haifa'].reason, /ambiguous/);
+  assert.strictEqual(res.measures.active.geos['d-south'].status, 'unresolved'); assert.match(res.measures.active.geos['d-south'].reason, /no leaf 44,4,3,6,\* in the listing/);
+  assert.strictEqual(res.measures.starts.geos['d-ta'].status, 'resolved'); assert.strictEqual(res.measures.starts.geos['d-ta'].leaf, 2, 'the total leaf wins among several');
+  assert.strictEqual(res.measures.starts.geos['d-center'].status, 'unresolved'); assert.match(res.measures.starts.geos['d-center'].reason, /none is the total/);
   assert.strictEqual(res.measures.active.geos.il.status, 'resolved');
+  /* the whole level-4 listing unavailable: every by-district geography pending, permits untouched */
+  const r2 = await R.resolveAll({ fetchJson: fetcherOf({ fail: { 'level:4:44:1': 500 } }), now: NOW });
+  assert.ok(!r2.level4.ok && /HTTP 500/.test(r2.level4.error));
+  assert.ok(['starts', 'completions', 'active'].every((m) => Object.values(r2.measures[m].geos).every((x) => x.status === 'pending' && /level-4 listing failed/.test(x.reason))));
+  assert.ok(Object.values(r2.measures.permits.geos).every((x) => x.status === 'resolved'));
+  assert.strictEqual(S.plan(r2, NOW).length, 64);
 });
 await ta('a catalogue in an unrecognized shape, or refused, fails the measure — nothing requested for it', async () => {
   const res = await R.resolveAll({ fetchJson: fetcherOf({ mutate: (id, b) => (id === '44,11,2' ? { catalogs: { level: 5 } } : b), fail: { '44,2,3': 403 } }), now: NOW });
@@ -143,6 +170,18 @@ await ta('a catalogue in an unrecognized shape, or refused, fails the measure �
   assert.throws(() => R.catalogNodes({ catalogs: { catalog: [{ path: 'a,b' }] } }), SchemaError);
   const n = R.catalogNodes({ catalogs: { level: 5, catalog: [{ path: '44,11,2,,271', name: 'מחוז ירושלים' }] } }).nodes[0];
   assert.deepStrictEqual([n.pathId, n.depth, n.path[3]], ['44,11,2,,271', 5, null], 'a string path with an empty level is read');
+});
+await ta('finalize: a response names a pending geography → resolved (by response); a response naming the code otherwise → mismatch, whatever another window said', async () => {
+  const res = await R.resolveAll({ fetchJson: fetcherOf({ fail: { 'level:4:44:1': 500 } }), now: NOW });
+  const named = { measure: 'starts', geo: 'd-jm', ok: true, parsed: { names: ['ירושלים'] } };
+  const wrong = { measure: 'starts', geo: 'd-ta', ok: false, kind: 'geo-name', error: 'geography name mismatch: series 1 is named "המרכז", not Tel Aviv District' };
+  const later = { measure: 'starts', geo: 'd-ta', ok: true, parsed: { names: ['תל אביב'] } };
+  R.finalize(res, [named, wrong, later]);
+  assert.deepStrictEqual([res.measures.starts.geos['d-jm'].status, res.measures.starts.geos['d-jm'].nameSource, res.measures.starts.geos['d-jm'].name], ['resolved', 'response', 'ירושלים']);
+  assert.deepStrictEqual([res.measures.starts.geos['d-ta'].status, res.measures.starts.geos['d-ta'].nameSource], ['mismatch', 'response']);
+  assert.strictEqual(res.measures.starts.geos['d-haifa'].status, 'pending'); assert.match(res.measures.starts.geos['d-haifa'].reason, /never named this geography/);
+  const sum = R.summarize(res);
+  assert.deepStrictEqual([sum.starts.resolved, sum.starts.byResponse, sum.starts.pending.length, sum.starts.mismatch.length], [1, 1, 6, 1]);
 });
 
 console.log('ingestion — the period kind is the series\' own, never assumed');
@@ -158,6 +197,26 @@ t('parse: original monthly, quarterly and annual read; SA / trend (first in the 
   const qSum = q.find((o) => o.period === '2026-Q2').value, mSum = m.filter((o) => ['2026-04', '2026-05', '2026-06'].includes(o.period)).reduce((a, o) => a + o.value, 0);
   assert.strictEqual(qSum, mSum, 'CBS\'s own quarterly figure beside the months (the fixture is consistent)');
   assert.strictEqual(r.obs.find((o) => o.freq === 'M' && o.period === '2026-06').geoName, 'תל אביב', 'the name travels as a label only');
+  assert.deepStrictEqual(r.names, ['תל אביב'], 'the names the response carried — the verification evidence');
+});
+t('parse: the geography NAME in the series path must say it is the district asked — a code alone never suffices (GeoNameError, not a shape error)', () => {
+  const a = body('starts', 'd-ta'); a.DataSet.Series.forEach((s) => { s.path.level4.name = 'המרכז'; });
+  assert.throws(() => parseResponse(a, req('starts', 'd-ta')), (e) => e.name === 'GeoNameError' && /is named "המרכז", not Tel Aviv District/.test(e.message) && !/unrecognized shape/.test(e.message));
+  const b = body('starts', 'il'); b.DataSet.Series.forEach((s) => { s.path.level4.name = 'ירושלים'; });
+  assert.throws(() => parseResponse(b, req('starts', 'il')), /GeoNameError|name mismatch/);
+  const c = body('permits', 'jsr'); c.DataSet.Series.forEach((s) => { s.path.name_id.name = ''; });
+  assert.throws(() => parseResponse(c, req('permits', 'jsr')), /carries no geography name/);
+  const d = body('starts', 'd-jm'); d.DataSet.Series.forEach((s) => { s.path.level4.name = 'סך הכל'; });
+  assert.throws(() => parseResponse(d, req('starts', 'd-jm')), /name mismatch/, 'a total node is never a district');
+  assert.strictEqual(parseResponse(body('permits', 'il'), req('permits', 'il')).names[0], 'סך כולל');
+  assert.strictEqual(parseResponse(body('permits', 'jsr'), req('permits', 'jsr')).names[0], 'אזור יהודה והשומרון (עד 2005 כולל חבל עזה)');
+});
+t('parse: a series of a time / data kind PROPX does not map is SKIPPED and listed with its raw kind — never applied (the permits 9538xx series)', () => {
+  const r = parseResponse(body('permits', 'd-ta'), req('permits', 'd-ta'));
+  const sk = r.series.filter((s) => s.skipped);
+  assert.strictEqual(sk.length, 1); assert.strictEqual(sk[0].id, 953875); assert.match(sk[0].skipped, /^time 9 ".*" \/ data 1 "נתונים מקוריים"$/); assert.strictEqual(sk[0].time.value, 9);
+  assert.ok(!r.obs.some((o) => o.seriesId === 953875), 'nothing of the skipped series is applied');
+  assert.deepStrictEqual(r.freqs, ['M', 'Y']); assert.strictEqual(r.series.length, 4);
 });
 t('parse: a measure answered only in quarters is stored as quarters (active construction) — never shown as months', () => {
   const r = parseResponse(body('active', 'il'), req('active', 'il'));
@@ -167,7 +226,7 @@ t('parse: a measure answered only in quarters is stored as quarters (active cons
 });
 t('parse: permits by name_id with no level 4; a series of another geography, leaf, level or branch is a schema change', () => {
   const r = parseResponse(body('permits', 'd-ta'), req('permits', 'd-ta'));
-  assert.ok(r.obs.length && r.obs.every((o) => o.cbs === 275 && o.nameId === 275 && o.pathId === '44,11,2,,275' && o.geoName === 'מחוז תל אביב'));
+  assert.ok(r.obs.length && r.obs.every((o) => o.cbs === 275 && o.nameId === 275 && o.pathId === '44,11,2,,275' && o.geoName === 'תל אביב'));
   const a = body('starts', 'd-ta'); a.DataSet.Series.forEach((s) => { s.path.level4.value = 4; });
   assert.throws(() => parseResponse(a, req('starts', 'd-ta')), /geography 4, asked 5/);
   const b = body('starts', 'd-ta'); b.DataSet.Series.forEach((s) => { s.path.name_id.value = 3; });
@@ -288,13 +347,13 @@ await ta('first run: SUCCESS; ledger, raw bundle (catalogue + data), latest.json
   for (const f of [FILES.ledger, FILES.runs, FILES.latest, FILES.resolution]) assert.ok(fs.existsSync(path.join(DIR1, f)), f);
   const raw = fs.readdirSync(path.join(DIR1, 'raw')); assert.strictEqual(raw.length, 1);
   const bundle = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(DIR1, 'raw', raw[0]))));
-  assert.strictEqual(bundle.responses.length, 28 + 64, 'the catalogue responses are evidence too');
+  assert.strictEqual(bundle.responses.length, 6 + 64, 'the catalogue responses (level-4 pages + branch listings) are evidence too');
   const run = readLines(path.join(DIR1, FILES.runs))[0];
-  assert.deepStrictEqual([run.state, run.status, run.requests, run.catalogueRequests, run.dataRequests, run.answered, run.failed, run.revised], ['SUCCESS', 'success', 92, 28, 64, 64, 0, 0]);
+  assert.deepStrictEqual([run.state, run.status, run.requests, run.catalogueRequests, run.dataRequests, run.answered, run.applied, run.failed, run.revised], ['SUCCESS', 'success', 70, 6, 64, 64, 64, 0, 0]);
   assert.deepStrictEqual(run.latest, { permits: { freq: 'M', period: '2026-06' }, starts: { freq: 'M', period: '2026-06' }, completions: { freq: 'M', period: '2026-06' }, active: { freq: 'Q', period: '2026-Q2' } });
-  assert.strictEqual(run.resolution.permits.paths['d-ta'], '44,11,2,,275');
+  assert.strictEqual(run.resolution.permits.paths['d-ta'], '44,11,2,,275'); assert.deepStrictEqual([run.resolution.level4.ok, run.resolution.level4.pages, run.resolution.starts.byCatalogue, run.resolution.starts.separators], [true, 2, 8, 8]);
   const res = JSON.parse(fs.readFileSync(path.join(DIR1, FILES.resolution), 'utf8'));
-  assert.ok(res.measures.starts.listed.length === 8 && res.measures.starts.geos['d-jm'].name === 'ירושלים');
+  assert.ok(res.measures.starts.listed.length === 16 && res.measures.starts.geos['d-jm'].name === 'ירושלים' && res.measures.starts.geos['d-jm'].nameSource === 'catalogue');
   PAY1 = out.payload;
   const recs = readLines(path.join(DIR1, FILES.ledger));
   assert.strictEqual(recs.length, PAY1.records.observations); assert.ok(recs.every((r) => r.revision === 0 && r.pathId && r.freq));
@@ -377,6 +436,36 @@ await ta('a measure whose catalogue cannot be read on the first sync is MISSING 
   assert.ok(miss && miss.reason.kind === 'mismatch' && /differs from the expected 271/.test(miss.reason.en));
   assert.ok(!('d-jm' in o2.payload.measures.permits.geos) && 'd-haifa' in o2.payload.measures.permits.geos);
   assert.deepStrictEqual(o2.runEntry.resolution.permits.mismatch.length, 2);
+});
+await ta('the level-4 listing unavailable: every by-district geography is named by its data response (resolved by response) and applied; one the response names otherwise is a MISMATCH, never applied; one never named stays pending, listed missing', async () => {
+  const dir = tmp();
+  const out = await runSync({ dir, fetchJson: fetcherOf({ fail: { 'level:4:44:1': 503 } }), now: NOW });
+  assert.strictEqual(out.status, 'SUCCESS', 'every geography was verified by a name — from the responses');
+  const st = out.runEntry.resolution.starts;
+  assert.deepStrictEqual([st.resolved, st.byCatalogue, st.byResponse, st.pending], [8, 0, 8, []]); assert.ok(!out.runEntry.resolution.level4.ok);
+  assert.strictEqual(out.payload.measures.starts.geos['d-jm'].sourceName, 'ירושלים'); assert.strictEqual(out.payload.missing.length, 0);
+  const res = JSON.parse(fs.readFileSync(path.join(dir, FILES.resolution), 'utf8'));
+  assert.strictEqual(res.measures.active.geos['d-ta'].nameSource, 'response');
+  /* a response that names code 5 "המרכז": the geography is a mismatch — nothing of it applied, even from the window that was fine */
+  const dir2 = tmp();
+  const wrong = (id, b, u) => { if (id === '44,2,3,5,2' && /startperiod=01-2022/.test(u.href)) for (const s of b.DataSet.Series) s.path.level4.name = 'המרכז'; };
+  const o2 = await runSync({ dir: dir2, fetchJson: fetcherOf({ mutate: wrong }), now: NOW });
+  assert.strictEqual(o2.status, 'PARTIAL');
+  const x = o2.resolution.measures.starts.geos['d-ta'];
+  assert.deepStrictEqual([x.status, x.nameSource], ['mismatch', 'response']); assert.match(x.reason, /is named "המרכז", not Tel Aviv District/);
+  assert.ok(!('d-ta' in o2.payload.measures.starts.geos), 'nothing applied for the mismatched geography');
+  const miss = o2.payload.missing.find((m) => m.measure === 'starts' && m.geo === 'd-ta'); assert.ok(miss && miss.reason.kind === 'mismatch');
+  assert.ok(!readLines(path.join(dir2, FILES.ledger)).some((r) => r.measure === 'starts' && r.geo === 'd-ta'), 'not in the ledger either');
+  assert.ok(o2.payload.measures.starts.geos['d-center'].latest.value > 0, 'the district the name belongs to is untouched');
+  assert.match(readLines(path.join(dir2, FILES.runs)).pop().error, /starts\|d-ta: geography name mismatch/);
+  /* never named: the level listing is down and the response carries no series for the geography */
+  const dir3 = tmp();
+  const o3 = await runSync({ dir: dir3, fetchJson: fetcherOf({ fail: { 'level:4:44:1': 503 }, mutate: (id, b) => { if (id === '44,4,3,3,2') b.DataSet.Series = []; } }), now: NOW });
+  assert.strictEqual(o3.status, 'PARTIAL');
+  const p = o3.resolution.measures.active.geos['d-haifa'];
+  assert.strictEqual(p.status, 'pending'); assert.match(p.reason, /never named this geography/);
+  const m3 = o3.payload.missing.find((m) => m.measure === 'active' && m.geo === 'd-haifa'); assert.ok(m3 && m3.reason.kind === 'pending');
+  assert.deepStrictEqual(o3.runEntry.resolution.active.pending, ['d-haifa']);
 });
 await ta('REFUSED / SCHEMA_CHANGED / FAILED when nothing is read: only the run log is written, the last valid data untouched', async () => {
   const dir = tmp();

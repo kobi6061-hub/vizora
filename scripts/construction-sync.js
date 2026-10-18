@@ -40,15 +40,17 @@ async function fetchJson(url) {
   const dryRun = has('dry-run');
   const out = await runSync({ dir: DIR, fetchJson, now: new Date(), dryRun, log: console.log });
   if (dryRun) {
-    /* the evidence a first run must show: every catalogue node of every branch, the resolution, the series found */
+    /* the evidence a first run must show: the level-4 listing, every catalogue node of every branch, the resolution, the series found */
+    const L4 = out.resolution.level4;
+    console.log(`\n== level-4 listing of subject 44: ${L4.ok ? `${L4.count} nodes over ${L4.pages} page(s)` : 'FAILED: ' + L4.error}`);
     for (const m of MEASURE_IDS) {
       const R = out.resolution.measures[m];
-      console.log(`\n== ${m} (${R.path}) ${R.ok ? `${R.nodes} catalogue nodes` : 'CATALOGUE FAILED: ' + R.error}`);
-      for (const n of R.listed || []) console.log(`   node ${n.path.padEnd(16)} ${n.name}`);
-      for (const [k, x] of Object.entries(R.geos || {})) console.log(`   ${x.status.padEnd(10)} ${k.padEnd(9)} code ${String(x.code).padEnd(4)} expected ${String(x.expected).padEnd(4)} ${x.pathId || ''} ${x.name ? `"${x.name}"` : ''}${x.leafName ? ` leaf "${x.leafName}"` : ''}${x.reason ? ' — ' + x.reason : ''}`);
+      console.log(`\n== ${m} (${R.path}) ${R.ok ? `${R.nodes} catalogue nodes (${R.separators} separators)` : 'CATALOGUE FAILED: ' + R.error}`);
+      for (const n of R.listed || []) console.log(`   node ${n.path.padEnd(16)} ${n.name}${n.pathDesc ? `  ⟨${n.pathDesc}⟩` : ''}`);
+      for (const [k, x] of Object.entries(R.geos || {})) console.log(`   ${x.status.padEnd(10)} ${k.padEnd(9)} code ${String(x.code).padEnd(4)} expected ${String(x.expected).padEnd(4)} ${(x.pathId || '').padEnd(14)} ${x.name ? `"${x.name}" (${x.nameSource})` : ''}${x.leafName ? ` leaf "${x.leafName}"` : ''}${x.reason ? ' — ' + x.reason : ''}`);
     }
-    console.log('\n== series found (per request)');
-    for (const r of out.results) console.log(`   ${r.ok ? 'OK    ' : 'FAILED'} ${r.measure.padEnd(12)} ${r.geo.padEnd(9)} ${r.pathId.padEnd(16)} ${r.window.join('-')} ${r.ok ? r.parsed.series.map((s) => `${s.id}:${s.freq}/${s.kind}/${s.n}`).join(' ') : r.error}`);
+    console.log('\n== series found (per request; a skipped series shows its raw time / data kind — map it in lib/construction/series.js on purpose or leave it ignored)');
+    for (const r of out.results) console.log(`   ${r.ok ? 'OK    ' : 'FAILED'} ${r.measure.padEnd(12)} ${r.geo.padEnd(9)} ${r.pathId.padEnd(16)} ${r.window.join('-')} ${r.ok ? r.parsed.series.map((s) => (s.skipped ? `${s.id}:SKIPPED(${s.skipped}, ${s.n} obs)` : `${s.id}:${s.freq}/${s.kind}/${s.n}`)).join(' ') + (r.parsed.names.length ? ` · named "${r.parsed.names.join('" / "')}"` : '') : r.error}`);
   }
   if (argVal('summary-file')) fs.writeFileSync(argVal('summary-file'), out.summary + '\n');
   process.exitCode = exitCodeOf(out.status);

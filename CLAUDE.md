@@ -52,9 +52,12 @@
   time-series API, subject 44 — building permits (44,11,2), construction starts (44,2,3), completions (44,3,3) and active
   construction (44,4,3 — a STOCK at period end, never summed over periods) — dwellings, for the country and its 7 districts ONLY
   (no locality series exists; a district figure is never allocated to a city). Geography codes differ per branch (level-4 codes
-  1–7 + 8 total; permits name_id 271–277 + 1): `lib/construction/resolve.js` walks the catalogue EVERY run, finds the node by NAME,
-  verifies its CODE against `series.js` and resolves the level-5 leaf — a mismatch / unresolved node is never requested (PARTIAL,
-  last data kept); data is keyed by the code, the name is a label; the resolution is written to `geo-resolution.json`. The period
+  1–7 + 8 total; permits name_id 271–277 + 1, total "סך כולל"): `lib/construction/resolve.js` walks the catalogue EVERY run — the
+  permits leaves are named; the by-district branches list only leaves `…,<k>,2` "סך הכל" (+ "----" separators `…,<k>,4141`), so
+  the district NAME comes from the subject's level-4 listing (`catalog/level?id=4&subject=44`) or, failing that, from the data
+  response's own path (`pending` until a response names it) — the name verifies the CODE in `series.js`, the code keys the data;
+  a mismatch (catalogue or response, `GeoNameError`) / unresolved / never-named geography is never applied (PARTIAL, last data
+  kept); the resolution is written to `geo-resolution.json`; an unmapped series kind is skipped and listed. The period
   kind comes from each series (month / quarter / year), stored with every observation, never assumed. Append-only ledger with
   every revision (sales ledger logic reused), raw responses per content hash, `latest.json` per measure × geography: latest
   period (OFFICIAL), T3 / T12 or T4, YTD vs prior YTD, change (DERIVED, periods named; stock: level vs previous / year earlier),

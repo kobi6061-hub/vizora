@@ -33,20 +33,39 @@ earlier, no trailing total).
 
 ## Geography resolution (lib/construction/resolve.js)
 
-The geography code sets differ per branch, and the level-5 leaf under a district node was not read on the runner. So
-the sync does not trust a table alone: every run it walks `catalog/path?id=<branch>` (and `…,<district>` for the leaf),
-finds the node whose **name** is the district (`GEOS[].match`), and **verifies** that its **code** is the one
-`series.js` expects (`LEVEL4_CODES` / `PERMIT_CODES`):
+The geography code sets differ per branch, so the sync never trusts a table alone: **the name verifies the code, the
+code keys the data**, and a name alone never keys anything. What the real catalogue answers (first dry-run on the
+runner, 18.10.2026, workflow run 39080649194):
+
+- `catalog/path?id=44,11,2` (permits) — 8 **named** leaves `44,11,2,,<code>`: 1 "סך כולל" (not "סך הכל"), 271 ירושלים,
+  272 הצפון, 273 חיפה, 274 המרכז, 275 תל אביב, 276 הדרום, 277 "אזור יהודה והשומרון (עד 2005 כולל חבל עזה)".
+- `catalog/path?id=44,2,3` and `44,3,3` — 16 leaves and **no district name**: `…,<k>,2` "סך הכל" plus a separator
+  `…,<k>,4141` named "----------------------------------" (listed, counted, never resolved). `44,4,3` — 8 leaves `…,<k>,2`.
+- The district names of those branches come from the subject's **level-4 listing**
+  `catalog/level?id=4&subject=44` (paged; the listing the discovery's "1 ירושלים … 8 סך הכל" came from) — fetched once
+  per run and shared by the three branches.
+
+Every run, per measure and geography:
 
 | status | meaning | effect |
 | --- | --- | --- |
-| `resolved` | the name is found once, the code matches, a single leaf (or the one named "סך הכל") is found | requested; the data is keyed by the code |
-| `mismatch` | the name is found under another code | **not requested** — the table or CBS's coding changed; a human checks and updates `series.js` |
-| `unresolved` | no node / several nodes carry the name, or no single leaf | **not requested** |
+| `resolved` | permits: a leaf named like the district, with the expected code · by-district: the leaf `…,<k>,2` exists and the level-4 node `…,<k>` is named like the district (`nameSource: 'catalogue'`) | requested; keyed by the code |
+| `pending` | the leaf exists but the level-4 listing is unavailable or lacks the node | requested; **applied only once a data response names it** (`nameSource: 'response'`) — never named → nothing applied |
+| `mismatch` | the name sits under another code (catalogue), or the data response names the code otherwise (`GeoNameError`) | **not applied** — a human checks `series.js` against the names recorded |
+| `unresolved` | no leaf for the code, several leaves and none the total, or (permits) no / several nodes with the name | not requested |
 
-A name never keys data; a code is never used unverified. The resolution of every run is written to
-`data/construction/geo-resolution.json` (the nodes listed, the codes, the names, the reasons) and summarised in the
-run-log line. A run with any geography not read is PARTIAL — the last valid data of that geography stays, marked stale.
+In every case the parser checks the name in the data response's own path (`path.level4.name` /
+`path.name_id.name`) against the geography asked — a mismatch there disqualifies the geography whatever another window
+answered. The resolution of every run is written to `data/construction/geo-resolution.json` (every node listed with its
+`pathDesc`, the codes, the names, their source, the reasons) and summarised in the run-log line
+(`resolution.<measure>: resolved · byCatalogue · byResponse · pending · mismatch · unresolved · separators · paths`).
+A run with any geography not applied is PARTIAL — the last valid data of that geography stays, marked stale.
+One run = 2–3 level-4 pages + 4 branch listings + 64 data requests (≈ 70).
+
+**Unmapped series kinds.** A series whose `time.value` / `data.value` is not in `TIME_KIND` / `DATA_KIND` is skipped
+and listed with its raw kind (the dry-run prints `SKIPPED(time … / data …)`). The runner showed a third permits series
+`9538xx` beside the monthly `5538xx` and the annual `6538xx` for every geography; its kind is read from the next
+dry-run and mapped in `series.js` only on purpose — until then it is ignored explicitly.
 
 ## Period kind (lib/construction/parse.js)
 
@@ -113,15 +132,16 @@ NO_RUN until the first run; STALE after 100 hours without a good check (working 
 
 Dispatch `construction-sync.yml` with `mode: dry-run` first and read the log:
 
-1. every branch lists its 8 nodes with the expected names, and every geography is `resolved` with the expected code
-   (`starts` / `completions` / `active`: 1–7 + 8; `permits`: 271–277 + 1) — a `mismatch` means the table in
-   `series.js` must be corrected to what the catalogue says (after reading the node's name), an `unresolved` means the
-   catalogue shape differs from the one assumed (`catalogs.catalog[].path` / `.name`);
-2. the leaf under each district node of the three level-4 branches is a single "סך הכל" node (expected code 2);
-3. the series found per request: an original (`original`) series exists for every geography, on the kind expected
-   (starts / completions / permits monthly `M` + annual; active quarterly `Q`) — if starts or completions come only
-   quarterly for the districts, that is fine: the lane stores the kind it finds;
-4. no `SchemaError` anywhere.
+1. the level-4 listing answers (`== level-4 listing of subject 44: N nodes over P page(s)`) and every by-district
+   geography is `resolved … (catalogue)` with the expected code (1–7 + 8, leaf 2); permits `resolved … (catalogue)`
+   with 271–277 + 1 (total "סך כולל") — a `mismatch` names the code the catalogue gives the district: correct
+   `series.js` to it after reading the node's name; a `pending` means the level listing lacks the node: the response
+   must then name it (`named "…"` on the request line);
+2. the series found per request: an original (`original`) series for every geography on the kind expected (starts /
+   completions / permits monthly `M` + annual; active quarterly `Q`) — if starts or completions come only quarterly for
+   the districts, that is fine: the lane stores the kind it finds; every request line ends with `named "<district>"`;
+3. the permits `9538xx` series prints as `SKIPPED(time … / data …)` — decide whether to map that kind;
+4. no `SchemaError` / `geography name mismatch` anywhere; ≈ 70 requests.
 Then dispatch `sync`. The commit message names the measures and their latest periods.
 
 ## Hook points (not wired yet — by design)
