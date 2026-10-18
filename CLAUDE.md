@@ -56,6 +56,13 @@
   their basis (geography · population · period · premium as an assumption), the delta under the price is labelled as the new-homes
   INDEX change, and every headline card has an ⓘ (registry group `board`: definition · geography · population · period · source · class
   · what it does not mean).
+  PRESENTATION (owner's decision 19.10.2026, "official first, model second"): the national board's FIRST card is the CBS figure itself —
+  "Average transaction price — Israel" ₪2,435,000, OFFICIAL, Q2 2026, all dwelling transactions (new + second-hand), registry term
+  `cbs_average_transaction_price`, Trust source `cbs:average-dwelling-price` (TRANSCRIBED, not synced); the ×1.12 figure follows on its own
+  dashed card "Estimated new-home price ≈ ₪2.73M", MODEL (`vcOf` country price / sqm = mod; districts / cities unchanged — the capital
+  model reads them), its +12% assumption printed, term `new_home_price_estimate` ("CBS does not publish this figure as the official
+  national average price of a new dwelling"); under a filter the official card is "—" (never split, never replaced by the estimate).
+  Gates 1–6 in the test; `natPrice()` reads `PRICE_BASIS.il` only.
 - `test/calculator.test.js` = the deal calculator (`#calc`, `calcEngine`, `calcIrr`): visible,
   independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
   appreciation.

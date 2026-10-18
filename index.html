@@ -307,6 +307,18 @@ section.blk{padding-block:22px}
 .tp{position:relative}
 .tp .tp-xp{position:absolute;top:2px;inset-inline-end:2px}
 .kpi .kb{display:block;font-size:10.5px;line-height:1.4;color:var(--ink-3);margin-top:4px}
+/* the national price pair: the population is named on each card and the two look different (official solid · estimate dashed) */
+.kpi .kpop{align-self:flex-start;max-width:100%;font-size:10px;font-weight:700;letter-spacing:.01em;padding:1px 7px;border-radius:7px;line-height:1.5;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .kpop.all{background:var(--wash-blue);color:var(--accent-deep)}
+.kpi .kpop.est{color:var(--ink-3);border:1px dashed currentColor}
+.kpi.pop-est{border-style:dashed}
+.kpi.pop-est .val{color:var(--ink-2)}
+@media(min-width:1060px){.kpis.k7{grid-template-columns:repeat(5,1fr)}.kpis.k7 .kpi.pop-est.hi{grid-column:span 2}}
+@media(min-width:1360px){.kpis.k7{grid-template-columns:repeat(9,1fr)}}
+.kpis.k7 .kpi .lbl,.kpis.k7 .kpi .kpop{white-space:normal;overflow:visible}   /* the national pair's names are read whole, never cut */
+.ap-est{border-inline-start:1px dashed var(--edge);padding-inline-start:14px}
+.ap-v2{font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--ink-2);line-height:1.15}
 /* clarity (STEP 2A): orientation line · entity badge · drawer trail · labels that open the legend · five questions */
 .orient{font-size:12px;color:var(--ink-3);margin-top:4px;line-height:1.5}
 .xp-how{font:inherit;font-size:11.5px;font-weight:700;color:var(--accent-deep);background:none;border:0;padding:0 2px;cursor:pointer;white-space:nowrap}
@@ -826,6 +838,7 @@ footer.foot{border-top:1px solid var(--hairline);margin-top:26px;padding-block:2
 .kpi-scroll{overflow-x:auto}
 @media(max-width:699px){
   .kpis{grid-template-columns:232px repeat(5,minmax(150px,1fr));min-width:1010px}
+  .kpis.k7{grid-template-columns:232px 200px repeat(5,minmax(150px,1fr));min-width:1220px}
   .kpi.hero .val{font-size:25px}
   .kpi-scroll{margin-inline:-20px;padding-inline:20px;scrollbar-width:none}
   .kpi-scroll::-webkit-scrollbar{display:none}
@@ -2199,8 +2212,12 @@ const UPDATED_AT = "2026-08";
    dwellings for ISRAEL — TOTAL (Table 2.2, Q2 2026: ₪2,435,000 — the national row of this file before 29.08.2026) × the assumed 1.12
    new-build premium (commit d0f696c), rounded to ₪10,000 = ₪2,730,000. It is never a district's figure: Central District's ₪2,731,500
    (the same table) is a different row whose value is only numerically close. The per-m² base ₪26,500 has no separately recorded
-   source. test/headline-metrics.test.js pins this; the overview's price cards print it. */
-const PRICE_BASIS={il:{cbs:2435000,cbsPsm:26500,premium:1.12,geo:"Israel — total"}};
+   source. test/headline-metrics.test.js pins this; the overview's price cards print it.
+   PRESENTATION (owner's decision 19.10.2026 — OFFICIAL first, MODEL second): the national headline is the CBS figure itself
+   (cbs, OFFICIAL — transcribed from the named table and period; the label holds only while the value shown equals it), and the
+   ×premium figure (LOCATIONS.il.base.price) is shown after it, apart, as PROPX's new-home ESTIMATE (MODEL). CBS does not publish
+   ₪2,730,000 as the national average price of a new dwelling. */
+const PRICE_BASIS={il:{cbs:2435000,cbsPsm:26500,premium:1.12,geo:"Israel — total",table:"2.2",period:"2026-Q2",pop:"all dwelling transactions, new + second-hand",transcribed:"19.10.2026"}};
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,o:"tl",
     base:{price:2730000,sqm:29700,rent:5430,yoy:-2.0,y3:4.8,rentYoy:3.5,tx:34000,listings:84990}},
@@ -2459,8 +2476,13 @@ he:{
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
   nhIdxLbl:"מדד מחירי דירות חדשות · שינוי שנתי",xpInfo:"הסבר",
-  basisIl:(v,p)=>`ישראל — כלל הארץ (לא מחוז) · ממוצע הלמ״ס לכל הדירות, חדשות ויד שנייה: ${v}, רבעון ב׳ 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
-  basisIlPsm:(v,p)=>`ישראל — כלל הארץ · ${v} למ״ר, כל הדירות, אמצע 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
+  basisIl:(v,p,pct)=>`אומדן PROPX: ${v} (הלמ״ס, כל הדירות, ישראל — סך הכל, רבעון ב׳ 2026) × ${p} — הנחה: פרמיה של ${pct} לדירה חדשה. הלמ״ס אינה מפרסמת סכום זה כממוצע הארצי של דירה חדשה.`,
+  basisIlPsm:(v,p,pct)=>`אומדן PROPX: ${v} למ״ר (כל הדירות, אמצע 2026 — מקור הבסיס לא תועד) × ${p} — הנחה: ${pct} לדירה חדשה`,
+  offPriceL:"מחיר עסקה ממוצע — ישראל",offPriceS:"רבעון ב׳ 2026 · הלמ״ס, לוח 2.2",offPriceB:"ישראל — סך הכל (לא מחוז) · נתון הלמ״ס כפי שפורסם · הועתק ידנית ב-19.10.2026",
+  offNaFilt:"הלמ״ס מפרסמת ממוצע אחד לכל הדירות — אין מקור שמפצל אותו לפי חדרים / סוג",
+  nhEstL:"מחיר דירה חדשה — אומדן",nhEstS:(p,pct)=>`הממוצע הרשמי × ${p} · הנחה: ${pct} לדירה חדשה`,psmEst:"מחיר למ״ר — דירה חדשה, אומדן",
+  popAll:"כל עסקאות הדירות · חדשות + יד שנייה",popEst:"דירה חדשה · אומדן PROPX — לא נתון רשמי",
+  kpiNoteSaleNat:"רשמי קודם, מודל אחריו: מחיר העסקה הממוצע של הלמ״ס לכל הדירות, ואחריו אומדן PROPX לדירה חדשה · בכל כרטיס: סיווג ותקופה",
   basisArea:"ממוצע הלמ״ס של האזור לכל הדירות × 1.12 פרמיית דירה חדשה (הנחה)",basisEst:"אומדן מעוגן לעיר / למחוז — אין פרסום ישיר לאזור",
   basisFiltered:"מסנן פעיל: מוכפל במכפילי הדגמה — מודל",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
@@ -3024,8 +3046,13 @@ en:{
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
   nhIdxLbl:"New-homes price index · annual change",xpInfo:"Explain",
-  basisIl:(v,p)=>`Israel — total (not a district) · CBS average of all dwellings, new and second-hand: ${v}, Q2 2026 · × ${p} new-build premium (assumption)`,
-  basisIlPsm:(v,p)=>`Israel — total · ${v} per m², all dwellings, mid-2026 · × ${p} new-build premium (assumption)`,
+  basisIl:(v,p,pct)=>`PROPX estimate: ${v} (CBS, all dwellings, Israel — total, Q2 2026) × ${p} — an assumed ${pct} new-build premium. CBS does not publish this figure as the national average price of a new dwelling.`,
+  basisIlPsm:(v,p,pct)=>`PROPX estimate: ${v} per m² (all dwellings, mid-2026 — the base's source was not recorded) × ${p} — an assumed ${pct} for a new home`,
+  offPriceL:"Average transaction price — Israel",offPriceS:"Q2 2026 · CBS Table 2.2",offPriceB:"Israel — total (not a district) · the CBS figure as published · transcribed 19.10.2026",
+  offNaFilt:"CBS publishes one average for all dwellings — no source splits it by rooms / type",
+  nhEstL:"Estimated new-home price",nhEstS:(p,pct)=>`official average × ${p} · assumed ${pct} new-build premium`,psmEst:"Price per m² — new-home estimate",
+  popAll:"All dwelling transactions · new + second-hand",popEst:"New homes · PROPX estimate — not an official figure",
+  kpiNoteSaleNat:"Official first, model second: the CBS average transaction price of all dwellings, then PROPX's new-home estimate · class and period on every card",
   basisArea:"CBS area average of all dwellings × 1.12 new-build premium (assumption)",basisEst:"An estimate anchored to the city / district — no direct publication for the area",
   basisFiltered:"Filter on: multiplied by demonstration multipliers — MODEL",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
@@ -3792,7 +3819,9 @@ function msShown(l){
 function vcOf(l,field,base){   /* base: the unfiltered board value (the capital model reads l.base) */
   const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=!base&&filtersActive();
   switch(field){
-    case "price":case "sqm":return filt||est?"mod":"der";
+    case "price":case "sqm":   /* the country row is the ×1.12 new-home ESTIMATE — MODEL (owner's decision 19.10.2026); its official
+                                  figure is PRICE_BASIS.il, shown first. District / city rows keep their class (the capital model reads it). */
+      return filt||est||l.type==="country"?"mod":"der";
     case "yoy":   /* national = the CBS new-homes index: RAW only from the live snapshot */
       return l.id==="il"&&MKT.nh?"raw":isStatic(l,"yoy")?"static":est?"mod":"der";
     case "y3":case "rentYoy":return est?"mod":"der";
@@ -3823,6 +3852,15 @@ function vcPer(l,field,base){
   return "";
 }
 const vcTag=cls=>`<span class="vc ${cls}" title="${T().vcTip[cls]}">${T().vcName[cls]}</span>`;
+/* the national price pair (owner's decision 19.10.2026): off = the CBS average transaction price of ALL dwellings, Israel — total
+   (OFFICIAL only while the shown value equals the cited figure; a filter never splits it → "—"); est = PROPX's ×premium new-home
+   estimate (LOCATIONS.il, MODEL). Read only from PRICE_BASIS.il — never from a district row. */
+const premPct=B=>ltr("+"+Math.round((B.premium-1)*100)+"%");   /* "+12%" — kept left-to-right inside Hebrew text */
+function natPrice(){
+  const B=PRICE_BASIS.il;if(!B)return null;
+  const off=filtersActive()?{show:false}:{show:true,v:B.cbs,cls:"raw"};
+  return{B,off,est:{v:metricsOf("il").price,cls:vcOf(LOC.il,"price")}};
+}
 /* A ranking — places ordered by a value, a #1/#2/#3 list or a "leader" mark —
    is shown only when EVERY ranked value is RAW (official, stored provenance).
    A class badge does not make a modelled, derived or static #1 defensible.
@@ -4046,7 +4084,7 @@ function renderKPIs(skeleton){
   const t=T(),l=LOC[state.locId],m=metricsOf(state.locId);
   const nat=state.locId==="il"?null:metricsOf("il");
   el("kpiTitle").textContent=(state.locId==="il"?t.kpiTitleNat:t.kpiTitleFor+heName(l));
-  el("kpiNote").textContent=state.mode==="sale"?t.kpiNoteSale:t.kpiNoteRent;
+  el("kpiNote").textContent=state.mode==="sale"?(state.locId==="il"?t.kpiNoteSaleNat:t.kpiNoteSale):t.kpiNoteRent;
   /* every card carries its value class and the period it describes; a median
      needs official deals with real coverage, so until then it is UNAVAILABLE */
   /* the national index change is a different series and period than the price above it — its label says which (audit 19.10.2026) */
@@ -4054,12 +4092,19 @@ function renderKPIs(skeleton){
   const dl=f=>`${idxLbl(f)} · ${vcPer(l,f)} · ${t.vcName[vcOf(l,f)]}`;
   /* every price card names its own basis: geography · population · period · source (the Israel row = the CBS national total, never a district) */
   const B=!filtersActive()&&PRICE_BASIS[l.id];
-  const basisOf=f=>filtersActive()?t.basisFiltered:B?(f==="price"?t.basisIl(fmtNIS(B.cbs),B.premium):t.basisIlPsm(fmtNIS(B.cbsPsm),B.premium)):vcOf(l,f)==="mod"?t.basisEst:t.basisArea;
+  const basisOf=f=>filtersActive()?t.basisFiltered:B?(f==="price"?t.basisIl(fmtNIS(B.cbs),B.premium,premPct(B)):t.basisIlPsm(fmtNIS(B.cbsPsm),B.premium,premPct(B))):vcOf(l,f)==="mod"?t.basisEst:t.basisArea;
+  /* the national price — OFFICIAL first, MODEL second (owner's decision 19.10.2026): the CBS average transaction price of ALL
+     dwellings (PRICE_BASIS.il.cbs) heads the board; PROPX's ×premium new-home estimate follows as its own MODEL card with its
+     assumption in view. The estimate never takes the headline; no district value reaches either card (test/headline-metrics.test.js). */
+  const NAT=state.mode==="sale"&&l.id==="il"?natPrice():null;
   const yoyXp=l.id==="il"&&MKT.nh?"new_homes_price_index_change":"board_annual_change_estimate";
-  const cards=state.mode==="sale"?[
-    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy"),b:basisOf("price"),xp:"board_average_price"},
+  const cards=(state.mode==="sale"?[
+    NAT&&(NAT.off.show?{k:"offPrice",l:t.offPriceL,v:NAT.off.v,f:fmtNIS,vc:NAT.off.cls,s:t.offPriceS,b:t.offPriceB,xp:"cbs_average_transaction_price",pop:"all"}
+      :{k:"offPrice",l:t.offPriceL,na:t.offNaFilt,pop:"all"}),
+    NAT?{k:"price",l:t.nhEstL,v:m.price,f:v=>"≈ "+fmtCompact(v),vc:vcOf(l,"price"),s:t.nhEstS(NAT.B.premium,premPct(NAT.B)),b:basisOf("price"),xp:"new_home_price_estimate",pop:"est"}
+      :{k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy"),b:basisOf("price"),xp:"board_average_price"},
     {k:"median",l:t.medPrice,na:t.naMedianWhy},
-    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null,b:basisOf("sqm"),xp:"board_price_per_sqm"},
+    {k:"sqm",l:NAT?t.psmEst:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null,b:basisOf("sqm"),xp:NAT?"new_home_price_per_sqm_estimate":"board_price_per_sqm",pop:NAT?"est":null},
     {k:"yoy",l:idxLbl("yoy"),v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy"),xp:yoyXp},
     (x=>x.show?{k:"tx",l:t.tx,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"official_new_home_sales"}:{k:"tx",l:t.tx,na:x.why})(txShown(l)),
     {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3"),xp:"board_three_year_change"},
@@ -4070,8 +4115,9 @@ function renderKPIs(skeleton){
     {k:"rentYoy",l:t.yoyLbl,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy),vc:vcOf(l,"rentYoy"),s:vcPer(l,"rentYoy"),xp:"board_average_rent"},
     {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",vc:vcOf(l,"yield"),s:t.yieldFormula,xp:"board_gross_yield"},
     (x=>x.show?{k:"listings",l:t.listings,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"unsold_inventory"}:{k:"listings",l:t.listings,na:x.why})(invShown(l)),
-  ];
+  ]).filter(Boolean);   /* both lists: the national official card is absent elsewhere */
   const KICO={
+    offPrice:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
     price:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
     median:'<path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/>',
     sqm:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>',
@@ -4085,16 +4131,17 @@ function renderKPIs(skeleton){
     yield:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 15.5l7-7"/><circle cx="9.3" cy="9.3" r="1.2"/><circle cx="14.7" cy="14.7" r="1.2"/>',
     listings:'<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/>',
   };
-  const KTONE={price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
+  const KTONE={offPrice:"b",price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
     rent:"b",rentMedian:"v",rentPsm:"o",rentYoy:"g",yield:"g",listings:"v"};
   const cmpOf=c=>c.na?`<span>${c.na}</span>`
     :vcTag(c.vc)+(c.d!==undefined?deltaHTML(c.d,true)+`<span>${c.dl}</span>`
       :c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`
       :`<span>${c.s||""}</span>`)+(c.xp?xpBtn(c.xp):"");
+  el("kpis").classList.toggle("k7",cards.length===7);
   el("kpis").innerHTML=cards.map((c,i)=>`
-    <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}${c.na?" na":""}">
+    <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}${c.na?" na":""}${c.pop?" pop-"+c.pop:""}">
       <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
-      <span class="lbl">${c.l}</span>
+      <span class="lbl" title="${c.l}">${c.l}</span>${c.pop?`<span class="kpop ${c.pop}">${c.pop==="all"?t.popAll:t.popEst}</span>`:""}
       <span class="val ${c.cls||""}">${c.na?`<span class="na-v">${t.naShort}</span>`:`<span class="num" data-kpi="${c.k}">${c.f(c.v)}</span>`}</span>
       <span class="cmp">${cmpOf(c)}</span>${c.b&&!c.na?`<span class="kb">${c.b}</span>`:""}
     </div>`).join("");
@@ -4403,6 +4450,7 @@ function renderProfile(){
   const chain=chainOf(l).map(heName).reverse().join(" · ");
   const sale=state.mode==="sale";
   const primV=sale?m.price:m.rent;
+  const NP=sale&&l.id==="il"?natPrice():null;   /* the country: OFFICIAL first, MODEL second */
   const yf=sale?"yoy":"rentYoy";
   const stat=(lb,v,f,s)=>`<div class="stat"><div class="l">${lb}</div><div class="v num">${v}</div><div class="s">${vcTag(vcOf(l,f))}${s?` ${s}`:""}</div></div>`;
   el("profileCard").innerHTML=`
@@ -4416,12 +4464,22 @@ function renderProfile(){
         ${CI_EXTERNAL&&["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
       </div>
     </div>
-    <div class="asset-price">
+    <div class="asset-price">${NP?`
+      <div class="ap-off">
+        <div class="ap-l">${t.offPriceL} ${NP.off.show?vcTag(NP.off.cls):vcTag("na")}</div>
+        <div class="ap-v num">${NP.off.show?fmtNIS(NP.off.v):"—"}</div>
+        <div class="ap-d"><span>${NP.off.show?`${t.offPriceS} · ${t.popAll}`:t.offNaFilt}</span></div>
+      </div>
+      <div class="ap-est">
+        <div class="ap-l">${t.nhEstL} ${vcTag(NP.est.cls)}</div>
+        <div class="ap-v2 num">≈ ${fmtCompact(NP.est.v)}</div>
+        <div class="ap-d"><span>${t.nhEstS(NP.B.premium,premPct(NP.B))} · ${t.popEst}</span></div>
+      </div>`:`
       <div>
         <div class="ap-l">${sale?t.avgPrice:t.avgRent} ${vcTag(vcOf(l,sale?"price":"rent"))}</div>
         <div class="ap-v num">${fmtNIS(primV)}</div>
         <div class="ap-d">${deltaHTML(sale?m.yoy:m.rentYoy,true)}<span>${t.yoyLbl} · ${vcPer(l,yf)} · ${t.vcName[vcOf(l,yf)]}</span></div>
-      </div>
+      </div>`}
     </div>
     <div class="stats">
       ${stat(t.psm,fmtNIS(m.sqm),"sqm")}
