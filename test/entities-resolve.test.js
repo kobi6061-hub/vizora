@@ -59,7 +59,12 @@ t('no legal form (a private person) / a joint string / a missing registry → UN
   assert.equal(R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), R.buildIndex(null, null)).reasons[0].code, 'REGISTRY_NOT_SYNCED');
 });
 t('a company number from a source or the user → VERIFIED; an unknown number → UNRESOLVED (not in coverage), never a name fallback', () => {
-  assert.equal(R.resolveCompany(dev('משהו אחר בע"מ'), idx, { companyNumber: 511399388 }).state, 'VERIFIED');
+  const ok = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: 511399388 }); assert.equal(ok.state, 'VERIFIED'); assert.equal(ok.userProvided, true);
+  assert.ok(!ok.reasons.some((x) => x.code === 'USER_CONFIRMED_CANDIDATE'), 'a typed number is a user-provided key, not a confirmation');
+  /* a user number whose registered name is NOT the observed name is shown as a candidate, never attached */
+  const mm = R.resolveCompany(dev('משהו אחר בע"מ'), idx, { companyNumber: 511399388 }); assert.equal(mm.state, 'POSSIBLE_MATCH'); assert.equal(mm.chosen, null);
+  assert.deepEqual(mm.reasons.map((x) => x.code), ['COMPANY_NUMBER_USER_PROVIDED', 'USER_KEY_NAME_MISMATCH']); assert.equal(mm.candidates[0].num, 511399388);
+  assert.equal(R.resolveCompany(dev('משהו אחר בע"מ'), idx, { companyNumber: 511399388, confirmedCandidate: true }).state, 'POSSIBLE_MATCH', 'a confirmation flag never overrides the name check');
   assert.equal(R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ', 'company', { companyId: 511399388 }), idx).reasons[0].code, 'COMPANY_NUMBER_FROM_SOURCE');
   const u = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: 512345678 }); assert.equal(u.state, 'UNRESOLVED'); assert.ok(u.reasons.some((x) => x.code === 'REGISTRY_ROW_NOT_IN_COVERAGE'));
   const bad = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: '42' }); assert.equal(bad.state, 'UNRESOLVED', 'a malformed user number is refused, never replaced by the name'); assert.ok(bad.reasons.some((x) => x.code === 'INVALID_COMPANY_NUMBER'));
@@ -71,9 +76,12 @@ t('a plene / defective spelling variant (בניה / בנייה, פתוח / פי�
   const b = R.resolveCompany(dev('אביסרור משה ובניו עבודות בנין ופתוח בע"מ'), I2); assert.equal(b.state, 'AMBIGUOUS'); assert.equal(b.candidates.length, 2);
 });
 t('a joint winner string is not one entity: UNRESOLVED as a whole, every party resolved on its own', () => {
-  const r = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ, משה כהן', 'company', { joint: true }), idx);
+  const r = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ, גד השקעות בע"מ', 'company', { joint: true }), idx);
   assert.equal(r.state, 'UNRESOLVED'); assert.equal(r.chosen, null); assert.ok(r.reasons.some((x) => x.code === 'JOINT_PARTIES_RESOLVED_SEPARATELY'));
-  assert.deepEqual(r.parties.map((p) => [p.name, p.state]), [['י.ח. דמרי בניה ופיתוח בע"מ', 'STRONG_MATCH'], ['משה כהן', 'UNRESOLVED']]);
+  assert.deepEqual(r.parties.map((p) => [p.name, p.state]), [['י.ח. דמרי בניה ופיתוח בע"מ', 'STRONG_MATCH'], ['גד השקעות בע"מ', 'STRONG_MATCH']]);
+  /* a part without a legal form (a private person — or a fragment of one name cut at a comma) is not guessed: the string is not split */
+  const q = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ, משה כהן', 'company', { joint: true }), idx);
+  assert.equal(q.state, 'UNRESOLVED'); assert.ok(q.reasons.some((x) => x.code === 'JOINT_STRING_NOT_SPLITTABLE')); assert.equal((q.parties || []).length, 0);
 });
 t('resolved ambiguity: the user supplies the company number of one candidate → VERIFIED on a user-provided key (labelled), the other candidate untouched', () => {
   const r = R.resolveCompany(dev('א.ב. יזמות בע"מ'), R.buildIndex({ fetchedAt: '2026-10-18', rows: [{ num: 512000011, name: 'א.ב. יזמות בע~מ', status: 'מחוקה' }, { num: 512000012, name: 'א.ב יזמות בע~מ', status: 'פעילה' }] }, null), { companyNumber: '512000012', confirmedCandidate: true });
@@ -99,6 +107,26 @@ t('company facts: status class + verbatim; the registry TYPE alone sets the fina
   const z = R.companyFacts(idx.companies.byNumber.get('1004')); assert.equal(z.financialCoverage.cls, 'FOREIGN_COMPANY'); assert.equal(z.violating.flag, true); assert.match(z.violating.label.en, /NOT insolvency/);
   assert.equal(R.statusClassOf('בפרוק ע~י בימ~ש').cls, 'IN_COURT_LIQUIDATION'); assert.equal(R.statusClassOf('מחוקה').cls, 'STRUCK_OFF'); assert.equal(R.statusClassOf('בפרוק מרצון').cls, 'IN_VOLUNTARY_LIQUIDATION'); assert.equal(R.statusClassOf('').cls, 'UNKNOWN');
   assert.equal(R.financialCoverageOf('ישראלית חברה פרטית').cls, 'PRIVATE_WITH_LIMITED_PUBLIC_DATA'); assert.equal(R.financialCoverageOf(null).cls, 'UNKNOWN');
+});
+t('a comma inside ONE registered name: the whole name is resolved first (STRONG), never split into "parties"', () => {
+  const I3 = R.buildIndex({ fetchedAt: '2026-10-18', rows: [{ num: 512000021, name: 'פרץ לוזון, בנין ופתוח בע~מ', status: 'פעילה', type: 'ישראלית חברה פרטית' }, { num: 512000022, name: 'גמא בע~מ', status: 'פעילה', type: 'ישראלית חברה פרטית' }, { num: 512000023, name: 'דלתא בע~מ', status: 'פעילה', type: 'ישראלית חברה פרטית' }] }, null);
+  const a = R.resolveCompany(dev('פרץ לוזון, בנין ופתוח בע"מ', 'company', { joint: true }), I3);
+  assert.equal(a.state, 'STRONG_MATCH'); assert.equal(a.chosen.num, 512000021); assert.ok(a.reasons.some((x) => x.code === 'COMMA_IN_REGISTERED_NAME'));
+  /* a real joint string: every part carries a legal form → split, each party on its own */
+  const b = R.resolveCompany(dev('גמא בע"מ, דלתא בע"מ', 'company', { joint: true }), I3); assert.equal(b.state, 'UNRESOLVED'); assert.deepEqual(b.parties.map((x) => x.state), ['STRONG_MATCH', 'STRONG_MATCH']);
+  /* a part without a legal-form marker → the string is not splittable: nothing is guessed */
+  const c = R.resolveCompany(dev('גמא בע"מ, בנין ופתוח', 'company', { joint: true }), I3); assert.equal(c.state, 'UNRESOLVED'); assert.ok(c.reasons.some((x) => x.code === 'JOINT_STRING_NOT_SPLITTABLE')); assert.equal((c.parties || []).length, 0);
+});
+t('status AND sub-status classify: an order opening proceedings / rehabilitation / an arrangement is said as the registrar writes it', () => {
+  assert.equal(R.statusClassOf('פעילה', 'צו לפתיחת הליכים').cls, 'INSOLVENCY_PROCEEDINGS');
+  assert.equal(R.statusClassOf('פעילה', 'צו לפתיחת הליכים - תאגיד בשיקום').cls, 'INSOLVENCY_PROCEEDINGS');
+  assert.equal(R.statusClassOf('בפרוק ע~י בימ~ש', 'צו לפתיחת הליכים').cls, 'INSOLVENCY_PROCEEDINGS');
+  assert.equal(R.statusClassOf('פעילה/בפירוק - הליך פשרה או הסדר/פירוק זמני', 'פעילה').cls, 'ARRANGEMENT_OR_PROVISIONAL_LIQUIDATION');
+  assert.equal(R.statusClassOf('פעילה', 'בפרוק מרצון בהליך מזורז').cls, 'IN_VOLUNTARY_LIQUIDATION');
+  assert.equal(R.statusClassOf('פעילה', 'בהליכי מחיקה').cls, 'STRIKE_OFF_PENDING');
+  assert.equal(R.statusClassOf('פעילה', 'הוגשה בקשת מיזוג - מיועדת לקלוט').cls, 'ACTIVE', 'a merger application is not a distress status');
+  const s = R.statusClassOf('פעילה', 'צו לפתיחת הליכים'); assert.equal(s.verbatim, 'פעילה'); assert.equal(s.sub, 'צו לפתיחת הליכים');
+  const f = R.companyFacts({ num: 512000031, name: 'ק.מ. בע~מ', status: 'פעילה', sub: 'צו לפתיחת הליכים', type: 'ישראלית חברה פרטית' }); assert.equal(f.status.cls, 'INSOLVENCY_PROCEEDINGS'); assert.equal(f.status.sub, 'צו לפתיחת הליכים');
 });
 t('official keys from free text: a parcel parses, a lot number parses once, plurals do not', () => {
   assert.deepEqual(R.parseParcel('6979 / 3 '), { block: 6979, parcel: 3, key: 'parcel:6979/3' });
