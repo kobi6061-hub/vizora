@@ -19,7 +19,7 @@ on:
         options: [sync, dry-run]
         default: sync
       lanes:
-        description: 'comma-separated lanes (contractors, companies, partnerships, filings, insolvency, sites, tlv) — empty = all'
+        description: 'comma-separated lanes (contractors, companies, partnerships, filings, insolvency, strikeoff, sites, tlv) — empty = all'
         type: string
         default: ''
 

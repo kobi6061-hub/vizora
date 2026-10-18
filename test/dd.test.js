@@ -260,6 +260,12 @@ t('sync history labels: a cancelled charge removal is not a removal; an annual-r
   const exc = SY.diffSites(sp, { active: [site({ executorId: 1001 })], closed: { rows: [] } }, 'T')[0]; assert.equal(exc.event, 'site-executor-changed'); assert.equal(exc.oldExecutorId, 1002); assert.equal(exc.executorId, 1001);
   const cl = SY.diffSites(sp, { active: [site({})], closed: { rows: [{ name: 'אתר', executorName: 'אלפא בנייה בע"מ', from: '2026-10-01' }] } }, 'T')[0]; assert.equal(cl.event, 'site-closure-notice'); assert.equal(cl.executorKey, R.regKey('אלפא בנייה בע"מ'));
 });
+t('sync: the strike-off designation list — a new designation, a changed expected date and a removal are separate events; the first read of a company is a baseline', () => {
+  const SY = require('../lib/dd/sync');
+  const prev = { rows: [{ num: 1, name: 'א', expected: '2026-11-01', published: '2026-08-01' }, { num: 2, name: 'ב', expected: '2026-12-01', published: '2026-09-01' }] };
+  const next = { rows: [{ num: 1, name: 'א', expected: '2027-01-01', published: '2026-08-01' }, { num: 3, name: 'ג', expected: '2027-02-01', published: '2026-10-01' }, { num: 4, name: 'ד', expected: '2027-02-01', published: '2026-10-01' }] };
+  assert.deepEqual(SY.diffStrikeOff(prev, next, 'T', new Set(['1', '2', '3'])).map((e) => [e.event, e.key]).sort(), [['strike-off-date-changed', 'co:1'], ['strike-off-designation-no-longer-listed', 'co:2'], ['strike-off-designation-observed', 'co:3']].sort());
+});
 t('§18 WATCH matches by exact keys only: a parcel on a site event, a contractor\'s registry number (also as the previous executor), a closure notice under the contractor\'s registered name', () => {
   const H = [
     { at: '2026-10-19T05:00:00Z', lane: 'sites', event: 'site-first-seen', key: 'site:labor:77', parcel: 'parcel:7000/1', executorId: 9 },
