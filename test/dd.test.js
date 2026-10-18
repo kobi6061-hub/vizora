@@ -209,6 +209,17 @@ t('the summary sentences are declarative, classed, bilingual, and pass the langu
   languageGate(p, 'summary');
 });
 
+t('§15 explainability: every DD signal id has a rule, every DD missing id a reason, every DD term a level-2 entry (lib/explain/registry.js)', () => {
+  const X = require('../lib/explain/registry');
+  const sig = ['ENTITY_AMBIGUOUS', 'ENTITY_UNRESOLVED', 'COURT_LIQUIDATION_STATUS', 'COMPANY_NOT_ACTIVE', 'COURT_LIQUIDATION_PROCEEDING', 'VOLUNTARY_LIQUIDATION_LISTED', 'BREACH_FLAG', 'ANNUAL_REPORT_LAG', 'CHARGE_ACTIVITY', 'NO_PUBLIC_FINANCIALS', 'REGISTERED_CONTRACTOR', 'SITE_ENFORCEMENT', 'SITE_CLOSURE_NOTICE', 'POSSIBLE_SAME_ENTITY', 'EXECUTION_GAP'];
+  const src = fs.readFileSync(path.join(__dirname, '..', 'lib', 'dd', 'developer.js'), 'utf8'); for (const m of src.matchAll(/add\('([A-Z_]+)'/g)) assert.ok(sig.includes(m[1]), 'unlisted DD signal ' + m[1]);
+  for (const id of sig) { const r = X.SIGNAL_RULES[id]; assert.ok(r, 'no rule for ' + id); assert.ok(X.term(r.term), id + ' → ' + r.term); }
+  const devMiss = ddOf(dev('dev-a', 'אלפא בנייה בע"מ')).missing.map((m) => m.id); const prjMiss = prj(lot('ila:1:L9', { localityCode: 9000 }), null).missing.map((m) => m.id);
+  for (const id of new Set([...devMiss, ...prjMiss, 'dd-not-synced'])) assert.ok(X.missing(id, 'en'), 'no missing-data reason for ' + id);
+  for (const id of ['entity_match_state', 'legal_company', 'developer_brand', 'project_spv', 'charge_lien', 'insolvency_proceeding', 'voluntary_liquidation', 'breach_flag', 'registry_status', 'financial_resilience_coverage', 'registered_contractor', 'active_construction_site', 'municipal_permit_record', 'parcel_match', 'parcel_history', 'dd_stage_ladder', 'no_later_public_evidence', 'execution_gap', 'execution_velocity', 'coverage_label', 'risk_gap_brief', 'dd_next_best_evidence', 'watch_contract', 'dd_evidence_graph']) assert.ok(X.level2(id, 'en'), id);
+  assert.match(X.level2('charge_lien', 'en').notAs, /Not distress/); assert.match(X.level2('financial_resilience_coverage', 'en').short, /PUBLIC FINANCIAL DATA NOT AVAILABLE IN CURRENT COVERAGE/);
+});
+
 /* ---- the real synced data (skipped before the first sync) ---- */
 const REAL = D.load();
 if (REAL.synced) {
