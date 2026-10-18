@@ -47,6 +47,13 @@
 //   view=dd (POST)    the same read with the user's documents in the body { userDocs: [...] } — validated, used for this read only, never stored
 //   view=ddPermit     one Tel Aviv permit record (id=<request or permit number>) with its site, parcel and the ILA lots on that parcel
 //   view=ddStatus     coverage, freshness and the sync state of the due-diligence sources
+//   view=group        SPONSOR X-RAY — DEVELOPER GROUP INTELLIGENCE (lib/group): developer=<dev-…> [company=<number, USER-PROVIDED key>&confirm=1]
+//                     | company=<number> | project=<moch:…|ila:…> → the group behind it: identity graph (CORE · DOCUMENTED · SHARED ·
+//                     POSSIBLE · AMBIGUOUS, every edge with match state · source · date · why), the observed portfolio (each project once,
+//                     per universe), furthest-verified stages, observed execution load, execution history vs the national cohort, signals,
+//                     geography, programme, land pipeline, financial view per legal entity, pipeline vs financial position, SPVs,
+//                     corporate structure, legal / corporate timeline, group timeline, matrix, risk & gap brief, next best evidence
+//   view=group (POST) the same read with the user's documents in the body { userDocs: [...] } — validated, used for this read only, never stored
 
 'use strict';
 
@@ -62,6 +69,7 @@ const REV = require('../lib/radar/revisions');
 let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /* the supply read model ships separately */ }
 let GRAPH = null; try { GRAPH = require('../lib/graph'); } catch { /* the knowledge graph ships separately */ }
 let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence layer ships separately */ }
+let GROUP = null; try { GROUP = require('../lib/group'); } catch { /* Sponsor X-Ray ships separately */ }
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -87,8 +95,8 @@ module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://x');
   const p = Object.fromEntries(url.searchParams.entries());
   const view = p.view || 'status';
-  const post = req.method === 'POST' && view === 'dd';
-  if (req.method !== 'GET' && !post) { res.statusCode = 405; res.setHeader('Allow', view === 'dd' ? 'GET, POST' : 'GET'); return res.end('Method Not Allowed'); }
+  const post = req.method === 'POST' && (view === 'dd' || view === 'group');
+  if (req.method !== 'GET' && !post) { res.statusCode = 405; res.setHeader('Allow', view === 'dd' || view === 'group' ? 'GET, POST' : 'GET'); return res.end('Method Not Allowed'); }
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   let body = null;
@@ -133,6 +141,15 @@ module.exports = async (req, res) => {
       if (p.developer) { const out = DD.developer(String(p.developer), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       if (p.project) { const out = DD.project(String(p.project), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       return send(res, 400, { error: 'developer or project required' });
+    }
+    if (view === 'group') {
+      if (!GROUP || !DD) return send(res, 404, { error: 'group read model not available' });
+      if (!p.developer && !p.company && !p.project) return send(res, 400, { error: 'developer, company or project required' });
+      const key = p.developer && p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined;
+      const opt = { companyNumber: key, confirmedCandidate: p.confirm === '1', userDocs: body && Array.isArray(body.userDocs) ? body.userDocs : [], projectId: p.project ? String(p.project) : null };
+      const ready = await DD.prepare(opt);
+      const out = GROUP.group({ developer: p.developer || null, company: p.developer ? null : (p.company || null), project: p.developer ? null : (p.project || null) }, ready);
+      return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' });
     }
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));

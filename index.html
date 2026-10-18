@@ -1518,6 +1518,29 @@ tr.dd-off td{opacity:.72}
 .dd-watch .ho-more{margin:0}
 .dd-watchlist{margin:6px 0;font-size:11.5px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .dd-wl{cursor:pointer;background:var(--panel)}
+/* Sponsor X-Ray — developer group intelligence (lib/group) */
+.gx-open{margin-inline-start:6px}.gx-hit{font-size:11px}
+.ho-panel.gx-wide-panel{width:min(1080px,100%)}
+table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide td{vertical-align:top}table.gx-mid{min-width:760px}table.gx-mid th{white-space:nowrap}
+.gx-1m{margin:8px 0 12px}.gx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:6px;margin:8px 0}
+.gx-kpi{border:1px solid var(--hairline);border-radius:8px;padding:6px 8px;font-size:12px;line-height:1.45;background:var(--panel);min-width:0;overflow-wrap:anywhere}
+.gx-kpi .k{font-size:10.5px;font-weight:800;color:var(--ink-3);margin-bottom:2px}.gx-kpi .v{color:var(--ink)}
+.gx-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:6px 0}
+.gx-bar{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11.5px}.gx-bl{min-width:9em;color:var(--ink-2);font-weight:700}
+.gx-bt{flex:1;display:flex;height:16px;border-radius:5px;overflow:hidden;border:1px solid var(--hairline);background:var(--panel-2)}
+.gx-bt .gx-s{display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#fff;font-style:normal;min-width:2px}
+.gx-leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:var(--ink-2);margin:2px 0 6px}.gx-leg span{display:inline-flex;align-items:center;gap:4px}.gx-leg .gx-s{display:inline-block;width:10px;height:10px;border-radius:2px}
+.gx-s-LAND{background:var(--heat-3)}.gx-s-MARKETED{background:var(--heat-2)}.gx-s-PERMIT{background:var(--heat-5)}.gx-s-CONSTRUCTION{background:var(--conf-med)}.gx-s-ACTIVE_SITE{background:var(--gold)}.gx-s-COMPLETION{background:var(--up)}.gx-s-OCCUPANCY{background:var(--conf-high)}.gx-s-NO_LATER_EVIDENCE{background:var(--ink-3)}
+.gx-q{display:inline-block;font-size:9.5px;font-weight:800;border:1px solid currentColor;border-radius:4px;padding:0 5px}.gx-q-HIGH{color:var(--up)}.gx-q-MEDIUM{color:var(--conf-med)}.gx-q-LOW{color:var(--ink-3);border-style:dashed}
+.gx-qa dt{margin-top:4px}.gx-lev{border-inline-start:3px solid var(--navy);padding-inline-start:8px;margin:6px 0}
+.gx-map{overflow-x:auto;border:1px solid var(--hairline);border-radius:8px;background:var(--panel-2);margin:6px 0}.gx-map svg{display:block}
+.gx-map .gx-n rect{fill:var(--panel);stroke:var(--edge);stroke-width:1.2}.gx-map .gx-n-CORE rect{stroke:var(--navy);stroke-width:2}.gx-map .gx-n-DOCUMENTED rect{stroke:var(--accent)}.gx-map .gx-n-SHARED rect{stroke:var(--brass);stroke-dasharray:4 3}.gx-map .gx-n-POSSIBLE rect,.gx-map .gx-n-AMBIGUOUS rect{stroke:var(--gold);stroke-dasharray:3 3}.gx-map .gx-n-CONTEXT rect{stroke:var(--ink-3)}
+.gx-map .gx-n.sel rect,.gx-map .gx-n:focus rect{stroke:var(--gold);stroke-width:2.5}.gx-map .gx-n{cursor:pointer;outline:none}
+.gx-map .gx-t1{font:700 11px var(--f-body);fill:var(--ink)}.gx-map .gx-t2{font:600 9.5px var(--f-body);fill:var(--ink-3)}
+.gx-map .gx-ln{stroke:var(--ink-2);stroke-width:1.4}.gx-map .gx-e-poss .gx-ln{stroke:var(--gold);stroke-dasharray:4 3}.gx-map .gx-hit{stroke:transparent;stroke-width:12;cursor:pointer}.gx-map .gx-e.sel .gx-ln,.gx-map .gx-e:focus .gx-ln{stroke:var(--accent);stroke-width:3}.gx-map .gx-e{outline:none}
+.gx-sel{border:1px dashed var(--hairline);border-radius:8px;padding:4px 8px;margin:4px 0;min-height:4px;font-size:12px}.gx-sel:empty{display:none}
+.gx-mx td.on{background:var(--wash-blue);font-weight:700}.gx-mx th[scope=row]{white-space:nowrap}
+.gx-tl li.gx-ln-corporate{border-inline-start:3px solid var(--navy);padding-inline-start:6px}.gx-tl li.gx-ln-financial{border-inline-start:3px solid var(--brass);padding-inline-start:6px}
 @media (max-width:640px){.dd-ladder{grid-template-columns:1fr 1fr}.dd-dl{grid-template-columns:1fr}}
 .ds-ind li{font-size:12px} .num.up{color:var(--up)} .num.down{color:var(--down)}
 .ds-why{border:1px solid var(--hairline);border-inline-start:3px solid var(--brass);border-radius:9px;padding:10px 13px;margin:10px 0 2px;background:var(--panel)}
@@ -4809,7 +4832,13 @@ const PT_DOM={
   dsdevs:"text,number,number,number,date,number",
   purev:"text,text,text,number,percent,date,date",
   indl:"text,number,number,currency,currency",
-  cibulk:"number,currency,currency,percent,text"};
+  cibulk:"number,currency,currency,percent,text",
+  gxport:"text,text,text,text,text,number,date,text,text,text,date,text,text,text,text",
+  gxdist:"text,number,number,number,number,date",
+  gxloc:"text,number,number,number,number,date",
+  gxspv:"text,text,text,text,text,text,text,text",
+  gxedges:"text,text,text,text,text,date,text",
+  gxmem:"text,text,text,text,text,number,number,text"};
 /* a sortable day key for the periods the dossier prints (ISO day, "YYYY-MM" month, "YYYY-Qn" quarter) — the cell keeps its displayed text */
 const ptDayKey=v=>{if(!v)return "";const s=String(v);let m=s.match(/^(\d{4})-Q([1-4])$/);if(m)return `${m[1]}-${("0"+m[2]*3).slice(-2)}-31`;m=s.match(/^(\d{4})-(\d{2})$/);if(m)return `${m[1]}-${m[2]}-31`;return s.slice(0,10)};
 function ptDomAll(root,o={}){
@@ -8336,7 +8365,10 @@ function inHitSub(h){
 function inHitHTML(h,i){
   const t=IT(),sb=inHitSub(h),sub=sb?`<span class="sb">${inE(sb)}</span>`:"";
   const kids=(h.type==="plan"||h.type==="parcel")&&inState.sopen===i&&h.tenders?`<div class="in-kids">${h.tenders.map(x=>`<button type="button" class="in-kid" data-ldtender="${inE(x.id)}">${inE(t.ty.tender)} <span class="num">${inE(x.name||x.michrazId)}</span>${x.publishedDate?` · ${inDate(x.publishedDate)}`:""}</button>`).join("")}</div>`:"";
-  return `<div class="in-hitw"><button type="button" class="in-hit" data-inhit="${i}"><span class="ty">${inE(t.ty[h.type]||h.type)}</span><span class="lb"><bdi>${inE(state.lang==="en"&&h.meta&&h.meta.en&&(h.type==="district"||h.type==="country")?h.meta.en:h.label)}</bdi> ${sub}</span></button>${kids}</div>`;
+  /* Sponsor X-Ray: a developer (brand), a legal company or a project opens its group too */
+  const gk=h.type==="developer"?"developer:"+h.id:h.type==="company"&&h.meta&&h.meta.number?"company:"+h.meta.number:h.type==="project"?"project:"+h.id:null;
+  const grp=gk?`<button type="button" class="in-kid gx-hit" data-ingroup="${inE(gk)}">${GXT().hit} ↗</button>`:"";
+  return `<div class="in-hitw"><button type="button" class="in-hit" data-inhit="${i}"><span class="ty">${inE(t.ty[h.type]||h.type)}</span><span class="lb"><bdi>${inE(state.lang==="en"&&h.meta&&h.meta.en&&(h.type==="district"||h.type==="country")?h.meta.en:h.label)}</bdi> ${sub}</span></button>${grp}${kids}</div>`;
 }
 function renderInSearch(){
   const box=el("inRes");if(!box)return;
@@ -8371,7 +8403,8 @@ async function inOpen(kind,id,from){
   el("inDrawer").hidden=false;document.body.style.overflow="hidden";
   renderInDrawer();el("inPanel").focus();
   const ddq=kind==="company"?(String(id).startsWith("kablan:")?`view=ddCompany&kablan=${encodeURIComponent(String(id).slice(7))}`:`view=ddCompany&number=${encodeURIComponent(id)}${(w=>w?`&since=${encodeURIComponent(w.since)}`:"")(ddWatchOf("company",id))}`):kind==="permit"?`view=ddPermit&id=${encodeURIComponent(id)}`:null;
-  try{const d=await inGet(ddq||`view=${kind==="renewal"?"renewalComplex":kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
+  if(kind==="group"){gxState.sel=null;gxState.tl="m24"}
+  try{const d=await (kind==="group"?gxFetch(id):inGet(ddq||`view=${kind==="renewal"?"renewalComplex":kind}&id=`+encodeURIComponent(id)));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
   catch(e){if(!inState.open||inState.open.id!==id)return;inState.detailErr=e.message}
   renderInDrawer();
 }
@@ -8414,7 +8447,7 @@ function piHTML(d){
   return `<p class="ho-note">${inE(bl(I.basis))}</p><div class="ds-ft">${w.tl}</div>${tl}<div class="ds-ft">${w.ladder} ${xpBtn("project_stage")}</div>${rungs}${I.land?`<div class="ds-ft">${w.land}</div>${ctx(I.land,w.land,"₪","land_cost_position")}`:""}${I.demand?`<div class="ds-ft">${w.demand}</div>${ctx(I.demand,w.demand,"","lottery_demand_position")}`:""}<div class="ds-ft">${w.sig}</div>${sig}<div class="ds-ft">${w.miss}</div>${miss}`;
 }
 const inEntType=()=>{const o=inState.open,d=inState.detail||{};if(!o)return null;
-  return o.kind==="developer"?"developer":o.kind==="project"?(d.kind==="ila-awarded-lot"?"lot":"project"):o.kind==="company"?(d.kind==="contractor"?"contractor":"company"):o.kind==="permit"?"permit":o.kind==="renewal"?"renewal":null};
+  return o.kind==="developer"?"developer":o.kind==="project"?(d.kind==="ila-awarded-lot"?"lot":"project"):o.kind==="company"?(d.kind==="contractor"?"contractor":"company"):o.kind==="permit"?"permit":o.kind==="renewal"?"renewal":o.kind==="group"?"group":null};
 /* the path the user took between entity drawers: a step reached through a POSSIBLE / AMBIGUOUS link carries that mark */
 function inTrailPush(b){const o=inState.open;if(!o||!inState.detail)return;
   const row=b.closest("tr,li,p"),poss=b.dataset.rel==="possible"||!!(row&&row.querySelector(".dd-m-POSSIBLE_MATCH,.dd-m-AMBIGUOUS"));
@@ -8432,7 +8465,8 @@ function renderInDrawerBody(){
   const t=IT(),d=inState.detail,p=el("inPanel"),o=inState.open;
   const close=`<button type="button" class="ho-x" data-inclose aria-label="${inE(t.dClose)}">×</button>`;
   if(!o)return;
-  if(!d){p.innerHTML=`<div class="ho-dh"><h3 id="inDTitle">${inState.detailErr?(inOffline()?t.offline:t.err):t.loading}</h3>${close}</div>`;return}
+  p.classList.toggle("gx-wide-panel",o.kind==="group");
+  if(!d){const g=o.kind==="group"?GXT():null;p.innerHTML=`<div class="ho-dh"><h3 id="inDTitle">${inState.detailErr?(inOffline()?(g?g.offline:t.offline):(g?g.err:t.err)):(g?g.loading:t.loading)}</h3>${close}</div>`;return}
   const kv=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const sec=(title,tag,body)=>`<section class="ho-dsec"><h4>${title}${tag?" "+tag:""}</h4>${body}</section>`;
   const O=vcTag("raw"),D=vcTag("der"),K=t.kv;
@@ -8441,6 +8475,7 @@ function renderInDrawerBody(){
   if(o.kind==="renewal"){p.innerHTML=renewalDrawerHTML(d,close);ptDomAll(p);return}
   if(o.kind==="company"){p.innerHTML=ddCompanyDrawerHTML(d,close);ptDomAll(p);return}
   if(o.kind==="permit"){p.innerHTML=ddPermitDrawerHTML(d,close);ptDomAll(p);return}
+  if(o.kind==="group"){p.innerHTML=gxDrawerHTML(d,close);ptDomAll(p);return}
   if(o.kind==="developer"){
     const A=d.tenders||{},AR=d.tendersRecent||{},M=d.lotteries||{},MR=d.lotteriesRecent||{},C=d.construction;
     const two=(lab,a,b)=>`<tr><th>${lab}</th><td class="num">${a}</td><td class="num">${b}</td></tr>`;
@@ -8459,7 +8494,7 @@ function renderInDrawerBody(){
     const ps=(d.possibleSame||[]).length?`<ul class="ho-note ld-ul">${d.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}" data-rel="possible"><bdi>${inE(x.name)}</bdi></button> — ${inE(t.ev[x.evidence]||x.evidence)}</li>`).join("")}</ul>`:"";
     const ent=(d.entries||[]).length?`<ul class="ho-note ld-ul">${d.entries.map(x=>`<li>${inCity(x)} · ${inDate(x.date)} · ${inE(t.via[x.via]||x.via)}</li>`).join("")}</ul>`:"";
     p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.dDev} · ${inE(t.basisShort)}</span><h3 id="inDTitle"><bdi>${inE(d.name)}</bdi></h3>
-        <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}</div></div>${close}</div>
+        <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}<button type="button" class="ho-more gx-open" data-ingroup="developer:${inE(d.id)}">${GXT().open}</button></div></div>${close}</div>
       ${ddSlot("developer",d.id)}
       ${sec(t.dIds,O,`<div class="ho-dl">${kv(t.dCanon,`<bdi>${inE(d.canonical)}</bdi>`)}${kv(t.dCompany,inE(t.dCompanyV))}${kv(t.c.cities,inN((d.markets||[]).length))}${kv(t.c.last,inDate(d.lastActivity))}</div>
         <p class="ho-note">${t.dAliases}: ${(d.aliases||[]).map(a=>`<bdi>${inE(a.name)}</bdi> <span class="num">(${fmtInt(a.occurrences)})</span>`).join(" · ")}</p>${ps?`<h4 class="ld-h4">${t.dPossible}</h4>${ps}`:""}`)}
@@ -8496,7 +8531,7 @@ function renderInDrawerBody(){
   }
   const prov=d.provenance||{};
   p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${inE(t.pkinds[d.kind]||d.kind)} · <span class="num">${inE(d.id)}</span></span>
-      <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}</div></div>${close}</div>
+      <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}${(d.developers||[]).length||d.developerId?`<button type="button" class="ho-more gx-open" data-ingroup="project:${inE(d.id)}">${GXT().open}</button>`:""}</div></div>${close}</div>
     ${ddSlot("project",d.id)}
     ${body}
     ${d.intel&&t.pi?sec(t.pi.title,D,piHTML(d)):""}
@@ -8923,7 +8958,7 @@ function ddCompanyDrawerHTML(d,close){
   const c=d.company;
   const devs=(d.developers||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddcodevs"><thead><tr><th>${t.brand}</th><th>${state.lang==="en"?"Match":"התאמה"}</th><th>${state.lang==="en"?"Basis":"בסיס"}</th></tr></thead><tbody>${d.developers.map(x=>`<tr><td><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>${x.note?` <span class="ho-na">${inE(ddL(x.note))}</span>`:""}</td><td>${ddM(x.state)}</td><td>${inE(ddBasis(x.basis))}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">—</p>`;
   const sites=(d.sites.list||[]).length?`<ul class="dd-rs">${d.sites.list.map(s=>`<li><bdi>${inE(s.name||s.id)}</bdi> · ${inE(s.city||"")} · ${t.firstSeen} ${ddDate(s.firstSeen)}</li>`).join("")}</ul>`:"";
-  return `<div class="ho-dh"><div><span class="lyr">${t.company} · ${t.number} <span class="num">${inE(c.number)}</span></span><h3 id="inDTitle"><bdi>${inE(c.name)}</bdi></h3><div class="sub">${inE(ddStatus(c.status))} · ${inE(c.type||"")}</div></div>${close}</div>
+  return `<div class="ho-dh"><div><span class="lyr">${t.company} · ${t.number} <span class="num">${inE(c.number)}</span></span><h3 id="inDTitle"><bdi>${inE(c.name)}</bdi></h3><div class="sub">${inE(ddStatus(c.status))} · ${inE(c.type||"")}<button type="button" class="ho-more gx-open" data-ingroup="company:${inE(c.number)}">${GXT().openCo}</button></div></div>${close}</div>
     ${ddSec(t.legal,ddCoFacts(c),true)}${ddSec(`${t.devsOf} <span class="num">(${fmtInt((d.developers||[]).length)})</span>`,devs+`<p class="ho-note">${xpBtn("entity_match_state")} ${xpBtn("developer_brand")}</p>`,true)}${ddSec(t.corporate,ddCorpHTML(d.corporate),true)}${ddSec(t.financial,ddFinHTML(d.financial))}
     ${ddSec(t.contractor,d.contractor.registered?`<ul class="dd-rs">${d.contractor.branches.map(b=>`<li><span class="num">${inE(b.kablan)}</span> · ${inE(b.branch||"—")} · ${inE(b.group||"")} · ${inE(b.sivug||"")}</li>`).join("")}</ul><p>${t.sites}: <span class="num">${fmtInt(d.sites.active)}</span></p>${sites}`:`<p class="ho-note">${t.notReg}</p>`)}
     ${(d.tlvHolderSites.list||[]).length?ddSec(t.tlvHolder,`<p>${ddM(d.tlvHolderSites.matchState)} ${ddCov(d.tlvHolderSites.coverage)}</p><ul class="dd-rs">${d.tlvHolderSites.list.map(s=>`<li>${inE((s.parcels||[]).join(", "))} · ${inE(s.state||"—")} · ${t.start} ${ddDate(s.start)}</li>`).join("")}</ul>`):""}
@@ -8963,15 +8998,339 @@ function ddClick(b){
     ddState.key=null;ddEnsure(d.ddk,d.ddi);return}
 }
 
+/* =====================================================================
+   SPONSOR X-RAY — DEVELOPER GROUP INTELLIGENCE (lib/group · /api/intel?view=group)
+   "Show me the entire real-estate group": the companies, SPVs, pipeline,
+   execution, leverage, exposures and evidence gaps in one institutional
+   view. One-minute view · five-minute sections · deep dive. Group totals
+   are CORE + DOCUMENTED only, each project once, per universe; SHARED /
+   POSSIBLE / AMBIGUOUS are shown apart. No group score, no verdict.
+   ===================================================================== */
+const GX_I18N={
+he:{product:"Sponsor X-Ray",name:"מודיעין קבוצת יזם",open:"מפת קבוצת היזם",openCo:"קבוצה / ספונסר",hit:"קבוצה",loading:"טוען את מפת הקבוצה…",err:"מודיעין הקבוצה אינו זמין כרגע",offline:"מודיעין הקבוצה זמין בגרסת השרת בלבד",
+  oneMin:"תמונה בדקה",first:"מה לדעת קודם?",fiveMin:"פירוט (חמש דקות)",deep:"עומק — גרף ישויות, מקורות, נוסחאות ורשומות",openedFrom:"נפתח מ",otherDevs:"יזמים נוספים ברשומת הפרויקט — לכל אחד קבוצה משלו:",
+  top:{group:"קבוצה / ספונסר",status:"סטטוס זהות הקבוצה",core:"החברה המשפטית בליבה",pp:"ציבורית / פרטית",proj:"פרויקטים שנצפו",units:"יח״ד שנצפו",active:"פרויקטים פתוחים",exec:"ראיות לבנייה פעילה",done:"ראיות לגמר",land:"צנרת קרקע (36 ח׳)",geo:"חשיפה גאוגרפית",prog:"חשיפה לפי תכנית",fin:"כיסוי פיננסי",legal:"דגלים משפטיים / תאגידיים",exposure:"חשיפה עיקרית",gap:"פער הראיות העיקרי",next:"מה לבדוק הלאה"},
+  ila:"מגרשי רמ״י",moch:"פרויקטי הגרלה",lots:"מגרשים",projects:"פרויקטים",units_:"יח״ד",tenders:"מכרזים",localities:"יישובים",universeNote:"שני יקומים — לא מחוברים",stageMix:"תמהיל שלבים",trend:"מגמת ביצוע",qa:"שאלות הדקה הראשונה",
+  sec:{portfolio:"תיק הפרויקטים",shared:"זכיות משותפות — לא נספרות",stages:"התפלגות שלבים (השלב הרחוק ביותר המאומת)",load:"עומס ביצוע שנצפה",history:"רקורד ביצוע היסטורי",signals:"אותות ביצוע וחשיפה",geo:"חשיפה גאוגרפית",prog:"חשיפה לפי תכנית / מודל עסקי",land:"צנרת הקרקע",fin:"מינוף וחוסן פיננסי",lev:"להבין מינוף",change:"אז ← עכשיו",pvf:"צנרת מול מצב פיננסי",spv:"חשיפת SPV — חברות פרויקט",structure:"מבנה הקבוצה",legal:"ציר זמן משפטי / תאגידי",timeline:"ציר הזמן של הקבוצה",matrix:"מטריצת ריכוז",brief:"סיכונים ופערים",nbe:"הראיה הבאה — ברמת הקבוצה",graph:"גרף הישויות",lineage:"מקורות",formulas:"נוסחאות וכללים",raw:"הפניות לרשומות",cmp:"קבוצת ההשוואה (כל המגרשים)",meth:"מתודולוגיה וכללי אמת"},
+  c:{project:"פרויקט",city:"יישוב",legal:"ישות משפטית",pco:"חברת פרויקט",stage:"שלב",units:"יח״ד",award:"זכייה",permit:"היתר",cons:"בנייה",done:"גמר",latest:"ראיה אחרונה",match:"התאמה",quality:"איכות ראיות",prog:"תכנית",market:"שוק",brand:"מותג",winner:"זוכה / יזם",holder:"בעל היתר",contractor:"קבלן מבצע",parent:"חברת אם",guarantor:"ערב",measure:"מדד",median:"חציון (ח׳)",range:"רבעונים",minmax:"טווח",period:"תקופה",coverage:"כיסוי",district:"מחוז",n:"רשומות",share:"נתח",tier:"שכבה",via:"דרך",totals:"בסיכומים",type:"סוג",from:"מ",to:"אל",state:"מצב",source:"מקור",date:"תאריך",why:"למה",field:"שדה",then:"אז",now:"עכשיו",delta:"שינוי",entity:"ישות",kind:"סוג",event:"אירוע"},
+  mk:{open:"שוק חופשי",subsidized:"מסובסד",rental:"השכרה",other:"אחר"},yes:"כן",no:"לא",partial:"חלקית",current:"נוכחי",stale:"ישן",none:"—",
+  q:{HIGH:"גבוהה",MEDIUM:"בינונית",LOW:"נמוכה"},use:{HIGH:"גבוה",MEDIUM:"בינוני",LOW:"נמוך"},lab:{SHORTER:"קצר יותר",LONGER:"ארוך יותר",SIMILAR:"דומה",NO_COMPARISON_BASIS:"אין בסיס השוואה",IMPROVING:"מתקצר",LENGTHENING:"מתארך"},
+  startMed:"חציון חודשים מזכייה לתחילה",sigName:{EXECUTION_TIME_IMPROVING:"זמן הביצוע מתקצר",EXECUTION_TIME_LENGTHENING:"זמן הביצוע מתארך",HIGH_SIMULTANEOUS_PROJECT_LOAD:"עומס פרויקטים מקבילי גבוה",HIGH_EARLY_STAGE_PIPELINE:"צנרת מוקדמת גבוהה",HIGH_UNFINISHED_OBSERVED_PIPELINE:"צנרת שהחלה ללא ראיה לגמר",COMPLETION_EVIDENCE_STRONG:"ראיות גמר חזקות",LIMITED_COMPLETION_EVIDENCE:"ראיות גמר מוגבלות",RECENT_PROJECT_ACTIVITY_ACCELERATING:"פעילות חדשה מאיצה",RECENT_PROJECT_ACTIVITY_SLOWING:"פעילות חדשה מאטה",NO_LATER_PUBLIC_EVIDENCE_FOUND:"אין ראיה ציבורית מאוחרת",GROUP_GEOGRAPHIC_CONCENTRATION:"ריכוז גאוגרפי"},
+  etype:{RESOLVES_TO:"נפתר לחברה",CANDIDATE_OF:"מועמד לזהות",POSSIBLY_SAME:"ייתכן שאותה ישות",JOINT_AWARD_PARTY:"צד בזכייה משותפת",HOLDS:"מחזיקה (לפי מסמך)",SHAREHOLDER_OF:"בעלת מניות (לפי מסמך)",GUARANTEES:"ערבות (לפי מסמך)",REGISTERED_AS_CONTRACTOR:"רשומה כקבלן"},nkind:{DEVELOPER_BRAND:"מותג יזם",LEGAL_COMPANY:"חברה משפטית",CONTRACTOR:"קבלן רשום",NAMED_PARTY:"צד בשם בלבד (לא נמצא ברשם)"},role:{CORE:"ליבה",PARENT:"חברת אם",SUBSIDIARY:"חברה בת",PROJECT_SPV:"חברת פרויקט",AFFILIATE:"קשורה",CO_WINNER_PARTY:"שותף לזכייה",JOINT_PARTY:"צד בזכייה",CANDIDATE:"מועמד",DOCUMENTED:"לפי מסמך",DOCUMENT_PARTY:"צד במסמך",CONTRACTOR:"קבלן"},tierShort:{CORE:"מותג · ליבה",DOCUMENTED:"מותג · לפי מסמך",SHARED:"זכייה משותפת",POSSIBLE:"אפשרי",AMBIGUOUS:"רב-משמעי",CONTEXT:"הקשר"},
+  own:"הקבוצה",cohort:"כל המגרשים",startH:h=>`תחילה תוך ${h} חודשים מהזכייה`,eligible:"מגרשים בחלון מלא",startedShare:"שיעור שהחל",byTender:"חציון על מכרזים",prior:"מול ההיסטוריה של הקבוצה",earlier:"מוקדמים",later:"מאוחרים",locality:"קבוצת היישוב",
+  exec:{lots:"מגרשים בביצוע שנצפה",current:"אתר פעיל נוכחי",start:"ראיה לתחילה בלבד",stale:"ראיה ישנה (משב״ש)",early:"שלב מוקדם",recent12:"נזכו ב-12 ח׳",recent24:"נזכו ב-24 ח׳",noLater:"ללא ראיה מאוחרת",gap:"בכיסוי (כלל פער הראיות)",covGap:"פער כיסוי",geos:"יישובים במקביל",open:"פתוחים"},
+  sig:{projects:"פרויקטים מעורבים",cmp:"השוואה",n:"גודל מדגם",rule:"כלל",lim:"מגבלות",value:"ערך",threshold:"סף",showIds:"הצגת הרשומות"},
+  geo:{top3:"שלושת היישובים המובילים",cityUnits:"נתח יח״ד בעיר המובילה",distLots:"נתח מגרשים במחוז המוביל",entries:"כניסות ליישובים חדשים",m12:"12 ח׳",m24:"24 ח׳",m36:"36 ח׳"},
+  land:{won:"מגרשים שנזכו",units:"יח״ד שנזכו",cities:"ערים",latest:"זכייה אחרונה",first:"זכייה ראשונה",windows:"פעילות לפי חלון",lpu:"קרקע ליח״ד (תחרותי)",lpu36:"קרקע ליח״ד — 36 ח׳",psm:"מגרשי מחיר למ״ר",fixed:"מגרשי מחיר קבוע",sum:"סכומי זכייה (תחרותי)",before:"נזכו לאחר שיווק קודם ללא הצלחה",after:"שווקו שוב לאחר זכייה",byMarket:"לפי שוק"},
+  fin:{reporting:"הישות המדווחת",none:"אין דוחות כספיים בכיסוי",ratios:"יחסים (מדוח אחד)",flags:"דגלים מול התקופה המקבילה",entities:"ישויות הקבוצה — כל אחת בנפרד",period:"תקופה",basis:"בסיס",missing:"קלט חסר",bonds:"פירעונות אג״ח לפי שנה (כפי שבמסמך)",financing:"הסכמי ליווי",curLev:"מינוף נוכחי",levChange:"שינוי במינוף",maturity:"ריכוז פירעונות",nearShare:"חלק החוב לפירעון תוך 12 ח׳",cashCov:"כיסוי מזומנים",weak:"אם יצירת המזומנים נחלשת",longer:"אם הפרויקטים מתארכים",noScenario:"",pipeline:"הצנרת הנראית",position:"המצב הפיננסי המדווח",execLots:"מגרשים בביצוע",openRec:"רשומות פתוחות",awarded36:"נזכו ב-36 ח׳",landSum:"סכומי קרקע (36 ח׳)",cash:"מזומנים",debt:"חוב פיננסי",ntd:"חוב תוך 12 ח׳",equity:"הון עצמי",ocf:"תזרים מפעילות"},
+  spv:{distinct:"חברות פרויקט שונות",shared:"פרויקטים שחולקים חברה משפטית",unres:"חברת פרויקט לא מזוהה",verified:"מאומתות",strong:"בהתאמה חזקה",conflicts:"סתירות",roles:"תפקידים לפי פרויקט"},
+  map:{hint:"לחצו על קו או ישות לפרטים",edges:"כל הקשרים",select:"פרטי הקשר",node:"פרטי הישות",openCo:"פתיחת החברה",openDev:"פתיחת המותג",notProves:"מה זה לא מוכיח",reasons:"סיבות",legend:"קו מלא = חזק / מאומת · מקווקו = אפשרי / רב-משמעי — מוצג, לא נספר"},
+  tl:{m12:"12 ח׳",m24:"24 ח׳",y5:"5 שנים",all:"הכול",lanes:{project:"פרויקט",corporate:"תאגידי",financial:"פיננסי"},shown:(a,b)=>`מוצגים ${a} מתוך ${b}`},
+  nbe:{why:"למה זה חשוב",change:"מה זה יכול לשנות",propx:"PROPX יכולה להשיג?",user:"המשתמש צריך לספק?",docs:"הוספת מסמך — בפאנל בדיקת הנאותות של המותג",manage:"ניהול המסמכים",used:n=>`${n} מסמכים שסיפקתם שימשו בקריאה הזו (לא נשמרו בשרת)`},
+  brief:{why:"למה זה חשוב",not:"מה זה לא אומר",confirms:"מה יאשר",disproves:"מה יפריך",verify:"מה לבדוק הלאה"},
+  dp:{members:"מותגים בקבוצה",excluded:"אפשריים / רב-משמעיים — לא נספרים",companies:"חברות",contractor:"החברה כקבלן רשום (הקשר — לא בתיק)",path:"מסלול",truths:"כללי אמת",rules:"ספים מתועדים"},
+  noRows:"אין פרויקטים בקבוצה במקורות שבכיסוי",basisNote:"פעילות שנצפתה ב-PROPX — לא מאגר קרקעות, לא צנרת כוללת; ללא ציון קבוצתי"},
+en:{product:"Sponsor X-Ray",name:"Developer group intelligence",open:"View developer group",openCo:"View group / sponsor",hit:"Group",loading:"Loading the group map…",err:"Group intelligence is not available right now",offline:"Group intelligence is available in the server version only",
+  oneMin:"One-minute view",first:"What should I know first?",fiveMin:"Five-minute view",deep:"Deep dive — entity graph, sources, formulas and records",openedFrom:"Opened from",otherDevs:"Other developers on the project record — each has its own group:",
+  top:{group:"Group / sponsor",status:"Group identity status",core:"Core legal entity",pp:"Public / private",proj:"Observed projects",units:"Observed units",active:"Active (open) projects",exec:"Active construction evidence",done:"Completion evidence",land:"Land pipeline (36 m)",geo:"Geographic exposure",prog:"Programme exposure",fin:"Financial coverage",legal:"Legal / corporate flags",exposure:"Main exposure",gap:"Main evidence gap",next:"What to verify next"},
+  ila:"ILA lots",moch:"lottery projects",lots:"lots",projects:"projects",units_:"units",tenders:"tenders",localities:"localities",universeNote:"two universes — never added",stageMix:"Project-stage mix",trend:"Execution trend",qa:"The first-minute questions",
+  sec:{portfolio:"Project portfolio",shared:"Joint awards — not counted",stages:"Stage distribution (furthest verified stage)",load:"Observed execution load",history:"Historical execution record",signals:"Execution & exposure signals",geo:"Geographic exposure",prog:"Programme / business-model exposure",land:"Land pipeline",fin:"Financial leverage & resilience",lev:"Understanding leverage",change:"Then → now",pvf:"Pipeline vs financial position",spv:"SPV exposure — project companies",structure:"Corporate structure",legal:"Legal / corporate timeline",timeline:"Group timeline",matrix:"Group concentration matrix",brief:"Risks & gaps",nbe:"Next best evidence — group level",graph:"Entity graph",lineage:"Source lineage",formulas:"Formulas & rules",raw:"Raw record references",cmp:"The comparison cohort (every lot)",meth:"Methodology & truth rules"},
+  c:{project:"Project",city:"Locality",legal:"Legal entity",pco:"Project company",stage:"Stage",units:"Units",award:"Award",permit:"Permit",cons:"Construction",done:"Completion",latest:"Latest evidence",match:"Match",quality:"Evidence quality",prog:"Programme",market:"Market",brand:"Brand",winner:"Land winner / developer",holder:"Permit holder",contractor:"Executing contractor",parent:"Parent",guarantor:"Guarantor",measure:"Measure",median:"Median (m)",range:"Quartiles",minmax:"Range",period:"Period",coverage:"Coverage",district:"District",n:"Records",share:"Share",tier:"Tier",via:"Via",totals:"In totals",type:"Type",from:"From",to:"To",state:"State",source:"Source",date:"Date",why:"Why",field:"Field",then:"Then",now:"Now",delta:"Change",entity:"Entity",kind:"Kind",event:"Event"},
+  mk:{open:"open market",subsidized:"subsidized",rental:"rental",other:"other"},yes:"yes",no:"no",partial:"partly",current:"current",stale:"stale",none:"—",
+  q:{HIGH:"HIGH",MEDIUM:"MEDIUM",LOW:"LOW"},use:{HIGH:"HIGH",MEDIUM:"MEDIUM",LOW:"LOW"},lab:{SHORTER:"shorter",LONGER:"longer",SIMILAR:"similar",NO_COMPARISON_BASIS:"no comparison basis",IMPROVING:"improving",LENGTHENING:"lengthening"},
+  startMed:"median months from award to start",sigName:{EXECUTION_TIME_IMPROVING:"execution time improving",EXECUTION_TIME_LENGTHENING:"execution time lengthening",HIGH_SIMULTANEOUS_PROJECT_LOAD:"high simultaneous project load",HIGH_EARLY_STAGE_PIPELINE:"high early-stage pipeline",HIGH_UNFINISHED_OBSERVED_PIPELINE:"high unfinished observed pipeline",COMPLETION_EVIDENCE_STRONG:"completion evidence strong",LIMITED_COMPLETION_EVIDENCE:"limited completion evidence",RECENT_PROJECT_ACTIVITY_ACCELERATING:"recent activity accelerating",RECENT_PROJECT_ACTIVITY_SLOWING:"recent activity slowing",NO_LATER_PUBLIC_EVIDENCE_FOUND:"no later public evidence found",GROUP_GEOGRAPHIC_CONCENTRATION:"geographic concentration"},
+  etype:{RESOLVES_TO:"resolves to the company",CANDIDATE_OF:"identity candidate",POSSIBLY_SAME:"possibly the same entity",JOINT_AWARD_PARTY:"joint-award party",HOLDS:"holds (per document)",SHAREHOLDER_OF:"shareholder (per document)",GUARANTEES:"guarantee (per document)",REGISTERED_AS_CONTRACTOR:"registered as a contractor"},nkind:{DEVELOPER_BRAND:"developer brand",LEGAL_COMPANY:"legal company",CONTRACTOR:"registered contractor",NAMED_PARTY:"a named party only (not found in the registry)"},role:{CORE:"core",PARENT:"parent",SUBSIDIARY:"subsidiary",PROJECT_SPV:"project SPV",AFFILIATE:"affiliate",CO_WINNER_PARTY:"co-winner",JOINT_PARTY:"joint party",CANDIDATE:"candidate",DOCUMENTED:"per document",DOCUMENT_PARTY:"document party",CONTRACTOR:"contractor"},tierShort:{CORE:"brand · core",DOCUMENTED:"brand · documented",SHARED:"joint award",POSSIBLE:"possible",AMBIGUOUS:"ambiguous",CONTEXT:"context"},
+  own:"The group",cohort:"Every lot",startH:h=>`start within ${h} months of the award`,eligible:"lots in a full window",startedShare:"share started",byTender:"median over tenders",prior:"vs the group's own history",earlier:"earlier",later:"later",locality:"locality cohort",
+  exec:{lots:"lots in observed execution",current:"current active site",start:"start evidence only",stale:"stale evidence (MoCH)",early:"early stage",recent12:"awarded in 12 m",recent24:"awarded in 24 m",noLater:"without later evidence",gap:"covered (evidence-gap rule)",covGap:"coverage gap",geos:"simultaneous localities",open:"open"},
+  sig:{projects:"Projects involved",cmp:"Comparison",n:"Sample size",rule:"Rule",lim:"Limitations",value:"Value",threshold:"Threshold",showIds:"Show the records"},
+  geo:{top3:"Top three localities",cityUnits:"Units share in the largest city",distLots:"Lots share in the largest district",entries:"New locality entries",m12:"12 m",m24:"24 m",m36:"36 m"},
+  land:{won:"Lots won",units:"Units awarded",cities:"Cities",latest:"Latest award",first:"First award",windows:"Activity by window",lpu:"Land per unit (competitive)",lpu36:"Land per unit — 36 m",psm:"₪/m² bid lots",fixed:"fixed-price lots",sum:"Winning sums (competitive)",before:"Won after an earlier unsuccessful marketing",after:"Marketed again after the award",byMarket:"By market"},
+  fin:{reporting:"Reporting entity",none:"No financial statements in coverage",ratios:"Ratios (one statement)",flags:"Flags against the comparable period",entities:"Group entities — each on its own",period:"Period",basis:"Basis",missing:"Missing input",bonds:"Bond maturities by year (as in the document)",financing:"Financing agreements",curLev:"Current leverage",levChange:"Leverage change",maturity:"Maturity concentration",nearShare:"Share of debt due within 12 m",cashCov:"Cash coverage",weak:"If cash generation weakens",longer:"If projects take longer",noScenario:"",pipeline:"The visible pipeline",position:"The reported financial position",execLots:"Lots in execution",openRec:"Open records",awarded36:"Awarded in 36 m",landSum:"Land sums (36 m)",cash:"Cash",debt:"Financial debt",ntd:"Debt due within 12 m",equity:"Equity",ocf:"Operating cash flow"},
+  spv:{distinct:"Distinct project companies",shared:"Projects sharing one legal company",unres:"Project company not identified",verified:"VERIFIED",strong:"STRONG",conflicts:"Conflicts",roles:"Roles per project"},
+  map:{hint:"Click a line or an entity for its details",edges:"Every connection",select:"Connection details",node:"Entity details",openCo:"Open the company",openDev:"Open the brand",notProves:"What it does not prove",reasons:"Reasons",legend:"solid line = STRONG / VERIFIED · dashed = POSSIBLE / AMBIGUOUS — shown, never counted"},
+  tl:{m12:"12 m",m24:"24 m",y5:"5 years",all:"All",lanes:{project:"project",corporate:"corporate",financial:"financial"},shown:(a,b)=>`showing ${a} of ${b}`},
+  nbe:{why:"Why it matters",change:"What it could change",propx:"Can PROPX retrieve it?",user:"Does the user need to provide it?",docs:"Add a document — in the brand's due-diligence panel",manage:"Manage documents",used:n=>`${n} document(s) you provided were used in this read (not stored on the server)`},
+  brief:{why:"Why this matters",not:"What it does not mean",confirms:"What would confirm it",disproves:"What would disprove it",verify:"What to verify next"},
+  dp:{members:"Brands in the group",excluded:"Possible / ambiguous — not counted",companies:"Companies",contractor:"The company as a registered contractor (context — not in the portfolio)",path:"Path",truths:"Truth rules",rules:"Documented thresholds"},
+  noRows:"No group projects in the sources in coverage",basisNote:"OBSERVED PROPX ACTIVITY — never a land bank or a total pipeline; no group score"}};
+const GXT=()=>GX_I18N[state.lang==="en"?"en":"he"];
+const gxState={tl:"m24",sel:null};
+const gxL=v=>ddL(v);
+const gxCls=c=>c?ddCls(c):"";
+const gxN=v=>v==null?inDash():`<span class="num">${fmtInt(v)}</span>`;
+const gxPct=v=>v==null?inDash():`<span class="num">${Math.round(v*100)}%</span>`;
+const gxMo=v=>v==null?inDash():`<span class="num">${(Math.round(v*10)/10).toLocaleString(state.lang==="en"?"en-US":"he-IL")}</span>`;
+const gxNIS=(v,cur)=>v==null?inDash():cur&&cur!=="ILS"?`<span class="num">${inE(cur)} ${fmtInt(v)}</span>`:`<span class="num">${fmtNIS(v)}</span>`;
+const gxKV=(k,v,xp)=>`<div class="gx-kpi"><div class="k">${k}${xp?" "+xpBtn(xp):""}</div><div class="v">${v}</div></div>`;
+/* the query of a group key ("developer:dev-…" | "company:<number>" | "project:<id>") — a developer anchor carries the user's company number (as the DD panel) */
+function gxQuery(key){const i=String(key).indexOf(":"),kind=key.slice(0,i),id=key.slice(i+1);let q=`view=group&${kind}=${encodeURIComponent(id)}`;
+  if(kind==="developer"){const co=ddUserCo(id),cf=ddUserCoConfirmed(id);if(co)q+=`&company=${encodeURIComponent(co)}${cf?"&confirm=1":""}`}return q}
+function gxFetch(key){const docs=ddDocsNorm().map(x=>x.raw),q=gxQuery(key);return docs.length?inPost(q,{userDocs:docs}):inGet(q)}
+const gxStage=(d,b)=>{const x=(d.stages&&d.stages.buckets||[]).find(s=>s.id===b);return x?gxL(x.label):b};
+const gxProg=(d,id)=>{const r=(d.programme&&d.programme.rows||[]).find(x=>x.id===id);return r?gxL(r.label):id||"—"};
+function gxDrawerHTML(d,close){
+  const t=GXT(),he=state.lang!=="en";
+  const A=d.anchor||{},core=d.identity&&d.identity.core,name=core&&core.company?core.company.name:A.name;
+  const from=`${t.openedFrom}: ${inE(IT().ty[A.type]||A.type)} <bdi>${inE(A.name||A.id)}</bdi>`;
+  const others=(d.otherDevelopers||[]).length?`<p class="ho-note">${t.otherDevs} ${d.otherDevelopers.map(x=>`<button type="button" class="ld-link" data-ingroup="developer:${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>`).join(" · ")}</p>`:"";
+  const head=`<div class="ho-dh"><div><span class="lyr">${t.product} · ${t.name}</span><h3 id="inDTitle"><bdi>${inE(name||"—")}</bdi></h3>
+    <div class="sub">${ddM(core?core.linkState||core.state:(A.resolution&&A.resolution.state))} ${inE(gxL(d.identity.statusLabel))} ${xpBtn("group_identity_status")} · ${inE(gxL(d.identity.structureLabel))}</div><p class="ho-note">${inE(gxL(d.promise))} ${xpBtn("sponsor_xray")}</p><p class="ho-note">${from}${core&&core.company?` · ${ddCoLabel(core.company)}`:""}</p>${others}</div>${close}</div>`;
+  const used=d.userDocs&&d.userDocs.used?`<p class="ho-note">${t.nbe.used(d.userDocs.used)}</p>`:"";
+  return head+used+gxOneMinHTML(d)+`<h4 class="dd-h">${t.fiveMin}</h4>`+gxFiveHTML(d)+ddSec(t.deep,gxDeepHTML(d),false,"dd-deep")+`<p class="ho-note">${t.basisNote}</p>`;
+}
+/* ---- the one-minute view ---- */
+function gxOneMinHTML(d){
+  const t=GXT(),T0=d.top||{},L=d.load||{},S=d.stages||{};
+  const fr=`<ul class="dd-lines">${(d.firstRead||[]).map(l=>`<li><span class="dd-k">${inE(gxL(l.label))}:</span> ${gxCls(l.cls)} ${inE(gxL(l.text))} ${l.term?xpBtn(l.term):""}</li>`).join("")}</ul>`;
+  const co=T0.coreLegalEntity;
+  const exp=T0.mainExposure||{},gap=T0.mainEvidenceGap||{},nx=T0.verifyNext;
+  const geoTop=(T0.geographicExposure&&T0.geographicExposure.top||[]).map(x=>`<bdi>${inE(he()?x.city:(x.cityEn||x.city))}</bdi> <span class="ds-m">(${fmtInt(x.ila)} ${t.lots}${x.moch?`, ${fmtInt(x.moch)} ${t.moch}`:""})</span>`).join("<br>")||inDash();
+  const lf=(T0.legalFlags||[]);
+  const legal=lf.length?lf.map(e=>`<bdi>${inE(e.name||e.number)}</bdi>: ${inE(e.status||"—")}${e.breach?" · ⚑":""} · ${fmtInt(e.charges)} ${state.lang==="en"?"charges":"שעבודים"}${e.openInsolvency?` · <b>${fmtInt(e.openInsolvency)} ${state.lang==="en"?"open insolvency records":"רשומות חדלות פירעון פתוחות"}</b>`:""}${e.strikeOff?` · ${state.lang==="en"?"strike-off designation":"ייעוד למחיקה"}`:""}`).join("<br>"):inDash();
+  const grid=`<div class="gx-grid">${[
+    gxKV(t.top.group,`<bdi>${inE(T0.group&&T0.group.name||"—")}</bdi>`,"sponsor_xray"),
+    gxKV(t.top.status,inE(gxL(T0.identityStatus&&T0.identityStatus.label)),"group_identity_status"),
+    gxKV(t.top.core,co?`${ddCoLabel(co)} ${ddM(co.linkState)}`:inDash(),"group_member_tier"),
+    gxKV(t.top.pp,T0.publicPrivate?inE(gxL(T0.publicPrivate.label)):inDash(),"group_public_private"),
+    gxKV(t.top.proj,`${gxN(T0.observedProjects&&T0.observedProjects.ila)} ${t.ila} · ${gxN(T0.observedProjects&&T0.observedProjects.moch)} ${t.moch}<div class="ds-m">${t.universeNote}</div>`,"observed_portfolio"),
+    gxKV(t.top.units,`${gxN(T0.observedUnits&&T0.observedUnits.ila)} · ${gxN(T0.observedUnits&&T0.observedUnits.moch)}<div class="ds-m">${t.ila} · ${t.moch}</div>`,"observed_portfolio"),
+    gxKV(t.top.active,`${gxN(T0.activeProjects&&T0.activeProjects.ila)} · ${gxN(T0.activeProjects&&T0.activeProjects.moch)}`,"active_projects_group"),
+    gxKV(t.top.exec,`${gxN(L.executionEvidence&&L.executionEvidence.lots)} <span class="ds-m">(${t.exec.current}: ${fmtInt(L.executionEvidence?L.executionEvidence.current:0)})</span>`,"observed_execution_load"),
+    gxKV(t.top.done,`${gxN(T0.completionEvidence&&T0.completionEvidence.ila)} · ${gxN(T0.completionEvidence&&T0.completionEvidence.moch)}`,"completion_evidence"),
+    gxKV(t.top.land,T0.landPipeline&&T0.landPipeline.m36?`${gxN(T0.landPipeline.m36.lots)} ${t.lots} · ${gxN(T0.landPipeline.m36.units)} ${t.units_}`:inDash(),"group_land_pipeline"),
+    gxKV(t.top.geo,geoTop,"group_geographic_concentration"),
+    gxKV(t.top.prog,T0.programmeExposure?`${inE(gxL(T0.programmeExposure.label))} (${fmtInt(T0.programmeExposure.n)})`:inDash(),"programme_exposure"),
+    gxKV(t.top.fin,`${gxCls(T0.financialCoverage&&T0.financialCoverage.cls==="USER_DOCUMENT"?"USER_DOCUMENT":"MISSING")} ${inE(gxL(T0.financialCoverage&&T0.financialCoverage.statement))}`,"understanding_leverage"),
+    gxKV(t.top.legal,legal,"legal_corporate_timeline"),
+    gxKV(t.top.exposure,`${gxCls(exp.cls)} ${inE(gxL(exp.text))}`,"group_main_exposure"),
+    gxKV(t.top.gap,`${gxCls(gap.cls)} ${inE(gxL(gap.text))}`,"group_main_unknown"),
+    gxKV(t.top.next,nx?inE(gxL(nx.text)):inDash(),"group_next_best_evidence"),
+  ].join("")}</div>`;
+  const bar=u=>{const B=S[u]&&S[u].buckets||{},tot=S[u]?S[u].records:0;if(!tot)return"";
+    return `<div class="gx-bar" role="img" aria-label="${inE(u==="ila"?t.ila:t.moch)}"><span class="gx-bl">${u==="ila"?t.ila:t.moch} <span class="num">(${fmtInt(tot)})</span></span><span class="gx-bt">${(S.buckets||[]).filter(b=>B[b.id]&&B[b.id].n).map(b=>`<i class="gx-s gx-s-${inE(b.id)}" style="flex:${B[b.id].n}" title="${inE(gxL(b.label))}: ${fmtInt(B[b.id].n)}">${B[b.id].n/tot>=0.08?fmtInt(B[b.id].n):""}</i>`).join("")}</span></div>`};
+  const legend=`<p class="gx-leg">${(S.buckets||[]).map(b=>`<span><i class="gx-s gx-s-${inE(b.id)}"></i>${inE(gxL(b.label))}</span>`).join("")}</p>`;
+  const H=d.history||{},cmp=H.comparison||{};
+  const mt=(x)=>x&&x.monthsByTender&&x.monthsByTender.median!=null?`${gxMo(x.monthsByTender.median)} <span class="ds-m">(${fmtInt(x.monthsByTender.n)} ${t.tenders})</span>`:inDash();
+  const trend=`<p class="ho-note">${t.trend} ${xpBtn("execution_cohort_comparison")}: <b>${t.lab[cmp.label]||cmp.label||"—"}</b>${cmp.own&&cmp.own.monthsByTender&&cmp.own.monthsByTender.median!=null?` — ${t.startMed}: ${t.own} ${mt(cmp.own)} · ${t.cohort} ${mt(cmp.cohort)}`:""}${H.prior?` · ${t.prior}: ${t.lab[H.prior.label]||H.prior.label}`:""}</p>${(d.signals||[]).length?`<p class="ho-note">${d.signals.map(s=>`<span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${inE((t.sigName&&t.sigName[s.id])||s.id)}</span>`).join(" ")}</p>`:""}`;
+  const qa=`<details class="dd-sec"><summary>${t.qa}</summary><div class="dd-b"><dl class="dd-dl gx-qa">${(d.oneMinute||[]).map(x=>`<dt>${inE(gxL(x.q))}</dt><dd>${gxCls(x.cls)} ${inE(gxL(x.a))} ${x.term?xpBtn(x.term):""}</dd>`).join("")}</dl></div></details>`;
+  return `<section class="dd-1m gx-1m"><h4 class="dd-h">${t.oneMin}</h4><h5 class="dd-h5">${t.first} ${xpBtn("group_first_read")}</h5>${fr}${grid}<h5 class="dd-h5">${t.stageMix} ${xpBtn("stage_distribution")}</h5>${bar("ila")}${bar("moch")}${legend}${trend}${qa}</section>`;
+  function he(){return state.lang!=="en"}
+}
+/* ---- the five-minute sections ---- */
+function gxFiveHTML(d){
+  const t=GXT();
+  return [
+    ddSec(`${t.sec.portfolio} <span class="num">(${fmtInt(d.portfolio.total)})</span> ${xpBtn("observed_portfolio")}`,gxPortfolioHTML(d),true),
+    d.shared&&d.shared.total?ddSec(`${t.sec.shared} <span class="num">(${fmtInt(d.shared.total)})</span> ${xpBtn("shared_joint_awards")}`,gxSharedHTML(d)):"",
+    ddSec(`${t.sec.stages} ${xpBtn("stage_distribution")}`,gxStagesHTML(d)),
+    ddSec(`${t.sec.load} ${xpBtn("observed_execution_load")}`,gxLoadHTML(d)),
+    ddSec(`${t.sec.history} ${xpBtn("execution_duration")}`,gxHistoryHTML(d)),
+    ddSec(`${t.sec.signals} <span class="num">(${fmtInt((d.signals||[]).length)})</span>`,gxSignalsHTML(d),(d.signals||[]).length>0),
+    ddSec(`${t.sec.geo} ${xpBtn("group_geographic_concentration")}`,gxGeoHTML(d)),
+    ddSec(`${t.sec.prog} ${xpBtn("programme_exposure")}`,gxProgHTML(d)),
+    ddSec(`${t.sec.land} ${xpBtn("group_land_pipeline")}`,gxLandHTML(d)),
+    ddSec(`${t.sec.fin} ${xpBtn("understanding_leverage")}`,gxFinHTML(d)),
+    ddSec(`${t.sec.pvf} ${xpBtn("pipeline_vs_financial_position")}`,gxPvfHTML(d)),
+    ddSec(`${t.sec.spv} ${xpBtn("spv_exposure")}`,gxSpvHTML(d)),
+    ddSec(`${t.sec.structure} ${xpBtn("group_structure_map")}`,gxStructureHTML(d)),
+    ddSec(`${t.sec.legal} ${xpBtn("legal_corporate_timeline")}`,gxLegalHTML(d)),
+    ddSec(`${t.sec.timeline} ${xpBtn("group_timeline")}`,`<div id="gxTl">${gxTimelineHTML(d)}</div>`),
+    ddSec(`${t.sec.matrix} ${xpBtn("concentration_matrix")}`,gxMatrixHTML(d)),
+    ddSec(`${t.sec.brief} ${xpBtn("group_risk_gap_brief")}`,gxBriefHTML(d),true),
+    ddSec(`${t.sec.nbe} ${xpBtn("group_next_best_evidence")}`,gxNbeHTML(d),true),
+  ].join("");
+}
+function gxPortfolioHTML(d){
+  const t=GXT(),R=d.portfolio.rows||[];if(!R.length)return `<p class="ho-note">${t.noRows}</p>`;
+  const yn=(x,lab)=>x&&x.evidenced?`${lab||t.yes}${x.date?` ${inDate(x.date)}`:""}`:inDash();
+  const cons=r=>r.start&&r.start.evidenced?(r.bucket==="ACTIVE_SITE"?t.current:r.start.stale?t.stale:t.yes)+(r.start.date?` ${inDate(r.start.date)}`:""):inDash();
+  const rows=R.map(r=>`<tr><td><button type="button" class="ld-link" data-inproj="${inE(r.id)}"><bdi>${inE(r.label)}</bdi></button>${r.coDevelopers&&r.coDevelopers.length?`<div class="ds-m">+ <bdi>${inE(r.coDevelopers.map(x=>x.name).join(", "))}</bdi></div>`:""}</td><td>${inCity(r)}</td>
+    <td>${r.legalEntity&&r.legalEntity.number?`<span class="num">${inE(r.legalEntity.number)}</span>`:inDash()}</td><td>${r.projectCompany.number?`<span class="num">${inE(r.projectCompany.number)}</span> `:""}${ddM(r.projectCompany.state)}</td>
+    <td>${inE(gxStage(d,r.bucket))}</td><td class="num" data-v="${r.units!=null?r.units:""}">${gxN(r.units)}</td><td data-v="${inE((r.landAward?r.landAward.date:r.lotteries?r.lotteries.first:"")||"")}">${r.landAward?inDate(r.landAward.date):r.lotteries?inDate(r.lotteries.first):inDash()}</td>
+    <td>${yn(r.permit)}</td><td>${cons(r)}</td><td>${yn(r.completion)}</td><td data-v="${inE(r.latestEvidence&&r.latestEvidence.date||"")}">${r.latestEvidence?inDate(r.latestEvidence.date):inDash()}</td>
+    <td>${ddM(r.chainState)} <span class="ds-m">${inE(gxL(d.identity.tierDefs[r.tier]&&d.identity.tierDefs[r.tier].label))}</span></td><td><span class="gx-q gx-q-${inE(r.quality.level)}" title="${inE(r.quality.reasons.map(c=>gxL(d.portfolio.qualityReasons[c])).join(" · "))}">${t.q[r.quality.level]}</span></td>
+    <td>${inE(gxProg(d,r.programme))}</td><td>${inE(t.mk[r.market]||r.market)}</td></tr>`).join("");
+  return `<p class="ho-note">${gxN(d.portfolio.byUniverse.ila)} ${t.ila} · ${gxN(d.portfolio.byUniverse.moch)} ${t.moch} — ${inE(gxL(d.portfolio.universes.note))} ${xpBtn("row_evidence_quality")}</p>
+    <div class="ld-scroll"><table class="ho-dt dd-tbl gx-wide" data-ptdom="gxport"><thead><tr>${["project","city","legal","pco","stage","units","award","permit","cons","done","latest","match","quality","prog","market"].map(k=>`<th>${t.c[k]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div><p class="ho-note">${inE(gxL(d.portfolio.basis))}</p>`;
+}
+function gxSharedHTML(d){
+  const t=GXT();
+  return `<p class="ho-note">${inE(gxL(d.shared.note))}</p><ul class="dd-rs">${(d.shared.rows||[]).slice(0,80).map(r=>`<li><button type="button" class="ld-link" data-inproj="${inE(r.id)}"><bdi>${inE(r.label)}</bdi></button> · ${inCity(r)} · ${gxN(r.units)} ${t.units_} · ${inE(gxStage(d,r.bucket))} · <bdi>${inE(r.members.map(m=>m.name).join(" / "))}</bdi></li>`).join("")}</ul>`;
+}
+function gxStagesHTML(d){
+  const t=GXT(),S=d.stages;
+  const row=b=>`<tr><td>${inE(gxL(b.label))}</td><td class="num">${gxN(S.ila.buckets[b.id].n)}</td><td class="num">${gxN(S.ila.buckets[b.id].units)}</td><td class="num">${gxN(S.moch.buckets[b.id].n)}</td><td class="num">${gxN(S.moch.buckets[b.id].units)}</td><td class="ds-m">${inE(gxL(b.d))}</td></tr>`;
+  return `<div class="ld-scroll"><table class="ho-dt dd-tbl"><thead><tr><th>${t.c.stage}</th><th>${t.ila}</th><th>${t.c.units}</th><th>${t.moch}</th><th>${t.c.units}</th><th></th></tr></thead><tbody>${S.buckets.map(row).join("")}</tbody></table></div><p class="ho-note">${inE(gxL(S.basis))}</p><p class="ho-note">${inE(gxL(S.planningNote))}</p>`;
+}
+function gxLoadHTML(d){
+  const t=GXT(),L=d.load,E=L.executionEvidence,W=L.withoutLaterEvidence,R=L.recentlyAwarded;
+  return `<div class="gx-grid">${[gxKV(t.exec.lots,`${gxN(E.lots)} <span class="ds-m">(${fmtInt(E.tenders)} ${t.tenders} · ${fmtInt(E.localities)} ${t.localities})</span>`),gxKV(t.exec.current,gxN(E.current)),gxKV(t.exec.start,gxN(E.startEvidenceOnly)),gxKV(t.exec.stale,gxN(E.staleOnly)),gxKV(t.c.units,gxN(E.units)),
+    gxKV(t.exec.early,`${gxN(L.earlyStage.lots)} · ${gxN(L.earlyStage.lotteryProjects)}`),gxKV(t.exec.recent12,`${gxN(R.m12)} <span class="ds-m">(${fmtInt(R.units12||0)} ${t.units_})</span>`),gxKV(t.exec.recent24,`${gxN(R.m24)} <span class="ds-m">(${fmtInt(R.units24||0)} ${t.units_})</span>`),
+    gxKV(t.exec.noLater,`${gxN(W.total)} <span class="ds-m">${t.exec.gap}: ${fmtInt(W.gapRuleFires)} · ${t.exec.covGap}: ${fmtInt(W.coverageGap)}</span>`,"group_no_later_evidence"),gxKV(t.exec.geos,gxN(L.simultaneousGeographies)),gxKV(t.exec.open,`${gxN(L.openRecords.ila)} · ${gxN(L.openRecords.moch)}`,"active_projects_group")].join("")}</div>
+    <p class="ho-note">P50 <span class="num">${L.cohort.p50??"—"}</span> · P90 <span class="num">${L.cohort.p90??"—"}</span> · ${fmtInt(L.cohort.groups)} ${state.lang==="en"?"groups with any":"קבוצות עם לפחות אחד"}</p><p class="ho-note"><b>${inE(gxL(L.notCapacity))}</b></p><p class="ho-note">${inE(gxL(L.basis))} · ${inE(gxL(L.openDefinition))}</p>`;
+}
+function gxHistoryHTML(d){
+  const t=GXT(),H=d.history;
+  const rows=H.measures.map(m=>`<tr><td>${inE(gxL(m.label))}</td><td class="num">${gxN(m.n)}</td><td class="num">${gxN(m.tenders)}</td><td class="num">${gxMo(m.median)}</td><td>${m.n?`${gxMo(m.p25)}–${gxMo(m.p75)}`:inDash()}</td><td>${m.n?`${gxMo(m.min)}–${gxMo(m.max)}`:inDash()}</td><td>${m.period?`${inDate(m.period.from)}–${inDate(m.period.to)}`:inDash()}</td><td class="num">${fmtInt(m.coverage.withPair)}/${fmtInt(m.coverage.lots)}</td></tr>`).join("");
+  const blk=(lab,x)=>x?`<tr><th scope="row">${lab}</th><td class="num">${fmtInt(x.eligible)}</td><td class="num">${gxPct(x.share)}</td><td class="num">${gxMo(x.monthsByTender&&x.monthsByTender.median)} <span class="ds-m">(${fmtInt(x.monthsByTender?x.monthsByTender.n:0)} ${t.tenders})</span></td></tr>`:"";
+  const cmp=`<table class="ho-dt dd-tbl"><thead><tr><th></th><th>${t.eligible}</th><th>${t.startedShare}</th><th>${t.byTender}</th></tr></thead><tbody>${blk(t.own,H.comparison.own)}${blk(t.cohort,H.comparison.cohort)}${H.locality?blk(`${t.locality}: <bdi>${inE(state.lang==="en"?H.locality.cityEn||H.locality.city:H.locality.city)}</bdi>`,H.locality.cohort):""}</tbody></table>
+    <p class="ho-note"><b>${t.lab[H.comparison.label]||H.comparison.label}</b> ${xpBtn("execution_cohort_comparison")} — ${inE(t.startH(H.comparison.own.horizonMonths||36))}; ${inE(H.comparison.rule)}</p>`;
+  const P=H.prior?`<p class="ho-note">${t.prior}: <b>${t.lab[H.prior.label]||H.prior.label}</b> ${xpBtn("execution_time_trend")} — ${t.earlier} ${inDate(H.prior.earlier.from)}–${inDate(H.prior.earlier.to)}: ${gxMo(H.prior.earlier.months.median)} (${fmtInt(H.prior.earlier.startedTenders)}/${fmtInt(H.prior.earlier.eligibleTenders)} ${t.tenders}) · ${t.later} ${inDate(H.prior.later.from)}–${inDate(H.prior.later.to)}: ${gxMo(H.prior.later.months.median)} (${fmtInt(H.prior.later.startedTenders)}/${fmtInt(H.prior.later.eligibleTenders)} ${t.tenders})</p>`:"";
+  return `<div class="ld-scroll"><table class="ho-dt dd-tbl"><thead><tr><th>${t.c.measure}</th><th>${t.lots}</th><th>${t.tenders}</th><th>${t.c.median}</th><th>${t.c.range}</th><th>${t.c.minmax}</th><th>${t.c.period}</th><th>${t.c.coverage}</th></tr></thead><tbody>${rows}</tbody></table></div>${cmp}${P}<p class="ho-note">${inE(gxL(H.basis))}</p><ul class="ho-note ld-ul">${(H.limitations||[]).map(x=>`<li>${inE(gxL(x))}</li>`).join("")}</ul>`;
+}
+function gxSignalsHTML(d){
+  const t=GXT(),S=d.signals||[];if(!S.length)return `<p class="ho-note">—</p>`;
+  return `<ul class="ds-sig">${S.map(s=>`<li><span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${inE(s.kind)}</span> <b>${inE(gxL(s.text))}</b> ${xpSig(s.id,{text:s.text,value:s.value,valueLabel:s.valueLabel,threshold:s.threshold,period:s.period?`${s.period.from||""}–${s.period.to||""}`:null,source:s.source,cls:s.cls})}
+    <div class="ds-m">${t.sig.rule}: ${inE(s.rule)} · ${t.sig.value}: ${inE(s.valueLabel||"—")} · ${t.sig.n}: ${s.sampleSize!=null?fmtInt(s.sampleSize):"—"}${s.comparison?` · ${t.sig.cmp}: ${inE(s.comparison.basis||"")}${s.comparison.share!=null?` ${Math.round(s.comparison.share*100)}%`:""}${s.comparison.p90!=null?` P90 ${s.comparison.p90}`:""}`:""} · ${inE(s.source)} · ${gxCls(s.cls)}</div>
+    <details class="pu-why"><summary>${t.sig.projects} (${fmtInt(s.projectsTotal)}) · ${t.sig.lim}</summary><p class="ho-note">${s.projects.map(id=>`<button type="button" class="ld-link" data-inproj="${inE(id)}"><span class="num">${inE(id)}</span></button>`).join(" ")}${s.projectsTotal>s.projects.length?" …":""}</p><ul class="ho-note ld-ul">${(s.limitations||[]).map(x=>`<li>${inE(gxL(x))}</li>`).join("")}</ul></details></li>`).join("")}</ul>`;
+}
+function gxGeoHTML(d){
+  const t=GXT(),G=d.geography,en=state.lang==="en";
+  const lbl=e=>`<bdi>${inE(en?e.label.en||e.label.he:e.label.he||e.key)}</bdi>`;
+  const tbl=(xs,key,lab)=>`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="${key}"><thead><tr><th>${lab}</th><th>${t.ila}</th><th>${t.c.units}</th><th>${t.moch}</th><th>${t.c.units}</th><th>${t.land.first}</th></tr></thead><tbody>${xs.map(e=>`<tr><td>${lbl(e)}</td><td class="num">${gxN(e.ila.n)}</td><td class="num">${gxN(e.ila.units)}</td><td class="num">${gxN(e.moch.n)}</td><td class="num">${gxN(e.moch.units)}</td><td>${inDate(e.first)}</td></tr>`).join("")}</tbody></table></div>`;
+  const cu=G.largestCityUnitsShare,dl=G.largestDistrictProjectsShare;
+  const ent=["m12","m24","m36"].map(k=>`${t.geo[k]}: ${(G.entries[k]||[]).length?G.entries[k].map(x=>`<bdi>${inE(en?x.cityEn||x.city:x.city)}</bdi>`).join(", "):"—"}`).join(" · ");
+  return `<div class="gx-grid">${gxKV(t.geo.top3,(G.top3||[]).map(x=>`<bdi>${inE(en?x.cityEn||x.city:x.city)}</bdi> <span class="ds-m">(${fmtInt(x.ila)} ${t.lots}${x.moch?`, ${fmtInt(x.moch)} ${t.moch}`:""})</span>`).join("<br>")||inDash())}${gxKV(t.geo.cityUnits,cu?`${gxPct(cu.share)} <bdi>${inE(en?cu.cityEn||cu.city:cu.city)}</bdi> <span class="ds-m">(${fmtInt(cu.units)}/${fmtInt(cu.of)})</span>`:inDash())}${gxKV(t.geo.distLots,dl?`${gxPct(dl.share)} <bdi>${inE(gxL(dl.label))}</bdi> <span class="ds-m">(${fmtInt(dl.lots)}/${fmtInt(dl.of)})</span>`:inDash())}</div>
+    <p class="ho-note">${t.geo.entries}: ${ent}</p><p class="ho-note"><b>${inE(gxL(G.statement))}</b></p>${tbl(G.byDistrict,"gxdist",t.c.district)}${tbl(G.byLocality,"gxloc",t.c.city)}<p class="ho-note">${inE(gxL(G.basis))}</p>`;
+}
+function gxProgHTML(d){
+  const t=GXT(),P=d.programme;
+  const blk=x=>x?`${gxN(x.n)} · ${gxN(x.units)} ${t.units_} · ${gxPct(x.share)}${x.period?` <span class="ds-m">${inDate(x.period.from)}–${inDate(x.period.to)}</span>`:""}`:inDash();
+  return `<div class="ld-scroll"><table class="ho-dt dd-tbl"><thead><tr><th>${t.c.prog}</th><th>${t.ila}</th><th>${t.moch}</th><th>${t.c.coverage}</th></tr></thead><tbody>${P.rows.map(r=>`<tr><td>${inE(gxL(r.label))}</td><td>${r.available?blk(r.ila):inDash()}</td><td>${r.available?blk(r.moch):inDash()}</td><td class="ds-m">${inE(gxL(r.available?r.coverage:r.reason))}${r.available?"":" "+xpMiss(r.id==="URBAN_RENEWAL"?"urban-renewal-exposure":"private-land")}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(gxL(P.basis))}</p>`;
+}
+function gxLandHTML(d){
+  const t=GXT(),L=d.land,W=L.windows;
+  const w=(k,lab)=>`<tr><th scope="row">${lab}</th><td class="num">${gxN(W[k].lots)}</td><td class="num">${gxN(W[k].units)}</td><td class="num">${gxNIS(W[k].competitiveSum)} <span class="ds-m">(${fmtInt(W[k].competitiveLots)})</span></td></tr>`;
+  const rt=(xs,lab)=>xs.length?`<p class="ho-note">${lab}: ${xs.map(x=>`<button type="button" class="ld-link" data-inproj="${inE(x.id)}"><span class="num">${inE(x.id)}</span></button> <span class="ds-m">(${inE(x.relation)})</span>`).join(" · ")}</p>`:"";
+  return `<div class="gx-grid">${gxKV(t.land.won,gxN(L.lotsWon))}${gxKV(t.land.units,gxN(L.unitsAwarded))}${gxKV(t.land.cities,gxN(L.cities))}${gxKV(t.land.latest,inDate(L.latestAward))}${gxKV(t.land.lpu,L.landPerUnit.all?`${gxNIS(L.landPerUnit.all.value)} <span class="ds-m">(${fmtInt(L.landPerUnit.all.lots)} ${t.lots})</span>`:inDash(),"group_land_pipeline")}${gxKV(t.land.lpu36,L.landPerUnit.m36?`${gxNIS(L.landPerUnit.m36.value)} <span class="ds-m">(${fmtInt(L.landPerUnit.m36.lots)})</span>`:inDash())}${gxKV(t.land.psm,`${gxN(L.perSqmLots)} · ${t.land.fixed} ${gxN(L.fixedPriceLots)}`)}</div>
+    <table class="ho-dt dd-tbl"><thead><tr><th>${t.land.windows}</th><th>${t.lots}</th><th>${t.units_}</th><th>${t.land.sum}</th></tr></thead><tbody>${w("m12",t.geo.m12)}${w("m24",t.geo.m24)}${w("m36",t.geo.m36)}</tbody></table>
+    <p class="ho-note">${t.land.byMarket}: ${Object.entries(L.byMarket).map(([k,x])=>`${inE(t.mk[k]||k)} ${fmtInt(x.lots)} / ${x.units!=null?fmtInt(x.units):"—"} ${t.units_}`).join(" · ")}</p>
+    ${rt(L.reTenders.wonAfterEarlierMarketing,t.land.before)}${rt(L.reTenders.laterReMarketed,t.land.after)}<p class="ho-note">${inE(gxL(L.reTenders.basis))} · ${inE(gxL(L.landPerUnit.basis))}</p>${ddNotA(L.truths)}`;
+}
+function gxFinHTML(d){
+  const t=GXT(),F=d.financial;
+  const ents=F.entities||[];
+  const ratio=r=>r?(r.valid?`<span class="num">${r.value}</span>`:`<span class="ds-m">${inE(gxL(r.reason))}</span>`):inDash();
+  const miss=xs=>(xs||[]).length?`<div class="ds-m">${t.fin.missing}: ${xs.map(x=>`<span class="dd-code">${inE(x)}</span>`).join(" ")}</div>`:"";
+  const ent=e=>{const P=e.profile,Lv=e.leverage,C=e.change;
+    if(!e.hasStatements)return `<li><bdi>${inE(e.name||e.number)}</bdi> <span class="num">${inE(e.number)}</span> · ${inE(gxL(e.publicPrivate.label))} · ${gxCls("MISSING")} ${inE(gxL(P.statement))} ${xpMiss("group-financials")}</li>`;
+    const lat=P.latest;
+    const ch=C.available?`<table class="ho-dt dd-tbl"><thead><tr><th>${t.c.field}</th><th>${t.c.then} <span class="ds-m">${inE(C.then.end)}</span></th><th>${t.c.now} <span class="ds-m">${inE(C.now.end)}</span></th><th>${t.c.delta}</th></tr></thead><tbody>${C.rows.map(r=>`<tr><td>${inE(gxL(r.label))}</td><td class="num">${gxNIS(r.then,C.currency)}</td><td class="num">${gxNIS(r.now,C.currency)}</td><td class="num">${r.delta!=null?`${gxNIS(r.delta,C.currency)} <span class="ds-m">(${r.deltaPct!=null?r.deltaPct+"%":"—"})</span>`:inDash()}</td></tr>`).join("")}</tbody></table><p class="ho-note">${inE(gxL(C.basis))}</p>`:`<p class="ho-note">${inE(gxL(C.reason))}</p>`;
+    const lev=`<div class="gx-lev"><p><b>${inE(gxL(Lv.intro.short))}</b> ${xpBtn("understanding_leverage")}</p><p class="ho-note">${inE(gxL(Lv.intro.why))}</p><p class="ho-note">${inE(gxL(Lv.intro.mechanism))}</p><p class="ho-note"><span class="ho-chip cont">${inE(gxL(Lv.intro.notAs))}</span></p>
+      <div class="gx-grid">${gxKV(t.fin.curLev,Lv.current?`ND/E ${ratio(Lv.current.netDebtToEquity)} · D/A ${ratio(Lv.current.debtToAssets)}${miss(Lv.current.missing)}`:inDash(),"net_debt_to_equity")}
+      ${gxKV(t.fin.levChange,Lv.change?`ND/E ${ratio(Lv.change.netDebtToEquity.then)} → ${ratio(Lv.change.netDebtToEquity.now)} · D/A ${ratio(Lv.change.debtToAssets.then)} → ${ratio(Lv.change.debtToAssets.now)}`:inDash(),"financial_change_view")}
+      ${gxKV(t.fin.maturity,Lv.maturity&&Lv.maturity.nearTermDebt!=null?`${t.fin.nearShare}: ${gxPct(Lv.maturity.nearTermShare)} · ND/cash ${ratio(Lv.maturity.nearTermToCash)}${miss(Lv.maturity.missing)}`:`${inDash()}${miss(Lv.maturity&&Lv.maturity.missing)}`,"debt_maturity_concentration")}
+      ${gxKV(t.fin.cashCov,Lv.cashCoverage?`cash/CL ${ratio(Lv.cashCoverage.cashToCurrentLiabilities)} · CR ${ratio(Lv.cashCoverage.currentRatio)}${miss(Lv.cashCoverage.missing)}`:inDash())}
+      ${gxKV(t.fin.weak,Lv.ifCashGenerationWeakens?`OCF/D ${ratio(Lv.ifCashGenerationWeakens.ocfToDebt)} · ICR ${ratio(Lv.ifCashGenerationWeakens.interestCoverage)}<div class="ds-m">${inE(gxL(Lv.ifCashGenerationWeakens.statement))}</div>${miss(Lv.ifCashGenerationWeakens.missing)}`:inDash())}
+      ${gxKV(t.fin.longer,Lv.ifProjectsTakeLonger?`${t.fin.ntd} ${gxNIS(Lv.ifProjectsTakeLonger.nearTermDebt,lat.currency)} · ${t.fin.cash} ${gxNIS(Lv.ifProjectsTakeLonger.cash,lat.currency)}<div class="ds-m">${inE(gxL(Lv.ifProjectsTakeLonger.statement))}</div>${miss(Lv.ifProjectsTakeLonger.missing)}`:inDash())}</div><p class="ho-note">${inE(gxL(Lv.noScenario))}</p></div>`;
+    const bonds=(e.bonds||[]).length?`<p class="ho-note">${t.fin.bonds}: ${e.bonds.map(b=>`${inE(b.series)}: ${Object.entries(b.maturitiesByYear).map(([y,v])=>`${y} ${fmtInt(v)}`).join(" · ")} (${inE(b.compliant)})`).join(" | ")} ${gxCls("USER_DOCUMENT")}</p>`:"";
+    const fl=(P.flags||[]).length?`<ul class="ds-sig">${P.flags.map(f=>`<li><b>${inE(gxL(f.text))}</b> ${xpSig(f.id,{text:f.text,threshold:f.threshold,cls:f.cls})}<div class="ds-m">${inE(f.rule)} · ${inE((f.periods||[]).join(" → "))}</div></li>`).join("")}</ul>`:"";
+    return `<li><b><bdi>${inE(e.name||e.number)}</bdi></b> <span class="num">${inE(e.number)}</span> · ${inE(gxL(e.publicPrivate.label))} · ${gxCls(lat.cls)} ${inE(lat.period.kind)} ${inE(lat.period.end)} · ${inE(lat.basis)} · ${inE(lat.audited)}<h5 class="dd-h5">${t.fin.flags}</h5>${fl||`<p class="ho-note">—</p>`}${lev}<h5 class="dd-h5">${t.sec.change} ${xpBtn("financial_change_view")}</h5>${ch}${bonds}</li>`};
+  return `<p class="ho-note">${gxCls(F.cls)} ${inE(gxL(F.statement))}</p>${F.publicPrivate?`<p class="ho-note">${inE(gxL(F.publicPrivate.label))} · ${inE(gxL(F.publicPrivate.note))}</p>`:""}<h5 class="dd-h5">${t.fin.entities}</h5><ul class="dd-sites">${ents.map(ent).join("")||"<li>—</li>"}</ul>${ddNotA(F.rules)}`;
+}
+function gxPvfHTML(d){
+  const t=GXT(),V=d.pipelineVsFinancial,Pp=V.pipeline,Fp=V.financial;
+  const left=`<div class="gx-kpi"><div class="k">${t.fin.pipeline} ${gxCls("DERIVED")}</div><div class="v">${t.fin.execLots}: ${gxN(Pp.executionLots)}${Pp.executionUnits!=null?` (${fmtInt(Pp.executionUnits)} ${t.units_})`:""}<br>${t.fin.openRec}: ${gxN(Pp.openIla)} · ${gxN(Pp.openMoch)}<br>${t.fin.awarded36}: ${gxN(Pp.awarded36&&Pp.awarded36.lots)} ${t.lots} · ${gxN(Pp.awarded36&&Pp.awarded36.units)} ${t.units_}<br>${t.fin.landSum}: ${gxNIS(Pp.awarded36&&Pp.awarded36.competitiveSum)}</div></div>`;
+  const right=Fp?`<div class="gx-kpi"><div class="k">${t.fin.position} ${gxCls("USER_DOCUMENT")} <span class="ds-m"><bdi>${inE(Fp.entity.name||Fp.entity.number)}</bdi> · ${inE(Fp.period.end)} · ${inE(Fp.basis)} · ${inE(Fp.units)}</span></div><div class="v">${t.fin.cash}: ${gxN(Fp.cash)} · ${t.fin.debt}: ${gxN(Fp.financialDebt)}<br>${t.fin.ntd}: ${gxN(Fp.nearTermDebt)} · ${t.fin.equity}: ${gxN(Fp.equity)}<br>${t.fin.ocf}: ${gxN(Fp.operatingCashFlow)}</div></div>`:`<div class="gx-kpi"><div class="k">${t.fin.position}</div><div class="v">${gxCls("MISSING")} ${t.fin.none} ${xpMiss("group-financials")}</div></div>`;
+  return `<p class="ho-note">${inE(gxL(V.question))}</p><div class="gx-two">${left}${right}</div><p><b>${inE(gxL(V.statement.text))}</b> ${xpSig(V.statement.id,{text:V.statement.text,cls:"DERIVED"})}</p><p class="ho-note">${inE(gxL(V.rule))}</p><p class="ho-note"><span class="ho-chip cont">${inE(gxL(V.notA))}</span></p>`;
+}
+function gxSpvHTML(d){
+  const t=GXT(),S=d.spv,R=d.portfolio.rows||[];
+  const sum=`<div class="gx-grid">${gxKV(t.spv.distinct,gxN(S.distinct))}${gxKV(t.spv.shared,S.sharedLegalCompany.length?S.sharedLegalCompany.map(g=>`<span class="num">${inE(g.number)}</span> ${ddM(g.state)}: ${fmtInt(g.projects.length)}`).join("<br>"):inDash())}${gxKV(t.spv.unres,gxN(S.unresolved),"spv_exposure")}${gxKV(`${t.spv.verified} / ${t.spv.strong}`,`${gxN(S.verified)} / ${gxN(S.strong)} ${xpMiss("verified-project-company")}`)}${gxKV(t.spv.conflicts,gxN(S.conflicts.length))}</div>`;
+  const rows=R.slice(0,300).map(r=>{const o=r.roles||{},w=o.landWinner||o.programmeDeveloper;return `<tr><td><button type="button" class="ld-link" data-inproj="${inE(r.id)}"><bdi>${inE(r.label)}</bdi></button></td><td><bdi>${inE(r.members[0].name)}</bdi></td><td>${w?`<bdi>${inE(w.name)}</bdi> ${ddM(w.state)}`:inDash()}</td><td>${r.projectCompany.number?`<span class="num">${inE(r.projectCompany.number)}</span> `:""}${ddM(r.projectCompany.state)}${r.projectCompany.conflict?` <span class="dd-conf">⚠</span>`:""}</td><td>${(o.permitHolders||[]).map(h=>`<bdi>${inE(h.name)}</bdi> ${ddM(h.state)}`).join("<br>")||inDash()}</td><td>${(o.contractors||[]).map(c=>`<bdi>${inE(c.name||c.kablan)}</bdi>`).join("<br>")||inDash()}</td><td>${o.parent?`<bdi>${inE(o.parent.name||o.parent.number)}</bdi> ${gxCls(o.parent.cls)}`:inDash()}</td><td>${o.guarantor?`<bdi>${inE(o.guarantor.name||"")}</bdi>${o.guarantor.expired?" ⌛":""} ${gxCls(o.guarantor.cls)}`:inDash()}</td></tr>`}).join("");
+  return sum+`<h5 class="dd-h5">${t.spv.roles}</h5><div class="ld-scroll"><table class="ho-dt dd-tbl gx-wide" data-ptdom="gxspv"><thead><tr>${["project","brand","winner","pco","holder","contractor","parent","guarantor"].map(k=>`<th>${t.c[k]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div><p class="ho-note">${inE(gxL(S.basis))}</p>${ddNotA(S.rules)}`;
+}
+/* ---- the corporate structure: a layered map (every node / line clickable) + the full edge list ---- */
+const GX_LAYER={PARENT:0,CORE:1,AFFILIATE:1,CO_WINNER_PARTY:1,JOINT_PARTY:1,CANDIDATE:1,SUBSIDIARY:2,PROJECT_SPV:2,DOCUMENTED:2,DOCUMENT_PARTY:2};
+function gxLayerOf(n){if(n.kind==="DEVELOPER_BRAND")return 3;if(n.kind==="CONTRACTOR"||n.kind==="NAMED_PARTY")return 4;return GX_LAYER[n.role]!=null?GX_LAYER[n.role]:1}
+function gxStructureHTML(d){
+  const t=GXT(),St=d.structure,N=St.nodes||[],E=St.edges||[];
+  if(!N.length)return `<p class="ho-note">—</p>`;
+  const layers=[[],[],[],[],[]];for(const n of N)layers[gxLayerOf(n)].push(n);
+  const W=150,H=46,GX=14,GY=40,maxN=Math.max(...layers.map(l=>l.length)),width=Math.max(320,maxN*(W+GX)+GX);
+  const used=layers.map((l,i)=>l.length?i:-1).filter(i=>i>=0),pos=new Map();
+  used.forEach((li,row)=>{const l=layers[li],off=(width-(l.length*(W+GX)-GX))/2;l.forEach((n,i)=>pos.set(n.id,{x:off+i*(W+GX),y:GX+row*(H+GY)}))});
+  const height=GX*2+used.length*(H+GY)-GY;
+  const cut=s=>{s=String(s||"");return s.length>24?s.slice(0,23)+"…":s};
+  const lines=E.map((e,i)=>{const a=pos.get(e.from),b=pos.get(e.to);if(!a||!b)return"";const x1=a.x+W/2,y1=a.y+H/2,x2=b.x+W/2,y2=b.y+H/2,cls=`gx-e gx-e-${e.state==="VERIFIED"||e.state==="STRONG_MATCH"?"ok":"poss"}${gxState.sel==="e"+i?" sel":""}`;
+    return `<g class="${cls}" data-gx="edge" data-gxe="${i}" tabindex="0" role="button" aria-label="${inE(e.type)} ${inE(e.state)}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="gx-ln"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="gx-hit"/></g>`}).join("");
+  const boxes=N.map(n=>{const p=pos.get(n.id);if(!p)return"";return `<g class="gx-n gx-n-${inE(n.tier||"")}${gxState.sel==="n"+n.id?" sel":""}" data-gx="node" data-gxn="${inE(n.id)}" tabindex="0" role="button" aria-label="${inE(n.label||n.id)}"><rect x="${p.x}" y="${p.y}" width="${W}" height="${H}" rx="7"/><text x="${p.x+W/2}" y="${p.y+18}" text-anchor="middle" class="gx-t1">${inE(cut(n.label||n.id))}</text><text x="${p.x+W/2}" y="${p.y+34}" text-anchor="middle" class="gx-t2">${inE(cut(n.kind==="LEGAL_COMPANY"?(n.number||"")+" · "+((t.role&&t.role[n.role])||n.role||""):n.kind==="DEVELOPER_BRAND"?((t.tierShort&&t.tierShort[n.tier])||n.tier||""):n.kind==="CONTRACTOR"?(t.role.CONTRACTOR+" "+(n.kablan||"")):n.kind))}</text></g>`}).join("");
+  const svg=`<div class="gx-map" dir="ltr"><svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="group" aria-label="${inE(t.sec.structure)}">${lines}${boxes}</svg></div>`;
+  const list=`<div class="ld-scroll"><table class="ho-dt dd-tbl gx-mid" data-ptdom="gxedges"><thead><tr><th>${t.c.type}</th><th>${t.c.from}</th><th>${t.c.to}</th><th>${t.c.state}</th><th>${t.c.source}</th><th>${t.c.date}</th><th>${t.c.why}</th></tr></thead><tbody>${E.map((e,i)=>{const lab=id=>{const n=N.find(x=>x.id===id);return n?n.label||id:id};return `<tr><td><button type="button" class="ld-link" data-gx="edge" data-gxe="${i}">${inE(t.etype[e.type]||e.type)}</button></td><td><bdi>${inE(lab(e.from))}</bdi></td><td><bdi>${inE(lab(e.to))}</bdi></td><td>${ddM(e.state)}</td><td class="ds-m">${inE(e.source||"")}</td><td>${inDate(e.date)}</td><td class="ds-m">${inE(gxL(e.why))}</td></tr>`}).join("")}</tbody></table></div>`;
+  return `<p class="ho-note">${inE(gxL(St.statement))} · ${t.map.legend} · ${t.map.hint}</p>${svg}<div id="gxSel" class="gx-sel" aria-live="polite">${gxSelHTML(d)}</div><h5 class="dd-h5">${t.map.edges} <span class="num">(${fmtInt(E.length)})</span></h5>${list}${ddNotA(St.rules)}`;
+}
+function gxSelHTML(d){
+  const t=GXT(),St=d.structure,s=gxState.sel;if(!s)return "";
+  if(s[0]==="e"){const e=St.edges[+s.slice(1)];if(!e)return "";const np=St.notProves&&St.notProves[e.notProvesKey];
+    const lab=id=>{const n=St.nodes.find(x=>x.id===id);return n?n.label||id:String(id).replace(/^name:/,"")};
+    return `<h5 class="dd-h5">${t.map.select}: ${inE(t.etype[e.type]||e.type)} ${ddM(e.state)} ${gxCls(e.cls)}</h5><dl class="dd-dl"><dt>${t.c.from}</dt><dd><bdi>${inE(lab(e.from))}</bdi></dd><dt>${t.c.to}</dt><dd><bdi>${inE(lab(e.to))}</bdi></dd><dt>${t.c.source}</dt><dd>${inE(e.source||"—")}</dd><dt>${t.c.date}</dt><dd>${inDate(e.date)}</dd><dt>${t.c.why}</dt><dd>${inE(gxL(e.why))}</dd><dt>${t.map.reasons}</dt><dd>${ddRs(e.reasons)}</dd><dt>${t.map.notProves}</dt><dd>${inE(gxL(np))}</dd></dl>${(e.limitations||[]).length?`<ul class="ho-note ld-ul">${e.limitations.map(x=>`<li>${inE(gxL(x))}</li>`).join("")}</ul>`:""}`}
+  const n=St.nodes.find(x=>x.id===s.slice(1));if(!n)return "";
+  const act=n.kind==="LEGAL_COMPANY"&&n.number?`<button type="button" class="ho-more" data-dd="company" data-ddco="${inE(n.number)}">${t.map.openCo}</button> <button type="button" class="ho-more" data-ingroup="company:${inE(n.number)}">${t.openCo}</button>`:n.kind==="DEVELOPER_BRAND"?`<button type="button" class="ho-more" data-indev="${inE(n.devId)}">${t.map.openDev}</button>`:"";
+  return `<h5 class="dd-h5">${t.map.node}: <bdi>${inE(n.label||n.id)}</bdi></h5><dl class="dd-dl"><dt>${t.c.kind}</dt><dd>${inE(t.nkind[n.kind]||n.kind)}${n.role?" · "+inE(t.role[n.role]||n.role):""}</dd><dt>${t.c.tier}</dt><dd>${inE(gxL(d.identity.tierDefs[n.tier]&&d.identity.tierDefs[n.tier].label)||n.tier||"—")}</dd>${n.number?`<dt>${DT().number}</dt><dd><span class="num">${inE(n.number)}</span>${n.status?` · ${inE(ddStatus(n.status))}`:""}${n.type?` · ${inE(n.type)}`:""}</dd>`:""}${n.kind==="DEVELOPER_BRAND"?`<dt>${t.lots}</dt><dd>${fmtInt(n.lots||0)} · ${fmtInt(n.lotteryProjects||0)} ${t.moch}</dd>`:""}</dl>${act}`;
+}
+function gxLegalHTML(d){
+  const t=GXT(),G=d.legal;
+  const ents=`<ul class="dd-sites">${(G.entities||[]).map(e=>`<li><b><bdi>${inE(e.name||e.number)}</bdi></b> <span class="num">${inE(e.number)}</span> · ${inE(e.role)}${e.inCoverage?` · ${inE(ddStatus(e.status))}${e.breach&&e.breach.flag?" · ⚑":""} · ${fmtInt(e.charges.registered)} / ${fmtInt(e.charges.removed)} ${state.lang==="en"?"charges registered / removed":"שעבודים נרשמו / סולקו"}${e.charges.window?` <span class="ds-m">(${inE(e.charges.window.from)}–${inE(e.charges.window.to)})</span>`:""}<div class="ds-m">${inE(gxL(e.legalStatement))}</div>`:` · ${inDash()}`}</li>`).join("")||"<li>—</li>"}</ul>`;
+  const ev=(G.events||[]).slice(0,120).map(e=>`<li><span class="ds-d">${e.date?inDate(e.date):"—"}</span> <bdi>${inE(e.entity.name||e.entity.number)}</bdi> · ${inE(gxL(e.label))} ${gxCls(e.cls)}${e.notA?` <span class="ho-chip cont">${inE(gxL(e.notA))}</span>`:""}<div class="ds-m">${inE(e.source)} · ${inE(gxL(e.dateBasis))}</div></li>`).join("");
+  return ents+`<p class="ho-note">${inE(gxL(G.exactEntityOnly))}</p><ul class="ds-ch">${ev||"<li>—</li>"}</ul>${(G.events||[]).length>120?`<p class="ho-note">${t.tl.shown(120,G.events.length)}</p>`:""}<ul class="ho-note ld-ul">${(G.notObservable||[]).map(x=>`<li>${inE(gxL(x))}</li>`).join("")}</ul>${ddNotA(G.truths)}`;
+}
+function gxTimelineHTML(d){
+  const t=GXT(),TL=d.timeline,w=gxState.tl,from=TL.windows[w]||null;
+  const xs=TL.events.filter(e=>!from||e.date>=from);
+  const btn=k=>`<button type="button" data-gx="tl" data-gxw="${k}" aria-pressed="${w===k}">${t.tl[k]} <span class="num">(${fmtInt(TL.counts[k])})</span></button>`;
+  return `<p class="ho-note">${inE(gxL(TL.question))}</p><span class="ho-per" role="group">${["m12","m24","y5","all"].map(btn).join("")}</span><ul class="ds-ch gx-tl">${xs.slice(0,200).map(e=>`<li class="gx-ln-${inE(e.lane)}"><span class="ds-d">${inDate(e.date)}</span> <span class="ho-chip">${inE(t.tl.lanes[e.lane]||e.lane)}</span> ${inE(gxL(e.label))}${e.id?` <button type="button" class="ld-link" data-inproj="${inE(e.id)}">↗</button>`:""} ${gxCls(e.cls)}${e.propxObserved?` <span class="ho-chip cont">PROPX</span>`:""}</li>`).join("")||"<li>—</li>"}</ul>${xs.length>200?`<p class="ho-note">${t.tl.shown(200,xs.length)}</p>`:""}<p class="ho-note">${inE(gxL(TL.basis))}</p>`;
+}
+function gxMatrixHTML(d){
+  const t=GXT(),M=d.matrix,B=M.buckets,en=state.lang==="en";
+  const tbl=(rows,lab)=>`<div class="ld-scroll"><table class="ho-dt dd-tbl gx-mx"><thead><tr><th>${lab}</th>${B.map(b=>`<th>${inE(gxStage(d,b))}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr><th scope="row"><bdi>${inE(en?r.label.en||r.label.he:r.label.he||r.key)}</bdi></th>${B.map(b=>{const c=r.cells[b],n=c.ila+c.moch;return `<td class="num${n?" on":""}">${n?`${fmtInt(c.ila)}${c.moch?`·${fmtInt(c.moch)}`:""}`:""}</td>`}).join("")}</tr>`).join("")}</tbody></table></div>`;
+  const obs=(M.observations||[]).length?`<ul class="ds-sig">${M.observations.map(o=>`<li><b>${inE(gxStage(d,o.bucket))} · <bdi>${inE(en?o.label.en||o.label.he:o.label.he)}</bdi>: ${fmtInt(o.n)}/${fmtInt(o.of)} (${Math.round(o.share*100)}%)</b> ${xpSig(o.id,{text:{he:"",en:""},cls:o.cls})}<div class="ds-m">${inE(o.rule)}</div></li>`).join("")}</ul>`:"";
+  return `<p class="ho-note">${t.ila}·${t.moch} · ${inE(gxL(M.basis))}</p>${tbl(M.geography,t.c.district)}${tbl(M.locality,t.c.city)}${tbl(M.programme,t.c.prog)}${obs}`;
+}
+function gxBriefHTML(d){
+  const t=GXT(),B=d.brief,cats=DT().cats||{};
+  const by={};for(const i of B.items)(by[i.category]=by[i.category]||[]).push(i);
+  return B.categories.filter(k=>by[k]).map(k=>`<h5 class="dd-h5">${inE(cats[k]||k)} <span class="num">(${fmtInt(by[k].length)})</span></h5><ul class="dd-brief">${by[k].map(i=>`<li class="dd-c-${k}"><div>${inE(gxL(i.text))}${i.state?" "+ddM(i.state):""}${i.cls?" "+gxCls(i.cls):""}${i.value!=null&&i.value!==""?` <span class="dd-val">${inE(String(i.value))}</span>`:""}</div><details class="pu-why"><summary>${t.brief.why} · ${t.brief.not} · ${t.brief.verify}</summary><dl class="dd-dl"><dt>${t.brief.why}</dt><dd>${inE(gxL(i.why))}</dd><dt>${t.brief.not}</dt><dd>${inE(gxL(i.notMean))}</dd><dt>${t.brief.confirms}</dt><dd>${inE(gxL(i.confirms))}</dd><dt>${t.brief.disproves}</dt><dd>${inE(gxL(i.disproves))}</dd><dt>${t.brief.verify}</dt><dd>${inE(gxL(i.verify))}</dd></dl></details></li>`).join("")}</ul>`).join("")+`<p class="ho-note">${inE(gxL(B.basis))}</p>`;
+}
+function gxNbeHTML(d){
+  const t=GXT(),N=d.nextBest,dev=d.anchor&&d.anchor.devId;
+  return `<ol class="dd-nbe">${N.items.map(i=>`<li><span class="dd-use dd-use-${inE(i.usefulness)}">${t.use[i.usefulness]}</span> <b>${inE(gxL(i.text))}</b><dl class="dd-dl"><dt>${t.nbe.why}</dt><dd>${inE(gxL(i.why))}</dd><dt>${t.nbe.change}</dt><dd>${inE(gxL(i.couldChange))}</dd><dt>${t.nbe.propx}</dt><dd>${i.propxRetrieves==="PARTIAL"?t.partial:t.no} — ${inE(gxL(i.retrievable))}</dd><dt>${t.nbe.user}</dt><dd>${i.userProvides?t.yes:t.no}${i.doc?` <span class="dd-code">${inE(i.doc)}</span>`:""}</dd></dl></li>`).join("")}</ol>${dev?`<p class="ho-note">${t.nbe.docs} <button type="button" class="ho-more" data-indev="${inE(dev)}">${t.nbe.manage}</button></p>`:""}<p class="ho-note">${inE(gxL(N.basis))}</p>`;
+}
+/* ---- the deep dive ---- */
+function gxDeepHTML(d){
+  const t=GXT(),I=d.identity,X=XP(),L=state.lang==="en"?"en":"he";
+  const mem=`<div class="ld-scroll"><table class="ho-dt dd-tbl gx-mid" data-ptdom="gxmem"><thead><tr><th>${t.c.brand}</th><th>${t.c.tier}</th><th>${t.c.match}</th><th>${t.c.via}</th><th>${DT().number}</th><th>${t.lots}</th><th>${t.moch}</th><th>${t.c.totals}</th></tr></thead><tbody>${I.members.map(m=>`<tr><td><button type="button" class="ld-link" data-indev="${inE(m.devId)}"><bdi>${inE(m.name)}</bdi></button></td><td>${inE(gxL(I.tierDefs[m.tier].label))}</td><td>${ddM(m.state)}</td><td class="ds-m">${inE(m.via)}${m.role?" · "+inE(m.role):""}</td><td>${m.companyNumber?`<span class="num">${inE(m.companyNumber)}</span>`:inDash()}</td><td class="num">${gxN(m.lots)}</td><td class="num">${gxN(m.lotteryProjects)}</td><td>${m.inTotals?t.yes:t.no}</td></tr>`).join("")}</tbody></table></div>`;
+  const exc=(I.excluded||[]).length?`<ul class="dd-rs">${I.excluded.map(x=>`<li>${x.devId?`<button type="button" class="ld-link" data-indev="${inE(x.devId)}" data-rel="possible"><bdi>${inE(x.name)}</bdi></button>`:`<bdi>${inE(x.name||x.number||"—")}</bdi> ${x.number?`<span class="num">${inE(x.number)}</span>`:""}`} · ${ddM(x.state)} · ${inE(x.relation)}${x.basis?` · ${inE(x.basis)}`:""}</li>`).join("")}</ul>`:`<p class="ho-note">—</p>`;
+  const cos=`<ul class="dd-rs">${(I.companies||[]).map(c=>`<li><bdi>${inE(c.name||"—")}</bdi> <span class="num">${inE(c.number)}</span> · ${inE(c.tier)} · ${inE(c.role)} · ${ddM(c.state)} · ${inE(gxL(c.publicPrivate.label))}${(c.path||[]).length?` · ${t.dp.path}: ${c.path.map(p=>`${inE(p.type)} ${p.dir==="down"?"↓":"↑"} (${inE(p.doc.type)} ${inE(p.doc.date||"")})`).join(" · ")}`:""}</li>`).join("")}</ul>`;
+  const kab=I.contractor?`<p class="ho-note">${t.dp.contractor}: ${I.contractor.kablan.map(k=>`<span class="num">${inE(k)}</span>`).join(", ")} · ${fmtInt(I.contractor.activeSitesAsExecutor)} ${state.lang==="en"?"active sites as executor":"אתרים פעילים כמבצע"} · ${inE(gxL(I.contractor.note))}</p>`:"";
+  const src=`<ul class="ho-note ld-ul">${d.deep.sources.map(s=>`<li><span class="dd-code">${inE(s)}</span>${X&&X.sourceLabel?` — ${inE(X.sourceLabel(s,L)||"")}`:""}</li>`).join("")}</ul>`;
+  const fml=`<p class="ho-note">${d.deep.formulas.map(id=>`${inE(X&&X.term(id)?X.level1(id,L).title||id:id)} ${xpBtn(id)}`).join(" · ")}</p>`;
+  const raw=`<details class="pu-why"><summary>${t.ila} (${fmtInt(d.deep.rawRefs.ila.length)}) · ${t.moch} (${fmtInt(d.deep.rawRefs.moch.length)})</summary><p class="ho-note dd-code">${d.deep.rawRefs.ila.map(x=>inE(x.id)).join(" · ")}</p><p class="ho-note dd-code">${d.deep.rawRefs.moch.map(inE).join(" · ")}</p></details>`;
+  const C=d.deep.comparables.cohort;
+  const cmp=`<p class="ho-note">${fmtInt(C.records)} ${state.lang==="en"?"records":"רשומות"} · ${t.startH(C.start.horizonMonths)}: ${gxPct(C.start.share)} (${fmtInt(C.start.startedWithinHorizon)}/${fmtInt(C.start.eligible)}) · ${t.byTender} ${gxMo(C.start.monthsByTender.median)} (${fmtInt(C.start.monthsByTender.n)} ${t.tenders}) · early ${gxPct(C.early.share)} · unfinished ${gxPct(C.unfinished.share)} · completion ${gxPct(C.completion.share)} · load P50 ${C.load.p50??"—"} / P90 ${C.load.p90??"—"} · ${inE(C.consAsOf)}</p>`;
+  const rules=`<p class="ho-note dd-code">${Object.entries(d.deep.rules).map(([k,v])=>`${inE(k)}=${inE(Array.isArray(v)?v.join("/"):v)}`).join(" · ")}</p>`;
+  return `<h5 class="dd-h5">${t.sec.graph}</h5><h5 class="dd-h5">${t.dp.members}</h5>${mem}<h5 class="dd-h5">${t.dp.excluded}</h5>${exc}<h5 class="dd-h5">${t.dp.companies}</h5>${cos}${kab}<h5 class="dd-h5">${t.sec.lineage}</h5>${src}<h5 class="dd-h5">${t.sec.formulas}</h5>${fml}<h5 class="dd-h5">${t.sec.raw}</h5>${raw}<h5 class="dd-h5">${t.sec.cmp} ${xpBtn("execution_cohort_comparison")}</h5>${cmp}<h5 class="dd-h5">${t.sec.meth}</h5><p class="ho-note">${inE(gxL(d.deep.methodology))}</p><h5 class="dd-h5">${t.dp.rules}</h5>${rules}<h5 class="dd-h5">${t.dp.truths}</h5>${ddNotA(d.truths)}`;
+}
+/* the group's clicks inside the drawer: the timeline window, a node / line of the structure map */
+function gxClick(b){
+  const d=inState.detail;if(!d||!inState.open||inState.open.kind!=="group")return;
+  const a=b.dataset.gx;
+  if(a==="tl"){gxState.tl=b.dataset.gxw;const box=el("gxTl");if(box)box.innerHTML=gxTimelineHTML(d);return}
+  if(a==="edge"||a==="node"){gxState.sel=a==="edge"?"e"+b.dataset.gxe:"n"+b.dataset.gxn;const box=el("gxSel");if(box){box.innerHTML=gxSelHTML(d);box.scrollIntoView({block:"nearest"})}
+    for(const g of document.querySelectorAll("#inPanel .gx-map g.sel"))g.classList.remove("sel");const g=document.querySelector(a==="edge"?`#inPanel .gx-map g[data-gxe="${b.dataset.gxe}"]`:`#inPanel .gx-map g[data-gxn="${CSS.escape(b.dataset.gxn)}"]`);if(g)g.classList.add("sel");return}
+}
+
 function initIntel(){
   const sec=el("intel");if(!sec)return;
   {const g=ptLoad("in");if(g.x&&IN_KEY[g.x.tab])inState.tab=g.x.tab;inRestore(inState.tab)}
   const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const onClick=e=>{
-    const b=e.target.closest("[data-dd],[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
+    const b=e.target.closest("[data-dd],[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall],[data-ingroup],[data-gx]");
     if(!b)return;
     const d=b.dataset;
     if(b.closest("#inPanel")&&(d.indev||d.inproj||d.inrn||(d.dd==="company"&&d.ddco)||(d.dd==="permit"&&d.ddp)))inTrailPush(b);
+    if(b.closest("#inPanel")&&d.ingroup)inTrailPush(b);
+    if(d.gx){gxClick(b);return}
+    if(d.ingroup){inOpen("group",d.ingroup,b.closest("#inPanel")?inState.returnFocus:b);return}
     if(d.dd){ddClick(b);return}
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
@@ -9012,6 +9371,7 @@ function initIntel(){
   sec.addEventListener("keydown",e=>{
     if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr[data-indev],tr[data-inproj],tr[data-inrn],.tcard[data-indev],.tcard[data-inproj],.tcard[data-inrn]");if(r&&e.target===r){e.preventDefault();r.click()}}
   });
+  if(drawer)drawer.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const g=e.target.closest("g[data-gx]");if(g&&e.target===g){e.preventDefault();gxClick(g)}});
   document.addEventListener("keydown",e=>{
     if(!inState.open)return;
     if(e.key==="Escape"){inClose();return}
