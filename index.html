@@ -304,6 +304,7 @@ section.blk{padding-block:22px}
 .kpi .lbl{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .val{font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
 .kpi .cmp{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.kpi .kb{display:block;font-size:10.5px;line-height:1.4;color:var(--ink-3);margin-top:4px}
 .kpi.skel .val{color:transparent;background:linear-gradient(100deg,var(--panel-2) 40%,var(--hairline) 50%,var(--panel-2) 60%);
   background-size:200% 100%;border-radius:4px;animation:shimmer 1.1s linear infinite}
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
@@ -2178,6 +2179,12 @@ const UPDATED_AT = "2026-08";
      STATIC only while it equals the cited figure.
    · neighborhoods/subs — real, recognized localities (CBS statistical-area /
      municipal naming); every figure is a city-anchored estimate               */
+/* the NATIONAL board price's lineage (data-integrity audit 19.10.2026). The Israel row is the CBS average transaction price of ALL
+   dwellings for ISRAEL — TOTAL (Table 2.2, Q2 2026: ₪2,435,000 — the national row of this file before 29.08.2026) × the assumed 1.12
+   new-build premium (commit d0f696c), rounded to ₪10,000 = ₪2,730,000. It is never a district's figure: Central District's ₪2,731,500
+   (the same table) is a different row whose value is only numerically close. The per-m² base ₪26,500 has no separately recorded
+   source. test/headline-metrics.test.js pins this; the overview's price cards print it. */
+const PRICE_BASIS={il:{cbs:2435000,cbsPsm:26500,premium:1.12,geo:"Israel — total"}};
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,o:"tl",
     base:{price:2730000,sqm:29700,rent:5430,yoy:-2.0,y3:4.8,rentYoy:3.5,tx:34000,listings:84990}},
@@ -2435,6 +2442,11 @@ he:{
   vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"חסר",usr:"הנחת משתמש"},
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
   perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
+  nhIdxLbl:"מדד מחירי דירות חדשות · שינוי שנתי",
+  basisIl:(v,p)=>`ישראל — כלל הארץ (לא מחוז) · ממוצע הלמ״ס לכל הדירות, חדשות ויד שנייה: ${v}, רבעון ב׳ 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
+  basisIlPsm:(v,p)=>`ישראל — כלל הארץ · ${v} למ״ר, כל הדירות, אמצע 2026 · × ${p} פרמיית דירה חדשה (הנחה)`,
+  basisArea:"ממוצע הלמ״ס של האזור לכל הדירות × 1.12 פרמיית דירה חדשה (הנחה)",basisEst:"אומדן מעוגן לעיר / למחוז — אין פרסום ישיר לאזור",
+  basisFiltered:"מסנן פעיל: מוכפל במכפילי הדגמה — מודל",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
   evTitle:"מכירות — ראיות (RAW · DERIVED · DISPLAY)",
   perInvEst:"הקצאה לסך הארצי — מודל",
@@ -2995,6 +3007,11 @@ en:{
   vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Missing",usr:"User assumption"},
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
   perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
+  nhIdxLbl:"New-homes price index · annual change",
+  basisIl:(v,p)=>`Israel — total (not a district) · CBS average of all dwellings, new and second-hand: ${v}, Q2 2026 · × ${p} new-build premium (assumption)`,
+  basisIlPsm:(v,p)=>`Israel — total · ${v} per m², all dwellings, mid-2026 · × ${p} new-build premium (assumption)`,
+  basisArea:"CBS area average of all dwellings × 1.12 new-build premium (assumption)",basisEst:"An estimate anchored to the city / district — no direct publication for the area",
+  basisFiltered:"Filter on: multiplied by demonstration multipliers — MODEL",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
   evTitle:"Sales — evidence (RAW · DERIVED · DISPLAY)",
   perInvEst:"allocated to the national total — model",
@@ -4016,21 +4033,27 @@ function renderKPIs(skeleton){
   el("kpiNote").textContent=state.mode==="sale"?t.kpiNoteSale:t.kpiNoteRent;
   /* every card carries its value class and the period it describes; a median
      needs official deals with real coverage, so until then it is UNAVAILABLE */
-  const dl=f=>`${t.yoyLbl} · ${vcPer(l,f)} · ${t.vcName[vcOf(l,f)]}`;
+  /* the national index change is a different series and period than the price above it — its label says which (audit 19.10.2026) */
+  const idxLbl=f=>f==="yoy"&&l.id==="il"&&MKT.nh?t.nhIdxLbl:t.yoyLbl;
+  const dl=f=>`${idxLbl(f)} · ${vcPer(l,f)} · ${t.vcName[vcOf(l,f)]}`;
+  /* every price card names its own basis: geography · population · period · source (the Israel row = the CBS national total, never a district) */
+  const B=!filtersActive()&&PRICE_BASIS[l.id];
+  const basisOf=f=>filtersActive()?t.basisFiltered:B?(f==="price"?t.basisIl(fmtNIS(B.cbs),B.premium):t.basisIlPsm(fmtNIS(B.cbsPsm),B.premium)):vcOf(l,f)==="mod"?t.basisEst:t.basisArea;
+  const yoyXp=l.id==="il"&&MKT.nh?"new_homes_price_index_change":"board_annual_change_estimate";
   const cards=state.mode==="sale"?[
-    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy")},
+    {k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy"),b:basisOf("price"),xp:"board_average_price"},
     {k:"median",l:t.medPrice,na:t.naMedianWhy},
-    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null},
-    {k:"yoy",l:t.yoyLbl,v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy")},
-    (x=>x.show?{k:"tx",l:t.tx,v:x.v,f:()=>x.text,vc:x.cls,s:x.per}:{k:"tx",l:t.tx,na:x.why})(txShown(l)),
-    {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3")},
+    {k:"sqm",l:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null,b:basisOf("sqm"),xp:"board_price_per_sqm"},
+    {k:"yoy",l:idxLbl("yoy"),v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy"),xp:yoyXp},
+    (x=>x.show?{k:"tx",l:t.tx,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"official_new_home_sales"}:{k:"tx",l:t.tx,na:x.why})(txShown(l)),
+    {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3"),xp:"board_three_year_change"},
   ]:[
-    {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,vc:vcOf(l,"rent"),d:m.rentYoy,dl:dl("rentYoy")},
+    {k:"rent",l:t.avgRent,v:m.rent,f:fmtNIS,vc:vcOf(l,"rent"),d:m.rentYoy,dl:dl("rentYoy"),xp:"board_average_rent"},
     {k:"rentMedian",l:t.medRent,na:t.naMedianWhy},
-    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1),vc:vcOf(l,"rentPsm"),s:vcPer(l,"rentPsm"),n:nat?(m.rentPsm/nat.rentPsm-1)*100:null},
-    {k:"rentYoy",l:t.yoyLbl,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy),vc:vcOf(l,"rentYoy"),s:vcPer(l,"rentYoy")},
-    {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",vc:vcOf(l,"yield"),s:t.yieldFormula},
-    (x=>x.show?{k:"listings",l:t.listings,v:x.v,f:()=>x.text,vc:x.cls,s:x.per}:{k:"listings",l:t.listings,na:x.why})(invShown(l)),
+    {k:"rentPsm",l:t.rpsm,v:m.rentPsm,f:v=>"₪"+v.toFixed(1),vc:vcOf(l,"rentPsm"),s:vcPer(l,"rentPsm"),n:nat?(m.rentPsm/nat.rentPsm-1)*100:null,xp:"board_average_rent"},
+    {k:"rentYoy",l:t.yoyLbl,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy),vc:vcOf(l,"rentYoy"),s:vcPer(l,"rentYoy"),xp:"board_average_rent"},
+    {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",vc:vcOf(l,"yield"),s:t.yieldFormula,xp:"board_gross_yield"},
+    (x=>x.show?{k:"listings",l:t.listings,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"unsold_inventory"}:{k:"listings",l:t.listings,na:x.why})(invShown(l)),
   ];
   const KICO={
     price:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
@@ -4051,13 +4074,13 @@ function renderKPIs(skeleton){
   const cmpOf=c=>c.na?`<span>${c.na}</span>`
     :vcTag(c.vc)+(c.d!==undefined?deltaHTML(c.d,true)+`<span>${c.dl}</span>`
       :c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`
-      :`<span>${c.s||""}</span>`);
+      :`<span>${c.s||""}</span>`)+(c.xp?xpBtn(c.xp):"");
   el("kpis").innerHTML=cards.map((c,i)=>`
     <div class="card kpi ${i===0?"hero":i<3?"hi":"ctx"} ${skeleton?"skel":""}${c.na?" na":""}">
       <span class="kico t-${KTONE[c.k]||"b"}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${KICO[c.k]||KICO.price}</svg></span>
       <span class="lbl">${c.l}</span>
       <span class="val ${c.cls||""}">${c.na?`<span class="na-v">${t.naShort}</span>`:`<span class="num" data-kpi="${c.k}">${c.f(c.v)}</span>`}</span>
-      <span class="cmp">${cmpOf(c)}</span>
+      <span class="cmp">${cmpOf(c)}</span>${c.b&&!c.na?`<span class="kb">${c.b}</span>`:""}
     </div>`).join("");
   if(!skeleton&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
     el("kpis").querySelectorAll("[data-kpi]").forEach(node=>{
@@ -9255,8 +9278,8 @@ function initPulse(){
    "why am I seeing this?" = the rule + trigger · value · threshold · comparison · period · source · class · evidence quality.
    Nothing here computes; the registry documents. */
 const XP=()=>window.PropxExplain||null;
-const XP_T={he:{info:"הסבר",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
-  en:{info:"Explain",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
+const XP_T={he:{info:"הסבר",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",population:"אוכלוסייה / יקום",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
+  en:{info:"Explain",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",population:"Population / universe",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
 const xpT=()=>XP_T[state.lang==="en"?"en":"he"];
 const xpRT=new Map();let xpSeq=0,xpTrig=null;
 const xpBtn=id=>XP()&&XP().term(id)?`<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${xpT().info}" title="${xpT().info}">ⓘ</button>`:"";
@@ -9264,7 +9287,7 @@ const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";if(xpRT.size>150
 const xpMiss=id=>XP()&&XP().missing(id)?`<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${xpT().whyMissing}" title="${xpT().whyMissing}">ⓘ</button>`:"";
 function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
 function xpL2HTML(id){const L=state.lang==="en"?"en":"he",x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
-  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
+  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.population,ldE(x.population))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
 function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let html="",more="";
   const head=(title,chip)=>`<div class="xp-h"><b>${title}</b>${chip||""}<button type="button" class="ho-x" data-xpclose aria-label="${t.close}">×</button></div>`;
   if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;html=head(ldE(x.title),xpClsChip(x.cls))+`<p class="xp-s">${ldE(x.short)}</p>`;more=xpL2HTML(trigger.dataset.xp)}

@@ -212,8 +212,8 @@ t('no neighbourhood inference: no neighbourhood or sub-area shows sales, invento
 t('missing renders — on every board surface, and each surface goes through its gate', () => {
   setF();
   const kpi = fnBody('renderKPIs');
-  assert.match(kpi, /\(x=>x\.show\?\{k:"tx",l:t\.tx,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per\}:\{k:"tx",l:t\.tx,na:x\.why\}\)\(txShown\(l\)\)/);
-  assert.match(kpi, /\(x=>x\.show\?\{k:"listings",l:t\.listings,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per\}:\{k:"listings",l:t\.listings,na:x\.why\}\)\(invShown\(l\)\)/);
+  assert.match(kpi, /\(x=>x\.show\?\{k:"tx",l:t\.tx,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per,xp:"official_new_home_sales"\}:\{k:"tx",l:t\.tx,na:x\.why\}\)\(txShown\(l\)\)/);   /* + its ⓘ (audit 19.10.2026) */
+  assert.match(kpi, /\(x=>x\.show\?\{k:"listings",l:t\.listings,v:x\.v,f:\(\)=>x\.text,vc:x\.cls,s:x\.per,xp:"unsold_inventory"\}:\{k:"listings",l:t\.listings,na:x\.why\}\)\(invShown\(l\)\)/);
   assert.match(kpi, /c\.na\?`<span class="na-v">\$\{t\.naShort\}<\/span>`/);
   assert.match(INDEX, /naShort:"—"/);
   const prof = fnBody('renderProfile');

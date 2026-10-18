@@ -49,6 +49,13 @@
   caps/capacity/pool/minimum data basis, rankings independent of capital size and of the appreciation
   assumption, every return a true IRR from `calcEngine`/`calcIrr`, data basis from `vcOf` (no o-flags),
   every policy rule and assumption editable in the section.
+- `test/headline-metrics.test.js` = headline-metric scope gates (data-integrity audit 19.10.2026): the overview's national average price
+  ₪2,730,000 is the CBS ISRAEL-TOTAL average of ALL dwellings (Table 2.2, Q2 2026: ₪2,435,000 — `PRICE_BASIS.il`) × the assumed 1.12
+  new-build premium (git d0f696c), NOT Central District (₪2,731,500, only numerically close); the national row never takes a district's
+  value; the official headline series are read under CBS 5069 "Israel — total" (sales, inventory) and index 70000; the price cards print
+  their basis (geography · population · period · premium as an assumption), the delta under the price is labelled as the new-homes
+  INDEX change, and every headline card has an ⓘ (registry group `board`: definition · geography · population · period · source · class
+  · what it does not mean).
 - `test/calculator.test.js` = the deal calculator (`#calc`, `calcEngine`, `calcIrr`): visible,
   independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
   appreciation.
