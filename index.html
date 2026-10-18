@@ -8484,7 +8484,8 @@ function ddExecHTML(E){
 function ddSignalsHTML(S){
   if(!(S||[]).length)return"";
   const kc=k=>k==="risk"?" bad":k==="watch"?" on":"";
-  return `<ul class="ds-sig">${S.map(s=>`<li><span class="ho-chip${kc(s.kind)}">${inE(s.kind)}</span> <b>${inE(ddL(s.text))}</b> ${xpSig(s.id,s)} ${ddCls(s.cls)}</li>`).join("")}</ul>`;
+  const kn={risk:state.lang==="en"?"risk":"סיכון",watch:state.lang==="en"?"watch":"לבדיקה",info:state.lang==="en"?"info":"מידע"};
+  return `<ul class="ds-sig">${S.map(s=>`<li><span class="ho-chip${kc(s.kind)}">${inE(kn[s.kind]||s.kind)}</span> <b>${inE(ddL(s.text))}</b> ${xpSig(s.id,s)} ${ddCls(s.cls)}</li>`).join("")}</ul>`;
 }
 /* ---- the developer panel ---- */
 function ddDevHTML(X){
@@ -8520,7 +8521,7 @@ function ddSitesHTML(S,permits){
 function ddProjHTML(X){
   const t=DT(),P=X.dd;
   const sum=`<ul class="dd-lines">${(P.summary||[]).map(s=>`<li>${ddCls(s.cls)} ${inE(state.lang==="en"?s.en:s.he)}</li>`).join("")}</ul>`;
-  const gap=P.executionGap&&P.executionGap.fires?`<ul class="ds-sig"><li><span class="ho-chip on">watch</span> <b>${inE(ddL(P.executionGap.text))}</b> ${xpSig("EXECUTION_GAP",{text:P.executionGap.text,value:P.executionGap.value,threshold:"≥ "+P.executionGap.threshold,cls:"DERIVED",source:"propx:dd"})}</li></ul>`:"";
+  const gap=P.executionGap&&P.executionGap.fires?`<ul class="ds-sig"><li><span class="ho-chip on">${state.lang==="en"?"watch":"לבדיקה"}</span> <b>${inE(ddL(P.executionGap.text))}</b> ${xpSig("EXECUTION_GAP",{text:P.executionGap.text,value:P.executionGap.value,threshold:"≥ "+P.executionGap.threshold,cls:"DERIVED",source:"propx:dd"})}</li></ul>`:"";
   const dv=X.developer?`<p>${t.developer}: <button type="button" class="ld-link" data-indev="${inE(X.developer.id)}"><bdi>${inE(X.developer.name)}</bdi></button> ${ddM(X.developer.summary.resolution)}${X.developer.summary.companyId?` <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(X.developer.summary.companyId.replace(/^co:/,""))}"><span class="num">${inE(X.developer.summary.companyId.replace(/^co:/,""))}</span> ↗</button>`:""}</p>`:"";
   const oneMin=`<div class="dd-1m"><h5 class="dd-h5">${t.oneMin}</h5>${sum}${gap}<h5 class="dd-h5">${t.ladder}</h5>${ddLadderHTML(P.ladder)}<h5 class="dd-h5">${t.verifyNext}</h5>${ddNbeHTML(X.nextBest,3)}</div>`;
   const links=`<ul class="dd-rs">${P.identity.links.map(l=>`<li><span class="dd-code">${inE(l.type)}</span> <bdi>${inE(l.id||l.value||"—")}</bdi> ${ddM(l.state)} ${l.key?`<span class="ho-na">${inE(ddL(l.key))}</span>`:""}${l.note?`<div class="ho-note">${inE(ddL(l.note))}</div>`:""}</li>`).join("")}</ul><p class="ho-note">${inE(ddL(P.identity.note))} ${xpBtn("marketing_name")}</p>`;
@@ -8744,7 +8745,7 @@ function intelSug(q){
     intelTimer=setTimeout(async()=>{
       let list=[];
       try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal","district","country","company","contractor","permit"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
+        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","company","contractor","permit","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
       catch(e){/* offline/standalone: no entity layer */}
       intelLast={q:qq,list};
       const inp=el("searchInput");
