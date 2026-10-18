@@ -18,7 +18,7 @@
   const uid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'd' + Date.now().toString(36) + (performance.now() * 1000 | 0).toString(36));
 
   /* ------------------------------------------------------------ storage */
-  const KEY = { deals: 'altaris:deals:v1', settings: 'altaris:settings:v1', draft: 'altaris:draft:v1', ui: 'altaris:ui:v1' };
+  const KEY = { deals: 'altaris:deals:v1', settings: 'altaris:settings:v1', draft: 'altaris:draft:v1', ui: 'altaris:ui:v1', thesis: 'altaris:thesis:v1' };
   const THEME_KEY = 'kobix:theme';   // the shared PROPX theme preference (read + write, same as PROPX)
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -213,8 +213,9 @@
     stress: null, R: null, dirty: false, deals: store.get(KEY.deals, {}) || {}, mkt: { status: 'idle' }, mbarOpen: false, cmpVer: {},
     mlang: 'he', mAppendix: true, mfocus: null,
     D: null, flips: { key: null, list: null, t: 0 },   // the investment decision (altaris/decision.js) and its lazily computed flip points
+    thesisId: null, thBusy: {},   // the Live Thesis view's deal and the checks in flight
   };
-  const VIEWS = ['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision'];
+  const VIEWS = ['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision', 'thesis'];
   const parseHash = () => { const [v, id] = location.hash.slice(1).split('/'); return { v, id: id ? decodeURIComponent(id) : null }; };
   const getP = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
   function setP(o, p, v) {
@@ -463,7 +464,7 @@
     if (!s || s.schema !== 1 || !s.geos || !s.geos.il || !s.geos.il.metrics || !s.geos.il.metrics.ok) return null;
     const dk = CBS_DISTRICT[info && info.district], g = dk && s.geos[dk] && s.geos[dk].metrics && s.geos[dk].metrics.ok ? s.geos[dk] : null;
     const M = (g || s.geos.il).metrics;
-    return { ok: true, level: g ? 'district' : 'national', scope: g ? { he: `${g.name.he} (מחוז)`, en: `${g.name.en || g.name.he} (district)` } : { he: 'ארצי', en: 'national' },
+    return { ok: true, level: g ? 'district' : 'national', code: g ? dk : 'il', scope: g ? { he: `${g.name.he} (מחוז)`, en: `${g.name.en || g.name.he} (district)` } : { he: 'ארצי', en: 'national' },
       momentum: M.momentum && M.momentum.m3 && M.momentum.m3.ok ? M.momentum.m3.pct : null, small: !!M.small, latest: M.latest || null,
       freshness: s.freshness && s.freshness.state || null, sourceUpdate: s.sourceUpdate || null, checkedAt: s.checkedAt || null,
       inventory: s.inventory && s.inventory.latest ? s.inventory.latest.value : null, inventoryPeriod: s.inventory && s.inventory.latest ? s.inventory.latest.period : null };
@@ -471,6 +472,11 @@
   /* the Market & Execution Assessment (altaris/market-assessment.js) over the context the panel already holds — passed INTO the decision layer,
      which combines it with the economic verdict through POLICY.final only (the engine and the economic verdict never read it) */
   const AM = () => window.AltarisMarket || null;
+  /* LIVE THESIS — altaris/thesis.js (window.AltarisThesis): the post-decision layer. Its repository runs over the same browser storage as
+     the saved deals (KEY.thesis); a server adapter can replace the storage adapter later with no change in logic (altaris/THESIS_PERSISTENCE.md). */
+  const TH = () => window.AltarisThesis || null;
+  let thRepo = null;
+  const thesisRepo = () => (thRepo || (TH() ? (thRepo = TH().createRepository({ get: (k) => store.get(k, null), set: (k, v) => store.set(k, v) }, { key: KEY.thesis })) : null));
   const marketAssess = () => (AM() ? AM().assess(S.deal.market || null, cbsCtx(S.deal.info), { today: TODAY }) : null);
   const dctx = () => ({ today: TODAY, deal: S.deal, market: S.deal.market || null, cbs: cbsCtx(S.deal.info), indicators: (window.PROPX_MARKET || {}).indicators || {}, indicatorsCheckedAt: (window.PROPX_MARKET || {}).checkedAt || null, marketAssessment: marketAssess() });
   /* flip points re-run the engine on modified copies of the deal (~1s): computed after the inputs settle, cached per deal state */
@@ -617,6 +623,7 @@
     else if (S.view === 'settings') main.innerHTML = viewSettings();
     else if (S.view === 'method') main.innerHTML = viewMethod();
     else if (S.view === 'decision') main.innerHTML = '<div id="o-decision"></div>';
+    else if (S.view === 'thesis') main.innerHTML = '<div id="o-thesis"></div>';
     recompute(true);
     if (S.view === 'method') focusMethod();
   }
@@ -778,7 +785,7 @@
      filter ever reaches a calculation. State per table in memory for the page's life (ALTARIS stores nothing beyond
      its own altaris:* keys). */
   const AXT = { types: { comps: 'date,text,number,number,currency,currency', pf: 'text,text,text,text,currency,currency,percent,percent,number,number,date,number,text',
-    saved: 'text,text,text,text,text,text,date,number,-' } };
+    saved: 'text,text,text,text,text,text,text,date,number,-', thpf: 'text,text,text,text,number,number,number,text,date,-' } };   // saved: + the Live Thesis column; thpf: the portfolio thesis monitor
   AXT.types.pf += ',text,number,text,text';   // additive decision columns: decision · attractiveness · recommended structure · evidence quality
   AXT.st = {};
   const axtState = (k) => AXT.st[k] || (AXT.st[k] = { sort: null, q: '' });
@@ -828,6 +835,15 @@
     if (!info.city) { toast('בחרו יישוב בשלב 1 כדי לטעון נתוני שוק'); return; }
     S.mkt = { status: 'loading' }; paintMarket();
     const target = S.deal;   // the deal that asked; a reply after the user opened another deal is dropped
+    const out = await fetchMarket(info);
+    if (S.deal !== target) { S.mkt = { status: 'idle' }; toast('נתוני השוק נטענו לעסקה שכבר נסגרה — לא הוחלו'); return; }
+    S.deal.market = out; S.mkt = { status: 'done' };
+    applyMarketToValue();
+    markDirty(); recompute();
+  }
+  /* the read-only PROPX market read for a locality / developer — shared by the market panel (which then applies it to the deal) and by the
+     Live Thesis check (which reads it beside the frozen decision and never touches the deal) */
+  async function fetchMarket(info) {
     const out = { retrievedAt: new Date().toISOString(), city: info.city, cityCode: info.cityCode || null, street: info.street || null };
     const q = new URLSearchParams({ city: info.city, months: '24', limit: '200' });
     if (info.street) q.set('street', info.street);
@@ -859,7 +875,7 @@
       jobs.push(getJSON(`/api/intel?view=dossier&city=${encodeURIComponent(info.cityCode)}`).then((d) => {
         const sig = (k) => (d.signals || []).filter((s) => s.kind === k).map((s) => ({ id: s.id, text: s.text, threshold: s.threshold, period: s.period, source: s.source, cls: s.cls }));
         out.dossier = { geo: d.geo, quality: d.quality ? { level: d.quality.level, score: d.quality.score, items: (d.quality.items || []).map((i) => i.he) } : null, watch: sig('watch'), risk: sig('risk'),
-          missing: (d.missing || []).map((m) => m.he), salesScope: d.sections && d.sections.sales && d.sections.sales.scope ? d.sections.sales.scope.he : null, generatedAt: d.generatedAt,
+          missing: (d.missing || []).map((m) => m.he), missingIds: (d.missing || []).map((m) => m.id), salesScope: d.sections && d.sections.sales && d.sections.sales.scope ? d.sections.sales.scope.he : null, generatedAt: d.generatedAt,
           /* "Why this market?" — the dossier's own lead sentences (lib/dossier/narrative.js) and Land Economics 2.0 (lib/land/economics.js): context only */
           narrative: d.narrative && Array.isArray(d.narrative.sentences) ? d.narrative.sentences.filter((s) => (d.narrative.lead || []).includes(s.id)).map((s) => ({ id: s.id, he: s.he, cls: s.cls, source: s.source })) : [],
           landEconomics: d.sections && d.sections.landEconomics && d.sections.landEconomics.competitiveBid ? (() => { const E = d.sections.landEconomics, c = E.competitiveBid.current || {}, ch = E.competitiveBid.change || {}, O = E.outcomes || {}; return { lots: c.lots, tenders: c.tenders, median: c.median, p25: c.p25, p75: c.p75, unitWeighted: c.unitWeighted, small: !!c.small, from: c.period && c.period.from, to: c.period && c.period.to, medianPct: ch.small ? null : ch.medianPct, mixWarning: ch.mixWarning ? ch.mixWarning.he : null, published: O.tenders, failedRatio: O.failedRatio, reTenders: E.reTenders ? E.reTenders.tenders : null }; })() : null };
@@ -882,10 +898,7 @@
       }).catch((e) => { if (/HTTP 404/.test(e.message)) out.devIntel = { none: true }; else out.devIntelError = e.message; }));
     }
     await Promise.all(jobs);
-    if (S.deal !== target) { S.mkt = { status: 'idle' }; toast('נתוני השוק נטענו לעסקה שכבר נסגרה — לא הוחלו'); return; }
-    S.deal.market = out; S.mkt = { status: 'done' };
-    applyMarketToValue();
-    markDirty(); recompute();
+    return out;
   }
   function applyMarketToValue() {
     const m = S.deal.market, tx = m && m.tx; if (!tx) return;
@@ -1417,6 +1430,191 @@
       <section class="ax-sec">${secHead('', 'כיסוי בטוחות · FINANCE ו-HYBRID')}<div class="ax-res two">${fin.ok ? collateralFlow(fin.collateral, fin.haircut, fin.priorLiens, fin.exposure, 'FINANCE · כיסוי בטוחות') : ''}${hyb.ok ? collateralFlow(hyb.collateral, R.strategies.hybrid.inputs.haircutPct / 100, hyb.priorLiens, hyb.exposure, 'HYBRID · כיסוי בטוחות') : ''}</div></section>`;
   }
 
+  /* ===================================================== LIVE THESIS — post-decision intelligence (altaris/thesis.js) */
+  /* A saved deal that carries a decision keeps its DECISION SNAPSHOT (what PROPX knew then), its THESIS CONTRACT (what must remain true), the
+     NEXT BEST EVIDENCE and the WATCHTOWER — automatically on save (the saved-deal architecture already stamps the decision on every version).
+     "Check now" / "check all" read the market again (read-only: the deal is never touched) and compose the FROZEN economic verdict with the new
+     market & execution assessment through the same rules F0–F5 → the DECISION DELTA. Economics never move with market data; a changed assumption
+     is a RE-UNDERWRITE (a new saved version → a new thesis version beside the original). Old saved deals are reconstructed from their latest
+     version when the stamped decision matches, else labelled BASELINE CREATED TODAY. Everything is kept in this browser (KEY.thesis). */
+  const TT = {
+    he: { kick: 'LIVE THESIS · תזה חיה', original: 'ההחלטה המקורית', current: 'היום · אותה מדיניות', since: 'מאז ההחלטה', material: 'שינויים מהותיים', resolved: 'תנאי הוסר', added: 'תנאי נוסף', next: 'הראיה החשובה הבאה', checked: 'נבדק', never: 'טרם נבדק', check: 'בדיקה עכשיו', checkAll: 'בדיקת כל התזות מול קריאה חדשה', checking: 'בודק…', open: 'אז מול עכשיו ←', pause: 'השהיה', resume: 'חידוש', none: 'אין',
+      h: 'תזה חיה — אז מול עכשיו', sub: 'ההחלטה המקורית, הראיות שמאחוריה, ומה השתנה מאז — תחת אותה מדיניות', lang: 'שפת המסמך', noThesis: 'אין תזה חיה להצגה', noThesisP: 'שמרו עסקה שיש לה החלטה — תמונת ההחלטה והראיות נשמרות איתה אוטומטית.', toSaved: 'לעסקאות השמורות', toDeal: 'פתיחת העסקה ←', version: 'גרסת תזה', decidedAt: 'תאריך ההחלטה', basis: 'בסיס התמונה', monitor: 'מעקב',
+      s: { what: 'מה השתנה', info: 'מידע נוסף (ללא השפעה על ההחלטה)', same: 'מה לא השתנה', why: 'למה זה חשוב', must: 'מה חייב להישאר נכון', brk: 'מה ישבור את התזה', conds: 'תנאים', active: 'פעילים', res: 'הוסרו', nbe: 'הראיות החשובות הבאות', watch: 'מגדל התצפית — מה נעקב ומה לא', geo: 'שינויים בתיק הגאוגרפיה מאז ההחלטה', rev: 'תיקונים רשמיים לתקופות שקדמו להחלטה', retro: 'אילו ידענו אז מה שאנחנו יודעים עכשיו', hist: 'היסטוריה', about: 'מה זו תזה חיה', narrative: 'בשפה פשוטה' },
+      cols: { change: 'שינוי', cat: 'קטגוריה', mat: 'מהותיות', impact: 'השפעה על ההחלטה', src: 'מקור', period: 'תקופה', cls: 'סיווג · ראיות', then: 'אז', now: 'עכשיו', fact: 'עובדה', rel: 'רלוונטיות', ifYes: 'אם יאומת', ifNo: 'אם לא', srcExp: 'מקור צפוי', path: 'נתיב', dim: 'ממד', whyW: 'למה', feeds: 'מקורות', watchable: 'ניתן למעקב', ev: 'אירוע', at: 'מועד', state: 'מצב', verdict: 'החלטה', note: 'הערה', orig: 'ערך מקורי', revd: 'ערך מתוקן', pub: 'פורסם', retroImp: 'השפעה רטרוספקטיבית' },
+      path: { REASSESS: 'בחינה מחדש (ראיות חיצוניות)', RE_UNDERWRITE: 'חיתום מחדש (קלט משתמש)' }, yes: 'כן', no: 'לא — ' , movesOnly: 'זז רק עם', resolvedBy: 'נפתר על ידי', unwatch: 'לא ניתן למעקב', checkedVia: 'קריאה', noCheck: 'טרם נעשתה בדיקה מול קריאה חדשה — לחצו "בדיקה עכשיו".', dealChanged: 'הנחות העסקה השמורה שונות מתמונת ההחלטה — שמירה חדשה תיצור גרסת תזה חדשה; המקורית נשמרת.' },
+    en: { kick: 'LIVE THESIS', original: 'Original decision', current: 'Today · same policy', since: 'Since the decision', material: 'material changes', resolved: 'Condition resolved', added: 'Condition added', next: 'Next most important evidence', checked: 'Last checked', never: 'Not checked yet', check: 'Check now', checkAll: 'Check every thesis against a new read', checking: 'Checking…', open: 'Then vs now →', pause: 'Pause', resume: 'Resume', none: 'none',
+      h: 'Live Thesis — Then vs Now', sub: 'The original decision, the evidence behind it, and what changed since — under the same policy', lang: 'Document language', noThesis: 'No live thesis to show', noThesisP: 'Save a deal that carries a decision — the decision snapshot and its evidence are kept with it automatically.', toSaved: 'Saved deals', toDeal: 'Open the deal →', version: 'Thesis version', decidedAt: 'Decision date', basis: 'Snapshot basis', monitor: 'Monitor',
+      s: { what: 'WHAT CHANGED', info: 'NEW INFORMATION (NO DECISION IMPACT)', same: 'WHAT DID NOT CHANGE', why: 'WHY IT MATTERS', must: 'WHAT MUST REMAIN TRUE', brk: 'WHAT WOULD BREAK THE THESIS', conds: 'CONDITIONS', active: 'active', res: 'resolved', nbe: 'NEXT BEST EVIDENCE', watch: 'WATCHTOWER — WHAT IS WATCHED (AND WHAT IS NOT)', geo: 'GEOGRAPHY DOSSIER CHANGES SINCE THE DECISION', rev: 'OFFICIAL REVISIONS OF PRE-DECISION PERIODS', retro: 'IF WE KNEW THEN WHAT WE KNOW NOW', hist: 'HISTORY', about: 'WHAT IS LIVE THESIS', narrative: 'IN PLAIN LANGUAGE' },
+      cols: { change: 'Change', cat: 'Category', mat: 'Materiality', impact: 'Decision impact', src: 'Source', period: 'Period', cls: 'Class · evidence', then: 'Then', now: 'Now', fact: 'Fact', rel: 'Relevance', ifYes: 'If verified', ifNo: 'If not', srcExp: 'Expected source', path: 'Path', dim: 'Dimension', whyW: 'Why', feeds: 'Feeds', watchable: 'Watchable', ev: 'Event', at: 'At', state: 'State', verdict: 'Decision', note: 'Note', orig: 'Original value', revd: 'Revised value', pub: 'Published', retroImp: 'Retrospective impact' },
+      path: { REASSESS: 'reassessment (external evidence)', RE_UNDERWRITE: 're-underwrite (user input)' }, yes: 'yes', no: 'no — ', movesOnly: 'moves only with', resolvedBy: 'resolved by', unwatch: 'not watchable', checkedVia: 'read', noCheck: 'No check against a newer read yet — press "Check now".', dealChanged: 'The saved deal\'s assumptions differ from the decision snapshot — a new save creates a new thesis version; the original is kept.' },
+  };
+  const thMem = new Map();   // thesis records by deal id (the repository parses the store on every read)
+  const thesisGet = (id) => { if (thMem.has(id)) return thMem.get(id); const repo = thesisRepo(); const rec = repo ? repo.get(id) : null; thMem.set(id, rec); return rec; };
+  const thDeal = (id) => (S.deals[id] && S.deals[id].versions && S.deals[id].versions.length ? S.deals[id] : null);
+  const thExtras = (T0, snap) => { const C = T0.contract(snap); return { contract: C, watch: T0.watchlist(snap, C), nbe: T0.nextBestEvidence(snap) }; };
+  /* the decision of a saved version, the way the page computes it (the rest of the portfolio as concentration context) */
+  function thDecide(id, v, today) {
+    let others = []; try { others = E.portfolio(portfolioItems().filter((x) => x.id !== id), S.settings, { today: TODAY }).rows.map((r) => ({ developer: r.developer, project: r.project, city: r.city, capital: r.capital })); } catch (e) { others = []; }
+    const R = E.run(v.deal, S.settings, { today, portfolio: others, marketDepth: v.deal.market && v.deal.market.tx ? { deals: v.deal.market.tx.n, from: v.deal.market.tx.from, to: v.deal.market.tx.to } : null });
+    const cbs = cbsCtx(v.deal.info);
+    const ctx = { today, deal: v.deal, market: v.deal.market || null, cbs, indicators: (window.PROPX_MARKET || {}).indicators || {}, indicatorsCheckedAt: (window.PROPX_MARKET || {}).checkedAt || null, marketAssessment: AM() ? AM().assess(v.deal.market || null, cbs, { today }) : null };
+    return { R, D: DX.decide(R, ctx), ctx };
+  }
+  /* saving a deal with a decision keeps the thesis — automatically; a changed assumption appends a new thesis version (the original stays) */
+  function thesisOnSave(rec) {
+    const T0 = TH(), repo = thesisRepo(); if (!T0 || !repo || !S.D || !rec || !rec.versions.length) return;
+    const v = rec.versions[rec.versions.length - 1];
+    try {
+      const snap = T0.snapshot({ D: S.D, R: S.R, deal: v.deal, ctx: dctx(), meta: { dealId: rec.id, versionN: v.n, savedAt: v.savedAt, createdAt: v.savedAt, basis: 'DECISION_SAVE', stamp: v.decision, settings: S.settings || null } });
+      const r = repo.init(rec.id, snap, thExtras(T0, snap), { at: v.savedAt }); thMem.delete(rec.id);
+      if (r.action === 'created') toast('התזה החיה נשמרה עם ההחלטה'); else if (r.action === 'appended') toast(r.kind === 'REUNDERWRITE' ? `חיתום מחדש — גרסת תזה ${r.record.versions.length} נוספה; המקורית נשמרה` : `ההחלטה חושבה מחדש (אותן הנחות) — גרסת תזה ${r.record.versions.length}; המקורית נשמרה`);
+    } catch (e) { /* the thesis never blocks a save */ }
+  }
+  /* an existing saved deal without a thesis: reconstructed from its latest version when the decision stamped at save time matches; otherwise BASELINE CREATED TODAY (never a fabricated past state) */
+  function thesisEnsure(id) {
+    const T0 = TH(), repo = thesisRepo(), rec = thDeal(id); if (!T0 || !repo || !rec) return null;
+    const have = thesisGet(id); if (have) return have;
+    const v = rec.versions[rec.versions.length - 1];
+    try {
+      const day = /^\d{4}-\d{2}-\d{2}/.test(String(v.savedAt || '')) ? String(v.savedAt).slice(0, 10) : TODAY;
+      let x = thDecide(id, v, day), basis = v.decision && T0.stampMatches(x.D, v.decision) ? 'RECONSTRUCTED' : null;
+      if (!basis) { x = thDecide(id, v, TODAY); basis = 'BASELINE_TODAY'; }
+      const createdAt = basis === 'RECONSTRUCTED' ? v.savedAt : new Date().toISOString();
+      const snap = T0.snapshot({ D: x.D, R: x.R, deal: v.deal, ctx: x.ctx, meta: { dealId: id, versionN: v.n, savedAt: v.savedAt, createdAt, basis, stamp: v.decision || null, settings: S.settings || null } });
+      const r = repo.init(id, snap, thExtras(T0, snap), { at: createdAt }); thMem.delete(id);
+      return r.ok ? r.record : null;
+    } catch (e) { return null; }
+  }
+  function thesisEnsureAll() { for (const r of liveDeals()) if (!r.archived) thesisEnsure(r.id); }
+  const thCache = new Map();   // one market read per locality × developer × street inside a check run
+  async function thesisFetch(info, snap) {
+    const key = `${info.cityCode || info.city || ''}|${(info.developer || '').trim()}|${info.street || ''}`;
+    if (!thCache.has(key)) thCache.set(key, fetchMarket(info).catch(() => null));
+    const market = await thCache.get(key);
+    let hist = null, rev = null;
+    if (info.cityCode) {
+      const hk = 'hist|' + info.cityCode + '|' + (snap.decidedAt || ''); if (!thCache.has(hk)) thCache.set(hk, getJSON(`/api/intel?view=dossierHistory&city=${encodeURIComponent(info.cityCode)}&since=${encodeURIComponent(snap.decidedAt || TODAY)}`).catch(() => null)); hist = await thCache.get(hk);
+      const cbs = snap.context && snap.context.cbs; if (cbs && cbs.code) { const rk = 'rev|' + cbs.code; if (!thCache.has(rk)) thCache.set(rk, getJSON(`/api/intel?view=revisions&geo=${encodeURIComponent(cbs.code)}&measure=new_sold&window=365d&size=200`).then((d) => d.rows || []).catch(() => null)); rev = await thCache.get(rk); }
+    }
+    return { market, hist, rev };
+  }
+  /* REASSESS MARKET THESIS: new external evidence only — the deal and its economics are never touched */
+  async function thesisCheck(id, batch) {
+    const T0 = TH(), repo = thesisRepo(); if (!T0 || !repo) return null;
+    const rec = thDeal(id), th = thesisEnsure(id); if (!rec || !th) return null;
+    const v = rec.versions[rec.versions.length - 1], snap = th.versions[th.versions.length - 1].snapshot;
+    if (!v.deal.info || !v.deal.info.city) { if (!batch) toast('לעסקה אין יישוב — אין קריאת שוק לבדוק מולה'); return null; }
+    if (!batch) thCache.clear();
+    S.thBusy[id] = true; thesisRepaint();
+    try {
+      const got = await thesisFetch(v.deal.info, snap);
+      const res = T0.reassess(snap, { today: TODAY, market: got.market, cbs: cbsCtx(v.deal.info), indicators: (window.PROPX_MARKET || {}).indicators || {}, dealHash: T0.hashOf(T0.dealFacts(v.deal)), settingsHash: T0.hashOf(S.settings || null), dossierHistory: got.hist, revisions: got.rev });
+      repo.recordCheck(id, res, { at: new Date().toISOString(), basis: { retrievedAt: got.market ? got.market.retrievedAt : null, dossierGeneratedAt: got.market && got.market.dossier ? got.market.dossier.generatedAt : null, radarBuiltAt: got.market && got.market.radar ? got.market.radar.builtAt : null } });
+      thMem.delete(id);
+      if (!batch) toast(`${dealName(v.deal)}: ${T0.t(res.stateLabel, 'he')}`);
+      return res;
+    } catch (e) { if (!batch) toast('בדיקת התזה נכשלה — ' + e.message); return null; }
+    finally { delete S.thBusy[id]; if (!batch) thCache.clear(); thesisRepaint(); }
+  }
+  async function thesisCheckAll() {
+    if (Object.keys(S.thBusy).length) return;
+    thCache.clear(); let n = 0;
+    for (const r of liveDeals().filter((x) => !x.archived)) { const th = thesisEnsure(r.id); if (!th || th.monitor === 'PAUSED') continue; if (await thesisCheck(r.id, true)) n++; }
+    thCache.clear(); toast(`נבדקו ${n} תזות מול קריאה חדשה`); thesisRepaint();
+  }
+  function thesisRepaint() { if (S.view === 'deal') paintLedger(); else if (S.view === 'portfolio') paintPortfolio(); else if (S.view === 'saved') paintSaved(); else if (S.view === 'thesis') paintThesis(); }
+  const thSrc = (id, L) => (id === 'user' ? (L === 'en' ? 'the user (a verified document / input)' : 'המשתמש (מסמך מאומת / קלט)') : id === 'terms' ? (L === 'en' ? 'commercial terms' : 'תנאים מסחריים') : (XPR() && XPR().sourceLabel(id, L)) || id);
+  const thTone = (st) => (st === 'REVIEW_REQUIRED' ? 'pass' : st === 'CHANGED' ? 'cond' : st === 'SUPPORTED' ? 'take' : 'none');
+  const fmtAny = (v) => (v == null ? '—' : typeof v === 'number' ? (Number.isInteger(v) ? F.int(v) : String(Math.round(v * 100) / 100)) : typeof v === 'boolean' ? (v ? '✓' : '✗') : String(v));
+  /* the compact card on the ledger: one small status → click → then vs now */
+  function thesisCardHTML() {
+    const T0 = TH(); if (!T0 || !S.D || isCase(S.deal)) return '';
+    const t = (v) => T0.t(v, 'he'), tt = TT.he;
+    const th = S.dealId ? thesisEnsure(S.dealId) : null;
+    if (!th) return S.dealId ? '' : `<div class="ax-th hint" role="note"><div class="ax-dec-k">${tt.kick}${xpBtn('live_thesis')}</div><b>${esc(t(T0.COPY.cta))}</b><p>${esc(t(T0.COPY.ctaBody))} ${esc(t(T0.COPY.automatic))}</p></div>`;
+    const v = th.versions[th.versions.length - 1], snap = v.snapshot, lc = th.lastCheck, busy = !!S.thBusy[S.dealId], paused = th.monitor === 'PAUSED';
+    const cur = lc && lc.current ? lc.current.verdict : snap.final.verdict;
+    const mat = lc ? (lc.changes || []).filter((c) => c.materiality !== 'INFORMATIONAL').length : null;
+    const nbe = v.nbe && v.nbe.items[0];
+    const rows = [[tt.original, `${DX.VERDICT[snap.final.verdict].label.en} · ${F.date(snap.decidedAt)}`], [tt.current, lc && lc.current ? `${DX.VERDICT[cur].label.en}${lc.current.rule ? ` (${lc.current.rule})` : ''}` : tt.never],
+      [tt.since, lc ? (lc.state === 'INSUFFICIENT_NEW_EVIDENCE' || lc.state === 'DEAL_CHANGED' ? t(lc.stateLabel) : `${mat} ${tt.material}`) : '—']];
+    if (lc && lc.conditions && lc.conditions.resolved.length) rows.push([tt.resolved, lc.conditions.resolved.map((c) => t(c.text)).join('; ')]);
+    if (lc && lc.conditions && lc.conditions.added.length) rows.push([tt.added, lc.conditions.added.map((c) => t(c.text)).join('; ')]);
+    if (nbe) rows.push([tt.next, `${t(nbe.fact)} · ${t(nbe.relevanceLabel)}`]);
+    rows.push([tt.checked, lc ? F.date(lc.checkedAt) : tt.never]);
+    return `<div class="ax-th ax-dec tone-${paused ? 'none' : thTone(th.status)}" role="group" aria-label="${esc(t(T0.COPY.name))}"><div class="ax-dec-k">${tt.kick}<span class="v">v${T0.VERSION.n}</span>${xpBtn('live_thesis')}</div>
+      <div class="ax-dec-v"><i></i><span class="code">${esc(paused ? 'PAUSED' : T0.STATUS[th.status].label.en)}</span><span class="he">${esc(paused ? t(T0.MONITOR.PAUSED) : t(T0.STATUS[th.status].label))}</span>${snap.basis !== 'DECISION_SAVE' ? `<span class="ax-tag warn" title="${esc(t(snap.basisLabel))}">${snap.basis === 'BASELINE_TODAY' ? 'BASELINE TODAY' : 'RECONSTRUCTED'}</span>` : ''}${th.versions.length > 1 ? `<span class="ax-tag">v${th.versions.length}</span>` : ''}</div>
+      <dl class="ax-dec-dl">${rows.map(([k, val]) => `<dt>${esc(k)}</dt><dd>${esc(val)}</dd>`).join('')}</dl>
+      <div class="ax-th-act"><button class="ax-btn" type="button" data-act="thesis-check" data-id="${esc(S.dealId)}"${busy || paused ? ' disabled' : ''}>${busy ? tt.checking : tt.check}</button><button class="ax-link ax-dec-go" type="button" data-act="thesis-open" data-id="${esc(S.dealId)}">${tt.open}</button><button class="ax-link" type="button" data-act="${paused ? 'thesis-resume' : 'thesis-pause'}" data-id="${esc(S.dealId)}">${paused ? tt.resume : tt.pause}</button></div>
+      <p class="ax-dec-disc">${esc(t(T0.COPY.tagline))}</p></div>`;
+  }
+  function thesisChipHTML(id) {
+    const T0 = TH(); const th = T0 ? thesisGet(id) : null; if (!T0 || !th) return '<span class="ax-muted">—</span>';
+    const paused = th.monitor === 'PAUSED', st = paused ? 'PAUSED' : th.status;
+    return `<button class="ax-th-st ${st}" type="button" data-act="thesis-open" data-id="${esc(id)}" title="${esc(T0.t(T0.COPY.name, 'he'))}">${esc(paused ? 'PAUSED' : T0.STATUS[th.status].label.en)}</button>`;
+  }
+  /* the portfolio thesis monitor: which deal actually needs attention today (deterministic order, no score) */
+  function thesisPortfolioHTML(items) {
+    const T0 = TH(); if (!T0) return '';
+    thesisEnsureAll();
+    const t = (v) => T0.t(v, 'he'), tt = TT.he;
+    const list = items.filter((it) => !it.archived).map((it) => { const th = thesisGet(it.id); if (!th) return null; const v = th.versions[th.versions.length - 1]; return { dealId: it.id, name: dealName(it.deal), monitor: th.monitor, status: th.status, snapshot: v.snapshot, contract: v.contract, nbe: v.nbe, lastCheck: th.lastCheck }; }).filter(Boolean);
+    if (!list.length) return '';
+    const P = T0.portfolio(list), sm = P.summary, busy = Object.keys(S.thBusy).length > 0;
+    const tile = (n, label, key) => `<div class="ax-th-tile k-${key}${n ? ' on' : ''}"><b class="num">${n}</b><span>${esc(label)}</span></div>`;
+    const tiles = [[sm.total, 'תזות פעילות', 'all'], [sm.noMaterialChange, 'אין שינוי מהותי', 'ok'], [sm.newInformation, 'מידע חדש — ללא השפעה', 'info'], [sm.resolved, 'תנאי הוסר', 'res'], [sm.newCondition + sm.weakened, 'תנאי חדש / החמרה', 'warn'], [sm.requiresReview, 'נדרשת בחינה', 'rev'], [sm.sourceIssue, 'מקורות / התיישנות', 'src'], [sm.notChecked + sm.paused + sm.dealChanged, 'טרם נבדק · מושהה · חיתום מחדש', 'na']];
+    const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="thesis-open" data-id="${esc(r.dealId)}">${esc(r.name || r.dealId)}</button></td><td><span class="ax-th-st ${r.monitor === 'PAUSED' ? 'PAUSED' : r.status}">${esc(t(r.attention.label))}</span></td><td>${r.original ? DX.VERDICT[r.original].label.en : '—'}</td><td>${r.current ? DX.VERDICT[r.current].label.en : '—'}</td><td class="n">${r.activeConditions}</td><td class="n">${r.resolved}</td><td class="n">${r.materialChanges}</td><td>${r.nbeTop ? `${esc(t(r.nbeTop.fact))} <span class="ax-tag">${esc(r.nbeTop.relevance)}</span>` : '—'}</td><td class="n">${r.checkedAt ? F.date(r.checkedAt) : '—'}</td><td><button class="ax-btn" type="button" data-act="thesis-check" data-id="${esc(r.dealId)}"${S.thBusy[r.dealId] || r.monitor === 'PAUSED' ? ' disabled' : ''}>${S.thBusy[r.dealId] ? tt.checking : tt.check}</button></td></tr>`).join('');
+    const nbe = P.nbe.length ? `<ol class="ax-dv-ol">${P.nbe.map((x) => `<li><b>${esc(t(x.fact))}</b> <span class="ax-tag">${esc(x.relevance)}</span> <span class="ax-muted">· ${x.deals} עסקאות · ${esc(thSrc(x.expectedSource, 'he'))} · ${esc(tt.path[x.path] || x.path)}</span></li>`).join('')}</ol>` : '';
+    return `<section class="ax-sec ax-th-pf">${secHead('', 'תזה חיה — מוניטור הפורטפוליו', `${esc(t(T0.COPY.tagline))} ${xpBtn('portfolio_thesis_monitor')}`)}
+      <div class="ax-th-tiles">${tiles.map((x) => tile(x[0], x[1], x[2])).join('')}</div>
+      <div class="ax-th-act" style="margin:10px 0"><button class="ax-btn pri" type="button" data-act="thesis-check-all"${busy ? ' disabled' : ''}>${busy ? tt.checking : tt.checkAll}</button><span class="ax-muted">${esc(t(T0.COPY.whatA))}</span></div>
+      <div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="thpf"><thead><tr><th>עסקה</th><th>תשומת לב</th><th>החלטה מקורית</th><th>היום · אותה מדיניות</th><th class="n">תנאים פעילים</th><th class="n">הוסרו</th><th class="n">שינויים מהותיים</th><th>הראיה החשובה הבאה</th><th class="n">נבדק</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="ax-muted">${esc(t(P.basis))}</p>${nbe ? `<h3 class="ax-h3">הראיות החשובות הבאות לרוחב הפורטפוליו ${xpBtn('next_best_evidence')}</h3>${nbe}` : ''}
+      <p class="ax-dec-disc">${esc(t(T0.COPY.disclaimer))} ${esc(t(T0.COPY.limitation))}</p></section>`;
+  }
+  /* the THEN VS NOW view: understandable in thirty seconds, every detail expandable */
+  function paintThesis() {
+    const box = $('#o-thesis'); if (!box) return;
+    const T0 = TH(), L = dlang(), dir = L === 'en' ? 'ltr' : 'rtl', tt = TT[L], t = (v) => (T0 ? T0.t(v, L) : '');
+    const id = S.thesisId, rec = id ? thDeal(id) : null, th = rec ? thesisEnsure(id) : null;
+    const langSeg = `<div class="ax-seg" role="group" aria-label="${esc(tt.lang)}"><button type="button" data-mlang="he" lang="he" aria-pressed="${L === 'he'}">עברית</button><button type="button" data-mlang="en" lang="en" aria-pressed="${L === 'en'}">English</button></div>`;
+    if (!T0 || !th) { box.innerHTML = `<section class="ax-sec ax-mv" dir="${dir}" lang="${L}"><div class="ax-mv-h"><div><div class="kick">${TT.en.kick}</div><h2>${esc(tt.h)}</h2></div><div class="tools">${langSeg}</div></div><div class="ax-empty"><b>${esc(tt.noThesis)}</b><p>${esc(tt.noThesisP)}</p><button class="ax-btn" type="button" data-view="saved">${esc(tt.toSaved)}</button></div></section>`; return; }
+    const v = th.versions[th.versions.length - 1], snap = v.snapshot, C = v.contract, N = v.nbe, W = v.watch, lc = th.lastCheck, paused = th.monitor === 'PAUSED', deal = rec.versions[rec.versions.length - 1].deal;
+    const sec = (key, title, body, xp) => `<section class="ax-dv-s" id="th-${key}"><h3 class="ax-dv-h">${esc(title)}${xp ? ' ' + xpBtn(xp) : ''}</h3>${body}</section>`;
+    const ul = (arr, f) => (arr && arr.length ? `<ul class="ax-dv-ul">${arr.map((x) => `<li>${f(x)}</li>`).join('')}</ul>` : `<p class="ax-muted">${esc(tt.none)}</p>`);
+    const V = (k) => (k && DX.VERDICT[k] ? `${DX.VERDICT[k].label.en} · ${t(DX.VERDICT[k].label)}` : '—');
+    const cur = lc && lc.current ? lc.current : null, tvn = lc ? lc.thenVsNow : null;
+    const status = paused ? 'PAUSED' : th.status;
+    const head = `<div class="ax-dec tone-${paused ? 'none' : thTone(th.status)} big"><div class="ax-dec-v"><i></i><span class="code">${esc(paused ? 'PAUSED' : T0.STATUS[th.status].label.en)}</span><span class="he">${esc(paused ? t(T0.MONITOR.PAUSED) : t(T0.STATUS[th.status].label))}</span>${snap.basis !== 'DECISION_SAVE' ? `<span class="ax-tag warn">${esc(t(snap.basisLabel))}</span>` : ''}</div>
+      <div class="ax-dec-fin"><span>${esc(tt.original)}: <b>${esc(V(snap.final.verdict))}</b> · ${F.date(snap.decidedAt)}${snap.final.rule ? ` (${snap.final.rule})` : ''}</span><span>${esc(tt.current)}: <b>${cur ? esc(V(cur.verdict)) + (cur.rule ? ` (${cur.rule})` : '') : esc(tt.never)}</b></span>${lc ? `<span>${esc(tt.since)}: <b>${esc(t(lc.stateLabel))}</b> · ${esc(t(T0.MATERIALITY[lc.materiality].label))}</span>` : ''}</div>
+      <div class="ax-dec-row"><span>${esc(tt.version)}: <b>v${th.versions.length}</b></span><span>${esc(tt.monitor)}: <b>${esc(t(T0.MONITOR[th.monitor] || T0.MONITOR.LIVE))}</b></span><span>${esc(tt.checked)}: <b>${lc ? F.date(lc.checkedAt) : esc(tt.never)}</b></span>${snap.geography.city ? `<span>${esc(snap.geography.city)}${snap.developer ? ` · ${esc(snap.developer)}` : ''}</span>` : ''}</div>
+      <div class="ax-th-act" style="margin-top:10px"><button class="ax-btn pri" type="button" data-act="thesis-check" data-id="${esc(id)}"${S.thBusy[id] || paused ? ' disabled' : ''}>${S.thBusy[id] ? esc(tt.checking) : esc(tt.check)}</button><button class="ax-btn" type="button" data-act="${paused ? 'thesis-resume' : 'thesis-pause'}" data-id="${esc(id)}">${esc(paused ? tt.resume : tt.pause)}</button><button class="ax-btn" type="button" data-act="open" data-id="${esc(id)}">${esc(tt.toDeal)}</button></div>
+      ${lc && lc.state === 'DEAL_CHANGED' ? `<p class="ax-dv-basis">${esc(tt.dealChanged)}</p>` : ''}${!lc ? `<p class="ax-dv-basis">${esc(tt.noCheck)}</p>` : ''}<p class="ax-dec-disc">${esc(t(T0.COPY.disclaimer))}</p></div>`;
+    const chgRow = (c) => `<tr class="m-${c.materiality}"><td><b>${esc(t(c.text))}</b>${c.ruleText ? `<div class="ax-muted">${esc(c.rule)}: ${esc(t(c.ruleText))}</div>` : ''}${c.limitation ? `<div class="ax-muted">${esc(t(c.limitation))}</div>` : ''}</td><td>${esc(t(c.categoryLabel))}</td><td>${esc(t(c.materialityLabel))}</td><td>${esc(t(c.impactLabel))}</td><td>${esc(c.source || '—')}</td><td>${esc(c.period || '—')}</td><td>${esc(c.cls || '—')}${c.evidence ? ` · ${esc(c.evidence)}` : ''}</td><td class="n">${esc(fmtAny(c.from))}</td><td class="n">${esc(fmtAny(c.to))}</td></tr>`;
+    const chgTable = (list) => `<div class="ax-tbl-wrap"><table class="ax-tbl data th-chg"><thead><tr><th>${esc(tt.cols.change)}</th><th>${esc(tt.cols.cat)}</th><th>${esc(tt.cols.mat)}</th><th>${esc(tt.cols.impact)}</th><th>${esc(tt.cols.src)}</th><th>${esc(tt.cols.period)}</th><th>${esc(tt.cols.cls)}</th><th class="n">${esc(tt.cols.then)}</th><th class="n">${esc(tt.cols.now)}</th></tr></thead><tbody>${list.map(chgRow).join('')}</tbody></table></div>`;
+    const matList = lc ? (lc.changes || []).filter((c) => c.materiality !== 'INFORMATIONAL').sort((a, b) => T0.MATERIALITY[b.materiality].rank - T0.MATERIALITY[a.materiality].rank) : [], infoList = lc ? (lc.changes || []).filter((c) => c.materiality === 'INFORMATIONAL') : [];
+    const whatChanged = lc ? (matList.length ? chgTable(matList) : `<p class="ax-muted">${esc(t(T0.DELTA.NO_MATERIAL_THESIS_CHANGE.label))}</p>`) + (infoList.length ? `<details class="th-info"><summary>${esc(tt.s.info)} · ${infoList.length}</summary>${chgTable(infoList)}</details>` : '') : `<p class="ax-muted">${esc(tt.noCheck)}</p>`;
+    const narr = lc && lc.narrative && lc.narrative.length ? `<div class="ax-dv-narr">${lc.narrative.map((p) => `<p>${esc(t(p))}</p>`).join('')}</div>` : '';
+    const same = tvn ? ul(tvn.whatDidNotChange, (x) => esc(t(x))) : ul([`IRR`, `MOIC`], (x) => esc(x));
+    const why = tvn ? `<p class="ax-dv-basis">${esc(t(tvn.whyItMatters))}</p>` : '';
+    const must = ul(C.dependsOn, (d) => `${esc(t(d.text))}${d.movesOnly ? ` <span class="ax-muted">· ${esc(tt.movesOnly)}: ${esc(t(d.movesOnly))}</span>` : ''}${d.rule ? ` <span class="ax-tag">${esc(d.rule)}</span>` : ''}`);
+    const brk = ul(C.breakers, (b) => `${esc(t(b.text))}${b.rule ? ` <span class="ax-tag">${esc(b.rule)}</span>` : ''}`) + (C.notes.length ? `<p class="ax-muted">${esc(C.notes.map((n) => t(n)).join(' · '))}</p>` : '');
+    const condsActive = lc && lc.conditions ? lc.conditions.active : snap.conditions, condsRes = lc && lc.conditions ? lc.conditions.resolved : [];
+    const condHTML = (c) => { const cc = C.activeConditions.find((x) => x.id === c.id); return `<b>${esc(t(c.text))}</b>${c.basis ? `<div class="ax-muted">${esc(t(c.basis))}</div>` : ''}${cc ? `<div class="ax-muted">${esc(tt.resolvedBy)}: ${esc(t(cc.resolvedBy))} · ${esc(tt.path[cc.path] || cc.path)}</div>` : ''}`; };
+    const conds = `<h4 class="ax-h3">${esc(tt.s.active)} · ${condsActive.length}</h4>${condsActive.length ? `<ol class="ax-dv-ol">${condsActive.map((c) => `<li>${condHTML(c)}</li>`).join('')}</ol>` : `<p class="ax-muted">${esc(tt.none)}</p>`}<h4 class="ax-h3">${esc(tt.s.res)} · ${condsRes.length}</h4>${condsRes.length ? `<ol class="ax-dv-ol">${condsRes.map((c) => `<li>${condHTML(c)}</li>`).join('')}</ol>` : `<p class="ax-muted">${esc(tt.none)}</p>`}`;
+    const nbe = N.items.length ? `<ol class="ax-dv-ol th-nbe">${N.items.map((x) => `<li><b>${esc(t(x.fact))}</b> <span class="ax-tag">${esc(t(x.relevanceLabel))}</span><div class="ax-muted">${esc(tt.s.why)}: ${esc(t(x.why))}</div><div class="ax-muted">${esc(tt.cols.ifYes)}: ${esc(t(x.ifVerified))}</div><div class="ax-muted">${esc(tt.cols.ifNo)}: ${esc(t(x.ifNot))}</div><div class="ax-muted">${esc(tt.cols.srcExp)}: ${esc(thSrc(x.expectedSource, L))} · ${esc(tt.cols.path)}: ${esc(tt.path[x.path] || x.path)}${x.missingId && XPR() && XPR().missing(x.missingId, L) ? ` · ${esc(XPR().missing(x.missingId, L).why)}` : ''}</div></li>`).join('')}</ol><p class="ax-muted">${esc(t(N.basis))}</p>` : `<p class="ax-muted">${esc(tt.none)}</p>`;
+    const watch = `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>${esc(tt.cols.dim)}</th><th>${esc(tt.cols.whyW)}</th><th>${esc(tt.cols.feeds)}</th><th>${esc(tt.cols.watchable)}</th></tr></thead><tbody>${W.dimensions.map((d) => `<tr class="${d.watchable ? '' : 'th-unwatch'}"><td><b>${esc(t(d.label))}</b>${d.signals && d.signals.length ? `<div class="ax-muted">${esc(d.signals.join(' · '))}</div>` : ''}</td><td>${esc(t(d.why))}${d.note ? `<div class="ax-muted">${esc(t(d.note))}</div>` : ''}</td><td>${esc((d.feeds || []).map((f) => (XPR() && XPR().sourceLabel(f, L)) || f).join(' · ') || '—')}</td><td>${d.watchable ? esc(tt.yes) : `${esc(tt.no)}${esc(t(d.reason))}`}</td></tr>`).join('')}</tbody></table></div><p class="ax-muted">${esc(t(W.basis))}</p>`;
+    const geo = lc && lc.geoChanges && lc.geoChanges.length ? chgTable(lc.geoChanges) : `<p class="ax-muted">${esc(tt.none)}${lc && lc.notes && lc.notes.length ? ' · ' + esc(lc.notes.map((n) => t(n)).join(' · ')) : ''}</p>`;
+    const rev = lc && lc.revisions && lc.revisions.length ? `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>${esc(tt.cols.period)}</th><th class="n">${esc(tt.cols.orig)}</th><th class="n">${esc(tt.cols.revd)}</th><th class="n">Δ</th><th>${esc(tt.cols.pub)}</th><th>${esc(tt.cols.retroImp)}</th></tr></thead><tbody>${lc.revisions.map((r) => `<tr><td>${esc(r.period || '—')}</td><td class="n">${esc(fmtAny(r.original))}</td><td class="n">${esc(fmtAny(r.revised))}</td><td class="n">${esc(fmtAny(r.delta))}</td><td>${r.publishedAt ? F.date(r.publishedAt) : '—'}</td><td>${esc(t(r.retrospectiveImpact))}</td></tr>`).join('')}</tbody></table></div>` : `<p class="ax-muted">${esc(tt.none)}</p>`;
+    const retro = lc ? `<p class="ax-dv-basis"><b>${esc(t(lc.retrospective.text))}</b></p>${lc.retrospective.facts && lc.retrospective.facts.length ? ul(lc.retrospective.facts, (f) => `${esc(t(f.text))} <span class="ax-tag">${esc(f.rule)}</span>${f.cls ? ` <span class="ax-tag">${esc(f.cls)}</span>` : ''}`) : ''}${lc.retrospective.unchanged ? `<p class="ax-muted">${esc(t(lc.retrospective.unchanged))}</p>` : ''}` : `<p class="ax-muted">${esc(tt.noCheck)}</p>`;
+    const hist = `<div class="ax-tbl-wrap"><table class="ax-tbl data"><thead><tr><th>#</th><th>${esc(tt.cols.at)}</th><th>${esc(tt.cols.ev)}</th><th>${esc(tt.cols.state)}</th><th>${esc(tt.cols.verdict)}</th><th>${esc(tt.cols.note)}</th></tr></thead><tbody>${th.events.slice().reverse().map((e) => `<tr><td class="n">${e.n}</td><td>${e.at ? F.date(e.at) : '—'}</td><td><b>${esc(e.kind)}</b>${e.version ? ` <span class="ax-tag">v${e.version}</span>` : ''}</td><td>${e.state ? esc(t(T0.DELTA[e.state] ? T0.DELTA[e.state].label : e.state)) : e.basis ? esc(t(T0.BASIS[e.basis] || e.basis)) : '—'}</td><td>${e.verdict ? esc(DX.VERDICT[e.verdict].label.en) : '—'}${e.from && e.to && e.from !== e.to ? ` <span class="ax-muted">(${esc(DX.VERDICT[e.from].label.en)} → ${esc(DX.VERDICT[e.to].label.en)})</span>` : ''}</td><td class="ax-muted">${e.rule ? esc(e.rule) : ''}${e.hash ? ` · ${esc(String(e.hash).slice(0, 8))}` : ''}</td></tr>`).join('')}</tbody></table></div>${th.statusHistory && th.statusHistory.length > 1 ? `<p class="ax-muted">${th.statusHistory.map((x) => `${x.at ? F.date(x.at) : '—'} ${esc(t(T0.STATUS[x.status] ? T0.STATUS[x.status].label : x.status))}`).join(' → ')}</p>` : ''}`;
+    const about = `<p class="ax-dv-basis"><b>${esc(t(T0.COPY.title))}</b></p>${T0.COPY.body.map((p) => `<p class="ax-dv-basis">${esc(t(p))}</p>`).join('')}<ul class="ax-dv-ul">${T0.COPY.always.map((x) => `<li>${esc(t(x))}</li>`).join('')}</ul><p class="ax-muted">${esc(t(T0.COPY.reassessVsReunderwrite))}</p><p class="ax-muted">${esc(t(T0.COPY.automatic))} ${esc(t(T0.COPY.limitation))}</p>`;
+    box.innerHTML = `<section class="ax-sec ax-mv ax-dv th-view" dir="${dir}" lang="${L}"><div class="ax-mv-h"><div><div class="kick">${TT.en.kick}</div><h2>${esc(tt.h)}${xpBtn('live_thesis')}</h2><p class="sub">${esc(tt.sub)} · ${esc(dealName(deal))}</p></div><div class="tools">${langSeg}</div></div>
+      ${head}${narr ? sec('narr', tt.s.narrative, narr) : ''}${sec('what', tt.s.what, whatChanged, 'decision_delta')}${sec('same', tt.s.same, same)}${why ? sec('why', tt.s.why, why) : ''}${sec('must', tt.s.must, must, 'thesis_contract')}${sec('conds', tt.s.conds, conds, 'decision_condition')}${sec('brk', tt.s.brk, brk, 'thesis_breaker')}${sec('nbe', tt.s.nbe, nbe, 'next_best_evidence')}${sec('watch', tt.s.watch, watch, 'watchtower')}${sec('geo', tt.s.geo, geo)}${sec('rev', tt.s.rev, rev, 'data_revision')}${sec('retro', tt.s.retro, retro, 'retrospective_decision')}${sec('hist', tt.s.hist, hist, 'decision_snapshot')}${sec('about', tt.s.about, about, 'live_thesis')}</section>`;
+    axTables(box);
+  }
+
   /* ===================================================== view: portfolio */
   const liveDeals = () => Object.values(S.deals).filter((r) => r.versions && r.versions.length);
   function portfolioItems() { return liveDeals().map((r) => ({ id: r.id, deal: r.versions[r.versions.length - 1].deal, status: r.status, archived: r.archived })); }
@@ -1436,10 +1634,10 @@
     const strat = (k) => sm.byStrategy.find((x) => x.key === k) || { capital: 0, share: 0 };
     const kp = `<div class="ax-kpis">${kpi('הון מושקע כולל', F.m(sm.capital), sm.fundUse != null ? `${F.pct(sm.fundUse)} מהקרן` : '', { m: 'portfolio', how: 'סכום ההון בסיכון של העסקאות הפעילות, במבנה שנבחר לביצוע או במבנה המועדף.' })}${kpi('שווי נתמך כולל', F.m(sm.smv), `${sm.deals} עסקאות`)}${kpi('IRR משוקלל', F.pct(sm.irr), 'לפי הון', { m: 'portfolio', how: 'ממוצע IRR הבסיס של העסקאות, משוקלל בהון הנדרש' })}${kpi('MOIC משוקלל', F.x(sm.moic), 'לפי הון')}${kpi('משך משוקלל', F.mo(sm.months), 'לפי הון')}${kpi('היציאה הקרובה', sm.upcoming[0] ? F.date(sm.upcoming[0].exitDate) : '—', sm.upcoming[0] ? sm.upcoming[0].name : '')}</div>
       <div class="ax-kpis" style="border-top:none">${E.STRATS.map((k) => kpi(`חשיפת ${SN[k]}`, F.m(strat(k).capital), F.pct(strat(k).share))).join('')}${kpi('ריכוזיות יזם', F.pct(sm.topDeveloperShare), sm.byDeveloper[0] ? sm.byDeveloper[0].key : '')}${kpi('ריכוזיות יישוב', F.pct(sm.topCityShare), sm.byCity[0] ? sm.byCity[0].key : '')}${kpi('נזילות צפויה · 3 / 6 / 12 ח׳', `${F.m(sm.liquidity.m3)}`, `6 ח׳ ${F.m(sm.liquidity.m6)} · 12 ח׳ ${F.m(sm.liquidity.m12)}`, { m: 'portfolio', how: 'סך התקבולים החיוביים (קרן ורווח) המתוארכים בכל חלון מהיום' })}</div>`;
-    const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(r.name)}</button>${S.deals[r.id] && S.deals[r.id].origin === 'illustrative-case' ? ' <span class="ax-tag ill">להמחשה</span>' : ''}</td><td>${esc(r.developer || '—')}</td><td>${esc(r.project || '—')}</td><td>${r.strategy ? `<span class="st" style="--c:${SC[r.strategy]}">${SN[r.strategy]}</span>` : '—'}</td><td class="n">${F.m(r.capital)}</td><td class="n">${F.m(r.smv)}</td><td class="n">${F.pct(r.ltv)}</td><td class="n">${F.pct(r.irr)}</td><td class="n">${F.x(r.moic)}</td><td class="n">${F.mo(r.months)}</td><td class="n">${F.date(r.exitDate)}</td><td class="n">${r.risk ?? '—'}</td><td>${statusSelect(r.id)}</td>${pfDecisionCells(r.id)}</tr>`).join('');
+    const rows = P.rows.map((r) => `<tr><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(r.name)}</button>${S.deals[r.id] && S.deals[r.id].origin === 'illustrative-case' ? ' <span class="ax-tag ill">להמחשה</span>' : ''}</td><td>${esc(r.developer || '—')}</td><td>${esc(r.project || '—')}</td><td>${r.strategy ? `<span class="st" style="--c:${SC[r.strategy]}">${SN[r.strategy]}</span>` : '—'}</td><td class="n">${F.m(r.capital)}</td><td class="n">${F.m(r.smv)}</td><td class="n">${F.pct(r.ltv)}</td><td class="n">${F.pct(r.irr)}</td><td class="n">${F.x(r.moic)}</td><td class="n">${F.mo(r.months)}</td><td class="n">${F.date(r.exitDate)}</td><td class="n">${r.risk ?? '—'}</td><td>${thesisChipHTML(r.id)}</td><td>${statusSelect(r.id)}</td>${pfDecisionCells(r.id)}</tr>`).join('');
     const bars = (list, limit, title) => C.shareBars(list.map((x) => ({ label: x.key === '—' ? 'לא הוזן' : x.key, v: x.capital, share: st.fundSize ? x.ofFund : x.share })), { limit: st.fundSize ? limit / 100 : null, title, question: st.fundSize ? 'שיעור מגודל הקרן מול התקרה שהוגדרה' : 'שיעור מההון בפורטפוליו', w: CW(true) });
     const cal = C.columns(sm.calendar.slice(0, 8).map((x) => ({ label: x.q, v: x.v })), { title: 'לוח החזרי הון', question: 'מתי צפוי ההון (קרן ורווח) לחזור לקרן?', periodLabel: 'רבעון', w: CW(true) });
-    box.innerHTML = `<section class="ax-sec">${secHead('', 'פורטפוליו', `${sm.deals} עסקאות פעילות · הגרסה האחרונה של כל עסקה, במבנה שנבחר לביצוע או במבנה המועדף. גודל קרן: ${F.m(st.fundSize)}.`)}${kp}
+    box.innerHTML = `${thesisPortfolioHTML(items)}<section class="ax-sec">${secHead('', 'פורטפוליו', `${sm.deals} עסקאות פעילות · הגרסה האחרונה של כל עסקה, במבנה שנבחר לביצוע או במבנה המועדף. גודל קרן: ${F.m(st.fundSize)}.`)}${kp}
       <h3 class="ax-h3">עסקאות</h3><div class="ax-tbl-wrap"><table class="ax-tbl data" data-axt="pf"><thead><tr><th>עסקה</th><th>יזם</th><th>פרויקט</th><th>מבנה</th><th class="n">הון</th><th class="n">שווי נתמך</th><th class="n">LTV</th><th class="n">IRR</th><th class="n">MOIC</th><th class="n">משך</th><th class="n">יציאה צפויה</th><th class="n">סיכון</th><th>סטטוס</th><th>החלטה</th><th class="n">אטרקטיביות</th><th>מבנה מומלץ</th><th>ראיות</th></tr></thead><tbody>${rows}</tbody></table></div><p class="ax-muted">החלטה · אטרקטיביות · מבנה מומלץ · ראיות — ${esc(DX.VERSION.label.he)}: לפי הגרסה האחרונה של כל עסקה והגדרות הקרן הנוכחיות; לא משנה את חישובי הפורטפוליו.</p></section>
       <section class="ax-sec">${secHead('', 'חשיפה ולוח נזילות')}<div class="ax-res two">${C.shareBars(sm.byStrategy.map((x) => ({ label: SN[x.key] || x.key, v: x.capital, share: x.share, c: SC[x.key] })), { title: 'חשיפה לפי מבנה', question: 'איך ההון מתחלק בין רכישה, מימון ומבנה משולב?', w: CW(true) })}${cal}</div>
       <div class="ax-res two">${bars(sm.byDeveloper.slice(0, 8), st.maxDevExposure, 'חשיפה לפי יזם')}${bars(sm.byCity.slice(0, 8), st.maxGeoExposure, 'חשיפה לפי יישוב')}</div>
@@ -1457,7 +1655,7 @@
     const tools = `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button class="ax-btn pri" type="button" data-act="new">עסקה חדשה</button><label class="ax-btn" style="cursor:pointer">ייבוא קובץ עסקה (JSON)<input type="file" accept="application/json,.json" data-act-file="import" hidden></label><label class="ax-switch"><input type="checkbox" data-act-check="arch"${showArch ? ' checked' : ''}> הצגת ארכיון (${all.filter((r) => r.archived).length})</label></div>`;
     let body;
     if (!all.length) body = `<div class="ax-empty"><b>אין עסקאות שמורות</b><p>העסקאות נשמרות בדפדפן הזה בלבד (localStorage). כדי להעביר עסקה לעמית או למחשב אחר — ייצאו קובץ עסקה (JSON) וייבאו אותו שם.</p><button class="ax-btn pri" type="button" data-view-go="deal">לעסקה חדשה</button></div>`;
-    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data" data-axt="saved"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>החלטה בשמירה</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
+    else body = `<div class="ax-tbl-wrap" style="margin-top:10px"><table class="ax-tbl data" data-axt="saved"><thead><tr><th>עסקה</th><th>יזם</th><th>יישוב</th><th>אות אחרון</th><th>החלטה בשמירה</th><th>תזה חיה</th><th>סטטוס</th><th class="n">נשמר</th><th class="n">גרסאות</th><th>פעולות</th></tr></thead><tbody>${list.map((r) => {
       const v = r.versions[r.versions.length - 1], info = v.deal.info || {};
       return `<tr${r.id === S.dealId ? ' class="pick"' : ''}><td><button class="ax-link" type="button" data-act="open" data-id="${esc(r.id)}">${esc(dealName(v.deal))}</button>${r.archived ? ' <span class="ax-tag">ארכיון</span>' : ''}${v.deal.example ? ' <span class="ax-tag">דוגמה</span>' : ''}${fromCase(v.deal) ? ' <span class="ax-tag ill">מבוסס על מקרה להמחשה</span>' : ''}</td><td>${esc(info.developer || '—')}</td><td>${esc(info.city || '—')}</td><td>${esc(v.signal || '—')}</td><td>${v.decision && (v.decision.final || v.decision.verdict) ? `<span class="ax-dv-${esc(DX.VERDICT[v.decision.final || v.decision.verdict] ? DX.VERDICT[v.decision.final || v.decision.verdict].tone : 'none')}">${esc(DX.VERDICT[v.decision.final || v.decision.verdict] ? DX.VERDICT[v.decision.final || v.decision.verdict].label.en : (v.decision.final || v.decision.verdict))}</span>${isNum(v.decision.score) ? ` <span class="num ax-muted">${v.decision.score}</span>` : ''}` : '<span class="ax-muted">לא סומן (לפני v1)</span>'}</td><td>${statusSelect(r.id)}</td><td class="n">${esc(F.date((r.updatedAt || '').slice(0, 10)))}</td><td class="n">${r.versions.length}</td>
         <td style="white-space:nowrap"><button class="ax-btn" type="button" data-act="dup" data-id="${esc(r.id)}">שכפול</button> <button class="ax-btn" type="button" data-act="archive" data-id="${esc(r.id)}">${r.archived ? 'שחזור' : 'ארכוב'}</button> <button class="ax-btn" type="button" data-act="cmp" data-id="${esc(r.id)}"${r.versions.length < 2 ? ' disabled title="נדרשות לפחות שתי גרסאות"' : ''}>השוואת גרסאות</button></td></tr>`;
@@ -1608,7 +1806,7 @@
     const q1 = `<div class="ax-q"><div class="qn"><b>1</b>מהו השווי הנתמך האמיתי?${mi('supportedValue')}</div><div class="a"><span class="v num">${Fx.smv ? F.m(Fx.smv) : '—'}</span><span class="x">${Fx.chosen ? esc(VSRC[Fx.chosen].l) + ' ' + clsTag(valueOrigin(Fx.chosen, (S.deal.value || {})[Fx.chosen])) : 'לא נבחר שווי לחיתום'}</span></div>
       <div class="s">${Fx.smv ? `הנחת כניסה ${F.pct(Fx.discount)} · בסיס ${F.m(Fx.basis)}${Fx.sqm ? ' · ' + F.int(Fx.smv / Fx.sqm) + ' ₪/מ״ר' : ''}` : 'בחרו מקור שווי במפורש בשלב 2.'}</div></div>`;
     if (!b) {
-      return head + decisionCardHTML() + q1 + `<div class="ax-q">${needBox(`<b>${SN[k]}:</b> חסרים ${esc(missingTxt(s.base.missing))}`)}</div>` + sigHTML(sig) + footHTML();
+      return head + decisionCardHTML() + thesisCardHTML() + q1 + `<div class="ax-q">${needBox(`<b>${SN[k]}:</b> חסרים ${esc(missingTxt(s.base.missing))}`)}</div>` + sigHTML(sig) + footHTML();
     }
     const q2 = `<div class="ax-q"><div class="qn"><b>2</b>כמה הון ALTARIS מסכנת?${mi('capitalAtRisk', capLive(k, s))}</div><div class="a"><span class="v num">${F.m(E.capOf(b))}</span><span class="x">${SN[k]} · ${SH[k]}</span></div>
       <div class="s">${k === 'buy' ? `חוב ${F.m(b.debt)}${b.debt ? ' · LTV ' + F.pct(b.ltv) : ''} · מחיר ${F.m(b.price)}` : k === 'finance' ? `LTV ${F.pct(b.ltv)} · כיסוי בטוחות ${F.x(b.coverage)}` : `הון בסיכון מקסימלי ${F.m(b.maxAtRisk)} · כיסוי ${F.x(b.coverage)}`}</div></div>`;
@@ -1619,7 +1817,7 @@
       <div class="row"><div><div class="k">IRR שלילי</div><div class="v2 num${d && E.irrOf(d) < 0 ? ' neg' : ''}">${d ? F.pct(E.irrOf(d)) : '—'}</div></div><div><div class="k">רווח שלילי</div><div class="v2 num${d && d.profit < 0 ? ' neg' : ''}">${d ? F.m(d.profit) : '—'}</div></div><div><div class="k">מרווח ביטחון${mi('mos')}</div><div class="v2 num${s.mos < 0 ? ' neg' : ''}">${F.pct(s.mos)}</div></div></div>
       <div class="s">${k === 'buy' ? `נקודת איזון ${F.m(base.breakEvenExit)} · השווי יכול לרדת ${F.pct(base.maxHaircut)} מהשווי הנתמך לפני הפסד` : d && d.recovery ? `כשל בחודש ${d.recovery.defaultMonth}, גבייה בחודש ${d.recovery.recoveryMonth}: ${F.pct(d.recovery.rate, 0)} מהתביעה${d.recovery.principalLoss > 0 ? ' · פגיעה בקרן ' + F.m(d.recovery.principalLoss) : ' · הקרן מוחזרת'}` : 'ירידת שווי מקסימלית לפני פגיעה בהון'}</div></div>`;
     const risk = s.risk ? `<div class="ax-q"><div class="qn">ציון סיכון · ${SN[k]}${mi('riskScore')}${modelTag()}</div><div class="ax-risk"><span class="v2 num" style="font-family:var(--f-display);font-weight:800;font-size:16px">${s.risk.overall}</span><span class="bar"><i style="width:${s.risk.overall}%"></i></span><span class="x ax-muted">/ 100 · גבוה = סיכון נמוך</span></div></div>` : '';
-    return head + decisionCardHTML() + q1 + q2 + q3 + q4 + sigHTML(sig) + risk + footHTML();
+    return head + decisionCardHTML() + thesisCardHTML() + q1 + q2 + q3 + q4 + sigHTML(sig) + risk + footHTML();
   }
   const sigHTML = (sig) => `<div class="ax-signal ${SIG_CLASS[sig.code] || ''}"><div class="qn" style="font-size:10.5px;font-weight:700;color:var(--ink-3)"><b style="font-family:var(--f-display);color:var(--brass)">5</b> BUY, FINANCE או HYBRID?${mi('signal')}</div><div class="code"><i></i>${esc(sig.code)}</div><ul>${sig.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul><button class="ax-link" type="button" data-view-go="compare">ההסבר המלא בהשוואת המבנים</button></div>`;
   const footHTML = () => (isCase(S.deal) ? `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="case-copy">יצירת עותק עבודה</button><button class="ax-btn" type="button" data-act="pdf-ic">PDF ועדה</button><span class="ax-muted" style="align-self:center">מקרה להמחשה — אינו נשמר בעסקאות</span></div>` : `<div class="ax-ldg-f"><button class="ax-btn pri" type="button" data-act="save">${S.dealId ? 'שמירת גרסה' : 'שמירת עסקה'}</button><button class="ax-btn" type="button" data-act="pdf-ic">PDF ועדה</button><span class="ax-muted" style="align-self:center">${S.dealId ? (S.dirty ? 'שינויים שלא נשמרו' : 'נשמר') : 'טיוטה — נשמרת אוטומטית בדפדפן'}</span></div>`);
@@ -1653,6 +1851,7 @@
     else if (S.view === 'portfolio') paintPortfolio();
     else if (S.view === 'saved') paintSaved();
     else if (S.view === 'decision') paintDecision();
+    else if (S.view === 'thesis') paintThesis();
     paintLedger();
     if (POP.trigger && !POP.trigger.isConnected) closePop(false);
     store.set(KEY.draft, { deal: S.deal, dealId: S.dealId, dirty: S.dirty });
@@ -1672,6 +1871,7 @@
     rec.versions.push({ n: rec.versions.length + 1, savedAt: now, deal: snap, signal: S.R.signal.code, decision: S.D ? S.D.stamp : null, strategy: S.R.ic.strategy, methodology: MD.VERSION.id });
     rec.updatedAt = now;
     persistDeals(); S.dirty = false;
+    thesisOnSave(rec);
     toast(`נשמר · גרסה ${rec.versions.length}`); renderShell(); recompute(false);
   }
   function openDeal(id, n) {
@@ -2006,6 +2206,10 @@
       case 'xlsx': exportXLSX(); break;
       case 'csv': exportCSV(); break;
       case 'json': exportJSON(); break;
+      case 'thesis-check': thesisCheck(id); break;
+      case 'thesis-check-all': thesisCheckAll(); break;
+      case 'thesis-pause': case 'thesis-resume': { const repo = thesisRepo(); if (repo) { repo.setMonitor(id, act === 'thesis-pause' ? 'PAUSED' : 'LIVE', { at: new Date().toISOString() }); thMem.delete(id); thesisRepaint(); } break; }
+      case 'thesis-open': S.thesisId = id; S.view = 'thesis'; S.mbarOpen = false; history.replaceState(null, '', '#thesis/' + encodeURIComponent(id)); renderView(); window.scrollTo(0, 0); break;
       default: break;
     }
   }
@@ -2048,6 +2252,7 @@
     window.addEventListener('hashchange', () => {
       const h = parseHash(); if (!VIEWS.includes(h.v)) return;
       if (h.v === 'method') { if (S.view !== 'method' || h.id !== S.mfocus) goMethod(h.id); }
+      else if (h.v === 'thesis') { if (S.view !== 'thesis' || h.id !== S.thesisId) { S.thesisId = h.id || S.thesisId; S.view = 'thesis'; S.mfocus = null; renderView(); } }
       else if (h.v !== S.view) { S.view = h.v; S.mfocus = null; renderView(); }
     });
   }
@@ -2063,6 +2268,7 @@
     const h = parseHash();
     S.view = VIEWS.includes(h.v) ? h.v : VIEWS.includes(ui.view) ? ui.view : 'deal';
     S.mfocus = S.view === 'method' && h.v === 'method' ? h.id : null;
+    S.thesisId = h.v === 'thesis' ? h.id : null;
     S.strat = E.STRATS.includes(ui.strat) ? ui.strat : 'buy';
     S.mlang = ui.mlang === 'en' ? 'en' : 'he';
     S.mAppendix = ui.mAppendix !== false;

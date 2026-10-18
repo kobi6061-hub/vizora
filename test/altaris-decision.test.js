@@ -259,14 +259,14 @@ t('the page loads the decision module after the engine and the methodology and b
   assert.match(APP, /S\.D = DX\.decide\(S\.R, dctx\(\)\); scheduleFlips\(ctx\);/, 'the verdict is recomputed with every engine run; flips are scheduled lazily');
 });
 t('the compact decision card sits at the top of the ledger in both ledger branches; nothing existing is removed; the disclaimer sits beneath it', () => {
-  assert.match(APP, /return head \+ decisionCardHTML\(\) \+ q1 \+ `<div class="ax-q">/);
-  assert.match(APP, /return head \+ decisionCardHTML\(\) \+ q1 \+ q2 \+ q3 \+ q4 \+ sigHTML\(sig\) \+ risk \+ footHTML\(\);/);
+  assert.match(APP, /return head \+ decisionCardHTML\(\) \+ thesisCardHTML\(\) \+ q1 \+ `<div class="ax-q">/);
+  assert.match(APP, /return head \+ decisionCardHTML\(\) \+ thesisCardHTML\(\) \+ q1 \+ q2 \+ q3 \+ q4 \+ sigHTML\(sig\) \+ risk \+ footHTML\(\);/);
   assert.match(APP, /data-view-go="decision">\$\{DT\.he\.basis\} ←<\/button>\n\s*<p class="ax-dec-disc">\$\{esc\(DX\.DISCLAIMER\.he\)\}<\/p>/);
   for (const s of ['ALTARIS INVESTMENT DECISION', "kick: 'ALTARIS INVESTMENT DECISION'", 'ax-dec-dl', '<dt>${DT.he.why}</dt>', '<dt>${DT.he.risk}</dt>', '<dt>${DT.he.cond}</dt>']) assert.ok(APP.includes(s), s);
   assert.ok(!/gauge|sparkle|confetti/i.test(APP + CSS));
 });
 t('the basis view: a route of its own, Hebrew RTL / English LTR, every section of the brief', () => {
-  assert.match(APP, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision'\];/);
+  assert.match(APP, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision', 'thesis'\];/);
   assert.match(APP, /else if \(S\.view === 'decision'\) main\.innerHTML = '<div id="o-decision"><\/div>';/);
   for (const id of ['whyStruct', 'cmp', 'returns', 'downside', 'structure', 'market', 'execution', 'gates', 'evidence', 'conds', 'flips', 'sources', 'conflicts', 'fresh', 'policy', 'narr']) assert.ok(APP.includes(`sec('${id}'`) || APP.includes(`sec(g, `), id);
   assert.match(APP, /<section class="ax-sec ax-mv ax-dv" dir="\$\{dir\}" lang="\$\{L\}">/);
@@ -286,8 +286,8 @@ t('IC snapshot, full PDF, Excel and CSV gain additive decision sections; the exi
 t('portfolio and saved deals gain decision columns (sortable through the shared table core); existing columns stay', () => {
   assert.match(APP, /AXT\.types\.pf \+= ',text,number,text,text';/);
   assert.match(APP, /<th>סטטוס<\/th><th>החלטה<\/th><th class="n">אטרקטיביות<\/th><th>מבנה מומלץ<\/th><th>ראיות<\/th>/);
-  assert.match(APP, /<th>אות אחרון<\/th><th>החלטה בשמירה<\/th><th>סטטוס<\/th>/);
-  assert.match(APP, /saved: 'text,text,text,text,text,text,date,number,-'/);
+  assert.match(APP, /<th>אות אחרון<\/th><th>החלטה בשמירה<\/th><th>תזה חיה<\/th><th>סטטוס<\/th>/);
+  assert.match(APP, /saved: 'text,text,text,text,text,text,text,date,number,-'/);
   assert.ok(APP.includes("לא משנה את חישובי הפורטפוליו"));
 });
 t('versioning: saved versions, JSON exports and imports carry the decision stamp beside the metric methodology id; old versions stay readable', () => {

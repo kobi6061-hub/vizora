@@ -548,7 +548,7 @@ t('the local dev server mirrors the rewrite', () => {
   assert.match(SRC('scripts/kobix-dev-server.mjs'), /p === '\/altaris' \|\| p === '\/altaris\/' \? '\/altaris\/index\.html'/);
 });
 const APP = SRC('altaris/app.js');
-const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/decision.js', 'altaris/cases.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
+const ALL_AX = ['altaris/app.js', 'altaris/engine.js', 'altaris/methodology.js', 'altaris/decision.js', 'altaris/market-assessment.js', 'altaris/thesis.js', 'altaris/cases.js', 'altaris/charts.js', 'altaris/export.js', 'altaris/index.html', 'altaris/altaris.css'].map((f) => [f, SRC(f)]);
 t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else', () => {
   assert.ok(!/method\s*:/.test(APP), 'a request with an explicit method');
   assert.equal((APP.match(/\bfetch\(/g) || []).length, 1, 'fetch used outside getJSON');
@@ -559,7 +559,7 @@ t('ALTARIS only reads PROPX: GET requests to the known endpoints, nothing else',
 });
 t('ALTARIS stores only its own keys (plus the shared theme preference) and never clears PROPX state', () => {
   const keys = [...APP.matchAll(/'((?:altaris|kobix):[a-z]+(?::v\d)?)'/g)].map((m) => m[1]);
-  assert.deepEqual([...new Set(keys)].sort(), ['altaris:deals:v1', 'altaris:draft:v1', 'altaris:settings:v1', 'altaris:ui:v1', 'kobix:theme']);
+  assert.deepEqual([...new Set(keys)].sort(), ['altaris:deals:v1', 'altaris:draft:v1', 'altaris:settings:v1', 'altaris:thesis:v1', 'altaris:ui:v1', 'kobix:theme']);
   for (const [f, src] of ALL_AX) assert.ok(!/localStorage\.(removeItem|clear)|sessionStorage|document\.cookie/.test(src), f + ' touches other browser state');
 });
 t('no randomness, no credential, no secret in any ALTARIS file', () => {
@@ -586,7 +586,7 @@ t('the page is native to PROPX: same tokens, theme key and session-gated shell',
     assert.ok(css.includes(tok) && idx.includes(tok.replace(':', ':')), tok);
   }
   assert.match(html, /localStorage\.getItem\("kobix:theme"\)/);
-  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/methodology.js', '/altaris/cases.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
+  for (const s of ['/data/market/latest.js', '/altaris/engine.js', '/altaris/methodology.js', '/altaris/decision.js', '/altaris/market-assessment.js', '/altaris/thesis.js', '/altaris/cases.js', '/altaris/charts.js', '/altaris/export.js', '/altaris/app.js']) assert.ok(html.includes(`<script src="${s}" defer></script>`), s);
   assert.ok(html.indexOf('/altaris/methodology.js') < html.indexOf('/altaris/app.js'), 'the methodology loads before the page controller');
 });
 
@@ -786,7 +786,7 @@ t('level 2 — popover: hover/click on desktop, tap → bottom sheet on a phone,
   assert.match(html, /id="axMethodBtn" type="button" data-view="method"/);
 });
 t('level 3 — Metric Conventions view: route, Hebrew RTL / English LTR, bidi isolation, formulas left-to-right', () => {
-  assert.match(APP_SRC, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision'\];/);
+  assert.match(APP_SRC, /const VIEWS = \['deal', 'compare', 'portfolio', 'saved', 'settings', 'method', 'decision', 'thesis'\];/);
   for (const s of ["h: 'מתודולוגיית מדדים', sub: 'בסיס חישוב והגדרות השקעה'", "h: 'Metric Conventions', sub: 'Calculation Basis & Investment Definitions'", 'dir="${dir}" lang="${L}"', '<code class="ax-fx" dir="ltr">']) assert.ok(APP_SRC.includes(s), s);
   // the bidi helper, run on real methodology text
   const re = new RegExp(/he: (\/\(\?<!.*?\/g), en: (\/.*?\/g) \};/.exec(APP_SRC)[1].slice(1, -2), 'g');
