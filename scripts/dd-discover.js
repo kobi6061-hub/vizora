@@ -15,6 +15,12 @@
 //   node scripts/dd-discover.js --insolvency   the Official Receiver files (liquidation, debt claims), the filings register by company number (charges / violations), the registry by number
 //   node scripts/dd-discover.js --pledges       the pledges register (רשם המשכונות): fields, debtor-id presence, lookups by company number
 //   node scripts/dd-discover.js --tlv           Tel Aviv IView2: permits (772) + construction sites (499) — parcel / address / permit-holder fields
+//   node scripts/dd-discover.js --finance       PREMIUM 2.0: MAYA / TASE / MAGNA / XBRL / rating agencies / data.gov.il — financial statements
+//   node scripts/dd-discover.js --ownership     PREMIUM 2.0: shareholders / interested parties / group structure
+//   node scripts/dd-discover.js --litigation    PREMIUM 2.0: class actions, courts, enforcement, insolvency catalogues
+//   node scripts/dd-discover.js --permits       PREMIUM 2.0: municipal permits — data.gov.il, municipal portals, municipal ArcGIS (13 cities)
+//   node scripts/dd-discover.js --execution     PREMIUM 2.0: construction starts / completions / occupancy sources
+//   node scripts/dd-discover.js --sales         PREMIUM 2.0: project-level sales progress sources
 //   node scripts/dd-discover.js --all
 //
 // Nothing is written anywhere. Every request carries an honest User-Agent and a bounded timeout. No login, no CAPTCHA, no
@@ -198,8 +204,158 @@ async function tlv() {
   out({ lane: 'tlv', layer: 772, sampled: rows.length, buildingStage: dist(rows, 'building_stage'), requestStage: dist(rows, 'request_stage'), type: dist(rows, 'sug_bakasha', 8), withPermit: rows.filter((r) => r.permission_date).length, withStart: rows.filter((r) => r.tr_hathalat_bniya).length, withFinished: rows.filter((r) => r.finished).length, withOccupation: rows.filter((r) => r.occupation).length });
 }
 
+/* ================================================================================================================
+   PREMIUM DILIGENCE 2.0 lanes (18.10.2026): financial filings · ownership · litigation · municipal permits · execution · sales.
+   Same rules: honest User-Agent, read-only, bounded timeouts; a refusal (403 / anti-bot page / login) is reported as such and
+   never worked around; no header that pretends to be a browser.
+   ================================================================================================================ */
+const probe = async (lane, name, url, headers = {}) => {
+  const r = await req(url, { headers, timeoutMs: 30000 });
+  const body = r.json ? trim(r.json, 500) : trim(String(r.text || '').replace(/\s+/g, ' '), 300);
+  const antiBot = /incapsula|imperva|cloudflare|captcha|_Incapsula_Resource|cf-chl|Request unsuccessful|Access Denied|bot/i.test(String(r.text || '').slice(0, 4000));
+  out({ lane, name, url, status: r.status, ms: r.ms, type: r.type, server: r.server, antiBot, error: r.error || null, body });
+  await sleep(250);
+  return r;
+};
+async function ckanFields(lane, pkg) {
+  for (const res of (pkg.resources || []).slice(0, 4)) {
+    if (!res.datastore_active) { out({ lane, step: 'resource (no datastore)', pkg: pkg.title, org: pkg.organization && pkg.organization.title, name: res.name, format: res.format, url: trim(res.url, 160), modified: res.last_modified || res.metadata_modified }); continue; }
+    const h = await ds(res.id, { limit: 3 });
+    out({ lane, step: 'resource', pkg: pkg.title, org: pkg.organization && pkg.organization.title, resource: res.id, name: res.name, total: h.result ? h.result.total : null, error: h.error || null,
+      fields: h.result ? (h.result.fields || []).map((f) => f.id) : null, sample: h.result ? trim((h.result.records || [])[0], 700) : null, modified: res.last_modified || res.metadata_modified });
+    await sleep(300);
+  }
+}
+async function searchAndProfile(lane, queries, rows = 12, profileTop = 6) {
+  const seen = new Set();
+  for (const q of queries) {
+    const r = await ckanSearch(q, rows);
+    out({ lane, step: 'catalogue', q, count: r.count, packages: (r.results || []).map((p) => ({ name: p.name, title: p.title, org: p.organization && p.organization.title, modified: p.metadata_modified, res: (p.resources || []).length })) });
+    for (const p of (r.results || []).slice(0, profileTop)) { if (seen.has(p.id)) continue; seen.add(p.id); await ckanFields(lane, p); }
+    await sleep(300);
+  }
+}
+async function finance() {
+  const MAYA = { 'X-Maya-With': 'allow' };
+  /* TASE / MAYA: the public site's own data API, static report files, RSS; the TASE Data Hub (keyed) */
+  await probe('finance', 'maya:api financereports', 'https://mayaapi.tase.co.il/api/company/financereports?companyId=1100', MAYA);
+  await probe('finance', 'maya:api company details', 'https://mayaapi.tase.co.il/api/company/details?companyId=1100', MAYA);
+  await probe('finance', 'maya:api reports search', 'https://mayaapi.tase.co.il/api/report/filter', MAYA);
+  await probe('finance', 'maya:static report pdf', 'https://mayafiles.tase.co.il/rpdf/1500001-1501000/P1500001-00.pdf');
+  await probe('finance', 'maya:static report html', 'https://mayafiles.tase.co.il/rhtm/1500001-1501000/H1500001.htm');
+  await probe('finance', 'maya:rss', 'https://maya.tase.co.il/rss/maya.xml');
+  await probe('finance', 'tase:site', 'https://www.tase.co.il/he');
+  await probe('finance', 'tase:api (no key)', 'https://api.tase.co.il/api/company/securitiesdata?lang=he');
+  await probe('finance', 'tase:openapi gateway (no key)', 'https://openapigw-p.tase.co.il/tase/prod/api/v1/basic-securities/companies-list');
+  await probe('finance', 'tase:datahub', 'https://datahub.tase.co.il/');
+  /* ISA MAGNA: the filing system, its details pages, XBRL */
+  await probe('finance', 'isa:magna home', 'https://www.magna.isa.gov.il/');
+  await probe('finance', 'isa:magna details', 'https://www.magna.isa.gov.il/details.aspx?reference=2024-01-000001');
+  await probe('finance', 'isa:site', 'https://www.isa.gov.il/');
+  await probe('finance', 'isa:xbrl', 'https://www.isa.gov.il/xbrl');
+  /* credit ratings: the two Israeli rating agencies — robots and terms first */
+  await probe('finance', 'maalot:robots', 'https://www.maalot.co.il/robots.txt');
+  await probe('finance', 'maalot:home', 'https://www.maalot.co.il/');
+  await probe('finance', 'midroog:robots', 'https://www.midroog.co.il/robots.txt');
+  await probe('finance', 'midroog:home', 'https://www.midroog.co.il/');
+  /* data.gov.il: any ISA / TASE / bonds / financial-statements dataset */
+  await searchAndProfile('finance', ['רשות ניירות ערך', 'דוחות כספיים', 'אגרות חוב', 'בורסה לניירות ערך', 'תאגידים מדווחים', 'דירוג אשראי'], 10, 3);
+}
+async function ownership() {
+  await searchAndProfile('ownership', ['רשות התאגידים', 'בעלי מניות', 'בעלי עניין', 'דירקטורים', 'נושאי משרה', 'שינוי שם חברה', 'קבוצת חברות', 'חברות בנות'], 12, 3);
+  await probe('ownership', 'ica:generic corporation info (free page)', 'https://ica.justice.gov.il/GenericCorporarionInfo/SearchCorporation?unit=8');
+  await probe('ownership', 'ica:online services', 'https://ica.justice.gov.il/');
+}
+async function litigation() {
+  await searchAndProfile('litigation', ['תובענות ייצוגיות', 'פנקס תובענות ייצוגיות', 'הרשות השופטת', 'פסקי דין', 'הוצאה לפועל', 'חדלות פירעון', 'הממונה על הליכי חדלות פירעון', 'כונס נכסים', 'צו לפתיחת הליכים'], 12, 3);
+  await probe('litigation', 'judiciary:site', 'https://www.gov.il/he/departments/the_judicial_authority');
+  await probe('litigation', 'judiciary:class actions registry', 'https://www.court.gov.il/NGCS.Web.Site/HomePage.aspx');
+  await probe('litigation', 'judiciary:supreme decisions search', 'https://supremedecisions.court.gov.il/');
+}
+/* municipal permits: data.gov.il, the municipal open-data portals and the municipal ArcGIS servers of the largest cities */
+const CITIES = [
+  ['ירושלים', 3000, ['https://opendata.jerusalem.muni.il', 'https://jerusalem.datacity.org.il'], ['https://gisviewer.jerusalem.muni.il/arcgis/rest/services', 'https://jergisng.jerusalem.muni.il/arcgis/rest/services']],
+  ['חיפה', 4000, ['https://opendata.haifa.muni.il'], ['https://gisserver.haifa.muni.il/arcgis/rest/services', 'https://gis.haifa.muni.il/arcgis/rest/services']],
+  ['ראשון לציון', 8300, ['https://opendata.rishonlezion.muni.il'], ['https://gis.rishonlezion.muni.il/arcgis/rest/services']],
+  ['פתח תקווה', 7900, ['https://opendata.ptikva.org.il', 'https://data.petah-tikva.muni.il'], ['https://gis.ptikva.org.il/arcgis/rest/services']],
+  ['באר שבע', 9000, ['https://opendata.br7.org.il'], ['https://gis.br7.org.il/arcgis/rest/services', 'https://gisweb.br7.org.il/arcgis/rest/services']],
+  ['נתניה', 7400, ['https://opendata.netanya.muni.il'], ['https://gis.netanya.muni.il/arcgis/rest/services']],
+  ['אשדוד', 70, ['https://opendata.ashdod.muni.il'], ['https://gis.ashdod.muni.il/arcgis/rest/services']],
+  ['חולון', 6600, ['https://opendata.holon.muni.il'], ['https://gis.holon.muni.il/arcgis/rest/services']],
+  ['רמת גן', 8600, ['https://opendata.ramat-gan.muni.il'], ['https://gis.ramat-gan.muni.il/arcgis/rest/services']],
+  ['הרצליה', 6400, ['https://opendata.herzliya.muni.il'], ['https://gis.herzliya.muni.il/arcgis/rest/services']],
+  ['בת ים', 6200, ['https://opendata.bat-yam.muni.il'], ['https://gis.bat-yam.muni.il/arcgis/rest/services']],
+  ['כפר סבא', 6900, ['https://opendata.kfar-saba.muni.il'], ['https://gis.kfar-saba.muni.il/arcgis/rest/services']],
+  ['רעננה', 8700, ['https://opendata.raanana.muni.il'], ['https://gis.raanana.muni.il/arcgis/rest/services']],
+];
+const PERMIT_RE = /היתר|רישוי|בני[יה]|heter|permit|rishui|binyan|bniya|building|license|construction/i;
+async function arcgisWalk(lane, city, root) {
+  const r = await req(`${root}?f=json`, { timeoutMs: 20000 });
+  if (!r.json) { out({ lane, city, root, status: r.status, error: r.error || trim(String(r.text || '').replace(/\s+/g, ' '), 160) }); return; }
+  const folders = r.json.folders || [], services = r.json.services || [];
+  out({ lane, city, root, status: r.status, folders: folders.slice(0, 60), services: services.slice(0, 60).map((s) => s.name + ':' + s.type) });
+  const cand = services.filter((s) => PERMIT_RE.test(s.name));
+  for (const f of folders.slice(0, 25)) { const fr = await req(`${root}/${encodeURIComponent(f)}?f=json`, { timeoutMs: 20000 }); for (const s of ((fr.json && fr.json.services) || [])) if (PERMIT_RE.test(s.name) || PERMIT_RE.test(f)) cand.push(s); await sleep(150); }
+  for (const s of cand.slice(0, 8)) {
+    const m = await req(`${root}/${s.name}/${s.type}?f=json`, { timeoutMs: 20000 });
+    const layers = ((m.json && m.json.layers) || []).map((l) => ({ id: l.id, name: l.name }));
+    out({ lane, city, service: s.name + ':' + s.type, layers: layers.slice(0, 40) });
+    for (const l of layers.filter((x) => PERMIT_RE.test(x.name)).slice(0, 4)) {
+      const lm = await req(`${root}/${s.name}/${s.type}/${l.id}?f=json`, { timeoutMs: 20000 });
+      const cnt = await req(`${root}/${s.name}/${s.type}/${l.id}/query?where=1%3D1&returnCountOnly=true&f=json`, { timeoutMs: 20000 });
+      const q = await req(`${root}/${s.name}/${s.type}/${l.id}/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=json`, { timeoutMs: 20000 });
+      out({ lane, city, layer: `${s.name}/${l.id} ${l.name}`, fields: lm.json && lm.json.fields ? lm.json.fields.map((f) => f.name + (f.alias && f.alias !== f.name ? '(' + f.alias + ')' : '')).slice(0, 60) : null, count: cnt.json ? cnt.json.count : null, sample: q.json && q.json.features ? trim(q.json.features.map((f) => f.attributes), 800) : trim(q.text, 200) });
+      await sleep(200);
+    }
+  }
+}
+async function permits() {
+  await searchAndProfile('permits', ['היתרי בניה', 'היתר בניה', 'רישוי בניה', 'בקשות להיתר', 'רישוי זמין', 'תעודת גמר', 'טופס 4', 'מידע תכנוני'], 20, 6);
+  /* municipality organizations on data.gov.il and what each publishes */
+  const orgs = await req(`${CKAN}/organization_list?all_fields=true&limit=1000`);
+  const list = orgs.json && orgs.json.result ? orgs.json.result : [];
+  out({ lane: 'permits', step: 'organizations', n: list.length, municipal: list.filter((o) => /עיריית|עירית|מועצה/.test(o.title || o.display_name || '')).map((o) => `${o.name}:${o.title}:${o.package_count}`).slice(0, 120) });
+  for (const [city] of CITIES) {
+    const o = list.find((x) => (x.title || '').includes(city));
+    if (!o) { out({ lane: 'permits', city, datagov: 'no organization' }); continue; }
+    const r = await req(`${CKAN}/package_search?fq=organization:${encodeURIComponent(o.name)}&rows=100`);
+    const pk = (r.json && r.json.result && r.json.result.results) || [];
+    out({ lane: 'permits', city, org: o.name, packages: pk.map((p) => p.title).slice(0, 100) });
+    for (const p of pk.filter((p) => PERMIT_RE.test(p.title + ' ' + (p.notes || ''))).slice(0, 4)) await ckanFields('permits', p);
+    await sleep(300);
+  }
+  /* municipal portals (CKAN-style search) and municipal ArcGIS servers */
+  for (const [city, , portals, gis] of CITIES) {
+    for (const base of portals) { const r = await req(`${base}/api/3/action/package_search?q=${encodeURIComponent('היתר')}&rows=10`, { timeoutMs: 20000 });
+      out({ lane: 'permits', city, portal: base, status: r.status, error: r.error || null, count: r.json && r.json.result ? r.json.result.count : null, titles: r.json && r.json.result ? r.json.result.results.map((p) => p.title) : trim(String(r.text || '').replace(/\s+/g, ' '), 160) });
+      if (r.json && r.json.result) for (const p of r.json.result.results.slice(0, 3)) for (const res of (p.resources || []).slice(0, 2)) {
+        if (!res.datastore_active) { out({ lane: 'permits', city, portalResource: res.name, format: res.format, url: trim(res.url, 200) }); continue; }
+        const h = await req(`${base}/api/3/action/datastore_search?resource_id=${res.id}&limit=2`, { timeoutMs: 20000 });
+        out({ lane: 'permits', city, portalResource: res.name, id: res.id, total: h.json && h.json.result ? h.json.result.total : null, fields: h.json && h.json.result ? h.json.result.fields.map((f) => f.id) : null, sample: h.json && h.json.result ? trim(h.json.result.records[0], 600) : null });
+      }
+      await sleep(250); }
+    for (const root of gis) await arcgisWalk('permits', city, root);
+  }
+}
+async function execution() {
+  await searchAndProfile('execution', ['התחלות בנייה', 'גמר בנייה', 'התקדמות בנייה', 'פרויקטים בבנייה', 'אכלוס', 'אתרי בנייה', 'בניה רוויה'], 12, 4);
+  const h = await ds('1ec45809-5927-430a-9b30-77f77f528ce3', { limit: 3 });
+  out({ lane: 'execution', step: 'moch construction progress', total: h.result ? h.result.total : null, fields: h.result ? h.result.fields.map((f) => f.id) : null, sample: h.result ? trim(h.result.records[0], 900) : h.error });
+}
+async function sales() {
+  await searchAndProfile('sales', ['מכירת דירות', 'דירות שנמכרו', 'מכירות דירות חדשות', 'מלאי דירות', 'דירה בהנחה', 'מחיר למשתכן', 'עסקאות נדלן', 'חוזים שנחתמו'], 12, 3);
+  const h = await ds('7c8255d0-49ef-49db-8904-4cf917586031', { limit: 2 });
+  out({ lane: 'sales', step: 'moch dira behanacha periodic data — every field', total: h.result ? h.result.total : null, fields: h.result ? h.result.fields.map((f) => f.id) : null });
+}
+
 (async () => {
   out({ lane: 'meta', at: new Date().toISOString(), node: process.version, argv: process.argv.slice(2) });
+  if (has('finance')) await finance();
+  if (has('ownership')) await ownership();
+  if (has('litigation')) await litigation();
+  if (has('permits')) await permits();
+  if (has('execution')) await execution();
+  if (has('sales')) await sales();
   if (has('companies')) await companies();
   if (has('legal')) await legal();
   if (has('public')) await publicFilings();

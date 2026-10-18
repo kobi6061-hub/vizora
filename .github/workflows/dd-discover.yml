@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'comma-separated lanes: companies (Corporations Authority registry) | legal (charges / insolvency / courts catalogue) | public (TASE / MAYA / ISA) | contractors (the contractors register) | sites (active + closed construction sites) | insolvency (Official Receiver files, filings by company number) | pledges (the pledges register) | tlv (Tel Aviv IView2 permits + sites) | all'
+        description: 'comma-separated lanes: companies (Corporations Authority registry) | legal (charges / insolvency / courts catalogue) | public (TASE / MAYA / ISA) | contractors (the contractors register) | sites (active + closed construction sites) | insolvency (Official Receiver files, filings by company number) | pledges (the pledges register) | tlv (Tel Aviv IView2 permits + sites) | finance (MAYA / TASE / MAGNA / ratings) | ownership | litigation | permits (13 municipalities) | execution | sales | all'
         type: string
         default: all
 
@@ -20,7 +20,7 @@ permissions:
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
