@@ -118,7 +118,7 @@ module.exports = async (req, res) => {
         if (out && out.kind === 'company' && out.inCoverage === false) { const ready = await DD.prepare({ companyNumber: out.number }); if (ready.live && ready.live.size) { const again = DD.company(out.number, { since, live: ready.live }); if (again) out = { ...again, live: [...ready.live.values()].map((r) => ({ number: r.number, checkedAt: r.checkedAt, found: !!r.company, answered: r.answered })) }; } }
         return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       if (view === 'ddPermit') { const out = DD.permit(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
-      const opt = { since, companyNumber: p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined, confirmedCandidate: p.confirm === '1', userDocs: body && Array.isArray(body.userDocs) ? body.userDocs : [] };
+      const opt = { since, companyNumber: p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined, confirmedCandidate: p.confirm === '1', userDocs: body && Array.isArray(body.userDocs) ? body.userDocs : [], projectId: p.project ? String(p.project) : null };
       const ready = await DD.prepare(opt);
       if (p.developer) { const out = DD.developer(String(p.developer), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       if (p.project) { const out = DD.project(String(p.project), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }

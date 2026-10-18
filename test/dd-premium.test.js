@@ -100,7 +100,7 @@ t('validation: provenance required, a future date refused, a company number is 8
   assert.equal(UD.normalize(doc('sales_report', { projectId: 'x', asOf: '2026-01-01', reportedBy: 'marketing' })).ok, false, 'reportedBy is a closed list');
   assert.equal(UD.normalize(doc('ownership_chart', { asOf: '2026-01-01', relations: [{ parentNumber: '1', childNumber: '2' }] })).ok, false, 'list rows validated');
   const ok = UD.normalize(doc('permit', { projectId: 'x', municipality: 'חיפה', permitNumber: '1', issueDate: '2025-01-01' }));
-  assert.equal(ok.ok, true); assert.equal(ok.doc.cls, 'USER_DOCUMENT'); assert.match(ok.doc.id, /^udoc:[0-9a-f]{20}$/);
+  assert.equal(ok.ok, true); assert.equal(ok.doc.cls, 'USER_DOCUMENT'); assert.match(ok.doc.id, /^udoc:[0-9a-f]{16}-[0-9a-f]{8}$/);
   assert.ok(ok.doc.limitations.some((l) => /never overrides an official record/.test(l.en)));
   const many = Array.from({ length: 70 }, (_, i) => doc('permit', { projectId: 'x' + i, municipality: 'm', permitNumber: String(i), issueDate: '2025-01-01' }));
   assert.equal(UD.normalizeAll(many).docs.length, UD.MAX_DOCS);
@@ -161,7 +161,7 @@ t('restatement: a later document marked restated supersedes the original (both k
   const o = UD.normalize(fs1('500000004', '2025-12-31', '2026-03-01', { cash: 100, equity: 1000 })).doc, r = UD.normalize(fs1('500000004', '2025-12-31', '2026-06-01', { cash: 90, equity: 1000 }, { restated: true })).doc;
   const P = FIN.profile({ statements: FIN.statementsFromDocs([o, r], '500000004'), entityNumber: '500000004' });
   assert.equal(P.restatements.length, 1); assert.equal(P.latest.supersedes, o.id); assert.equal(P.latest.figures.cash.value, 90);
-  assert.deepEqual(P.restatements[0].changed, [{ field: 'cash', original: 100, restated: 90 }]);
+  assert.deepEqual(P.restatements[0].changed, [{ field: 'cash', original: 100, originalUnits: 'thousands', restated: 90, restatedUnits: 'thousands' }]);
   const u = UD.normalize(fs1('500000004', '2025-12-31', '2026-06-01', { cash: 80, equity: 1000 })).doc;
   const Q2 = FIN.profile({ statements: FIN.statementsFromDocs([o, u], '500000004'), entityNumber: '500000004' });
   assert.equal(Q2.conflicts.length, 1); assert.equal(Q2.latest, null, 'no pick'); assert.deepEqual(Q2.conflicts[0].fields, ['cash']);
@@ -172,6 +172,93 @@ t('NO FINANCIALS ≠ FINANCIAL WEAKNESS: without statements only INSUFFICIENT FI
   assert.equal(P.statement.en, 'PROPX does not currently have machine-readable audited financial statements for this entity');
   assert.ok(P.notA.some((x) => x.en === 'NO FINANCIALS ≠ FINANCIAL WEAKNESS'));
   assert.ok(!/"(score|probability|probabilityOfDefault|grade)":/.test(JSON.stringify(P)), 'no score / probability field');
+});
+
+console.log('dd-premium: review findings (independent review, 18.10.2026)');
+t('R1 · a document about ANOTHER project never lends this one a parent, a guarantor or a guarantee; a company is never its own parent; an expired guarantee is said', () => {
+  const pcNo = prj(NETANYA_LOT).premium.projectCompany.company.number;
+  const R = prj(NETANYA_LOT, { userDocs: [
+    doc('developer_declaration', { projectId: 'ila:OTHER:PROJECT', asOf: '2026-01-01', parentNumber: pcNo, parentName: 'x', projectCompanyNumber: '516000001', guarantee: 'explicit-parent-guarantee' }),
+    doc('bank_guarantee', { projectId: 'moch:99999', bank: 'בנק לבדיקה', kind: 'sale-law', applicantName: 'x', applicantNumber: pcNo, issueDate: '2024-01-01', expiryDate: '2025-06-01' }),
+    doc('developer_declaration', { asOf: '2026-01-01', parentNumber: pcNo, projectCompanyNumber: pcNo, guarantee: 'explicit-parent-guarantee' })] });
+  const roles = R.premium.projectCompany.roles;
+  assert.equal(roles.parent.state, 'NOT_IN_COVERAGE'); assert.equal(roles.guarantor.state, 'NOT_VERIFIED');
+  const own = prj(NETANYA_LOT, { now: '2026-10-18T00:00:00Z', userDocs: [doc('bank_guarantee', { projectId: NETANYA_LOT, bank: 'בנק לבדיקה', kind: 'sale-law', applicantName: 'x', applicantNumber: pcNo, issueDate: '2024-01-01', expiryDate: '2025-06-01' })] });
+  assert.equal(own.premium.projectCompany.roles.guarantor.expired, true); assert.match(own.premium.projectCompany.roles.guarantor.note.en, /expired on 2025-06-01/);
+  assert.ok(!R.premium.structure.edges.some((e) => e.from === e.to), 'no self-loop');
+});
+t('R3 · a STRONG project company is a DERIVED signal in the brief (never a verified fact); a user document\'s registry-found number makes the relation STRONG at most', () => {
+  const pcNo = prj(NETANYA_LOT).premium.projectCompany.company.number;
+  const R = prj(TLV_LOT, { userDocs: [doc('purchase_agreement', { projectId: TLV_LOT, sellerName: nameOf(pcNo), sellerNumber: pcNo, signDate: '2026-01-15' })] });
+  const it = R.brief.items.find((i) => i.id === 'project-company'); assert.ok(it); assert.equal(it.category, 'DERIVED_SIGNAL');
+  for (const e of R.premium.projectCompany.evidence) assert.notEqual(e.resolution, 'VERIFIED', 'no VERIFIED from a document');
+  assert.equal(R.premium.projectCompany.cls, 'USER_DOCUMENT');
+});
+t('R4 · PUBLIC / GROUP COMPANY ≠ PROJECT SPV: a project read showing the statements of a STRONG (not verified) project company carries the SPV note; the project form never pre-fills a company number', () => {
+  const pcNo = prj(NETANYA_LOT).premium.projectCompany.company.number;
+  const R = prj(NETANYA_LOT, { userDocs: [fs1(pcNo, '2025-12-31', '2026-03-20', { cash: 1, equity: 2 })] });
+  assert.ok(R.premium.financial.latest); assert.match(R.premium.financial.spvNote.en, /STRONG — not verified/);
+  assert.match(R.premium.projectCompany.statement.en, /may sit in a different project company \(SPV\)/);
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.match(html, /const num=X\.kind==="developer"\?/); assert.ok(!/X\.premium\.projectCompany\.company\.number\);\s*if\(num\)pref\.entityNumber/.test(html));
+});
+t('R5 · the summary agrees with the read models: the LATEST sales report; a stage moved by a STRONG link is DERIVED; corporate / legal reads the project company\'s own record; all-conflicting statements are CONFLICT', () => {
+  const R = prj(LOTTERY, { userDocs: [doc('sales_report', { projectId: LOTTERY, asOf: '2025-06-30', reportedBy: 'bank', unitsMarketed: 60, unitsSold: 20 }), doc('sales_report', { projectId: LOTTERY, asOf: '2026-06-30', reportedBy: 'developer', unitsMarketed: 100, unitsSold: 80 })] });
+  assert.match(rowOf(R.summary, 'sales').en, /^80 units sold of 100/); assert.equal(rowOf(R.summary, 'sales').cls, 'SELF_REPORTED');
+  const T = prj(TLV_LOT); assert.equal(rowOf(T.summary, 'projectStage').cls, 'DERIVED'); assert.match(rowOf(T.summary, 'projectStage').en, /through a STRONG link/);
+  const pcNo = prj(NETANYA_LOT).premium.projectCompany.company.number;
+  const U = prj(TLV_LOT, { userDocs: [doc('purchase_agreement', { projectId: TLV_LOT, sellerName: nameOf(pcNo), sellerNumber: pcNo, signDate: '2026-01-15' })] });
+  assert.ok(U.premium.projectCompanyRecord); assert.equal(rowOf(U.summary, 'corporateLegal').cls, 'USER_DOCUMENT'); assert.match(rowOf(U.summary, 'corporateLegal').en, new RegExp('project company .*' + pcNo));
+  assert.equal(rowOf(dev(DEMRI).summary, 'corporateLegal').cls, 'DERIVED', 'a name match is DERIVED, not VERIFIED');
+  const C2 = dev(DEMRI, { userDocs: [fs1(DEMRI_NO, '2025-12-31', '2026-03-20', { cash: 100 }), fs1(DEMRI_NO, '2025-12-31', '2026-03-21', { cash: 80 })] });
+  assert.equal(rowOf(C2.summary, 'financial').cls, 'CONFLICT'); assert.match(C2.premium.financial.statement.en, /conflicting versions/);
+});
+t('R6 · a user-disclosed insolvency is said beside the official statement ("no OFFICIAL record of an open insolvency proceeding") and reaches the risks row', () => {
+  const R = dev(DEMRI, { userDocs: [doc('litigation_disclosure', { entityNumber: DEMRI_NO, asOf: '2026-03-20', kind: 'insolvency', material: 'yes' })] });
+  assert.match(R.premium.legal.statement.en, /no OFFICIAL record of an open insolvency proceeding/); assert.match(R.premium.legal.statement.en, /discloses an insolvency proceeding \(USER DOCUMENT\)/);
+  assert.match(rowOf(R.summary, 'risks').en, /disclosed in a user document: an insolvency proceeding/);
+});
+t('R7 · several documents entered from ONE file stay distinct (the id = file fingerprint + the facts); the same facts twice are one document and the duplicate is listed', () => {
+  const prov = { fileName: 'annual-report.pdf', sha256: 'ab'.repeat(32) };
+  const a = { type: 'financial_statements', fields: { entityNumber: '500000009', periodEnd: '2025-12-31', periodKind: 'annual', reportDate: '2026-03-01', audited: 'audited', basis: 'consolidated', currency: 'ILS', units: 'thousands', cash: 1 }, provenance: prov };
+  const b = { ...a, fields: { ...a.fields, basis: 'separate', cash: 2 } };
+  const r = UD.normalizeAll([a, b, a]); assert.equal(r.docs.length, 2); assert.notEqual(r.docs[0].id, r.docs[1].id);
+  assert.equal(r.rejected.length, 1); assert.match(r.rejected[0].errors[0], /duplicate/);
+});
+t('R8 · a lot number + the executor = the developer\'s company stays POSSIBLE (a lot number is plan-scoped; PROPX knows only ILA lots) — never on the ladder', () => {
+  const R = prj('ila:20220231:0000800017561');
+  const s = R.dd.sites.labour.find((x) => x.lot != null && x.executor && x.executor.isDeveloper);
+  assert.ok(s, 'the Bat Yam lot-18 site is still found'); assert.equal(s.matchState, 'POSSIBLE_MATCH'); assert.equal(s.onLadder, false);
+  assert.ok(s.reasons.some((r) => r.code === 'LOT_NUMBER_PLAN_SCOPED') && s.reasons.some((r) => r.code === 'EXECUTOR_IS_DEVELOPER_COMPANY'));
+  assert.ok(R.dd.sites.labour.every((x) => x.lot == null || x.matchState !== 'STRONG_MATCH'));
+});
+t('R9 · the financial engine: the same figure in millions and in thousands is equal (no false conflict); an original, a restated and a third differing version — none dropped; leverage inputs include debt and cash', () => {
+  const m = UD.normalize(doc('financial_statements', { entityNumber: '500000010', periodEnd: '2025-12-31', periodKind: 'annual', reportDate: '2026-03-01', audited: 'audited', basis: 'consolidated', currency: 'ILS', units: 'millions', cash: 2.01 })).doc;
+  const k = UD.normalize(doc('financial_statements', { entityNumber: '500000010', periodEnd: '2025-12-31', periodKind: 'annual', reportDate: '2026-03-02', audited: 'audited', basis: 'consolidated', currency: 'ILS', units: 'thousands', cash: 2010 })).doc;
+  const P = FIN.profile({ statements: FIN.statementsFromDocs([m, k], '500000010'), entityNumber: '500000010' }); assert.equal(P.conflicts.length, 0); assert.ok(P.latest);
+  const v1 = UD.normalize(fs1('500000011', '2025-12-31', '2026-03-01', { cash: 100 })).doc, v2 = UD.normalize(fs1('500000011', '2025-12-31', '2026-04-01', { cash: 95 })).doc, v3 = UD.normalize(fs1('500000011', '2025-12-31', '2026-06-01', { cash: 90 }, { restated: true })).doc;
+  const Q3 = FIN.profile({ statements: FIN.statementsFromDocs([v1, v2, v3], '500000011'), entityNumber: '500000011' });
+  assert.equal(Q3.restatements.length, 2); assert.ok(Q3.restatements.every((r) => r.earlierVersionsDisagree)); assert.deepEqual(Q3.latest.supersedesAll.sort(), [v1.id, v2.id].sort());
+  const L = FIN.profile({ statements: FIN.statementsFromDocs([UD.normalize(fs1('500000012', '2024-12-31', '2025-03-01', { shortTermDebt: 100, longTermDebt: 100, cash: 50, equity: 400, totalAssets: 1000 })).doc, UD.normalize(fs1('500000012', '2025-12-31', '2026-03-01', { shortTermDebt: 300, longTermDebt: 300, cash: 50, equity: 400, totalAssets: 1200 })).doc], '500000012'), entityNumber: '500000012' });
+  const f = L.flags.find((x) => x.id === 'LEVERAGE_INCREASED'); assert.ok(f); assert.ok(['shortTermDebt', 'longTermDebt', 'cash', 'equity'].every((k2) => f.inputs.some((i) => i.field === k2)));
+});
+t('R10 · input parsing: "1,5" is refused (never 15); "1,234" is 1234; 2025-02-31 is not a date', () => {
+  const base = (cash, periodEnd = '2025-12-31') => UD.normalize(doc('financial_statements', { entityNumber: '500000013', periodEnd, periodKind: 'annual', reportDate: '2026-03-01', audited: 'audited', basis: 'consolidated', currency: 'ILS', units: 'units', cash }));
+  assert.equal(base('1,5').ok, false); assert.equal(base('1,234').doc.fields.cash, 1234); assert.equal(base('1.5').doc.fields.cash, 1.5);
+  assert.equal(base('1', '2025-02-31').ok, false);
+});
+t('R12 · a Tel Aviv permit holder whose name linked the site is not an independent record (never INDEPENDENT_RECORDS_AGREE on its own)', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'lib/dd/projectco.js'), 'utf8');
+  assert.match(src, /independent: false/); assert.match(src, /e\.independent !== false/);
+});
+t('R13 · an attachment-order filing is a filing (add / update / remove — the source does not say which), a DERIVED signal in the brief — never a verified attachment', () => {
+  assert.match(LEG.KIND.ATTACHMENT_ORDER.en, /add \/ update \/ remove/);
+  const src = fs.readFileSync(path.join(ROOT, 'lib/dd/brief.js'), 'utf8'); assert.match(src, /x\.kind === 'ATTACHMENT_ORDER' \? 'DERIVED_SIGNAL' : 'VERIFIED_FACT'/);
+});
+t('R14 · a shareholder without a number is scoped to its document (never merged with a same-name person elsewhere) and its edge is POSSIBLE', () => {
+  const mk = (n) => UD.normalize(doc('company_extract', { entityNumber: DEMRI_NO, asOf: '2026-01-0' + n, shareholders: [{ name: 'ישראל ישראלי', sharePct: 10 }] })).doc;
+  const S = STR.structure({ companyNumbers: [DEMRI_NO], userDocs: [mk(1), mk(2)], index: C.idx });
+  const persons = S.nodes.filter((x) => /^person:/.test(x.id)); assert.equal(persons.length, 2);
+  assert.ok(S.edges.filter((e) => e.type === 'SHAREHOLDER_OF').every((e) => e.state === 'POSSIBLE_MATCH'));
 });
 
 console.log('dd-premium: structure, legal, sales, coverage');
@@ -238,6 +325,21 @@ console.log('dd-premium: the live registry lookup');
     assert.ok(P.premium.projectCompanyRecord && P.premium.projectCompanyRecord.liveRead);
     const down = await LIVE.lookup(['516999999'], { fetchJson: async () => { throw new Error('HTTP 403'); }, now: NOW });
     assert.match(LIVE.statementOf(down.get('516999999')).en, /did not answer — not to be read as "no company"/);
+  });
+  await at('R2 · a live lookup whose lanes did not answer says NOT CHECKED in the legal read and the corporate record — never "no record"; R11 · an answer for another number is ignored; the typed number and THIS project\'s documents get the lookup budget first; the shared memos never hold live rows', async () => {
+    const stub = async (u) => { const q = new URL(u); const f = JSON.parse(q.searchParams.get('filters')); const num = Object.values(f)[0];
+      if (q.searchParams.get('resource_id') === LIVE.RES.companies.resource) return { result: { records: [{ 'מספר חברה': num, 'שם חברה': 'חברת בדיקה חיה בע"מ', 'סטטוס חברה': 'פעילה' }, { 'מספר חברה': '512345678', 'שם חברה': 'אחרת בע"מ' }] } };
+      throw new Error('HTTP 503'); };
+    const ready = await DD.prepare({ now: NOW, userDocs: [doc('purchase_agreement', { projectId: LOTTERY, sellerName: 'חברת בדיקה חיה בע"מ', sellerNumber: '516999999', signDate: '2026-01-15' })], liveFetchJson: stub, projectId: LOTTERY });
+    const rec = ready.live.get('516999999'); assert.equal(rec.company.num, 516999999, 'the row for another number is never used');
+    const P = DD.project(LOTTERY, ready);
+    assert.deepEqual(P.premium.legal.notChecked.sort(), ['filings', 'liquidation', 'strikeOff', 'voluntaryFast']); assert.match(P.premium.legal.statement.en, /some sources were not checked/);
+    assert.equal(P.premium.projectCompanyRecord.corporate.insolvency.notChecked, true); assert.match(P.premium.projectCompanyRecord.corporate.insolvency.statement.en, /not checked/);
+    assert.equal(P.premium.projectCompanyRecord.corporate.filings.total, null);
+    const many = [1, 2, 3, 4].map((i) => doc('purchase_agreement', { projectId: 'moch:other' + i, sellerName: 'x', sellerNumber: '51699990' + i, signDate: '2026-01-15' }));
+    const asked = []; await DD.prepare({ now: NOW, userDocs: many.concat([doc('purchase_agreement', { projectId: LOTTERY, sellerName: 'x', sellerNumber: '516999988', signDate: '2026-01-15' })]), projectId: LOTTERY, liveFetchJson: async (u) => { asked.push(JSON.parse(new URL(u).searchParams.get('filters'))); return { result: { records: [] } }; } });
+    assert.ok(asked.some((f) => Object.values(f)[0] === '516999988'), 'this project\'s document is looked up first');
+    const memo = DD.company('511399388'); assert.ok(memo.inCoverage);
   });
   await at('the API: POST is accepted ONLY for view=dd (405 elsewhere); a body over 256 KB is refused (413); the documents are used for that read and appear in userDocs.used / rejected', async () => {
     const H = require('../api/intel');
