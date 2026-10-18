@@ -55,6 +55,26 @@ at('the role shim is a TEST HARNESS file, never a migration', () => {
   assert.ok(!fs.readdirSync(path.join(ROOT, 'supabase/private/migrations')).some((f) => /shim/.test(f)));
 });
 
+at('the real-project tooling is fail-closed: probe always rolls back; activation verifies the target, needs the fingerprint, applies the repository file as the non-superuser owner, prints no host or secret', () => {
+  const probe = fs.readFileSync(path.join(ROOT, 'supabase/private/test/real-project-probe.sql'), 'utf8');
+  assert.match(probe, /^-- TEST HARNESS ONLY/);
+  assert.ok(!/^\s*(commit|rollback|begin\s*;|end\s+transaction)/im.test(probe.replace(/--.*$/gm, '')), 'no transaction control in the probe');
+  assert.equal((probe.replace(/--.*$/gm, '').match(/^do \$probe\$/gm) || []).length, 1, 'one statement');
+  assert.match(probe, /raise exception 'PROBE_RESULT %', jsonb_build_object\('roles', roles, 'results', res\)::text;\nend\n\$probe\$;\s*$/, 'the probe ends by raising its result');
+  assert.match(probe, /if exists \(select 1 from ws\.users\) then raise exception 'PROBE_REFUSED/);
+  const act = fs.readFileSync(path.join(ROOT, 'scripts/identity-activate.js'), 'utf8');
+  assert.match(act, /const EXPECT = Object\.freeze\(\{ name: 'propx-private', region: 'eu-central-1' \}\);/);
+  assert.match(act, /if \(named\.length !== 1\) fail\('target NOT verified'/);
+  assert.match(act, /if \(String\(env\.CONFIRM_REF \|\| ''\)\.trim\(\) !== fpOf\(ref\)\) fail\('apply refused'/);
+  assert.match(act, /if \(db\.postgres_superuser !== false\) fail\('apply refused'/);
+  assert.match(act, /const text = fs\.readFileSync\(path\.join\(ROOT, MIGRATION\), 'utf8'\);\n[^\n]*\n    try \{ await sql\(prefix \+ text, ref\); \}/, 'the repository migration, unchanged');
+  assert.ok(!/console\.log\([^)]*(PROPX_WS_URL|PROPX_WS_APIKEY|PROPX_WS_JWT_SECRET|SUPABASE_ACCESS_TOKEN)\b/.test(act), 'no setting is printed');
+  assert.ok(!/note\([^\n]*\$\{ref\}/.test(act), 'the full ref is never printed (public run logs): mask() + fingerprint only');
+  const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/identity-activate.yml'), 'utf8');
+  assert.match(wf, /workflow_dispatch:/); assert.ok(!/\n  (push|schedule|pull_request)/.test(wf), 'run by hand only');
+  assert.ok(!/contents: write|git push|PROPX_IDENTITY|PROPX_ID_SECRET/.test(wf));
+});
+
 /* ───────────── database gates ───────────── */
 const PG = process.env.PROPX_PG_URL;
 if (!PG) {
@@ -600,6 +620,43 @@ at('INFO · objects created later start closed: a new function, table and sequen
     rollback;`);
   assert.ok(r.ok, r.err);
   assert.deepEqual(JSON.parse(r.out.split('\n').find((l) => l.startsWith('@@')).slice(2)), { fn: false, tbl: false, seq: false });
+});
+
+at('the real-project activation sequence (against a local stand-in of the Management API): preflight · refusals · apply · audit · probe — and the probe leaves nothing', () => {
+  const ADB = 'propx_ws_act_' + process.pid, root = urlFor(new URL(PG).username, new URL(PG).pathname.slice(1) || 'postgres');
+  assert.ok(psql(root, `create database ${ADB};`).ok);
+  const aSuper = urlFor(new URL(PG).username, ADB);
+  try {
+    assert.ok(psql(aSuper, fs.readFileSync(SHIM, 'utf8'), { pw: `'${PW}'`, DBNAME: ADB }).ok);
+    assert.ok(psql(aSuper, 'create schema storage; create table storage.buckets (id text); create table storage.objects (id text); create schema auth; create table auth.users (id uuid);').ok);
+    const port = 20000 + (process.pid % 20000);
+    const mock = require('node:child_process').spawn(process.execPath, [path.join(ROOT, 'supabase/private/test/management-api-mock.js')], { env: { PATH: process.env.PATH, MOCK_DB_URL: aSuper, MOCK_PORT: String(port) }, stdio: ['ignore', 'pipe', 'inherit'] });
+    try {
+      const t0 = Date.now(); while (Date.now() - t0 < 10000) { const r = spawnSync('bash', ['-c', `exec 3<>/dev/tcp/127.0.0.1/${port}`]); if (r.status === 0) break; spawnSync('sleep', ['0.2']); }
+      const run = (vars) => { const r = spawnSync(process.execPath, [path.join(ROOT, 'scripts/identity-activate.js')], { encoding: 'utf8', timeout: 240000,
+        env: { PATH: process.env.PATH, SUPABASE_API_BASE: `http://127.0.0.1:${port}/v1`, PROPX_ACTIVATE_DB_ROLE: 'ws_owner', ...vars } });
+        return { code: r.status, out: (r.stdout || '').split('\n').filter((l) => /^::(notice|error)/.test(l)).join('\n').replace(/%0A/g, '\n') }; };
+      const TOKEN = { SUPABASE_ACCESS_TOKEN: 'sbp_localmocktoken' };
+      const FP = crypto.createHash('sha256').update('propx-ref|abcdefghijklmnopqrst').digest('hex').slice(0, 12);
+      let r = run({ MODE: 'preflight' });
+      assert.equal(r.code, 1); assert.match(r.out, /target NOT verified::.*SUPABASE_ACCESS_TOKEN is not set/);
+      r = run({ ...TOKEN, MODE: 'preflight' });
+      assert.equal(r.code, 0, r.out); assert.match(r.out, /ref abcd…st · fingerprint [0-9a-f]{12} · name propx-private · region eu-central-1/); assert.ok(!/abcdefghijklmnopqrst/.test(r.out), 'the full ref is not printed');
+      r = run({ ...TOKEN, MODE: 'apply', CONFIRM_REF: 'wrong' });
+      assert.equal(r.code, 1); assert.match(r.out, /apply refused::confirm_ref must equal/);
+      assert.equal(ownerVal(`(select count(*) from pg_namespace where nspname = 'ws')`), 1, 'the gate database itself (sanity)');
+      r = run({ ...TOKEN, MODE: 'apply', CONFIRM_REF: FP });
+      assert.equal(r.code, 0, r.out); assert.match(r.out, /migration APPLIED::version 20261019120000 · sha256 [0-9a-f]{64} · run as ws_owner \(switched from /);
+      assert.match(r.out, /Data API exposed schemas: public,graphql_public → ws/); assert.match(r.out, /Auth sign-up disabled: false → true/);
+      assert.match(r.out, /privileges outside the allow-list: none/); assert.match(r.out, /"owner_is_superuser":false/);
+      r = run({ ...TOKEN, MODE: 'apply', CONFIRM_REF: FP });
+      assert.equal(r.code, 1); assert.match(r.out, /apply refused::PROPX objects already exist/);
+      r = run({ ...TOKEN, MODE: 'probe' });
+      assert.equal(r.code, 0, r.out); assert.match(r.out, /isolation probe \(real project, rolled back\)::18\/18 pass · 0 not tested/); assert.match(r.out, /nothing left behind::clean/);
+      const left = psql(aSuper, `select (select count(*) from ws.users) + (select count(*) from ws.organizations) + (select count(*) from private.identity_events);`);
+      assert.equal(left.out.trim(), '0', 'nothing was kept by the probe');
+    } finally { mock.kill(); }
+  } finally { psql(root, `drop database if exists ${ADB} with (force);`); }
 });
 
 at('bootstrap runs once', () => {

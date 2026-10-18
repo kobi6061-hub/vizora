@@ -8,7 +8,8 @@ sessions. It is a different project from the one the public `market` schema (`su
 |---|---|
 | **Migration** | `migrations/20261019120000_identity_foundation.sql` (schemas `ws` + `private`, role `propx_auth`) |
 | **Test harness** | `test/supabase-roles-shim.sql`. TEST ONLY: the Supabase roles on a throwaway PostgreSQL 16, with deliberately permissive defaults. |
-| **Isolation gate** | `test/private-identity.test.js` (35 gates, the HARD BLOCKER) and `test/identity.test.js` (server flows, 18), both run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
+| **Isolation gate** | `test/private-identity.test.js` (37 gates, the HARD BLOCKER) and `test/identity.test.js` (server flows, 18), both run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
+| **Real-project activation** | `.github/workflows/identity-activate.yml` + `scripts/identity-activate.js` (modes preflight · apply · audit · probe, run by hand) and `test/real-project-probe.sql` (the two-organization probe that always rolls back). `test/management-api-mock.js` is a TEST HARNESS stand-in for the Management API so the gate can run the same sequence locally |
 | **Server** | `lib/identity/*`, `api/identity.js`, `api/logout.js` |
 | **Activation check** | `scripts/identity-verify.js`, also run by `.github/workflows/identity-verify.yml`. Read-only. |
 | **Status** | NOT ACTIVATED. Production runs with `PROPX_IDENTITY` unset, so the feature is off. |
@@ -195,37 +196,57 @@ psql's `\getenv` + `\bind`.
 code mints only the two roles above. A unit gate checks this: `service_role`, `anon`, `postgres` and the rest are
 refused.
 
-## Activation (owner, by hand — not done yet)
+## Activation (STEP 2A.1 — through GitHub runners; the development sandbox cannot reach Supabase)
 
-1. **Create a NEW Supabase project.** It must not be the public one. Choose the region closest to the PROPX functions
-   (D7). Vercel functions currently run in the default region, because `vercel.json` sets no `regions`.
-   - Verify the plan supports a function region.
-   - Then set Frankfurt (`fra1`) and the project in `eu-central-1` *together*.
-   - Never change the Production region blindly.
-2. **Data API.** Set the exposed schemas to `ws` only. Do **not** expose `private`.
-3. **Authentication.** Turn off "Allow new users to sign up". PROPX does not use Supabase Auth users.
-4. **Apply the migration.** Use the SQL editor, or
-   `psql "$PRIVATE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/private/migrations/20261019120000_identity_foundation.sql`.
-5. **Bootstrap, once,** in the SQL editor:
-   `select private.bootstrap('<your email>', '<your name>', '<first team name>');`
-   It returns a one-time activation token. Keep it out of chat and email history.
-6. **Set the Vercel environment.** Use the Production scope and server-side variables only; never use a
-   `NEXT_PUBLIC_` prefix.
+The project `propx-private` exists in `eu-central-1` (Frankfurt). The activation runs on GitHub runners and reports back through
+workflow annotations. **The repository is public, so its run logs are too:** the scripts print the project ref masked
+(`abcd…xy`) with a fingerprint, never the API host and never a secret.
 
-   | Variable | Value |
-   |---|---|
-   | `PROPX_WS_URL` | the private project URL |
-   | `PROPX_WS_APIKEY` | its anon / publishable key |
-   | `PROPX_WS_JWT_SECRET` | its JWT secret |
-   | `PROPX_ID_SECRET` | 48+ random characters, different from `SESSION_SECRET` |
+1. **Add the GitHub Actions secrets** (Settings → Secrets and variables → Actions). Never paste them into chat.
 
-   Put the first three in GitHub Actions secrets too, for the activation check. Do not set `PROPX_IDENTITY` yet.
-7. **Run the activation check.** Run "Private identity — activation check" (`identity-verify.yml`). All 7 checks must
-   pass. The isolation workflow must be green on the same commit.
-8. **Turn on the switch.** Set `PROPX_IDENTITY=on` and redeploy.
-9. **Activate the first account.** Open `https://<site>/#invite=<token>`. The site password comes first, as always.
-   Set your name and a password (12+ characters), and you are the OWNER of the first team. Invite others from the
-   workspace panel. Each link is shown once, to you, and you deliver it.
+   | Secret | Value | Used by |
+   |---|---|---|
+   | `SUPABASE_ACCESS_TOKEN` | a Supabase personal access token. It reaches every project of the account, so create it for this activation and revoke it afterwards | `identity-activate.yml`: verifies the target's name and region, applies the migration, reads the advisors |
+   | `PROPX_WS_URL` | `https://<ref>.supabase.co` of `propx-private` | both workflows (must name the same project) |
+   | `PROPX_WS_APIKEY` | its anon / publishable key | `identity-verify.yml` |
+   | `PROPX_WS_JWT_SECRET` | its **legacy** JWT secret (HS256; Project Settings → JWT Keys). Master-equivalent: server only | `identity-verify.yml` (check 4 proves the project accepts the server-minted token) |
+   | `SUPABASE_URL` | optional: the public project's URL, so the preflight can also prove the target is not that project | both |
+
+2. **Preflight** (read-only): run "Private identity — real-project activation" with `mode = preflight`.
+   - **What it checks:**
+     - the token sees exactly one project named `propx-private`;
+     - its region is `eu-central-1`;
+     - it is `ACTIVE_HEALTHY`;
+     - it is not the public project;
+     - it is the project `PROPX_WS_URL` names.
+   - **What it reads:** the executing role, and whether the database holds any PROPX object or business data.
+   - **What it prints:** the target's fingerprint.
+3. **Apply.** Run the same workflow with `mode = apply` and `confirm_ref = <the fingerprint>`.
+   - **The migration.** It applies `migrations/20261019120000_identity_foundation.sql` from the repository, unchanged, with its
+     sha-256 printed. It runs as the project's non-superuser `postgres` role; a superuser API session switches to it. If
+     `postgres` is a superuser here, the apply is refused.
+   - **The record.** It records the migration in `supabase_migrations.schema_migrations`.
+   - **Data API.** Only `ws` is exposed; `private` never is.
+   - **Auth.** Public sign-up is turned off.
+   - **The audit.** It then runs the catalogue audit and the advisors.
+   - **Refusals.** It refuses if any PROPX object already exists.
+4. **Verify the token mechanism.** Run "Private identity — activation check" (`identity-verify.yml`). All 7 checks must
+   pass against the real project. If check 4 fails, the project does not accept the server-minted HS256 token. In that case
+   **do not weaken anything**: the fallback is only the adapter (see "Two documented choices").
+5. **Audit and probe.**
+   - `mode = audit` lists, read-only:
+     - the catalogue: tables, functions, RLS, every privilege against the allow-list, owners, default privileges;
+     - row counts and business-data emptiness;
+     - the Supabase security and performance advisors.
+   - `mode = probe` runs the two-organization isolation scenario (18 cases) inside one statement that always ends in an
+     exception, so nothing is kept. It then proves the tables are still empty.
+6. **Revoke the access token.**
+7. **Bootstrap, once,** in the SQL editor: `select private.bootstrap('<your email>', '<your name>', '<first team name>');`.
+   It returns a one-time activation token (72 h); keep it out of chat and email history.
+8. **Vercel environment.** Production scope, server-side only; never use a `NEXT_PUBLIC_` prefix. Set `PROPX_WS_URL`,
+   `PROPX_WS_APIKEY`, `PROPX_WS_JWT_SECRET`, and `PROPX_ID_SECRET` (48+ random characters, different from `SESSION_SECRET`).
+9. **Turn on the switch** only after the owner has reviewed the report: set `PROPX_IDENTITY=on`, redeploy, and open
+   `https://<site>/#invite=<token>`.
 
 **Kill switch.** Remove `PROPX_IDENTITY`, or set it to anything other than `on`, then redeploy.
 

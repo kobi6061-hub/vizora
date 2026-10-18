@@ -37,7 +37,12 @@
   `x-propx-intent: 1` + JSON + same origin. KILL SWITCH `PROPX_IDENTITY=on` (default OFF: status `{enabled:false}`, the page shows
   nothing). The page's workspace chip / drawer live between `ws:begin` / `ws:end` markers that the offline build strips. Nothing from
   the browser (`propx:dd:docs:v1`, `altaris:*`, watchlists) is imported. The two-organization isolation gate (35) runs on a throwaway
-  PostgreSQL 16 in CI — HARD BLOCKER before any activation. Independent security review (19.10.2026) fixed: an invitation activates /
+  PostgreSQL 16 in CI — HARD BLOCKER before any activation (37 gates incl. the real-project activation sequence against
+  `supabase/private/test/management-api-mock.js`). STEP 2A.1: `.github/workflows/identity-activate.yml` + `scripts/identity-activate.js`
+  (run by hand: preflight verifies exactly one project `propx-private` in eu-central-1, not the public one · apply needs the printed
+  fingerprint, runs the repository migration unchanged as the non-superuser `postgres`, records it, exposes `ws` only, disables sign-up ·
+  audit = catalogue + advisors · probe = `supabase/private/test/real-project-probe.sql`, 18 isolation cases in one statement that always
+  rolls back); public run logs print the ref masked + a fingerprint, never the host or a secret. Independent security review (19.10.2026) fixed: an invitation activates /
   is accepted only while its inviter still stands (active member + active user + rank for the role; revoke / demote / disable revokes
   their open links); a NEW identity belongs to the workspace whose invitation created it (`origin_org`) and activates only through that
   link and only after the platform admin approved it (`ws.admin_approve_user`; the platform admin's own invitations are approved at
