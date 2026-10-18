@@ -36,6 +36,15 @@
 //                     plan:<key> | parcel:<block>/<parcel> | renewal:<n> | rental:<MichrazID> | source:<id>) → { node, edges, neighbours } — every edge
 //                     with the exact key it rests on (relation=<RELATION> filter, limit= default 200 max 1000; 404 for an unknown id; lib/graph)
 //   view=graphStats   the graph's counts per type / relation, join coverage, unmatched counts, conflicts, basis + the vocabulary
+//   view=dd           INSTITUTIONAL DUE DILIGENCE (lib/dd) — developer=<dev-…> | project=<moch:…|ila:…> [company=<9-digit number, USER-PROVIDED
+//                     key>&confirm=1] [since=YYYY-MM-DD]: legal identity with an explicit match state, corporate record (registry status,
+//                     charges as filing events, Official Receiver cases), financial-data coverage class, contractor registration and
+//                     active sites, Tel Aviv permits / sites, the verified dated timeline and stage ladder (coverage per rung), the
+//                     execution gap rule, RISK & GAP BRIEF (six categories), NEXT BEST EVIDENCE, the WATCH contract, the evidence graph
+//   view=ddCompany    one LEGAL COMPANY (number=<company number> | kablan=<contractor number>): registry facts, the developers resolving to
+//                     it by match state, contractor registration, sites, filings, proceedings
+//   view=ddPermit     one Tel Aviv permit record (id=<request or permit number>) with its site, parcel and the ILA lots on that parcel
+//   view=ddStatus     coverage, freshness and the sync state of the due-diligence sources
 
 'use strict';
 
@@ -50,6 +59,7 @@ const SCAN = require('../lib/radar/scan');
 const REV = require('../lib/radar/revisions');
 let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /* the supply read model ships separately */ }
 let GRAPH = null; try { GRAPH = require('../lib/graph'); } catch { /* the knowledge graph ships separately */ }
+let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence layer ships separately */ }
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -84,6 +94,17 @@ module.exports = async (req, res) => {
       return send(res, 200, { node, edges, edgesTotal: GRAPH.degree(id, q), neighbours: GRAPH.neighbours(id, q), relation: q.relation, limit: edges.length, basis: GRAPH.BASIS });
     }
     if (view === 'graphStats') { if (!GRAPH) return send(res, 404, { error: 'graph read model not available' }); return send(res, 200, { ...GRAPH.stats(), vocabulary: GRAPH.vocabulary() }); }
+    if (view === 'dd' || view === 'ddCompany' || view === 'ddPermit' || view === 'ddStatus') {
+      if (!DD) return send(res, 404, { error: 'due-diligence read model not available' });
+      if (view === 'ddStatus') return send(res, 200, DD.status());
+      const since = /^\d{4}-\d{2}-\d{2}$/.test(String(p.since || '')) ? p.since : null;
+      if (view === 'ddCompany') { const out = DD.company(p.number || null, { kablan: p.kablan || null, since }); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      if (view === 'ddPermit') { const out = DD.permit(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      const opt = { since, companyNumber: p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined, confirmedCandidate: p.confirm === '1' };
+      if (p.developer) { const out = DD.developer(String(p.developer), opt); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      if (p.project) { const out = DD.project(String(p.project), opt); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      return send(res, 400, { error: 'developer or project required' });
+    }
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));
     if (view === 'projects') return send(res, 200, Q.projects(p));
