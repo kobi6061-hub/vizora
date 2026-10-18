@@ -43,6 +43,8 @@
 //                     execution gap rule, RISK & GAP BRIEF (six categories), NEXT BEST EVIDENCE, the WATCH contract, the evidence graph
 //   view=ddCompany    one LEGAL COMPANY (number=<company number> | kablan=<contractor number>): registry facts, the developers resolving to
 //                     it by match state, contractor registration, sites, filings, proceedings
+//   view=ddCoverage   the municipal permit connectors (state per municipality) + the execution coverage map of a locality (city=<code>)
+//   view=dd (POST)    the same read with the user's documents in the body { userDocs: [...] } — validated, used for this read only, never stored
 //   view=ddPermit     one Tel Aviv permit record (id=<request or permit number>) with its site, parcel and the ILA lots on that parcel
 //   view=ddStatus     coverage, freshness and the sync state of the due-diligence sources
 
@@ -63,13 +65,24 @@ let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence l
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
+/* the user's documents (USER DOCUMENT) travel ONLY in the body of POST view=dd — never stored server-side, never logged;
+   Vercel parses a JSON body into req.body, the local dev server hands the raw stream */
+const MAX_BODY = 256 * 1024;
+function readBody(req) {
+  if (req.body !== undefined) return Promise.resolve(typeof req.body === 'string' ? (() => { try { return JSON.parse(req.body); } catch { return null; } })() : req.body);
+  return new Promise((resolve) => { let n = 0; const chunks = []; req.on('data', (c) => { n += c.length; if (n <= MAX_BODY) chunks.push(c); }); req.on('end', () => { if (n > MAX_BODY) return resolve({ tooLarge: true }); try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || 'null')); } catch { resolve(null); } }); req.on('error', () => resolve(null)); });
+}
+
 module.exports = async (req, res) => {
-  if (req.method !== 'GET') { res.statusCode = 405; res.setHeader('Allow', 'GET'); return res.end('Method Not Allowed'); }
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   const url = new URL(req.url, 'http://x');
   const p = Object.fromEntries(url.searchParams.entries());
   const view = p.view || 'status';
+  const post = req.method === 'POST' && view === 'dd';
+  if (req.method !== 'GET' && !post) { res.statusCode = 405; res.setHeader('Allow', view === 'dd' ? 'GET, POST' : 'GET'); return res.end('Method Not Allowed'); }
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+  let body = null;
+  if (post) { body = await readBody(req); if (body && body.tooLarge) return send(res, 413, { error: 'body too large' }); }
   try {
     if (view === 'sources') return send(res, 200, catalog());
     if (view === 'radar') return send(res, 200, RADAR.feed(p));
@@ -94,15 +107,21 @@ module.exports = async (req, res) => {
       return send(res, 200, { node, edges, edgesTotal: GRAPH.degree(id, q), neighbours: GRAPH.neighbours(id, q), relation: q.relation, limit: edges.length, basis: GRAPH.BASIS });
     }
     if (view === 'graphStats') { if (!GRAPH) return send(res, 404, { error: 'graph read model not available' }); return send(res, 200, { ...GRAPH.stats(), vocabulary: GRAPH.vocabulary() }); }
-    if (view === 'dd' || view === 'ddCompany' || view === 'ddPermit' || view === 'ddStatus') {
+    if (view === 'dd' || view === 'ddCompany' || view === 'ddPermit' || view === 'ddStatus' || view === 'ddCoverage') {
       if (!DD) return send(res, 404, { error: 'due-diligence read model not available' });
       if (view === 'ddStatus') return send(res, 200, DD.status());
+      if (view === 'ddCoverage') return send(res, 200, DD.coverage(/^\d{1,5}$/.test(String(p.city || '')) ? Number(p.city) : null));
       const since = /^\d{4}-\d{2}-\d{2}$/.test(String(p.since || '')) ? p.since : null;
-      if (view === 'ddCompany') { const out = DD.company(p.number || null, { kablan: p.kablan || null, since }); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      if (view === 'ddCompany') {
+        let out = DD.company(p.number || null, { kablan: p.kablan || null, since });
+        /* a valid number outside the kept rows: one live, exact-number lookup (labelled LIVE READ; nothing stored) */
+        if (out && out.kind === 'company' && out.inCoverage === false) { const ready = await DD.prepare({ companyNumber: out.number }); if (ready.live && ready.live.size) { const again = DD.company(out.number, { since, live: ready.live }); if (again) out = { ...again, live: [...ready.live.values()].map((r) => ({ number: r.number, checkedAt: r.checkedAt, found: !!r.company, answered: r.answered })) }; } }
+        return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       if (view === 'ddPermit') { const out = DD.permit(p.id); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
-      const opt = { since, companyNumber: p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined, confirmedCandidate: p.confirm === '1' };
-      if (p.developer) { const out = DD.developer(String(p.developer), opt); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
-      if (p.project) { const out = DD.project(String(p.project), opt); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      const opt = { since, companyNumber: p.company != null && String(p.company).trim() !== '' ? String(p.company).trim().slice(0, 12) : undefined, confirmedCandidate: p.confirm === '1', userDocs: body && Array.isArray(body.userDocs) ? body.userDocs : [] };
+      const ready = await DD.prepare(opt);
+      if (p.developer) { const out = DD.developer(String(p.developer), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
+      if (p.project) { const out = DD.project(String(p.project), ready); return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' }); }
       return send(res, 400, { error: 'developer or project required' });
     }
     if (view === 'status') return send(res, 200, Q.status());
