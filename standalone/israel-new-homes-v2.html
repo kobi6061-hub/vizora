@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="a3ad149d01c34724b0120925e26f0b053cef1dc6c7f41fe7d8d6a0096ac56b95">
+<meta name="propx-source-sha256" content="a00b90bb34d0585d72550a4691c72bb14b533de9989525804c97208dce0b308f">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -711,6 +711,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .ld-tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.04em;border:1px solid;border-radius:4px;padding:0 4px;margin-inline-start:4px;vertical-align:1px;white-space:nowrap}
 .ld-tag-full{color:var(--up);border-color:var(--up)}
 .ld-tag-partial{color:var(--brass);border-color:var(--brass)}
+.ld-tag-complete{color:var(--up);border-color:var(--up)}
 .ld-tag-derived{color:var(--ink-3);border-color:var(--baseline)}
 .ld-cov{display:flex;flex-wrap:wrap;gap:4px 16px;margin:6px 0 4px;font-size:11.5px;color:var(--ink-2)}
 .ld-cv{display:inline-flex;align-items:center;gap:4px}
@@ -2921,6 +2922,22 @@ tr.dd-off td{opacity:.72}
       notAs: bi('לא "ביקוש חלש" בהכרח — לעיתים מחיר מינימום או תנאים; לא נתון על קרקע פרטית.', 'Not necessarily "weak demand" — sometimes the minimum price or terms; nothing about private land.'),
       limitations: [LIM.detailBudget], evidence: bi('תיק השוק → "מה יכול להשתבש" → הסף והערך', 'the dossier → "what could go wrong" → threshold and value'),
       freshness: { observation: bi('תאריכי ההחלטה', 'the decision dates'), publication: bi('עדכוני הרשות', 'the Authority\'s updates'), check: dailySync } }),
+    T({ id: 'tender_bid_vs_minimum_appraisal', group: 'land', title: bi('הצעה זוכה מול מחיר מינימום / שומה', 'Winning bid vs minimum / appraisal'),
+      short: bi('בכמה גבוהה (או נמוכה) ההצעה הזוכה ממחיר המינימום וממחיר השומה שרמ״י פרסמה לאותם מגרשים — יחס בין סכומים נומינליים, לא שווי שוק ולא הנחה.', 'How far the winning bid sits above (or below) the minimum price and the appraisal the ILA published for the same lots — a ratio of nominal sums, not a market value and not a discount.'),
+      why: bi('מראה את עוצמת התחרות במכרז מול נקודות הייחוס של רמ״י עצמה.', 'Shows how hard the tender was contested against the ILA\'s own reference points.'),
+      unit: bi('% (יחס פחות 1)', '% (ratio minus 1)'),
+      geography: bi('המגרשים של המכרז הזה בלבד', 'this tender\'s lots only'),
+      population: bi('מגרשים שהוכרז בהם זוכה ושיש להם גם סכום זכייה וגם מחיר מינימום / שומה — מונה ומכנה מאותם מגרשים', 'lots with a recorded winner that carry both an award sum and a minimum price / appraisal — numerator and denominator from the same lots'),
+      period: bi('מועד ההחלטה במכרז', 'the tender\'s decision date'),
+      source: { ids: ['rmi:michrazim'] }, cls: 'DERIVED',
+      methodology: bi('Σ סכומי הזכייה ÷ Σ מחירי המינימום − 1, ו-Σ סכומי הזכייה ÷ Σ השומות − 1, על אותם מגרשים; המינימום והשומה כפי שרמ״י מפרסמת אותם לתנאי המכרז (ללא מע״מ — לא צוין במקור).', 'Σ award sums ÷ Σ minimum prices − 1, and Σ award sums ÷ Σ appraisals − 1, over the same lots; the minimum and the appraisal as the ILA publishes them for the tender\'s terms (VAT not stated by the source).'),
+      formula: bi('Σ זכייה ÷ Σ מינימום − 1 · Σ זכייה ÷ Σ שומה − 1', 'Σ award ÷ Σ minimum − 1 · Σ award ÷ Σ appraisal − 1'),
+      inputs: [bi('סכום הזכייה בכל מגרש (רמ״י)', 'the award sum of each lot (ILA)'), bi('מחיר המינימום של המגרש (רמ״י)', 'the lot\'s minimum price (ILA)'), bi('השומה של המגרש (רמ״י)', 'the lot\'s appraisal (ILA)')],
+      interpretation: bi('חיובי = הזוכה הציע מעל נקודת הייחוס; שלילי מול שומה = ההצעה נמוכה מהשומה שרמ״י פרסמה לתנאי המכרז.', 'Positive = the winner bid above the reference; negative vs the appraisal = the bid was below the appraisal the ILA published for the tender\'s terms.'),
+      notAs: bi('לא שווי שוק של הקרקע או של הפרויקט; לא "הנחה" ולא רווח; השומה היא של רמ״י לתנאי המכרז (כולל הנחות או מגבלות המסלול), לא הערכת שווי של דירות.', 'Not a market value of the land or the project; not a "discount" and not a profit; the appraisal is the ILA\'s for the tender\'s terms (including the track\'s concessions or limits), not a valuation of homes.'),
+      limitations: [bi('מגרש בלי מינימום או שומה מפורסמים אינו נכלל — ראו מספר המגרשים.', 'A lot without a published minimum or appraisal is left out — see the lot count.'), bi('סכומים נומינליים, בלי הוצאות פיתוח ובלי מע״מ.', 'Nominal sums, without development costs and without VAT.')],
+      evidence: bi('lib/land/normalize.js → premiumVsMinimum / premiumVsAppraisal', 'lib/land/normalize.js → premiumVsMinimum / premiumVsAppraisal'),
+      freshness: { observation: bi('מועד ההחלטה', 'the decision date'), publication: bi('אתר המכרזים של רמ״י', 'the ILA tender site'), check: bi('סנכרון הקרקעות היומי', 'the daily land sync') } }),
     T({ id: 'land_per_unit', group: 'land', title: bi('₪ קרקע ליח״ד', 'Land ₪ per unit'),
       short: bi('Σ סכומי הזכייה ÷ Σ יחידות על אותם מגרשי מגורים במכרז תחרותי שמפרסמים יחידות.', 'Σ winning sums ÷ Σ units over the same residential competitive-bid lots that publish units.'),
       why: bi('בסיס הקרקע של השוק — ההשוואה הישירה ביותר בין מכרזים ובין יזמים.', 'The market\'s land basis — the most direct comparison between tenders and between developers.'),
@@ -3072,7 +3089,7 @@ tr.dd-off td{opacity:.72}
       evidence: bi('data/construction/latest.json · observations.jsonl (כל תיקון נשמר) · raw/ לפי hash · מרכז האמון cbs:construction', 'data/construction/latest.json · observations.jsonl (every revision kept) · raw/ by hash · Trust Center cbs:construction'),
       freshness: { observation: bi('התקופה האחרונה שפורסמה', 'the latest published period'), publication: bi('תאריך עדכון הסדרה של הלמ״ס', 'the CBS series update date'), check: bi('הסנכרון בימי עבודה (PROPX בדק)', 'the working-day sync (PROPX checked)') } }),
     T({ id: 'supply_universes', group: 'supply', title: bi('יקומי ההיצע המקבילים', 'The parallel supply universes'),
-      short: bi('שישה מקורות של "יח״ד" שמתארים שלבים ומושאים שונים — אותן דירות עשויות להופיע בכמה מהם, ולכן לעולם אינם מסוכמים.', 'Six sources of "units" describing different stages and objects — the same homes can appear in several, so they are never summed.'),
+      short: bi('תשעה יקומים נפרדים של "יח״ד" (תוכניות, מכרזים, התחדשות, שכירות, הגרלות, בנייה, היתרי / התחלות / בנייה פעילה של הלמ״ס) — אותן דירות עשויות להופיע בכמה מהם, ולכן לעולם אינם מסוכמים.', 'Nine separate "units" universes (plans, tenders, renewal, rental, lotteries, construction, CBS permits / starts / active) — the same homes can appear in several, so they are never summed.'),
       why: bi('סכום של תוכניות + מכרזים + מתחמים היה סופר את אותה דירה שלוש פעמים.', 'A sum of plans + tenders + complexes would count the same home three times.'),
       unit: bi('יח״ד לכל יקום בנפרד', 'units per universe, apart'), geography: bi('ארצי · מחוז · יישוב', 'National · district · locality'), period: bi('לכל יקום התקופה שלו', 'Each universe its own period'),
       source: { ids: ['iplan:xplan', 'rmi:michrazim', 'datagov:moch:urban-renewal-complexes', 'dira-lehaskir:tenders', 'datagov:moch:dira-behanacha-lotteries', 'datagov:moch:construction-progress', 'propx:supply'] }, cls: 'OFFICIAL',
@@ -4509,7 +4526,7 @@ he:{
   ldPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים","5y":"5 שנים",all:"כל המכרזים במקור",custom:"טווח מותאם"}, ldPerL:"תקופה",
   ldScope:{current:"שוק נוכחי",all:"כל ההיסטוריה"}, ldScopeL:"היקף", ldScopeTip:{current:"מכרזים שעדיין בתהליך (פורסם / פתוח / נסגר / ממתין להגרלה / מוקפא) והחלטות — זכייה, ללא זוכה, ביטול — מ-24 החודשים האחרונים",all:"כל רשומות המקור מאז 2000"},
   ldScopeSay:d=>`שוק נוכחי: מכרזים בתהליך והחלטות מאז ${d}.`, ldScopeSayAll:"היסטוריה מלאה: כל רשומות המקור מאז 2000 — סכומים היסטוריים, לא צנרת נוכחית.",
-  ldTagN:{full:"רשימה מלאה",partial:"פירוט חלקי",derived:"תת-קבוצה נגזרת"}, ldTagTip:{full:"נספר מרשימת המכרזים השלמה של רמ״י (נקראת במלואה בכל סנכרון)",partial:"תלוי בפירוט המכרז (מגרשים/זוכים) שנקרא בתקציב יומי — מכרזים שפירוטם טרם נקרא אינם נספרים",derived:"נגזר רק מהמכרזים שפירוטם נקרא — לא סטטיסטיקה של השוק כולו"},
+  ldTagN:{full:"רשימה מלאה",partial:"פירוט חלקי",complete:"פירוט 100%",derived:"תת-קבוצה נגזרת"}, ldTagTip:{complete:"תלוי בפירוט המכרז — והפירוט נבדק לכל מכרז ברשימה (אין מכרז שממתין)",full:"נספר מרשימת המכרזים השלמה של רמ״י (נקראת במלואה בכל סנכרון)",partial:"תלוי בפירוט המכרז (מגרשים/זוכים) שנקרא בתקציב יומי — מכרזים שפירוטם טרם נקרא אינם נספרים",derived:"נגזר רק מהמכרזים שפירוטם נקרא — לא סטטיסטיקה של השוק כולו"},
   ldCvList:n=>`רשימת מכרזים: ${n}`, ldCvDetail:(c,l,p,r,u,pn)=>`פירוט: ${c}/${l} נבדקו (${p}%) — ${r} נקראו · ${u} לא זמינים (404) · ${pn} ממתינים`, ldCvYears:y=>`שלם משנת ${y} ואילך`,
   ldCvAnalytics:(r,l)=>`ניתוחי זוכים/מגרשים: על בסיס ${r} מתוך ${l} מכרזים בהיקף שפירוטם נקרא`, ldCvConstruction:n=>`קישורי בנייה מדויקים: ${n}`,
   ldStateLand:"פעילות קרקע ציבורית של רמ״י (קרקעות מדינה) בלבד — לא כל הקרקע למגורים בישראל, לא עסקאות קרקע פרטיות, לא התחדשות עירונית, לא היצע הדיור העתידי.",
@@ -4547,7 +4564,7 @@ he:{
   ldSeriesNone:"אין נקודות בתקופה המכוסה.", ldSeriesNote:"אירועי מכרז לפי התאריך שנבחר · לא עסקאות · עמודה בהירה = תקופה שכיסוי המקור בה חלקי.",
   ldCitiesT:"יישובים לפי יח״ד במכרזים", ldCCity:"יישוב", ldCTend:"מכרזים", ldCOpen:"פתוחים", ldCUnits:"יח״ד", ldCAw:"הוקצו", ldCLand:"קרקע/יח״ד", ldCLast:"פרסום אחרון",
   ldCitiesNote:"יח״ד כפי שרמ״י פרסמה · קרקע ליח״ד רק ממגרשים שהוכרז בהם זוכה בהצעת מחיר, מסלול שוק חופשי (או המסלול שנבחר) · קרקעות מדינה בלבד — לא כיסוי של שוק הקרקע הפרטי.",
-  ldDevT:"יזמים — זכיות שנצפו במכרזים פומביים שפירוטם נקרא", ldDevCov:(r,l,a)=>`כיסוי התצפית: ${r} מתוך ${l} מכרזים בהיקף שפירוטם נקרא (${a} שהוכרז בהם זוכה). לא ״בנק קרקעות״, לא סך זכיות רמ״י, לא אחזקות ארציות.`, ldDName:"זוכה (כפי שפורסם)", ldDLots:"מגרשים", ldDTend:"מכרזים", ldDUnits:"יח״ד", ldDLand:"סה״כ קרקע", ldDLast:"זכייה אחרונה",
+  ldDevT:"יזמים — זכיות שנצפו במכרזים פומביים שפירוטם נקרא", ldDevCov:(r,l,a)=>`כיסוי התצפית: ${r} מתוך ${l} מכרזים בהיקף שפירוטם נקרא (${a} שהוכרז בהם זוכה). לא ״בנק קרקעות״, לא סך זכיות רמ״י, לא אחזקות ארציות.`, ldDvName:"זוכה (כפי שפורסם)", ldDvLots:"מגרשים", ldDTend:"מכרזים", ldDUnits:"יח״ד", ldDLand:"סה״כ קרקע", ldDLast:"זכייה אחרונה",
   ldDevNote:"קיבוץ לפי מחרוזת השם המדויקת שפרסמה רמ״י — ישויות אינן ממוזגות לפי דמיון שמות. זכיות שנצפו באתר זה בלבד; לא ״בנק קרקעות״. סה״כ קרקע: הצעות מחיר בלבד בכל המסלולים (לא הקצאות במחיר קבוע ולא ₪ למ״ר), מע״מ לא צוין.",
   ldPipeT:"צנרת תכנון ושיווק", ldPipeInv:"מלאי תכנוני — קרקעות מדינה בלבד", ldPipeInvS:d=>`רמ״י, data.gov.il · עדכון מקור ${d} — ישן; יח״ד פוטנציאליות לשיווק, לא תחזית`,
   ldPipePlans:"תוכניות שהמכרזים מפנים אליהן", ldPipePlansS:"מינהל התכנון (xplan) · צירוף לפי מספר תוכנית מדויק",
@@ -4570,7 +4587,7 @@ he:{
   ldDTokenMin:"מינימום סמלי (₪1)", ldDNote:"הערת המקור", ldDLotsNone:"פירוט המגרשים טרם נקרא מהמקור (נקרא בתקציב יומי).",
   ldDNamed:"שם ללא סכום מפורסם — לא נרשם כזכייה", ldDAlloc:"הקצאה — מחיר קבוע, סכום לא פורסם", ldDPerUnitScope:{'all-priced-lots':"כל המגרשים שהוכרז בהם זוכה",'lots-with-units-only':"רק מגרשים שפורסמו בהם יח״ד",'no-units-published':"לא פורסמו יח״ד — אין חישוב ליח״ד"},
   ldDEcon:"כלכלה — נגזר", ldDE:{basis:"בסיס",vat:"מע״מ",aw:"מגרשים שהוכרז בהם זוכה",units:"יח״ד במגרשים אלה",total:"סה״כ הצעות זוכות",lpu:"קרקע ליח״ד",dpu:"פיתוח ליח״ד",tpu:"בסיס כולל ליח״ד",prem:"פרמיה מעל המינימום",app:"מול השומה",bids:"הצעות שהתקבלו",psm:"₪ למ״ר (טווח)",ceil:"מחיר מרבי למ״ר"},
-  ldDEconNote:"מונה ומכנה מאותם מגרשים בלבד. ₪ למ״ר (מחיר למשתכן) אינו מחולק ליח״ד. מע״מ: לא צוין במקור.",
+  ldDEconNote:"מינימום ושומה כפי שרמ״י מגדירה אותם לתנאי המכרז — לא שווי שוק ולא הנחה. מונה ומכנה מאותם מגרשים בלבד. ₪ למ״ר (מחיר למשתכן) אינו מחולק ליח״ד. מע״מ: לא צוין במקור.",
   ldDPlans:"תוכניות", ldDP:{plan:"תוכנית",join:"צירוף",station:"שלב סטטוטורי",before:"יח״ד מאושרות לפני התוכנית",delta:"תוספת יח״ד בתוכנית",after:"סה״כ יח״ד לאחר התוכנית",date:"אישור",pot:"פוטנציאל לשיווק (רמ״י, ישן)",link:"מינהל התכנון"},
   ldDPlanExact:"מספר תוכנית מדויק", ldDPlanNo:"לא נמצאה בשכבת מינהל התכנון", ldDPlanPending:"טרם נבדק מול מינהל התכנון", ldDPlanLink:"קישור באתר רמ״י (לא מספר תוכנית)", ldDPlansNone:"המכרז אינו מציין מספרי תוכנית.",
   ldDParcels:"גוש / חלקה", ldDConst:"בנייה — ראיה בלבד", ldDConstNone:"אין צירוף גוש/חלקה מדויק לדיווחי התקדמות בנייה של משרד הבינוי (מתוארכים 2024). חוזה, היתר והתחלת בנייה אינם מפורסמים במקורות אלה — לא מוסקים.",
@@ -5079,7 +5096,7 @@ en:{
   ldPer:{"6m":"6 months","12m":"12 months","24m":"24 months","5y":"5 years",all:"All tenders in source",custom:"Custom range"}, ldPerL:"Period",
   ldScope:{current:"Current market",all:"Full history"}, ldScopeL:"Scope", ldScopeTip:{current:"Tenders still in play (published / open / closed / awaiting lottery / frozen) and decisions — award, no award, cancellation — of the last 24 months",all:"Every source record since 2000"},
   ldScopeSay:d=>`Current market: tenders in play and decisions since ${d}.`, ldScopeSayAll:"Full history: every source record since 2000 — lifetime totals, not the current pipeline.",
-  ldTagN:{full:"FULL LIST",partial:"PARTIAL DETAIL",derived:"DERIVED SUBSET"}, ldTagTip:{full:"Counted over the ILA's complete tender list (read whole on every sync)",partial:"Depends on per-tender detail (lots / winners) read on a daily budget — tenders whose detail is not read yet are not counted",derived:"Derived only from detail-read tenders — not a statistic of the whole market"},
+  ldTagN:{full:"FULL LIST",partial:"PARTIAL DETAIL",complete:"DETAIL 100%",derived:"DERIVED SUBSET"}, ldTagTip:{complete:"Depends on per-tender detail — and the detail has been checked for every listed tender (none pending)",full:"Counted over the ILA's complete tender list (read whole on every sync)",partial:"Depends on per-tender detail (lots / winners) read on a daily budget — tenders whose detail is not read yet are not counted",derived:"Derived only from detail-read tenders — not a statistic of the whole market"},
   ldCvList:n=>`Tender list: ${n}`, ldCvDetail:(c,l,p,r,u,pn)=>`Detail: ${c}/${l} checked (${p}%) — ${r} retrieved · ${u} unavailable (404) · ${pn} pending`, ldCvYears:y=>`complete from ${y} onward`,
   ldCvAnalytics:(r,l)=>`Winner / lot analytics: based on ${r} of ${l} tenders in scope with detail read`, ldCvConstruction:n=>`Exact construction links: ${n}`,
   ldStateLand:"ILA public / state-land activity only — not all residential land in Israel, not private land transactions, not urban renewal, not future housing supply.",
@@ -5117,7 +5134,7 @@ en:{
   ldSeriesNone:"No points in the covered period.", ldSeriesNote:"Tender events by the selected date · not transactions · light bar = period only partly covered by the source.",
   ldCitiesT:"Localities by tender units", ldCCity:"Locality", ldCTend:"Tenders", ldCOpen:"Open", ldCUnits:"Units", ldCAw:"Awarded", ldCLand:"Land/unit", ldCLast:"Last published",
   ldCitiesNote:"Units as the ILA published them · land per unit only from lots awarded on a competitive bid, open-market track (or the selected track) · state land only — not coverage of the private land market.",
-  ldDevT:"Developers — observed public tender wins in detail-read records", ldDevCov:(r,l,a)=>`Observation coverage: ${r} of ${l} tenders in scope with detail read (${a} awarded). Not a land bank, not total ILA wins, not national holdings.`, ldDName:"Winner (as published)", ldDLots:"Lots", ldDTend:"Tenders", ldDUnits:"Units", ldDLand:"Land total", ldDLast:"Last win",
+  ldDevT:"Developers — observed public tender wins in detail-read records", ldDevCov:(r,l,a)=>`Observation coverage: ${r} of ${l} tenders in scope with detail read (${a} awarded). Not a land bank, not total ILA wins, not national holdings.`, ldDvName:"Winner (as published)", ldDvLots:"Lots", ldDTend:"Tenders", ldDUnits:"Units", ldDLand:"Land total", ldDLast:"Last win",
   ldDevNote:"Grouped by the exact name string the ILA published — entities are never merged by name similarity. Wins observed on this site only; not a land bank. Land total: competitive bids only across tracks (no fixed-price allocations, no ₪/m² bids), VAT not stated.",
   ldPipeT:"Planning & marketing pipeline", ldPipeInv:"Planning inventory — STATE LAND ONLY", ldPipeInvS:d=>`ILA, data.gov.il · source updated ${d} — stale; potential units for marketing, not a forecast`,
   ldPipePlans:"Plans the tenders reference", ldPipePlansS:"Planning Administration (xplan) · exact plan-number join",
@@ -5140,7 +5157,7 @@ en:{
   ldDTokenMin:"Token minimum (₪1)", ldDNote:"Source note", ldDLotsNone:"Lot detail not read from the source yet (read on a daily budget).",
   ldDNamed:"Name without a published sum — not recorded as an award", ldDAlloc:"Allocation — fixed price, sum not published", ldDPerUnitScope:{'all-priced-lots':"all awarded lots",'lots-with-units-only':"lots with published units only",'no-units-published':"no units published — no per-unit figure"},
   ldDEcon:"Economics — derived", ldDE:{basis:"Basis",vat:"VAT",aw:"Lots with a recorded winner",units:"Units in those lots",total:"Σ winning sums",lpu:"Land per unit",dpu:"Development per unit",tpu:"Total basis per unit",prem:"Premium over minimum",app:"vs appraisal",bids:"Bids received",psm:"₪/m² (range)",ceil:"Ceiling ₪/m²"},
-  ldDEconNote:"Numerator and denominator from the same lots only. ₪/m² (Mechir LaMishtaken) is never divided into units. VAT: not stated by the source.",
+  ldDEconNote:"Minimum and appraisal as the ILA defines them for the tender's terms — not a market value, not a discount. Numerator and denominator from the same lots only. ₪/m² (Mechir LaMishtaken) is never divided into units. VAT: not stated by the source.",
   ldDPlans:"Plans", ldDP:{plan:"Plan",join:"Join",station:"Statutory station",before:"Previously Authorized Units",delta:"Plan Unit Delta",after:"Units After Plan",date:"Approval",pot:"Marketing potential (ILA, stale)",link:"Planning Administration"},
   ldDPlanExact:"Exact plan number", ldDPlanNo:"Not found in the Planning Administration layer", ldDPlanPending:"Not checked against the Planning Administration yet", ldDPlanLink:"ILA site link (not a plan number)", ldDPlansNone:"The tender names no plan numbers.",
   ldDParcels:"Block / parcel", ldDConst:"Construction — evidence only", ldDConstNone:"No exact block/parcel join to the MoCH construction-progress reports (dated 2024). Contract, permit and construction start are not published by these sources — not inferred.",
@@ -5810,6 +5827,8 @@ function setStatics(){
     const key=stale4&&(node.dataset.i==="blt4v"||node.dataset.i==="blt4s")?node.dataset.i+"Stale":node.dataset.i;
     if(typeof t[key]==="string")node.textContent=t[key];
   });
+  /* a stale trend statement is not shown in "rising" green (UX review 19.10.2026) */
+  const b4=document.querySelector('[data-i="blt4v"]');if(b4)b4.classList.toggle("up-t",!stale4);
   document.querySelectorAll("[data-ia]").forEach(node=>{
     const key=node.dataset.ia;
     if(typeof t[key]==="string")node.setAttribute("aria-label",t[key]);
@@ -9280,7 +9299,7 @@ function ldCityCols(){const t=T();return [
   {k:"unitsAwarded",label:t.ldCAw,type:"number",sort:true,filter:true,num:true},{k:"landPerUnit",label:t.ldCLand,type:"currency",sort:true,filter:true,num:true},
   {k:"lastPublished",label:t.ldCLast,type:"date",sort:true,filter:true,num:true}]}
 function ldDevCols(){const t=T();return [
-  {k:"name",label:t.ldDName,type:"text",sort:true,filter:true},{k:"lotsWon",label:t.ldDLots,type:"number",sort:true,filter:true,num:true},
+  {k:"name",label:t.ldDvName,type:"text",sort:true,filter:true},{k:"lotsWon",label:t.ldDvLots,type:"number",sort:true,filter:true,num:true},
   {k:"tendersWon",label:t.ldDTend,type:"number",sort:true,filter:true,num:true},{k:"unitsInLotsWon",label:t.ldDUnits,type:"number",sort:true,filter:true,num:true},
   {k:"landTotalCompetitive",label:t.ldDLand,type:"currency",sort:true,filter:true,num:true},{k:"lastWin",label:t.ldDLast,type:"date",sort:true,filter:true,num:true}]}
 /* a table's own column filters as request parameters (facet columns travel as the section's facets) */
@@ -9299,6 +9318,8 @@ const ldLifeChip=lc=>lc?`<span class="ho-chip ld-${ldE(lc)}">${ldE(T().ldLife[lc
 const ldTrackName=tr=>T().ldTracks[tr]||tr||"—";
 /* what a figure rests on: the whole tender list · the detail-read part of it · a derived subset of the detail-read records */
 const ldTag=k=>`<span class="ld-tag ld-tag-${k}" title="${ldE(T().ldTagTip[k])}">${T().ldTagN[k]}</span>`;
+/* "partial detail" only while it is partial: when every listed tender's detail has been checked (none pending) the tag says so */
+const ldDetailTagK=DC=>DC&&DC.listed>0&&DC.checked>=DC.listed&&!DC.pending?"complete":"partial";
 /* official Hebrew labels verbatim; in English the known vocabularies carry a gloss, the original stays in the tooltip */
 const ldTx=he=>he==null||he===""?ldDash():ldE(he);
 function ldQS(extra){
@@ -9372,7 +9393,7 @@ function ldBarHTML(){
     ${loc}${dirty?`<button type="button" class="ho-reset" data-ldreset>${t.ldReset}</button>`:""}`;
 }
 function ldKpisHTML(S){
-  const t=T(),K=S.kpis,D=vcTag("der");
+  const t=T(),K=S.kpis,D=vcTag("der"),PD=ldDetailTagK(S.detailCoverage);
   const LDXP={[t.ldKTenders]:"ila_tender_lifecycle",[t.ldKOpen]:"tender_units_open",[t.ldKClosed]:"ila_tender_lifecycle",[t.ldKAwarded]:"tender_units_awarded",[t.ldKCancelled]:"failed_tender_ratio",
     [t.ldKUnits]:"published_tender_units",[t.ldKUnique]:"re_tender_share",[t.ldKLand]:"land_per_unit",[t.ldKPsm]:"per_sqm_bid_level",[t.ldKBids]:"tender_outcomes",[t.ldKWinners]:"developer_observed_activity"};
   const tile=(l,v,sub,cov)=>`<div class="ho-k"><div class="l">${l} ${D}${cov?ldTag(cov):""} ${LDXP[l]?xpBtn(LDXP[l]):""}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
@@ -9383,8 +9404,8 @@ function ldKpisHTML(S){
     tile(t.ldKTenders,ldN(K.tenders),t.ldKTendersS(fmtInt(K.residentialTenders),fmtInt(K.cities)),"full"),
     tile(t.ldKOpen,ldN(K.open+K.published),t.ldKOpenS(K.unitsOpen!=null?fmtInt(K.unitsOpen):""),"full"),
     tile(t.ldKClosed,ldN(K.closed+K.lotteryPending),K.unitsPendingDecision!=null?t.ldKClosedS(fmtInt(K.unitsPendingDecision)):"","full"),
-    tile(t.ldKAwarded,ldN(K.awarded),[t.ldKAwardedS(K.unitsAwarded!=null?fmtInt(K.unitsAwarded):"",K.unitsAwardedTenders!=null?fmtInt(K.unitsAwardedTenders):""),nd].filter(Boolean).join(" · "),"partial"),
-    tile(t.ldKCancelled,ldN(K.cancelled+K.frozen+(K.decided-K.decidedWithoutDetail)),K.unitsFailed!=null?t.ldKCancelledS(fmtInt(K.unitsFailed),fmtInt(K.cancelled+K.frozen),fmtInt(K.decided-K.decidedWithoutDetail)):"","partial"),
+    tile(t.ldKAwarded,ldN(K.awarded),[t.ldKAwardedS(K.unitsAwarded!=null?fmtInt(K.unitsAwarded):"",K.unitsAwardedTenders!=null?fmtInt(K.unitsAwardedTenders):""),nd].filter(Boolean).join(" · "),PD),
+    tile(t.ldKCancelled,ldN(K.cancelled+K.frozen+(K.decided-K.decidedWithoutDetail)),K.unitsFailed!=null?t.ldKCancelledS(fmtInt(K.unitsFailed),fmtInt(K.cancelled+K.frozen),fmtInt(K.decided-K.decidedWithoutDetail)):"",PD),
     tile(t.ldKUnits,ldN(K.unitsResidential),t.ldKUnitsS+(ldRentalOn()?" "+t.rtUnitsKpi:""),"full"),
     tile(t.ldKUnique,U&&U.tendersCovered?ldN(U.units):ldDash(),U?t.ldKUniqueS(fmtInt(U.lots),fmtInt(U.tendersCovered),fmtInt(U.duplicateUnits),fmtInt(U.tendersNotDeduplicable),fmtInt(U.unitsNotDeduplicable),Object.entries(U.byLatestStage||{}).filter(([,v])=>v).map(([k,v])=>`${t.ldKUniqueSt[k]||k} ${fmtInt(v)}`).join(" · ")):"","derived"),
     tile(t.ldKLand,ldNIS(K.landPerUnit),K.landPerUnit!=null?t.ldKLandS(fmtInt(LB.lots||K.landPerUnitLots),fmtInt(LB.units||K.landPerUnitUnits),fmtInt(LB.tenders||0),LB.medianLotPerUnit!=null?fmtNIS(LB.medianLotPerUnit):"—",t.ldTrackScope(K.landPerUnitTracks),(LB.competitionTypes||[]).map(x=>x.he).join(" / ")):"","derived"),
@@ -9448,7 +9469,7 @@ function ldCovHTML(S){
   const nopos=ldState.mapOn&&ldState.map&&ldState.map.withoutPosition?` ${t.ldNoPos(fmtInt(ldState.map.withoutPosition))}.`:"";
   const DC=S.detailCoverage||{},KC=(S.kpis&&S.kpis.detailCoverage)||{},K=S.kpis||{};
   const strip=`<div class="ld-cov"><span class="ld-cv">${ldTag("full")} ${t.ldCvList(fmtInt(DC.listed||fr.inLatestSource||0))}</span>
-    <span class="ld-cv">${ldTag("partial")} ${t.ldCvDetail(fmtInt(DC.checked||0),fmtInt(DC.listed||0),DC.pct!=null?DC.pct:"—",fmtInt(DC.retrieved||0),fmtInt(DC.unavailable||0),fmtInt(DC.pending||0))}${DC.completeFrom?` · ${t.ldCvYears(DC.completeFrom)}`:""}</span>
+    <span class="ld-cv">${ldTag(ldDetailTagK(DC))} ${t.ldCvDetail(fmtInt(DC.checked||0),fmtInt(DC.listed||0),DC.pct!=null?DC.pct:"—",fmtInt(DC.retrieved||0),fmtInt(DC.unavailable||0),fmtInt(DC.pending||0))}${DC.completeFrom?` · ${t.ldCvYears(DC.completeFrom)}`:""}</span>
     <span class="ld-cv">${ldTag("derived")} ${t.ldCvAnalytics(fmtInt(KC.retrieved||0),fmtInt(KC.listed||0))}</span>
     <span class="ld-cv">${ldTag("derived")} ${t.ldCvConstruction(fmtInt(K.withConstructionLink||0))}</span></div>`;
   const scopeSay=(S.scope&&S.scope.mode)==="current"?t.ldScopeSay(ldDate(S.scope.currentFrom)):t.ldScopeSayAll;
@@ -9652,7 +9673,7 @@ function renderLdDrawer(){
   const lots=r.lots?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="ldlots"><thead><tr>${["lot","area","units","dev","min","app","winner","amount","bids","lpu"].map(k=>`<th>${t.ldDL[k]}</th>`).join("")}</tr></thead><tbody>${r.lots.map(lotRow).join("")}</tbody></table></div>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
   const econ=E?`<div class="ho-dl">${kv(t.ldDE.basis,ldE(t.ldBasis[E.basis]||E.basis))}${kv(t.ldDE.vat,ldE(t.ldVat.split(":")[1]||E.vat))}${kv(t.ldDE.aw,`<span class="num">${fmtInt(E.awardedLots)}/${fmtInt(E.lots)}</span>`)}
     ${E.basis==="price-per-sqm-bid"?kv(t.ldDE.psm,E.pricePerSqmMin!=null?`<span class="num">${fmtNIS(E.pricePerSqmMin)}–${fmtNIS(E.pricePerSqmMax)}</span>`:ldDash())+kv(t.ldDE.ceil,E.ceilingPerSqmMin!=null?`<span class="num">${fmtNIS(E.ceilingPerSqmMin)}–${fmtNIS(E.ceilingPerSqmMax)}</span>`:ldDash())
-    :kv(t.ldDE.units,ldN(E.awardedUnits))+kv(t.ldDE.total,ldNIS(E.awardedLandTotal))+kv(t.ldDE.lpu,ldNIS(E.landPerUnit))+kv(t.ldDE.dpu,ldNIS(E.developmentPerUnit))+kv(t.ldDE.tpu,ldNIS(E.totalBasisPerUnit))+kv(t.ldDE.prem,ldPct(E.premiumVsMinimum))+kv(t.ldDE.app,ldPct(E.premiumVsAppraisal))}
+    :kv(t.ldDE.units,ldN(E.awardedUnits))+kv(t.ldDE.total,ldNIS(E.awardedLandTotal))+kv(t.ldDE.lpu,ldNIS(E.landPerUnit))+kv(t.ldDE.dpu,ldNIS(E.developmentPerUnit))+kv(t.ldDE.tpu,ldNIS(E.totalBasisPerUnit))+kv(`${t.ldDE.prem} ${xpBtn("tender_bid_vs_minimum_appraisal")}`,ldPct(E.premiumVsMinimum))+kv(`${t.ldDE.app} ${xpBtn("tender_bid_vs_minimum_appraisal")}`,ldPct(E.premiumVsAppraisal))}
     ${kv(t.ldDE.bids,ldN(E.bidsReceived))}</div><p class="ho-note">${t.ldDEconNote}${E.perUnitScope?` ${t.ldDPerUnitScope[E.perUnitScope]||""}.`:""}</p>`:`<p class="ho-note">${t.ldDLotsNone}</p>`;
   const plans=(d.plans||[]).length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="ldplans"><thead><tr>${["plan","join","station","before","delta","after","date","pot","link"].map(k=>`<th>${t.ldDP[k]}${k==="after"?" "+vcTag("der"):""}</th>`).join("")}</tr></thead><tbody>${d.plans.map(pl=>{const x=pl.xplan,inv=pl.inventory,U=pl.units||{};
     return`<tr><td class="num">${ldE(pl.plan)}</td><td>${pl.via==="lot"?(x?`<span class="ho-chip">${t.ldDPlanExact}</span>`:pl.xplanStatus==="not-found"?`<span class="ho-na">${t.ldDPlanNo}</span>`:`<span class="ho-na">${t.ldDPlanPending}</span>`):`<span class="ho-na">${t.ldDPlanLink}</span>`}</td>
@@ -10348,7 +10369,7 @@ he:{title:"בדיקת נאותות",oneMin:"תמונה בדקה",fiveMin:"פיר
   financial:"חוסן פיננסי — כיסוי נתונים",neverShown:"לעולם לא מוצג",contractor:"קבלן רשום ואתרים",notReg:"לא נמצא בפנקס הקבלנים",branches:"ענפים",sites:"אתרים פעילים",cities:"ערים",enforcement:"אכיפת בטיחות",sanctions:"עיצומים",warrants:"צווים",closedNotices:"הודעות סגירת אתר",firstSeen:"נראה לראשונה",lastSeen:"נראה לאחרונה",
   tlvHolder:"אתרים בתל אביב שבהם היזם הוא בעל ההיתר",execution:"רשומת ביצוע",byStage:"מגרשים לפי השלב הרחוק ביותר",velocity:"מהירות ביצוע",velOk:(m,n)=>`חציון ${m} חודשים מזכייה לתחילת בנייה מתוארכת (n=${n})`,velCmp:(m,n)=>`אותו כלל על כל המגרשים: חציון ${m} חודשים (n=${n})`,linked:(l,s,p)=>`${l} מגרשים עם אתר מקושר · ${s} קישורים חזקים · ${p} אפשריים`,
   summary:"תקציר",ladder:"סולם שלבים מאומת",timeline:"ציר זמן מאומת",links:"מזהים וקישורים",siteJoin:"אתרים והיתרים",tlvSites:"אתרי תל אביב (חלקה)",labourSites:"אתרי משרד העבודה (מפתח מטקסט)",permits:"רשומות היתר",history:"היסטוריית החלקה — לא הפרויקט",contractors:"קבלנים מבצעים",excluded:"לא קושרו",onLadder:"בסולם",offLadder:"לא בסולם",
-  stages:{"land-awarded":"זכייה בקרקע",marketed:"שיווק",permitted:"היתר","construction-started":"תחילת בנייה",completed:"גמר",occupied:"אכלוס"},asOf:"נכון ל",noDate:"ללא תאריך במקור",
+  stages:{"land-awarded":"זכייה בקרקע",marketed:"שיווק",permitted:"היתר","construction-started":"תחילת בנייה",completed:"גמר",occupied:"אכלוס"},asOf:"נכון ל",seenActive:"נצפה פעיל ב-",checkedNone:"נבדק — לא נמצאה ראיה ב:",noDate:"ללא תאריך במקור",
   developer:"היזם",openDev:"פתח את תיק היזם",brief:"סיכונים ופערים",cats:{VERIFIED_FACT:"עובדה מאומתת",DERIVED_SIGNAL:"אות נגזר",MISSING_EVIDENCE:"ראיה חסרה",SOURCE_LIMITATION:"מגבלת מקור",ENTITY_AMBIGUITY:"עמימות ישות",SOURCE_CONFLICT:"סתירה בין מקורות"},why:"למה זה כאן",confirms:"מה יאשר",disproves:"מה יפריך",verify:"מה לבדוק",
   nbe:"הראיה הבאה הטובה ביותר",use:{HIGH:"גבוה",MEDIUM:"בינוני",LOW:"נמוך"},flags:{retrievableByPropx:"PROPX יכולה להביא",userProvided:"המשתמש מספק",monitorable:"ניתן לניטור"},verifyNext:"מה לבדוק עכשיו",
   watch:"מעקב",watchOn:"עקוב",watchOff:"הפסק מעקב",watching:d=>`במעקב מאז ${d}`,detectable:"מה PROPX מזהה",notDetectable:"מה PROPX לא מזהה",lastCheck:"בדיקה אחרונה",changes:"שינויים",noChange:"לא נצפה שינוי במפתחות אלה",material:"מהותי",watchList:"רשימת מעקב",
@@ -10364,7 +10385,7 @@ en:{title:"Due diligence",oneMin:"One-minute view",fiveMin:"Details (five minute
   financial:"Financial resilience — data coverage",neverShown:"Never shown",contractor:"Registered contractor and sites",notReg:"Not found in the contractors register",branches:"Branches",sites:"Active sites",cities:"Cities",enforcement:"Safety enforcement",sanctions:"sanctions",warrants:"warrants",closedNotices:"Site-closure notices",firstSeen:"First seen",lastSeen:"Last seen",
   tlvHolder:"Tel Aviv sites where the developer is the permit holder",execution:"Execution record",byStage:"Lots by furthest stage",velocity:"Execution velocity",velOk:(m,n)=>`median ${m} months from award to a dated construction start (n=${n})`,velCmp:(m,n)=>`the same rule over every lot: median ${m} months (n=${n})`,linked:(l,s,p)=>`${l} lots with a linked site · ${s} strong links · ${p} possible`,
   summary:"Summary",ladder:"Verified stage ladder",timeline:"Verified timeline",links:"Identifiers and links",siteJoin:"Sites and permits",tlvSites:"Tel Aviv sites (parcel)",labourSites:"Ministry of Labour sites (key from text)",permits:"Permit records",history:"Parcel history — not this project",contractors:"Executing contractors",excluded:"Not linked",onLadder:"on the ladder",offLadder:"not on the ladder",
-  stages:{"land-awarded":"Land awarded",marketed:"Marketed",permitted:"Permitted","construction-started":"Construction started",completed:"Completed",occupied:"Occupied"},asOf:"as of",noDate:"no date in the source",
+  stages:{"land-awarded":"Land awarded",marketed:"Marketed",permitted:"Permitted","construction-started":"Construction started",completed:"Completed",occupied:"Occupied"},asOf:"as of",seenActive:"seen active",checkedNone:"checked — nothing found in:",noDate:"no date in the source",
   developer:"Developer",openDev:"Open the developer",brief:"Risks and gaps",cats:{VERIFIED_FACT:"Verified fact",DERIVED_SIGNAL:"Derived signal",MISSING_EVIDENCE:"Missing evidence",SOURCE_LIMITATION:"Source limitation",ENTITY_AMBIGUITY:"Entity ambiguity",SOURCE_CONFLICT:"Source conflict"},why:"Why it is here",confirms:"What would confirm it",disproves:"What would disprove it",verify:"What to verify next",
   nbe:"Next best evidence",use:{HIGH:"High",MEDIUM:"Medium",LOW:"Low"},flags:{retrievableByPropx:"PROPX can retrieve",userProvided:"user-provided",monitorable:"monitorable"},verifyNext:"What to verify now",
   watch:"Watch",watchOn:"Watch",watchOff:"Stop watching",watching:d=>`Watching since ${d}`,detectable:"What PROPX can detect",notDetectable:"What PROPX cannot detect",lastCheck:"Last check",changes:"Changes",noChange:"No change observed on these keys",material:"material",watchList:"Watchlist",
@@ -10504,7 +10525,7 @@ function ddDevHTML(X){
 /* ---- the project panel ---- */
 function ddLadderHTML(L){
   const t=DT();if(!L)return"";
-  return `<ol class="dd-ladder">${(L.rungs||[]).map(r=>`<li class="${r.evidenced?"ev":"no"}"><b>${inE(t.stages[r.stage]||r.stage)}</b> ${r.evidenced?`✓ ${r.date?ddDate(r.date):r.ddAsOf?`${t.asOf} ${ddDate(r.ddAsOf)}`:`<span class="ho-na">${t.noDate}</span>`}`:"·"} ${ddCov(r.coverage)}${r.ddLabel?`<div class="ho-note">${inE(ddL(r.ddLabel))}</div>`:""}${!r.evidenced&&(r.reason||r.coverageNote)?`<div class="ho-note">${inE(ddL(r.coverageNote||r.reason))}</div>`:""}</li>`).join("")}</ol><p class="ho-note">${inE(ddL(L.basis))}${L.possibleNotOnLadder?` · ${fmtInt(L.possibleNotOnLadder)} ${t.offLadder}`:""} ${xpBtn("dd_stage_ladder")}</p>`;
+  return `<ol class="dd-ladder">${(L.rungs||[]).map(r=>`<li class="${r.evidenced?"ev":"no"}"><b>${inE(t.stages[r.stage]||r.stage)}</b> ${r.evidenced?`✓ ${r.date?ddDate(r.date):r.ddAsOf?`${t.seenActive} ${ddDate(r.ddAsOf)}`:`<span class="ho-na">${t.noDate}</span>`}`:`· ${r.coverageNote?"":t.checkedNone}`} ${ddCov(r.coverage)}${r.ddLabel?`<div class="ho-note">${inE(ddL(r.ddLabel))}</div>`:""}${!r.evidenced&&(r.reason||r.coverageNote)?`<div class="ho-note">${inE(ddL(r.coverageNote||r.reason))}</div>`:""}</li>`).join("")}</ol><p class="ho-note">${inE(ddL(L.basis))}${L.possibleNotOnLadder?` · ${fmtInt(L.possibleNotOnLadder)} ${t.offLadder}`:""} ${xpBtn("dd_stage_ladder")}</p>`;
 }
 function ddTimelineHTML(TL){
   const t=DT();if(!(TL||[]).length)return `<p class="ho-note">${inDash()}</p>`;
@@ -11302,7 +11323,7 @@ function renderDossierBody(){
   if(!bar||!t.dsT)return;
   const ix=dsState.index,cur=dsState.level==="il"?"il":`${dsState.level}:${dsState.code}`;
   const opt=(v,l)=>`<option value="${ldE(v)}"${cur===v?" selected":""}>${ldE(l)}</option>`;
-  bar.innerHTML=`<label class="ds-pick"><span class="ho-note" style="margin:0">${t.dsPick}</span><select class="ho-sel" data-dspick aria-label="${t.dsPick}">${opt("il",t.dsNat)}${ix?`<optgroup label="${t.dsDistricts}">${ix.districts.map(d=>opt("district:"+d.code,he?d.he:d.en)).join("")}</optgroup><optgroup label="${t.dsLocs}">${ix.localities.slice(0,200).map(l=>opt("locality:"+l.code,(he?l.he:l.en)+" ("+l.tenders+")")).join("")}</optgroup>`:""}</select></label>${D?`<span class="ds-q ds-q-${D.quality.level.toLowerCase()}" title="${ldE(D.quality.basis[L])}">${t.dsQuality}: ${ldE(D.quality.label[L])} · <span class="num">${D.quality.score}</span></span>`:""}`;
+  bar.innerHTML=`<label class="ds-pick"><span class="ho-note" style="margin:0">${t.dsPick}</span><select class="ho-sel" data-dspick aria-label="${t.dsPick}">${opt("il",t.dsNat)}${ix?`<optgroup label="${t.dsDistricts}">${ix.districts.map(d=>opt("district:"+d.code,he?d.he:d.en)).join("")}</optgroup><optgroup label="${t.dsLocs}">${ix.localities.slice(0,200).map(l=>opt("locality:"+l.code,(he?l.he:l.en)+" ("+l.tenders+")")).join("")}</optgroup>`:""}</select></label>${D?`<span class="ds-q ds-q-${D.quality.level.toLowerCase()}" title="${ldE(D.quality.basis[L])}">${t.dsQuality}: ${ldE(D.quality.label[L])}</span>`:""}`;
   prov.textContent=D?t.dsGen(D.generatedAt.slice(0,10).split("-").reverse().join(".")):"";
   if(dsState.status==="error"){body.innerHTML=`<p class="ho-note">${t.dsErr}</p>`;return}
   if(!D){body.innerHTML=`<p class="ho-note">${t.dsLoading}</p>`;return}
@@ -11324,7 +11345,8 @@ function renderDossierBody(){
   const ch=S.changes&&S.changes.rows.length?`<ul class="ds-ch">${S.changes.rows.slice(0,8).map(e=>`<li><span class="num ds-d">${ldE(puDay(e.at))}</span> ${ldE(e.title[L])}</li>`).join("")}</ul><p class="ho-note"><a class="ld-link" href="#pulse">${t.dsToPulse} (${n(S.changes.total)} · ${ldE(S.changes.window)})</a></p>`:`<p class="ho-note">${t.puNone}</p>`;
   const devs=S.developers&&S.developers.top.length?`<div class="ld-scroll"><table class="ho-dt" data-ptdom="dsdevs"><thead><tr><th>${t.dsCols.name}</th><th>${t.dsCols.lotsHere}</th><th>${t.dsCols.unitsHere}</th><th>${t.dsCols.projHere}</th><th>${t.dsCols.last}</th><th>${t.dsCols.total}</th></tr></thead><tbody>${S.developers.top.map(d=>`<tr><td>${ldE(d.name)}${d.possibleSame?` <span class="ho-chip cont" title="${he?"שמות דומים מקושרים ואינם ממוזגים":"similar names linked, never merged"}">${d.possibleSame}</span>`:""}</td><td class="num">${n(d.lotsHere)}</td><td class="num">${n(d.unitsHere)}</td><td class="num">${n(d.projectsHere)}</td><td class="num" data-v="${ptDayKey(d.lastHere)}">${ldE(puDay(d.lastHere))}</td><td class="num">${n(d.lots)}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${ldE(S.developers.basis[L])}</p>`:`<p class="ho-note">—</p>`;
   const fresh=`<div class="ld-scroll"><table class="ho-dt" data-ptdom="dsfresh"><thead><tr>${t.dsFreshT.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.freshness.map(f=>`<tr><td>${ldE(f.label[L])}</td><td class="num" data-v="${ptDayKey(f.observed)}">${ldE(f.observed?puDay(f.observed):"—")}</td><td class="num" data-v="${ptDayKey(f.published)}">${ldE(f.published?puDay(f.published):"—")}</td><td class="num" data-v="${ptDayKey(f.checked)}">${ldE(f.checked?puDay(f.checked):"—")}</td><td>${ldE(f.state||"—")}</td></tr>`).join("")}</tbody></table></div>`;
-  const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])} · ${D.quality.score}/100</b> ${xpBtn("evidence_quality")} — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
+  /* the level leads; the number is shown as what it is — 100 minus the documented deductions, not a probability (UX review 19.10.2026) */
+  const q=`<p class="ho-note"><b>${t.dsQuality}: ${ldE(D.quality.label[L])}</b> <span class="ho-na">(${L==="en"?`100 − deductions = ${D.quality.score}; not a probability`:`100 פחות ניכויים = ${D.quality.score}; לא הסתברות`})</span> ${xpBtn("evidence_quality")} — ${D.quality.items.map(i=>ldE(i[L])).join(" · ")||"—"}. ${ldE(D.quality.basis[L])}</p>`;
   const miss=D.missing.length?`<ul class="ds-miss">${D.missing.map(m=>`<li>${ldE(m[L])} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
   body.innerHTML=`<div class="ds-head"><h3>${ldE(D.geo.name[L])}${D.geo.districtName&&D.geo.level==="locality"?` <span class="ax-muted">· ${t.dsDistrictOf}: ${ldE(D.geo.districtName[L])}</span>`:""}</h3><p class="ho-note">${ldE(D.basis[L])}</p></div>
     ${dsWhyHTML(D)}

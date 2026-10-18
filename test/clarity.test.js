@@ -107,4 +107,73 @@ at('ⓘ on the headline tiles of every data section (land, housing, developers, 
   assert.match(INDEX, /const tile=\(l,v,s,xp="developer_observed_activity"\)=>/);
 });
 
+/* ── the two-persona UX acceptance review (19.10.2026): the substantive comprehension failures it found, each pinned ── */
+console.log('clarity: persona-review fixes');
+const vm = require('node:vm');
+at('the land developers table has its own header names (no function rendered as text, no "Tender number" over developer names)', () => {
+  const cols = /function ldDevCols\(\)\{const t=T\(\);return \[\n  \{k:"name",label:t\.ldDvName,[^\n]*\{k:"lotsWon",label:t\.ldDvLots,/.exec(INDEX); assert.ok(cols, 'ldDevCols uses its own keys');
+  for (const [k, he, en] of [['ldDvName', 'זוכה (כפי שפורסם)', 'Winner (as published)'], ['ldDvLots', 'מגרשים', 'Lots']]) {
+    assert.ok(INDEX.includes(`${k}:"${he}"`) && INDEX.includes(`${k}:"${en}"`), k + ' is a plain string in both languages');
+  }
+  assert.match(INDEX, /ldDLots:n=>`Lots \(\$\{n\}\)`/, 'the drawer keeps its own function key');
+});
+at('"PARTIAL DETAIL" only while detail is partial: every listed tender checked and none pending → "DETAIL 100%"', () => {
+  const fn = vm.runInNewContext('(' + /const ldDetailTagK=(DC=>[^;]+);/.exec(INDEX)[1] + ')');
+  assert.equal(fn({ listed: 10649, checked: 10649, pending: 0 }), 'complete');
+  assert.equal(fn({ listed: 10649, checked: 10600, pending: 49 }), 'partial');
+  assert.equal(fn({ listed: 10, checked: 10, pending: 2 }), 'partial');
+  assert.equal(fn(null), 'partial');
+  assert.match(INDEX, /ldTagN:\{full:"FULL LIST",partial:"PARTIAL DETAIL",complete:"DETAIL 100%"/);
+  assert.match(INDEX, /PD=ldDetailTagK\(S\.detailCoverage\)/); assert.match(INDEX, /\$\{ldTag\(ldDetailTagK\(DC\)\)\} \$\{t\.ldCvDetail\(/);
+});
+at('the diligence summary never says "nothing fired" above the watch items it summarises; a STRONG-MATCH project company names its records and is "not verified"', () => {
+  const SUM = require('../lib/dd/summary.js');
+  const dev = SUM.summarize({ kind: 'developer', dd: { identity: { resolution: null, observedName: 'X' }, execution: {}, signals: [{ kind: 'watch', text: { he: 'סגירה', en: '3 site-closure notices (matched by contractor name)' } }] } });
+  const risks = dev.rows.find((r) => r.id === 'risks');
+  assert.match(risks.en, /^no risk rule fired in the sources in coverage · watch items: 1 \(3 site-closure notices \(matched by contractor name\)\) \(≠ "no risk"\)$/);
+  assert.equal(risks.cls, 'DERIVED'); assert.equal(risks.watch, 1);
+  const none = SUM.summarize({ kind: 'developer', dd: { identity: { resolution: null, observedName: 'X' }, execution: {}, signals: [] } }).rows.find((r) => r.id === 'risks');
+  assert.equal(none.cls, 'MISSING'); assert.match(none.en, /^no risk rule fired in the sources in coverage \(≠ "no risk"\)$/);
+  const proj = SUM.summarize({ kind: 'project', devDD: null, dd: { identity: { ids: { project: 'ila:1:2' } }, ladder: { furthest: null, rungs: [] } },
+    premium: { projectCompany: { state: 'STRONG_MATCH', cls: 'DERIVED', company: { name: 'Co Ltd', number: '510000001' }, whyThis: { support: [{ role: 'LAND_WINNER' }] } } } });
+  const id = proj.rows.find((r) => r.id === 'identity');
+  assert.equal(id.en, 'ila:1:2 · land winner: Co Ltd (510000001) — STRONG MATCH · project company not verified (the project may sit in an SPV)');
+  assert.match(id.he, /זוכה הקרקע: Co Ltd \(510000001\) — התאמה חזקה · חברת הפרויקט לא אומתה/);
+});
+at('one class per fact across views: name-matched site closures are DERIVED; the project stage is OFFICIAL only on the project\'s own record', () => {
+  assert.match(fs.readFileSync(path.join(ROOT, 'lib/dd/developer.js'), 'utf8'), /add\('SITE_CLOSURE_NOTICE', 'watch', 'DERIVED',[^\n]*matched by contractor name/);
+  const prj = fs.readFileSync(path.join(ROOT, 'lib/dd/project.js'), 'utf8');
+  assert.match(prj, /const stageCls = fr && fr\.evidenced && !fr\.ddEvidenced && !\/construction-progress\/\.test\(String\(fr\.source \|\| ''\)\) \? 'OFFICIAL' : 'DERIVED';\n  add\('stage', stageCls,/);
+  assert.match(fs.readFileSync(path.join(ROOT, 'lib/dd/summary.js'), 'utf8'), /const official = !!\(r && r\.evidenced && !r\.ddEvidenced && !\/construction-progress\/\.test/, 'the same rule as the summary row');
+});
+at('counts carry their unit: the construction signal says buildings in joined lots', () => {
+  const I = require('../lib/entities/intel.js');
+  const rule = (I.RULES || I.SIGNALS || []).find ? (I.RULES || I.SIGNALS).find((r) => r.id === 'CONSTRUCTION_EVIDENCE') : null;
+  const src = fs.readFileSync(path.join(ROOT, 'lib/entities/intel.js'), 'utf8');
+  assert.match(src, /`construction started on \$\{x\.construction\.started\} buildings in \$\{x\.construction\.lots\} joined lots \(\$\{x\.construction\.completed\} buildings completed\)/);
+  if (rule) assert.match(rule.text({ construction: { started: 72, completed: 68, lots: 3, asOf: '2022-01-01' } }).en, /72 buildings in 3 joined lots \(68 buildings completed\)/);
+});
+at('the stage ladder never reads a listing date as a start date, and an empty rung says it was checked', () => {
+  assert.match(INDEX, /r\.ddAsOf\?`\$\{t\.seenActive\} \$\{ddDate\(r\.ddAsOf\)\}`/);
+  assert.match(INDEX, /:`· \$\{r\.coverageNote\?"":t\.checkedNone\}`\} \$\{ddCov\(r\.coverage\)\}/);
+  assert.match(INDEX, /seenActive:"seen active",checkedNone:"checked — nothing found in:"/);
+});
+at('tender economics: ⓘ on "premium over minimum" and "vs appraisal", and the note says not a market value, not a discount', () => {
+  assert.match(INDEX, /kv\(`\$\{t\.ldDE\.prem\} \$\{xpBtn\("tender_bid_vs_minimum_appraisal"\)\}`,ldPct\(E\.premiumVsMinimum\)\)\+kv\(`\$\{t\.ldDE\.app\} \$\{xpBtn\("tender_bid_vs_minimum_appraisal"\)\}`/);
+  const T2 = X.level2('tender_bid_vs_minimum_appraisal', 'en');
+  assert.equal(T2.cls, 'DERIVED'); assert.match(T2.notAs, /Not a market value[^]*not a "discount"/);
+  assert.match(INDEX, /ldDEconNote:"Minimum and appraisal as the ILA defines them for the tender's terms — not a market value, not a discount\./);
+});
+at('the supply-universe ⓘ names as many universes as the dossier shows; evidence quality leads with its level, the number explained', () => {
+  const U = require('../lib/supply/pipeline.js').UNIVERSES;
+  assert.equal(U.length, 9);
+  assert.match(X.level1('supply_universes', 'en').short, /^Nine separate "units" universes/);
+  assert.ok(!INDEX.includes('${D.quality.score}/100'), 'no bare "95/100"');
+  assert.ok(!INDEX.includes('· <span class="num">${D.quality.score}</span>'), 'the dossier head shows the level, not a bare number');
+  assert.match(INDEX, /100 − deductions = \$\{D\.quality\.score\}; not a probability/);
+});
+at('a stale trend statement on the ticker loses its "rising" colour', () => {
+  assert.match(INDEX, /const b4=document\.querySelector\('\[data-i="blt4v"\]'\);if\(b4\)b4\.classList\.toggle\("up-t",!stale4\);/);
+});
+
 console.log(`clarity: ${n} passed`);
