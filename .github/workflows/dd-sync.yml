@@ -46,8 +46,8 @@ jobs:
 
       - name: Offline gates (must pass before any data is written)
         run: |
-          [ -f test/entities-resolve.test.js ] && node test/entities-resolve.test.js || echo 'no resolver gates yet'
-          [ -f test/dd.test.js ] && node test/dd.test.js || echo 'no dd gates yet'
+          node test/entities-resolve.test.js
+          node test/dd.test.js
 
       - name: Read the sources
         id: sync
@@ -64,7 +64,7 @@ jobs:
       - name: Gates over the written data
         if: env.MODE == 'sync'
         run: |
-          [ -f test/dd.test.js ] && node test/dd.test.js || echo 'no dd gates yet'
+          node test/dd.test.js
           node test/integrity.test.js
 
       - name: Rebuild the Market Radar
