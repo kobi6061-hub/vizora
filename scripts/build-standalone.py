@@ -74,6 +74,14 @@ geo = (ROOT / "lib" / "geo" / "boundaries.js").read_text(encoding="utf-8")
 assert "</script" not in geo.lower(), "geo boundaries must not close the script element"
 s = s.replace(TAG5, "<script>\n" + geo + "</script>", 1)
 
+# the user-evidence validator (lib/dd/userdocs.js) — pure functions; the due-diligence panel is server-only, inlined so the
+# page never requests a missing file offline
+TAG6 = '<script src="/lib/dd/userdocs.js"></script>'
+assert s.count(TAG6) == 1
+ud = (ROOT / "lib" / "dd" / "userdocs.js").read_text(encoding="utf-8")
+assert "</script" not in ud.lower(), "user-docs validator must not close the script element"
+s = s.replace(TAG6, "<script>\n" + ud + "</script>", 1)
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)
