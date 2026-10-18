@@ -690,5 +690,7 @@
       'FINAL DECISION = the economic verdict ⊕ the Market & Execution Assessment (altaris-market-assessment-v1) ⊕ evidence quality ⊕ fund gates, through rules F0–F5 only: no assessment → the economics stand; economic INSUFFICIENT → INSUFFICIENT; economic PASS → PASS (a good market never rescues weak economics); TAKE + CAUTION → TAKE WITH CONDITIONS with an explicit market condition and what would remove it; TAKE WITH CONDITIONS + CAUTION → the condition is added; STRONG / NEUTRAL → unchanged. CAUTION = ≥ 2 material negative factors from ≥ 2 independent source families; a weak / stale / model / national signal never creates CAUTION alone. The market never changes IRR, MOIC, cash flows, repayment or capital at risk.'),
   ]);
 
-  return { VERSION, POLICY, POLICY_TEXT, VERDICT, DESCRIPTOR, EVIDENCE, GROUP_LABEL, GATE_LABEL, DISCLAIMER, decide, flips, narrative, assess, t: T, fmtV };
+  /* finalOf is exported for the Live Thesis layer (altaris/thesis.js): a reassessment composes the FROZEN economic verdict with a new market &
+     execution assessment through exactly these rules — the same function the decision uses; nothing else of the policy is reachable from outside. */
+  return { VERSION, POLICY, POLICY_TEXT, VERDICT, DESCRIPTOR, EVIDENCE, GROUP_LABEL, GATE_LABEL, DISCLAIMER, decide, flips, narrative, assess, finalOf, t: T, fmtV };
 });

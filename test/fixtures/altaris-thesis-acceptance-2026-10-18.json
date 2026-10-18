@@ -1,0 +1,538 @@
+{
+ "today": "2026-10-18",
+ "later": "2026-10-25",
+ "basis": "synthetic market contexts (test inputs) over the illustrative cases — never product data; economics frozen in every reassessment",
+ "cases": [
+  {
+   "n": 1,
+   "title": "TAKE, no material changes",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": null,
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NO_MATERIAL_THESIS_CHANGE"
+  },
+  {
+   "n": 2,
+   "title": "TAKE WITH CONDITIONS, permit later verified (re-underwrite v2)",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [
+     "permit"
+    ],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "the saved deal's assumptions differ from the decision snapshot"
+   ],
+   "materiality": "DECISION_IMPACTING",
+   "rule": "TH-DEAL",
+   "decisionDelta": "DEAL_CHANGED",
+   "currentDecision": null,
+   "activeConditions": null,
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "verified building permit / construction start (HIGH)",
+    "a review of the structure's material defaults (LOW)"
+   ],
+   "retrospective": "CANNOT_DETERMINE",
+   "attention": "DEAL_CHANGED",
+   "reunderwrite": {
+    "from": "TAKE",
+    "to": "TAKE",
+    "conditionsAfter": []
+   }
+  },
+  {
+   "n": 3,
+   "title": "TAKE WITH CONDITIONS, condition unresolved",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [
+     "permit"
+    ],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": null,
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [
+    "permit"
+   ],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "verified building permit / construction start (HIGH)",
+    "a review of the structure's material defaults (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NO_MATERIAL_THESIS_CHANGE"
+  },
+  {
+   "n": 4,
+   "title": "TAKE, one weak negative signal",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-FACTOR-INFO",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 5,
+   "title": "TAKE, three high-quality negatives from independent families converge",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "new material factor: signal failed-tenders",
+    "new material factor: signal developer-concentration",
+    "new material factor: district momentum −10.5%",
+    "market & execution: NEUTRAL → CAUTION (3 material negatives from 2 families; 0 positives)"
+   ],
+   "materiality": "DECISION_IMPACTING",
+   "rule": "TH-F3",
+   "decisionDelta": "DECISION_REQUIRES_REVIEW",
+   "currentDecision": "TAKE_WITH_CONDITIONS",
+   "activeConditions": [
+    "market-caution"
+   ],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "YES",
+   "attention": "DECISION_REQUIRES_REVIEW"
+  },
+  {
+   "n": 6,
+   "title": "PASS, market improves strongly",
+   "originalDecision": "PASS",
+   "originalThesis": {
+    "economic": "PASS",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [
+     "irr"
+    ],
+    "rule": "F2"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-POS-NEW",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "PASS",
+   "activeConditions": [
+    "irr"
+   ],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an explanation of the PROPX-median vs underwriting-value gap (appraisal) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 7,
+   "title": "PASS remains PASS (economics fail)",
+   "originalDecision": "PASS",
+   "originalThesis": {
+    "economic": "PASS",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [
+     "irr",
+     "projectExposure"
+    ],
+    "rule": "F2"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-NEG-NEW",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "PASS",
+   "activeConditions": [
+    "irr",
+    "projectExposure"
+   ],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 8,
+   "title": "INSUFFICIENT EVIDENCE, key evidence later arrives (re-underwrite v2)",
+   "originalDecision": "INSUFFICIENT_EVIDENCE",
+   "originalThesis": {
+    "economic": "INSUFFICIENT_EVIDENCE",
+    "market": "NEUTRAL",
+    "evidence": "LOW",
+    "conditions": [],
+    "rule": "F1"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-POS-NEW",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "INSUFFICIENT_EVIDENCE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "finance.collateralValue (HIGH)",
+    "hybrid.realizationValue (HIGH)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION",
+   "reunderwrite": {
+    "from": "INSUFFICIENT_EVIDENCE",
+    "to": "TAKE"
+   }
+  },
+  {
+   "n": 9,
+   "title": "source revision of a historical fact",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": null,
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NO_MATERIAL_THESIS_CHANGE",
+   "revision": {
+    "id": "44,10:d-center#2",
+    "measure": "new_sold",
+    "period": "2026-07",
+    "original": 812,
+    "revised": 846,
+    "delta": 34,
+    "material": false,
+    "publishedAt": "2026-10-22",
+    "observedAt": null,
+    "source": "cbs:timeseries:44,10",
+    "cls": "OFFICIAL",
+    "rule": "TH-REVISION",
+    "retrospectiveImpact": {
+     "he": "ללא — מצב גורם המומנטום זהה; ההחלטה לא הייתה משתנה",
+     "en": "none — the momentum factor's state is the same; the decision would not have changed"
+    },
+    "impact": "NONE"
+   }
+  },
+  {
+   "n": 10,
+   "title": "stale source",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "the CBS sales series is STALE in the current read"
+   ],
+   "materiality": "RELEVANT",
+   "rule": "TH-SOURCE-STALE",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "SOURCE_ISSUE"
+  },
+  {
+   "n": 11,
+   "title": "conflicting sources",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "PROPX median × area (₪21,959,140) deviates 43% from the underwriting value (₪31,370,000)"
+   ],
+   "materiality": "RELEVANT",
+   "rule": "TH-CONFLICT",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "SOURCE_ISSUE"
+  },
+  {
+   "n": 12,
+   "title": "project execution advances (developer-level evidence)",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [
+     "permit"
+    ],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "the developer's construction evidence (MoCH): buildings 3 → 4 · started 2 → 3 · completed 1 → 1 (as of 2026-09-30)"
+   ],
+   "materiality": "RELEVANT",
+   "rule": "TH-DEV-CONSTR",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [
+    "permit"
+   ],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "verified building permit / construction start (HIGH)",
+    "a review of the structure's material defaults (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 13,
+   "title": "no later public evidence found",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-NOREAD",
+   "decisionDelta": "INSUFFICIENT_NEW_EVIDENCE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "CANNOT_DETERMINE",
+   "attention": "NOT_CHECKED"
+  },
+  {
+   "n": 14,
+   "title": "developer evidence weakens materially",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "STRONG",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "57 priced residential deals in the locality (2025-10-01 → 2026-09-30) — is no longer a material positive (context — no direction (a count or information, not directional evidence); materiality 1 — housekeeping)",
+    "signal developer-entries — not present in the current read",
+    "district momentum +32% — not present in the current read",
+    "market & execution: STRONG → NEUTRAL (0 material negatives from 0 families; 0 positives)"
+   ],
+   "materiality": "RELEVANT",
+   "rule": "TH-POS-GONE",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 15,
+   "title": "irrelevant macro change",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": "TH-MACRO",
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NEW_INFORMATION"
+  },
+  {
+   "n": 16,
+   "title": "user changes a deal assumption (re-underwrite v2)",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [
+    "the saved deal's assumptions differ from the decision snapshot"
+   ],
+   "materiality": "DECISION_IMPACTING",
+   "rule": "TH-DEAL",
+   "decisionDelta": "DEAL_CHANGED",
+   "currentDecision": null,
+   "activeConditions": null,
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "CANNOT_DETERMINE",
+   "attention": "DEAL_CHANGED",
+   "reunderwrite": {
+    "from": "TAKE",
+    "to": "TAKE",
+    "irrFrom": 0.22175587683033468,
+    "irrTo": 0.17751518029992605
+   }
+  },
+  {
+   "n": 17,
+   "title": "portfolio: one materially changed deal among 19 unchanged",
+   "portfolio": {
+    "total": 20,
+    "first": "changed",
+    "requiresReview": 1,
+    "noMaterialChange": 19
+   }
+  },
+  {
+   "n": 18,
+   "title": "old saved deal, no historical snapshot (baseline today)",
+   "originalDecision": "TAKE",
+   "originalThesis": {
+    "economic": "TAKE",
+    "market": "NEUTRAL",
+    "evidence": "HIGH",
+    "conditions": [],
+    "rule": "F5"
+   },
+   "newEvidence": [],
+   "materiality": "INFORMATIONAL",
+   "rule": null,
+   "decisionDelta": "NO_MATERIAL_THESIS_CHANGE",
+   "currentDecision": "TAKE",
+   "activeConditions": [],
+   "resolvedConditions": [],
+   "nextBestEvidence": [
+    "a review of the structure's material defaults (LOW)",
+    "an underwriting value from an independent source (appraisal / comparables / PROPX) (LOW)"
+   ],
+   "retrospective": "NO",
+   "attention": "NO_MATERIAL_THESIS_CHANGE",
+   "basis": "BASELINE_TODAY"
+  },
+  {
+   "n": 19,
+   "title": "next-best evidence: one fact removes a condition, the others cannot",
+   "ranking": [
+    "1. verified building permit / construction start — HIGH (CONDITION)",
+    "2. a review of the structure's material defaults — LOW (EVIDENCE)",
+    "3. an underwriting value from an independent source (appraisal / comparables / PROPX) — LOW (EVIDENCE)",
+    "4. מלאי: ארצי בלבד — INFORMATIONAL (NONE)"
+   ]
+  },
+  {
+   "n": 20,
+   "title": "Supabase unavailable",
+   "effect": "none — no runtime dependency; the thesis repository runs over the browser adapter",
+   "events": [
+    "BASELINE",
+    "CHECK"
+   ]
+  }
+ ]
+}
