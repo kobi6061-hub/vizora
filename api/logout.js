@@ -1,7 +1,9 @@
 // Clears the session cookie and returns to the access page. With the private-workspace identity on (PROPX_IDENTITY=on),
-// the named session is also ENDED on the server (not just forgotten by the browser) and its cookie cleared; a store
-// that does not answer within 3 s never blocks the sign-out — the identity session is bound to the perimeter session
-// just cleared, so it cannot be used again either way.
+// the named session is also ENDED on the server (not just forgotten by the browser) and its cookie cleared — when the
+// identity cookie reaches this request. It does not on a cross-site navigation (the cookie is SameSite=Strict), and a store
+// that does not answer within 3 s never blocks the sign-out; in both cases the server session stays valid until it expires
+// (≤ 8 h) for whoever still holds BOTH cookies. The page therefore ends it first with a same-origin intent POST
+// (/api/identity?op=signout) and only then follows this link (security review 19.10.2026, finding 6).
 
 const { identityConfig, redact } = require('../lib/identity/config');
 const { restAdapter } = require('../lib/identity/rest');

@@ -118,6 +118,7 @@ function invite(ctx, org, email, role) {
   ok(as(ctx, call('invite_member', { p_org: org, p_email: email, p_role: role, p_token_hash: sha(t) })), `invite ${email} as ${role}`);
   return t;
 }
+const userId = (email) => ownerVal(`(select id::text from ws.users where email = '${email}')`);
 
 // fresh database + shim + migration (as the non-superuser owner)
 {
@@ -144,14 +145,17 @@ const PADMIN = activate(T0, 'Platform Admin');
 const P = session(PADMIN);
 const PROPX_ORG = ok(as(P, call('me'))).organizations.find((o) => o.kind === 'team').id;
 
+/** a NEW identity a member (not the platform admin) creates waits for the platform admin's approval */
+const approve = (email) => ok(as(P, call('admin_approve_user', { p_user: userId(email) })), 'approve ' + email);
+const inviteNew = (ctx, org, email, role) => { const t = invite(ctx, org, email, role); approve(email); return t; };
 const A1 = activate(invite(P, PROPX_ORG, 'a1@a.test', 'viewer'), 'A One'); const cA1 = session(A1);
 const orgA = ok(as(cA1, call('create_team', { p_name: 'Org A' }))).org_id;
-const A2 = activate(invite(cA1, orgA, 'a2@a.test', 'viewer'), 'A Two'); const cA2 = session(A2);
+const A2 = activate(inviteNew(cA1, orgA, 'a2@a.test', 'viewer'), 'A Two'); const cA2 = session(A2);
 const B1 = activate(invite(P, PROPX_ORG, 'b1@b.test', 'viewer'), 'B One'); const cB1 = session(B1);
 const orgB = ok(as(cB1, call('create_team', { p_name: 'Org B' }))).org_id;
-const B2 = activate(invite(cB1, orgB, 'b2@b.test', 'analyst'), 'B Two'); const cB2 = session(B2);
-const B3 = activate(invite(cB1, orgB, 'b3@b.test', 'admin'), 'B Three'); const cB3 = session(B3);
-const B4 = activate(invite(cB1, orgB, 'b4@b.test', 'viewer'), 'B Four'); const cB4 = session(B4);
+const B2 = activate(inviteNew(cB1, orgB, 'b2@b.test', 'analyst'), 'B Two'); const cB2 = session(B2);
+const B3 = activate(inviteNew(cB1, orgB, 'b3@b.test', 'admin'), 'B Three'); const cB3 = session(B3);
+const B4 = activate(inviteNew(cB1, orgB, 'b4@b.test', 'viewer'), 'B Four'); const cB4 = session(B4);
 const NOWHERE = crypto.randomUUID();
 const snapshotB = () => ownerVal(`(select jsonb_agg(to_jsonb(m) order by m.user_id) from ws.organization_members m where m.org_id = '${orgB}')`)
   .map(({ updated_at, ...r }) => r);
@@ -385,10 +389,14 @@ at('the catalogue holds exactly the allow-listed privileges (no platform default
       union select format('%s|%s.%s|EXECUTE', r.rolname, n.nspname, p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
         cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a join pg_roles r on r.oid = a.grantee
        where n.nspname in ('ws','private') and r.rolname <> 'ws_owner'
+      union select format('%s|%s.%s(seq)|%s', coalesce(r.rolname, 'PUBLIC'), n.nspname, c.relname, a.privilege_type) from pg_class c
+        join pg_namespace n on n.oid = c.relnamespace cross join lateral aclexplode(coalesce(c.relacl, acldefault('s', c.relowner))) a
+        left join pg_roles r on r.oid = a.grantee where c.relkind = 'S' and n.nspname in ('ws','private') and coalesce(r.rolname, 'PUBLIC') <> 'ws_owner'
       union select format('%s|%s|%s', coalesce(r.rolname, 'PUBLIC'), n.nspname, a.privilege_type) from pg_namespace n
         cross join lateral aclexplode(n.nspacl) a left join pg_roles r on r.oid = a.grantee
        where n.nspname in ('ws','private') and coalesce(r.rolname, 'PUBLIC') <> 'ws_owner') t)`);
-  const tables = rows.filter((r) => !/\(col\)|EXECUTE|\|(ws|private)\|/.test(r));
+  assert.deepEqual(rows.filter((r) => /\(seq\)/.test(r)), [], 'no role holds anything on a sequence');
+  const tables = rows.filter((r) => !/\(col\)|\(seq\)|EXECUTE|\|(ws|private)\|/.test(r));
   assert.deepEqual(tables.filter((r) => !/\|SELECT$/.test(r) || !/^authenticated\|ws\./.test(r)), [], 'table grants: ' + tables.join(' '));
   const fns = rows.filter((r) => /EXECUTE$/.test(r));
   assert.ok(fns.every((r) => /^(authenticated|propx_auth)\|/.test(r)), fns.filter((r) => !/^(authenticated|propx_auth)\|/.test(r)).join(' '));
@@ -413,7 +421,7 @@ at('invitations: single-use, expire, never re-activate an existing user, never a
   assert.equal(ok(as(cB1, call('me'))).organizations.find((o) => o.id === orgA).role, 'analyst');
   ok(as(cB1, call('revoke_member', { p_org: orgA, p_user: B1 })), 'a member may leave');
   // a new user's link: single use, expiry
-  const tN = invite(cA1, orgA, 'new@a.test', 'viewer');
+  const tN = inviteNew(cA1, orgA, 'new@a.test', 'viewer');
   activate(tN, 'New User');
   denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tN), p_password_hash: 'scrypt$x', p_display_name: 'x' })), 'reused link');
   assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tN) }))), null);
@@ -441,8 +449,11 @@ at('sign-in plane: lookup only for active users, 5 failures lock for 15 minutes 
   assert.equal(ok(as(AUTH, call('auth_signin_lookup', { p_email: 'missing@m.test' }))), null);
   const l = ok(as(AUTH, call('auth_signin_lookup', { p_email: ' A1@A.TEST ' })));
   assert.equal(l.user_id, A1); assert.equal(l.locked, false); assert.match(l.password_hash, /^scrypt\$/);
-  for (let i = 0; i < 4; i++) assert.equal(ok(as(AUTH, call('auth_signin_failed', { p_user_id: A1 }))).locked, false);
-  assert.equal(ok(as(AUTH, call('auth_signin_failed', { p_user_id: A1 }))).locked, true);
+  // the failure is booked by the email as typed, and the answer is the same for every address (the server calls it on EVERY failure)
+  const answers = ['missing@m.test', 'nobody@n.test', 'a2@a.test'].map((e) => ok(as(AUTH, call('auth_signin_failed', { p_email: e }))));
+  for (const a of answers) assert.deepEqual(a, { ok: true });
+  for (let i = 0; i < 4; i++) { assert.deepEqual(ok(as(AUTH, call('auth_signin_failed', { p_email: ' A1@a.test ' }))), { ok: true }); assert.equal(ok(as(AUTH, call('auth_signin_lookup', { p_email: 'a1@a.test' }))).locked, false); }
+  assert.deepEqual(ok(as(AUTH, call('auth_signin_failed', { p_email: 'a1@a.test' }))), { ok: true });
   const locked = ok(as(AUTH, call('auth_signin_lookup', { p_email: 'a1@a.test' })));
   assert.equal(locked.locked, true); assert.equal(locked.password_hash, null);
   denied(as(AUTH, call('auth_session_open', { p_user_id: A1, p_token_hash: sha(tok()), p_perimeter_hash: perim(), p_ttl_seconds: 60 })), 'no session while locked');
@@ -462,8 +473,133 @@ at('platform administration is the platform admin\'s only; every identity action
   failsWith(as(P, call('admin_set_user_status', { p_user: PADMIN, p_status: 'disabled' })), 'self');
   const actions = ownerVal(`(select jsonb_agg(distinct action) from private.identity_events)`).sort();
   for (const a of ['bootstrap', 'activate', 'signin', 'invite', 'create_team', 'set_role', 'revoke_member', 'revoke_invitation', 'accept', 'leave',
-    'signout', 'signout_all', 'revoke_sessions', 'user_disabled', 'user_active', 'archive', 'restore', 'signin_locked']) assert.ok(actions.includes(a), a);
+    'signout', 'signout_all', 'revoke_sessions', 'user_disabled', 'user_active', 'archive', 'restore', 'signin_locked', 'approve_user']) assert.ok(actions.includes(a), a);
+  denied(as(cA1, call('admin_approve_user', { p_user: A2 })), 'approval is the platform admin\'s only');
   assert.ok(!ownerVal(`(select bool_or(detail::text ~ 'scrypt|token') from private.identity_events)`), 'no credential or token in the log');
+});
+
+/* ───────────── independent security review (19.10.2026): the confirmed findings, each a gate ───────────── */
+const C1 = activate(invite(P, PROPX_ORG, 'c1@c.test', 'viewer'), 'C One'); const cC1 = session(C1);
+const orgC = ok(as(cC1, call('create_team', { p_name: 'Org C' }))).org_id;
+const C2 = activate(invite(P, PROPX_ORG, 'c2@c.test', 'viewer'), 'C Two'); const cC2 = session(C2);
+ok(as(cC2, call('accept_invitation', { p_token_hash: sha(invite(cC1, orgC, 'c2@c.test', 'owner')) })), 'C2 joins C as a second owner');
+const memberRow = (org, email) => ownerVal(`(select to_jsonb(m) - 'invite_token_hash' from ws.organization_members m join ws.users u on u.id = m.user_id where m.org_id = '${org}' and u.email = '${email}')`);
+
+at('HIGH · a revoked inviter\'s links die with their membership: the sock-puppet owner never activates, the existing user never joins', () => {
+  const tSock = inviteNew(cC2, orgC, 'sock@evil.test', 'owner');          // approved — the attack needs nothing else
+  const tExist = invite(cC2, orgC, 'a1@a.test', 'analyst');               // an existing user, through the same inviter
+  assert.equal(ok(as(cC1, call('org_members', { p_org: orgC }))).find((m) => m.email === 'sock@evil.test').invited_by_email, 'c2@c.test', 'the remaining owner sees who invited');
+  ok(as(cC1, call('revoke_member', { p_org: orgC, p_user: C2 })));
+  for (const t of [tSock, tExist]) assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(t) }))), null, 'the link opens nothing');
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tSock), p_password_hash: 'scrypt$sock', p_display_name: 'Sock' })), 'sock activation');
+  denied(as(cA1, call('accept_invitation', { p_token_hash: sha(tExist) })), 'existing user accepts a dead link');
+  assert.equal(memberRow(orgC, 'sock@evil.test').status, 'revoked', 'the invitation itself was revoked');
+  assert.equal(memberRow(orgC, 'sock@evil.test').revoked_by, C1, 'by the actor who revoked the inviter');
+  assert.deepEqual(ok(as(cC1, call('me'))).organizations.find((o) => o.id === orgC).role, 'owner', 'C1 keeps the workspace');
+  assert.ok(ownerVal(`(select count(*) from private.identity_events where action = 'expire_invitations' and subject_user_id = '${C2}')`) >= 1, 'the expiry is in the event log');
+});
+
+at('HIGH · even without the expiry (a lost standing however it happened), an invitation activates / is accepted only while its inviter stands', () => {
+  ok(as(cC2, call('accept_invitation', { p_token_hash: sha(invite(cC1, orgC, 'c2@c.test', 'owner')) })), 'C2 back as owner');
+  const tSock = invite(cC2, orgC, 'sock@evil.test', 'owner');             // re-invite the (approved, never activated) identity
+  const tExist = invite(cC2, orgC, 'a1@a.test', 'analyst');
+  const raw = (sql) => { const r = psql(SUPER, `set session_replication_role = replica; ${sql}`); assert.ok(r.ok, r.err); };
+  raw(`update ws.organization_members set status = 'revoked', revoked_at = now() where org_id = '${orgC}' and user_id = '${C2}';`);   // no expiry path ran
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tSock), p_password_hash: 'scrypt$sock', p_display_name: 'Sock' })), 'inviter revoked');
+  denied(as(cA1, call('accept_invitation', { p_token_hash: sha(tExist) })), 'inviter revoked (accept)');
+  raw(`update ws.organization_members set status = 'active', revoked_at = null where org_id = '${orgC}' and user_id = '${C2}';`);
+  raw(`update ws.organization_members set role = 'admin' where org_id = '${orgC}' and user_id = '${C2}';`);                  // an admin may not have sent an owner link
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tSock), p_password_hash: 'scrypt$sock', p_display_name: 'Sock' })), 'inviter demoted below the role');
+  assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tExist) }))).role, 'analyst', 'an admin\'s analyst link still stands');
+  raw(`update ws.organization_members set role = 'owner' where org_id = '${orgC}' and user_id = '${C2}';`);
+  raw(`update ws.users set status = 'disabled' where id = '${C2}';`);
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tSock), p_password_hash: 'scrypt$sock', p_display_name: 'Sock' })), 'inviter disabled');
+  raw(`update ws.users set status = 'active' where id = '${C2}';`);
+  ok(as(cC1, call('revoke_invitation', { p_org: orgC, p_user: userId('sock@evil.test') })));
+  ok(as(cC1, call('revoke_invitation', { p_org: orgC, p_user: A1 })));
+});
+
+at('HIGH · demoting or disabling the inviter revokes their links above the new standing; re-enabling does not revive them', () => {
+  const cC2b = session(C2);
+  const tAdm = inviteNew(cC2b, orgC, 'adm@c.test', 'admin');
+  const tAn = inviteNew(cC2b, orgC, 'an@c.test', 'analyst');
+  ok(as(cC1, call('set_member_role', { p_org: orgC, p_user: C2, p_role: 'admin' })));
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tAdm), p_password_hash: 'scrypt$x', p_display_name: 'x' })), 'owner → admin: the admin link died');
+  assert.equal(memberRow(orgC, 'adm@c.test').status, 'revoked');
+  assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tAn) }))).role, 'analyst', 'the analyst link an admin may send stands');
+  ok(as(P, call('admin_set_user_status', { p_user: C2, p_status: 'disabled' })));
+  assert.equal(memberRow(orgC, 'an@c.test').status, 'revoked', 'disabled: every link they sent is revoked');
+  assert.equal(memberRow(orgC, 'an@c.test').revoked_by, null, 'by the platform admin, who is not a member of C (never attributed to someone outside)');
+  ok(as(P, call('admin_set_user_status', { p_user: C2, p_status: 'active' })));
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tAn), p_password_hash: 'scrypt$x', p_display_name: 'x' })), 're-enabled: still dead');
+});
+
+at('MEDIUM · no member can claim an address for someone else: a new identity waits for the platform admin, and only the creating workspace\'s link activates it', () => {
+  // §1: a VIEWER creates a team and invites the CEO's address
+  const cA2c = session(A2);
+  const orgX = ok(as(cA2c, call('create_team', { p_name: 'Squat' }))).org_id;
+  const tSq = invite(cA2c, orgX, 'ceo@corp.test', 'viewer');
+  const peek = ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tSq) })));
+  assert.deepEqual([peek.needs_activation, peek.pending_approval], [true, true]);
+  failsWith(as(AUTH, call('auth_activate', { p_token_hash: sha(tSq), p_password_hash: 'scrypt$attacker', p_display_name: 'CEO' })), 'pending_approval');
+  assert.equal(ownerVal(`(select status from ws.users where email = 'ceo@corp.test')`), 'invited');
+  const row = ok(as(P, call('admin_users'))).find((u) => u.email === 'ceo@corp.test');
+  assert.deepEqual([row.approved, row.origin_org_name, row.origin_invited_by_email], [false, 'Squat', 'a2@a.test'], 'the platform admin sees what to decide on');
+  // §2: org B invites a new hire as OWNER; the attacker invites the same address and would activate first
+  const tB = invite(cB1, orgB, 'newhire@b.test', 'owner');
+  const tAtt = invite(cA2c, orgX, 'newhire@b.test', 'viewer');
+  approve('newhire@b.test');
+  assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tAtt) }))).needs_activation, false, 'the attacker\'s link did not create the identity');
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tAtt), p_password_hash: 'scrypt$attacker', p_display_name: 'x' })), 'the attacker\'s link never sets the password');
+  const NH = activate(tB, 'New Hire');
+  assert.equal(ownerVal(`(select password_hash from private.user_credentials where user_id = '${NH}')`), 'scrypt$test$New Hire');
+  // an unapproved identity also cannot be activated through ANOTHER workspace's link once approved
+  const tOther = invite(cB1, orgB, 'ceo@corp.test', 'viewer');
+  approve('ceo@corp.test');
+  denied(as(AUTH, call('auth_activate', { p_token_hash: sha(tOther), p_password_hash: 'scrypt$b', p_display_name: 'x' })), 'not the creating workspace');
+  // look-alike addresses are refused, not made into a second identity
+  for (const e of ['ceo​@corp.test', 'сeo@corp.test', 'ceo@corp.tеst']) failsWith(as(cB1, call('invite_member', { p_org: orgB, p_email: e, p_role: 'viewer', p_token_hash: sha(tok()) })), 'invalid_email', JSON.stringify(e));
+  // the platform admin's own invitations are approved at once
+  const tP = invite(P, PROPX_ORG, 'direct@propx.test', 'viewer');
+  assert.equal(ok(as(AUTH, call('auth_invite_peek', { p_token_hash: sha(tP) }))).pending_approval, false);
+});
+
+at('MEDIUM · the member list never reveals the account behind an invited address (name, state, or whether it exists)', () => {
+  invite(cA1, orgA, 'b2@b.test', 'viewer');                 // exists, active, has a name
+  invite(cA1, orgA, 'never@seen.test', 'viewer');           // does not exist
+  const rows = ok(as(cA1, call('org_members', { p_org: orgA })));
+  const known = rows.find((m) => m.email === 'b2@b.test'), unknown = rows.find((m) => m.email === 'never@seen.test');
+  const shape = (m) => ({ ...m, user_id: '', email: '', invited_at: '', invite_expires_at: '' });
+  assert.deepEqual(shape(known), shape(unknown), 'an invited row reads the same for a known and an unknown address');
+  assert.equal(known.display_name, null); assert.equal(known.user_status, null);
+  const active = rows.find((m) => m.email === 'a1@a.test');
+  assert.equal(active.display_name, 'A One', 'a member who joined is shown by name');
+});
+
+at('LOW · an owner who is a disabled user does not count: the last usable owner cannot step down (functions and the commit-time check)', () => {
+  // orgC: owners C1 and C2; disable C2
+  ok(as(cC1, call('set_member_role', { p_org: orgC, p_user: C2, p_role: 'owner' })));
+  ok(as(P, call('admin_set_user_status', { p_user: C2, p_status: 'disabled' })));
+  failsWith(as(cC1, call('set_member_role', { p_org: orgC, p_user: C1, p_role: 'admin' })), 'last_owner');
+  failsWith(as(cC1, call('revoke_member', { p_org: orgC, p_user: C1 })), 'last_owner');
+  const r = owner(`update ws.organization_members set role = 'admin' where org_id = '${orgC}' and user_id = '${C1}';`);
+  assert.ok(!r.ok && /last_owner/.test(r.err), 'commit-time check: ' + r.err);
+  ok(as(P, call('admin_set_user_status', { p_user: C2, p_status: 'active' })));
+  ok(as(cC1, call('set_member_role', { p_org: orgC, p_user: C1, p_role: 'admin' })), 'with a usable second owner, stepping down is allowed again');
+  ok(as(session(C2), call('set_member_role', { p_org: orgC, p_user: C1, p_role: 'owner' })));
+});
+
+at('INFO · objects created later start closed: a new function, table and sequence in ws grant nothing to any API role', () => {
+  const r = owner(`begin;
+    create function ws.zz_probe() returns int language sql as 'select 1';
+    create table ws.zz_probe_t (id bigint generated always as identity primary key);
+    select '@@' || jsonb_build_object(
+      'fn', (select bool_or(has_function_privilege(r, 'ws.zz_probe()', 'execute')) from unnest(array['anon','authenticated','service_role','propx_auth']) r),
+      'tbl', (select bool_or(has_table_privilege(r, 'ws.zz_probe_t', 'select,insert,update,delete')) from unnest(array['anon','authenticated','service_role','propx_auth']) r),
+      'seq', (select bool_or(has_sequence_privilege(r, 'ws.zz_probe_t_id_seq', 'usage,select,update')) from unnest(array['anon','authenticated','service_role','propx_auth']) r))::text;
+    rollback;`);
+  assert.ok(r.ok, r.err);
+  assert.deepEqual(JSON.parse(r.out.split('\n').find((l) => l.startsWith('@@')).slice(2)), { fn: false, tbl: false, seq: false });
 });
 
 at('bootstrap runs once', () => {

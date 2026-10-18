@@ -126,7 +126,7 @@ const valueOf = (sc) => sc && /^[^=]+=([^;]*)/.exec(sc)[1];
     assert.equal(b64json(init.headers.authorization.split(' ')[1].split('.')[1]).role, 'authenticated');
     await assert.rejects(() => db.rpc('auth_x', {}, { role: 'propx_auth' }), /unknown function/);
     await assert.rejects(() => db.rpc('me', {}, { role: 'service_role' }), /refused role/);
-    assert.equal(FUNCTIONS.size, 20);
+    assert.equal(FUNCTIONS.size, 21);
     const src = ['lib/identity/rest.js', 'lib/identity/service.js', 'lib/identity/config.js', 'api/identity.js', 'api/logout.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
     assert.ok(!/SUPABASE_SERVICE_ROLE_KEY|service_role'|storeConfig|SUPABASE_URL\b(?!.*same-project)/.test(src.replace(/\/\/.*$/gm, '')), 'the identity code never reads the public store settings or a service key');
   });
@@ -158,6 +158,32 @@ const valueOf = (sc) => sc && /^[^=]+=([^;]*)/.exec(sc)[1];
     assert.equal(touched, 0, 'refused before the store');
     assert.equal((await call(h, { method: 'DELETE' })).status, 405);
     assert.equal((await call(h, { url: '/api/identity?op=signin' })).status, 404, 'a POST operation is not reachable by GET');
+  });
+
+  await at('security review (19.10.2026): sign-in makes the SAME store calls for every failure; operation names are own names only; a bad link never costs a scrypt', async () => {
+    const log = [];
+    const spy = (looked) => ({ rpc: async (fn, args) => { log.push(fn); if (fn === 'auth_signin_lookup') return { ok: true, value: looked }; if (fn === 'auth_invite_peek') return { ok: true, value: null }; return { ok: true, value: { ok: true } }; } });
+    const known = { user_id: crypto.randomUUID(), locked: false, password_hash: await PW.hash('the right passphrase') };
+    const runs = [];
+    for (const looked of [null, known, { ...known, locked: true, password_hash: null }]) {
+      log.length = 0;
+      const r = await call(createHandler({ adapter: spy(looked), env: ENV_ON }), { method: 'POST', url: '/api/identity?op=signin', body: { email: 'x@y.test', password: 'a wrong passphrase' }, cookie: 'kobix_session=1.a' });
+      assert.deepEqual([r.status, r.body.error], [401, 'signin_failed']);
+      runs.push(log.join(','));
+    }
+    assert.deepEqual(runs, Array(3).fill('auth_signin_lookup,auth_signin_failed'), 'unknown · wrong password · locked: identical calls');
+    const svc = fs.readFileSync(path.join(ROOT, 'lib/identity/service.js'), 'utf8');
+    assert.match(svc, /await db\.rpc\('auth_signin_failed', \{ p_email: email \}, AUTH\);/);
+    const h = createHandler({ adapter: spy(null), env: ENV_ON });
+    for (const op of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+      assert.equal((await call(h, { method: 'POST', url: '/api/identity?op=' + op, body: {}, cookie: 'kobix_session=1.a' })).status, 404, op);
+      assert.equal((await call(h, { url: '/api/identity?op=' + op })).status, 404, 'GET ' + op);
+    }
+    log.length = 0;
+    const r = await call(h, { method: 'POST', url: '/api/identity?op=activate', body: { token: 'A'.repeat(43), password: 'a fine long passphrase', displayName: 'X' }, cookie: 'kobix_session=1.a' });
+    assert.deepEqual([r.status, r.body.error, log.join(',')], [403, 'invite_invalid', 'auth_invite_peek'], 'the link is checked before any password is hashed');
+    const adapter = fs.readFileSync(path.join(ROOT, 'scripts/identity-psql-adapter.js'), 'utf8');
+    assert.ok(/\\\\bind/.test(adapter) && /\\\\getenv/.test(adapter) && !/replace\(\/'\/g/.test(adapter), 'the test adapter binds every value (no value in the statement text)');
   });
 
   /* ───────────── end to end against the private migration ───────────── */
@@ -195,7 +221,7 @@ const valueOf = (sc) => sc && /^[^=]+=([^;]*)/.exec(sc)[1];
 
   await at('activation through the invitation link: the link opens what it is for; a weak password is refused; then a signed-in session', async () => {
     const info = await post(admin, 'invite-info', { token: T0 });
-    assert.deepEqual({ ...info.body.invite, expiresAt: 0 }, { orgName: 'PROPX', role: 'owner', email: 'admin@propx.test', needsActivation: true, expiresAt: 0 });
+    assert.deepEqual({ ...info.body.invite, expiresAt: 0 }, { orgName: 'PROPX', role: 'owner', email: 'admin@propx.test', needsActivation: true, pendingApproval: false, expiresAt: 0 });
     assert.equal((await post(admin, 'activate', { token: T0, password: 'short', displayName: 'Admin' })).body.error, 'password_too_short');
     assert.equal((await post(admin, 'invite-info', { token: 'A'.repeat(43) })).status, 404);
     const act = await post(admin, 'activate', { token: T0, password: 'admin passphrase 1', displayName: 'Platform Admin' });
@@ -316,6 +342,26 @@ const valueOf = (sc) => sc && /^[^=]+=([^;]*)/.exec(sc)[1];
     assert.equal((await post(admin, 'invite', { org: team, email: 'z@z.test', role: 'viewer' })).body.error, 'archived');
     assert.equal((await post(admin, 'archive', { org: team, archived: false })).status, 200);
     assert.equal((await post(admin, 'set-role', { org: 'not-a-uuid', user: uid, role: 'viewer' })).body.error, 'invalid_input');
+  });
+
+  await at('a NEW identity a non-admin creates waits for the platform admin: the link says so, activation is refused until approved, then works', async () => {
+    const b = browser();
+    await post(b, 'signin', { email: 'analyst@example.test', password: 'analyst passphrase' });
+    const team = (await post(b, 'create-team', { name: 'Analyst Team' })).body.result.org_id;
+    const inv = await post(b, 'invite', { org: team, email: 'colleague@example.test', role: 'viewer' });
+    assert.equal(inv.status, 200, JSON.stringify(inv.body));
+    const t = tokenOf(inv.body.invite.link);
+    assert.deepEqual((({ needsActivation, pendingApproval }) => ({ needsActivation, pendingApproval }))((await post(browser(), 'invite-info', { token: t })).body.invite), { needsActivation: true, pendingApproval: true });
+    const c = browser();
+    assert.deepEqual((await post(c, 'activate', { token: t, password: 'colleague passphrase', displayName: 'Col League' })).body, { ok: false, error: 'pending_approval' });
+    const pending = (await get(admin, 'op=admin-users')).body.result.find((u) => u.email === 'colleague@example.test');
+    assert.deepEqual([pending.approved, pending.origin_org_name, pending.origin_invited_by_email], [false, 'Analyst Team', 'analyst@example.test']);
+    assert.equal((await post(b, 'admin-approve-user', { user: pending.id })).status, 403, 'only the platform admin approves');
+    assert.equal((await post(admin, 'admin-approve-user', { user: pending.id })).status, 200);
+    assert.equal((await post(c, 'activate', { token: t, password: 'colleague passphrase', displayName: 'Col League' })).status, 200);
+    assert.ok((await get(c, 'op=status')).body.organizations.some((o) => o.id === team && o.role === 'viewer'));
+    const members = (await get(b, 'op=members&org=' + team)).body.result;
+    assert.equal(members.find((m) => m.email === 'colleague@example.test').invited_by_email, 'analyst@example.test');
   });
 
   await at('logout ends the named session on the server and clears both cookies', async () => {

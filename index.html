@@ -9589,7 +9589,9 @@ he:{chipOut:"סביבת עבודה",chipTitle:"סביבת עבודה פרטית 
   done:{activated:"החשבון הופעל — אתם מחוברים.",accepted:"ההזמנה התקבלה.",signedin:"נכנסתם.",signedout:"יצאתם מסביבת העבודה.",signoutAll:"כל הכניסות הסתיימו.",
     created:"הצוות נוצר — אתם הבעלים.",saved:"נשמר.",removed:"הוסר.",invited:"קישור ההזמנה נוצר."},
   loading:"טוען…",back:"חזרה",
-  err:{denied:"אין הרשאה לפעולה הזו.",signin_failed:"הכניסה נכשלה: דוא״ל או סיסמה שגויים, או שהחשבון נעול זמנית אחרי ניסיונות כושלים.",
+  pendingT:"החשבון ממתין לאישור מנהל המערכת — אחרי האישור, אותו קישור יפעיל אותו.",invitedBy:"הוזמן על ידי",
+  approve:"אישור החשבון",pendingApproval:"ממתין לאישור",createdIn:"נוצר בסביבה",
+  err:{denied:"אין הרשאה לפעולה הזו.",pending_approval:"החשבון ממתין לאישור מנהל המערכת.",signin_failed:"הכניסה נכשלה: דוא״ל או סיסמה שגויים, או שהחשבון נעול זמנית אחרי ניסיונות כושלים.",
     invite_invalid:"הקישור אינו בתוקף (כבר נוצל, פג, בוטל, או מיועד לחשבון אחר).",password_too_short:"הסיסמה קצרה מדי — 12 תווים לפחות.",
     password_too_weak:"הסיסמה חלשה מדי.",password_too_long:"הסיסמה ארוכה מדי.",mismatch:"הסיסמאות אינן זהות.",invalid_name:"יש להזין שם (עד 120 תווים).",
     invalid_email:"כתובת הדוא״ל אינה תקינה.",invalid_role:"תפקיד לא מוכר.",last_owner:"לכל סביבת עבודה נשאר לפחות בעלים פעיל אחד — מנו בעלים נוסף קודם.",
@@ -9620,7 +9622,9 @@ en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"
   done:{activated:"Account activated — you are signed in.",accepted:"Invitation accepted.",signedin:"Signed in.",signedout:"Signed out of the workspace.",signoutAll:"Every sign-in ended.",
     created:"Team created — you are its owner.",saved:"Saved.",removed:"Removed.",invited:"Invitation link created."},
   loading:"Loading…",back:"Back",
-  err:{denied:"You do not have permission for this.",signin_failed:"Sign-in failed: wrong email or password, or the account is temporarily locked after failed attempts.",
+  pendingT:"This account waits for the platform administrator's approval — once approved, the same link activates it.",invitedBy:"invited by",
+  approve:"Approve account",pendingApproval:"awaiting approval",createdIn:"created in",
+  err:{denied:"You do not have permission for this.",pending_approval:"This account waits for the platform administrator's approval.",signin_failed:"Sign-in failed: wrong email or password, or the account is temporarily locked after failed attempts.",
     invite_invalid:"This link is not valid (already used, expired, cancelled, or meant for another account).",password_too_short:"The password is too short — at least 12 characters.",
     password_too_weak:"The password is too weak.",password_too_long:"The password is too long.",mismatch:"The passwords do not match.",invalid_name:"Enter a name (up to 120 characters).",
     invalid_email:"The email address is not valid.",invalid_role:"Unknown role.",last_owner:"Every workspace keeps at least one active owner — appoint another owner first.",
@@ -9701,6 +9705,7 @@ function wsInviteHTML(){
   const t=wsT(),I=wsState.inviteInfo,S=wsState.st||{};
   if(!I)return `<div class="ho-dsec"><h4>${t.inviteT}</h4><p class="ho-msg">${wsState.inviteErr?wsE(wsErr(wsState.inviteErr)):t.loading}</p>${wsState.inviteErr?`<div class="ws-row"><button type="button" class="ws-btn" data-wsact="main">${t.back}</button></div>`:""}</div>`;
   const what=`<p><b>${t.inviteTo(wsE(I.orgName),wsE(wsRole(I.role)))}</b></p><p class="ho-note">${t.inviteFor} <bdi dir="ltr">${wsE(I.email)}</bdi> · ${t.until} ${wsWhen(I.expiresAt,true)}</p>`;
+  if(I.needsActivation&&I.pendingApproval)return `<div class="ho-dsec"><h4>${t.inviteT}</h4>${what}<p class="ho-msg">${t.pendingT}</p></div>`;
   if(I.needsActivation)return `<div class="ho-dsec"><h4>${t.inviteT}</h4>${what}<form class="ws-form" data-wsform="activate">
     <label>${t.name}<input name="displayName" autocomplete="name" required maxlength="120"></label>
     <label>${t.password} <span class="ho-na">(${t.pwHint})</span><input type="password" name="password" autocomplete="new-password" required minlength="12" dir="ltr"></label>
@@ -9722,7 +9727,7 @@ function wsOrgHTML(){
       const lastOwner=m.role==="owner"&&!M.some(x=>x.user_id!==m.user_id&&x.role==="owner"&&x.status==="active");
       if(self&&team&&m.status==="active"&&!lastOwner)act.push(`<button type="button" class="ws-btn" data-wsact="leave" data-wsuser="${wsE(m.user_id)}">${t.leave}</button>`);
       const roleCell=m.status==="active"&&canManage(m)&&!frozen&&(owner||m.role!=="admin")?sel(m):`<span class="ws-role ${m.role}">${wsE(wsRole(m.role))}</span>`;
-      return `<tr><td><bdi dir="ltr">${wsE(m.email)}</bdi>${m.display_name?`<div class="ho-na">${wsE(m.display_name)}</div>`:""}</td><td>${roleCell}</td><td>${wsE(t.statuses[m.status]||m.status)}${m.status==="invited"&&m.invite_expires_at?`<div class="ho-na">${t.until} ${wsWhen(m.invite_expires_at)}</div>`:""}</td><td>${act.join(" ")}</td></tr>`}).join(""):"";
+      return `<tr><td><bdi dir="ltr">${wsE(m.email)}</bdi>${m.display_name?`<div class="ho-na">${wsE(m.display_name)}</div>`:""}</td><td>${roleCell}</td><td>${wsE(t.statuses[m.status]||m.status)}${m.status==="invited"&&m.invite_expires_at?`<div class="ho-na">${t.until} ${wsWhen(m.invite_expires_at)}</div>`:""}${m.status==="invited"&&m.invited_by_email?`<div class="ho-na">${t.invitedBy} <bdi dir="ltr">${wsE(m.invited_by_email)}</bdi></div>`:""}</td><td>${act.join(" ")}</td></tr>`}).join(""):"";
   const table=M?`<div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.role}</th><th>${t.status}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="ho-msg">${t.loading}</p>`;
   const link=wsState.link?`<div class="ws-msg ok" role="status">${t.linkOnce} ${wsWhen(wsState.link.expiresAt,true)}<div class="ws-link"><input readonly value="${wsE(wsState.link.link)}" aria-label="${t.inviteBtn}"><button type="button" class="ws-btn" data-wsact="copy">${t.copy}</button></div></div>`:"";
   const inv=manager&&team&&!frozen?`<form class="ws-row" data-wsform="invite"><input type="email" name="email" required placeholder="${t.email}" aria-label="${t.email}" dir="ltr"><select name="role" aria-label="${t.role}">${roleOpts.slice().reverse().map(r=>`<option value="${r}">${wsE(wsRole(r))}</option>`).join("")}</select><button class="ws-btn pri" type="submit">${t.inviteBtn}</button></form>${link}`:"";
@@ -9731,8 +9736,8 @@ function wsOrgHTML(){
 }
 function wsAdminHTML(){
   const t=wsT(),A=wsState.admin,S=wsState.st;if(!A)return"";
-  const rows=A.map(u=>`<tr><td><bdi dir="ltr">${wsE(u.email)}</bdi>${u.display_name?`<div class="ho-na">${wsE(u.display_name)}</div>`:""}</td><td>${wsE(t.userStatus[u.status]||u.status)}</td><td class="num">${fmtInt(u.live_sessions)}</td><td class="num">${fmtInt(u.organizations)}</td>
-    <td>${u.id===S.user.id?"":`${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>`}</td></tr>`).join("");
+  const rows=A.map(u=>`<tr><td><bdi dir="ltr">${wsE(u.email)}</bdi>${u.display_name?`<div class="ho-na">${wsE(u.display_name)}</div>`:""}</td><td>${wsE(t.userStatus[u.status]||u.status)}${u.status==="invited"&&!u.approved?`<div class="ho-na">${t.pendingApproval} · ${t.createdIn} ${wsE(u.origin_org_name||"—")} · ${t.invitedBy} <bdi dir="ltr">${wsE(u.origin_invited_by_email||"—")}</bdi></div>`:""}</td><td class="num">${fmtInt(u.live_sessions)}</td><td class="num">${fmtInt(u.organizations)}</td>
+    <td>${u.id===S.user.id?"":`${u.status==="invited"&&!u.approved?`<button type="button" class="ws-btn pri" data-wsact="approve" data-wsuser="${wsE(u.id)}">${t.approve}</button> `:""}${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>`}</td></tr>`).join("");
   return `<div class="ho-dsec"><h4>${t.admin}</h4><div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.status}</th><th>${t.liveSessions}</th><th>${t.orgCount}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function wsMainHTML(){
@@ -9799,11 +9804,16 @@ function initWorkspace(){
     if(conf&&!confirm(conf))return;
     const call={"revoke-member":["revoke-member",{org:wsState.org,user:u}],leave:["revoke-member",{org:wsState.org,user:u}],"revoke-invite":["revoke-invite",{org:wsState.org,user:u}],
       archive:["archive",{org:wsState.org,archived:b.dataset.wsarch==="1"}],disable:["admin-user-status",{user:u,status:"disabled"}],enable:["admin-user-status",{user:u,status:"active"}],
-      "revoke-sessions":["admin-revoke-sessions",{user:u}]}[a];
+      "revoke-sessions":["admin-revoke-sessions",{user:u}],approve:["admin-approve-user",{user:u}]}[a];
     if(!call)return;
-    const r=await wsDo(call[0],call[1],a==="archive"||a==="enable"?t.done.saved:t.done.removed);if(r)await wsRefreshAll();
+    const r=await wsDo(call[0],call[1],a==="archive"||a==="enable"||a==="approve"?t.done.saved:t.done.removed);if(r)await wsRefreshAll();
   });
   for(const id of ["langHe","langEn"])el(id).addEventListener("click",()=>{wsChip();wsRender()});
+  /* the site's sign-out link first ends the named session with a same-origin intent POST (the server revokes it), then follows
+     the link as before (which clears both cookies) — a cross-site navigation to the link never carries the identity cookie */
+  document.addEventListener("click",async e=>{const a=e.target.closest('a[data-ia="logout"]');
+    if(!a||!wsState.enabled||!(wsState.st&&wsState.st.signedIn)||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;
+    e.preventDefault();await wsCall("signout",{});location.href=a.getAttribute("href")});
   wsLoad();
 }
 initWorkspace();

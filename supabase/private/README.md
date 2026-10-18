@@ -8,7 +8,7 @@ sessions. It is a different project from the one the public `market` schema (`su
 |---|---|
 | **Migration** | `migrations/20261019120000_identity_foundation.sql` (schemas `ws` + `private`, role `propx_auth`) |
 | **Test harness** | `test/supabase-roles-shim.sql`. TEST ONLY: the Supabase roles on a throwaway PostgreSQL 16, with deliberately permissive defaults. |
-| **Isolation gate** | `test/private-identity.test.js` (28 gates, the HARD BLOCKER) and `test/identity.test.js` (server flows), both run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
+| **Isolation gate** | `test/private-identity.test.js` (35 gates, the HARD BLOCKER) and `test/identity.test.js` (server flows, 18), both run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
 | **Server** | `lib/identity/*`, `api/identity.js`, `api/logout.js` |
 | **Activation check** | `scripts/identity-verify.js`, also run by `.github/workflows/identity-verify.yml`. Read-only. |
 | **Status** | NOT ACTIVATED. Production runs with `PROPX_IDENTITY` unset, so the feature is off. |
@@ -52,8 +52,28 @@ Additional rules:
 - Every workspace with an active member keeps **at least one active OWNER**. This is checked in the functions, and
   checked again at commit by a deferred constraint trigger.
 - A **revocation takes effect on the next request**. Every read checks the membership again in the database.
-- **Platform administrator** (the bootstrap user) can list users, disable or re-enable a user, and end all of a user's
-  sessions. It refuses to disable the sole active owner of a team that still has other members.
+- **Platform administrator** (the bootstrap user) can list users, approve a new identity, disable or re-enable a user,
+  and end all of a user's sessions. It refuses to disable the sole active owner of a team that still has other members.
+- An owner who is a **disabled user** does not count as an owner: the last usable owner cannot step down.
+
+## Invitations and new identities
+
+- **An invitation is only as good as its inviter's standing.** A link activates, or is accepted, only while the inviter
+  is still an active member, an active user, and senior enough for the role it grants (admin for analyst / viewer, owner
+  for admin / owner). Revoking, demoting or disabling the inviter also revokes the links they had sent, and re-enabling
+  them does not bring those links back. The member list shows who sent each pending invitation.
+- **A new identity belongs to the workspace that created it.** Inviting an address with no account creates the identity
+  in that workspace (`origin_org`). Only that workspace's link can activate it: another workspace's invitation of the
+  same address waits until the person has activated and signed in, and is then accepted like any other.
+- **New identities need the platform administrator's approval.** One the platform administrator invites is approved at
+  creation. One any other member creates waits: the link says so, and activation answers `pending_approval` until the
+  platform administrator approves it in the users list. That list shows the address, the workspace that created it and
+  who invited it. So no member can claim an address for someone else.
+- **Addresses are printable ASCII only**, so a zero-width character or a look-alike letter cannot create a second
+  identity for the "same" address.
+- **The member list never shows the account behind an invited address.** A row that never joined shows only what the
+  workspace wrote: email, role, status, dates and who invited. It never shows the name, the account state, or whether
+  the address already had an account.
 
 ## Trust boundary
 
@@ -117,7 +137,9 @@ How each attack is refused:
 | fixation | every sign-in and activation mints a new session id and secret, and ends the one that browser held |
 | stolen identity cookie alone | bound to the perimeter session it was issued with (`ph`) |
 | login CSRF / cross-site writes | every POST needs `x-propx-intent: 1`, JSON and same origin (`Origin`, `Sec-Fetch-Site`); the cookie is `SameSite=Strict`; and the perimeter cookie (`SameSite=Lax`) is not sent on a cross-site POST, so the gate redirects first |
-| password guessing | 5 failures in a row lock the account for 15 minutes; one answer for unknown email, wrong password and locked account; an unknown email is checked against a dummy scrypt hash |
+| password guessing | 5 failures in a row lock the account for 15 minutes; one answer for unknown email, wrong password and locked account; an unknown email is checked against a dummy scrypt hash, built before the first lookup; every failure makes the same store call (`auth_signin_failed`, keyed by the address as typed), so the number of calls says nothing about the address |
+| sign-out through a cross-site link | the page ends the named session with a same-origin intent POST, then follows the logout link; the link alone revokes it only when the identity cookie arrives (never on a cross-site navigation, since the cookie is `SameSite=Strict`) |
+| a made-up activation link | it is checked against the store before the password is hashed, so it never costs a scrypt |
 
 ## Two documented choices that differ from the STEP 1 audit proposal
 
@@ -164,7 +186,10 @@ switching to the custom role named in the token's `role` claim. It could not be 
 
 If the project's signing setup no longer accepts a server-minted HS256 token, the fallback changes **only the
 adapter** (`lib/identity/rest.js`): a server-side Postgres connection that runs `SET LOCAL ROLE` plus
-`request.jwt.claims`. That is exactly how the isolation gate exercises the schema. The SQL rules do not move.
+`request.jwt.claims`. That is exactly how the isolation gate exercises the schema. The SQL rules do not move. Such an
+adapter **must bind every value as a parameter**, never put it in the statement text, so a failed call never writes a
+password or token hash to the database log. The local test adapter (`scripts/identity-psql-adapter.js`) does this with
+psql's `\getenv` + `\bind`.
 
 `PROPX_WS_JWT_SECRET` is master-equivalent for this project. It lives only in the Vercel server environment, and the
 code mints only the two roles above. A unit gate checks this: `service_role`, `anon`, `postgres` and the rest are
@@ -209,6 +234,22 @@ refused.
 - The private project is not contacted.
 - No browser-local state is touched.
 - Logout keeps working.
+
+**Future objects start closed.** The migration also revokes the role-wide default privileges of the role that applies it
+(no `IN SCHEMA`, the only form that also takes back PostgreSQL's built-in EXECUTE for PUBLIC). Any function, table,
+sequence or schema a later migration creates grants nothing until that migration grants it explicitly. A gate proves it
+with a probe function, table and sequence.
+
+## Known residuals (accepted for this step)
+
+- **The link holder learns one thing.** It learns whether this invitation created the identity (`needs_activation`),
+  and so whether the address already had an account before. The inviter holds the link too.
+- **An identity can get stuck.** If the creating workspace revokes the invitation, or is archived, before activation,
+  the identity can only be activated after that workspace re-invites it.
+- **An insider can keep an account locked.** The lock is per account, with no per-client component, so anyone behind
+  the site password can keep another account locked by failing its sign-in.
+- **An unused invitation link stays in browser history** for its 72 hours. The page strips it from the address bar. It
+  is single-use, and the site password comes first.
 
 ## Not in this step
 

@@ -36,8 +36,14 @@
   revocation / disabled user end it at once), 120-second HS256 tokens minted only for `authenticated` / `propx_auth`, POSTs need
   `x-propx-intent: 1` + JSON + same origin. KILL SWITCH `PROPX_IDENTITY=on` (default OFF: status `{enabled:false}`, the page shows
   nothing). The page's workspace chip / drawer live between `ws:begin` / `ws:end` markers that the offline build strips. Nothing from
-  the browser (`propx:dd:docs:v1`, `altaris:*`, watchlists) is imported. The two-organization isolation gate (28) runs on a throwaway
-  PostgreSQL 16 in CI — HARD BLOCKER before any activation. NOT ACTIVATED (see `supabase/private/README.md`).
+  the browser (`propx:dd:docs:v1`, `altaris:*`, watchlists) is imported. The two-organization isolation gate (35) runs on a throwaway
+  PostgreSQL 16 in CI — HARD BLOCKER before any activation. Independent security review (19.10.2026) fixed: an invitation activates /
+  is accepted only while its inviter still stands (active member + active user + rank for the role; revoke / demote / disable revokes
+  their open links); a NEW identity belongs to the workspace whose invitation created it (`origin_org`) and activates only through that
+  link and only after the platform admin approved it (`ws.admin_approve_user`; the platform admin's own invitations are approved at
+  creation); ASCII-only addresses; an invited row shows no account state; disabled owners do not count as owners; sign-in failures
+  make the same store call for every address; role-wide default privileges start future objects closed; the page signs out with an
+  intent POST before the logout link; the test adapter binds every value. NOT ACTIVATED (see `supabase/private/README.md`).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

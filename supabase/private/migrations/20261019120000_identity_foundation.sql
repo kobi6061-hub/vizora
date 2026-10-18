@@ -22,6 +22,11 @@
 --  * `anon` and `service_role` hold nothing here: the private project is not reached with the service key at all.
 --  * Roles: `authenticated` = a named user; `propx_auth` = the PROPX server's sign-in plane before a user exists (it may
 --    only EXECUTE the ws.auth_* functions — no table).
+--  * An invitation is only as good as its inviter's standing: it activates or is accepted only while the inviter is still
+--    an active member, an active user and senior enough for the role invited; revoking, demoting or disabling the inviter
+--    also revokes what they had sent. A NEW identity is created by one workspace's invitation, is activated only through
+--    that workspace's link, and only once the platform administrator approved it (identities the platform administrator
+--    invites are approved at creation) — a member can never claim an address for someone else.
 --
 -- Bootstrap: the project owner runs, once, in the SQL editor:  select private.bootstrap('<email>', '<name>', '<team>');
 -- It returns a one-time activation token (72 h) for the first platform administrator, who becomes the first OWNER.
@@ -51,6 +56,9 @@ create table ws.users (
   is_platform_admin boolean not null default false,
   idp               text not null default 'propx' check (idp in ('propx')),   -- SSO adds a provider here; the subject stays per provider
   idp_subject       text,
+  origin_org        uuid,             -- the workspace whose invitation created this identity: only its link activates it
+  approved_at       timestamptz,      -- a new identity activates only once the platform administrator approved it
+  approved_by       uuid references ws.users (id),
   created_at        timestamptz not null default now(),
   activated_at      timestamptz,
   disabled_at       timestamptz,
@@ -80,6 +88,7 @@ create table ws.organizations (
   check ((kind = 'personal') = (personal_owner is not null)),
   check ((archived_at is null) = (archived_by is null))
 );
+alter table ws.users add foreign key (origin_org) references ws.organizations (id);
 
 -- a membership is also the invitation: status invited (with a one-time token hash) → active → revoked (never deleted).
 -- invited_by / updated_by / revoked_by are COMPOSITE keys into the same organization's members: an action can never be
@@ -151,7 +160,9 @@ end $$;
 create function private.guard_users() returns trigger language plpgsql set search_path = '' as $$
 begin
   if new.id <> old.id or new.email <> old.email or new.idp <> old.idp or new.created_at <> old.created_at
-     or new.session_version < old.session_version then
+     or new.session_version < old.session_version
+     or new.origin_org is distinct from old.origin_org
+     or (old.approved_at is not null and (new.approved_at is distinct from old.approved_at or new.approved_by is distinct from old.approved_by)) then
     raise exception 'immutable user field' using errcode = 'P0001';
   end if;
   new.updated_at := now();
@@ -187,12 +198,15 @@ begin
   return new;
 end $$;
 
--- every organization with an active member keeps at least one active owner (checked at commit, after every change)
+-- every organization with an active member keeps at least one active owner (checked at commit, after every change); a
+-- disabled user is neither: an owner who cannot sign in does not keep a workspace governed
 create function private.check_owner() returns trigger language plpgsql security definer set search_path = '' as $$
 declare v_org uuid := coalesce(new.org_id, old.org_id);
 begin
-  if exists (select 1 from ws.organization_members m where m.org_id = v_org and m.status = 'active')
-     and not exists (select 1 from ws.organization_members m where m.org_id = v_org and m.status = 'active' and m.role = 'owner') then
+  if exists (select 1 from ws.organization_members m join ws.users u on u.id = m.user_id
+              where m.org_id = v_org and m.status = 'active' and u.status = 'active')
+     and not exists (select 1 from ws.organization_members m join ws.users u on u.id = m.user_id
+                      where m.org_id = v_org and m.status = 'active' and m.role = 'owner' and u.status = 'active') then
     raise exception 'last_owner' using errcode = 'P0001';
   end if;
   return null;
@@ -292,10 +306,11 @@ returns void language sql security definer set search_path = '' as $$
   values (p_actor, p_action, p_org, p_subject, coalesce(p_detail, '{}'::jsonb))
 $$;
 
+-- printable ASCII only: a zero-width character or a look-alike letter never makes a second identity for the "same" address
 create function private.norm_email(p text) returns text language plpgsql immutable set search_path = '' as $$
 declare v text := lower(btrim(coalesce(p, '')));
 begin
-  if length(v) > 254 or v !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
+  if length(v) > 254 or v !~ '^[!-?A-~]+@[a-z0-9-]+(\.[a-z0-9-]+)+$' then
     raise exception 'invalid_email' using errcode = 'P0001';
   end if;
   return v;
@@ -320,6 +335,39 @@ begin
   return v;
 end $$;
 
+-- is an invitation still backed by its inviter? The inviter must still be an active member and an active user, senior
+-- enough for the role invited (admin for analyst / viewer, owner for admin / owner). Only the bootstrap invitation has no
+-- inviter, and only in the first team (the one workspace created by no one).
+create function private.invite_backed(p_org uuid, p_inviter uuid, p_role text) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select case
+    when p_inviter is null then exists (select 1 from ws.organizations o where o.id = p_org and o.created_by is null)
+    else exists (
+      select 1 from ws.organization_members x join ws.users u on u.id = x.user_id
+       where x.org_id = p_org and x.user_id = p_inviter and x.status = 'active' and u.status = 'active'
+         and private.rank(x.role) >= case when private.rank(p_role) >= 3 then 4 else 3 end)
+  end
+$$;
+
+-- revoke the open invitations an inviter sent (in one workspace, or everywhere) at or above a role rank — called when the
+-- inviter is revoked, leaves, is demoted or is disabled, so a lost standing never lives on in a link already handed out
+create function private.expire_invites_by(p_inviter uuid, p_org uuid, p_min_rank integer, p_actor uuid) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare v_n integer;
+begin
+  update ws.organization_members m
+     set status = 'revoked', invite_token_hash = null, invite_expires_at = null, revoked_at = now(),
+         revoked_by = case when exists (select 1 from ws.organization_members a where a.org_id = m.org_id and a.user_id = p_actor)
+                           then p_actor end
+   where m.invited_by = p_inviter and m.status = 'invited' and (p_org is null or m.org_id = p_org)
+     and private.rank(m.role) >= p_min_rank;
+  get diagnostics v_n = row_count;
+  if v_n > 0 then
+    perform private.log(p_actor, 'expire_invitations', p_org, p_inviter, jsonb_build_object('invitations', v_n, 'min_rank', p_min_rank));
+  end if;
+  return v_n;
+end $$;
+
 -- ───────────────────────────── bootstrap (owner only, SQL editor) ─────────────────────────────
 
 -- Creates the first platform administrator as an INVITED owner of the first team workspace and returns the one-time
@@ -335,9 +383,9 @@ begin
   if exists (select 1 from ws.users where is_platform_admin) then
     raise exception 'already bootstrapped' using errcode = 'P0001';
   end if;
-  insert into ws.users (email, display_name, status, is_platform_admin)
-  values (v_email, nullif(btrim(p_display_name), ''), 'invited', true) returning id into v_user;
   insert into ws.organizations (name, kind, created_by) values (btrim(p_team_name), 'team', null) returning id into v_org;
+  insert into ws.users (email, display_name, status, is_platform_admin, origin_org, approved_at)
+  values (v_email, nullif(btrim(p_display_name), ''), 'invited', true, v_org, now()) returning id into v_user;
   insert into ws.organization_members (org_id, user_id, role, status, invite_token_hash, invite_expires_at, invited_at)
   values (v_org, v_user, 'owner', 'invited', encode(sha256(convert_to(v_token, 'UTF8')), 'hex'), now() + interval '72 hours', now());
   perform private.log(null, 'bootstrap', v_org, v_user, jsonb_build_object('email', v_email));
@@ -356,18 +404,22 @@ create function ws.auth_signin_lookup(p_email text) returns jsonb language sql s
    where u.email = lower(btrim(coalesce(p_email, ''))) and u.status = 'active'
 $$;
 
--- a wrong password: 5 in a row lock the account for 15 minutes
-create function ws.auth_signin_failed(p_user_id uuid) returns jsonb language plpgsql security definer set search_path = '' as $$
-declare v_count integer; v_locked boolean := false;
+-- a failed sign-in, keyed by the EMAIL as typed (the server makes this call on EVERY failure — unknown address, wrong
+-- password, locked or inactive account — so the number of calls says nothing about the address): an active, unlocked
+-- account counts it; 5 in a row lock it for 15 minutes. The answer is the same for every address.
+create function ws.auth_signin_failed(p_email text) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_user uuid; v_locked boolean := false;
 begin
   update private.user_credentials c
      set failed_count = case when c.failed_count + 1 >= 5 then 0 else c.failed_count + 1 end,
          locked_until = case when c.failed_count + 1 >= 5 then now() + interval '15 minutes' else c.locked_until end,
          last_failed_at = now()
-   where c.user_id = p_user_id
-  returning c.locked_until > now() into v_locked;
-  if coalesce(v_locked, false) then perform private.log(null, 'signin_locked', null, p_user_id); end if;
-  return jsonb_build_object('locked', coalesce(v_locked, false));
+    from ws.users u
+   where u.id = c.user_id and u.email = lower(btrim(coalesce(p_email, ''))) and u.status = 'active'
+     and (c.locked_until is null or c.locked_until <= now())
+  returning c.user_id, c.locked_until > now() into v_user, v_locked;
+  if coalesce(v_locked, false) then perform private.log(null, 'signin_locked', null, v_user); end if;
+  return jsonb_build_object('ok', true);
 end $$;
 
 -- a verified sign-in → a new server-side session (a fresh id + token every time: no session fixation)
@@ -409,31 +461,39 @@ begin
   return jsonb_build_object('revoked', v_user is not null);
 end $$;
 
--- what an invitation link opens (shown only to the holder of the link)
+-- what an invitation link opens (shown only to the holder of the link). needs_activation = this link created the identity
+-- and it has never been activated; pending_approval = it still waits for the platform administrator. A link whose inviter
+-- lost their standing opens nothing.
 create function ws.auth_invite_peek(p_token_hash text) returns jsonb language sql stable security definer set search_path = '' as $$
-  select jsonb_build_object('org_name', o.name, 'role', m.role, 'email', u.email, 'needs_activation', u.status = 'invited',
+  select jsonb_build_object('org_name', o.name, 'role', m.role, 'email', u.email,
+                            'needs_activation', u.status = 'invited' and u.origin_org = m.org_id,
+                            'pending_approval', u.status = 'invited' and u.origin_org = m.org_id and u.approved_at is null,
                             'expires_at', m.invite_expires_at)
     from ws.organization_members m
     join ws.organizations o on o.id = m.org_id
     join ws.users u on u.id = m.user_id
    where m.invite_token_hash = p_token_hash and m.status = 'invited' and m.invite_expires_at > now()
-     and o.archived_at is null and u.status <> 'disabled'
+     and o.archived_at is null and u.status <> 'disabled' and private.invite_backed(m.org_id, m.invited_by, m.role)
 $$;
 
 -- first activation of a NEW user through an invitation link: sets the password, opens the personal workspace and joins
--- the inviting organization. An existing user is never activated again (an inviter can never set someone's password):
--- they sign in and accept.
+-- the inviting organization. Only the link of the workspace that CREATED the identity activates it, only while its
+-- inviter still stands, and only once the platform administrator approved the identity. An existing user is never
+-- activated again (an inviter can never set someone's password): they sign in and accept.
 create function ws.auth_activate(p_token_hash text, p_password_hash text, p_display_name text) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare m ws.organization_members; v_status text; v_name text := nullif(btrim(coalesce(p_display_name, '')), '');
+declare m ws.organization_members; u ws.users; v_name text := nullif(btrim(coalesce(p_display_name, '')), '');
 begin
   select * into m from ws.organization_members
    where invite_token_hash = p_token_hash and status = 'invited' and invite_expires_at > now() for update;
   if m.org_id is null then perform private.denied(); end if;
-  select u.status into v_status from ws.users u where u.id = m.user_id for update;
-  if v_status <> 'invited' or exists (select 1 from ws.organizations o where o.id = m.org_id and o.archived_at is not null) then
+  select * into u from ws.users where id = m.user_id for update;
+  if u.status <> 'invited' or u.origin_org is distinct from m.org_id
+     or exists (select 1 from ws.organizations o where o.id = m.org_id and o.archived_at is not null)
+     or not private.invite_backed(m.org_id, m.invited_by, m.role) then
     perform private.denied();
   end if;
+  if u.approved_at is null then raise exception 'pending_approval' using errcode = 'P0001'; end if;
   if v_name is null or length(v_name) > 120 then raise exception 'invalid_name' using errcode = 'P0001'; end if;
   if coalesce(p_password_hash, '') !~ '^scrypt\$' then raise exception 'invalid_credential' using errcode = 'P0001'; end if;
   insert into private.user_credentials (user_id, password_hash) values (m.user_id, p_password_hash);
@@ -465,13 +525,20 @@ begin
       from ws.users u where u.id = v_uid);
 end $$;
 
+-- the members of a workspace. A row that never joined (an invitation, or one revoked before it was accepted) shows only
+-- what the workspace itself wrote — email, role, status, dates, who invited — never the account behind the address (its
+-- name or state lives in another workspace's world and says whether the address has an account at all).
 create function ws.org_members(p_org uuid) returns jsonb language plpgsql stable security definer set search_path = '' as $$
 declare v_role text := private.require_role(p_org, 'viewer');
 begin
   return coalesce((
     select jsonb_agg(jsonb_build_object(
-             'user_id', m.user_id, 'email', u.email, 'display_name', u.display_name, 'role', m.role, 'status', m.status,
-             'user_status', u.status, 'invited_at', m.invited_at,
+             'user_id', m.user_id, 'email', u.email,
+             'display_name', case when m.accepted_at is not null then u.display_name end,
+             'role', m.role, 'status', m.status,
+             'user_status', case when m.accepted_at is not null then u.status end,
+             'invited_at', m.invited_at, 'invited_by', m.invited_by,
+             'invited_by_email', (select i.email from ws.users i where i.id = m.invited_by),
              'invite_expires_at', case when private.rank(v_role) >= 3 then m.invite_expires_at end,
              'accepted_at', m.accepted_at, 'revoked_at', m.revoked_at)
            order by m.status, private.rank(m.role) desc, u.email)
@@ -480,7 +547,8 @@ begin
 end $$;
 
 -- invite (or re-invite) an email into a team workspace. OWNER may invite any role; ADMIN only analyst / viewer. The answer
--- is the same whether or not a user with that email already exists.
+-- is the same whether or not a user with that email already exists. An unknown address becomes a NEW identity of this
+-- workspace (origin_org): approved at once when the platform administrator invites it, otherwise waiting for approval.
 create function ws.invite_member(p_org uuid, p_email text, p_role text, p_token_hash text) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
@@ -498,7 +566,10 @@ begin
   perform private.check_hash(p_token_hash);
   select id into v_user from ws.users where email = v_email;
   if v_user is null then
-    insert into ws.users (email, status) values (v_email, 'invited') returning id into v_user;
+    insert into ws.users (email, status, origin_org, approved_at, approved_by)
+    select v_email, 'invited', p_org, case when a.ok then now() end, case when a.ok then v_uid end
+      from (select exists (select 1 from ws.users x where x.id = v_uid and x.is_platform_admin and x.status = 'active') as ok) a
+    returning id into v_user;
   end if;
   select * into m from ws.organization_members where org_id = p_org and user_id = v_user for update;
   if m.org_id is not null and m.status = 'active' then raise exception 'already_member' using errcode = 'P0001'; end if;
@@ -539,7 +610,8 @@ begin
   select * into m from ws.organization_members
    where invite_token_hash = p_token_hash and status = 'invited' and invite_expires_at > now() for update;
   if m.org_id is null or m.user_id <> v_uid
-     or exists (select 1 from ws.organizations o where o.id = m.org_id and o.archived_at is not null) then
+     or exists (select 1 from ws.organizations o where o.id = m.org_id and o.archived_at is not null)
+     or not private.invite_backed(m.org_id, m.invited_by, m.role) then
     perform private.denied();
   end if;
   update ws.organization_members
@@ -563,11 +635,16 @@ begin
     raise exception 'archived' using errcode = 'P0001';
   end if;
   if m.role = 'owner' and p_role <> 'owner' and not exists (
-       select 1 from ws.organization_members x where x.org_id = p_org and x.user_id <> p_user and x.status = 'active' and x.role = 'owner') then
+       select 1 from ws.organization_members x join ws.users ux on ux.id = x.user_id
+        where x.org_id = p_org and x.user_id <> p_user and x.status = 'active' and x.role = 'owner' and ux.status = 'active') then
     raise exception 'last_owner' using errcode = 'P0001';
   end if;
   if m.role = p_role then return jsonb_build_object('role', p_role, 'changed', false); end if;
   update ws.organization_members set role = p_role, updated_by = v_uid where org_id = p_org and user_id = p_user;
+  -- a demoted inviter's links above their new standing die with it (admin keeps analyst / viewer links; below admin, none)
+  if private.rank(p_role) < private.rank(m.role) then
+    perform private.expire_invites_by(p_user, p_org, case when private.rank(p_role) >= 3 then 3 else 0 end, v_uid);
+  end if;
   perform private.log(v_uid, 'set_role', p_org, p_user, jsonb_build_object('from', m.role, 'to', p_role));
   return jsonb_build_object('role', p_role, 'changed', true);
 end $$;
@@ -585,11 +662,13 @@ begin
   select kind into v_kind from ws.organizations where id = p_org;
   if v_kind = 'personal' then raise exception 'personal_org' using errcode = 'P0001'; end if;
   if m.role = 'owner' and not exists (
-       select 1 from ws.organization_members x where x.org_id = p_org and x.user_id <> p_user and x.status = 'active' and x.role = 'owner') then
+       select 1 from ws.organization_members x join ws.users ux on ux.id = x.user_id
+        where x.org_id = p_org and x.user_id <> p_user and x.status = 'active' and x.role = 'owner' and ux.status = 'active') then
     raise exception 'last_owner' using errcode = 'P0001';
   end if;
   update ws.organization_members set status = 'revoked', revoked_at = now(), revoked_by = v_uid, updated_by = v_uid
    where org_id = p_org and user_id = p_user;
+  perform private.expire_invites_by(p_user, p_org, 0, v_uid);   -- what they sent here dies with their membership
   perform private.log(v_uid, case when p_user = v_uid then 'leave' else 'revoke_member' end, p_org, p_user, jsonb_build_object('role', m.role));
   return jsonb_build_object('revoked', true);
 end $$;
@@ -650,6 +729,10 @@ begin
     select jsonb_agg(jsonb_build_object(
              'id', u.id, 'email', u.email, 'display_name', u.display_name, 'status', u.status,
              'is_platform_admin', u.is_platform_admin, 'created_at', u.created_at, 'activated_at', u.activated_at,
+             'approved', u.approved_at is not null, 'approved_at', u.approved_at,
+             'origin_org_name', (select o.name from ws.organizations o where o.id = u.origin_org),
+             'origin_invited_by_email', (select i.email from ws.organization_members m join ws.users i on i.id = m.invited_by
+                                          where m.org_id = u.origin_org and m.user_id = u.id),
              'live_sessions', (select count(*) from ws.sessions s where s.user_id = u.id and s.revoked_at is null
                                 and s.expires_at > now() and s.session_version = u.session_version),
              'organizations', (select count(*) from ws.organization_members m where m.user_id = u.id and m.status = 'active'))
@@ -678,6 +761,7 @@ begin
     end if;
     update ws.users set status = 'disabled', disabled_at = now(), session_version = session_version + 1 where id = p_user;
     update ws.sessions set revoked_at = now(), revoked_reason = 'disabled' where user_id = p_user and revoked_at is null;
+    perform private.expire_invites_by(p_user, null, 0, v_uid);   -- every link they sent, in every workspace
   else
     if v_old <> 'disabled' then return jsonb_build_object('status', v_old, 'changed', false); end if;
     update ws.users set status = case when exists (select 1 from private.user_credentials c where c.user_id = p_user) then 'active' else 'invited' end,
@@ -697,6 +781,20 @@ begin
   get diagnostics v_n = row_count;
   perform private.log(v_uid, 'revoke_sessions', null, p_user, jsonb_build_object('sessions', v_n));
   return jsonb_build_object('sessions_revoked', v_n);
+end $$;
+
+-- approve a NEW identity a workspace member created by invitation (the platform administrator sees the address, the
+-- workspace that created it and who invited it). Approval is final; it activates nothing by itself — the creating
+-- workspace's link still does that.
+create function ws.admin_approve_user(p_user uuid) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_uid uuid := private.require_platform_admin(); u ws.users;
+begin
+  select * into u from ws.users where id = p_user for update;
+  if u.id is null then raise exception 'not_found' using errcode = 'P0001'; end if;
+  if u.approved_at is not null then return jsonb_build_object('approved', true, 'changed', false); end if;
+  update ws.users set approved_at = now(), approved_by = v_uid where id = p_user;
+  perform private.log(v_uid, 'approve_user', u.origin_org, p_user, jsonb_build_object('email', u.email));
+  return jsonb_build_object('approved', true, 'changed', true);
 end $$;
 
 -- ───────────────────────────── row-level security (direct reads) ─────────────────────────────
@@ -723,9 +821,14 @@ revoke all on all sequences in schema ws from public, anon, authenticated, servi
 revoke all on all sequences in schema private from public, anon, authenticated, service_role, propx_auth;
 revoke all on all functions in schema ws from public, anon, authenticated, service_role, propx_auth;
 revoke all on all functions in schema private from public, anon, authenticated, service_role, propx_auth;
--- (per-schema ALTER DEFAULT PRIVILEGES cannot take back a platform-wide default, so every later migration revokes
--- explicitly too; test/private-identity.test.js audits the catalogue: every privilege on every object in ws / private
--- must be on the allow-list below)
+-- and for every object this role creates LATER, anywhere (role-wide defaults, no IN SCHEMA — the only form that also takes
+-- back PostgreSQL's built-in EXECUTE for PUBLIC): a future function, table, sequence or schema starts closed, and every
+-- later migration grants what it needs explicitly. test/private-identity.test.js audits the catalogue (every privilege on
+-- every object in ws / private must be on the allow-list below) and creates a probe function and table to prove it.
+alter default privileges revoke all on functions from public, anon, authenticated, service_role, propx_auth;
+alter default privileges revoke all on tables from public, anon, authenticated, service_role, propx_auth;
+alter default privileges revoke all on sequences from public, anon, authenticated, service_role, propx_auth;
+alter default privileges revoke all on schemas from public, anon, authenticated, service_role, propx_auth;
 
 grant usage on schema ws to authenticated, propx_auth;
 grant usage on schema private to authenticated;          -- the RLS policies call these two helpers; nothing else in private
@@ -737,7 +840,7 @@ grant select (org_id, user_id, role, status, invited_by, invited_at, accepted_at
   on ws.organization_members to authenticated;
 
 grant execute on function
-  ws.auth_signin_lookup(text), ws.auth_signin_failed(uuid), ws.auth_session_open(uuid, text, text, integer),
+  ws.auth_signin_lookup(text), ws.auth_signin_failed(text), ws.auth_session_open(uuid, text, text, integer),
   ws.auth_session_check(uuid, text), ws.auth_session_revoke(uuid, text), ws.auth_invite_peek(text),
   ws.auth_activate(text, text, text)
   to propx_auth;
@@ -746,7 +849,7 @@ grant execute on function
   ws.me(), ws.org_members(uuid), ws.invite_member(uuid, text, text, text), ws.revoke_invitation(uuid, uuid),
   ws.accept_invitation(text), ws.set_member_role(uuid, uuid, text), ws.revoke_member(uuid, uuid), ws.create_team(text),
   ws.set_org_archived(uuid, boolean), ws.signout_all(), ws.admin_users(), ws.admin_set_user_status(uuid, text),
-  ws.admin_revoke_sessions(uuid)
+  ws.admin_revoke_sessions(uuid), ws.admin_approve_user(uuid)
   to authenticated;
 
 commit;
