@@ -39,12 +39,12 @@ at('the identity layer imports nothing public: node built-ins and its own module
   const api = fs.readFileSync(path.join(ROOT, 'api/identity.js'), 'utf8');
   for (const m of api.matchAll(/require\('([^']+)'\)/g)) assert.match(m[1], /^\.\.\/lib\/identity\//);
 });
-at('no sync / discovery workflow can reach the private project: its settings appear only in the activation check (read-only) and the isolation gate (no secret)', () => {
+at('no sync / discovery workflow can reach the private project: its settings appear only in the activation check + the real-project activation (run by hand, never push) and the isolation gate (no secret)', () => {
   const wf = path.join(ROOT, '.github/workflows');
   for (const f of fs.readdirSync(wf)) {
     const y = fs.readFileSync(path.join(wf, f), 'utf8');
     const names = y.match(/PROPX_WS_[A-Z_]+|PROPX_ID_SECRET|PROPX_IDENTITY/g) || [];
-    if (f === 'identity-verify.yml') { assert.ok(names.length && !/PROPX_ID_SECRET|PROPX_IDENTITY|contents: write|git push/.test(y), f); continue; }
+    if (f === 'identity-verify.yml' || f === 'identity-activate.yml') { assert.ok(names.length && !/PROPX_ID_SECRET|PROPX_IDENTITY|contents: write|git push/.test(y), f); continue; }
     assert.deepEqual(names, [], f + ' names a private-workspace setting');
   }
   for (const f of FILES.filter((x) => /scripts\/.*-(sync|discover|snapshot|build)\.js$/.test(rel(x)))) assert.ok(!/PROPX_WS_|PROPX_ID_SECRET|lib\/identity/.test(fs.readFileSync(f, 'utf8')), rel(f));

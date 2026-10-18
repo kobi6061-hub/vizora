@@ -21,7 +21,10 @@ const { mint } = require('../lib/identity/token');
 const env = { ...process.env, PROPX_IDENTITY: 'on', PROPX_ID_SECRET: process.env.PROPX_ID_SECRET || 'verify-only-'.padEnd(40, 'x') };
 const cfg = identityConfig(env);
 const results = [];
-const check = (name, pass, note = '') => { results.push({ name, pass }); console.log(`${pass ? 'PASS' : 'FAIL'}  ${name}${note ? ' — ' + redact(note, env) : ''}`); };
+// each result is also a workflow annotation (readable through the checks API; no value of any setting is in it)
+const ann = (s) => String(s).replace(/%/g, '%25').replace(/\r/g, '').replace(/\n/g, '%0A');
+const check = (name, pass, note = '') => { results.push({ name, pass }); const line = `${pass ? 'PASS' : 'FAIL'}  ${name}${note ? ' — ' + redact(note, env) : ''}`;
+  console.log(line); if (process.env.GITHUB_ACTIONS) console.log(`::${pass ? 'notice' : 'error'} title=identity-verify ${results.length}::${ann(line)}`); };
 
 async function req(path, { method = 'GET', token, profile = 'ws', body } = {}) {
   const headers = { apikey: cfg.apikey, 'accept-profile': profile, 'content-profile': profile, 'content-type': 'application/json' };
@@ -60,5 +63,6 @@ async function req(path, { method = 'GET', token, profile = 'ws', body } = {}) {
 
   const failed = results.filter((x) => !x.pass).length;
   console.log(`\n${results.length - failed}/${results.length} checks passed`);
+  if (process.env.GITHUB_ACTIONS) console.log(`::${failed ? 'error' : 'notice'} title=identity-verify summary::${results.length - failed}/${results.length} checks passed`);
   process.exit(failed ? 1 : 0);
 })().catch((e) => { console.error('FAIL  ' + redact(e && e.message, env)); process.exit(1); });

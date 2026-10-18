@@ -1,0 +1,46 @@
+# PROPX · STEP 2A.1 — activate the identity foundation on the REAL private Supabase project (run by hand).
+# scripts/identity-activate.js: preflight (read-only target + emptiness check) · apply · audit (catalogue + advisors) · probe
+# (two-organization isolation inside one rolled-back statement). Prints no secret value; results go to annotations and the
+# job summary. It never touches the public project (refused when the named project is SUPABASE_URL's) and never pushes.
+# See supabase/private/README.md § Activation.
+
+name: Private identity — real-project activation
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'preflight | apply | audit | probe'
+        required: true
+        default: preflight
+      confirm_ref:
+        description: 'apply only: the project ref the preflight verified (refused if it differs)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: identity-activate
+  cancel-in-progress: false
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Real-project activation step
+        env:
+          MODE: ${{ inputs.mode }}
+          CONFIRM_REF: ${{ inputs.confirm_ref }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          PROPX_WS_URL: ${{ secrets.PROPX_WS_URL }}
+          PROPX_WS_APIKEY: ${{ secrets.PROPX_WS_APIKEY }}
+          PROPX_WS_JWT_SECRET: ${{ secrets.PROPX_WS_JWT_SECRET }}
+        run: node scripts/identity-activate.js
