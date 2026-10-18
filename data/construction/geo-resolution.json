@@ -1,0 +1,630 @@
+{
+ "at": "2026-10-18T00:17:20.307Z",
+ "note": "the catalogue nodes resolved for this run — evidence of the code ↔ name verification; the codes key the data, the names are labels",
+ "measures": {
+  "permits": {
+   "measure": "permits",
+   "path": "44,11,2",
+   "geoLevel": "name_id",
+   "ok": true,
+   "geos": {
+    "il": {
+     "key": "il",
+     "expected": 1,
+     "status": "resolved",
+     "code": 1,
+     "name": "סך כולל",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,1",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-jm": {
+     "key": "d-jm",
+     "expected": 271,
+     "status": "resolved",
+     "code": 271,
+     "name": "ירושלים",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,271",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-north": {
+     "key": "d-north",
+     "expected": 272,
+     "status": "resolved",
+     "code": 272,
+     "name": "הצפון",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,272",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-haifa": {
+     "key": "d-haifa",
+     "expected": 273,
+     "status": "resolved",
+     "code": 273,
+     "name": "חיפה",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,273",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-center": {
+     "key": "d-center",
+     "expected": 274,
+     "status": "resolved",
+     "code": 274,
+     "name": "המרכז",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,274",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-ta": {
+     "key": "d-ta",
+     "expected": 275,
+     "status": "resolved",
+     "code": 275,
+     "name": "תל אביב",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,275",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "d-south": {
+     "key": "d-south",
+     "expected": 276,
+     "status": "resolved",
+     "code": 276,
+     "name": "הדרום",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,276",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    },
+    "jsr": {
+     "key": "jsr",
+     "expected": 277,
+     "status": "resolved",
+     "code": 277,
+     "name": "אזור יהודה והשומרון (עד 2005 כולל חבל עזה)",
+     "nameSource": "catalogue",
+     "pathId": "44,11,2,,277",
+     "leaf": null,
+     "leafName": null,
+     "reason": null
+    }
+   },
+   "nodes": 8,
+   "separators": 0,
+   "listed": [
+    {
+     "path": "44,11,2,,1",
+     "name": "סך כולל"
+    },
+    {
+     "path": "44,11,2,,271",
+     "name": "ירושלים"
+    },
+    {
+     "path": "44,11,2,,272",
+     "name": "הצפון"
+    },
+    {
+     "path": "44,11,2,,273",
+     "name": "חיפה"
+    },
+    {
+     "path": "44,11,2,,274",
+     "name": "המרכז"
+    },
+    {
+     "path": "44,11,2,,275",
+     "name": "תל אביב"
+    },
+    {
+     "path": "44,11,2,,276",
+     "name": "הדרום"
+    },
+    {
+     "path": "44,11,2,,277",
+     "name": "אזור יהודה והשומרון (עד 2005 כולל חבל עזה)"
+    }
+   ]
+  },
+  "starts": {
+   "measure": "starts",
+   "path": "44,2,3",
+   "geoLevel": "level4",
+   "ok": true,
+   "geos": {
+    "il": {
+     "key": "il",
+     "expected": 8,
+     "status": "resolved",
+     "code": 8,
+     "name": "סך הכל",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,8,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-jm": {
+     "key": "d-jm",
+     "expected": 1,
+     "status": "resolved",
+     "code": 1,
+     "name": "ירושלים",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,1,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-north": {
+     "key": "d-north",
+     "expected": 2,
+     "status": "resolved",
+     "code": 2,
+     "name": "הצפון",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,2,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-haifa": {
+     "key": "d-haifa",
+     "expected": 3,
+     "status": "resolved",
+     "code": 3,
+     "name": "חיפה",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,3,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-center": {
+     "key": "d-center",
+     "expected": 4,
+     "status": "resolved",
+     "code": 4,
+     "name": "המרכז",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,4,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-ta": {
+     "key": "d-ta",
+     "expected": 5,
+     "status": "resolved",
+     "code": 5,
+     "name": "תל אביב",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,5,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-south": {
+     "key": "d-south",
+     "expected": 6,
+     "status": "resolved",
+     "code": 6,
+     "name": "הדרום",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,6,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "jsr": {
+     "key": "jsr",
+     "expected": 7,
+     "status": "resolved",
+     "code": 7,
+     "name": "אזור יהודה והשומרון (עד 2005 כולל חבל עזה)",
+     "nameSource": "catalogue",
+     "pathId": "44,2,3,7,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    }
+   },
+   "nodes": 16,
+   "separators": 8,
+   "listed": [
+    {
+     "path": "44,2,3,1,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,1,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,2,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,2,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,3,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,3,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,4,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,4,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,5,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,5,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,6,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,6,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,7,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,7,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,2,3,8,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,2,3,8,4141",
+     "name": "----------------------------------"
+    }
+   ]
+  },
+  "completions": {
+   "measure": "completions",
+   "path": "44,3,3",
+   "geoLevel": "level4",
+   "ok": true,
+   "geos": {
+    "il": {
+     "key": "il",
+     "expected": 8,
+     "status": "resolved",
+     "code": 8,
+     "name": "סך הכל",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,8,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-jm": {
+     "key": "d-jm",
+     "expected": 1,
+     "status": "resolved",
+     "code": 1,
+     "name": "ירושלים",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,1,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-north": {
+     "key": "d-north",
+     "expected": 2,
+     "status": "resolved",
+     "code": 2,
+     "name": "הצפון",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,2,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-haifa": {
+     "key": "d-haifa",
+     "expected": 3,
+     "status": "resolved",
+     "code": 3,
+     "name": "חיפה",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,3,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-center": {
+     "key": "d-center",
+     "expected": 4,
+     "status": "resolved",
+     "code": 4,
+     "name": "המרכז",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,4,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-ta": {
+     "key": "d-ta",
+     "expected": 5,
+     "status": "resolved",
+     "code": 5,
+     "name": "תל אביב",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,5,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-south": {
+     "key": "d-south",
+     "expected": 6,
+     "status": "resolved",
+     "code": 6,
+     "name": "הדרום",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,6,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "jsr": {
+     "key": "jsr",
+     "expected": 7,
+     "status": "resolved",
+     "code": 7,
+     "name": "אזור יהודה והשומרון (עד 2005 כולל",
+     "nameSource": "catalogue",
+     "pathId": "44,3,3,7,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    }
+   },
+   "nodes": 16,
+   "separators": 8,
+   "listed": [
+    {
+     "path": "44,3,3,1,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,1,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,2,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,2,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,3,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,3,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,4,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,4,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,5,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,5,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,6,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,6,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,7,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,7,4141",
+     "name": "----------------------------------"
+    },
+    {
+     "path": "44,3,3,8,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,3,3,8,4141",
+     "name": "----------------------------------"
+    }
+   ]
+  },
+  "active": {
+   "measure": "active",
+   "path": "44,4,3",
+   "geoLevel": "level4",
+   "ok": true,
+   "geos": {
+    "il": {
+     "key": "il",
+     "expected": 8,
+     "status": "resolved",
+     "code": 8,
+     "name": "סך הכל",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,8,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-jm": {
+     "key": "d-jm",
+     "expected": 1,
+     "status": "resolved",
+     "code": 1,
+     "name": "ירושלים",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,1,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-north": {
+     "key": "d-north",
+     "expected": 2,
+     "status": "resolved",
+     "code": 2,
+     "name": "הצפון",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,2,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-haifa": {
+     "key": "d-haifa",
+     "expected": 3,
+     "status": "resolved",
+     "code": 3,
+     "name": "חיפה",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,3,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-center": {
+     "key": "d-center",
+     "expected": 4,
+     "status": "resolved",
+     "code": 4,
+     "name": "המרכז",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,4,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-ta": {
+     "key": "d-ta",
+     "expected": 5,
+     "status": "resolved",
+     "code": 5,
+     "name": "תל אביב",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,5,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "d-south": {
+     "key": "d-south",
+     "expected": 6,
+     "status": "resolved",
+     "code": 6,
+     "name": "הדרום",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,6,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    },
+    "jsr": {
+     "key": "jsr",
+     "expected": 7,
+     "status": "resolved",
+     "code": 7,
+     "name": "אזור יהודה והשומרון (עד 2005 כולל",
+     "nameSource": "catalogue",
+     "pathId": "44,4,3,7,2",
+     "leaf": 2,
+     "leafName": "סך הכל",
+     "reason": null
+    }
+   },
+   "nodes": 8,
+   "separators": 0,
+   "listed": [
+    {
+     "path": "44,4,3,1,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,2,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,3,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,4,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,5,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,6,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,7,2",
+     "name": "סך הכל"
+    },
+    {
+     "path": "44,4,3,8,2",
+     "name": "סך הכל"
+    }
+   ]
+  }
+ }
+}
