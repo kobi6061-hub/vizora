@@ -10,9 +10,8 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'companies (Corporations Authority registry) | legal (charges / insolvency / courts) | public (TASE / MAYA / ISA) | contractors (the contractors register) | sites (active + closed construction sites) | tlv (Tel Aviv IView2 permits + sites) | all'
-        type: choice
-        options: [all, companies, legal, public, contractors, sites, tlv]
+        description: 'comma-separated lanes: companies (Corporations Authority registry) | legal (charges / insolvency / courts catalogue) | public (TASE / MAYA / ISA) | contractors (the contractors register) | sites (active + closed construction sites) | insolvency (Official Receiver files, filings by company number) | tlv (Tel Aviv IView2 permits + sites) | all'
+        type: string
         default: all
 
 permissions:

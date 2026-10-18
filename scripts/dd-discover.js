@@ -12,6 +12,7 @@
 //   node scripts/dd-discover.js --public        TASE / MAYA / ISA (MAGNA): are public-company filings machine-readable without a key?
 //   node scripts/dd-discover.js --contractors   the contractors register (פנקס הקבלנים): identifier fields, company-number coverage
 //   node scripts/dd-discover.js --sites         active + closed construction sites (משרד העבודה): fields, the executor_id ↔ MISPAR_KABLAN join
+//   node scripts/dd-discover.js --insolvency   the Official Receiver files (liquidation, debt claims), the filings register by company number (charges / violations), the registry by number
 //   node scripts/dd-discover.js --tlv           Tel Aviv IView2: permits (772) + construction sites (499) — parcel / address / permit-holder fields
 //   node scripts/dd-discover.js --all
 //
@@ -23,7 +24,8 @@
 const UA = 'PROPX-dd-discovery/1.0 (+https://github.com/kobi6061-hub/vizora; read-only source audit)';
 const CKAN = 'https://data.gov.il/api/3/action';
 const TLV = 'https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer';
-const has = (f) => process.argv.includes('--' + f) || process.argv.includes('--all');
+const MODES = process.argv.slice(2).filter((a) => a.startsWith('--')).flatMap((a) => a.slice(2).split(',')).map((a) => a.trim()).filter(Boolean);
+const has = (f) => MODES.includes(f) || MODES.includes('all');
 const out = (o) => console.log(JSON.stringify(o));
 const trim = (v, n = 160) => { const s = typeof v === 'string' ? v : JSON.stringify(v); return s && s.length > n ? s.slice(0, n) + '…' : s; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -51,12 +53,17 @@ function profile(rows, max = 60) {
 const dist = (rows, k, top = 12) => { const m = new Map(); for (const r of rows) { const v = r && r[k] != null && r[k] !== '' ? String(r[k]) : '—'; m.set(v, (m.get(v) || 0) + 1); } return [...m].sort((a, b) => b[1] - a[1]).slice(0, top); };
 
 async function ckanSearch(q, rows = 10) { const r = await req(`${CKAN}/package_search?q=${encodeURIComponent(q)}&rows=${rows}`); return r.json && r.json.result ? r.json.result : { status: r.status, error: r.error || trim(r.text, 200) }; }
-async function ds(resource, params = {}) { const u = new URL(`${CKAN}/datastore_search`); u.searchParams.set('resource_id', resource); for (const [k, v] of Object.entries(params)) u.searchParams.set(k, typeof v === 'string' ? v : JSON.stringify(v)); const r = await req(u.toString()); return { status: r.status, ms: r.ms, result: r.json && r.json.result ? r.json.result : null, error: r.json && r.json.error ? r.json.error : (r.error || null) }; }
+async function ds(resource, params = {}) {
+  const u = new URL(`${CKAN}/datastore_search`); u.searchParams.set('resource_id', resource); for (const [k, v] of Object.entries(params)) u.searchParams.set(k, typeof v === 'string' ? v : JSON.stringify(v));
+  let r = null;
+  for (let i = 0; i < 3; i++) { r = await req(u.toString()); if (r.json || (r.status && r.status < 500 && r.status !== 403 && r.status !== 429)) break; await sleep([3000, 8000, 20000][i]); }
+  return { status: r.status, ms: r.ms, result: r.json && r.json.result ? r.json.result : null, error: r.json && r.json.error ? r.json.error : (r.error || (r.json ? null : 'non-JSON answer: ' + trim(String(r.text || '').replace(/\s+/g, ' '), 160))) };
+}
 const listPackages = (res) => (res && res.results ? res.results.map((p) => ({ name: p.name, title: p.title, org: p.organization && p.organization.title, modified: p.metadata_modified, resources: (p.resources || []).map((x) => ({ id: x.id, name: x.name, format: x.format, datastore: !!x.datastore_active, modified: x.last_modified })) })) : res);
 
 /* known PROPX developers (ILA winners / MoCH developers) — identifier-quality probes against the companies registry */
 const KNOWN = ['י.ח. דמרי בניה ופיתוח בע"מ', 'עמרם אברהם חברה לבנין בע"מ', 'דונה חברה להנדסה ובנין בע"מ', 'אפריקה ישראל מגורים בע"מ', 'שיכון ובינוי נדל"ן בע"מ', 'אזורים בנין (1965) בע"מ', 'פרץ בוני הנגב אחים פרץ בע"מ', 'מגידו י.ק יזום בע"מ', 'אשדר חברה לבניה בע"מ', 'קבוצת אלמוגים אחזקות בע"מ'];
-const variants = (n) => [...new Set([n, n.replace(/״/g, '"'), n.replace(/"/g, '״'), n.replace(/\s*בע"מ\s*$/, '').trim(), n.replace(/\s*בע״מ\s*$/, '').trim()])];
+const variants = (n) => [...new Set([n, n.replace(/״/g, '"'), n.replace(/"/g, '״'), n.replace(/["״]/g, '~'), n.replace(/\s*בע"מ\s*$/, '').trim(), n.replace(/\s*בע״מ\s*$/, '').trim()])];
 
 async function companies() {
   out({ lane: 'companies', step: 'catalogue', q: 'רשם החברות', packages: listPackages(await ckanSearch('רשם החברות', 8)) });
@@ -100,8 +107,13 @@ async function publicFilings() {
     ['datagov:isa', `${CKAN}/package_search?q=${encodeURIComponent('רשות ניירות ערך')}&rows=8`, {}],
   ]) { const r = await req(url, { headers, timeoutMs: 30000 }); out({ lane: 'public', name, url, status: r.status, ms: r.ms, type: r.type, server: r.server, error: r.error || null, body: r.json ? trim(r.json, 400) : trim(r.text.replace(/\s+/g, ' '), 300) }); await sleep(300); }
 }
+async function resolveResource(q, fallback, pick) {
+  const cat = await ckanSearch(q, 8); const pk = listPackages(cat); out({ lane: 'catalogue', q, packages: pk });
+  for (const p of Array.isArray(pk) ? pk : []) for (const r of p.resources || []) if (r.datastore && pick(p, r)) return r.id;
+  return fallback;
+}
 async function contractors() {
-  const res = '4eb61bd6-18cf-4e7c-9f9c-e166dfa0a2d8';
+  const res = await resolveResource('פנקס הקבלנים', '4eb61bd6-18cf-4e7c-9f9c-e166dfa0a2d8', (p, r) => /קבלן|קבלנים/.test(p.title + ' ' + r.name) && !/PDF/i.test(r.format));
   const head = await ds(res, { limit: 3 }); if (!head.result) return out({ lane: 'contractors', status: head.status, error: head.error });
   out({ lane: 'contractors', total: head.result.total, fields: (head.result.fields || []).map((f) => f.id + ':' + f.type) });
   const page = await ds(res, { limit: 5000 }); const rows = page.result ? page.result.records : [];
@@ -110,7 +122,9 @@ async function contractors() {
   for (const name of KNOWN.slice(0, 6)) { const r = await ds(res, { q: name.replace(/["״]/g, ' '), limit: 5 }); out({ lane: 'contractors', step: 'lookup', name, hits: r.result ? r.result.records.map((x) => ({ kablan: x.MISPAR_KABLAN, yeshut: x.MISPAR_YESHUT, name: x.SHEM_YESHUT, branch: x.TEUR_ANAF, group: x.KVUTZA, sivug: x.SIVUG })) : r.error }); await sleep(200); }
 }
 async function sites() {
-  const A = 'b072e36c-a53b-49e1-be08-4a608fcf4638', C = 'b9257d8f-f93a-4c7d-84dd-e4b0838eadaa', K = '4eb61bd6-18cf-4e7c-9f9c-e166dfa0a2d8';
+  const A = await resolveResource('אתרי בניה פעילים', 'b072e36c-a53b-49e1-be08-4a608fcf4638', (p, r) => /אתרי בנ/.test(p.title + ' ' + r.name) && /פעיל/.test(p.title + ' ' + r.name) && !/סגור|PDF/i.test(r.name + r.format));
+  const C = await resolveResource('אתרי בניה סגורים', 'b9257d8f-f93a-4c7d-84dd-e4b0838eadaa', (p, r) => /אתרי בנ/.test(p.title + ' ' + r.name) && /סגור/.test(p.title + ' ' + r.name) && !/PDF/i.test(r.format));
+  const K = await resolveResource('פנקס הקבלנים', '4eb61bd6-18cf-4e7c-9f9c-e166dfa0a2d8', (p, r) => /קבלן|קבלנים/.test(p.title + ' ' + r.name) && !/PDF/i.test(r.format));
   const head = await ds(A, { limit: 3 }); if (!head.result) return out({ lane: 'sites', status: head.status, error: head.error });
   out({ lane: 'sites', active: { total: head.result.total, fields: (head.result.fields || []).map((f) => f.id + ':' + f.type) } });
   const page = await ds(A, { limit: 3000 }); const rows = page.result ? page.result.records : [];
@@ -122,6 +136,40 @@ async function sites() {
   out({ lane: 'sites', step: 'join executor_id → contractors.MISPAR_KABLAN', tried: ids.length, joined, examples: ex });
   const closed = await ds(C, { limit: 3 }); out({ lane: 'sites', closed: closed.result ? { total: closed.result.total, fields: (closed.result.fields || []).map((f) => f.id + ':' + f.type), sample: closed.result.records.slice(0, 2) } : closed.error });
   out({ lane: 'sites', sample: rows.slice(0, 3) });
+}
+/* known company numbers (exact hits of the first run, 18.10.2026): the join key for every corporate / legal probe */
+const KNOWN_NUMBERS = [['י.ח. דמרי בניה ופיתוח בע"מ', 511399388], ['שיכון ובינוי נדל"ן בע"מ', 520021171], ['פרץ בוני הנגב אחים פרץ בע"מ', 510865058], ['דונה חברה להנדסה ובנין בע"מ', 511543886], ['אזורים בנין (1965) בע"מ', 520031089], ['עמרם אברהם חברה לבנין בע"מ', 513201582], ['מגידו י.ק יזום בע"מ', 515384840]];
+async function insolvency() {
+  /* a. the Official Receiver (הכונס הרשמי / הממונה על הליכי חדלות פירעון): companies in liquidation, debt claims */
+  const cat = listPackages(await ckanSearch('הכונס הרשמי', 8)); out({ lane: 'insolvency', step: 'catalogue', packages: cat });
+  const RES = { liquidation: 'd8715392-287f-49b7-9ae3-f21ec5bf55f3', claims: '3cb25b2e-a501-4870-86a6-30be8d8e80a5', voluntaryFast: '6f3f0df3-5968-4135-81c5-8dd76bf89410' };
+  for (const [k, res] of Object.entries(RES)) {
+    const head = await ds(res, { limit: 5 }); if (!head.result) { out({ lane: 'insolvency', set: k, resource: res, status: head.status, error: head.error }); continue; }
+    const fields = (head.result.fields || []).map((f) => f.id + ':' + f.type);
+    out({ lane: 'insolvency', set: k, resource: res, total: head.result.total, fields, profile: profile(head.result.records || []), sample: (head.result.records || []).slice(0, 2) });
+    const page = await ds(res, { limit: 1500 }); const rows = page.result ? page.result.records || [] : []; const F = Object.keys(rows[0] || {}); const pick = (re) => F.find((x) => re.test(x));
+    out({ lane: 'insolvency', set: k, vocab: { status: pick(/סטטוס|מצב/) ? dist(rows, pick(/סטטוס|מצב/)) : null, kind: pick(/סוג/) ? dist(rows, pick(/סוג/)) : null, dateField: pick(/תאריך/) || null, numberField: pick(/מספר (תאגיד|חברה|ח\.פ|ח"פ|זהות)/) || pick(/מספר/) || null, fieldsAll: F } });
+    const numField = pick(/מספר (תאגיד|חברה)/) || pick(/ח\.?פ/) || null;
+    if (numField) for (const [name, num] of KNOWN_NUMBERS) { const r = await ds(res, { filters: { [numField]: String(num) }, limit: 5 }); out({ lane: 'insolvency', set: k, step: 'lookup by company number', name, num, hits: r.result ? r.result.records.length : r.error, sample: r.result ? r.result.records.slice(0, 2) : null }); await sleep(250); }
+    await sleep(400);
+  }
+  /* b. the filings register (ica-changes) BY COMPANY NUMBER: charge registrations / removals, violation updates, annual reports */
+  const CH = '28780ab5-3ef1-44c7-8377-da82c0aa6781';
+  for (const [name, num] of KNOWN_NUMBERS) {
+    const r = await ds(CH, { filters: { 'מספר תאגיד': String(num) }, limit: 500 });
+    const rows = r.result ? r.result.records || [] : [];
+    out({ lane: 'insolvency', set: 'filings', step: 'by company number', name, num, total: r.result ? r.result.total : r.error, kinds: dist(rows, 'סוג בקשה', 20), dates: dist(rows.map((x) => ({ y: String(x['תאריך עדכון סטטוס'] || '').slice(-4) })), 'y', 12), chargeIds: rows.filter((x) => /שעבוד/.test(String(x['סוג בקשה']))).map((x) => ({ kind: x['סוג בקשה'], id: x['מזהה השיעבוד'], at: x['תאריך עדכון סטטוס'] })).slice(0, 12) });
+    await sleep(300);
+  }
+  /* c. the companies registry BY COMPANY NUMBER (the exact key) and by the registry's own spelling (~ for the quotation mark) */
+  const CO = 'f004176c-b85f-4542-8901-7b3176f9a054';
+  for (const [name, num] of KNOWN_NUMBERS) {
+    const byNum = await ds(CO, { filters: { 'מספר חברה': String(num) }, limit: 2 });
+    const byName = await ds(CO, { filters: { 'שם חברה': name.replace(/["״]/g, '~') }, limit: 3 });
+    const rec = byNum.result && byNum.result.records[0];
+    out({ lane: 'insolvency', set: 'registry', name, num, byNumber: rec ? { name: rec['שם חברה'], status: rec['סטטוס חברה'], type: rec['סוג תאגיד'], violating: rec['מפרה'], lastReport: rec['שנה אחרונה של דוח שנתי (שהוגש)'], incorporated: rec['תאריך התאגדות'], city: rec['שם עיר'] } : byNum.error, byTildeName: byName.result ? byName.result.records.map((x) => ({ num: x['מספר חברה'], name: x['שם חברה'] })) : byName.error });
+    await sleep(300);
+  }
 }
 async function tlv() {
   for (const [layer, label] of [[772, 'בקשות והיתרי בניה'], [499, 'אתרי בניה'], [524, 'חלקות']]) {
@@ -145,6 +193,7 @@ async function tlv() {
   if (has('public')) await publicFilings();
   if (has('contractors')) await contractors();
   if (has('sites')) await sites();
+  if (has('insolvency')) await insolvency();
   if (has('tlv')) await tlv();
   out({ lane: 'meta', done: true });
 })().catch((e) => { out({ lane: 'meta', fatal: String(e && e.stack || e) }); process.exit(1); });
