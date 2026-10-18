@@ -152,10 +152,33 @@ t('§20 executing contractor: a parcel in the site name + the executor\'s compan
   const s = p.sites.labour[0]; assert.equal(s.matchState, 'STRONG_MATCH'); assert.ok(s.reasons.some((r) => r.code === 'EXECUTOR_IS_DEVELOPER_COMPANY')); assert.equal(s.executor.isDeveloper, true);
   const st = p.ladder.rungs.find((r) => r.stage === 'construction-started'); assert.equal(st.evidenced, true); assert.equal(st.date, null, 'the source publishes no start date'); assert.equal(st.ddAsOf, '2026-09-01');
 });
-t('§20 stale evidence · NO LATER PUBLIC EVIDENCE ≠ STOPPED: an award in 2020 and nothing after → the EXECUTION GAP rule fires, the words never say stalled / failed / delayed', () => {
-  const p = prj(lot('ila:1:OLD', { decisionDate: '2020-01-01', localityCode: 6600, stage: { furthest: 'land-awarded', evidence: [{ stage: 'land-awarded', date: '2020-01-01', source: 'rmi:michrazim' }] } }), null);
-  assert.equal(p.executionGap.fires, true); assert.ok(p.executionGap.value >= 18); assert.match(p.noLaterEvidence.statement.en, /NO LATER PUBLIC EVIDENCE FOUND/); assert.match(p.noLaterEvidence.notA.en, /not "stalled", "failed" or "delayed"/);
+t('§20 stale evidence · NO LATER PUBLIC EVIDENCE ≠ STOPPED: a Tel Aviv lot awarded in 2020 with nothing after → the EXECUTION EVIDENCE GAP rule fires (a source in coverage could have shown later evidence); the words never say stalled / failed / delayed', () => {
+  const p = prj(lot('ila:1:OLD', { decisionDate: '2020-01-01', localityCode: 5000, stage: { furthest: 'land-awarded', evidence: [{ stage: 'land-awarded', date: '2020-01-01', source: 'rmi:michrazim' }] } }), null);
+  assert.equal(p.executionGap.fires, true); assert.equal(p.coverageGap, false); assert.ok(p.executionGap.value >= 18); assert.match(p.noLaterEvidence.statement.en, /NO LATER PUBLIC EVIDENCE FOUND/); assert.match(p.noLaterEvidence.notA.en, /not "stalled", "failed" or "delayed"/);
   languageGate(p, 'stale project'); const b = BR.brief({ project: p }); assert.ok(b.items.some((i) => i.id === 'execution-gap' && i.category === 'DERIVED_SIGNAL'));
+});
+t('§19 SOURCE SILENCE ≠ NEGATIVE EVIDENCE: the same stale lot OUTSIDE coverage → no gap signal, a COVERAGE GAP said as a source limitation', () => {
+  const p = prj(lot('ila:1:OLD2', { decisionDate: '2020-01-01', localityCode: 6600, city: 'חולון', stage: { furthest: 'land-awarded', evidence: [{ stage: 'land-awarded', date: '2020-01-01', source: 'rmi:michrazim' }] } }), null);
+  assert.equal(p.executionGap.fires, false); assert.equal(p.coverageGap, true); assert.ok(p.executionGap.value >= 18, 'the age is still measured — it is the signal that is withheld');
+  const b = BR.brief({ project: p }); assert.ok(!b.items.some((i) => i.id === 'execution-gap'), 'no DERIVED signal from silence outside coverage');
+  assert.ok(b.items.some((i) => i.id === 'evidence-coverage-gap' && i.category === 'SOURCE_LIMITATION'));
+  languageGate(p, 'uncovered stale project');
+});
+t('§9 the ladder takes only evidence dated on / after the award: a STRONG site whose start precedes the award does not date "construction started"', () => {
+  const d = ddOf(dev('dev-a', 'אלפא בנייה בע"מ'));
+  const p = prj(lot('ila:1:L5', { parcels: ['7000/1'], developerId: 'dev-a', developerName: 'אלפא בנייה בע"מ', decisionDate: '2026-09-15' }), d);
+  const st = p.ladder.rungs.find((r) => r.stage === 'construction-started');
+  assert.equal(st.evidenced, false, 'a site PROPX saw listed before the award never evidences this lot\'s construction');
+  const w = p.sites.labour.find((x) => x.id === 'site:labor:1'); assert.equal(w.matchState, 'POSSIBLE_MATCH'); assert.equal(w.onLadder, false); assert.ok(w.reasons.some((r) => r.code === 'LISTED_BEFORE_AWARD'));
+  assert.ok(!p.contractors.some((c) => c.kablan === '1002'), 'a POSSIBLE site never names the project\'s contractor');
+  for (const e of p.timeline) if (e.onLadder !== false && e.date && e.event !== 'land-awarded' && !e.asOf && !e.propxObserved) assert.ok(e.date >= '2026-09-15' || e.preAward, e.event + ' ' + e.date);
+});
+t('§20 executing contractor: only a STRONG site names the project\'s contractor; a POSSIBLE site\'s executor is listed apart as a possible contractor', () => {
+  const lotIdxB = lotIdx({ '9000|12': ['תמל/1|12'] });
+  const p = prj(lot('ila:2:L12', { localityCode: 9000, city: 'באר שבע', planLots: ['תמל/1|12'], developerId: 'dev-x', developerName: 'אחר בע"מ' }), null, { lotIdx: lotIdxB });
+  for (const c of p.contractors) assert.equal(c.matchState, 'STRONG_MATCH');
+  for (const c of p.possibleContractors || []) assert.equal(c.matchState, 'POSSIBLE_MATCH');
+  assert.ok(!p.contractors.some((c) => (p.possibleContractors || []).some((x) => x.kablan === c.kablan && x.matchState === c.matchState)), 'a contractor is in one list by its match state');
 });
 t('§19 MISSING ≠ ZERO: an unmeasured velocity has no median; an undated project has no gap value; never 0', () => {
   const x = ddOf(dev('dev-a', 'אלפא בנייה בע"מ')); assert.equal(x.execution.velocity.measurable, false); assert.equal(x.execution.velocity.medianMonths, undefined);
@@ -221,9 +244,36 @@ t('sync history: the first read of a newly kept company is never an event; dupli
   assert.equal(RT.isRetracted({ at: '2026-10-18T10:24:33.459Z', lane: 'filings' }), true); assert.equal(RT.isRetracted({ at: '2026-10-19T05:00:00.000Z', lane: 'filings' }), false);
   for (const r of RT.RETRACTED) { assert.ok(r.reason.he && r.reason.en && r.fix); }
 });
+t('sync history labels: a cancelled charge removal is not a removal; an annual-report detail is not a new report; a sub-status change is its own event; site events carry their exact keys', () => {
+  const SY = require('../lib/dd/sync');
+  const prev = { rows: [] }, kinds = ['ביטול סילוק שעבוד', 'סילוק שעבוד', 'רישום שעבוד', 'עדכון שעבוד', 'דו~ח שנתי', 'דו~ח שנתי-הוספת בעל תפקיד', 'עדכון הפרה', 'הוספה/עדכון/הסרה של צו עיקול', 'פירוק מרצון מזורז', 'שינוי שם'];
+  const next = { rows: kinds.map((k, i) => ({ num: 1, kind: k, kindCode: i, date: '2026-10-0' + (i % 9 + 1), chargeId: i })) };
+  assert.deepEqual(SY.diffFilings(prev, next, 'T', new Set(['1'])).map((e) => e.event), ['charge-removal-cancelled', 'charge-removed', 'charge-registered', 'charge-updated', 'annual-report-filed', 'annual-report-update', 'breach-update', 'attachment-order-filing', 'voluntary-liquidation-filing', 'filing-observed']);
+  const co = (o) => ({ rows: [{ num: 7, name: 'x', status: 'פעילה', ...o }] });
+  const ev = SY.diffCompanies(co({ sub: null, lastReport: 2025 }), co({ sub: 'צו לפתיחת הליכים', lastReport: 2024 }), 'T');
+  assert.deepEqual(ev.map((e) => e.event), ['company-sub-status-changed', 'annual-report-year-changed'], 'an earlier report year is a change, never "advanced"');
+  assert.equal(SY.diffCompanies(co({ lastReport: 2024 }), co({ lastReport: 2025 }), 'T')[0].event, 'annual-report-year-advanced');
+  const site = (o) => ({ workId: 5, name: 'בניה גוש 7000 חלקה 1', executorId: 1002, executorName: 'אלפא בנייה בע"מ', sanctions: 0, warrants: 0, ...o });
+  const sp = { active: [site({})], closed: { rows: [] } };
+  const first = SY.diffSites({ active: [], closed: { rows: [] } }, sp, 'T')[0]; assert.equal(first.event, 'site-first-seen'); assert.equal(first.parcel, 'parcel:7000/1');
+  const enf = SY.diffSites(sp, { active: [site({ sanctions: 1 })], closed: { rows: [] } }, 'T')[0]; assert.equal(enf.event, 'site-enforcement-changed'); assert.equal(enf.executorId, 1002);
+  const exc = SY.diffSites(sp, { active: [site({ executorId: 1001 })], closed: { rows: [] } }, 'T')[0]; assert.equal(exc.event, 'site-executor-changed'); assert.equal(exc.oldExecutorId, 1002); assert.equal(exc.executorId, 1001);
+  const cl = SY.diffSites(sp, { active: [site({})], closed: { rows: [{ name: 'אתר', executorName: 'אלפא בנייה בע"מ', from: '2026-10-01' }] } }, 'T')[0]; assert.equal(cl.event, 'site-closure-notice'); assert.equal(cl.executorKey, R.regKey('אלפא בנייה בע"מ'));
+});
+t('§18 WATCH matches by exact keys only: a parcel on a site event, a contractor\'s registry number (also as the previous executor), a closure notice under the contractor\'s registered name', () => {
+  const H = [
+    { at: '2026-10-19T05:00:00Z', lane: 'sites', event: 'site-first-seen', key: 'site:labor:77', parcel: 'parcel:7000/1', executorId: 9 },
+    { at: '2026-10-19T05:00:00Z', lane: 'sites', event: 'site-executor-changed', key: 'site:labor:78', executorId: 9, oldExecutorId: 1002 },
+    { at: '2026-10-19T05:00:00Z', lane: 'sites', event: 'site-closure-notice', key: 'closed:abc', executorKey: R.regKey('אלפא בנייה בע"מ') },
+    { at: '2026-10-19T05:00:00Z', lane: 'tlv', event: 'site-state-changed', key: 'site:tlv:Z', parcels: ['parcel:6000/5'] },
+    { at: '2026-10-19T05:00:00Z', lane: 'sites', event: 'site-first-seen', key: 'site:labor:79', parcel: 'parcel:7000/2', executorId: 9 },
+  ];
+  const keys = [{ key: 'parcel:7000/1', kind: 'parcel' }, { key: 'parcel:6000/5', kind: 'parcel' }, { key: 'kablan:1002', kind: 'contractor', names: ['אלפא בנייה בע"מ'] }];
+  assert.deepEqual(W.changesSince(keys, H, '2026-10-01').map((e) => e.key).sort(), ['closed:abc', 'site:labor:77', 'site:labor:78', 'site:tlv:Z']);
+});
 t('§15 explainability: every DD signal id has a rule, every DD missing id a reason, every DD term a level-2 entry (lib/explain/registry.js)', () => {
   const X = require('../lib/explain/registry');
-  const sig = ['ENTITY_AMBIGUOUS', 'ENTITY_UNRESOLVED', 'COURT_LIQUIDATION_STATUS', 'COMPANY_NOT_ACTIVE', 'COURT_LIQUIDATION_PROCEEDING', 'VOLUNTARY_LIQUIDATION_LISTED', 'BREACH_FLAG', 'ANNUAL_REPORT_LAG', 'CHARGE_ACTIVITY', 'NO_PUBLIC_FINANCIALS', 'REGISTERED_CONTRACTOR', 'SITE_ENFORCEMENT', 'SITE_CLOSURE_NOTICE', 'POSSIBLE_SAME_ENTITY', 'EXECUTION_GAP'];
+  const sig = ['ENTITY_AMBIGUOUS', 'ENTITY_UNRESOLVED', 'COURT_LIQUIDATION_STATUS', 'INSOLVENCY_PROCEEDINGS_STATUS', 'COMPANY_NOT_ACTIVE', 'COURT_LIQUIDATION_PROCEEDING', 'VOLUNTARY_LIQUIDATION_LISTED', 'BREACH_FLAG', 'ANNUAL_REPORT_LAG', 'CHARGE_ACTIVITY', 'NO_PUBLIC_FINANCIALS', 'REGISTERED_CONTRACTOR', 'SITE_ENFORCEMENT', 'SITE_CLOSURE_NOTICE', 'POSSIBLE_SAME_ENTITY', 'EXECUTION_GAP'];
   const src = fs.readFileSync(path.join(__dirname, '..', 'lib', 'dd', 'developer.js'), 'utf8'); for (const m of src.matchAll(/add\('([A-Z_]+)'/g)) assert.ok(sig.includes(m[1]), 'unlisted DD signal ' + m[1]);
   for (const id of sig) { const r = X.SIGNAL_RULES[id]; assert.ok(r, 'no rule for ' + id); assert.ok(X.term(r.term), id + ' → ' + r.term); }
   const devMiss = ddOf(dev('dev-a', 'אלפא בנייה בע"מ')).missing.map((m) => m.id); const prjMiss = prj(lot('ila:1:L9', { localityCode: 9000 }), null).missing.map((m) => m.id);
@@ -261,5 +311,36 @@ if (REAL.synced) {
     for (const id of ['dev-69edd3ba1aec', 'dev-d23c21a9650e', 'dev-2eda15c3a337']) { if (!L.devById.has(id)) continue; const a = X.developer(id); languageGate(a, id); const s = a.dd.identity.resolution.state; assert.ok(['STRONG_MATCH', 'POSSIBLE_MATCH', 'AMBIGUOUS', 'UNRESOLVED'].includes(s)); }
     const p = X.project('ila:20210310:0000800008476'); if (p) { languageGate(p, 'project'); assert.ok(p.dd.summary.length >= 5); }
   });
+  t('real data: a number that is one Tel Aviv record\'s request AND another\'s permit returns BOTH hits, each saying by which; "היתר" / "בקשה" narrow; the bare number never opens one silently', () => {
+    const X = require('../lib/dd');
+    let both = null; for (const k of REAL.tlvPermitsByNumber.keys()) { const a = REAL.tlvPermitsByRequest.get(k); if (a && String(a[0].request) !== String(REAL.tlvPermitsByNumber.get(k)[0].request)) { both = k; break; } }
+    if (both) {
+      const h = X.searchHits(both).filter((x) => x.type === 'permit'); assert.equal(h.length, 2); assert.deepEqual(h.map((x) => x.via).sort(), ['exact-permit-number', 'exact-request-number']);
+      assert.deepEqual(X.searchHits('היתר ' + both).filter((x) => x.type === 'permit').map((x) => x.via), ['exact-permit-number']);
+      assert.deepEqual(X.searchHits('בקשה ' + both).filter((x) => x.type === 'permit').map((x) => x.via), ['exact-request-number']);
+      assert.equal(X.permit(both).ambiguous, true); assert.equal(X.permit('permit:tlv:' + both).id, 'permit:tlv:' + both, 'the record id is the request number');
+    }
+    /* a request with several rows keeps every row's permit number and stage; a lot with no stated date is SAME_PARCEL, never PRIOR_ACTIVITY */
+    let multi = null; for (const [k, v] of REAL.tlvPermitsByRequest) if (v.length > 1 && new Set(v.map((r) => r.permit).filter(Boolean)).size > 1) { multi = k; break; }
+    if (multi) { const r = X.permit('permit:tlv:' + multi); assert.ok(r.permit.permits.length > 1); assert.equal(r.permit.rowsCount, REAL.tlvPermitsByRequest.get(multi).length); for (const l of r.lots) if (!r.permit.opened && !r.permit.permitDate && !r.permit.start) assert.equal(l.relation, 'SAME_PARCEL'); }
+  });
 }
-console.log(`dd: ${n} gates passed${REAL.synced ? '' : ' (real-data gates skipped: data/dd not synced)'}`);
+
+/* the sync's paging guards run against a stub answer (no network): a short read fails the lane, a complete read passes */
+(async () => {
+  const SY = require('../lib/dd/sync');
+  const src = { id: 'stub', resource: 'r', fields: null };
+  const ckan = (rows, total, cap = Infinity) => async (u) => { const q = new URL(u); const off = Number(q.searchParams.get('offset')), lim = Math.min(Number(q.searchParams.get('limit')), cap); return { result: { total, fields: [], records: rows.slice(off, off + lim) } }; };
+  const rows = Array.from({ length: 25 }, (_, i) => ({ i }));
+  const ok = await SY.pageCkan(ckan(rows, 25), src, { pageSize: 10, pause: 0 }); assert.equal(ok.scanned, 25);
+  const capped = await SY.pageCkan(ckan(rows, 25, 7), src, { pageSize: 10, pause: 0 }); assert.equal(capped.scanned, 25, 'a server page cap below the requested size keeps paging to the total');
+  await assert.rejects(SY.pageCkan(ckan(rows.slice(0, 20), 25), src, { pageSize: 10, pause: 0 }), (e) => e.kind === 'PARTIAL' && /short read — 20 of 25/.test(e.message));
+  const est = async (u) => { const r = await ckan(rows.slice(0, 20), 25)(u); r.result.total_was_estimated = true; return r; };
+  assert.equal((await SY.pageCkan(est, src, { pageSize: 10, pause: 0 })).scanned, 20, 'an ESTIMATED total is not a count to enforce');
+  const lay = { id: 'stub-arc', layer: 1, oid: 'oid', fields: ['oid'] };
+  const arc = (n, count) => async (u) => { if (/returnCountOnly=true/.test(u)) return { count }; const off = Number(/resultOffset=(\d+)/.exec(u)[1]); const f = Array.from({ length: Math.max(0, Math.min(1000, n - off)) }, (_, i) => ({ attributes: { oid: off + i } })); return { fields: [{ name: 'oid' }], features: f, exceededTransferLimit: off + f.length < n }; };
+  assert.equal((await SY.pageArcgis(arc(1500, 1500), lay, { slim: (a) => a, pause: 0 })).kept.length, 1500);
+  await assert.rejects(SY.pageArcgis(arc(1500, 2000), lay, { slim: (a) => a, pause: 0 }), (e) => e.kind === 'PARTIAL');
+  n++; console.log('  ✓ sync paging: a short read (fewer rows than the source\'s own total) fails the lane — a row that was not read is never "gone"; a server page cap keeps paging; an estimated total is not enforced');
+  console.log(`dd: ${n} gates passed${REAL.synced ? '' : ' (real-data gates skipped: data/dd not synced)'}`);
+})().catch((e) => { console.error(e); process.exitCode = 1; console.log('dd: 1 FAILED'); });

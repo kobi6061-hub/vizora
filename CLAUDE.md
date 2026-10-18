@@ -289,17 +289,20 @@
   slim keyed rows (`data/dd/` is bot-written; `history.jsonl` append-only, the first read of a row is never an event; `lib/dd/retractions.js`
   lists defect-produced events — kept, skipped by reads). Entity model (18 types; parent / subsidiary / SPV / guarantor NOT resolvable) and
   match states VERIFIED (an official number — a source's or a USER-PROVIDED one, labelled) · STRONG_MATCH (identical normalized legal name, one
-  row) · POSSIBLE_MATCH (same letters / consonant skeleton, never chosen) · AMBIGUOUS (several, none picked) · UNRESOLVED; a name alone is never
-  VERIFIED; joint winner strings resolved per party. Developer DD (corporate record: registry status, breach flag, charges as dated filing events —
+  row) · POSSIBLE_MATCH (same letters / consonant skeleton, never chosen; a user number under another registered name) · AMBIGUOUS (several, none
+  picked) · UNRESOLVED; a name alone is never VERIFIED; a comma string is first one registered name, split per party only when every part carries
+  a legal form; status class from status + SUB-STATUS (an order opening proceedings → INSOLVENCY_PROCEEDINGS). Developer DD (corporate record: registry status, breach flag, charges as dated filing events —
   CHARGE ≠ DISTRESS, Receiver cases; financial-data coverage from the registry TYPE only — PUBLIC FINANCIAL DATA NOT AVAILABLE IN CURRENT COVERAGE;
   contractor + sites; execution record + velocity beside the same rule over every lot), project DD (a parcel identifies land: STRONG only with a
   second key and dates after the award, parcel-only POSSIBLE never moves the ladder, pre-award activity is PARCEL HISTORY; verified dated timeline;
-  ladder with a coverage label per rung; EXECUTION GAP ≥ 18 months; "NO LATER PUBLIC EVIDENCE FOUND", never stalled / failed / delayed), RISK &
+  ladder with a coverage label per rung; EXECUTION EVIDENCE GAP ≥ 18 months only where a covered source could show later evidence — elsewhere a
+  coverage gap, never a signal; "NO LATER PUBLIC EVIDENCE FOUND", never stalled / failed / delayed; contractors from STRONG sites only), RISK &
   GAP BRIEF (six categories, why · confirms · disproves · verify), NEXT BEST EVIDENCE, WATCH contract (no agent, no alerts; `propx:watch:v1` in the
   browser), per-entity evidence graph (every edge with source · dates · class · match state · reasons). `GET /api/intel?view=dd|ddCompany|
   ddPermit|ddStatus`; search returns typed LEGAL COMPANY / CONTRACTOR / PERMIT hits; the DD panel tops the developer / project drawer
-  (one-minute · five-minute · deep dive) + company and permit drawers; registry group `dd` (24 terms, 14 signal rules, 9 missing reasons); Trust
-  Center lists the 8 integrated sources. See `lib/dd/README.md`.
+  (one-minute · five-minute · deep dive) + company and permit drawers (a permit record = its request number; a number that is a request AND
+  another record's permit → both hits, never one picked); registry group `dd` (24 terms, 15 signal rules, 9 missing reasons); a lane fails on a
+  short read (never "gone" from an unread row); Trust Center lists the 8 integrated sources. See `lib/dd/README.md`.
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,
