@@ -1,0 +1,76 @@
+{
+ "schema": 1,
+ "generator": "lib/dossier/history.js",
+ "basis": {
+  "he": "תמונת מצב = קריאה של PROPX ביום הזה — לא תאריך פרסום של מקור; כל עובדה נלקחת מסעיפי התיק כפי שהם, עם מקורה, סיווגה ותקופתה; ערך חסר = null עם הסיבה (לעולם לא 0). ההבדל בין שתי קריאות של PROPX הוא נגזר (DERIVED) — לא אירוע שהמקור דיווח, ולא המלצה. קובץ יום שקיים לעולם אינו נכתב מחדש ואינו נמחק.",
+  "en": "A snapshot = a PROPX read on that day — not a source publication date; every fact is taken from the dossier sections as they are, with its source, class and period; a missing value = null with its reason (never 0). The difference between two PROPX reads is DERIVED — not an event the source reported, never a recommendation. A day file that exists is never rewritten or deleted."
+ },
+ "appendOnly": true,
+ "facts": [
+  "sales.latest",
+  "sales.t12",
+  "sales.momentum3m",
+  "inventory.unsold",
+  "inventory.monthsSupply",
+  "construction.permits",
+  "construction.starts",
+  "construction.completions",
+  "construction.active",
+  "land.tenders",
+  "land.published",
+  "land.open",
+  "land.closed",
+  "land.decided",
+  "land.awarded",
+  "land.frozen",
+  "land.cancelled",
+  "land.unitsOpen",
+  "land.unitsPendingDecision",
+  "land.unitsAwarded",
+  "land.unitsFailed",
+  "land.medianPerUnit",
+  "land.competitiveLots",
+  "renewal.complexes",
+  "renewal.proposedUnits",
+  "renewal.declared",
+  "housing.lotteries",
+  "housing.projects",
+  "housing.unitsFirst",
+  "housing.applicantsPerUnit",
+  "rental.tenders",
+  "rental.tenderUnits",
+  "developers.total",
+  "developers.lotsHere",
+  "developers.top",
+  "developers.entries",
+  "macro.boiRate",
+  "macro.constructionInputsYoy",
+  "macro.newHomesIndexYoy",
+  "macro.dwellingsIndexYoy",
+  "quality.score",
+  "quality.level",
+  "radar.tracked"
+ ],
+ "count": 1,
+ "first": "2026-10-18",
+ "latest": "2026-10-18",
+ "dates": [
+  {
+   "date": "2026-10-18",
+   "at": "2026-10-18T00:36:02.225Z",
+   "geographies": 449,
+   "byLevel": {
+    "il": 1,
+    "district": 7,
+    "locality": 441
+   },
+   "states": {
+    "SIGNALS": 169,
+    "NO_SIGNAL": 155,
+    "INSUFFICIENT_DATA": 125
+   },
+   "bytes": 332954,
+   "sha256": "797e3cd07da98131ed4331c01e1d5b07884c52b9515bc38f89a8e7ffc937806b"
+  }
+ ]
+}
