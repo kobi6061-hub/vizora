@@ -276,22 +276,30 @@
   "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=e7266a9c-fed6-40e4-a28e-8cddc9f44842",
   "catalogue": "https://data.gov.il/dataset/mashkonot",
   "accessMethod": "HTTPS GET, CKAN datastore_search (catalogue says datastore active)",
-  "classification": "PARTIAL",
-  "contains": "catalogue only: the pledges (משכונות) register view — fields NOT read in this audit (the companies lane was refused by the WAF before this resource)",
-  "sample": [],
+  "classification": "UNUSABLE",
+  "contains": "8,436,881 rows: מזהה משכון, תאריך רישום, סטטוס רישום (לא פעיל …), תאריך סיבת סטטוס, תאריך סטטוס, תאריך רישום נכס, תאריך הסרת הנכס — NO debtor, no company number, no name, no asset description",
+  "sample": [
+   {
+    "pledgeId": 1994000001,
+    "registered": "05/04/1994",
+    "status": "לא פעיל",
+    "statusReason": "ביוזמת צד",
+    "statusDate": "01/02/2015"
+   }
+  ],
   "geography": "national",
   "period": "—",
   "cadence": "source: nightly (modified 2026-10-17) · not read",
-  "freshness": "as audited: catalogue 2026-10-17",
-  "identifiers": "unknown until profiled (a pledge names a debtor; whether the debtor id is on the row is not yet known)",
-  "joinKey": "none yet",
-  "verdict": "DOCUMENT-ONLY",
-  "why": "audited at the catalogue level only — profiled in the next discovery run (dd-discover.js --pledges); a LIEN / PLEDGE is collateral, never insolvency",
+  "freshness": "as audited 2026-10-18: resource modified 2026-10-17",
+  "identifiers": "pledge id only",
+  "joinKey": "none — nothing on the row identifies the debtor",
+  "verdict": "REJECT",
+  "why": "the public view carries pledge ids and dates only: no debtor, company, name or asset — unjoinable to any entity; 8.4 M rows",
   "limitations": [
-   "not read",
-   "a pledge (משכון) on movable property / rights is not a land charge; LIEN ≠ INSOLVENCY"
+   "REJECTED: no identifier of the pledgor on the row",
+   "LIEN ≠ INSOLVENCY would apply if a joinable register existed — none does in open data"
   ],
-  "evidence": "run 39114805844 lane companies catalogue (package mashkonot listed; datastore true)",
+  "evidence": "run 39116455420 lane pledges: head 5 rows, vocabulary over 1,500 rows (status \"לא פעיל\" only; no id field)",
   "licence": "data.gov.il open licence unless stated",
   "requests": [],
   "auditedAt": "2026-10-18",

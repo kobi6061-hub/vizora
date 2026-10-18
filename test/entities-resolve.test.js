@@ -61,7 +61,24 @@ t('no legal form (a private person) / a joint string / a missing registry → UN
 t('a company number from a source or the user → VERIFIED; an unknown number → UNRESOLVED (not in coverage), never a name fallback', () => {
   assert.equal(R.resolveCompany(dev('משהו אחר בע"מ'), idx, { companyNumber: 511399388 }).state, 'VERIFIED');
   assert.equal(R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ', 'company', { companyId: 511399388 }), idx).reasons[0].code, 'COMPANY_NUMBER_FROM_SOURCE');
-  const u = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: 42 }); assert.equal(u.state, 'UNRESOLVED'); assert.ok(u.reasons.some((x) => x.code === 'REGISTRY_ROW_NOT_IN_COVERAGE'));
+  const u = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: 512345678 }); assert.equal(u.state, 'UNRESOLVED'); assert.ok(u.reasons.some((x) => x.code === 'REGISTRY_ROW_NOT_IN_COVERAGE'));
+  const bad = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ'), idx, { companyNumber: '42' }); assert.equal(bad.state, 'UNRESOLVED', 'a malformed user number is refused, never replaced by the name'); assert.ok(bad.reasons.some((x) => x.code === 'INVALID_COMPANY_NUMBER'));
+  const conf = R.resolveCompany(dev('א.ב. יזמות בע"מ'), idx, { companyNumber: '1002', confirmedCandidate: true }); assert.equal(conf.state, 'UNRESOLVED', '4-digit fixture numbers are not company numbers');
+});
+t('a plene / defective spelling variant (בניה / בנייה, פתוח / פיתוח) → POSSIBLE MATCH with the candidate, never chosen', () => {
+  const I2 = R.buildIndex({ fetchedAt: '2026-10-18', rows: [{ num: 512000001, name: 'רמי שבירו הנדסה בנייה והשקעות בע~מ', status: 'פעילה', type: 'ישראלית חברה פרטית' }, { num: 512000002, name: 'אביסרור משה ובניו עבודות בניין ופיתוח בע~מ', status: 'פעילה', type: 'ישראלית חברה פרטית' }, { num: 512000003, name: 'אביסרור משה ובניו עבודות בנין ופיתוח בע~מ', status: 'מחוקה', type: 'ישראלית חברה פרטית' }] }, null);
+  const a = R.resolveCompany(dev('רמי שבירו הנדסה בניה והשקעות בע"מ'), I2); assert.equal(a.state, 'POSSIBLE_MATCH'); assert.equal(a.chosen, null); assert.equal(a.candidates[0].num, 512000001); assert.ok(a.reasons.some((x) => x.code === 'SPELLING_VARIANT_ONE_ROW'));
+  const b = R.resolveCompany(dev('אביסרור משה ובניו עבודות בנין ופתוח בע"מ'), I2); assert.equal(b.state, 'AMBIGUOUS'); assert.equal(b.candidates.length, 2);
+});
+t('a joint winner string is not one entity: UNRESOLVED as a whole, every party resolved on its own', () => {
+  const r = R.resolveCompany(dev('י.ח. דמרי בניה ופיתוח בע"מ, משה כהן', 'company', { joint: true }), idx);
+  assert.equal(r.state, 'UNRESOLVED'); assert.equal(r.chosen, null); assert.ok(r.reasons.some((x) => x.code === 'JOINT_PARTIES_RESOLVED_SEPARATELY'));
+  assert.deepEqual(r.parties.map((p) => [p.name, p.state]), [['י.ח. דמרי בניה ופיתוח בע"מ', 'STRONG_MATCH'], ['משה כהן', 'UNRESOLVED']]);
+});
+t('resolved ambiguity: the user supplies the company number of one candidate → VERIFIED on a user-provided key (labelled), the other candidate untouched', () => {
+  const r = R.resolveCompany(dev('א.ב. יזמות בע"מ'), R.buildIndex({ fetchedAt: '2026-10-18', rows: [{ num: 512000011, name: 'א.ב. יזמות בע~מ', status: 'מחוקה' }, { num: 512000012, name: 'א.ב יזמות בע~מ', status: 'פעילה' }] }, null), { companyNumber: '512000012', confirmedCandidate: true });
+  assert.equal(r.state, 'VERIFIED'); assert.equal(r.chosen.num, 512000012); assert.equal(r.userProvided, true); assert.equal(r.basis, 'user-provided-key');
+  assert.deepEqual(r.reasons.map((x) => x.code), ['COMPANY_NUMBER_USER_PROVIDED', 'USER_CONFIRMED_CANDIDATE', 'REGISTRY_ROW_FOUND']);
 });
 t('partnership-kind names resolve against the partnerships register only', () => {
   assert.equal(R.resolveCompany(dev('אחים כהן ש.מ', 'partnership'), idx).state, 'STRONG_MATCH');
