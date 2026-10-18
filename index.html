@@ -1440,6 +1440,45 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
 .ds-m{font-size:10.5px;color:var(--ink-3);margin-top:2px}
 .ds-ch{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .ds-ch li{padding:4px 0;border-bottom:1px solid var(--hairline)} .ds-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
 .ds-miss{font-size:11.5px;color:var(--ink-2);line-height:1.5;padding-inline-start:16px}
+/* due diligence (lib/dd) */
+.dd-wrap{border-top:2px solid var(--navy);padding-top:10px}
+.dd-h{margin:0 0 6px;font-size:14px}
+.dd-h5{margin:10px 0 4px;font-size:12px;font-weight:800;color:var(--ink)}
+.dd-5m{border-top:1px dashed var(--hairline);padding-top:8px}
+.dd-1m{background:var(--panel-2,var(--panel));border:1px solid var(--hairline);border-radius:10px;padding:8px 10px}
+.dd-lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:12.5px;line-height:1.55}
+.dd-lines .vc{margin-inline-end:4px}
+.dd-k{font-weight:800;color:var(--ink-2);margin-inline-end:4px}
+.dd-m{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.02em;border:1px solid currentColor;border-radius:4px;padding:0 5px;white-space:nowrap;vertical-align:1px}
+.dd-m-VERIFIED{color:var(--up)} .dd-m-STRONG_MATCH{color:var(--navy)} .dd-m-POSSIBLE_MATCH{color:var(--gold)} .dd-m-AMBIGUOUS{color:var(--down);border-style:dashed} .dd-m-UNRESOLVED{color:var(--ink-3);border-style:dashed} .dd-m-PRIOR_ACTIVITY{color:var(--ink-3)}
+.dd-cov{display:inline-block;font-size:9.5px;font-weight:700;color:var(--ink-3);border:1px dotted var(--ink-3);border-radius:4px;padding:0 4px;white-space:normal}
+.dd-sec{border-top:1px solid var(--hairline);padding:6px 0}
+.dd-sec>summary{cursor:pointer;font-size:12.5px;font-weight:800;color:var(--ink);list-style-position:inside}
+.dd-sec .dd-b{padding:6px 0 2px;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.dd-deep>summary{color:var(--ink-2)}
+.dd-rs{margin:2px 0;padding-inline-start:16px;font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.dd-code{font:700 10px/1.4 ui-monospace,monospace;color:var(--ink-3)}
+.dd-brief{list-style:none;margin:0;padding:0}
+.dd-brief li{padding:5px 0;border-bottom:1px solid var(--hairline);font-size:12px}
+.dd-dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;font-size:11.5px;margin:4px 0}
+.dd-dl dt{font-weight:700;color:var(--ink-2)} .dd-dl dd{margin:0}
+.dd-val{font:700 11px/1 ui-monospace,monospace;color:var(--ink-2)}
+.dd-nbe{margin:2px 0;padding-inline-start:18px;font-size:12px;line-height:1.5}
+.dd-nbe li{margin:3px 0}
+.dd-use{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:0 5px;border:1px solid var(--hairline)}
+.dd-use-HIGH{color:var(--down);border-color:var(--down)} .dd-use-MEDIUM{color:var(--gold);border-color:var(--gold)} .dd-use-LOW{color:var(--ink-3)}
+.dd-ladder{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+.dd-ladder li{border:1px solid var(--hairline);border-radius:8px;padding:5px 7px;font-size:11.5px;line-height:1.45}
+.dd-ladder li.ev{border-color:var(--up)} .dd-ladder li.no{opacity:.8;border-style:dashed}
+.dd-sites{list-style:none;margin:0;padding:0} .dd-sites li{padding:5px 0;border-bottom:1px solid var(--hairline);font-size:11.5px;line-height:1.5}
+.dd-tbl td,.dd-tbl th{font-size:11.5px}
+tr.dd-off td{opacity:.72}
+.dd-user{margin-top:8px;font-size:11.5px}
+.dd-in{width:11ch;font:600 12px/1.4 ui-monospace,monospace;padding:2px 6px;border:1px solid var(--hairline);border-radius:6px;background:var(--panel);color:var(--ink)}
+.dd-watch .ho-more{margin:0}
+.dd-watchlist{margin:6px 0;font-size:11.5px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.dd-wl{cursor:pointer;background:var(--panel)}
+@media (max-width:640px){.dd-ladder{grid-template-columns:1fr 1fr}.dd-dl{grid-template-columns:1fr}}
 .ds-ind li{font-size:12px} .num.up{color:var(--up)} .num.down{color:var(--down)}
 .ds-why{border:1px solid var(--hairline);border-inline-start:3px solid var(--brass);border-radius:9px;padding:10px 13px;margin:10px 0 2px;background:var(--panel)}
 .ds-why .ds-ft{margin-top:0} .ds-why ol{margin:0;padding-inline-start:18px;font-size:12.5px;line-height:1.6} .ds-why li{padding:3px 0} .ds-why li .ds-m{display:inline}
@@ -1850,6 +1889,7 @@ label.pt-m{align-items:center;gap:6px;color:var(--ink-3);font-weight:600}
     <div class="card ho-card">
       <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
       <div class="in-res" id="inRes" hidden aria-live="polite"></div>
+      <div class="dd-watchlist" id="inWatch" hidden></div>
       <div class="ho-bar" id="inBar"></div>
       <div class="ho-cov" id="inCov" hidden></div>
       <div class="ho-kpis" id="inKpis"></div>
@@ -7198,6 +7238,7 @@ function initHousing(){
   };
   sec.addEventListener("click",onClick);
   if(drawer)drawer.addEventListener("click",onClick);
+  ddRenderWatchlist();
   sec.addEventListener("change",e=>{
     const x=e.target,d=x.dataset;
     if(d.hof){setF(d.hof,x.value);return}
@@ -7792,7 +7833,7 @@ he:{
   filterPh:{developers:"סינון לפי שם יזם",projects:"סינון לפי שם · יזם · שכונה"},cityPh:"עיר (שם או סמל)",
   searchPh:"חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר",searchL:"חיפוש ישויות",
   searching:"מחפש…",searchNone:"לא נמצאה ישות תואמת במקורות PROPX",searchErr:"החיפוש אינו זמין כרגע (השרת לא ענה) — זו אינה תוצאה ריקה; נסו שוב",searchBasis:"תוצאה היא הפניה לישות — שמות מותאמים לפי מחרוזת ואינם ממוזגים",
-  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב",district:"מחוז",country:"ארצי"},
+  ty:{tender:"מכרז",plan:"תכנית",parcel:"גוש/חלקה",address:"כתובת",developer:"יזם",project:"פרויקט",renewal:"התחדשות",locality:"יישוב",street:"רחוב",district:"מחוז",country:"ארצי",company:"חברה רשומה",contractor:"קבלן רשום",permit:"היתר (ת״א)"},
   kDevs:"יזמים ברישום",kDevsS:n=>`${n} מופיעים בשני המקורות (שם משפטי זהה)`,kSites:"מגרשי מגורים שנזכו",kSitesS:"מכרזי רמ״י · זוכה עם סימון צורה משפטית",
   kProjects:"פרויקטי הגרלה",kProjectsS:(a,b)=>`משב״ש · הגרלות ${a}–${b}`,kUnmarked:"זוכים ללא סימון משפטי",kUnmarkedS:n=>`${n} מגרשים — בדרך כלל אנשים פרטיים; נספרים, לא מוצגים`,
   basis:"פעילות שנצפתה במקורות PROPX — לא עתודת קרקע, לא צבר כולל ולא רשימת יזמים מלאה",
@@ -7886,7 +7927,7 @@ en:{
   filterPh:{developers:"Filter by developer name",projects:"Filter by name · developer · neighbourhood"},cityPh:"City (name or code)",
   searchPh:"Search: developer · project · tender 158/2026 · plan · block/parcel · city · street and number",searchL:"Entity search",
   searching:"Searching…",searchNone:"No matching entity in PROPX's sources",searchErr:"Search is unavailable right now (the server did not answer) — this is not an empty result; try again",searchBasis:"a result routes to an entity — names match by string and are never merged",
-  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street",district:"District",country:"Country"},
+  ty:{tender:"Tender",plan:"Plan",parcel:"Block/parcel",address:"Address",developer:"Developer",project:"Project",renewal:"Renewal",locality:"Locality",street:"Street",district:"District",country:"Country",company:"Legal company",contractor:"Contractor",permit:"Permit (TLV)"},
   kDevs:"Developers in the registry",kDevsS:n=>`${n} appear in both sources (identical legal name)`,kSites:"Residential lots won",kSitesS:"ILA tenders · winner with a legal-form marker",
   kProjects:"Lottery projects",kProjectsS:(a,b)=>`MoCH · lotteries ${a}–${b}`,kUnmarked:"Winners without a legal form",kUnmarkedS:n=>`${n} lots — usually private persons; counted, not listed`,
   basis:"Activity observed in PROPX's sources — not a land bank, not a total pipeline, not a complete developer list",
@@ -8076,6 +8117,7 @@ function inCardsHTML(d){
 }
 function renderIntel(){
   const sec=el("intel");if(!sec)return;
+  ddRenderWatchlist();
   const t=IT(),d=inState.data,st=inState.status,bar=el("inBar");
   const a=document.activeElement,key=a&&bar.contains(a)?(a.dataset.inq!==undefined?"[data-inq]":a.dataset.incity!==undefined?"[data-incity]":null):null;
   const typed=key?a.value:null,ss=key?a.selectionStart:null;
@@ -8134,6 +8176,9 @@ function inHitSub(h){
   if(h.type==="developer")return t.hitDev(fmtInt(M.lots||0),fmtInt(M.projects||0),fmtInt(M.cities||0));
   if(h.type==="plan"||h.type==="parcel")return t.hitN(fmtInt(M.tenders||0));
   if(h.type==="project"||h.type==="renewal")return h.sub||"";
+  if(h.type==="company")return `${state.lang==="en"?"co.":"ח.פ."} ${M.number||""}${M.inCoverage===false?" · "+DT().notInCov:""}`;
+  if(h.type==="contractor")return `${state.lang==="en"?"contractor":"קבלן"} ${M.kablan||""}${M.company?` · ${state.lang==="en"?"co.":"ח.פ."} ${M.company}`:""}`;
+  if(h.type==="permit")return `${state.lang==="en"?"Tel Aviv-Yafo":"תל אביב-יפו"}${M.stage?" · "+M.stage:""}`;
   if(h.type==="district"||h.type==="country")return t.hitDossier;
   if(h.type==="locality"&&h.radar)return t.hitRadar(fmtInt(h.radar.opportunities||0),fmtInt(h.radar.risks||0),(T().dsWhy&&T().dsWhy.q&&T().dsWhy.q[h.radar.quality])||h.radar.quality||"—");
   return "";
@@ -8160,6 +8205,9 @@ function inRoute(h,from){
   if(h.type==="developer"){inOpen("developer",h.id,from);return}
   if(h.type==="project"){inOpen("project",h.id,from);return}
   if(h.type==="renewal"){inOpen("renewal",h.id,from);return}
+  if(h.type==="company"){inOpen("company",(h.meta&&h.meta.number)||String(h.id).replace(/^co:/,""),from);return}
+  if(h.type==="contractor"){const M=h.meta||{};inOpen("company",M.company?M.company:"kablan:"+M.kablan,from);return}
+  if(h.type==="permit"){inOpen("permit",String((h.meta&&h.meta.request)||h.id).replace(/^permit:tlv:/,""),from);return}
   if(h.type==="district"||h.type==="country"){dsState.level=h.type==="district"?"district":"il";dsState.code=h.type==="district"?h.id:null;dsLoad();inGoSection("dossier");return}
   if((h.type==="address"||h.type==="street"||h.type==="locality")&&h.geo){
     const g=Object.assign({},h.geo);if(h.type==="address")g.house=h.route.house;
@@ -8171,7 +8219,8 @@ async function inOpen(kind,id,from){
   if(from)inState.returnFocus=from;
   el("inDrawer").hidden=false;document.body.style.overflow="hidden";
   renderInDrawer();el("inPanel").focus();
-  try{const d=await inGet(`view=${kind==="renewal"?"renewalComplex":kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
+  const ddq=kind==="company"?(String(id).startsWith("kablan:")?`view=ddCompany&kablan=${encodeURIComponent(String(id).slice(7))}`:`view=ddCompany&number=${encodeURIComponent(id)}${(w=>w?`&since=${encodeURIComponent(w.since)}`:"")(ddWatchOf("company",id))}`):kind==="permit"?`view=ddPermit&id=${encodeURIComponent(id)}`:null;
+  try{const d=await inGet(ddq||`view=${kind==="renewal"?"renewalComplex":kind}&id=`+encodeURIComponent(id));if(!inState.open||inState.open.id!==id)return;inState.detail=d}
   catch(e){if(!inState.open||inState.open.id!==id)return;inState.detailErr=e.message}
   renderInDrawer();
 }
@@ -8224,6 +8273,8 @@ function renderInDrawer(){
   const srcList=(d.sources||[]).map(s=>`<li><b>${inE(state.lang==="en"&&s.publisherEn?s.publisherEn:s.publisher)}</b> — ${inE(s.name)} <span class="ho-chip">${inE(s.classification)}</span><div class="sub">${inE(s.role||"")}</div></li>`).join("");
   const meth=`<ul class="ho-note ld-ul">${t.meth.map(m=>`<li>${inE(m)}</li>`).join("")}</ul>`;
   if(o.kind==="renewal"){p.innerHTML=renewalDrawerHTML(d,close);ptDomAll(p);return}
+  if(o.kind==="company"){p.innerHTML=ddCompanyDrawerHTML(d,close);ptDomAll(p);return}
+  if(o.kind==="permit"){p.innerHTML=ddPermitDrawerHTML(d,close);ptDomAll(p);return}
   if(o.kind==="developer"){
     const A=d.tenders||{},AR=d.tendersRecent||{},M=d.lotteries||{},MR=d.lotteriesRecent||{},C=d.construction;
     const two=(lab,a,b)=>`<tr><th>${lab}</th><td class="num">${a}</td><td class="num">${b}</td></tr>`;
@@ -8243,6 +8294,7 @@ function renderInDrawer(){
     const ent=(d.entries||[]).length?`<ul class="ho-note ld-ul">${d.entries.map(x=>`<li>${inCity(x)} · ${inDate(x.date)} · ${inE(t.via[x.via]||x.via)}</li>`).join("")}</ul>`:"";
     p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${t.dDev} · ${inE(t.basisShort)}</span><h3 id="inDTitle"><bdi>${inE(d.name)}</bdi></h3>
         <div class="sub">${inRoles(d)} ${inChip(inE(t.kinds[d.kind]||d.kind),"cont")}${d.joint?" "+inChip(inE(t.joint),"cont"):""}</div></div>${close}</div>
+      ${ddSlot("developer",d.id)}
       ${sec(t.dIds,O,`<div class="ho-dl">${kv(t.dCanon,`<bdi>${inE(d.canonical)}</bdi>`)}${kv(t.dCompany,inE(t.dCompanyV))}${kv(t.c.cities,inN((d.markets||[]).length))}${kv(t.c.last,inDate(d.lastActivity))}</div>
         <p class="ho-note">${t.dAliases}: ${(d.aliases||[]).map(a=>`<bdi>${inE(a.name)}</bdi> <span class="num">(${fmtInt(a.occurrences)})</span>`).join(" · ")}</p>${ps?`<h4 class="ld-h4">${t.dPossible}</h4>${ps}`:""}`)}
       ${d.intel?sec(t.di.title,D,diHTML(d.intel)):""}
@@ -8254,7 +8306,7 @@ function renderInDrawer(){
       ${(d.projects||[]).length?sec(t.dProjects,O,projs):""}
       ${sec(t.dSrc,"",`<ul class="ho-note ld-ul">${srcList}</ul>`)}
       ${sec(t.dMeth,"",meth)}`;
-    ptDomAll(p);return;
+    ptDomAll(p);ddEnsure("developer",d.id);return;
   }
   /* project */
   const ila=d.kind==="ila-awarded-lot",S=d.stage||{evidence:[]};
@@ -8279,21 +8331,259 @@ function renderInDrawer(){
   const prov=d.provenance||{};
   p.innerHTML=`<div class="ho-dh"><div><span class="lyr">${inE(t.pkinds[d.kind]||d.kind)} · <span class="num">${inE(d.id)}</span></span>
       <h3 id="inDTitle">${ila?`${inE(t.sTender)} <span class="num">${inE(d.tender||"")}</span> · ${inCity(d)}`:`<bdi>${inE(d.name||"")}</bdi> · ${inCity(d)}`}</h3><div class="sub">${inStage(S.furthest)}</div></div>${close}</div>
+    ${ddSlot("project",d.id)}
     ${body}
     ${d.intel&&t.pi?sec(t.pi.title,D,piHTML(d)):""}
     ${sec(t.pEvidence,D,ev)}
     ${sec(t.pJoin,"",`<p class="ho-note">${inE(ila?t.joinIla:t.joinMoch)}</p>`)}
     ${sec(t.pProv,"",`<div class="ho-dl">${kv(t.srcUpd,inDate(prov.sourceUpdatedAt))}${kv(t.fetched,inDate(prov.fetchedAt||prov.detailFetchedAt))}</div><ul class="ho-note ld-ul">${srcList}</ul>`)}`;
-  ptDomAll(el("inPanel"));
+  ptDomAll(el("inPanel"));ddEnsure("project",d.id);
 }
+/* =====================================================================
+   INSTITUTIONAL DUE DILIGENCE (lib/dd · /api/intel?view=dd | ddCompany |
+   ddPermit) — the panel at the top of the developer / project drawer and
+   the LEGAL COMPANY / PERMIT drawers. Three depths: the one-minute card,
+   the five-minute sections, the deep dive (evidence graph, hard truths).
+   Every link shows its match state; nothing is a score or a verdict.
+   ===================================================================== */
+const DD_I18N={
+he:{title:"בדיקת נאותות",oneMin:"תמונה בדקה",fiveMin:"פירוט (חמש דקות)",deep:"עומק — גרף ראיות, כללים ומקורות",loading:"טוען בדיקת נאותות…",err:"בדיקת הנאותות אינה זמינה כרגע",offline:"בדיקת הנאותות זמינה בגרסת השרת בלבד",
+  m:{VERIFIED:"מאומת",STRONG_MATCH:"התאמה חזקה",POSSIBLE_MATCH:"התאמה אפשרית",AMBIGUOUS:"רב-משמעי",UNRESOLVED:"לא נפתר",PRIOR_ACTIVITY:"היסטוריית חלקה"},
+  identity:"זהות משפטית",brand:"השם שנצפה (מותג)",legal:"חברה רשומה",number:"ח.פ.",status:"סטטוס רשם",type:"סוג תאגיד",breach:"דגל הפרה",lastReport:"דוח שנתי אחרון",incorporated:"התאגדות",reasons:"סיבות",candidates:"מועמדים (לא נבחרו)",parties:"צדדים במחרוזת המשותפת",possibleSame:"שמות באותן אותיות במרשם PROPX (לא אוחדו)",
+  useCand:"זו החברה — אני מאשר/ת",userNo:"מספר חברה (ח.פ.)",userGo:"החל",userNote:"מספר שתספק/י מסומן כמפתח שסופק על ידי המשתמש",userActive:n=>`מוצג לפי ח.פ. ${n} שסופק על ידי המשתמש`,userClear:"נקה",
+  corporate:"רשומה תאגידית",filings:"אירועי רישום",charges:(r,s,u)=>`${r} רישומי שעבוד · ${s} סילוקים · ${u} עדכונים`,window:"חלון המקור",insolvency:"פירוק / חדלות פירעון",cases:"תיקים",open:"פתוח",closed:"סגור",statusChanges:"שינויי סטטוס שנצפו",
+  financial:"חוסן פיננסי — כיסוי נתונים",neverShown:"לעולם לא מוצג",contractor:"קבלן רשום ואתרים",notReg:"לא נמצא בפנקס הקבלנים",branches:"ענפים",sites:"אתרים פעילים",cities:"ערים",enforcement:"אכיפת בטיחות",sanctions:"עיצומים",warrants:"צווים",closedNotices:"הודעות סגירת אתר",firstSeen:"נראה לראשונה",lastSeen:"נראה לאחרונה",
+  tlvHolder:"אתרים בתל אביב שבהם היזם הוא בעל ההיתר",execution:"רשומת ביצוע",byStage:"מגרשים לפי השלב הרחוק ביותר",velocity:"מהירות ביצוע",velOk:(m,n)=>`חציון ${m} חודשים מזכייה לתחילת בנייה מתוארכת (n=${n})`,velCmp:(m,n)=>`אותו כלל על כל המגרשים: חציון ${m} חודשים (n=${n})`,linked:(l,s,p)=>`${l} מגרשים עם אתר מקושר · ${s} קישורים חזקים · ${p} אפשריים`,
+  summary:"תקציר",ladder:"סולם שלבים מאומת",timeline:"ציר זמן מאומת",links:"מזהים וקישורים",siteJoin:"אתרים והיתרים",tlvSites:"אתרי תל אביב (חלקה)",labourSites:"אתרי משרד העבודה (מפתח מטקסט)",permits:"רשומות היתר",history:"היסטוריית החלקה — לא הפרויקט",contractors:"קבלנים מבצעים",excluded:"לא קושרו",onLadder:"בסולם",offLadder:"לא בסולם",
+  stages:{"land-awarded":"זכייה בקרקע",marketed:"שיווק",permitted:"היתר","construction-started":"תחילת בנייה",completed:"גמר",occupied:"אכלוס"},asOf:"נכון ל",noDate:"ללא תאריך במקור",
+  developer:"היזם",openDev:"פתח את תיק היזם",brief:"סיכונים ופערים",cats:{VERIFIED_FACT:"עובדה מאומתת",DERIVED_SIGNAL:"אות נגזר",MISSING_EVIDENCE:"ראיה חסרה",SOURCE_LIMITATION:"מגבלת מקור",ENTITY_AMBIGUITY:"עמימות ישות",SOURCE_CONFLICT:"סתירה בין מקורות"},why:"למה זה כאן",confirms:"מה יאשר",disproves:"מה יפריך",verify:"מה לבדוק",
+  nbe:"הראיה הבאה הטובה ביותר",use:{HIGH:"גבוה",MEDIUM:"בינוני",LOW:"נמוך"},flags:{retrievableByPropx:"PROPX יכולה להביא",userProvided:"המשתמש מספק",monitorable:"ניתן לניטור"},verifyNext:"מה לבדוק עכשיו",
+  watch:"מעקב",watchOn:"עקוב",watchOff:"הפסק מעקב",watching:d=>`במעקב מאז ${d}`,detectable:"מה PROPX מזהה",notDetectable:"מה PROPX לא מזהה",lastCheck:"בדיקה אחרונה",changes:"שינויים",noChange:"לא נצפה שינוי במפתחות אלה",material:"מהותי",watchList:"רשימת מעקב",
+  st:{NO_CHANGE:"ללא שינוי",CHANGE:"שינוי",MATERIAL_CHANGE:"שינוי מהותי",NOT_AVAILABLE:"לא זמין"},
+  graph:"גרף ראיות",edge:"קשת",from:"מ",to:"אל",src:"מקור",dates:"תאריכים",truths:"מה PROPX לעולם לא מסיקה",missing:"מה חסר",fresh:"עדכניות המקורות",coverage:"כיסוי",
+  company:"חברה רשומה",devsOf:"שמות יזם שנפתרים לחברה",notInCov:"לא בכיסוי PROPX",permit:"רשומת היתר (תל אביב-יפו)",request:"בקשה",permitNo:"היתר",permitDate:"תאריך היתר",start:"תחילת בנייה",stage:"שלב",units:"יח״ד",addr:"כתובות",lotsOnParcel:"מגרשי רמ״י על אותה חלקה",rel:{PRIOR_ACTIVITY:"ההיתר קודם לזכייה",SAME_PARCEL:"אותה חלקה (≠ אותו פרויקט)"},holders:"בעלי ההיתר",
+  basis:"מקורות רשמיים בלבד; כל קישור עם מצב התאמה; ללא ציון, ללא הסתברות, ללא המלצה"},
+en:{title:"Due diligence",oneMin:"One-minute view",fiveMin:"Details (five minutes)",deep:"Deep dive — evidence graph, rules and sources",loading:"Loading due diligence…",err:"Due diligence is unavailable right now",offline:"Due diligence is available on the server version only",
+  m:{VERIFIED:"VERIFIED",STRONG_MATCH:"STRONG MATCH",POSSIBLE_MATCH:"POSSIBLE MATCH",AMBIGUOUS:"AMBIGUOUS",UNRESOLVED:"UNRESOLVED",PRIOR_ACTIVITY:"PARCEL HISTORY"},
+  identity:"Legal identity",brand:"Observed name (brand)",legal:"Legal company",number:"Company no.",status:"Registrar status",type:"Registry type",breach:"Breach flag",lastReport:"Last annual report",incorporated:"Incorporated",reasons:"Reasons",candidates:"Candidates (not chosen)",parties:"Parties of the joint string",possibleSame:"Same-letters names in the PROPX registry (not merged)",
+  useCand:"This is the company — I confirm",userNo:"Company number",userGo:"Apply",userNote:"A number you supply is marked as a user-provided key",userActive:n=>`Shown for company number ${n}, provided by the user`,userClear:"Clear",
+  corporate:"Corporate record",filings:"Filing events",charges:(r,s,u)=>`${r} charge registrations · ${s} removals · ${u} updates`,window:"Source window",insolvency:"Liquidation / insolvency",cases:"Cases",open:"open",closed:"closed",statusChanges:"Observed status changes",
+  financial:"Financial resilience — data coverage",neverShown:"Never shown",contractor:"Registered contractor and sites",notReg:"Not found in the contractors register",branches:"Branches",sites:"Active sites",cities:"Cities",enforcement:"Safety enforcement",sanctions:"sanctions",warrants:"warrants",closedNotices:"Site-closure notices",firstSeen:"First seen",lastSeen:"Last seen",
+  tlvHolder:"Tel Aviv sites where the developer is the permit holder",execution:"Execution record",byStage:"Lots by furthest stage",velocity:"Execution velocity",velOk:(m,n)=>`median ${m} months from award to a dated construction start (n=${n})`,velCmp:(m,n)=>`the same rule over every lot: median ${m} months (n=${n})`,linked:(l,s,p)=>`${l} lots with a linked site · ${s} strong links · ${p} possible`,
+  summary:"Summary",ladder:"Verified stage ladder",timeline:"Verified timeline",links:"Identifiers and links",siteJoin:"Sites and permits",tlvSites:"Tel Aviv sites (parcel)",labourSites:"Ministry of Labour sites (key from text)",permits:"Permit records",history:"Parcel history — not this project",contractors:"Executing contractors",excluded:"Not linked",onLadder:"on the ladder",offLadder:"not on the ladder",
+  stages:{"land-awarded":"Land awarded",marketed:"Marketed",permitted:"Permitted","construction-started":"Construction started",completed:"Completed",occupied:"Occupied"},asOf:"as of",noDate:"no date in the source",
+  developer:"Developer",openDev:"Open the developer",brief:"Risks and gaps",cats:{VERIFIED_FACT:"Verified fact",DERIVED_SIGNAL:"Derived signal",MISSING_EVIDENCE:"Missing evidence",SOURCE_LIMITATION:"Source limitation",ENTITY_AMBIGUITY:"Entity ambiguity",SOURCE_CONFLICT:"Source conflict"},why:"Why it is here",confirms:"What would confirm it",disproves:"What would disprove it",verify:"What to verify next",
+  nbe:"Next best evidence",use:{HIGH:"High",MEDIUM:"Medium",LOW:"Low"},flags:{retrievableByPropx:"PROPX can retrieve",userProvided:"user-provided",monitorable:"monitorable"},verifyNext:"What to verify now",
+  watch:"Watch",watchOn:"Watch",watchOff:"Stop watching",watching:d=>`Watching since ${d}`,detectable:"What PROPX can detect",notDetectable:"What PROPX cannot detect",lastCheck:"Last check",changes:"Changes",noChange:"No change observed on these keys",material:"material",watchList:"Watchlist",
+  st:{NO_CHANGE:"No change",CHANGE:"Change",MATERIAL_CHANGE:"Material change",NOT_AVAILABLE:"Not available"},
+  graph:"Evidence graph",edge:"Edge",from:"From",to:"To",src:"Source",dates:"Dates",truths:"What PROPX never concludes",missing:"What is missing",fresh:"Source freshness",coverage:"Coverage",
+  company:"Legal company",devsOf:"Developer names resolving to this company",notInCov:"Not in PROPX coverage",permit:"Permit record (Tel Aviv-Yafo)",request:"Request",permitNo:"Permit",permitDate:"Permit date",start:"Construction start",stage:"Stage",units:"Units",addr:"Addresses",lotsOnParcel:"ILA lots on the same parcel",rel:{PRIOR_ACTIVITY:"the permit predates the award",SAME_PARCEL:"same parcel (≠ same project)"},holders:"Permit holders",
+  basis:"Official sources only; every link with a match state; no score, no probability, no recommendation"}};
+const DT=()=>DD_I18N[state.lang==="en"?"en":"he"];
+const ddL=v=>v==null?"":typeof v==="object"&&("he" in v||"en" in v)?(state.lang==="en"?v.en:v.he):String(v);
+const ddState={key:null,data:null,err:null,busy:false};
+const DD_WATCH_KEY="propx:watch:v1";
+function ddWatchList(){try{const x=JSON.parse(localStorage.getItem(DD_WATCH_KEY)||"{}");return Array.isArray(x.items)?x.items:[]}catch(e){return[]}}
+function ddWatchSave(items){try{localStorage.setItem(DD_WATCH_KEY,JSON.stringify({schema:"propx-watch-v1",items}))}catch(e){/* storage blocked: the watch lives for this view only */}}
+const ddWatchOf=(kind,id)=>ddWatchList().find(w=>w.kind===kind&&w.id===id)||null;
+const ddCoKey=id=>"propx:dd:co:"+id;
+function ddUserCo(devId){try{return sessionStorage.getItem(ddCoKey(devId))||null}catch(e){return null}}
+const ddM=st=>st?`<span class="dd-m dd-m-${inE(st)}" title="${inE(st)}">${inE(DT().m[st]||st)}</span>`:"";
+const ddCls=c=>c?(XP()?xpClsChip(c):`<span class="vc">${inE(c)}</span>`):"";
+const ddCov=c=>c?`<span class="dd-cov">${inE(ddL(c))}</span>`:"";
+const ddRs=rs=>(rs||[]).length?`<ul class="dd-rs">${rs.map(r=>`<li><span class="dd-code">${inE(r.code||"")}</span> ${inE(ddL(r))}</li>`).join("")}</ul>`:"";
+const ddKV=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+const ddSec=(title,body,open,cls)=>`<details class="dd-sec${cls?" "+cls:""}"${open?" open":""}><summary>${title}</summary><div class="dd-b">${body}</div></details>`;
+const ddDate=d=>d?inDate(d):inDash();
+function ddSlot(kind,id){return `<section class="ho-dsec dd-wrap" id="inDD" data-ddkind="${inE(kind)}" data-ddid="${inE(id)}" aria-live="polite">${ddBody()}</section>`}
+function ddEnsure(kind,id){
+  if(kind!=="developer"&&kind!=="project")return;
+  const co=kind==="developer"?ddUserCo(id):null,w=ddWatchOf(kind,id);
+  const key=`${kind}|${id}|${co||""}|${w?w.since:""}`;
+  if(ddState.key===key&&(ddState.data||ddState.busy||ddState.err)){ddPaint();return}
+  ddState.key=key;ddState.data=null;ddState.err=null;ddState.busy=true;ddPaint();
+  const q=`view=dd&${kind}=${encodeURIComponent(id)}${co?`&company=${encodeURIComponent(co)}&confirm=1`:""}${w?`&since=${encodeURIComponent(w.since)}`:""}`;
+  inGet(q).then(d=>{if(ddState.key!==key)return;ddState.data=d;ddState.busy=false;ddPaint()}).catch(e=>{if(ddState.key!==key)return;ddState.err=e.message||"error";ddState.busy=false;ddPaint()});
+}
+function ddPaint(){const box=el("inDD");if(!box)return;box.innerHTML=ddBody();ptDomAll(box)}
+function ddBody(){
+  const t=DT();
+  const head=`<h4 class="dd-h">${t.title} ${xpBtn("risk_gap_brief")}</h4>`;
+  if(ddState.err)return head+`<p class="ho-note">${inOffline()?t.offline:t.err}</p>`;
+  const X=ddState.data;if(!X)return head+`<p class="ho-note">${t.loading}</p>`;
+  return head+(X.kind==="developer"?ddDevHTML(X):ddProjHTML(X));
+}
+/* ---- the shared five-minute blocks ---- */
+function ddBriefHTML(B){
+  const t=DT();if(!B||!B.items)return"";
+  const by={};for(const i of B.items)(by[i.category]=by[i.category]||[]).push(i);
+  return Object.keys(t.cats).filter(k=>by[k]).map(k=>`<h5 class="dd-h5">${t.cats[k]} <span class="num">(${fmtInt(by[k].length)})</span></h5><ul class="dd-brief">${by[k].map(i=>`<li class="dd-c-${k}"><div>${inE(ddL(i.text))}${i.state?" "+ddM(i.state):""}${i.cls?" "+ddCls(i.cls):""}${i.value!=null&&i.value!==""?` <span class="dd-val">${inE(String(i.value))}</span>`:""}</div><details class="pu-why"><summary>${t.why} · ${t.verify}</summary><dl class="dd-dl"><dt>${t.why}</dt><dd>${inE(ddL(i.why))}</dd><dt>${t.confirms}</dt><dd>${inE(ddL(i.confirms))}</dd><dt>${t.disproves}</dt><dd>${inE(ddL(i.disproves))}</dd><dt>${t.verify}</dt><dd>${inE(ddL(i.verify))}</dd></dl></details></li>`).join("")}</ul>`).join("")+`<p class="ho-note">${inE(ddL(B.basis))}</p>`;
+}
+function ddNbeHTML(N,limit){
+  const t=DT();if(!N||!N.items||!N.items.length)return"";
+  const xs=limit?N.items.slice(0,limit):N.items;
+  return `<ol class="dd-nbe">${xs.map(i=>`<li><span class="dd-use dd-use-${inE(i.usefulness)}">${t.use[i.usefulness]||i.usefulness}</span> ${inE(ddL(i.text))}${limit?"":`<div class="ds-m">${Object.entries(i.flags).filter(([,v])=>v).map(([k])=>`<span class="ho-chip">${t.flags[k]}</span>`).join(" ")} · ${inE(ddL(i.unlocks))}</div>`}</li>`).join("")}</ol>`;
+}
+function ddWatchHTML(W,kind,id,name){
+  const t=DT();if(!W)return"";
+  const w=ddWatchOf(kind,id);
+  const btn=`<button type="button" class="ho-more" data-dd="watch" data-ddk="${inE(kind)}" data-ddi="${inE(id)}" data-ddn="${inE(name||id)}">${w?t.watchOff:t.watchOn}</button>`;
+  const ch=W.changes||[];
+  const changes=w?(ch.length?`<ul class="dd-rs">${ch.slice(0,30).map(e=>`<li>${ddDate(e.at)} · <span class="dd-code">${inE(e.event)}</span> ${inE(e.key||"")}${e.old!==undefined?` · <bdi>${inE(String(e.old==null?"—":typeof e.old==="object"?JSON.stringify(e.old):e.old))}</bdi> → <bdi>${inE(String(e.new==null?"—":typeof e.new==="object"?JSON.stringify(e.new):e.new))}</bdi>`:""}</li>`).join("")}</ul>`:`<p class="ho-note">${t.noChange}</p>`):"";
+  return `<div class="dd-watch"><div>${btn} ${w?`<span class="ho-chip">${t.watching(inE(String(w.since).split("-").reverse().join(".")))}</span> <span class="ho-chip${W.state==="MATERIAL_CHANGE"?" bad":""}">${t.st[W.state]||W.state}</span>`:""} ${xpBtn("watch_contract")}</div>
+    ${changes}<p class="ho-note">${inE(ddL(W.honest))}</p>
+    <p class="ho-note">${t.lastCheck}: ${W.lastCheck?`${ddDate(W.lastCheck.at)} · ${inE(W.lastCheck.status||"")}`:inDash()} · ${inE(ddL(W.cadence))}</p>
+    <details class="pu-why"><summary>${t.detectable} (${fmtInt((W.detectable||[]).length)}) · ${t.notDetectable}</summary><ul class="dd-rs">${(W.detectable||[]).map(d=>`<li>${inE(ddL(d.text))} <span class="ho-na">(${inE(d.source)} · ${inE(d.key)})</span></li>`).join("")}</ul><h5 class="dd-h5">${t.notDetectable}</h5><ul class="dd-rs">${(W.notDetectable||[]).map(x=>`<li>${inE(ddL(x))}</li>`).join("")}</ul></details></div>`;
+}
+function ddGraphHTML(G){
+  const t=DT();if(!G||!G.edges)return"";
+  return `<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddgraph"><thead><tr><th>${t.edge}</th><th>${t.from}</th><th>${t.to}</th><th>${state.lang==="en"?"Match":"התאמה"}</th><th>${t.src}</th><th>${t.dates}</th></tr></thead><tbody>${G.edges.map(e=>`<tr><td>${inE(ddL(e.label))}</td><td><bdi>${inE(e.from)}</bdi></td><td><bdi>${inE(e.to)}</bdi></td><td>${ddM(e.matchState)}</td><td>${inE(e.source||"—")}</td><td class="num">${inE([e.dates&&e.dates.source,e.dates&&e.dates.observed].filter(Boolean).map(x=>String(x).slice(0,10)).join(" · ")||"—")}</td></tr>`).join("")}</tbody></table></div><p class="ho-note">${inE(ddL(G.basis))} ${xpBtn("dd_evidence_graph")}</p>`;
+}
+const ddTruthsHTML=H=>(H||[]).length?`<ul class="dd-rs">${H.map(h=>`<li>${inE(ddL(h))}</li>`).join("")}</ul>`:"";
+const ddMissHTML=M=>(M||[]).length?`<ul class="ds-miss">${M.map(m=>`<li>${inE(ddL(m))} ${xpMiss(m.id)}</li>`).join("")}</ul>`:"";
+function ddFreshHTML(F){const t=DT();if(!F)return"";const rows=Object.entries(F).filter(([,v])=>v);return rows.length?`<div class="ho-dl">${rows.map(([k,v])=>ddKV(inE(k),`${v.checkedAt?ddDate(v.checkedAt):""}${v.sourceModified?` · ${ddDate(v.sourceModified)}`:""}${v.imported?` · ${inE(v.imported)}`:""}`)).join("")}</div><p class="ho-note">${state.lang==="en"?"PROPX check · the source's own modification / import":"בדיקת PROPX · עדכון / ייבוא המקור עצמו"}</p>`:""}
+/* ---- identity ---- */
+function ddCoFacts(c){const t=DT();if(!c)return"";return `<div class="ho-dl">${ddKV(t.legal,`<bdi>${inE(c.name)}</bdi>`)}${ddKV(t.number,`<span class="num">${inE(c.number)}</span>`)}${ddKV(t.status,`${inE(c.status&&c.status.verbatim||"—")} ${xpBtn("registry_status")}`)}${ddKV(t.type,inE(c.type||"—"))}${ddKV(t.breach,`${inE(ddL(c.violating&&c.violating.label))} ${xpBtn("breach_flag")}`)}${ddKV(t.lastReport,c.lastAnnualReportYear!=null?`<span class="num">${c.lastAnnualReportYear}</span>`:inDash())}${ddKV(t.incorporated,ddDate(c.incorporated))}</div>`}
+function ddIdentityHTML(D,devId){
+  const t=DT(),I=D.identity,r=I.resolution,co=ddUserCo(devId);
+  const cand=(r.candidates||[]).length&&!r.chosen?`<h5 class="dd-h5">${t.candidates}</h5><ul class="dd-rs">${r.candidates.map(c=>`<li><bdi>${inE(c.name)}</bdi> · <span class="num">${inE(c.number)}</span> · ${inE(c.status&&c.status.verbatim||"—")} <button type="button" class="ld-link" data-dd="useco" data-ddi="${inE(devId)}" data-ddco="${inE(c.number)}">${t.useCand}</button> <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(c.number)}">↗</button></li>`).join("")}</ul>`:"";
+  const parties=(r.parties||[]).length?`<h5 class="dd-h5">${t.parties}</h5><ul class="dd-rs">${r.parties.map(p=>`<li><bdi>${inE(p.name)}</bdi> ${ddM(p.state)}${p.chosen?` · <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(String(p.chosen.num))}"><span class="num">${inE(String(p.chosen.num))}</span> ↗</button>`:""}</li>`).join("")}</ul>`:"";
+  const ps=(I.possibleSame||[]).length?`<h5 class="dd-h5">${t.possibleSame}</h5><ul class="dd-rs">${I.possibleSame.map(x=>`<li><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button> ${ddM(x.state)}</li>`).join("")}</ul>`:"";
+  const form=devId?`<div class="dd-user"><label>${t.userNo} <input type="text" inputmode="numeric" maxlength="9" class="dd-in" data-dd-in="${inE(devId)}" value="${inE(co||"")}" dir="ltr"></label> <button type="button" class="ho-more" data-dd="userco" data-ddi="${inE(devId)}">${t.userGo}</button>${co?` <button type="button" class="ld-link" data-dd="clearco" data-ddi="${inE(devId)}">${t.userClear}</button>`:""}<div class="ho-note">${co?t.userActive(inE(co))+" · ":""}${t.userNote}</div></div>`:"";
+  return `<div class="ho-dl">${ddKV(t.brand,`<bdi>${inE(I.observedName)}</bdi>`)}${ddKV(t.legal,`${ddM(r.state)} ${xpBtn("entity_match_state")}${r.chosen?` <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(r.chosen.number)}"><span class="num">${inE(r.chosen.number)}</span> ↗</button>`:""}`)}</div>${r.chosen?ddCoFacts(r.chosen):""}<h5 class="dd-h5">${t.reasons}</h5>${ddRs(r.reasons)}${cand}${parties}${ps}<p class="ho-note">${inE(ddL(I.brandNote))} ${xpBtn("project_spv")}</p>${form}`;
+}
+function ddCorpHTML(co){
+  const t=DT();if(!co||co.state!=="RESOLVED")return `<p class="ho-note">${inE(ddL(co&&co.reason))}</p>`;
+  const F=co.filings,c=F.counts||{};
+  const ev=(F.events||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddfil"><thead><tr><th>${state.lang==="en"?"Date":"תאריך"}</th><th>${state.lang==="en"?"Kind":"סוג"}</th><th>${state.lang==="en"?"Charge id":"מזהה שעבוד"}</th></tr></thead><tbody>${F.events.map(e=>`<tr><td class="num">${ddDate(e.date)}</td><td>${inE(String(e.kind||"").replace(/~/g,'"'))}</td><td class="num">${e.chargeId!=null?inE(e.chargeId):"—"}</td></tr>`).join("")}</tbody></table></div>`:"";
+  const L=co.insolvency;
+  const cases=(L.liquidationCases||[]).length?`<ul class="dd-rs">${L.liquidationCases.map(x=>`<li>${inE(t.cases)} <span class="num">${inE(x.caseId)}</span> · ${inE(x.status||"—")} · ${x.open?`<span class="ho-chip bad">${t.open}</span>`:`<span class="ho-chip">${t.closed}</span>`} · ${ddDate(x.requested)} → ${ddDate(x.orderDate)}${x.closed?` → ${ddDate(x.closed)}`:""} · ${inE(x.court||"")}</li>`).join("")}</ul>`:"";
+  const chg=(co.statusChanges||[]).length?`<h5 class="dd-h5">${t.statusChanges}</h5><ul class="dd-rs">${co.statusChanges.map(x=>`<li>${ddDate(x.at)} · ${inE(x.event)} · <bdi>${inE(String(x.old==null?"—":x.old))}</bdi> → <bdi>${inE(String(x.new==null?"—":x.new))}</bdi></li>`).join("")}</ul>`:"";
+  return `<p>${t.charges(fmtInt(c.chargeRegistered||0),fmtInt(c.chargeRemoved||0),fmtInt(c.chargeUpdated||0))} ${xpBtn("charge_lien")} ${ddCls("OFFICIAL")}</p><p class="ho-note">${t.window}: ${F.window?`${ddDate(F.window.from)} → ${ddDate(F.window.to)}`:inDash()} · ${inE(ddL(F.interpretation))}</p>${ev}
+    <h5 class="dd-h5">${t.insolvency} ${xpBtn("insolvency_proceeding")}</h5><p>${inE(ddL(L.statement))}</p>${cases}${(L.voluntary||[]).length?`<p>${xpBtn("voluntary_liquidation")} ${L.voluntary.map(v=>`${inE(v.sub||v.status||"")} · ${ddDate(v.approved)}`).join(" · ")}</p>`:""}${chg}`;
+}
+function ddFinHTML(f){const t=DT();if(!f)return"";return `<p><b>${inE(ddL(f.label))}</b> ${xpBtn("financial_resilience_coverage")}</p><p class="ho-note">${inE(ddL(f.statement))}</p><p class="ho-note">${t.neverShown}: ${(f.neverShown||[]).map(x=>`<span class="ho-chip cont">${inE(x)}</span>`).join(" ")}</p>${ddTruthsHTML(f.limitations)}`}
+function ddContractorHTML(K){
+  const t=DT();if(!K)return"";
+  if(K.state!=="REGISTERED")return `<p>${K.state==="AMBIGUOUS"?ddM("AMBIGUOUS")+" ":""}${inE(ddL(K.reason))} ${xpBtn("registered_contractor")}</p>`;
+  const S=K.sites;
+  const br=`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddbr"><thead><tr><th>${state.lang==="en"?"Contractor no.":"מס׳ קבלן"}</th><th>${t.branches}</th><th>${state.lang==="en"?"Group":"קבוצה"}</th><th>${state.lang==="en"?"Class":"סיווג"}</th><th>${state.lang==="en"?"Recognized":"מוכר"}</th></tr></thead><tbody>${K.branches.map(b=>`<tr><td class="num">${inE(b.kablan)}</td><td>${inE(b.branch||"—")}</td><td>${inE(b.group||"—")}</td><td class="num">${inE(b.sivug||"—")}</td><td>${inE(b.recognized||"—")}</td></tr>`).join("")}</tbody></table></div>`;
+  const sl=(S.list||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddsites"><thead><tr><th>${state.lang==="en"?"Site":"אתר"}</th><th>${t.cities}</th><th>${state.lang==="en"?"Use":"שימוש"}</th><th>${t.firstSeen}</th><th>${t.lastSeen}</th></tr></thead><tbody>${S.list.map(s=>`<tr><td><bdi>${inE(s.name||s.id)}</bdi>${s.parcel?` <span class="ho-chip num">${inE(s.parcel)}</span>`:""}</td><td>${inE(s.city||"—")}</td><td>${inE(s.buildTypes||"—")}</td><td class="num">${ddDate(s.firstSeen)}</td><td class="num">${ddDate(s.lastSeen)}</td></tr>`).join("")}</tbody></table></div>`:"";
+  return `<p>${ddM(K.via&&K.via.state)} ${K.kablan.map(k=>`<span class="ho-chip num">${inE(k)}</span>`).join(" ")} ${xpBtn("registered_contractor")}</p>${br}
+    <p>${t.sites}: <span class="num">${fmtInt(S.active)}</span> · ${t.cities}: ${(S.cities||[]).slice(0,8).map(c=>`${inE(c.name||"—")} <span class="num">${fmtInt(c.n)}</span>`).join(" · ")||"—"} ${xpBtn("active_construction_site")}</p>
+    <p class="ho-note">${t.enforcement}: <span class="num">${fmtInt(S.enforcement.sanctions)}</span> ${t.sanctions} · <span class="num">${fmtInt(S.enforcement.warrants)}</span> ${t.warrants}${(K.closedNotices||[]).length?` · ${t.closedNotices}: <span class="num">${fmtInt(K.closedNotices.length)}</span>`:""}</p><p class="ho-note">${inE(ddL(S.interpretation))}</p>${sl}`;
+}
+function ddTlvHolderHTML(P){const t=DT();if(!P||!P.sites||!P.sites.length)return P&&P.note?`<p class="ho-note">${inE(ddL(P.note))}</p>`:"";return `<p>${ddM(P.matchState)} ${ddCov(P.coverage)} ${xpBtn("municipal_permit_record")}</p><ul class="dd-rs">${P.sites.map(s=>`<li><span class="num">${inE(s.parcel||"—")}</span> · ${inE(s.state||"—")} · ${t.start} ${ddDate(s.start)} · <bdi>${inE(s.address||"")}</bdi></li>`).join("")}</ul><p class="ho-note">${inE(ddL(P.matchBasis))} · ${inE(ddL(P.note))}</p>`}
+function ddExecHTML(E){
+  const t=DT();if(!E)return"";
+  const st=Object.entries(E.lotsByFurthestStage||{}).map(([k,n])=>`${inE(t.stages[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · ")||"—";
+  const V=E.velocity||{};
+  const vel=V.measurable?`${t.velOk(inE(String(V.medianMonths)),fmtInt(V.n))}${V.comparison?` · ${t.velCmp(inE(String(V.comparison.medianMonths)),fmtInt(V.comparison.n))}`:""}`:inE(ddL(V.reason));
+  return `<p>${t.byStage}: ${st} ${xpBtn("dd_stage_ladder")}</p>${E.linkedSites?`<p class="ho-note">${t.linked(fmtInt(E.linkedSites.lots),fmtInt(E.linkedSites.strong),fmtInt(E.linkedSites.possible))}</p>`:""}<p>${t.velocity}: ${vel} ${xpBtn("execution_velocity")}</p>${V.measurable?ddTruthsHTML(V.limitations):""}<p class="ho-note">${inE(ddL(E.basis))}</p>`;
+}
+function ddSignalsHTML(S){
+  if(!(S||[]).length)return"";
+  const kc=k=>k==="risk"?" bad":k==="watch"?" on":"";
+  return `<ul class="ds-sig">${S.map(s=>`<li><span class="ho-chip${kc(s.kind)}">${inE(s.kind)}</span> <b>${inE(ddL(s.text))}</b> ${xpSig(s.id,s)} ${ddCls(s.cls)}</li>`).join("")}</ul>`;
+}
+/* ---- the developer panel ---- */
+function ddDevHTML(X){
+  const t=DT(),D=X.dd,r=D.identity.resolution,co=D.corporate,K=D.contractor;
+  const line=(k,v)=>`<li><span class="dd-k">${k}</span> ${v}</li>`;
+  const idLine=`${ddM(r.state)} ${r.chosen?`<bdi>${inE(r.chosen.name)}</bdi> · <span class="num">${inE(r.chosen.number)}</span> · ${inE(r.chosen.status&&r.chosen.status.verbatim||"—")}`:inE(ddL(r.reasons&&r.reasons[0]))} ${xpBtn("entity_match_state")}`;
+  const corpLine=co.state==="RESOLVED"?`${t.charges(fmtInt(co.filings.counts.chargeRegistered||0),fmtInt(co.filings.counts.chargeRemoved||0),fmtInt(co.filings.counts.chargeUpdated||0))} · ${inE(ddL(co.insolvency.statement))}`:inE(ddL(co.reason));
+  const kLine=K.state==="REGISTERED"?`${ddM(K.via&&K.via.state)} ${fmtInt(K.sites.active)} ${t.sites} · ${(K.sites.cities||[]).slice(0,4).map(c=>inE(c.name||"—")).join(" · ")}`:inE(ddL(K.reason));
+  const risks=D.signals.filter(s=>s.kind!=="info");
+  const oneMin=`<div class="dd-1m"><h5 class="dd-h5">${t.oneMin}</h5><ul class="dd-lines">${line(t.identity,idLine)}${line(t.corporate,corpLine)}${line(t.financial,`${inE(ddL(D.financial.label))} ${xpBtn("financial_resilience_coverage")}`)}${line(t.contractor,kLine)}${line(t.execution,`${Object.entries(D.execution.lotsByFurthestStage||{}).map(([k,n])=>`${inE(t.stages[k]||k)} <span class="num">${fmtInt(n)}</span>`).join(" · ")||"—"}`)}</ul>${risks.length?ddSignalsHTML(risks):""}<h5 class="dd-h5">${t.verifyNext}</h5>${ddNbeHTML(X.nextBest,3)}</div>`;
+  const five=ddSec(t.identity,ddIdentityHTML(D,X.id),true)+ddSec(t.corporate,ddCorpHTML(co),true)+ddSec(t.financial,ddFinHTML(D.financial))+ddSec(t.contractor,ddContractorHTML(K))+ddSec(t.tlvHolder,ddTlvHolderHTML(D.permits))+ddSec(t.execution,ddExecHTML(D.execution))+ddSec(`${t.brief} <span class="num">(${fmtInt((X.brief.items||[]).length)})</span>`,ddBriefHTML(X.brief))+ddSec(t.nbe,ddNbeHTML(X.nextBest))+ddSec(t.watch,ddWatchHTML(X.watch,"developer",X.id,X.name),!!ddWatchOf("developer",X.id))+ddSec(state.lang==="en"?"All signals":"כל האותות",ddSignalsHTML(D.signals));
+  const deep=ddSec(t.deep,`<h5 class="dd-h5">${t.graph}</h5>${ddGraphHTML(X.evidence)}<h5 class="dd-h5">${t.truths}</h5>${ddTruthsHTML(D.hardTruths)}<h5 class="dd-h5">${t.missing}</h5>${ddMissHTML(D.missing)}<h5 class="dd-h5">${t.fresh}</h5>${ddFreshHTML(D.freshness)}`,false,"dd-deep");
+  return oneMin+`<h5 class="dd-h5 dd-5m">${t.fiveMin}</h5>`+five+deep+`<p class="ho-note">${t.basis}</p>`;
+}
+/* ---- the project panel ---- */
+function ddLadderHTML(L){
+  const t=DT();if(!L)return"";
+  return `<ol class="dd-ladder">${(L.rungs||[]).map(r=>`<li class="${r.evidenced?"ev":"no"}"><b>${inE(t.stages[r.stage]||r.stage)}</b> ${r.evidenced?`✓ ${r.date?ddDate(r.date):r.ddAsOf?`${t.asOf} ${ddDate(r.ddAsOf)}`:`<span class="ho-na">${t.noDate}</span>`}`:"·"} ${ddCov(r.coverage)}${r.ddLabel?`<div class="ho-note">${inE(ddL(r.ddLabel))}</div>`:""}${!r.evidenced&&(r.reason||r.coverageNote)?`<div class="ho-note">${inE(ddL(r.coverageNote||r.reason))}</div>`:""}</li>`).join("")}</ol><p class="ho-note">${inE(ddL(L.basis))}${L.possibleNotOnLadder?` · ${fmtInt(L.possibleNotOnLadder)} ${t.offLadder}`:""} ${xpBtn("dd_stage_ladder")}</p>`;
+}
+function ddTimelineHTML(TL){
+  const t=DT();if(!(TL||[]).length)return `<p class="ho-note">${inDash()}</p>`;
+  return `<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddtl"><thead><tr><th>${state.lang==="en"?"Date":"תאריך"}</th><th>${state.lang==="en"?"Event":"אירוע"}</th><th>${t.src}</th><th>${state.lang==="en"?"Class":"סיווג"}</th><th>${state.lang==="en"?"Link":"קישור"}</th></tr></thead><tbody>${TL.map(e=>`<tr class="${e.onLadder===false?"dd-off":""}"><td class="num">${ddDate(e.date)}${e.asOf?` <span class="ho-na">(${t.asOf})</span>`:""}</td><td>${inE(ddL(e.label))}</td><td>${inE(e.source||"—")}</td><td>${ddCls(e.cls)}</td><td>${e.matchState?ddM(e.matchState):""}${e.propxObserved?` <span class="ho-chip cont">PROPX</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function ddSitesHTML(S,permits){
+  const t=DT();if(!S)return"";
+  const tl=(S.tlv||[]).map(s=>`<li>${ddM(s.matchState)} <span class="num">${inE(s.id)}</span> · ${inE(s.parcel)} · ${inE(s.state||"—")} · ${t.start} ${ddDate(s.start)} · ${t.holders}: <bdi>${inE((s.holders||[]).join(", ")||"—")}</bdi> ${ddCov(s.coverage)}${ddRs(s.reasons)}</li>`).join("");
+  const lb=(S.labour||[]).map(s=>`<li>${ddM(s.matchState)} <bdi>${inE(s.name||s.id)}</bdi> · ${inE(s.city||"")} · ${state.lang==="en"?"executor":"מבצע"}: <bdi>${inE(s.executor.name||"—")}</bdi>${s.executor.company?` (<button type="button" class="ld-link" data-dd="company" data-ddco="${inE(s.executor.company.number)}"><span class="num">${inE(s.executor.company.number)}</span></button>)`:""} · ${t.firstSeen} ${ddDate(s.firstSeen)} ${ddCov(s.coverage)}${ddRs(s.reasons)}</li>`).join("");
+  const pr=(permits||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddpr"><thead><tr><th>${t.request}</th><th>${t.permitNo}</th><th>${t.permitDate}</th><th>${t.start}</th><th>${t.stage}</th><th>${t.units}</th><th>${state.lang==="en"?"Link":"קישור"}</th></tr></thead><tbody>${permits.map(p=>`<tr><td class="num"><button type="button" class="ld-link" data-dd="permit" data-ddp="${inE(p.request)}">${inE(p.request)}</button></td><td class="num">${inE(p.permit||"—")}</td><td class="num">${ddDate(p.permitDate)}</td><td class="num">${ddDate(p.start)}</td><td>${inE(p.stage||"—")}</td><td class="num">${p.units!=null?fmtInt(p.units):"—"}</td><td>${ddM(p.matchState)}</td></tr>`).join("")}</tbody></table></div>`:"";
+  const hi=(S.parcelHistory||[]).length?`<h5 class="dd-h5">${t.history} ${xpBtn("parcel_history")}</h5><ul class="dd-rs">${S.parcelHistory.map(h=>`<li>${ddM("PRIOR_ACTIVITY")} <span class="num">${inE(h.id)}</span> · ${inE(h.parcel||"")} · ${state.lang==="en"?"latest activity":"פעילות אחרונה"} ${ddDate(h.latestActivity)} < ${state.lang==="en"?"award":"זכייה"} ${ddDate(h.award)}</li>`).join("")}</ul>`:"";
+  const ex=(S.excluded||[]).length?`<h5 class="dd-h5">${t.excluded}</h5><ul class="dd-rs">${S.excluded.map(x=>`<li><bdi>${inE(x.name||x.id)}</bdi> ${ddRs(x.reasons)}</li>`).join("")}</ul>`:"";
+  return `<p class="ho-note">${inE(ddL(S.note))} ${xpBtn("parcel_match")}</p>${tl?`<h5 class="dd-h5">${t.tlvSites}</h5><ul class="dd-sites">${tl}</ul>`:""}${pr?`<h5 class="dd-h5">${t.permits}</h5>${pr}`:""}${lb?`<h5 class="dd-h5">${t.labourSites}</h5><ul class="dd-sites">${lb}</ul>`:""}${hi}${ex}${!tl&&!lb&&!pr&&!hi?`<p class="ho-note">${state.lang==="en"?"No site or permit joins this project by a key — not observed ≠ does not exist.":"אין אתר או היתר שמצטרפים לפרויקט במפתח — לא נצפה ≠ לא קיים."}</p>`:""}`;
+}
+function ddProjHTML(X){
+  const t=DT(),P=X.dd;
+  const sum=`<ul class="dd-lines">${(P.summary||[]).map(s=>`<li>${ddCls(s.cls)} ${inE(state.lang==="en"?s.en:s.he)}</li>`).join("")}</ul>`;
+  const gap=P.executionGap&&P.executionGap.fires?`<ul class="ds-sig"><li><span class="ho-chip on">watch</span> <b>${inE(ddL(P.executionGap.text))}</b> ${xpSig("EXECUTION_GAP",{text:P.executionGap.text,value:P.executionGap.value,threshold:"≥ "+P.executionGap.threshold,cls:"DERIVED",source:"propx:dd"})}</li></ul>`:"";
+  const dv=X.developer?`<p>${t.developer}: <button type="button" class="ld-link" data-indev="${inE(X.developer.id)}"><bdi>${inE(X.developer.name)}</bdi></button> ${ddM(X.developer.summary.resolution)}${X.developer.summary.companyId?` <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(X.developer.summary.companyId.replace(/^co:/,""))}"><span class="num">${inE(X.developer.summary.companyId.replace(/^co:/,""))}</span> ↗</button>`:""}</p>`:"";
+  const oneMin=`<div class="dd-1m"><h5 class="dd-h5">${t.oneMin}</h5>${sum}${gap}<h5 class="dd-h5">${t.ladder}</h5>${ddLadderHTML(P.ladder)}<h5 class="dd-h5">${t.verifyNext}</h5>${ddNbeHTML(X.nextBest,3)}</div>`;
+  const links=`<ul class="dd-rs">${P.identity.links.map(l=>`<li><span class="dd-code">${inE(l.type)}</span> <bdi>${inE(l.id||l.value||"—")}</bdi> ${ddM(l.state)} ${l.key?`<span class="ho-na">${inE(ddL(l.key))}</span>`:""}${l.note?`<div class="ho-note">${inE(ddL(l.note))}</div>`:""}</li>`).join("")}</ul><p class="ho-note">${inE(ddL(P.identity.note))} ${xpBtn("marketing_name")}</p>`;
+  const devBlock=dv+(P.developer&&P.developer.registeredStatus?`<p class="ho-note">${t.status}: ${inE(P.developer.registeredStatus.verbatim||"—")} · ${inE(ddL(P.developer.insolvency))}${P.developer.charges?` · ${t.charges(fmtInt(P.developer.charges.registered),fmtInt(P.developer.charges.removed),"—")}`:""}</p>`:"")+`<p class="ho-note">${inE(ddL(P.developer&&P.developer.note))}</p>`+((X.otherDevelopers||[]).length?`<ul class="dd-rs">${X.otherDevelopers.map(o=>`<li><button type="button" class="ld-link" data-indev="${inE(o.id)}"><bdi>${inE(o.name)}</bdi></button> ${ddM(o.state)}</li>`).join("")}</ul>`:"");
+  const five=ddSec(t.links,links,true)+ddSec(t.developer,devBlock,true)+ddSec(t.timeline,ddTimelineHTML(P.timeline),true)+ddSec(t.siteJoin,ddSitesHTML(P.sites,P.permits),true)+((P.contractors||[]).length?ddSec(t.contractors,`<ul class="dd-rs">${P.contractors.map(c=>`<li><bdi>${inE(c.name||c.kablan)}</bdi> <span class="num">${inE(c.kablan)}</span> ${ddM(c.matchState)}${c.company?` · <button type="button" class="ld-link" data-dd="company" data-ddco="${inE(c.company.number)}"><span class="num">${inE(c.company.number)}</span></button>`:""} <div class="ho-note">${inE(ddL(c.note))}</div></li>`).join("")}</ul>`):"")+ddSec(`${t.brief} <span class="num">(${fmtInt((X.brief.items||[]).length)})</span>`,ddBriefHTML(X.brief))+ddSec(t.nbe,ddNbeHTML(X.nextBest))+ddSec(t.watch,ddWatchHTML(X.watch,"project",X.id,X.id),!!ddWatchOf("project",X.id));
+  const deep=ddSec(t.deep,`<h5 class="dd-h5">${t.graph}</h5>${ddGraphHTML(X.evidence)}<h5 class="dd-h5">${t.truths}</h5>${ddTruthsHTML(P.hardTruths)}<h5 class="dd-h5">${t.missing}</h5>${ddMissHTML(P.missing)}<h5 class="dd-h5">${t.fresh}</h5>${ddFreshHTML(P.freshness&&P.freshness.dd)}`,false,"dd-deep");
+  return oneMin+`<h5 class="dd-h5 dd-5m">${t.fiveMin}</h5>`+five+deep+`<p class="ho-note">${t.basis}</p>`;
+}
+/* ---- the LEGAL COMPANY and PERMIT drawers ---- */
+function ddCompanyDrawerHTML(d,close){
+  const t=DT();
+  if(d.kind==="contractor")return `<div class="ho-dh"><div><span class="lyr">${state.lang==="en"?"Contractor":"קבלן"} · <span class="num">${inE(d.kablan)}</span></span><h3 id="inDTitle"><bdi>${inE(d.name||"")}</bdi></h3></div>${close}</div><p class="ho-note">${inE(ddL(d.note))}</p><ul class="dd-rs">${(d.branches||[]).map(b=>`<li>${inE(b.branch||"—")} · ${inE(b.group||"")} · ${inE(b.sivug||"")}</li>`).join("")}</ul>`;
+  if(!d.inCoverage)return `<div class="ho-dh"><div><span class="lyr">${t.company}</span><h3 id="inDTitle"><span class="num">${inE(d.number)}</span></h3><div class="sub">${t.notInCov}</div></div>${close}</div><p class="ho-note">${inE(ddL(d.note))}</p>`;
+  const c=d.company;
+  const devs=(d.developers||[]).length?`<div class="ld-scroll"><table class="ho-dt dd-tbl" data-ptdom="ddcodevs"><thead><tr><th>${t.brand}</th><th>${state.lang==="en"?"Match":"התאמה"}</th><th>${state.lang==="en"?"Basis":"בסיס"}</th></tr></thead><tbody>${d.developers.map(x=>`<tr><td><button type="button" class="ld-link" data-indev="${inE(x.id)}"><bdi>${inE(x.name)}</bdi></button>${x.note?` <span class="ho-na">${inE(ddL(x.note))}</span>`:""}</td><td>${ddM(x.state)}</td><td>${inE(x.basis||"—")}</td></tr>`).join("")}</tbody></table></div>`:`<p class="ho-note">—</p>`;
+  const sites=(d.sites.list||[]).length?`<ul class="dd-rs">${d.sites.list.map(s=>`<li><bdi>${inE(s.name||s.id)}</bdi> · ${inE(s.city||"")} · ${t.firstSeen} ${ddDate(s.firstSeen)}</li>`).join("")}</ul>`:"";
+  return `<div class="ho-dh"><div><span class="lyr">${t.company} · ${t.number} <span class="num">${inE(c.number)}</span></span><h3 id="inDTitle"><bdi>${inE(c.name)}</bdi></h3><div class="sub">${inE(c.status&&c.status.verbatim||"—")} · ${inE(c.type||"")}</div></div>${close}</div>
+    ${ddSec(t.legal,ddCoFacts(c),true)}${ddSec(`${t.devsOf} <span class="num">(${fmtInt((d.developers||[]).length)})</span>`,devs+`<p class="ho-note">${xpBtn("entity_match_state")} ${xpBtn("developer_brand")}</p>`,true)}${ddSec(t.corporate,ddCorpHTML(d.corporate),true)}${ddSec(t.financial,ddFinHTML(d.financial))}
+    ${ddSec(t.contractor,d.contractor.registered?`<ul class="dd-rs">${d.contractor.branches.map(b=>`<li><span class="num">${inE(b.kablan)}</span> · ${inE(b.branch||"—")} · ${inE(b.group||"")} · ${inE(b.sivug||"")}</li>`).join("")}</ul><p>${t.sites}: <span class="num">${fmtInt(d.sites.active)}</span></p>${sites}`:`<p class="ho-note">${t.notReg}</p>`)}
+    ${(d.tlvHolderSites.list||[]).length?ddSec(t.tlvHolder,`<p>${ddM(d.tlvHolderSites.matchState)} ${ddCov(d.tlvHolderSites.coverage)}</p><ul class="dd-rs">${d.tlvHolderSites.list.map(s=>`<li>${inE((s.parcels||[]).join(", "))} · ${inE(s.state||"—")} · ${t.start} ${ddDate(s.start)}</li>`).join("")}</ul>`):""}
+    ${ddSec(t.watch,ddWatchHTML(d.watch,"company",c.number,c.name))}${ddSec(t.truths,ddTruthsHTML(d.hardTruths))}<p class="ho-note">${t.basis}</p>`;
+}
+function ddPermitDrawerHTML(d,close){
+  const t=DT(),p=d.permit||{};
+  return `<div class="ho-dh"><div><span class="lyr">${t.permit} ${ddCov(d.coverage)}</span><h3 id="inDTitle">${t.request} <span class="num">${inE(p.request)}</span>${p.permit?` · ${t.permitNo} <span class="num">${inE(p.permit)}</span>`:""}</h3><div class="sub">${inE(p.stage||"—")}</div></div>${close}</div>
+    <div class="ho-dl">${ddKV(t.permitDate,ddDate(p.permitDate))}${ddKV(t.start,ddDate(p.start))}${ddKV(t.stage,`${inE(p.stage||"—")} ${xpBtn("municipal_permit_record")}`)}${ddKV(t.units,p.units!=null?`<span class="num">${fmtInt(p.units)}</span>`:inDash())}${ddKV(t.addr,`<bdi>${inE(p.addresses||"—")}</bdi>`)}</div>
+    ${ddSec(state.lang==="en"?"Sites":"אתרים",(d.sites||[]).length?`<ul class="dd-rs">${d.sites.map(s=>`<li><span class="num">${inE(s.id)}</span> · ${inE((s.parcels||[]).join(", "))} · ${inE(s.state||"—")} · ${t.holders}: <bdi>${inE((s.holders||[]).join(", ")||"—")}</bdi></li>`).join("")}</ul>`:inDash(),true)}
+    ${ddSec(t.lotsOnParcel,(d.lots||[]).length?`<ul class="dd-rs">${d.lots.map(l=>`<li><button type="button" class="ld-link" data-inproj="${inE(l.id)}">${inE(l.tender||l.id)}</button> · ${inE(l.parcel)} · ${ddDate(l.decisionDate)} · <bdi>${inE(l.developerName||"")}</bdi> · <span class="ho-chip${l.relation==="PRIOR_ACTIVITY"?" cont":""}">${inE(t.rel[l.relation]||l.relation)}</span></li>`).join("")}</ul>`:inDash(),true)}
+    <p class="ho-note">${inE(ddL(d.note))}</p>`;
+}
+/* ---- the watchlist in the intel section ---- */
+function ddRenderWatchlist(){
+  const box=el("inWatch");if(!box)return;const t=DT(),W=ddWatchList();
+  if(!W.length){box.hidden=true;box.innerHTML="";return}
+  box.hidden=false;
+  box.innerHTML=`<span class="dd-k">${t.watchList}:</span> ${W.map(w=>`<button type="button" class="ho-chip dd-wl" data-dd="open" data-ddk="${inE(w.kind)}" data-ddi="${inE(w.id)}"><bdi>${inE(w.name||w.id)}</bdi> · ${inE(String(w.since).split("-").reverse().join("."))}</button>`).join(" ")} ${xpBtn("watch_contract")}`;
+}
+function ddClick(b){
+  const d=b.dataset,a=d.dd,from=b.closest("#inPanel")?inState.returnFocus:b;
+  if(a==="company"){if(d.ddco)inOpen("company",d.ddco,from);return}
+  if(a==="permit"){if(d.ddp)inOpen("permit",d.ddp,from);return}
+  if(a==="open"){inOpen(d.ddk==="company"?"company":d.ddk,d.ddi,b);return}
+  if(a==="useco"||a==="userco"||a==="clearco"){
+    let n=a==="useco"?d.ddco:a==="userco"?((document.querySelector(`[data-dd-in="${CSS.escape(d.ddi)}"]`)||{}).value||"").replace(/\D/g,""):"";
+    try{if(n)sessionStorage.setItem(ddCoKey(d.ddi),n);else sessionStorage.removeItem(ddCoKey(d.ddi))}catch(e){/* storage blocked */}
+    ddState.key=null;ddEnsure("developer",d.ddi);return}
+  if(a==="watch"){
+    const W=ddWatchList(),i=W.findIndex(w=>w.kind===d.ddk&&w.id===d.ddi);
+    if(i>=0)W.splice(i,1);else W.push({kind:d.ddk,id:d.ddi,name:d.ddn||d.ddi,since:new Date().toISOString().slice(0,10)});
+    ddWatchSave(W);ddRenderWatchlist();
+    if(d.ddk==="company"){inOpen("company",d.ddi,from);return}
+    ddState.key=null;ddEnsure(d.ddk,d.ddi);return}
+}
+
 function initIntel(){
   const sec=el("intel");if(!sec)return;
   {const g=ptLoad("in");if(g.x&&IN_KEY[g.x.tab])inState.tab=g.x.tab;inRestore(inState.tab)}
   const drawer=el("inDrawer");if(drawer&&drawer.parentNode!==document.body)document.body.appendChild(drawer);
   const onClick=e=>{
-    const b=e.target.closest("[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
+    const b=e.target.closest("[data-dd],[data-intab],[data-inper],[data-inpage],[data-indev],[data-inproj],[data-inrn],[data-inpst],[data-inhit],[data-ldtender],[data-inclose],[data-insall]");
     if(!b)return;
     const d=b.dataset;
+    if(d.dd){ddClick(b);return}
     if(d.inclose!==undefined){inClose();return}
     if(d.insall!==undefined){inState.sall=!inState.sall;renderInSearch();return}
     if(d.intab){if(inState.tab!==d.intab){inState.tab=d.intab;inState.data=null;inRestore(d.intab);inLoad()}return}   /* never the previous tab's rows under the new tab's columns */
@@ -8454,7 +8744,7 @@ function intelSug(q){
     intelTimer=setTimeout(async()=>{
       let list=[];
       try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
+        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","renewal","district","country","company","contractor","permit"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
       catch(e){/* offline/standalone: no entity layer */}
       intelLast={q:qq,list};
       const inp=el("searchInput");

@@ -209,6 +209,18 @@ t('the summary sentences are declarative, classed, bilingual, and pass the langu
   languageGate(p, 'summary');
 });
 
+t('sync history: the first read of a newly kept company is never an event; duplicate rows of one Tel Aviv request are compared as a group; retracted runs are skipped', () => {
+  const SY = require('../lib/dd/sync'), RT = require('../lib/dd/retractions');
+  const prev = { rows: [{ num: 1, kind: 'רישום שעבוד', kindCode: 68, date: '2026-01-01', chargeId: 1 }] };
+  const next = { rows: prev.rows.concat([{ num: 1, kind: 'סילוק שעבוד', kindCode: 70, date: '2026-02-01', chargeId: 1 }, { num: 2, kind: 'רישום שעבוד', kindCode: 68, date: '2025-11-01', chargeId: 9 }]) };
+  assert.deepEqual(SY.diffFilings(prev, next, 'T', new Set(['1'])).map((e) => [e.event, e.key]), [['charge-removed', 'co:1']], 'company 2 was not kept before — its filings are a baseline');
+  const tp = (rows) => ({ permits: { rows }, sites: { rows: [] } });
+  const dup = [{ request: 7, stage: 'בבניה', permitDate: '2025-01-01' }, { request: 7, stage: 'קיימת לפחות תעודת גמר אחת', permitDate: '2025-01-01' }];
+  assert.deepEqual(SY.diffTlv(tp(dup), tp(dup.slice().reverse()), 'T'), [], 'the same rows in another order are no change');
+  assert.equal(SY.diffTlv(tp(dup), tp([dup[0], { ...dup[1], stage: 'קיים אכלוס' }]), 'T')[0].event, 'permit-stage-changed');
+  assert.equal(RT.isRetracted({ at: '2026-10-18T10:24:33.459Z', lane: 'filings' }), true); assert.equal(RT.isRetracted({ at: '2026-10-19T05:00:00.000Z', lane: 'filings' }), false);
+  for (const r of RT.RETRACTED) { assert.ok(r.reason.he && r.reason.en && r.fix); }
+});
 t('§15 explainability: every DD signal id has a rule, every DD missing id a reason, every DD term a level-2 entry (lib/explain/registry.js)', () => {
   const X = require('../lib/explain/registry');
   const sig = ['ENTITY_AMBIGUOUS', 'ENTITY_UNRESOLVED', 'COURT_LIQUIDATION_STATUS', 'COMPANY_NOT_ACTIVE', 'COURT_LIQUIDATION_PROCEEDING', 'VOLUNTARY_LIQUIDATION_LISTED', 'BREACH_FLAG', 'ANNUAL_REPORT_LAG', 'CHARGE_ACTIVITY', 'NO_PUBLIC_FINANCIALS', 'REGISTERED_CONTRACTOR', 'SITE_ENFORCEMENT', 'SITE_CLOSURE_NOTICE', 'POSSIBLE_SAME_ENTITY', 'EXECUTION_GAP'];
