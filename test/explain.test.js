@@ -21,7 +21,7 @@ t('a UMD module: Node and the page share one object; version stamped; the data c
   const src = fs.readFileSync(path.join(ROOT, 'lib/explain/registry.js'), 'utf8');
   assert.match(src, /root\.PropxExplain = api/); assert.ok(!/fetch\(|Math\.random|https?\.request/.test(src));
   assert.equal(X.VERSION.id, 'propx-explain-v1'); assert.match(X.VERSION.effective, /^\d{4}-\d{2}-\d{2}$/);
-  assert.deepEqual(Object.keys(X.CLASSES), ['OFFICIAL', 'OBSERVED', 'DERIVED', 'MODEL', 'USER_ASSUMPTION', 'USER_OVERRIDE', 'MISSING']);
+  assert.deepEqual(Object.keys(X.CLASSES), ['OFFICIAL', 'OBSERVED', 'DERIVED', 'MODEL', 'USER_ASSUMPTION', 'USER_OVERRIDE', 'SELF_REPORTED', 'USER_DOCUMENT', 'MISSING']);
   for (const c of Object.values(X.CLASSES)) { isBi(c.label, c.code); isBi(c.d, c.code + ' definition'); }
   for (const k of ['observation', 'publication', 'check']) isBi(X.FRESHNESS[k], 'freshness ' + k);
 });
