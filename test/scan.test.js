@@ -53,6 +53,15 @@ t('Radar 2.0: the scan covers every registry locality with a live ILA tender (no
   assert.equal(F.signalState, 'NO_SIGNAL'); assert.ok(F.signalStateLabel.he && F.stateReason.en); assert.equal(F.opportunities.length + F.risks.length, 0);
   const il = S.forGeo({ level: 'il', code: 'il' }); assert.ok(S.STATES[il.signalState]);
 });
+t('review 18.10.2026 (M3 / M4 / m8): a NO SIGNAL locality with fewer than 3 stored records and no event says the quiet-pipeline rule was NOT applicable (never "not crossed"); the reasons speak of stored records (current-scope tenders + rental; complexes + lotteries as published), the scope line of the latest ILA list', () => {
+  const P = S.load({ now: NOW });
+  const few = P.geographies.filter((g) => g.level === 'locality' && g.signalState === 'NO_SIGNAL' && g.tracked < D.TRACKED_MIN);
+  assert.ok(few.length > 0);
+  for (const g of few) { const d = D.dossier({ level: 'locality', code: g.code }); if (d.sections.changes && d.sections.changes.total === 0) assert.match(g.stateReason.en, /quiet-pipeline rule is not applicable/, g.code); else assert.match(g.stateReason.en, /no documented threshold was crossed/, g.code); }
+  for (const g of P.geographies.filter((g) => g.level === 'locality' && g.signalState === 'INSUFFICIENT_DATA' && g.tracked === 0)) assert.match(g.stateReason.en, /stored record .*current scope .*as published/, g.code);
+  assert.match(P.scope.localityRule.en, /in the latest list/);
+  const X = require('../lib/explain/registry'); assert.match(X.SIGNAL_RULES['no-recent-changes'].rule.en, /≥ 3 stored records/);
+});
 t('the quiet-pipeline rule (no-recent-changes) needs a pipeline: a locality with fewer than 3 tracked records never carries it; a district always may (BEFORE 18.10.2026: 297 of 400 indexed localities carried it with as little as one old tender)', () => {
   const P = S.load({ now: NOW });
   for (const x of P.risks.filter((x) => x.signal === 'no-recent-changes' && x.geo.level === 'locality')) { const g = P.geographies.find((g) => g.level === 'locality' && g.code === x.geo.code); assert.ok(g.tracked >= D.TRACKED_MIN, x.id); }

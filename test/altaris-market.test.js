@@ -39,7 +39,7 @@ const decideWith = (deal, assessment, extra) => { const R = E.run(deal, null, { 
 const ECON_KEYS = ['verdict', 'basis', 'score', 'descriptor', 'evidence', 'recommended', 'second', 'lead', 'structures', 'ranked', 'whyStructure', 'comparison', 'strengths', 'risks', 'conditions', 'breakdown', 'conflicts', 'freshness', 'mainReason', 'mainRisk'];
 
 console.log('intelligence → decision: the assessment module');
-t('pure, isolated, versioned: no DOM / storage / network / randomness, no engine or decision import, UMD; four statuses, seven dimensions, every PROPX signal id mapped', () => {
+t('pure, isolated, versioned: no DOM / storage / network / randomness, no engine or decision import, UMD; four statuses, nine dimensions, every PROPX signal id mapped', () => {
   const m = fs.readFileSync(path.join(ROOT, 'altaris/market-assessment.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   assert.ok(!/document\.|window\.|localStorage|fetch\(|XMLHttpRequest|Math\.random|Date\.now\(\)|new Date\(\)|require\(/.test(m.replace(/root\.AltarisMarket/g, '')));
   assert.equal(MA.VERSION.id, 'altaris-market-assessment-v1'); assert.deepEqual(Object.keys(MA.STATUS), ['STRONG', 'NEUTRAL', 'CAUTION', 'INSUFFICIENT']);
@@ -119,6 +119,30 @@ t('source conflicts reach evidence quality (pre-existing −10 CONFLICT deductio
   const ctx = CAUTION_CTX(); ctx.tx.median = F.smv && F.sqm ? Math.round((F.smv / F.sqm) * 1.6) : 60000;
   const D = DX.decide(R, { today: TODAY, deal: d, market: ctx, marketAssessment: MA.assess(ctx, null, { today: TODAY }) });
   assert.ok(D.evidence.items.some((i) => i.cls === 'CONFLICT'), 'the conflict deduction is applied'); assert.equal(D.marketAssessment.status, 'CAUTION');
+});
+t('review 18.10.2026 (m1–m4): a read without a date, a missing reference date or a future date is NOT fresh (fail closed) — year-old reads never make CAUTION; transaction depth is fresh by the page\'s retrievedAt (≤ 30 days), never by a 365-day window; a radar item with an unmapped rule or without its own evidence is informational; FAMILY_OF never matches "overview"', () => {
+  const noDates = CAUTION_CTX(); delete noDates.dossier.generatedAt; delete noDates.radar.builtAt;
+  const a = MA.assess(noDates, null, { today: TODAY }); assert.notEqual(a.status, 'CAUTION'); assert.equal(a.material.negative.length, 0, 'undated reads are not material');
+  const noToday = MA.assess(CAUTION_CTX(), null, {}); assert.notEqual(noToday.status, 'CAUTION'); assert.ok(noToday.notes.some((n) => /no reference date/.test(n.en)));
+  const future = CAUTION_CTX(); future.dossier.generatedAt = '2027-01-01T00:00:00Z'; future.radar.builtAt = '2027-01-01T00:00:00Z'; assert.notEqual(MA.assess(future, null, { today: TODAY }).status, 'CAUTION');
+  const oldTx = STRONG_CTX(); oldTx.retrievedAt = '2026-01-01T00:00:00Z'; const b = MA.assess(oldTx, null, { today: TODAY }); const txf = b.factors.find((f) => f.id === 'tx:depth'); assert.ok(txf && !txf.material && txf.whyNotMaterial.some((r) => /older than 30 days/.test(r.en)), 'a read retrieved 9 months ago is not fresh');
+  const unmapped = CAUTION_CTX(); unmapped.radar.risks = [item('something-new', 'risk', { m: 3, cls: 'OFFICIAL', source: 'rmi:michrazim' })]; const c = MA.assess(unmapped, null, { today: TODAY });
+  const uf = c.factors.find((f) => f.signal === 'something-new'); assert.ok(uf && uf.unmapped && !uf.material && uf.direction === 'neutral' && uf.whyNotMaterial.some((r) => /not mapped/.test(r.en)));
+  const noEv = CAUTION_CTX(); noEv.radar.risks = [item('failed-tenders', 'risk', { evidence: undefined })]; delete noEv.radar.risks[0].evidence; const d = MA.assess(noEv, null, { today: TODAY }); const nf = d.factors.find((f) => f.signal === 'failed-tenders'); assert.ok(nf && !nf.material, 'no evidence level on the item → not material');
+  const src = fs.readFileSync(path.join(ROOT, 'altaris/market-assessment.js'), 'utf8'); assert.ok(/\\bover\\b\|over\\.org/.test(src), 'FAMILY_OF anchored'); assert.ok(!/<= 365/.test(src));
+});
+t('review 18.10.2026 (M1 / M2): the basis view and the Excel conditions block list the FINAL conditions (the market condition under F3 / F4), the card shows the first final condition, and the portfolio / saved list / version compare decide with the assessment and print the FINAL verdict', () => {
+  const app = fs.readFileSync(path.join(ROOT, 'altaris/app.js'), 'utf8');
+  assert.ok(/const condsF = \(D\.final && D\.final\.conditions\) \|\| D\.conditions;\s*const condT = condsF\.length/.test(app));
+  assert.ok(/const cf = \(D\.final && D\.final\.conditions\) \|\| D\.conditions; for \(const c of cf\)/.test(app));
+  assert.ok(/const condsC = \(D\.final && D\.final\.conditions\) \|\| D\.conditions;/.test(app));
+  assert.ok(/pfd\[it\.id\] = DX\.decide\(R1, \{[\s\S]{0,400}?marketAssessment: AM\(\)/.test(app)); assert.ok(/DX\.VERDICT\[\(D\.final \|\| D\)\.verdict\]\.label\.en/.test(app));
+  assert.ok(/v\.decision\.final \|\| v\.decision\.verdict/.test(app)); assert.ok(/marketAssessment: maOf\(va\)/.test(app) && /\(da\.final \|\| da\)\.verdict/.test(app));
+  assert.ok(!/t\(DX\.VERDICT\.INSUFFICIENT_EVIDENCE\.label\)/.test(app), 'the market line uses the assessment vocabulary, not the decision verdict (m7)');
+  /* the decision itself: under F4 the FINAL conditions = the economic conditions + the market condition, in that order */
+  const c = CS.CASES.find((x) => x.id === 'ganei-hapark'); const R = E.run(c.deal, null, { today: TODAY });
+  const ma = MA.assess(CAUTION_CTX(), null, { today: TODAY }); const D = DX.decide(R, { today: TODAY, deal: c.deal, market: CAUTION_CTX(), cbs: null, indicators: {}, marketAssessment: ma });
+  assert.equal(D.final.verdict, 'TAKE_WITH_CONDITIONS'); assert.equal(D.final.conditions.length, D.conditions.length + 1); assert.equal(D.final.conditions[D.final.conditions.length - 1].id, 'market-caution'); assert.deepEqual(D.final.conditions.slice(0, -1).map((x) => x.id), D.conditions.map((x) => x.id));
 });
 t('the page wires the loop read-only: the assessment is computed in dctx() and passed in, the card and the basis head show the FINAL verdict beside the economic and market views, the basis view has the MARKET IMPACT ON DECISION section, the IC rows and the Excel rows carry it, the script tag loads the module, and the decision layer still imports only the engine', () => {
   const app = fs.readFileSync(path.join(ROOT, 'altaris/app.js'), 'utf8'), html = fs.readFileSync(path.join(ROOT, 'altaris/index.html'), 'utf8'), dec = fs.readFileSync(path.join(ROOT, 'altaris/decision.js'), 'utf8');

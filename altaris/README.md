@@ -267,8 +267,7 @@ methodology). The ambiguity was that the page said "read-only" for (2) while (1)
 **The layer (additive).** `altaris/market-assessment.js` (UMD `AltarisMarket`, `altaris-market-assessment-v1`) turns the context the
 page already holds (the locality's dossier watch / risk signals, the radar's opportunity / risk items, transaction depth, land
 economics, the developer registry, the dossier's evidence quality) into a MARKET & EXECUTION ASSESSMENT beside the economics:
-twelve dimensions (demand · supply · land market · transaction liquidity · planning · permits · construction · execution ·
-developer · rental · macro · data quality), every factor with value · comparison · period · source · class · rule · scope ·
+nine dimensions (demand · supply · land market · transaction liquidity · execution · developer · macro · data quality · rental), every factor with value · comparison · period · source · class · rule · scope ·
 material? · impact. A factor is MATERIAL only when all hold: a direction (a count alone is context), class OFFICIAL / OBSERVED,
 evidence HIGH / MEDIUM, the deal's own locality or its district (a national figure is context), a read ≤ 30 days old, materiality ≥ 2.
 Status: CAUTION = ≥ 2 material negatives from ≥ 2 independent source families (CBS · ILA · MoCH · register · planning · PROPX

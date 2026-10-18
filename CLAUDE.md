@@ -214,8 +214,9 @@
   read) / INSUFFICIENT_DATA with its `stateReason`; the quiet-pipeline rule needs ≥ 3 tracked records in a locality (`TRACKED_MIN`); every item: trigger · value · threshold · comparison (national
   figure or share of it) · period · source · class · evidence quality; strict geography (no district / national series on a
   locality); materiality a constant per rule; two named DERIVED convergence items. `view=scan` / `view=scanGeo`; the top of
-  `#pulse`; the ALTARIS market panel shows the deal locality's items READ-ONLY (the decision layer reads none of them —
-  proved in `test/altaris-decision.test.js`). `lib/radar/revisions.js` = REVISION INTELLIGENCE: the CBS ledger's revisions
+  `#pulse`; the ALTARIS market panel shows the deal locality's items; since 18.10.2026 they reach the FINAL verdict only through
+  `altaris/market-assessment.js` → `POLICY.final` (F0–F5), never the economic verdict or a return (`test/altaris-decision.test.js`,
+  `test/altaris-market.test.js`). `lib/radar/revisions.js` = REVISION INTELLIGENCE: the CBS ledger's revisions
   (old value · new value · period · publication · PROPX check, by release; material = |Δ| ≥ 5 %), `view=revisions`, shown
   in `#pulse`. Trust 2.0 (`lib/trust/catalog.js`): latest success ≠ latest failure, RECOVERED (7 days), 14-check history,
   tally, expected cadence, `alerts` (REFUSED / FAILED / SCHEMA_CHANGED / STALE / PARTIAL / RECOVERED / SOURCE_STALE) shown
@@ -294,7 +295,7 @@
   stays context (a tender is not an operating project; the rent index is a benchmark). Zero drift: the engine hash and
   the frozen baseline are unchanged.
   `altaris/market-assessment.js` + `test/altaris-market.test.js` = the intelligence → decision loop (18.10.2026): a deterministic
-  MARKET & EXECUTION ASSESSMENT (`altaris-market-assessment-v1`) beside the economics — twelve dimensions, every factor value ·
+  MARKET & EXECUTION ASSESSMENT (`altaris-market-assessment-v1`) beside the economics — nine dimensions (DEMAND · SUPPLY · LAND_MARKET · TRANSACTION_LIQUIDITY · EXECUTION · DEVELOPER · MACRO · DATA_QUALITY · RENTAL), every factor value ·
   comparison · period · source · class · rule · scope · material? · impact; material only with a direction, class OFFICIAL /
   OBSERVED, evidence HIGH / MEDIUM, own locality or district, read ≤ 30 days, materiality ≥ 2; CAUTION = ≥ 2 material negatives from
   ≥ 2 independent source families, STRONG = 2 material positives and none negative, else NEUTRAL, INSUFFICIENT without dossier +

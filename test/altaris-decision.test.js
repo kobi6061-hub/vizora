@@ -303,7 +303,7 @@ t('the AI role is explanation only: the page has no model call; the narrative fu
 });
 
 
-console.log('read-only context: the Market Dossier / Opportunity-Risk fields never move a decision');
+console.log('the Market Dossier / Opportunity-Risk fields on ctx.market never move the ECONOMIC decision (they reach the final verdict only through ctx.marketAssessment → POLICY.final)');
 t('decide() is byte-identical with and without the dossier / radar context fields on ctx.market (they are display-only in the ALTARIS market panel)', () => {
   for (const c of CS.CASES.slice(0, 3)) {
     const d = clone(c.deal);

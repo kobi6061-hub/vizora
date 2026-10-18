@@ -96,12 +96,13 @@ syncs (CBS sales, Dira Lehaskir) are stale only after 100 hours, so a weekend is
   `scope.localitiesWithLiveTenders` and `scope.localityRule` say which.
 - **Signal state.** Every geography in `scan.json → geographies[]` carries `signalState` + `stateReason`: `SIGNALS` (≥ 1 rule fired),
   `NO_SIGNAL` (the data is there and no documented threshold was crossed — a valid, counted read, never "fine" or "stable"),
-  `INSUFFICIENT_DATA` (evidence quality LOW, or no tracked record in the current market — e.g. a locality whose tenders are all
-  older than the 24-month current window, "history only"). `counts.states` and the vocabulary `states` ship with the view;
+  `INSUFFICIENT_DATA` (evidence quality LOW, or no stored record — e.g. a locality whose tenders are all older than the 24-month
+  current window and which has no complex, lottery project or rental tender, "history only"). A NO_SIGNAL locality with fewer than 3
+  stored records says that the quiet-pipeline rule was not applicable. `counts.states` and the vocabulary `states` ship with the view;
   `forGeo()` answers the state for a covered geography and for one computed on demand. The Pulse scope line shows the counts;
   the dossier's "no signals" line carries the `no_signal` registry term.
 - **Quiet pipeline needs a pipeline (precondition, not a new threshold).** `no-recent-changes` fires on a locality only when it carries
-  ≥ 3 tracked records (live tenders in the current market + renewal complexes + lottery projects + rental tenders;
+  ≥ 3 stored records (tenders in the current scope + rental tenders; renewal complexes + lottery projects as published, any date;
   `lib/dossier/query.js` `trackedRecords` / `TRACKED_MIN`). BEFORE: 297 of the 400 indexed localities carried the "risk" with as
   little as one old tender — an untracked locality is not quiet, it is unmeasured. Districts and the country always qualify. The
   signal's text, threshold and materiality are unchanged; the precondition is printed in its limitations.
