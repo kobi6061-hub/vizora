@@ -65,3 +65,14 @@ share of the national figure of the same universe — the scan's own comparisons
 isolated (LRI … PDI); never a recommendation, probability or attractiveness score. Pure and deterministic — no model call.
 The page renders it as the "למה השוק הזה?" block at the top of `#dossier` (the lead open, the full read in a `<details>`);
 the offline build has no server narrative. Gates: `test/narrative.test.js`.
+
+## Construction block (18.10.2026)
+
+`sections.construction` (OFFICIAL, `cbs:construction`) reads `data/construction/latest.json` (lib/construction): the four CBS measures —
+permits (44,11) · starts (44,2) · completions (44,3) as monthly flows with their trailing-12 and change vs the prior 12 (DERIVED), and
+active construction (44,4) as a quarterly STOCK (never summed) with its change vs the previous quarter and a year earlier — for the
+country and the seven districts ONLY. A locality's dossier shows its district's figures with the scope "district level, not the
+locality's figure" (`ownGeography: false`) and prints the `construction-locality` missing reason; nothing is allocated to a city. The
+freshness entry `construction` carries the latest published period, the CBS update date, the PROPX check and the quarter-based state
+(the reporting-lag assumption is documented in lib/construction). Before the first sync the section is absent and `construction-series`
+is listed as missing. Evidence quality and the signal rules are unchanged by the block.

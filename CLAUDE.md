@@ -65,7 +65,11 @@
   EXPECTED_REPORTING_LAG / STALE on a DOCUMENTED lag assumption (~10 weeks after the quarter; 60 / 120 days —
   `SOURCE.lagAssumption`). A measure without observations is MISSING with its reason, never 0. Run states SUCCESS / UNCHANGED /
   PARTIAL / FAILED / REFUSED / SCHEMA_CHANGED in `sync-runs.jsonl`; Trust Center `cbs:construction` (NO_RUN until the first run).
-  Four universes never summed; NOT wired to the dossier / supply pipeline / pulse / page yet — the hook is
+  Four universes never summed. WIRED 18.10.2026 (first sync run 39082195857: permits · starts · completions M 2026-06, active Q 2026-Q2): the
+  dossier's `sections.construction` (a locality shows its district's figures labelled, never allocated), three supply universes
+  (`permits` · `starts` · `activeConstruction`, never summed), radar group `construction` (`cbs-construction-published` NEW ·
+  `cbs-construction-revised` REVISED), registry terms building_permits · construction_starts · construction_completions ·
+  active_construction + source cbs:construction; the dossier tile and supply cards; `test/construction-wiring.test.js` (9 gates).
   `data/construction/latest.json` (shape in `lib/construction/README.md`). `data/construction/` is bot-written.
 - `lib/market/` + `scripts/market-sync.js` + `data/market/` + `.github/workflows/market-sync.yml` +
   `test/market.test.js` = the daily official-indicator sync (Bank of Israel rate, CBS new-homes index; optional monthly
@@ -167,8 +171,9 @@
   freshness (observation ≠ publication ≠ check), evidence quality HIGH / MEDIUM / LOW from documented deductions, and what
   is missing (transactions are a live source — never fetched here; no permits source). Unit universes are never added.
   `lib/supply/pipeline.js` + `test/supply.test.js` = SUPPLY PIPELINE (17.10.2026, `view=supply`, the dossier's "צנרת היצע" block):
-  six parallel universes — XPlan plan units, ILA tender units, renewal complex units, rental-track units, lottery units,
-  construction evidence — NEVER summed (the module exposes no total); DERIVED momentum (last 12 vs prior 12 months, small
+  nine parallel universes — XPlan plan units, ILA tender units, renewal complex units, rental-track units, lottery units,
+  construction evidence, + (18.10.2026) CBS permits · starts · active construction (national / district own figures; a locality carries
+  its district's as context) — NEVER summed (the module exposes no total); DERIVED momentum (last 12 vs prior 12 months, small
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.

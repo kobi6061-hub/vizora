@@ -533,15 +533,15 @@ t('buildPayload keeps a previous payload\'s geography when the ledger has nothin
 });
 
 console.log('workflow, README, CLAUDE.md');
-t('the workflow runs on working days and on dispatch, runs the sync and both test files, commits only data/construction', () => {
+t('the workflow runs on working days and on dispatch, runs the sync and both test files, rebuilds the radar, commits only data/construction + data/radar', () => {
   const y = fs.readFileSync(path.join(ROOT, '.github', 'workflows', 'construction-sync.yml'), 'utf8');
   assert.match(y, /cron: '\d+ \d+ \* \* 0-4'/); assert.match(y, /workflow_dispatch:/); assert.match(y, /options: \[sync, dry-run\]/);
   assert.match(y, /node scripts\/construction-sync\.js --summary-file/); assert.match(y, /node scripts\/construction-sync\.js --dry-run/);
   assert.match(y, /node test\/construction\.test\.js/); assert.match(y, /node test\/integrity\.test\.js/);
   const adds = [...y.matchAll(/git add (\S+)/g)].map((m) => m[1]);
-  assert.deepStrictEqual(adds, ['data/construction']);
+  assert.deepStrictEqual(adds, ['data/construction', 'data/radar']); assert.match(y, /node scripts\/radar-build\.js --quiet/);
   assert.match(y, /git commit -q -F "\$RUNNER_TEMP\/summary\.txt"/);
-  assert.ok(!/radar-build/.test(y), 'no radar rule exists for construction yet — the workflow does not rebuild the radar');
+  assert.ok(/radar-build/.test(y), 'the radar rules cbs-construction-published / -revised exist since 18.10.2026 (lib/radar/events.js) — the workflow rebuilds the radar before committing');
 });
 t('the CLI exists with the lane\'s User-Agent and no credential; the README states the semantics, the lag assumption and the hook', () => {
   const cli = fs.readFileSync(path.join(ROOT, 'scripts', 'construction-sync.js'), 'utf8');

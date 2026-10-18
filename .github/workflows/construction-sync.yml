@@ -61,12 +61,18 @@ jobs:
           node test/construction.test.js
           node test/integrity.test.js
 
+      # the Market Radar / Pulse reads the construction ledger (lib/radar/events.js): rebuild the event file before committing, as the other syncs do
+      - name: Rebuild the Market Radar
+        if: env.MODE == 'sync'
+        run: node scripts/radar-build.js --quiet
+
       - name: Commit the data
         if: env.MODE == 'sync'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/construction
+          git add data/radar
           if git diff --cached --quiet; then
             echo 'No changes to commit.'
             exit 0

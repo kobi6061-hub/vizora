@@ -37,8 +37,8 @@ t('three levels resolve from the registry; an unknown geography (or level) is nu
   assert.equal(S.supply({ level: 'locality', code: '999999', now: NOW }), null); assert.equal(S.supply({ level: 'district', code: 'd-nowhere', now: NOW }), null); assert.equal(S.supply({ level: 'nowhere', code: 'x', now: NOW }), null);
   for (const d of [IL, DTA, TLV]) { assert.equal(d.schema, 1); isBi(d.basis, 'basis'); assert.equal(d.today, '2026-10-17'); assert.equal(d.generatedAt, new Date(NOW).toISOString()); }
 });
-t('six universes, in the ONE order of UNIVERSES, each with its class, source id and bilingual label — and the output keys follow it', () => {
-  assert.deepEqual(S.UNIVERSES.map((u) => u.id), ['planning', 'land', 'renewal', 'rental', 'lotteries', 'construction']);
+t('nine universes (six + the three CBS construction series since 18.10.2026), in the ONE order of UNIVERSES, each with its class, source id and bilingual label — and the output keys follow it', () => {
+  assert.deepEqual(S.UNIVERSES.map((u) => u.id), ['planning', 'land', 'renewal', 'rental', 'lotteries', 'construction', 'permits', 'starts', 'activeConstruction']);
   for (const u of S.UNIVERSES) { assert.equal(u.cls, 'OFFICIAL'); assert.ok(u.source); isBi(u.label, u.id); isBi(u.counts, u.id); isBi(u.notTheOthers, u.id); }
   for (const d of [IL, DTA, TLV]) { assert.deepEqual(Object.keys(d.universes), S.UNIVERSES.map((u) => u.id)); assert.deepEqual(d.universeOrder, S.UNIVERSES.map((u) => u.id));
     for (const u of S.UNIVERSES) { const x = d.universes[u.id]; assert.equal(x.cls, u.cls, u.id); assert.equal(x.source, u.source, u.id); isBi(x.scope, u.id + '.scope'); } }

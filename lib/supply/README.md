@@ -100,3 +100,13 @@ land universe equals `lib/land/query`'s own KPIs; the momentum / small-sample / 
 data); every indicator's formula · inputs · period · limitations in he + en and the value following the formula;
 supply pressure null at locality level; the three freshness dates; missing items; every `{he, en}` pair; determinism;
 speed.
+
+## Nine universes (18.10.2026)
+
+Three more parallel universes join the six, in the ONE order of `UNIVERSES`, from the CBS construction series (lib/construction):
+`permits` (dwellings permitted, monthly flow), `starts` (dwellings begun, monthly flow — completions carried beside them), and
+`activeConstruction` (dwellings under construction at quarter end — a STOCK, never summed over periods). Own figures exist for the
+country and a district only; for a locality each carries `value: null` with the reason and the district's figure as `districtContext`
+("context only, not the locality's and not allocated to it"). They are never added to the other six (a permitted dwelling may also be a
+tender lot's capacity, a lottery home and a progress-report building) and the module still exposes no total. Missing reasons:
+`construction-cbs` (no store yet), `construction-locality`.

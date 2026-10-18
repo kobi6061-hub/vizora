@@ -168,7 +168,7 @@ Dispatch `construction-sync.yml` with `mode: dry-run` first and read the log:
    names all four measures with a period (`active Q YYYY-Qn`).
 Then dispatch `sync`. The commit message names the measures and their latest periods.
 
-## Hook points (not wired yet — by design)
+## Hook points (wired 18.10.2026 — see lib/dossier, lib/supply, lib/radar READMEs; the shape below is the contract)
 
 Nothing in the dossier, the supply pipeline, the pulse or the page reads this lane tonight. When they do, they read
 **`data/construction/latest.json`** (schema 1):

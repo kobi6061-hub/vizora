@@ -106,3 +106,10 @@ syncs (CBS sales, Dira Lehaskir) are stale only after 100 hours, so a weekend is
   little as one old tender — an untracked locality is not quiet, it is unmeasured. Districts and the country always qualify. The
   signal's text, threshold and materiality are unchanged; the precondition is printed in its limitations.
 - Cost: ≈ 16 s per build (one dossier per geography), run by `scripts/radar-build.js` at the end of every sync.
+
+## Construction events (18.10.2026)
+
+Group `construction` (label "official construction (CBS)"): `cbs-construction-published` (NEW, OFFICIAL, m 3 — a new period of
+permits / starts / completions / active construction after the first ingestion; the national value in the title, the districts in
+the detail) and `cbs-construction-revised` (REVISED, OFFICIAL, m 1–3 by the largest relative change; the old value kept beside the
+new), read from `data/construction/observations.jsonl` (lib/construction). The first ingestion produces no event.
