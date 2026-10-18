@@ -337,6 +337,48 @@ async function permits() {
     for (const root of gis) await arcgisWalk('permits', city, root);
   }
 }
+/* round 2: the public ArcGIS Online catalogue (municipal feature services are published there), data.gov.il municipal
+   organizations by exact title, the municipal CKAN portals by building terms, and the two municipal engineering platforms
+   (Complot, GIS-net V5) — reachability only */
+async function permits2() {
+  for (const q of ['היתרי בניה', 'היתרי בנייה', 'היתר בניה', 'בקשות להיתר', 'רישוי בניה', 'building permits israel', 'heterim', 'תיקי בניין']) {
+    const r = await req(`https://www.arcgis.com/sharing/rest/search?q=${encodeURIComponent(q)}&num=40&f=json`, { timeoutMs: 30000 });
+    const items = (r.json && r.json.results) || [];
+    out({ lane: 'permits2', step: 'arcgis-online search', q, status: r.status, total: r.json ? r.json.total : null,
+      items: items.filter((i) => /Feature Service|Map Service|Feature Layer|CSV|Web Map/.test(i.type)).map((i) => ({ title: i.title, type: i.type, owner: i.owner, access: i.access, url: i.url, modified: i.modified ? new Date(i.modified).toISOString().slice(0, 10) : null, tags: (i.tags || []).slice(0, 6) })).slice(0, 40) });
+    for (const i of items.filter((x) => x.url && /FeatureServer|MapServer/.test(x.url) && /היתר|permit|heter|רישוי|בני/i.test(x.title)).slice(0, 6)) {
+      const m = await req(`${i.url}?f=json`, { timeoutMs: 20000 });
+      const layers = ((m.json && (m.json.layers || [])) || []).map((l) => ({ id: l.id, name: l.name }));
+      out({ lane: 'permits2', item: i.title, owner: i.owner, url: i.url, status: m.status, layers: layers.slice(0, 12) });
+      for (const l of (layers.length ? layers : [{ id: null }]).slice(0, 2)) {
+        const base = l.id == null ? i.url : `${i.url}/${l.id}`;
+        const lm = await req(`${base}?f=json`, { timeoutMs: 20000 });
+        const cnt = await req(`${base}/query?where=1%3D1&returnCountOnly=true&f=json`, { timeoutMs: 20000 });
+        const q2 = await req(`${base}/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=json`, { timeoutMs: 20000 });
+        out({ lane: 'permits2', item: i.title, layer: base, fields: lm.json && lm.json.fields ? lm.json.fields.map((f) => f.name + (f.alias && f.alias !== f.name ? '(' + f.alias + ')' : '')).slice(0, 50) : null, count: cnt.json ? cnt.json.count : null, sample: q2.json && q2.json.features ? trim(q2.json.features.map((f) => f.attributes), 700) : trim(q2.text, 160) });
+        await sleep(200);
+      }
+    }
+    await sleep(400);
+  }
+  /* data.gov.il municipal organizations — every package title, building-related ones profiled */
+  const orgs = await req(`${CKAN}/organization_list?all_fields=true&limit=1000`);
+  for (const o of ((orgs.json && orgs.json.result) || []).filter((x) => /עיריית|עירית|מועצה/.test(x.title || ''))) {
+    const r = await req(`${CKAN}/package_search?fq=organization:${encodeURIComponent(o.name)}&rows=200`);
+    const pk = (r.json && r.json.result && r.json.result.results) || [];
+    out({ lane: 'permits2', org: o.title, packages: pk.map((p) => p.title) });
+    for (const p of pk.filter((p) => /בני|היתר|רישוי|מבנ|תיק/.test(p.title)).slice(0, 5)) await ckanFields('permits2', p);
+  }
+  /* municipal CKAN portals that answered in round 1 — building terms */
+  for (const base of ['https://opendata.haifa.muni.il', 'https://jerusalem.datacity.org.il']) for (const q of ['בניה', 'בנייה', 'רישוי', 'היתרים', 'מבנים']) {
+    const r = await req(`${base}/api/3/action/package_search?q=${encodeURIComponent(q)}&rows=20`, { timeoutMs: 20000 });
+    out({ lane: 'permits2', portal: base, q, status: r.status, count: r.json && r.json.result ? r.json.result.count : null, titles: r.json && r.json.result ? r.json.result.results.map((p) => `${p.title} [${(p.organization || {}).title || ''}]`) : trim(r.text, 120) });
+    await sleep(250);
+  }
+  /* the municipal engineering platforms (reachability; no form submission, no scraping) */
+  for (const [name, url] of [['complot:handasi', 'https://handasi.complot.co.il/handasi2016/'], ['complot:bakashot', 'https://bakashot.complot.co.il/'], ['gisnet:v5', 'https://v5.gis-net.co.il/v5/'],
+    ['jerusalem:handasa', 'https://handasa.jerusalem.muni.il/'], ['haifa:engineering', 'https://www.haifa.muni.il/'], ['rishuy:national', 'https://www.gov.il/he/departments/topics/building_licensing'], ['iplan:rishuy-zamin', 'https://rishuy.iplan.gov.il/']]) await probe('permits2', name, url);
+}
 async function execution() {
   await searchAndProfile('execution', ['התחלות בנייה', 'גמר בנייה', 'התקדמות בנייה', 'פרויקטים בבנייה', 'אכלוס', 'אתרי בנייה', 'בניה רוויה'], 12, 4);
   const h = await ds('1ec45809-5927-430a-9b30-77f77f528ce3', { limit: 3 });
@@ -354,6 +396,7 @@ async function sales() {
   if (has('ownership')) await ownership();
   if (has('litigation')) await litigation();
   if (has('permits')) await permits();
+  if (has('permits2')) await permits2();
   if (has('execution')) await execution();
   if (has('sales')) await sales();
   if (has('companies')) await companies();
