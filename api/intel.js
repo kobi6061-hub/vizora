@@ -19,6 +19,8 @@
 //                     + `narrative` — "Why this market?": ordered deterministic sentences, each with class · source · period · scope · term (lib/dossier/narrative.js)
 //   view=dossierIndex the geographies the page can ask for (districts + localities with ILA tenders)
 //                     (+ verb=NEW|ADVANCED|CHANGED|REVISED|STALE|RECOVERED|CONFLICT — the "what changed" verb of every event, lib/radar/verbs.js)
+//   view=dossierHistory  DOSSIER HISTORY / time machine — what changed for one geography between two PROPX reads (city= | district= | none = national; since=YYYY-MM-DD[, until=]): per fact NEW · CHANGED · REMOVED · STATE with class · source · period, signals added / removed, the Radar 2.0 state; NO_SNAPSHOT without a baseline, never a fabricated one (lib/dossier/history.js)
+//   view=dossierSnapshots the days an append-only snapshot exists (data/dossier/snapshots/) with their counts and the fact registry (class · source · kind · label · period meaning · levels)
 //   view=scan         OPPORTUNITY RADAR / RISK RADAR — the dossier signals over every geography (kind=opportunity|risk, level, city, district, m, limit; lib/radar/scan.js) — never a recommendation
 //   view=scanGeo      the opportunity / risk items of one geography (city= | district= | none = national)
 //   view=revisions    REVISION INTELLIGENCE — official CBS figures revised, old value beside new, by release (window=30d|90d|365d|all, material=1, measure, geo; lib/radar/revisions.js)
@@ -43,6 +45,7 @@ const RN = require('../lib/renewal/query');
 const RADAR = require('../lib/radar/query');
 const DOSSIER = require('../lib/dossier/query');
 let NARR = null; try { NARR = require('../lib/dossier/narrative'); } catch { /* the narrative ships separately */ }
+let HIST = null; try { HIST = require('../lib/dossier/history'); } catch { /* the dossier history ships separately */ }
 const SCAN = require('../lib/radar/scan');
 const REV = require('../lib/radar/revisions');
 let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /* the supply read model ships separately */ }
@@ -65,6 +68,8 @@ module.exports = async (req, res) => {
       if (NARR) { let scan = null, supply = null; try { scan = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); } catch { /* scan unavailable */ } try { supply = SUPPLY ? SUPPLY.supply({ level, code: p.city || p.district || null }) : null; } catch { /* supply unavailable */ } out.narrative = NARR.narrative(out, { scan, supply }); }
       return send(res, 200, out); }
     if (view === 'dossierIndex') return send(res, 200, DOSSIER.index());
+    if (view === 'dossierHistory') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = HIST.diff({ level, code: p.city || p.district || 'il', since: p.since, until: p.until }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
+    if (view === 'dossierSnapshots') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); return send(res, 200, HIST.snapshots()); }
     if (view === 'scan') return send(res, 200, SCAN.scan(p));
     if (view === 'scanGeo') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'revisions') return send(res, 200, REV.revisions(p));

@@ -177,6 +177,14 @@
   sample / uncovered window → null with a reason) and supply pressure (awarded state-land units ÷ official monthly sales
   pace, national / district only — null for a locality); every indicator carries formula · inputs · period · limitations.
   See `lib/dossier/README.md`, `lib/supply/README.md`.
+- `lib/dossier/history.js` + `scripts/dossier-snapshot.js` + `.github/workflows/dossier-snapshot.yml` + `data/dossier/snapshots/` +
+  `test/dossier-history.test.js` = DOSSIER HISTORY / TIME MACHINE (18.10.2026): a nightly APPEND-ONLY snapshot of every geography the
+  dossier describes (Israel, the 7 districts, every locality in the scan) — the dossier's own facts (value · class · source · period;
+  a locality's sales keep the DISTRICT label verbatim; missing = null with the dossier's reason, never 0), signal ids, Radar 2.0 state,
+  evidence quality — one file per day (`<YYYY-MM-DD>.json` + `index.json`, never rewritten or deleted; bot-written) and a deterministic
+  diff "what changed since <date>" (`view=dossierHistory&city=|district=&since=[&until=]`: NEW · CHANGED · REMOVED · STATE with the radar
+  verbs, signals added / removed; NO_SNAPSHOT without a baseline, "not covered on <date>" — never a fabricated baseline; a difference
+  between two PROPX reads is DERIVED, never a verdict); `view=dossierSnapshots` lists the days. See `lib/dossier/README.md`.
 - `lib/radar/verbs.js` + `test/verbs.test.js` = "What changed?" verbs (17.10.2026): every radar event carries NEW · ADVANCED · CHANGED ·
   REVISED · STALE · RECOVERED · CONFLICT — a constant per event rule, a source-state event by its recorded transition; never a
   judgement. `view=radar&verb=` narrows; `verbs` counts; the Pulse chip + filter; registry term `change_verb`.
