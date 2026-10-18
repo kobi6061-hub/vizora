@@ -1,0 +1,98 @@
+# PROPX · due diligence — daily read of the official corporate / contractor / construction-site / municipal-permit sources
+# (lib/dd/sync.js): the Registrar of Companies (companies, partnerships, filings incl. charges), the Official Receiver's
+# liquidation cases, fast-track voluntary liquidations, the contractors register, the Ministry of Labour's active and closed
+# construction sites, Tel Aviv-Yafo's IView2 permits and sites. Every kept row is keyed (company number, contractor number,
+# work id, request number, tik); the registry rows kept are CANDIDATES for an explicit resolution (lib/entities/resolve.js),
+# never a selection. A failed lane keeps its last data; nothing outside data/dd/ (+ the radar rebuild) is touched.
+# data.gov.il refreshes these resources nightly (~01:30 UTC); the municipal GIS imports ~02:15 Israel time.
+
+name: Due diligence sync
+
+on:
+  schedule:
+    - cron: '23 4 * * 0-4'   # Sun–Thu 04:23 UTC = 07:23 Israel (summer) / 06:23 (winter)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'sync (write + commit) · dry-run (read and report — nothing written)'
+        type: choice
+        options: [sync, dry-run]
+        default: sync
+      lanes:
+        description: 'comma-separated lanes (contractors, companies, partnerships, filings, insolvency, sites, tlv) — empty = all'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dd-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MODE: ${{ inputs.mode || 'sync' }}
+      LANES: ${{ inputs.lanes || '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Offline gates (must pass before any data is written)
+        run: |
+          [ -f test/entities-resolve.test.js ] && node test/entities-resolve.test.js || echo 'no resolver gates yet'
+          [ -f test/dd.test.js ] && node test/dd.test.js || echo 'no dd gates yet'
+
+      - name: Read the sources
+        id: sync
+        run: |
+          set +e
+          ARGS=""
+          [ -n "$LANES" ] && ARGS="--lanes $LANES"
+          case "$MODE" in
+            dry-run) node scripts/dd-sync.js --dry-run $ARGS ;;
+            *)       node scripts/dd-sync.js --summary-file "$RUNNER_TEMP/summary.txt" $ARGS ;;
+          esac
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Gates over the written data
+        if: env.MODE == 'sync'
+        run: |
+          [ -f test/dd.test.js ] && node test/dd.test.js || echo 'no dd gates yet'
+          node test/integrity.test.js
+
+      - name: Rebuild the Market Radar
+        if: env.MODE == 'sync'
+        run: node scripts/radar-build.js --quiet
+
+      - name: Commit the data
+        if: env.MODE == 'sync'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/dd
+          git add data/radar
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Due diligence sync: run log' > "$RUNNER_TEMP/summary.txt"
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+
+      - name: Fail the run if a source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "dd-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1

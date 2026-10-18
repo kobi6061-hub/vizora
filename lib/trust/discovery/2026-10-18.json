@@ -1,0 +1,648 @@
+[
+ {
+  "id": "datagov:ica:companies",
+  "target": 1,
+  "priority": 1,
+  "owner": "משרד המשפטים — רשות התאגידים (רשם החברות)",
+  "ownerEn": "Ministry of Justice — Israeli Corporations Authority (Registrar of Companies)",
+  "name": "מאגר חברות — רשם החברות (רשימת החברות)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=f004176c-b85f-4542-8901-7b3176f9a054",
+  "catalogue": "https://data.gov.il/dataset/ica_companies",
+  "accessMethod": "HTTPS GET, CKAN datastore_search (JSON), keyless; filters on any field (exact), q full text; paged (limit / offset). The WAF refuses a burst of ~100 datastore requests (HTML 403 — not a CKAN error): page the whole table slowly rather than query per name.",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "732,156 companies: מספר חברה (the 9-digit company number — the identifier), שם חברה (the registered name; the Hebrew quotation mark is written \"~\": בע~מ), שם באנגלית, סוג תאגיד (ישראלית חברה פרטית · ישראלית חברה ציבורית · foreign), סטטוס חברה (פעילה · פעילה זמנית · מחוקה · מחוסלת מרצון · בפרוק מרצון · בפרוק ע~י בימ~ש · חיסול ע~י בימ~ש · מחוסלת עקב מיזוג), תת סטטוס, מפרה (חברה מפרה — statutory filing breach flag, NOT a solvency fact), שנה אחרונה של דוח שנתי (שהוגש), תאריך התאגדות, חברה ממשלתית, מגבלות, address fields and their codes. No shareholders, directors, parents, subsidiaries, SPV links or financials.",
+  "sample": [
+   {
+    "num": 511399388,
+    "name": "י.ח. דמרי בניה ופיתוח בע~מ",
+    "status": "פעילה",
+    "type": "ישראלית חברה ציבורית",
+    "lastReport": 2026,
+    "incorporated": "09/07/1989"
+   },
+   {
+    "num": 510865058,
+    "name": "פרץ בוני הנגב-אחים פרץ בע~מ",
+    "status": "פעילה",
+    "type": "ישראלית חברה פרטית",
+    "lastReport": 2026
+   }
+  ],
+  "geography": "national (every registered company)",
+  "period": "since 1935 (incorporation dates) · the current state, not a history",
+  "cadence": "source: nightly (resource modified 2026-10-18 01:22) · PROPX: every working day (dd-sync.yml)",
+  "freshness": "as audited 2026-10-18: resource modified 2026-10-18T01:22",
+  "identifiers": "company number (9 digits) — exact; name — unique per the Registrar (an identical name with a legal-form marker names one company) but spelled with ~, hyphens, dots and extra spaces that differ from the tender / lottery strings",
+  "joinKey": "developer canonical name → normalized legal name (quotes / dots / hyphens / spacing unified) → STRONG MATCH when exactly one row; company number only when a PROPX source or the user carries it (none today) → VERIFIED",
+  "verdict": "INTEGRATE",
+  "why": "exact official identifier (company number) for every legal company; registered status, type and breach flag by that key; name-only resolution is explicit (STRONG / POSSIBLE / AMBIGUOUS / UNRESOLVED), never VERIFIED",
+  "limitations": [
+   "no PROPX source carries a company number — a developer is matched by its registered name only: STRONG MATCH at best, never VERIFIED",
+   "no ownership data: parent / subsidiary / SPV / guarantor relationships are NOT resolvable from this source",
+   "a struck-off and an active company may share a normalized name — AMBIGUOUS, never picked",
+   "\"מפרה\" (breach) is a filing-duty flag of the Registrar; it is not distress, not insolvency",
+   "the registry carries the current state only: no status history (the filings register carries recent changes)"
+  ],
+  "evidence": "run 39114805844 lane companies: head 5 rows, vocabulary over 2,000 rows, 10 known developers looked up (fulltext hits for 9; exact hits only after the ~ normalization — run 39115194781 lane insolvency set registry: by number 7/7, by ~-name 4/7 — the other 3 differ by a hyphen, a dot or spacing)",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:ica:changes",
+  "target": 1,
+  "priority": 1,
+  "owner": "משרד המשפטים — רשות התאגידים (רשם החברות)",
+  "ownerEn": "Ministry of Justice — Israeli Corporations Authority (Registrar of Companies)",
+  "name": "פרטי שינויים בתאגידים — רשם החברות (filings: charges registered / removed, annual reports, officers, violations)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=28780ab5-3ef1-44c7-8377-da82c0aa6781",
+  "catalogue": "https://data.gov.il/dataset/ica-changes",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless; filters on מספר תאגיד (exact) — the only safe access pattern (full-text by name returns duplicates and variants)",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "571,760 filing events: מספר תאגיד (company / partnership number), שם תאגיד, סוג בקשה (רישום שעבוד · סילוק שעבוד · ביטול סילוק שעבוד · עדכון שעבוד · דו~ח שנתי (+ sub-kinds) · עדכון הפרה · עדכון בעלי תפקידים · העברת מניות · עדכון כתובת …), קוד סוג בקשה, תאריך עדכון סטטוס, מזהה השיעבוד (the charge id within the company). No chargee, no amount, no secured asset.",
+  "sample": [
+   {
+    "num": 511399388,
+    "filings": 53,
+    "kinds": {
+     "רישום שעבוד": 24,
+     "סילוק שעבוד": 18,
+     "ביטול סילוק שעבוד": 3,
+     "דו~ח שנתי": 1
+    },
+    "years": {
+     "2026": 32,
+     "2025": 21
+    }
+   },
+   {
+    "num": 511543886,
+    "filings": 21,
+    "kinds": {
+     "סילוק שעבוד": 20,
+     "רישום שעבוד": 1
+    }
+   }
+  ],
+  "geography": "national",
+  "period": "a rolling window — the 7 known developers show 2025–2026 events only (the older history is not in the table)",
+  "cadence": "source: nightly (modified 2026-10-18 01:22) · PROPX: every working day",
+  "freshness": "as audited: modified 2026-10-18T01:22",
+  "identifiers": "company number (exact); charge id is per company (not global)",
+  "joinKey": "company number ← the STRONG / VERIFIED company resolution; nothing by name",
+  "verdict": "INTEGRATE",
+  "why": "dated corporate events by the exact company key: charge registrations and removals (the only public machine-readable charge signal), annual-report filings, officer changes, breach updates — CHARGE ≠ DISTRESS; shown as counts and dated events with their verbatim kind",
+  "limitations": [
+   "a charge (שעבוד) is ordinary financing collateral for a developer — never shown as distress, default or insolvency",
+   "no chargee, amount or asset: PROPX cannot say what was charged or to whom",
+   "rolling window: the absence of events before 2025 is NOT the absence of charges",
+   "events are keyed by the company number — the brand / SPV question is not answered here (a project SPV's charges sit on the SPV's number, which no PROPX source carries)"
+  ],
+  "evidence": "run 39115194781 lane insolvency set filings: 7/7 known companies by number — 11 to 53 events each, 2025–2026",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:ica:partnerships",
+  "target": 1,
+  "priority": 2,
+  "owner": "משרד המשפטים — רשות התאגידים (רשם החברות)",
+  "ownerEn": "Ministry of Justice — Israeli Corporations Authority (Registrar of Companies)",
+  "name": "מאגר שותפויות — רשם החברות (רשימת השותפויות)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=139aa193-fabb-4f6b-a71b-0bb40fd73eb2",
+  "catalogue": "https://data.gov.il/dataset/ica_partnerships",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "28,977 partnerships: מספר שותפות (the identifier), שם שותפות, שם באנגלית, סוג תאגיד (ישראלית כללית · חו~ל …), סטטוס תאגיד (פעילה · מחוקה · שותפות מחוקה מרצון · פורקה מרצון …), תאריך התאגדות, address",
+  "sample": [
+   {
+    "num": 530043694,
+    "name": "הנדסת קירור ליפשייץ לוינסקי",
+    "status": "מחוקה",
+    "type": "חו~ל שותפות חו~ל מהסבה"
+   }
+  ],
+  "geography": "national",
+  "period": "since 1942 · current state",
+  "cadence": "source: nightly · PROPX: every working day",
+  "freshness": "as audited: modified 2026-10-18T01:12",
+  "identifiers": "partnership number (exact); name as the companies registry",
+  "joinKey": "developer of kind partnership (ש.מ / שותפות — 45 in the registry) → normalized name → STRONG / POSSIBLE / AMBIGUOUS",
+  "verdict": "INTEGRATE",
+  "why": "the same role as the companies registry for the 45 partnership-kind developers; small",
+  "limitations": [
+   "name-only, never VERIFIED",
+   "the registry's partnership number (53…) is a different number space from the company number (51… / 52…)"
+  ],
+  "evidence": "run 39114805844 lane companies: head, vocabulary; the per-name lookups were refused by the WAF after ~100 requests (403, HTML)",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:ica:voluntary-liquidation-fast-track",
+  "target": 1,
+  "priority": 2,
+  "owner": "משרד המשפטים — רשות התאגידים (רשם החברות)",
+  "ownerEn": "Ministry of Justice — Israeli Corporations Authority (Registrar of Companies)",
+  "name": "חברות בפרוק מרצון בהליך מזורז",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=6f3f0df3-5968-4135-81c5-8dd76bf89410",
+  "catalogue": "https://data.gov.il/dataset/membership-in-liquidation",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "1,117 companies in fast-track voluntary liquidation: מספר חברה, שם חברה, סטטוס חברה (פעילה · בפרוק מרצון · מחוקה), תת סטטוס (בפרוק מרצון בהליך מזורז), אישור בקשת הפירוק (date), מועד החיסול הצפוי (date), מפרה, address",
+  "sample": [
+   {
+    "num": 510007586,
+    "status": "פעילה",
+    "sub": "בפרוק מרצון בהליך מזורז",
+    "approved": "08/10/2026",
+    "expectedDissolution": "16/01/2027"
+   }
+  ],
+  "geography": "national",
+  "period": "the current list (approvals 2026)",
+  "cadence": "source: nightly · PROPX: every working day",
+  "freshness": "as audited: modified 2026-10-17T20:12",
+  "identifiers": "company number (exact)",
+  "joinKey": "company number ← the company resolution",
+  "verdict": "INTEGRATE",
+  "why": "a dated voluntary-liquidation fact by the exact key — VOLUNTARY LIQUIDATION ≠ INSOLVENCY (a solvent wind-up); small",
+  "limitations": [
+   "voluntary liquidation is a shareholder decision, not a court insolvency order — labelled so",
+   "none of the 7 known developers appear (0 hits) — the list is of use mostly for SPVs whose numbers PROPX does not carry"
+  ],
+  "evidence": "run 39115194781 lane insolvency set voluntaryFast: head, vocabulary, 7 known numbers → 0 hits",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:moj:official-receiver:liquidation",
+  "target": 1,
+  "priority": 1,
+  "owner": "משרד המשפטים — הכונס הרשמי / הממונה על הליכי חדלות פירעון",
+  "ownerEn": "Ministry of Justice — the Official Receiver / Commissioner of Insolvency Proceedings",
+  "name": "מאגר הכונס הרשמי — קובץ חברות בפירוק (court liquidation cases)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=d8715392-287f-49b7-9ae3-f21ec5bf55f3",
+  "catalogue": "https://data.gov.il/dataset/pr2018",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "15,027 company liquidation cases: מזהה תיק פירוק חברה, שם החברה, מספר זיהוי של החברה (company number — 0 on some rows), עיר פעילות חברה, סטטוס תיק (תיק סגור · סגור-בוער · תיק סגור (בגניזה) · חיסול/ביטול/עיכוב הפרוק · מתן צו פרוק · הוגשה בקשה · הבקשה נמחקה), תאריך הגשת הבקשה, תאריך קבלת צו פירוק, תאריך ביטול / הקפאת צו פירוק, תאריך סגירת תיק, סיבת סגירה, בית משפט מחוזי",
+  "sample": [
+   {
+    "case": 14,
+    "company": 512280009,
+    "status": "תיק סגור (בגניזה)",
+    "requested": "09/05/2004",
+    "order": "13/09/2004",
+    "closed": "11/08/2020",
+    "reason": "חיסול",
+    "court": "מחוזי ת~א"
+   }
+  ],
+  "geography": "national (district courts)",
+  "period": "cases since the 1990s · open and closed",
+  "cadence": "source: weekly (modified 2026-10-11) · PROPX: every working day",
+  "freshness": "as audited: modified 2026-10-11T17:13",
+  "identifiers": "company number (exact; rows with 0 are unusable), case id",
+  "joinKey": "company number ← the company resolution",
+  "verdict": "INTEGRATE",
+  "why": "the only machine-readable court-insolvency record for companies: a dated liquidation request / order / stay / closure by the exact key — shown verbatim with its dates and status; an OPEN case is \"a liquidation proceeding is recorded\", a closed one is history",
+  "limitations": [
+   "rows with company number 0 cannot be joined and are never matched by name",
+   "the case status vocabulary is the Receiver's (closed / archived / order given / request filed) — PROPX maps nothing beyond it",
+   "no bankruptcy of individuals here (that file is separate and not read)",
+   "a liquidation case names the company on the row — a brand's or a parent's case is never attributed to a project SPV, nor the reverse"
+  ],
+  "evidence": "run 39115194781 lane insolvency set liquidation: head, vocabulary over 1,500 rows",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:moj:official-receiver:debt-claims",
+  "target": 1,
+  "priority": 3,
+  "owner": "משרד המשפטים — הכונס הרשמי",
+  "ownerEn": "Ministry of Justice — the Official Receiver",
+  "name": "תביעות חוב בהליכי פשיטת רגל או פירוק חברה",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=3cb25b2e-a501-4870-86a6-30be8d8e80a5",
+  "catalogue": "https://data.gov.il/dataset/pr2018",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "2,669,818 debt claims: סוג תובע החוב (פרטיים · בנקים · תאגידים · רשויות המדינה · עובדים …), סטטוס תביעת חוב (בבדיקה · אושר · לא אושר · טרם …), סוג מערכת (פשיטות רגל …), תאריך יצירת החוב, מזהה תיק, סכום תביעת החוב, סכום שאושר (+ ordinary / priority)",
+  "sample": [
+   {
+    "claimant": "בנקים",
+    "status": "טרם",
+    "system": "פשיטות רגל",
+    "case": 1,
+    "claimed": 100,
+    "approved": 0
+   }
+  ],
+  "geography": "national",
+  "period": "—",
+  "cadence": "weekly",
+  "freshness": "as audited: modified 2026-10-11",
+  "identifiers": "case id only — no company number on the row; the sample is personal bankruptcy",
+  "joinKey": "none exact (the case id space vs the company-liquidation case id is not documented)",
+  "verdict": "DOCUMENT-ONLY",
+  "why": "2.7 M rows keyed by a case id whose relation to the company-liquidation file is undocumented; mostly personal bankruptcy — not read",
+  "limitations": [
+   "never summed into a \"debt\" figure for a company",
+   "not read"
+  ],
+  "evidence": "run 39115194781 lane insolvency set claims: head, vocabulary",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:moj:pledges-register",
+  "target": 1,
+  "priority": 3,
+  "owner": "משרד המשפטים — רשם המשכונות",
+  "ownerEn": "Ministry of Justice — Registrar of Pledges",
+  "name": "רשם המשכונות — תצוגת משכונות",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=e7266a9c-fed6-40e4-a28e-8cddc9f44842",
+  "catalogue": "https://data.gov.il/dataset/mashkonot",
+  "accessMethod": "HTTPS GET, CKAN datastore_search (catalogue says datastore active)",
+  "classification": "PARTIAL",
+  "contains": "catalogue only: the pledges (משכונות) register view — fields NOT read in this audit (the companies lane was refused by the WAF before this resource)",
+  "sample": [],
+  "geography": "national",
+  "period": "—",
+  "cadence": "source: nightly (modified 2026-10-17) · not read",
+  "freshness": "as audited: catalogue 2026-10-17",
+  "identifiers": "unknown until profiled (a pledge names a debtor; whether the debtor id is on the row is not yet known)",
+  "joinKey": "none yet",
+  "verdict": "DOCUMENT-ONLY",
+  "why": "audited at the catalogue level only — profiled in the next discovery run (dd-discover.js --pledges); a LIEN / PLEDGE is collateral, never insolvency",
+  "limitations": [
+   "not read",
+   "a pledge (משכון) on movable property / rights is not a land charge; LIEN ≠ INSOLVENCY"
+  ],
+  "evidence": "run 39114805844 lane companies catalogue (package mashkonot listed; datastore true)",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:moch:contractors-register",
+  "target": 1,
+  "priority": 1,
+  "owner": "משרד הבינוי והשיכון — רשם הקבלנים",
+  "ownerEn": "Ministry of Construction and Housing — Registrar of Contractors",
+  "name": "פנקס הקבלנים הרשומים",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=4eb61bd6-18cf-4e7c-9f9c-e166dfa0a2d8",
+  "catalogue": "https://data.gov.il/dataset/pinkashakablanim",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless (one page of 24,373 rows)",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "24,373 registration rows (one per contractor × branch): MISPAR_KABLAN (the contractor number — 3,900 distinct in a 5,000-row sample), MISPAR_YESHUT (the entity number: the company number for corporations; empty for individuals / older rows), SHEM_YESHUT, SHEM_YISHUV / SHEM_REHOV / MISPAR_BAIT, TAARICH_KABLAN (registration date), KOD_ANAF / TEUR_ANAF (branch: בניה · שיפוצים · כבישים תשתית ופיתוח · בטונים בנית שלדים …), KVUTZA (א · ב · ג), SIVUG (classification 1–5), TARICH_SUG, HEKEF (financial scope class), KABLAN_MUKAR (מוכר בסיווג N — recognized for public works), OVDIM, HEARA",
+  "sample": [
+   {
+    "kablan": "8011",
+    "company": "510865058",
+    "name": "פרץ בוני הנגב אחים פרץ בע",
+    "branch": "—"
+   },
+   {
+    "kablan": "22286",
+    "company": "511847337",
+    "name": "פרץ בוני הנגב (1993) בעמ"
+   }
+  ],
+  "geography": "national",
+  "period": "the current register (modified 2026-08-17)",
+  "cadence": "source: irregular (last 2026-08-17) · PROPX: every working day",
+  "freshness": "as audited: modified 2026-08-17",
+  "identifiers": "MISPAR_KABLAN (exact — the key the Ministry of Labour's site list carries as executor_id), MISPAR_YESHUT (company number — exact to the companies registry)",
+  "joinKey": "sites.executor_id → MISPAR_KABLAN (VERIFIED) → MISPAR_YESHUT → co:<number> (VERIFIED); developer → company number (STRONG) → MISPAR_YESHUT (the chain inherits STRONG)",
+  "verdict": "INTEGRATE",
+  "why": "the exact key that turns a construction site into a named, registered executing contractor with its branch and classification; and the one public place where a developer's company number appears beside a contractor number",
+  "limitations": [
+   "CONTRACTOR ≠ DEVELOPER: a registered contractor executing a site is not the project's owner or developer",
+   "MISPAR_YESHUT is empty on individual / older rows — those contractors never resolve to a company",
+   "branch / group / classification are registration facts, not quality judgements",
+   "the register's last modification is 2026-08-17 — a contractor registered since is not here"
+  ],
+  "evidence": "run 39115194781 lane contractors: head, 5,000-row profile; lane sites: 25/25 executor_id joined to MISPAR_KABLAN with company numbers",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:labor:active-construction-sites",
+  "target": 1,
+  "priority": 1,
+  "owner": "משרד העבודה — מינהל הבטיחות והבריאות התעסוקתית",
+  "ownerEn": "Ministry of Labour — Occupational Safety and Health Administration",
+  "name": "אתרי בנייה פעילים (active construction sites)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=b072e36c-a53b-49e1-be08-4a608fcf4638",
+  "catalogue": "https://data.gov.il/dataset/b072e36c-a53b-49e1-be08-4a608fcf4638",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless (one page)",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "10,894 active sites: work_id (the site id), site_name (free text: \"בנייה מגרש 142-(שכ' הפארק) באר שבע\" — a lot number in 5 %, a block/parcel in 2 %, otherwise a street or a description), executor_name, executor_id (= MISPAR_KABLAN; present on 83 %), foreman_name, has_cranes, city_name (tel aviv 310 / jerusalem 218 / haifa 107 … per 3,000), build_types (מגורים · ציבורי · תעשייה · מסחר · empty on a third), safety_warrents, sanctions, sanctions_sum. NO dates, NO parcel field, NO permit number, NO developer.",
+  "sample": [
+   {
+    "work_id": 438354,
+    "site_name": "בנייה מגרש 142-(שכ' הפארק) באר שבע",
+    "executor_name": "פרץ בוני הנגב אחים פרץ בע\"מ",
+    "executor_id": 8011,
+    "city_name": "באר שבע"
+   }
+  ],
+  "geography": "national, by city name (free text)",
+  "period": "the current list only — a site drops out when closed; no start date",
+  "cadence": "source: nightly (modified 2026-10-17 21:15) · PROPX: every working day (first seen / last seen kept by PROPX)",
+  "freshness": "as audited: modified 2026-10-17T21:15",
+  "identifiers": "work_id (exact, PROPX keeps first / last seen); executor_id (exact → contractors register); city name (free text → locality by exact official name only)",
+  "joinKey": "executor_id → MISPAR_KABLAN (VERIFIED); site_name parsed block/parcel → parcel:<block>/<parcel> (STRONG — an official key read from free text); site_name parsed lot number + locality → one awarded ILA lot (POSSIBLE at best); anything else: contractor-level evidence in a city, never a project fact",
+  "verdict": "INTEGRATE",
+  "why": "the only national, daily, machine-readable evidence that a registered contractor has an ACTIVE SITE in a city — contractor-level, dated by PROPX observation (first seen / last seen), never a start or completion date",
+  "limitations": [
+   "ACTIVE SITE ≠ COMPLETED UNITS, ≠ CONSTRUCTION START DATE: the list has no dates; PROPX dates it by its own observation",
+   "no project key: a site joins a project only through a parcel or a lot number written in the free-text name — stated with its match state",
+   "the executing contractor is not the developer: a developer appears here only when it executes its own sites (a contractor number of its own)",
+   "a site missing from the list is NOT a stopped project: the list is of registered sites under safety supervision"
+  ],
+  "evidence": "run 39115194781 lane sites: head, 3,000-row profile, join 25/25",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:labor:closed-construction-sites",
+  "target": 1,
+  "priority": 2,
+  "owner": "משרד העבודה",
+  "ownerEn": "Ministry of Labour",
+  "name": "אתרי בניה שנסגרו (sites closed by the safety administration)",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=b9257d8f-f93a-4c7d-84dd-e4b0838eadaa",
+  "catalogue": "https://data.gov.il/dataset/closed-construction-sites",
+  "accessMethod": "HTTPS GET, CKAN datastore_search, keyless",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "789 rows: workName (free text), executorName (name only), fromDate (closure date, dd/mm/yyyy). No ids.",
+  "sample": [
+   {
+    "workName": "פרויקט כפתור חולות 14-16 אשדוד",
+    "executorName": "ארץ אשר אבניה ברזל יזמות בע\"מ",
+    "fromDate": "12/10/2026"
+   }
+  ],
+  "geography": "national",
+  "period": "closure dates (2026 in the sample)",
+  "cadence": "nightly",
+  "freshness": "as audited: modified 2026-10-17",
+  "identifiers": "none — names only",
+  "joinKey": "executorName normalized = contractor SHEM_YESHUT normalized (STRONG at best; one row) — never by site name",
+  "verdict": "INTEGRATE",
+  "why": "small; a dated safety-closure fact linked to a contractor by exact normalized name only (STRONG / AMBIGUOUS / UNRESOLVED) — a SAFETY CLOSURE ≠ project failure",
+  "limitations": [
+   "a closure by the safety administration is an enforcement event on a site — never shown as project stop, developer failure or insolvency",
+   "name-only: never VERIFIED",
+   "no site key: never joined to a project"
+  ],
+  "evidence": "run 39115194781 lane sites closed: head",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "tlv:iview2:permits-772",
+  "target": 1,
+  "priority": 1,
+  "owner": "עיריית תל אביב-יפו — מינהל ההנדסה (IView2 GIS)",
+  "ownerEn": "Tel Aviv-Yafo Municipality — Engineering Administration (IView2 GIS)",
+  "name": "בקשות והיתרי בניה (IView2 layer 772 — permit requests and permits)",
+  "url": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer/772/query?where=1%3D1&outFields=*&returnGeometry=false&f=json",
+  "catalogue": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer",
+  "accessMethod": "ArcGIS REST query, JSON, keyless (resultOffset / resultRecordCount paging)",
+  "classification": "CONFIRMED_GIS",
+  "contains": "10,620 permit requests: request_num, permission_num + permission_date, expiry_date, open_request, building_num, yechidot_diyur (dwelling units), sug_bakasha (request type), tochen_bakasha (content), maslul_rishuy, building_stage (בתהליך היתר 39 % · קיים היתר 6 % · בבניה 19 % · קיימת לפחות תעודת גמר אחת 30 % · קיים אכלוס 6 % of 2,000), request_stage (1–6), tr_hathalat_bniya (construction-start date; 67 % of 2,000), finished, occupation, ms_tik_binyan (the building file — the key to layer 499), addresses (free text), TAMA 38 flags, relief fields, geometry. No block/parcel, no permit holder.",
+  "sample": [
+   {
+    "request_num": 20190001,
+    "building_stage": "בתהליך היתר",
+    "request_stage": "1",
+    "yechidot_diyur": 3,
+    "ms_tik_binyan": 30430120,
+    "addresses": "עבד אל ראוף אלביטאר 12"
+   }
+  ],
+  "geography": "TEL AVIV-YAFO ONLY (municipal coverage)",
+  "period": "requests since 2019 in the sample (request_num 2019…); stages as of the import date",
+  "cadence": "source: nightly import (date_import 16/10/2026) · PROPX: every working day",
+  "freshness": "as audited: date_import 2026-10-16",
+  "identifiers": "request_num (exact), permission_num (exact), ms_tik_binyan (exact → layer 499 sites → gush_chelka)",
+  "joinKey": "permit → site by ms_tik_binyan (VERIFIED) → parcel (VERIFIED) → ILA tender parcels (VERIFIED key, same parcel) — PARCEL MATCH ≠ SAME PROJECT when the parcel carries several permits (flagged)",
+  "verdict": "INTEGRATE",
+  "why": "the only machine-readable PERMIT RECORD with a stage ladder (permit → construction start → completion certificate → occupancy) and a construction-start DATE — for one city; labelled TEL AVIV MUNICIPAL COVERAGE everywhere",
+  "limitations": [
+   "one municipality: never shown as national, district or locality coverage elsewhere",
+   "PERMIT ≠ CONSTRUCTION START ≠ COMPLETION: the stage field is the municipality's own; each rung is shown only with its own date / flag",
+   "no permit holder on the layer (the sites layer carries baalei_heter); no block/parcel (via the sites layer)",
+   "a request in process (בתהליך היתר) is not a permit"
+  ],
+  "evidence": "run 39114805844 lane tlv: metadata, count, 3 rows, 2,000-row stage vocabulary",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "tlv:iview2:sites-499",
+  "target": 1,
+  "priority": 1,
+  "owner": "עיריית תל אביב-יפו — מינהל ההנדסה (IView2 GIS)",
+  "ownerEn": "Tel Aviv-Yafo Municipality — Engineering Administration (IView2 GIS)",
+  "name": "אתרי בניה (IView2 layer 499 — construction sites under supervision)",
+  "url": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer/499/query?where=1%3D1&outFields=*&returnGeometry=false&f=json",
+  "catalogue": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer",
+  "accessMethod": "ArcGIS REST query, JSON, keyless",
+  "classification": "CONFIRMED_GIS",
+  "contains": "1,599 sites: tik_tipul, heterim (the permit numbers — a list), status_pikuach + tr_status_pikuach (supervision status + date), matzav_bniya (תחילת עבודות …), tr_tchilat_avoda (work-start date), shimush (use), baalei_heter (permit holders — names), sivug, sug_bakasha, tochen_bakasha, ktovet (address), ms_tik_binyan, gush_chelka (\"6979 / 3\"), url_archion_tik, geometry",
+  "sample": [
+   {
+    "tik_tipul": "63-1-2014-0153",
+    "heterim": "20140161 ,20150898 ,20170484 ,20221418 ,20260245",
+    "matzav_bniya": "תחילת עבודות",
+    "tr_tchilat_avoda": "2026-08-02",
+    "baalei_heter": "קסטיאל אלי יאן",
+    "gush_chelka": "6979 / 3",
+    "ms_tik_binyan": 40170560
+   }
+  ],
+  "geography": "TEL AVIV-YAFO ONLY",
+  "period": "current sites; work-start dates",
+  "cadence": "nightly import · PROPX: every working day",
+  "freshness": "as audited: date_import 2026-10-16",
+  "identifiers": "ms_tik_binyan (exact), gush_chelka (exact parcel), heterim (exact permit numbers → layer 772)",
+  "joinKey": "gush_chelka → parcel:<block>/<parcel> → ILA tender parcels (VERIFIED key); baalei_heter normalized = developer legal name (STRONG at best)",
+  "verdict": "INTEGRATE",
+  "why": "the parcel-keyed, dated work-start evidence for Tel Aviv sites with the permit holders named — the bridge between the permit record and the land record",
+  "limitations": [
+   "TEL AVIV MUNICIPAL COVERAGE only",
+   "the permit holder is a name: a developer link is STRONG MATCH at best (exact normalized legal name), a person is never listed",
+   "a work start on a parcel is not the completion of units"
+  ],
+  "evidence": "run 39114805844 lane tlv: metadata, count, 3 rows",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "tlv:iview2:parcels-524",
+  "target": 1,
+  "priority": 3,
+  "owner": "עיריית תל אביב-יפו — מינהל ההנדסה (IView2 GIS)",
+  "ownerEn": "Tel Aviv-Yafo Municipality — Engineering Administration (IView2 GIS)",
+  "name": "חלקות (IView2 layer 524 — cadastral parcels)",
+  "url": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer/524",
+  "catalogue": "https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer",
+  "accessMethod": "ArcGIS REST, JSON, keyless",
+  "classification": "CONFIRMED_GIS",
+  "contains": "45,161 parcels: ms_gush, ms_chelka, ms_gush_vechelka, areas, registration status, geometry — no owner, no permit",
+  "sample": [
+   {
+    "ms_gush": 6620,
+    "ms_chelka": 21
+   }
+  ],
+  "geography": "TEL AVIV-YAFO ONLY",
+  "period": "—",
+  "cadence": "nightly",
+  "freshness": "as audited 2026-10-16",
+  "identifiers": "block / parcel (exact)",
+  "joinKey": "not needed — the sites layer carries the parcel key",
+  "verdict": "DOCUMENT-ONLY",
+  "why": "geometry and cadastre only; no due-diligence fact; the parcel key is already on the sites layer",
+  "limitations": [
+   "not read"
+  ],
+  "evidence": "run 39114805844 lane tlv",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "tase:maya:public-filings",
+  "target": 1,
+  "priority": 1,
+  "owner": "הבורסה לניירות ערך בתל אביב (מאיה) · רשות ניירות ערך (מגנ\"א)",
+  "ownerEn": "Tel Aviv Stock Exchange (MAYA) · Israel Securities Authority (MAGNA)",
+  "name": "Public-company filings and financial statements (MAYA / MAGNA / TASE API)",
+  "url": "https://maya.tase.co.il/",
+  "catalogue": "https://www.magna.isa.gov.il/",
+  "accessMethod": "api.tase.co.il → 403 (HTML, anti-bot page); mayaapi.tase.co.il (documented public endpoint, X-Maya-With header) → 403; maya.tase.co.il → 200 (an Angular SPA, data behind the refused API); www.magna.isa.gov.il → 403 (S3 front); www.isa.gov.il → 200 (SPA). data.gov.il: no ISA / TASE dataset (the two package hits are unrelated: an environment-ministry dataset and a closed finance-ministry one).",
+  "classification": "RESTRICTED",
+  "contains": "financial statements, immediate reports, bond series, ratings — for listed companies and bond issuers; none of it reachable by a keyless, non-browser, terms-respecting client",
+  "sample": [
+   {
+    "name": "maya:api",
+    "status": 403
+   },
+   {
+    "name": "tase:api",
+    "status": 403
+   },
+   {
+    "name": "isa:magna",
+    "status": 403
+   }
+  ],
+  "geography": "listed companies and bond issuers",
+  "period": "—",
+  "cadence": "continuous",
+  "freshness": "not readable",
+  "identifiers": "TASE company id / ISA reporting id — not obtainable here",
+  "joinKey": "none",
+  "verdict": "BLOCKED",
+  "why": "every machine channel refuses a non-browser client (403) and PROPX does not bypass anti-bot controls or scrape a SPA; public-company financials are therefore PUBLIC FINANCIAL DATA NOT AVAILABLE IN CURRENT COVERAGE; the registry type (ישראלית חברה ציבורית) is the only public-company fact PROPX carries",
+  "limitations": [
+   "no revenue, equity, leverage, bond price or rating is shown for any developer",
+   "a private developer is not penalized: the same label applies to every company — \"not in current coverage\"",
+   "PUBLIC COMPANY FINANCIALS ≠ SPV FINANCIALS: even a future filing feed would describe the listed parent, never a project SPV"
+  ],
+  "evidence": "run 39114805844 lane public: 7 probes",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:courts-and-enforcement",
+  "target": 1,
+  "priority": 3,
+  "owner": "הרשות השופטת · רשות האכיפה והגבייה · משרד המשפטים",
+  "ownerEn": "Judiciary · Enforcement and Collection Authority · Ministry of Justice",
+  "name": "Court case registers / enforcement (הוצאה לפועל) datasets on data.gov.il",
+  "url": "https://data.gov.il/api/3/action/package_search?q=בתי%20משפט%20תיקים",
+  "catalogue": "https://data.gov.il/",
+  "accessMethod": "CKAN package_search",
+  "classification": "UNUSABLE",
+  "contains": "package_search hits for \"בתי משפט תיקים\": religious courts (sharia / druze case files and marriage contracts), a list of magistrate courts by district, welfare assistance-unit case counts; \"הוצאה לפועל\": the Authority's 2017 annual statistics (aggregate CSVs, mostly not in the datastore); \"שעבודים\" / \"חדלות פירעון\" / \"כינוס נכסים\" / \"חברות מפרות\": 0 packages",
+  "sample": [],
+  "geography": "—",
+  "period": "—",
+  "cadence": "—",
+  "freshness": "—",
+  "identifiers": "none",
+  "joinKey": "none",
+  "verdict": "REJECT",
+  "why": "no civil-litigation, enforcement-file or charge register exists on data.gov.il at the debtor level; the court system (net-hamishpat) is a login service and is not approached",
+  "limitations": [
+   "SOURCE SILENCE ≠ NEGATIVE EVIDENCE: PROPX has no litigation feed — \"no litigation found\" is never stated"
+  ],
+  "evidence": "run 39114805844 lane legal: 10 catalogue queries",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ },
+ {
+  "id": "datagov:moj:amutot",
+  "target": 1,
+  "priority": 3,
+  "owner": "משרד המשפטים — רשם העמותות",
+  "ownerEn": "Ministry of Justice — Registrar of Non-profits",
+  "name": "מאגר עמותות וחברות לתועלת הציבור",
+  "url": "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95",
+  "catalogue": "https://data.gov.il/dataset/moj-amutot",
+  "accessMethod": "CKAN datastore_search",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "contains": "registered non-profits, proper-management certificates, foreign donations (catalogue level — fields not profiled)",
+  "sample": [],
+  "geography": "national",
+  "period": "—",
+  "cadence": "nightly",
+  "freshness": "as audited: modified 2026-10-17",
+  "identifiers": "non-profit number (58…)",
+  "joinKey": "the 101 nonprofit-kind developers → normalized name (future)",
+  "verdict": "DOCUMENT-ONLY",
+  "why": "relevant to the 101 nonprofit-kind registry developers only; not profiled or read in this build",
+  "limitations": [
+   "not read"
+  ],
+  "evidence": "run 39114805844 lane legal catalogue",
+  "licence": "data.gov.il open licence unless stated",
+  "requests": [],
+  "auditedAt": "2026-10-18",
+  "auditedBy": "PROPX due-diligence discovery (scripts/dd-discover.js on GitHub runners 39114805844 + 39115194781, read-only)"
+ }
+]

@@ -13,6 +13,7 @@
 //   node scripts/dd-discover.js --contractors   the contractors register (פנקס הקבלנים): identifier fields, company-number coverage
 //   node scripts/dd-discover.js --sites         active + closed construction sites (משרד העבודה): fields, the executor_id ↔ MISPAR_KABLAN join
 //   node scripts/dd-discover.js --insolvency   the Official Receiver files (liquidation, debt claims), the filings register by company number (charges / violations), the registry by number
+//   node scripts/dd-discover.js --pledges       the pledges register (רשם המשכונות): fields, debtor-id presence, lookups by company number
 //   node scripts/dd-discover.js --tlv           Tel Aviv IView2: permits (772) + construction sites (499) — parcel / address / permit-holder fields
 //   node scripts/dd-discover.js --all
 //
@@ -171,6 +172,17 @@ async function insolvency() {
     await sleep(300);
   }
 }
+/* the pledges register (רשם המשכונות) — catalogue-level only in the 18.10 audit; profiled here: fields, vocabulary, debtor id presence */
+async function pledges() {
+  const res = 'e7266a9c-fed6-40e4-a28e-8cddc9f44842';
+  const head = await ds(res, { limit: 5 }); if (!head.result) return out({ lane: 'pledges', resource: res, status: head.status, error: head.error });
+  const fields = (head.result.fields || []).map((f) => f.id + ':' + f.type);
+  out({ lane: 'pledges', resource: res, total: head.result.total, fields, profile: profile(head.result.records || []), sample: (head.result.records || []).slice(0, 2) });
+  const page = await ds(res, { limit: 1500 }); const rows = page.result ? page.result.records || [] : []; const F = Object.keys(rows[0] || {}); const pick = (re) => F.find((x) => re.test(x));
+  out({ lane: 'pledges', vocab: { kind: pick(/סוג/) ? dist(rows, pick(/סוג/)) : null, status: pick(/סטטוס|מצב/) ? dist(rows, pick(/סטטוס|מצב/)) : null, debtorIdField: pick(/מספר (זהות|תאגיד|חברה|ח\.?פ)|ת\.?ז|מזהה חייב/) || null, dateField: pick(/תאריך/) || null, fieldsAll: F } });
+  const numField = pick(/מספר (זהות|תאגיד|חברה)|ח\.?פ|מזהה חייב/);
+  if (numField) for (const [name, num] of KNOWN_NUMBERS) { const r = await ds(res, { filters: { [numField]: String(num) }, limit: 5 }); out({ lane: 'pledges', step: 'lookup by company number', name, num, hits: r.result ? r.result.total : r.error, sample: r.result ? r.result.records.slice(0, 2) : null }); await sleep(300); }
+}
 async function tlv() {
   for (const [layer, label] of [[772, 'בקשות והיתרי בניה'], [499, 'אתרי בניה'], [524, 'חלקות']]) {
     const meta = await req(`${TLV}/${layer}?f=json`); const fields = meta.json && meta.json.fields ? meta.json.fields.map((f) => f.name + ':' + f.type) : null;
@@ -194,6 +206,7 @@ async function tlv() {
   if (has('contractors')) await contractors();
   if (has('sites')) await sites();
   if (has('insolvency')) await insolvency();
+  if (has('pledges')) await pledges();
   if (has('tlv')) await tlv();
   out({ lane: 'meta', done: true });
 })().catch((e) => { out({ lane: 'meta', fatal: String(e && e.stack || e) }); process.exit(1); });
