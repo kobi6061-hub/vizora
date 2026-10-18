@@ -444,7 +444,7 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
       for (const open of ['/api/login', '/login.html', '/robots.txt', '/favicon.ico', '/api/jobs/tx-refresh']) assert.equal(await gated(open), false, open + ' is gated');
       for (const p of ['/', '/index.html', '/api/housing', '/api/gov/transactions', '/api/geo/search', '/api/logout', '/data/market/x.json', '/standalone/x.html',
         '/api/jobs', '/api/jobs/', '/api/jobsx', '/api/jobs/tx-refresh/', '/api/jobs/tx-refreshx', '/api/jobs/other', '/api/jobs/%2e%2e/housing', '/api/jobs/tx-refresh/..%2fhousing',
-        '/x/api/jobs/tx-refresh']) assert.equal(await gated(p), true, p + ' escaped the gate');
+        '/x/api/jobs/tx-refresh', '/api/login-anything', '/api/loginx', '/api/login/', '/api/login/x', '/login.html.bak', '/login.htmlx', '/robots.txtx', '/favicon.icox']) assert.equal(await gated(p), true, p + ' escaped the gate');
     });
   }
 

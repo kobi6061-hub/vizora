@@ -57,6 +57,10 @@ jobs:
           probe "/api/intel?view=ddStatus" "302 307" login.html
           probe "/api/intel?view=dd&developer=x" "302 307" login.html
           probe "/api/intel?view=ddCoverage&city=5000" "302 307" login.html
+          probe "/api/login-anything" "302 307" login.html
+          probe "/api/loginx" "302 307" login.html
+          probe "/login.html.bak" "302 307" login.html
+          probe "/robots.txt.x" "302 307" login.html
           probe "/data/land/meta.json" "302 307 404" ""
           probe "/data/dd/latest.json" "302 307 404" ""
           exit $fail

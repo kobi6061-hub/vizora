@@ -4,27 +4,49 @@
 // The password itself never reaches the client: it lives in the SITE_PASSWORD
 // environment variable and is checked only in /api/login.
 //
+// The matcher sends EVERY path here and the exclusions are decided below on the
+// parsed pathname by EXACT comparison (19.10.2026 — before, the matcher excluded
+// by prefix, so a future /api/login-anything or /login.html.bak would have
+// passed ungated). scripts/kobix-dev-server.mjs uses the same two lists;
+// test/security-gate.test.js keeps them equal.
 //
 // One machine-only path passes without a cookie: exactly /api/jobs/tx-refresh
 // (compared on the parsed, normalized pathname — no prefix, no encoded
 // segments), because that function authenticates the caller itself with a
 // bearer token from server-side env and fails closed (api/jobs/tx-refresh.js).
+//
+// The evidence request (POST /api/intel, view=dd — the user's documents in the
+// body) is refused here, before the function runs, when its declared length is
+// over 256 KB. A request without a Content-Length (chunked) is checked again by
+// the function after the platform has read it (the platform's own ceiling is
+// 4.5 MB); the function also caps the normalized evidence at 256 KB.
 
 const COOKIE = 'kobix_session';
+const PUBLIC_PATHS = new Set(['/api/login', '/login.html', '/robots.txt', '/favicon.ico']);
 const MACHINE_PATHS = new Set(['/api/jobs/tx-refresh']);
+const EVIDENCE_PATH = '/api/intel';
+const MAX_EVIDENCE_BODY = 256 * 1024;
 
 export const config = {
-  matcher: ['/((?!api/login|login\\.html|robots\\.txt|favicon\\.ico).*)'],
+  matcher: ['/(.*)'],
 };
 
 export default async function middleware(req) {
-  if (MACHINE_PATHS.has(new URL(req.url).pathname)) return; // its own token gate, fail-closed
+  const pathname = new URL(req.url).pathname;
+  if (MACHINE_PATHS.has(pathname)) return; // its own token gate, fail-closed
+  if (PUBLIC_PATHS.has(pathname)) return; // exactly these paths — never a prefix
   const cookies = req.headers.get('cookie') || '';
   const raw = cookies
     .split(/;\s*/)
     .find((c) => c.startsWith(COOKIE + '='));
   if (raw && (await verify(raw.slice(COOKIE.length + 1)))) {
-    return; // valid session — continue to the static asset
+    if (req.method === 'POST' && pathname === EVIDENCE_PATH) {
+      const declared = Number(req.headers.get('content-length'));
+      if (Number.isFinite(declared) && declared > MAX_EVIDENCE_BODY) {
+        return new Response(JSON.stringify({ error: 'body too large', limitBytes: MAX_EVIDENCE_BODY }), { status: 413, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+      }
+    }
+    return; // valid session — continue to the static asset / function
   }
   return Response.redirect(new URL('/login.html', req.url), 302);
 }

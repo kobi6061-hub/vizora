@@ -147,7 +147,10 @@ is scraped, no anti-bot control is bypassed. Integrated: the Registrar's compani
   financial · corporate / legal · sales · risks · gaps · next best evidence · watch), one sentence and ONE class each
   (VERIFIED · DERIVED · SELF_REPORTED · USER_DOCUMENT · MISSING · CONFLICT), each with its registry term.
 
-API: `POST /api/intel?view=dd&developer=|project=` with `{ userDocs: [...] }` (≤ 256 KB; POST is refused on every other view;
+API: `POST /api/intel?view=dd&developer=|project=` with `{ userDocs: [...] }` (≤ 256 KB — since 19.10.2026 enforced for real: the Edge
+middleware refuses a declared length over 256 KB before the function runs, the function refuses a declared length before it
+touches the platform-parsed body and measures a body without a length after parsing, and `userdocs.normalizeAll` caps the
+normalized evidence at 256 KB in total; the platform's own ceiling for a chunked body is 4.5 MB; POST is refused on every other view;
 the documents are validated again, used for that read, never stored or logged) → `premium`, `summary`, `userDocs { used,
 rejected }`, `live`; `view=ddCoverage&city=<code>`. Page: the summary at the top of the DD panel, the premium sections in the
 five-minute view, "Evidence you provided" (form per type, CSV import, file fingerprint, `propx:dd:docs:v1` in the browser), an

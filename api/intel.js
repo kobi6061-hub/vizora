@@ -65,11 +65,21 @@ let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence l
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
-/* the user's documents (USER DOCUMENT) travel ONLY in the body of POST view=dd — never stored server-side, never logged;
-   Vercel parses a JSON body into req.body, the local dev server hands the raw stream */
+/* the user's documents (USER DOCUMENT) travel ONLY in the body of POST view=dd — never stored server-side, never logged.
+   The 256 KB limit is enforced in three places, none of which trusts the next: the Edge middleware refuses a declared length
+   over 256 KB before the function runs; here, a declared length over 256 KB is refused BEFORE req.body is touched (on Vercel,
+   reading req.body parses the platform-buffered request, whose own ceiling is 4.5 MB); a body without a length (chunked) is
+   measured after parsing; and lib/dd/userdocs.js caps the normalized evidence at 256 KB in total. The local dev server hands
+   the raw stream, which is cut at 256 KB while it is read. */
 const MAX_BODY = 256 * 1024;
+function declaredTooLarge(req) { const n = Number(req.headers && req.headers['content-length']); return Number.isFinite(n) && n > MAX_BODY; }
 function readBody(req) {
-  if (req.body !== undefined) return Promise.resolve(typeof req.body === 'string' ? (() => { try { return JSON.parse(req.body); } catch { return null; } })() : req.body);
+  if (declaredTooLarge(req)) return Promise.resolve({ tooLarge: true });
+  if (req.body !== undefined) {
+    const b = req.body, size = typeof b === 'string' ? Buffer.byteLength(b) : Buffer.isBuffer(b) ? b.length : Buffer.byteLength(JSON.stringify(b == null ? null : b) || '');
+    if (size > MAX_BODY) return Promise.resolve({ tooLarge: true });
+    return Promise.resolve(typeof b === 'string' ? (() => { try { return JSON.parse(b); } catch { return null; } })() : Buffer.isBuffer(b) ? (() => { try { return JSON.parse(b.toString('utf8')); } catch { return null; } })() : b);
+  }
   return new Promise((resolve) => { let n = 0; const chunks = []; req.on('data', (c) => { n += c.length; if (n <= MAX_BODY) chunks.push(c); }); req.on('end', () => { if (n > MAX_BODY) return resolve({ tooLarge: true }); try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || 'null')); } catch { resolve(null); } }); req.on('error', () => resolve(null)); });
 }
 

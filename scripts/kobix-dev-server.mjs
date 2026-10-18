@@ -12,6 +12,10 @@ const SITE_PASSWORD = String(process.env.SITE_PASSWORD || '').trim().replace(/^(
 const SESSION_SECRET = process.env.SESSION_SECRET || '';
 const COOKIE = 'kobix_session';
 const MAX_AGE_S = 60 * 60 * 12;
+const PUBLIC_PATHS = new Set(['/api/login', '/login.html', '/robots.txt', '/favicon.ico']);
+const MACHINE_PATHS = new Set(['/api/jobs/tx-refresh']);
+const EVIDENCE_PATH = '/api/intel';
+const MAX_EVIDENCE_BODY = 256 * 1024;
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.txt': 'text/plain', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
@@ -46,17 +50,22 @@ http.createServer(async (req, res) => {
     res.setHeader('Set-Cookie', `${COOKIE}=${exp}.${hmacHex(exp)}; Path=/; Max-Age=${MAX_AGE_S}; HttpOnly; SameSite=Lax`);
     return res.end('{"ok":true}');
   }
+  if (p === '/api/login') { res.statusCode = 405; res.setHeader('Allow', 'POST'); return res.end('Method Not Allowed'); }   // parity with api/login.js
   if (p === '/api/logout') {
     res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`);
     res.statusCode = 302; res.setHeader('Location', '/login.html'); return res.end();
   }
 
-  // middleware gate (same exclusions as middleware.js matcher)
-  const open = p === '/login.html' || p === '/robots.txt' || p === '/favicon.ico' || p === '/api/jobs/tx-refresh';
+  // middleware gate — the same EXACT-path lists as middleware.js (test/security-gate.test.js keeps them equal)
+  const open = PUBLIC_PATHS.has(p) || MACHINE_PATHS.has(p);
   if (!open) {
     const raw = (req.headers.cookie || '').split(/;\s*/).find((c) => c.startsWith(COOKIE + '='));
     if (!(raw && verify(raw.slice(COOKIE.length + 1)))) {
       res.statusCode = 302; res.setHeader('Location', '/login.html'); return res.end();
+    }
+    /* parity with middleware.js: a declared evidence body over 256 KB is refused before the function runs */
+    if (req.method === 'POST' && p === EVIDENCE_PATH && Number(req.headers['content-length']) > MAX_EVIDENCE_BODY) {
+      res.statusCode = 413; res.setHeader('content-type', 'application/json; charset=utf-8'); return res.end(JSON.stringify({ error: 'body too large', limitBytes: MAX_EVIDENCE_BODY }));
     }
   }
 

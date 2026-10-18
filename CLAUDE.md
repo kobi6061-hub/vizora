@@ -17,6 +17,12 @@
   geography: the six CBS district boundaries, the country outline and the West Bank / Gaza areas from Natural Earth 1:10m (public
   domain; inputs not committed), `[lat, lng]` rings, geometry only — no market value; the page's `#map` draws them with a true-aspect
   equirectangular projection (the hand-drawn constants stay as the fallback), inlined in the offline build (see `lib/geo/README.md`).
+- `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
+  every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
+  /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
+  The evidence POST (`/api/intel` view=dd) is limited to 256 KB at the Edge (declared length), in the function (declared length before
+  the platform-parsed body is touched; measured after parsing when chunked) and on the normalized evidence (`userdocs` total); the
+  platform's own ceiling is 4.5 MB.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled
