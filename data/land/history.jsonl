@@ -93859,3 +93859,17 @@
 {"id":"rmi:20260208","field":"tenderMinimum","from":null,"to":165119,"observedAt":"2026-10-16T08:10:57.164Z","syncRunId":"land-20261016T081041Z"}
 {"id":"rmi:20260208","field":"lotsDigest","from":"caf7cfafb0a5","to":"221b03ee3018","observedAt":"2026-10-16T08:10:57.164Z","syncRunId":"land-20261016T081041Z"}
 {"id":"rmi:20260208","field":"sourceUpdatedAt","from":"2026-10-08T08:26:32.537Z","to":"2026-10-11T10:33:26.060Z","observedAt":"2026-10-16T08:10:57.164Z","syncRunId":"land-20261016T081041Z"}
+{"id":"rmi:20250232","field":"statusCode","from":1,"to":2,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250232","field":"lifecycle","from":"published","to":"open","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250352","field":"purposeCode","from":4,"to":26,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250377","field":"statusCode","from":1,"to":2,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250377","field":"lifecycle","from":"published","to":"open","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250392","field":"statusCode","from":1,"to":2,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20250392","field":"lifecycle","from":"published","to":"open","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"statusCode","from":2,"to":1,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"lifecycle","from":"open","to":"published","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"openDate","from":"2026-08-24","to":"2026-11-16","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"closeDate","from":"2026-10-26","to":"2027-01-25","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"docs","from":3,"to":4,"observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"docsUpdatedAt","from":"2026-07-05T21:00:00.000Z","to":"2026-10-17T21:00:00.000Z","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
+{"id":"rmi:20260003","field":"sourceUpdatedAt","from":"2026-07-07T10:07:05.813Z","to":"2026-10-18T07:12:26.433Z","observedAt":"2026-10-18T08:01:50.120Z","syncRunId":"land-20261018T080129Z"}
