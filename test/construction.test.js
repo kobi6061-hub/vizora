@@ -85,7 +85,8 @@ t('four measures, each with CBS\'s semantics and kind; eight geographies by CBS 
   assert.strictEqual(S.pathIdOf('starts', 8, 2), '44,2,3,8,2'); assert.strictEqual(S.pathIdOf('permits', 275), '44,11,2,,275');
   assert.throws(() => S.pathIdOf('starts', 5), /needs the resolved leaf/);
   for (const m of S.MEASURE_IDS) for (const v of S.MEASURES[m].verified) assert.ok(v.startsWith(S.MEASURES[m].path + ','), `${m}: verified path ${v} is not on the branch`);
-  assert.strictEqual(S.TIME_KIND[4], 'Q', 'the quarterly time kind is read'); assert.strictEqual(S.TIME_KIND[3], 'M'); assert.strictEqual(S.TIME_KIND[1], 'Y');
+  assert.deepStrictEqual(S.TIME_KIND, { 3: 'M', 2: 'Q', 1: 'Y' }, 'only the kinds read on the runner: 3 month, 2 quarter ("רבע"), 1 year');
+  assert.strictEqual(S.TIME_KIND[4], undefined, 'the discovery text\'s "4 quarter" was never seen in a response — not mapped');
   assert.ok(S.SOURCE.lagAssumption && S.SOURCE.lagAssumption.observed[0].days === 72 && /Assumption/.test(S.SOURCE.lagAssumption.en), 'the lag assumption is documented as an assumption');
   assert.strictEqual(S.SOURCE.discovery, 'cbs:series:construction-by-district');
 });
@@ -196,6 +197,8 @@ t('parse: original monthly, quarterly and annual read; SA / trend (first in the 
   const y = r.obs.filter((o) => o.freq === 'Y').map((o) => o.period).sort(); assert.deepStrictEqual(y, ['2024', '2025']);
   const qSum = q.find((o) => o.period === '2026-Q2').value, mSum = m.filter((o) => ['2026-04', '2026-05', '2026-06'].includes(o.period)).reduce((a, o) => a + o.value, 0);
   assert.strictEqual(qSum, mSum, 'CBS\'s own quarterly figure beside the months (the fixture is consistent)');
+  assert.strictEqual(r.series.find((s) => s.freq === 'Q').quarterConvention, 'end-month', 'the series says how it writes its quarters');
+  assert.ok(r.series.find((s) => s.freq === 'Q').id && FX.data['44,2,3,5,2'].DataSet.Series.find((s) => s.time.value === 2).time.name === 'רבע', 'quarterly = time.value 2 "רבע", as the runner printed');
   assert.strictEqual(r.obs.find((o) => o.freq === 'M' && o.period === '2026-06').geoName, 'תל אביב', 'the name travels as a label only');
   assert.deepStrictEqual(r.names, ['תל אביב'], 'the names the response carried — the verification evidence');
 });
@@ -211,18 +214,42 @@ t('parse: the geography NAME in the series path must say it is the district aske
   assert.strictEqual(parseResponse(body('permits', 'il'), req('permits', 'il')).names[0], 'סך כולל');
   assert.strictEqual(parseResponse(body('permits', 'jsr'), req('permits', 'jsr')).names[0], 'אזור יהודה והשומרון (עד 2005 כולל חבל עזה)');
 });
-t('parse: a series of a time / data kind PROPX does not map is SKIPPED and listed with its raw kind — never applied (the permits 9538xx series)', () => {
+t('parse: the permits 9538xx series is the quarterly original (time 2 "רבע") and is read as quarters; a series of a kind PROPX does not map is SKIPPED and listed with its raw kind — never applied', () => {
   const r = parseResponse(body('permits', 'd-ta'), req('permits', 'd-ta'));
-  const sk = r.series.filter((s) => s.skipped);
-  assert.strictEqual(sk.length, 1); assert.strictEqual(sk[0].id, 953875); assert.match(sk[0].skipped, /^time 9 ".*" \/ data 1 "נתונים מקוריים"$/); assert.strictEqual(sk[0].time.value, 9);
-  assert.ok(!r.obs.some((o) => o.seriesId === 953875), 'nothing of the skipped series is applied');
-  assert.deepStrictEqual(r.freqs, ['M', 'Y']); assert.strictEqual(r.series.length, 4);
+  assert.deepStrictEqual(r.freqs, ['M', 'Q', 'Y']); assert.strictEqual(r.series.length, 4); assert.ok(!r.series.some((s) => s.skipped));
+  const q = r.obs.filter((o) => o.seriesId === 953875); assert.strictEqual(q.length, 10); assert.ok(q.every((o) => o.freq === 'Q' && /^\d{4}-Q[1-4]$/.test(o.period)));
+  const b = body('permits', 'd-ta'); b.DataSet.Series.find((s) => s.id === 953875).time = { value: 9, name: 'לא ידוע' };
+  const r2 = parseResponse(b, req('permits', 'd-ta'));
+  const sk = r2.series.filter((s) => s.skipped);
+  assert.strictEqual(sk.length, 1); assert.strictEqual(sk[0].id, 953875); assert.strictEqual(sk[0].skipped, 'time 9 "לא ידוע" / data 1 "נתונים מקוריים"'); assert.strictEqual(sk[0].n, 10);
+  assert.ok(!r2.obs.some((o) => o.seriesId === 953875), 'nothing of the skipped series is applied'); assert.deepStrictEqual(r2.freqs, ['M', 'Y']);
 });
-t('parse: a measure answered only in quarters is stored as quarters (active construction) — never shown as months', () => {
+t('parse: a measure answered only in quarters (+ annual) is stored as quarters (active construction) — never shown as months; quarterly SA / trend ignored', () => {
   const r = parseResponse(body('active', 'il'), req('active', 'il'));
-  assert.deepStrictEqual(r.freqs, ['Q']); assert.ok(r.obs.every((o) => o.kind === 'stock' && /^\d{4}-Q[1-4]$/.test(o.period)));
-  assert.strictEqual(periodOf('Q', '2026-Q3'), '2026-Q3'); assert.strictEqual(periodOf('Q', '2026-09'), '2026-Q3'); assert.strictEqual(periodOf('Q', '2026-05'), null);
+  assert.deepStrictEqual(r.freqs, ['Q', 'Y']); assert.ok(r.obs.every((o) => o.kind === 'stock' && (o.freq === 'Y' ? /^\d{4}$/ : /^\d{4}-Q[1-4]$/).test(o.period)));
+  assert.strictEqual(r.series.filter((s) => s.freq === 'Q' && (s.kind === 'sa' || s.kind === 'trend')).length, 2, 'the national row carries quarterly SA and trend series');
+  assert.ok(r.obs.every((o) => o.dataKind === 'original'), 'none of their values is applied');
+  assert.strictEqual(r.obs.filter((o) => o.freq === 'Q').length, 10); assert.deepStrictEqual(r.obs.filter((o) => o.freq === 'Y').map((o) => o.period).sort(), ['2024', '2025']);
   assert.strictEqual(periodOf('M', '2026-13'), null); assert.strictEqual(periodOf('Y', '2025-01'), '2025'); assert.strictEqual(periodOf('Y', '2025'), '2025');
+});
+t('quarterly periods are parsed defensively per series: explicit forms, quarter-end months (the evidenced convention), quarter numbers only when the series proves it — anything else is a schema change naming the string', () => {
+  const { quarterConvention, explicitQuarter } = require('../lib/construction/parse');
+  assert.strictEqual(quarterConvention(['2026-Q1', '2026 Q2', 'Q3/2026', 'Q4 2025', '2026-4', '2026Q1']), 'explicit');
+  assert.deepStrictEqual(['2026-Q1', '2026 Q2', 'Q3/2026', 'Q4 2025', '2026-4', '2026Q1', '2026-04'].map(explicitQuarter), ['2026-Q1', '2026-Q2', '2026-Q3', '2025-Q4', '2026-Q4', '2026-Q1', null]);
+  assert.strictEqual(quarterConvention(['2026-06', '2026-03', '2025-12', '2025-09']), 'end-month');
+  assert.strictEqual(quarterConvention(['2026-03']), 'end-month', 'a lone "-03" reads as the quarter-end month — the convention the discovery\'s reads showed');
+  assert.strictEqual(quarterConvention(['2026-01', '2026-02', '2026-03', '2026-04', '2025-04']), 'quarter-number');
+  assert.strictEqual(quarterConvention([]), 'explicit');
+  assert.throws(() => quarterConvention(['2026-01', '2026-06']), (e) => e.name === 'SchemaError' && /mix or use months 01\/06/.test(e.message));
+  assert.throws(() => quarterConvention(['2026-05', '2026-08']), (e) => e.name === 'SchemaError' && /"2026-05", "2026-08"/.test(e.message));
+  assert.throws(() => quarterConvention(['2026/2', '2026/3']), (e) => e.name === 'SchemaError' && /"2026\/2"/.test(e.message) && /not a form PROPX reads/.test(e.message));
+  assert.throws(() => quarterConvention(['2026-Q1', '2026-06']), SchemaError, 'a mix of explicit quarters and months is undecidable');
+  assert.deepStrictEqual([periodOf('Q', '2026-09', 'end-month'), periodOf('Q', '2026-05', 'end-month'), periodOf('Q', '2026-02', 'quarter-number'), periodOf('Q', '2026-06', 'quarter-number'), periodOf('Q', 'Q4/2025', 'explicit'), periodOf('Q', '2025-12', 'explicit')], ['2026-Q3', null, '2026-Q2', null, '2025-Q4', null]);
+  /* at the parser: a quarterly series in the quarter-number form is read as quarters; a lone odd month fails the whole series, naming it */
+  const qn = body('active', 'd-jm'); const s = original(qn, 2); s.obs = [{ TimePeriod: '2026-02', Value: 10 }, { TimePeriod: '2026-01', Value: 9 }, { TimePeriod: '2025-04', Value: 8 }];
+  assert.deepStrictEqual(parseResponse(qn, req('active', 'd-jm')).obs.filter((o) => o.freq === 'Q').map((o) => [o.period, o.sourcePeriod]).sort(), [['2025-Q4', '2025-04'], ['2026-Q1', '2026-01'], ['2026-Q2', '2026-02']]);
+  const bad = body('active', 'd-jm'); original(bad, 2).obs.push({ TimePeriod: '2026-05', Value: 1 });
+  assert.throws(() => parseResponse(bad, req('active', 'd-jm')), (e) => e.name === 'SchemaError' && /"2026-05"/.test(e.message) && /unrecognized shape/.test(e.message));
 });
 t('parse: permits by name_id with no level 4; a series of another geography, leaf, level or branch is a schema change', () => {
   const r = parseResponse(body('permits', 'd-ta'), req('permits', 'd-ta'));
@@ -238,8 +265,8 @@ t('parse: permits by name_id with no level 4; a series of another geography, lea
   const e = body('completions', 'il'); e.DataSet.Series.forEach((s) => { s.path.level2.value = 2; });
   assert.throws(() => parseResponse(e, req('completions', 'il')), /not branch 44,3,3/);
   assert.throws(() => parseResponse({ DataSet: {} }, req('starts', 'il')), /unrecognized shape/);
-  const f = body('active', 'il'); original(f, 4).obs[0].TimePeriod = '2026-05';
-  assert.throws(() => parseResponse(f, req('active', 'il')), /Q period "2026-05"/);
+  const f = body('active', 'il'); original(f, 2).obs[0].TimePeriod = '2026-05';
+  assert.throws(() => parseResponse(f, req('active', 'il')), /"2026-05"/);
   const g = body('starts', 'il'); original(g, 3).obs[0].Value = -1;
   assert.throws(() => parseResponse(g, req('starts', 'il')), SchemaError);
 });
@@ -256,9 +283,9 @@ const ctx0 = { fetchedAt: '2026-10-17T12:00:00Z', snapshot: 'aaaa' };
 const obsOf = (measure, geo, edit) => { const b = body(measure, geo); if (edit) edit(b); return parseResponse(b, req(measure, geo)).obs; };
 t('first read: every value is revision 0 with the construction fields (path, leaf, name label, source period, kind)', () => {
   const m = L.merge([], obsOf('active', 'd-jm'), ctx0);
-  assert.strictEqual(m.added, 10); assert.strictEqual(m.revised, 0);
-  for (const r of m.append) { assert.strictEqual(r.revision, 0); assert.deepStrictEqual([r.pathId, r.nameId, r.geoName, r.kind, r.freq], ['44,4,3,1,2', 2, 'ירושלים', 'stock', 'Q']); assert.ok(r.sourcePeriod && r.snapshot === 'aaaa' && r.sourceUpdate === '2026-09-10' && r.cbs === 1 && r.geo === 'd-jm'); }
-  assert.strictEqual(L.keyOf(m.append[0]), `active|1|Q|${m.append[0].period}`);
+  assert.strictEqual(m.added, 12, '10 quarters + 2 annual levels'); assert.strictEqual(m.revised, 0);
+  for (const r of m.append) { assert.strictEqual(r.revision, 0); assert.deepStrictEqual([r.pathId, r.nameId, r.geoName, r.kind], ['44,4,3,1,2', 2, 'ירושלים', 'stock']); assert.ok(['Q', 'Y'].includes(r.freq) && r.sourcePeriod && r.snapshot === 'aaaa' && r.sourceUpdate === '2026-09-10' && r.cbs === 1 && r.geo === 'd-jm'); }
+  assert.strictEqual(L.keyOf(m.append[0]), `active|1|${m.append[0].freq}|${m.append[0].period}`);
 });
 t('historical revision: a changed value appends revision 1 and keeps the old one; an unchanged re-read appends nothing', () => {
   const a = L.merge([], obsOf('starts', 'il'), ctx0).append;
@@ -374,7 +401,9 @@ t('the payload: four measures on their own period kinds, eight geographies, OFFI
   assert.deepStrictEqual(Object.keys(il.series.Y), ['2024', '2025']);
   assert.strictEqual(il.metrics.lastYear.annual, il.metrics.lastYear.sumOfMonths, 'the fixture\'s annual figure equals its months');
   const act = p.measures.active.geos.il;
-  assert.ok(act.metrics.kind === 'stock' && act.metrics.vsPrevious.ok && !('t4' in act.metrics) && act.series.M.length === 0);
+  assert.ok(act.metrics.kind === 'stock' && act.metrics.vsPrevious.ok && !('t4' in act.metrics) && act.series.M.length === 0 && act.freq === 'Q');
+  assert.deepStrictEqual(Object.keys(act.series.Y), ['2024', '2025'], 'the annual level beside the quarters');
+  assert.ok(p.measures.permits.geos.il.metrics.quarterly && p.measures.permits.geos.il.metrics.quarterly.t4.ok, 'permits: CBS\'s own quarterly series (9538xx) beside the months');
   assert.deepStrictEqual(p.freshness.state, 'CURRENT'); assert.deepStrictEqual(Object.keys(p.freshness.byMeasure), S.MEASURE_IDS); assert.ok(p.freshness.assumption);
   assert.strictEqual(p.missing.length, 0); assert.match(p.notes.geography.en, /never allocated to a locality/); assert.match(p.notes.universes.en, /never summed/);
   const js = toJs({ ...p, x: '</script>' });

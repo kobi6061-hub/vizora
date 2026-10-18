@@ -16,7 +16,7 @@ product will show. Added 17.10.2026; it integrates the discovery candidate `cbs:
 | Construction starts | `44,2,3,<district>,<leaf>` — dwellings whose construction began in the period; geography = level-4 code 1–7, total = 8; the leaf (level 5) is "סך הכל" (2 for the total, verified `44,2,3,8,2`, monthly). |
 | Completions | `44,3,3,<district>,<leaf>` — dwellings whose construction was completed in the period; same codes (verified `44,3,3,8,2`, monthly). |
 | Active construction | `44,4,3,<district>,<leaf>` — dwellings under construction at the END of the period: a **stock**, not a flow (verified `44,4,3,8,2`, quarterly). |
-| Fields | per series: `id`, `time` (3 month / **4 quarter** / 1 year), `data` (1 original / 2 seasonally adjusted / 3 trend), `unit`, `path.level1..level4` + `path.name_id`, `update` (series update date), `obs[{TimePeriod, Value}]` — a quarterly observation is dated by the quarter's last month ("2026-06" = Q2 2026) |
+| Fields | per series: `id`, `time` (3 "חודש" month / **2 "רבע" quarter** / 1 "שנה" year — as read on the runner 18.10.2026; the discovery text's "4 quarter" was never seen and is not mapped), `data` (1 original / 2 seasonally adjusted / 3 trend — quarterly SA / trend exist on the national rows too, ignored), `unit`, `path.level1..level4` + `path.name_id`, `update` (series update date), `obs[{TimePeriod, Value}]` — the discovery's reads printed quarterly observations dated by the quarter's last month ("2026-06" = Q2 2026); the raw quarterly string is parsed defensively (below) |
 | Unit | number of dwellings, original data — never floor area, never buildings |
 | Cadence | a quarterly construction release about ten weeks after the quarter ends; the monthly figures appear with the quarter; `update` dates each series (observed 2026-09-10 for Q2 2026 data) |
 | Depth | PROPX reads from 2016-01 (≤ 6-year windows); the API serves earlier periods on request |
@@ -63,16 +63,37 @@ A run with any geography not applied is PARTIAL — the last valid data of that 
 One run = 2–3 level-4 pages + 4 branch listings + 64 data requests (≈ 70).
 
 **Unmapped series kinds.** A series whose `time.value` / `data.value` is not in `TIME_KIND` / `DATA_KIND` is skipped
-and listed with its raw kind (the dry-run prints `SKIPPED(time … / data …)`). The runner showed a third permits series
-`9538xx` beside the monthly `5538xx` and the annual `6538xx` for every geography; its kind is read from the next
-dry-run and mapped in `series.js` only on purpose — until then it is ignored explicitly.
+and listed with its raw kind (the dry-run prints `SKIPPED(time … / data …)`); a kind is mapped in `series.js` only
+after it was seen on the runner (that is how `time 2 "רבע"` = quarter was mapped on 18.10.2026 — the discovery text's
+"4 quarter" was never seen and is not mapped).
 
 ## Period kind (lib/construction/parse.js)
 
 Never assumed. Each series says what it is (`time.value`): monthly observations are stored as `freq: "M"` / `"YYYY-MM"`,
 quarterly as `freq: "Q"` / `"YYYY-Qn"`, annual as `freq: "Y"` / `"YYYY"`; the source's own `TimePeriod` string is kept
 as `sourcePeriod`. Only the original series (`data.value = 1`) is read — the seasonally adjusted series that the API
-sometimes returns first is skipped. A period the response does not carry is MISSING, never 0; a published 0 stays 0.
+sometimes returns first is skipped. A series whose time or data kind is not mapped is skipped and listed with its raw kind
+(`SKIPPED(time … / data …)` in the dry-run) — that is how the quarterly kind was found. A period the response does not
+carry is MISSING, never 0; a published 0 stays 0.
+
+**What the dry-runs showed (18.10.2026, runs 39080649194 and 39081586319).** Monthly = `time 3 "חודש"`, annual =
+`time 1 "שנה"` (both as in the sales lane); **quarterly = `time 2 "רבע"`** (24 observations over a 6-year window) — the
+permits `9538xx` series beside the monthly `5538xx` and the annual `6538xx`, the only original series of active construction
+(`5740xx`, plus the annual `6740xx`), and quarterly SA / trend series (`time 2 / data 2, 3`) on the national rows, ignored like
+the monthly ones. Level-4 listing of subject 44: 124 nodes over 2 pages; all 32 geographies resolved by catalogue (the jsr
+name is printed truncated, "אזור יהודה והשומרון (עד 2005 כולל", under 44,3,3 / 44,4,3 — the regex accepts it).
+
+**Quarterly `TimePeriod`, parsed defensively per series** (the raw string has not been read on the runner — the dry-run
+stores no raw; the discovery's reads printed quarter-end months). `quarterConvention()` decides over ALL of a series'
+strings, then every observation is read under that convention; anything else fails the series with a `SchemaError` that
+names the raw string (the run goes SCHEMA_CHANGED / PARTIAL — never a wrong period stored):
+
+| convention | accepted | example → stored |
+| --- | --- | --- |
+| explicit | `YYYY-Qn` · `YYYYQn` · `YYYY Qn` · `Qn/YYYY` · `Qn YYYY` · `YYYY-n` (one digit is never a month) | `Q2/2026` → `2026-Q2` |
+| end-month | `YYYY-MM` with MM ∈ 03 / 06 / 09 / 12 only — the evidenced convention; a lone `-03` reads as Q1 | `2026-06` → `2026-Q2` |
+| quarter-number | `YYYY-0n`, n ∈ 1..4, ONLY when the series proves it (a 01 / 02 / 04 present and no 06 / 09 / 12) | `2026-02` → `2026-Q2` |
+| otherwise | a mix of forms, a month like 05 / 07 / 08 / 10 / 11, `YYYY/n` … | SchemaError naming the strings |
 
 ## Files
 
@@ -138,10 +159,13 @@ Dispatch `construction-sync.yml` with `mode: dry-run` first and read the log:
    `series.js` to it after reading the node's name; a `pending` means the level listing lacks the node: the response
    must then name it (`named "…"` on the request line);
 2. the series found per request: an original (`original`) series for every geography on the kind expected (starts /
-   completions / permits monthly `M` + annual; active quarterly `Q`) — if starts or completions come only quarterly for
-   the districts, that is fine: the lane stores the kind it finds; every request line ends with `named "<district>"`;
-3. the permits `9538xx` series prints as `SKIPPED(time … / data …)` — decide whether to map that kind;
-4. no `SchemaError` / `geography name mismatch` anywhere; ≈ 70 requests.
+   completions / permits monthly `M` + quarterly `Q` + annual `Y`; active quarterly `Q` + annual `Y`) — the lane stores
+   the kind it finds; every request line ends with `named "<district>"`;
+3. no `SKIPPED(…)` series other than the quarterly / monthly SA and trend ones (`data 2 / 3`); a skipped original series
+   means a kind PROPX does not map yet — map it in `series.js` only after reading its raw kind here;
+4. no `SchemaError` (a quarterly series whose `TimePeriod` is written in a form the parser cannot justify fails that way,
+   naming the string — then add the form on evidence) and no `geography name mismatch`; ≈ 70 requests; the summary line
+   names all four measures with a period (`active Q YYYY-Qn`).
 Then dispatch `sync`. The commit message names the measures and their latest periods.
 
 ## Hook points (not wired yet — by design)
