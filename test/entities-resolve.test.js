@@ -128,6 +128,19 @@ t('status AND sub-status classify: an order opening proceedings / rehabilitation
   const s = R.statusClassOf('פעילה', 'צו לפתיחת הליכים'); assert.equal(s.verbatim, 'פעילה'); assert.equal(s.sub, 'צו לפתיחת הליכים');
   const f = R.companyFacts({ num: 512000031, name: 'ק.מ. בע~מ', status: 'פעילה', sub: 'צו לפתיחת הליכים', type: 'ישראלית חברה פרטית' }); assert.equal(f.status.cls, 'INSOLVENCY_PROCEEDINGS'); assert.equal(f.status.sub, 'צו לפתיחת הליכים');
 });
+t('resolution lift without lowering the bar: the abbreviation "חב׳" = "חברה" only; the contractors register as a second official register (a name → ONE company number)', () => {
+  const companies = { fetchedAt: '2026-10-18', rows: [{ num: 512000041, name: 'אחים אוזן חברה לבניה בע~מ', status: 'פעילה' }, { num: 512000042, name: 'שבירו הנדסה בניה והשקעות בע~מ', status: 'פעילה' }, { num: 512000043, name: 'כפולה בע~מ', status: 'פעילה' }, { num: 512000044, name: 'כפולה בע~מ', status: 'מחוקה' }, { num: 512000045, name: 'אחר בע~מ', status: 'פעילה' }] };
+  const I = R.buildIndex(companies, null);
+  I.contractors = R.buildContractorsIndex({ fetchedAt: '2026-10-18', rows: [{ kablan: '9001', company: '512000042', name: 'רמי שבירו הנדסה בניה והשקעות בע"מ' }, { kablan: '9002', company: '512000043', name: 'כפולה בע"מ' }, { kablan: '9003', company: '512000045', name: 'סתירה בע"מ' }, { kablan: '9004', company: '512000041', name: 'סתירה בע"מ' }, { kablan: '9005', company: null, name: 'יחיד קבלן' }] });
+  const a = R.resolveCompany(dev(`אחים אוזן חב' לבניה בע"מ`), I); assert.equal(a.state, 'STRONG_MATCH'); assert.ok(a.reasons.some((x) => x.code === 'ABBREVIATION_NORMALIZED'));
+  assert.equal(R.regKey('חבר הנדסה בע"מ').includes('חברה'), false, 'only the whole word חב expands');
+  const b = R.resolveCompany(dev('רמי שבירו הנדסה בניה והשקעות בע"מ'), I); assert.equal(b.state, 'STRONG_MATCH'); assert.equal(b.chosen.num, 512000042); assert.equal(b.basis, 'contractor-register'); assert.ok(b.reasons.some((x) => x.code === 'CONTRACTOR_REGISTER_NAME_TO_NUMBER')); assert.ok(b.reasons.some((x) => x.code === 'NAME_ONLY_NEVER_VERIFIED'), 'still a name at the first link — never VERIFIED');
+  const c = R.resolveCompany(dev('כפולה בע"מ'), I); assert.equal(c.state, 'STRONG_MATCH'); assert.equal(c.chosen.num, 512000043); assert.ok(c.reasons.some((x) => x.code === 'CONTRACTOR_REGISTER_DISAMBIGUATES')); assert.equal(c.candidates.length, 1);
+  const d = R.resolveCompany(dev('סתירה בע"מ'), I); assert.equal(d.state, 'AMBIGUOUS'); assert.ok(d.reasons.some((x) => x.code === 'CONTRACTOR_REGISTER_SEVERAL_NUMBERS'), 'the register lists the name with two numbers — none chosen');
+  const I2 = R.buildIndex(companies, null); I2.contractors = R.buildContractorsIndex({ rows: [{ kablan: '9006', company: '512000045', name: 'שבירו הנדסה בניה והשקעות בע"מ' }] });
+  const e = R.resolveCompany(dev('שבירו הנדסה בניה והשקעות בע"מ'), I2); assert.equal(e.state, 'AMBIGUOUS'); assert.ok(e.reasons.some((x) => x.code === 'CONTRACTOR_REGISTER_NUMBER_CONFLICT'), 'the registry and the contractors register disagree — both shown, none chosen');
+  assert.equal(R.resolveCompany(dev('יחיד קבלן'), I).state, 'UNRESOLVED', 'an individual contractor row carries no company number — no lift');
+});
 t('official keys from free text: a parcel parses, a lot number parses once, plurals do not', () => {
   assert.deepEqual(R.parseParcel('6979 / 3 '), { block: 6979, parcel: 3, key: 'parcel:6979/3' });
   assert.equal(R.parseParcel('בנייה גוש 6620 חלקה 21').key, 'parcel:6620/21'); assert.equal(R.parseParcel('רחוב התקוה 56'), null);
