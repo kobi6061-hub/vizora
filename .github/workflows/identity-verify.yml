@@ -1,0 +1,28 @@
+# PROPX · verify the PRIVATE workspace project after its migration (read-only activation check, run by hand).
+# Reads only server-side secrets; prints no value (scripts/identity-verify.js redacts); writes nothing.
+# See supabase/private/README.md § Activation.
+
+name: Private identity — activation check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Activation check (read-only)
+        env:
+          PROPX_WS_URL: ${{ secrets.PROPX_WS_URL }}
+          PROPX_WS_APIKEY: ${{ secrets.PROPX_WS_APIKEY }}
+          PROPX_WS_JWT_SECRET: ${{ secrets.PROPX_WS_JWT_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: node scripts/identity-verify.js

@@ -23,6 +23,21 @@
   The evidence POST (`/api/intel` view=dd) is limited to 256 KB at the Edge (declared length), in the function (declared length before
   the platform-parsed body is touched; measured after parsing when chunked) and on the normalized evidence (`userdocs` total); the
   platform's own ceiling is 4.5 MB.
+- `supabase/private/` + `lib/identity/` + `api/identity.js` + `test/private-identity.test.js` + `test/identity.test.js` +
+  `.github/workflows/private-identity.yml` (+ `identity-verify.yml`, `scripts/identity-verify.js`, `scripts/private-pg-local.sh`,
+  `scripts/identity-psql-adapter.js`) = PRIVATE WORKSPACE IDENTITY FOUNDATION (STEP 2A, 19.10.2026): named, invite-only users on top of the
+  perimeter gate, for a SEPARATE private Supabase project (never the `market` one — refused when the hosts match). Schema `ws` (users ·
+  organizations [one personal + team] · organization_members [owner · admin · analyst · viewer; a membership is also the invitation] ·
+  sessions) + `private` (credentials, append-only identity events); every write a SECURITY DEFINER function (search_path ''), the actor
+  only from a LIVE session (claims sub · sid · sv), one uniform `42501 denied` before any validation, RLS on every table, composite
+  keys so no cross-organization attribution, nothing deleted (revoke / archive / expire), ≥ 1 active owner (deferred trigger). Server:
+  scrypt passwords (PROPX-owned, set through a one-time 72 h link — no Supabase Auth, no email), `__Host-propx_id` cookie (HttpOnly ·
+  Secure · SameSite=Strict, HMAC, bound to the perimeter session) + a server-side session row (sign-out / sign-out everywhere / admin
+  revocation / disabled user end it at once), 120-second HS256 tokens minted only for `authenticated` / `propx_auth`, POSTs need
+  `x-propx-intent: 1` + JSON + same origin. KILL SWITCH `PROPX_IDENTITY=on` (default OFF: status `{enabled:false}`, the page shows
+  nothing). The page's workspace chip / drawer live between `ws:begin` / `ws:end` markers that the offline build strips. Nothing from
+  the browser (`propx:dd:docs:v1`, `altaris:*`, watchlists) is imported. The two-organization isolation gate (28) runs on a throwaway
+  PostgreSQL 16 in CI — HARD BLOCKER before any activation. NOT ACTIVATED (see `supabase/private/README.md`).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

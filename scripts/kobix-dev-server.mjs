@@ -17,6 +17,23 @@ const MACHINE_PATHS = new Set(['/api/jobs/tx-refresh']);
 const EVIDENCE_PATH = '/api/intel';
 const MAX_EVIDENCE_BODY = 256 * 1024;
 
+// private-workspace identity (STEP 2A): the same /api/identity + /api/logout modules Vercel runs. With PROPX_WS_PSQL set
+// (a THROWAWAY local database from scripts/private-pg-local.sh, connected as `authenticator`) the store is that database
+// through scripts/identity-psql-adapter.js; otherwise the default (PROPX_IDENTITY unset → OFF).
+const IDENTITY_PSQL = process.env.PROPX_WS_PSQL || '';
+let identityApi = null;
+async function identity() {
+  if (identityApi) return identityApi;
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  const adapter = IDENTITY_PSQL ? require(path.join(ROOT, 'scripts/identity-psql-adapter.js')).psqlAdapter(IDENTITY_PSQL) : null;
+  identityApi = {
+    handler: require(path.join(ROOT, 'api/identity.js')).createHandler({ adapter, env: process.env }),
+    logout: require(path.join(ROOT, 'api/logout.js')).createLogout({ adapter, env: process.env }),
+  };
+  return identityApi;
+}
+
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.txt': 'text/plain', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
 const hmacHex = (msg) => createHmac('sha256', SESSION_SECRET).update('kobix|' + msg).digest('hex');
@@ -51,10 +68,7 @@ http.createServer(async (req, res) => {
     return res.end('{"ok":true}');
   }
   if (p === '/api/login') { res.statusCode = 405; res.setHeader('Allow', 'POST'); return res.end('Method Not Allowed'); }   // parity with api/login.js
-  if (p === '/api/logout') {
-    res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`);
-    res.statusCode = 302; res.setHeader('Location', '/login.html'); return res.end();
-  }
+  if (p === '/api/logout') return (await identity()).logout(req, res);   // the deployed module: perimeter + named session
 
   // middleware gate — the same EXACT-path lists as middleware.js (test/security-gate.test.js keeps them equal)
   const open = PUBLIC_PATHS.has(p) || MACHINE_PATHS.has(p);
@@ -68,6 +82,8 @@ http.createServer(async (req, res) => {
       res.statusCode = 413; res.setHeader('content-type', 'application/json; charset=utf-8'); return res.end(JSON.stringify({ error: 'body too large', limitBytes: MAX_EVIDENCE_BODY }));
     }
   }
+
+  if (p === '/api/identity') return (await identity()).handler(req, res);
 
   // serverless api simulation (same modules Vercel runs)
   if (p.startsWith('/api/geo/') || p.startsWith('/api/gov/') || p.startsWith('/api/jobs/') || p === '/api/housing' || p === '/api/land' || p === '/api/intel') {

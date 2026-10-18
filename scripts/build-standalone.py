@@ -82,6 +82,15 @@ ud = (ROOT / "lib" / "dd" / "userdocs.js").read_text(encoding="utf-8")
 assert "</script" not in ud.lower(), "user-docs validator must not close the script element"
 s = s.replace(TAG6, "<script>\n" + ud + "</script>", 1)
 
+# the private workspace (named sign-in, /api/identity) is server-only: its markup, styles and script are removed whole,
+# so the offline file carries no identity code, endpoint or setting (test/private-boundary.test.js)
+import re as _re
+n_ws = len(_re.findall(r"ws:begin", s))
+assert n_ws == 4 and len(_re.findall(r"ws:end", s)) == 4, "expected 4 private-workspace blocks, found %d" % n_ws
+s = _re.sub(r"[ \t]*<!-- ws:begin -->.*?<!-- ws:end -->\n?", "", s, flags=_re.S)
+s = _re.sub(r"/\* ws:begin.*?/\* ws:end \*/\n?", "", s, flags=_re.S)
+assert "ws:begin" not in s and "/api/identity" not in s and "propx_id" not in s, "private-workspace code left in the offline build"
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

@@ -96,7 +96,7 @@ button[disabled]{opacity:.6;cursor:wait}
     fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},
       body:JSON.stringify({password:pw.value})})
       .then(function(r){
-        if(r.ok){location.replace('/');return;}
+        if(r.ok){location.replace('/'+(/^#invite=[A-Za-z0-9_-]{43}$/.test(location.hash)?location.hash:''));return;}
         throw r.status;
       })
       .catch(function(st){
