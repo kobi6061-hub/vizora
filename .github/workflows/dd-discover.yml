@@ -1,0 +1,33 @@
+# PROPX · Institutional due diligence — read-only source discovery.
+#
+# Runs scripts/dd-discover.js on a GitHub runner (gov.il and the municipal GIS are reachable here, not from the
+# Claude sandbox) and prints what the corporate registry, legal, public-filing, contractor, construction-site and
+# municipal-permit sources actually expose. Nothing is written or committed; no login, no anti-bot circumvention.
+
+name: Due diligence — source discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'companies (Corporations Authority registry) | legal (charges / insolvency / courts) | public (TASE / MAYA / ISA) | contractors (the contractors register) | sites (active + closed construction sites) | tlv (Tel Aviv IView2 permits + sites) | all'
+        type: choice
+        options: [all, companies, legal, public, contractors, sites, tlv]
+        default: all
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover due-diligence sources (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+        run: node scripts/dd-discover.js --"$MODE"
