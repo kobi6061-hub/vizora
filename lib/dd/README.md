@@ -93,8 +93,84 @@ API (`api/intel.js`): `view=dd&developer=|project=[&company=<number>&confirm=1][
 `view=ddPermit&id=`, `view=ddStatus`; `view=search` returns typed LEGAL COMPANY / CONTRACTOR / PERMIT hits beside the developer
 (brand) hits. Page: the DD panel at the top of the developer / project drawer (one-minute card · five-minute sections · deep
 dive), the company and permit drawers, the watchlist row in `#intel`. Registry: 24 terms (group `dd`), 15 signal rules, 9
-missing reasons. Tests: `test/entities-resolve.test.js` (18), `test/dd.test.js` (41, the brief's test matrix on the labelled
+missing reasons. Tests: `test/entities-resolve.test.js` (19), `test/dd.test.js` (42, the brief's test matrix on the labelled
 fixture `test/fixtures/dd-fixture.js` + real-data gates + the sync's paging guards on a stub answer).
+
+## Premium Diligence 2.0 (18.10.2026)
+
+Source audit: `lib/trust/discovery/2026-10-18-premium.json` (32 candidates, runs 39130709010 + 39130975687 of
+`dd-discover.yml`). Financial filings (MAYA API / static reports, TASE Data Hub, ISA MAGNA, XBRL), credit ratings (Maalot,
+Midroog), ownership (the Registrar extract), litigation (class-actions registry, court decisions) and 13 municipal permit
+channels are classified INTEGRATE / BROWSER-AUTOMATION ONLY / DOCUMENT-ONLY / BLOCKED / REJECT with the run evidence; nothing
+is scraped, no anti-bot control is bypassed. Integrated: the Registrar's companies-designated-for-strike-off list (lane
+`strikeoff`, exact company number) and the MoCH construction-progress join already in the land read model.
+
+- `userdocs.js` (UMD — the page and the server share it) — USER DOCUMENT: 13 document types (financial statements, ownership
+  chart, company extract, permit, bank guarantee, sales report, financing agreement, appraisal, land-rights document, bond
+  covenants, purchase agreement, developer declaration, litigation disclosure), typed fields, provenance REQUIRED (file name or
+  issuer; the file's SHA-256 when the user attaches one — the file never leaves the browser), no future dates, at most 60
+  documents, `registryCheck` of every company number (REGISTRY_ROW_FOUND · NAME_DIFFERS · NOT_IN_COVERAGE · NO_NUMBER), CSV
+  template / import. Class USER_DOCUMENT always; a document never overrides an official record (a different company = CONFLICT).
+- `financial.js` — PUBLIC FINANCIAL PROFILE for ONE legal entity (statements are read only for the resolved company number —
+  none without one): figures with period · report date · source · document id · currency · units · restated · class; ratios
+  within one statement only (net debt / equity, debt / assets, current ratio, cash / current liabilities, OCF / debt, interest
+  cover, near-term debt / cash), each with its inputs or the reason it is withheld; total debt = the reported total, else
+  short + long (DERIVED) — the bond balance is a component, never added; restatement supersedes (both kept); an un-marked
+  disagreement = CONFLICT (no pick, no ratios); flags (LEVERAGE INCREASED · LIQUIDITY WEAKENED · CASH IMPROVED · NEAR-TERM DEBT
+  CONCENTRATION · OPERATING CASH FLOW NEGATIVE · GOING-CONCERN LANGUAGE PRESENT · RATING DOWNGRADE · RATING OUTLOOK NEGATIVE ·
+  INSUFFICIENT FINANCIAL DATA) only against the comparable period (same kind, basis, currency; a year ± 45 days), each with
+  rule · threshold · inputs · periods. No score, no probability of default. A project read shows the project company's
+  statements when provided, else the developer company's — labelled (developer / public-company financials ≠ SPV financials).
+- `structure.js` — CORPORATE STRUCTURE GRAPH: HOLDS / SHAREHOLDER_OF / GUARANTEES only from a user document (each party
+  checked by number: both found → STRONG, else POSSIBLE / UNRESOLVED); CO_WINNER from the official joint award (not
+  ownership). Every edge: what it proves · source · date · scope · what it does NOT prove.
+- `projectco.js` — PROJECT COMPANY / SPV: roles developer brand · land winner / programme developer · project company · permit
+  holder · executing contractor · parent · guarantor (only from an explicit document). States: VERIFIED needs an official
+  project-level record with the company number (none in coverage) · STRONG (one or more records resolve to ONE company; the
+  wording says how many) · POSSIBLE (a candidate not resolved, or records naming different companies — CONFLICT, none picked)
+  · UNRESOLVED; the resolving documents feed NEXT BEST EVIDENCE.
+- `legal.js` — LEGAL EXPOSURE — PUBLICLY DISCLOSED ONLY: liquidation cases, insolvency / court-liquidation status, voluntary
+  liquidation, strike-off designation, attachment filings (by company number) + disclosed litigation from a user document;
+  civil / regulatory NOT IN COVERAGE. ABSENCE OF A PUBLIC ROW ≠ NO LITIGATION.
+- `sales.js` — SALES PROGRESS: OFFICIAL programme lotteries (offered ≠ sold) and tender capacity; reported sales from a user
+  document labelled by who reported them (DEVELOPER-REPORTED → SELF_REPORTED in the summary); a DERIVED pace only between two
+  dated reports; never mixed with official transactions.
+- `coverage.js` + `lib/permits/connectors.js` — the MUNICIPAL PERMIT CONNECTOR registry (14 municipalities: Tel Aviv-Yafo LIVE,
+  Jerusalem BLOCKED, Kfar Saba DOCUMENTED, 11 NO MACHINE ACCESS; every other locality NOT AUDITED; one common permit schema a
+  future connector maps to) and the PROJECT EXECUTION COVERAGE MAP (permit · start · active site · completion · occupancy:
+  project-live / project-stale / national-no-dates / district-only / none — a district series never fills a project cell).
+- `live.js` — LIVE REGISTRY LOOKUP for a company number the user supplies that the kept rows do not hold: exact CKAN `filters`
+  on five registry resources, at most 3 numbers per read, 6 s per request, used for that read only (a per-read overlay — the
+  memoised cache is never mutated), labelled LIVE READ; a refusal is "did not answer", never "no company".
+- `summary.js` — the INSTITUTIONAL DILIGENCE SUMMARY: 11 fixed rows (identity · resolution · project stage · execution ·
+  financial · corporate / legal · sales · risks · gaps · next best evidence · watch), one sentence and ONE class each
+  (VERIFIED · DERIVED · SELF_REPORTED · USER_DOCUMENT · MISSING · CONFLICT), each with its registry term.
+
+API: `POST /api/intel?view=dd&developer=|project=` with `{ userDocs: [...] }` (≤ 256 KB; POST is refused on every other view;
+the documents are validated again, used for that read, never stored or logged) → `premium`, `summary`, `userDocs { used,
+rejected }`, `live`; `view=ddCoverage&city=<code>`. Page: the summary at the top of the DD panel, the premium sections in the
+five-minute view, "Evidence you provided" (form per type, CSV import, file fingerprint, `propx:dd:docs:v1` in the browser), an
+"Add a document" button on every NEXT BEST EVIDENCE item that names a document type. Registry: group `dd2` (22 terms with
+"what would strengthen it" / "what to verify next"), 9 financial signal rules, classes SELF_REPORTED / USER_DOCUMENT.
+Tests: `test/dd-premium.test.js` (39 gates incl. the brief's 20 acceptance cases; `DD_PREMIUM_ACCEPTANCE_OUT=<file>` writes them).
+
+### Adapter contract — a licensed financial feed (not activated)
+
+A licensed feed (e.g. a TASE / MAYA data licence or a rating agency's feed) enters ONLY through the statement shape
+`financial.js` already reads — never through scraping — and keeps its own class:
+
+```
+{ id, entityNumber, entityName, period: { end: 'YYYY-MM-DD', kind: 'annual'|'half'|'quarter' }, reportDate, basis:
+  'consolidated'|'separate', audited, currency, units: 'units'|'thousands'|'millions', restated: bool, cls: 'OFFICIAL',
+  source: '<licensed-feed id>', filingId: '<the filing reference>', figures: { <FIELD>: { value, nis } }, notes, rating,
+  limitations }
+```
+
+Rules for the adapter: one entity per statement (keyed by the company number, never a name); XBRL facts mapped by concept id
+with the context's period / unit / decimals checked (a duration fact never read as a balance); restatements carried as
+separate statements with `restated: true` and a later `reportDate`; nothing summed across entities or periods; a missing
+concept is absent — never 0. A persistence adapter for user documents (Supabase `user_state`) is likewise NOT activated: the
+browser store is the only store; the server never keeps them.
 
 ## Hard truths enforced by code and gates
 
@@ -102,5 +178,8 @@ MISSING ≠ ZERO · NOT OBSERVED ≠ DOES NOT EXIST · NO LATER PUBLIC EVIDENCE 
 LIEN ≠ INSOLVENCY · VOLUNTARY LIQUIDATION ≠ INSOLVENCY · PERMIT ≠ CONSTRUCTION START ≠ COMPLETION · ACTIVE SITE ≠ COMPLETED UNITS ·
 DEVELOPER NAME ≠ LEGAL COMPANY · BRAND ≠ SPV · PARENT ≠ GUARANTOR · CONTRACTOR ≠ DEVELOPER · MARKETING NAME ≠ PLANNING IDENTITY ·
 NAME SIMILARITY ≠ VERIFIED · PARCEL MATCH ≠ SAME PROJECT · MUNICIPAL ≠ NATIONAL · PUBLIC COMPANY FINANCIALS ≠ SPV FINANCIALS ·
-SOURCE SILENCE ≠ NEGATIVE EVIDENCE. The language gate in `test/dd.test.js` refuses distress / insolvent / stalled / delayed /
+SOURCE SILENCE ≠ NEGATIVE EVIDENCE · NO FINANCIALS ≠ FINANCIAL WEAKNESS · PUBLIC COMPANY ≠ PROJECT SPV · SHAREHOLDER ≠ PROJECT
+SUPPORT · DEVELOPER-REPORTED SALES ≠ OFFICIAL SALES · MARKETING CLAIM ≠ VERIFIED FACT · ADDRESS MATCH ≠ COMPANY OWNERSHIP · DISTRICT
+CONSTRUCTION DATA ≠ PROJECT CONSTRUCTION DATA · NO COURT ROW ≠ NO LITIGATION · NO PUBLIC OWNERSHIP DATA ≠ NO OWNER ·
+USER-UPLOADED DOCUMENT ≠ OFFICIAL SOURCE. The language gate in `test/dd.test.js` refuses distress / insolvent / stalled / delayed /
 probability-of-default wording unless it is negated.

@@ -303,6 +303,21 @@
   (one-minute · five-minute · deep dive) + company and permit drawers (a permit record = its request number; a number that is a request AND
   another record's permit → both hits, never one picked); registry group `dd` (24 terms, 15 signal rules, 9 missing reasons); a lane fails on a
   short read (never "gone" from an unread row); Trust Center lists the 8 integrated sources. See `lib/dd/README.md`.
+- `lib/dd/{userdocs,financial,structure,projectco,legal,sales,coverage,summary,live}.js` + `lib/permits/connectors.js` +
+  `test/dd-premium.test.js` = PREMIUM DILIGENCE 2.0 (18.10.2026; audit `lib/trust/discovery/2026-10-18-premium.json`, 32 candidates —
+  MAYA / TASE / MAGNA / XBRL / ratings / ownership extract / court registries / 13 municipal permit channels classified, none scraped;
+  integrated: the Registrar's designated-for-strike-off list, lane `strikeoff`). USER DOCUMENT (13 types, provenance required, file
+  fingerprint only — the file never leaves the browser; facts travel only in `POST view=dd` `{ userDocs }`, ≤ 256 KB, re-validated,
+  never stored or logged; `propx:dd:docs:v1` in the browser); PUBLIC FINANCIAL PROFILE for ONE resolved company number (ratios within
+  one statement, bond balance never added, restatement supersedes / un-marked disagreement = CONFLICT, flags only vs the comparable
+  period, no score); CORPORATE STRUCTURE (ownership only from a document, CO_WINNER ≠ ownership); PROJECT COMPANY / SPV roles (VERIFIED
+  needs an official project-level number — none in coverage; a document naming another company = CONFLICT); LEGAL EXPOSURE — PUBLICLY
+  DISCLOSED ONLY; SALES (OFFICIAL lottery / capacity apart from DEVELOPER-REPORTED); MUNICIPAL PERMIT CONNECTORS (Tel Aviv LIVE, 13
+  audited) + EXECUTION COVERAGE MAP (district never fills a project); LIVE REGISTRY LOOKUP by exact number (≤ 3, per-read overlay);
+  INSTITUTIONAL DILIGENCE SUMMARY (11 rows, one class each: VERIFIED · DERIVED · SELF_REPORTED · USER_DOCUMENT · MISSING · CONFLICT).
+  Resolution lift: `חב׳` = `חברה` + the contractors register as a second register. Registry group `dd2` (22 terms with strengthen /
+  verifyNext, 9 financial signal rules, classes SELF_REPORTED / USER_DOCUMENT). Supabase NOT used (adapter contract in
+  `lib/dd/README.md`). See `lib/dd/README.md` § Premium Diligence 2.0.
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,
