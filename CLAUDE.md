@@ -315,6 +315,8 @@
   DISCLOSED ONLY; SALES (OFFICIAL lottery / capacity apart from DEVELOPER-REPORTED); MUNICIPAL PERMIT CONNECTORS (Tel Aviv LIVE, 13
   audited) + EXECUTION COVERAGE MAP (district never fills a project); LIVE REGISTRY LOOKUP by exact number (≤ 3, per-read overlay);
   INSTITUTIONAL DILIGENCE SUMMARY (11 rows, one class each: VERIFIED · DERIVED · SELF_REPORTED · USER_DOCUMENT · MISSING · CONFLICT).
+  52 gates incl. the 20 acceptance cases and R1–R14 (independent review: no cross-project parent / guarantee, NOT CHECKED live
+  lanes, STRONG never a verified fact, SPV note, a lot number + executor stays POSSIBLE).
   Resolution lift: `חב׳` = `חברה` + the contractors register as a second register. Registry group `dd2` (22 terms with strengthen /
   verifyNext, 9 financial signal rules, classes SELF_REPORTED / USER_DOCUMENT). Supabase NOT used (adapter contract in
   `lib/dd/README.md`). See `lib/dd/README.md` § Premium Diligence 2.0.

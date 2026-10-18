@@ -128,7 +128,8 @@ is scraped, no anti-bot control is bypassed. Integrated: the Registrar's compani
   holder · executing contractor · parent · guarantor (only from an explicit document). States: VERIFIED needs an official
   project-level record with the company number (none in coverage) · STRONG (one or more records resolve to ONE company; the
   wording says how many) · POSSIBLE (a candidate not resolved, or records naming different companies — CONFLICT, none picked)
-  · UNRESOLVED; the resolving documents feed NEXT BEST EVIDENCE.
+  · UNRESOLVED; the resolving documents feed NEXT BEST EVIDENCE. Only documents carrying THIS project's id (or whose subject is
+  this project company) lend it a parent / guarantor; an expired guarantee is marked.
 - `legal.js` — LEGAL EXPOSURE — PUBLICLY DISCLOSED ONLY: liquidation cases, insolvency / court-liquidation status, voluntary
   liquidation, strike-off designation, attachment filings (by company number) + disclosed litigation from a user document;
   civil / regulatory NOT IN COVERAGE. ABSENCE OF A PUBLIC ROW ≠ NO LITIGATION.
@@ -152,7 +153,19 @@ rejected }`, `live`; `view=ddCoverage&city=<code>`. Page: the summary at the top
 five-minute view, "Evidence you provided" (form per type, CSV import, file fingerprint, `propx:dd:docs:v1` in the browser), an
 "Add a document" button on every NEXT BEST EVIDENCE item that names a document type. Registry: group `dd2` (22 terms with
 "what would strengthen it" / "what to verify next"), 9 financial signal rules, classes SELF_REPORTED / USER_DOCUMENT.
-Tests: `test/dd-premium.test.js` (39 gates incl. the brief's 20 acceptance cases; `DD_PREMIUM_ACCEPTANCE_OUT=<file>` writes them).
+Tests: `test/dd-premium.test.js` (52 gates incl. the brief's 20 acceptance cases and one gate per independent-review finding,
+R1–R14; `DD_PREMIUM_ACCEPTANCE_OUT=<file>` writes the cases).
+
+Independent review (18.10.2026) — fixed: documents about another project never lend a parent / guarantor / guarantee (only this
+project's id, or a document whose subject is this project company; a company is never its own parent; an expired guarantee is
+said); live lanes that did not answer are NOT CHECKED (never "no record"); a STRONG project company is a DERIVED signal and a
+document makes a relation STRONG at most; the SPV note on every project read whose statements are not a VERIFIED project
+company's; the summary reads the latest sales report, rates a stage moved by a STRONG link DERIVED, reads the project company's
+own record and says CONFLICT when every statement conflicts; a user-disclosed insolvency is said beside "no OFFICIAL record";
+document ids = file fingerprint + facts; a lot number + executor stays POSSIBLE (`LOT_NUMBER_PLAN_SCOPED`); money compared to
+the agora; every superseded version kept; '1,5' / 2025-02-31 refused; live answers for another number ignored and the shared
+memos never hold live rows; a Tel Aviv permit holder is not an independent record; an attachment filing is a filing; a
+shareholder without a number is scoped to its document.
 
 ### Adapter contract — a licensed financial feed (not activated)
 
