@@ -1,0 +1,55 @@
+# PROPX · transaction freshness — source discovery (read-only).
+#
+# Runs scripts/tx-freshness-discover.js on a GitHub runner (the Israeli hosts answer here, not from the Claude sandbox) and
+# prints what each transaction channel answers today: the Tax Authority register, nadlan.gov.il, GovMap, data.gov.il and the
+# two republished copies on over.org.il. Read-only: GET only, one request at a time, nothing written or committed. A channel
+# behind an identification / CAPTCHA / bot-manager screen is recorded, never bypassed.
+
+name: Transactions — freshness discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'official | over | compare'
+        type: choice
+        options: [official, over, compare]
+        default: official
+      cities:
+        description: 'compare: city names separated by |'
+        type: string
+        default: ''
+      from:
+        description: 'compare: first transaction date (YYYY-MM-DD)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tx-freshness-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          CITIES: ${{ inputs.cities }}
+          FROM: ${{ inputs.from }}
+        run: |
+          case "$MODE" in
+            over)    node scripts/tx-freshness-discover.js --over ;;
+            compare) node scripts/tx-freshness-discover.js --compare "$CITIES" ${FROM:+--from "$FROM"} ;;
+            *)       node scripts/tx-freshness-discover.js --official ;;
+          esac
