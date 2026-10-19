@@ -182,46 +182,80 @@ async function compare(names, fromArg) {
     const G = (await govmapRows(spell, from)).map((g) => ({ ...g, sub: num(g.sub_parcel), gush: num(g.gush), parcel: num(g.parcel), amount: num(g.deal_amount), area: num(g.asset_area), rooms: num(g.rooms), date: String(g.deal_date).slice(0, 10) }));
     const sh = code ? EV.shardOf(code) : null;
     const P = sh ? EV.dealsOf(sh).map((x) => ({ ...x.deal, streetCodes: x.streets.map((s) => s.code), gushN: num(x.deal.gush), helkaN: num(x.deal.helka), subN: num(x.deal.subParcel) })).filter((d) => d.date >= from) : [];
-    const key = (date, gush, parcel, sub) => `${date}|${gush}|${parcel}|${sub}`;
-    const pIdx = new Map(); for (const d of P) { const k = key(d.date, d.gushN, d.helkaN, d.subN); if (!pIdx.has(k)) pIdx.set(k, []); pIdx.get(k).push(d); }
-    const gIdx = new Map(); for (const g of G) { const k = key(g.date, g.gush, g.parcel, g.sub); if (!gIdx.has(k)) gIdx.set(k, []); gIdx.get(k).push(g); }
-    /* the loose key: the same unit and amount on another date (a date the two channels print differently) */
-    const lkey = (gush, parcel, sub, amount) => `${gush}|${parcel}|${sub}|${amount}`;
-    const pLoose = new Map(); for (const d of P) { const k = lkey(d.gushN, d.helkaN, d.subN, d.amount); if (!pLoose.has(k)) pLoose.set(k, []); pLoose.get(k).push(d); }
-    const cls = { MATCH: 0, FIELD_DIFFERENCE: 0, DATE_DIFFERENCE: 0, MISSING_IN_PROPX_WITHIN_COPY: 0, MISSING_IN_PROPX_AFTER_COPY: 0, FUTURE_DATED_AT_SOURCE: 0, EXTRA_IN_PROPX: 0 };
+    /* one unit = block · parcel · sub-parcel (a missing sub-parcel is 0 on both sides); a deal = a unit on a date. The GovMap-layer
+       copy prints some dates one day EARLIER than the register (its newer deal-id series, a UTC conversion of a local midnight)
+       and truncates amounts to ₪1,000; a register row of a sold SHARE prints the share's amount. Each is a FIELD DIFFERENCE with
+       its cause — never silently equal. */
+    const unit = (gush, parcel, sub) => `${gush}|${parcel}|${sub || 0}`;
+    const pByUnit = new Map(); for (const d of P) { const k = unit(d.gushN, d.helkaN, d.subN); if (!pByUnit.has(k)) pByUnit.set(k, []); pByUnit.get(k).push(d); }
+    const pByParcel = new Map(); for (const d of P) { const k = `${d.gushN}|${d.helkaN}`; if (!pByParcel.has(k)) pByParcel.set(k, []); pByParcel.get(k).push(d); }
+    const pByDate = new Map(); for (const d of P) { if (!pByDate.has(d.date)) pByDate.set(d.date, []); pByDate.get(d.date).push(d); }
+    const dayDiff = (a, b) => Math.round((Date.parse(a) - Date.parse(b)) / 864e5);
+    const amountRel = (g, deal) => {
+      const d = deal.amount;
+      if (g == null || d == null) return 'missing';
+      if (g === d) return 'equal';
+      if (g <= d && d - g < 1000) return 'truncated';                        // GovMap prints ₪1,000 steps
+      if (deal.portionFraction != null && deal.portionFraction < 1) return 'share';
+      return 'differs';
+    };
+    const near = (g, d) => g != null && d != null && (g === d || (g <= d && d - g < 1000));
+    const cls = { MATCH: 0, MATCH_AMOUNT_TRUNCATED: 0, FIELD_DIFFERENCE: 0, MISSING_IN_PROPX_REPORTED_LATE: 0, MISSING_IN_PROPX_OLDER: 0, FUTURE_DATED_AT_SOURCE: 0, EXTRA_IN_PROPX: 0 };
     const samples = Object.fromEntries(Object.keys(cls).map((k) => [k, []]));
-    const diffKinds = {};
+    const diffKinds = {}, missWhy = {};
+    const missSamples = {};
     const push = (k, o) => { cls[k]++; if (samples[k].length < 8) samples[k].push(o); };
     const gOut = (g) => [g.date, g.street, g.house_num, `${g.gush}/${g.parcel}/${g.sub}`, g.amount, g.area, g.rooms, g.property_type || g.deal_nature, g.deal_id];
-    const pOut = (d) => [d.date, (d.parcelAddresses || []).slice(0, 2).join(' · '), `${d.gushN}/${d.helkaN}/${d.subN}`, d.amount, d.areaSqm, d.rooms, d.nature, d.yearBuilt];
+    const pOut = (d) => [d.date, (d.parcelAddresses || []).slice(0, 2).join(' · '), `${d.gushN}/${d.helkaN}/${d.subN}`, d.amount, d.areaSqm, d.rooms, d.nature, d.yearBuilt, d.portionFraction];
     const matched = new Set();
     const cand = [];
+    /* "reported late": a deal dated within 60 days before the register copy's latest deal — the register's own reporting lag
+       (the copy held ≈ 13 % of August and ≈ 41 % of July 2026 when it was taken) */
+    const lateFrom = minusDays(copyEnd, 75);
     for (const g of G) {
       if (g.date > today) { push('FUTURE_DATED_AT_SOURCE', gOut(g)); continue; }
-      const k = key(g.date, g.gush, g.parcel, g.sub);
-      const ps = pIdx.get(k);
-      if (ps && ps.length) {
-        const d = ps.find((x) => !matched.has(x) && x.amount === g.amount) || ps.find((x) => !matched.has(x)) || ps[0];
+      const ps = (pByUnit.get(unit(g.gush, g.parcel, g.sub)) || []).filter((d) => !matched.has(d) && Math.abs(dayDiff(g.date, d.date)) <= 1);
+      if (ps.length) {
+        const d = ps.find((x) => x.date === g.date && x.amount === g.amount) || ps.find((x) => near(g.amount, x.amount)) || ps.find((x) => x.date === g.date) || ps[0];
         matched.add(d);
         const diffs = [];
-        if (d.amount !== g.amount) diffs.push('amount');
+        const ar = amountRel(g.amount, d);
+        if (ar === 'share') diffs.push('amount:share-of-property'); else if (ar === 'differs' || ar === 'missing') diffs.push('amount');
+        if (d.date !== g.date) diffs.push(dayDiff(g.date, d.date) === -1 ? 'date:govmap-one-day-earlier' : 'date');
         if (g.area != null && d.areaSqm != null && Math.abs(g.area - d.areaSqm) > 1) diffs.push('area');
         if (g.rooms != null && d.rooms != null && g.rooms !== d.rooms) diffs.push('rooms');
         if (diffs.length) { push('FIELD_DIFFERENCE', { govmap: gOut(g), propx: pOut(d), diffs }); for (const x of diffs) diffKinds[x] = (diffKinds[x] || 0) + 1; }
         else {
-          cls.MATCH++;
-          if (samples.MATCH.length < 8) samples.MATCH.push(gOut(g));
-          if (g.street && d.date > minusDays(copyEnd, 150)) cand.push({ city, code, street: g.street, house: g.house_num, date: g.date, gush: g.gush, parcel: g.parcel, sub: g.sub,
+          push(ar === 'truncated' ? 'MATCH_AMOUNT_TRUNCATED' : 'MATCH', gOut(g));
+          if (ar === 'equal' && g.street && d.date > minusDays(copyEnd, 150)) cand.push({ city, code, street: g.street, house: g.house_num, date: g.date, gush: g.gush, parcel: g.parcel, sub: g.sub || 0,
             amount: g.amount, areaSqm: g.area, rooms: g.rooms, govmapType: g.property_type || g.deal_nature || null, registerNature: d.nature, yearBuilt: d.yearBuilt, govmapDealId: g.deal_id,
             propxStreetCodes: d.streetCodes, propxMatch: d.match });
         }
         continue;
       }
-      const loose = (pLoose.get(lkey(g.gush, g.parcel, g.sub, g.amount)) || []).find((x) => !matched.has(x));
-      if (loose) { matched.add(loose); push('DATE_DIFFERENCE', { govmap: gOut(g), propx: pOut(loose) }); continue; }
-      push(g.date <= copyEnd ? 'MISSING_IN_PROPX_WITHIN_COPY' : 'MISSING_IN_PROPX_AFTER_COPY', gOut(g));
+      if (g.date >= lateFrom) { push('MISSING_IN_PROPX_REPORTED_LATE', gOut(g)); continue; }
+      /* an older GovMap deal the register copy does not hold under the same unit: why? */
+      const sameParcel = (pByParcel.get(`${g.gush}|${g.parcel}`) || []).find((d) => !matched.has(d) && Math.abs(dayDiff(g.date, d.date)) <= 1 && near(g.amount, d.amount));
+      const sameDay = !sameParcel && [-1, 0, 1].flatMap((k) => pByDate.get(iso(Date.parse(g.date) + k * 864e5)) || []).find((d) => !matched.has(d) && near(g.amount, d.amount) && (g.area == null || d.areaSqm == null || Math.abs(g.area - d.areaSqm) <= 1));
+      const why = sameParcel ? 'sub-parcel-differs' : sameDay ? 'block-or-parcel-differs' : g.gush == null ? 'no-block-at-source' : 'not-found';
+      missWhy[why] = (missWhy[why] || 0) + 1;
+      if (!missSamples[why]) missSamples[why] = [];
+      if (missSamples[why].length < 5) missSamples[why].push({ govmap: gOut(g), propx: sameParcel ? pOut(sameParcel) : sameDay ? pOut(sameDay) : null });
+      push('MISSING_IN_PROPX_OLDER', gOut(g));
     }
-    for (const d of P) if (!matched.has(d) && d.dwelling && d.date <= today) push('EXTRA_IN_PROPX', pOut(d));
+    const extras = [];
+    for (const d of P) if (!matched.has(d) && d.dwelling && d.date <= today) { push('EXTRA_IN_PROPX', pOut(d)); extras.push(d); }
+    /* a sample of the extra rows looked up in the GovMap-layer copy by block + parcel (any settlement spelling, or none) */
+    const extraCheck = { FOUND_UNDER_OTHER_SETTLEMENT: 0, FOUND_DIFFERENT_FIELDS: 0, NOT_IN_GOVMAP_COPY: 0, LOOKUP_FAILED: 0 }, extraSamples = [];
+    for (const d of extras.filter((x) => x.date < lateFrom && x.gushN != null && x.helkaN != null).slice(0, 12)) {
+      const r = await overGet(`/api/deals/govmap/search?gush=${d.gushN}&helka=${d.helkaN}&sort=date_desc&limit=200`);
+      const rows = rowsOf(r.json);
+      if (r.status !== 200 || !rows) { extraCheck.LOOKUP_FAILED++; continue; }
+      const hit = rows.find((g) => unit(num(g.gush), num(g.parcel), num(g.sub_parcel)) === unit(d.gushN, d.helkaN, d.subN) && Math.abs(dayDiff(String(g.deal_date).slice(0, 10), d.date)) <= 1);
+      const k = !hit ? 'NOT_IN_GOVMAP_COPY' : normCity(hit.settlement) !== normCity(city) ? 'FOUND_UNDER_OTHER_SETTLEMENT' : 'FOUND_DIFFERENT_FIELDS';
+      extraCheck[k]++;
+      if (extraSamples.length < 6) extraSamples.push({ k, propx: pOut(d), govmap: hit ? [String(hit.deal_date).slice(0, 10), hit.settlement, hit.street, hit.house_num, `${hit.gush}/${hit.parcel}/${hit.sub_parcel}`, num(hit.deal_amount), num(hit.asset_area), num(hit.rooms)] : null, parcelRowsInGovmap: rows.length });
+    }
     /* acceptance candidates: up to 12 per city, newest first, one per street before a second, every property type early */
     const seenSt = new Map(), seenTy = new Set();
     cand.sort((a, b) => b.date.localeCompare(a.date));
@@ -245,7 +279,7 @@ async function compare(names, fromArg) {
       counts: { govmap: { d90today: within(gDates, today, 90), d365today: within(gDates, today, 365), d90copy: within(gDates, copyEnd, 90), d365copy: within(gDates, copyEnd, 365) },
         propxDwelling: { d90today: within(pDw, today, 90), d365today: within(pDw, today, 365), d90copy: within(pDw, copyEnd, 90), d365copy: within(pDw, copyEnd, 365) } },
       monthly: Object.keys({ ...gm, ...pm }).sort().map((m) => `${m}:${gm[m] || 0}/${pm[m] || 0}`).join(' '), govmapTypes: types });
-    out({ kind: 'compareSamples', city, samples });
+    out({ kind: 'compareSamples', city, samples, missWhy, missSamples, extraCheck, extraSamples });
     /* streets: the three busiest GovMap streets of the last 365 days + one of medium and one of low activity */
     const byStreet = new Map(); for (const g of G) { if (!g.street || g.date > today) continue; if (!byStreet.has(g.street)) byStreet.set(g.street, []); byStreet.get(g.street).push(g); }
     const ranked = [...byStreet].sort((a, b) => b[1].length - a[1].length);
@@ -254,11 +288,12 @@ async function compare(names, fromArg) {
       const ids = D.streets.filter((s) => s.cityCode === code && SD.normName(s.name) === SD.normName(name)).map((s) => s.code);
       const pS = P.filter((d) => d.dwelling && d.streetCodes.some((c) => ids.includes(c)));
       const gD = gs2.map((g) => g.date).sort(), pD = pS.map((d) => d.date).sort();
-      const status = gs2.slice(0, 40).map((g) => (pIdx.get(key(g.date, g.gush, g.parcel, g.sub)) ? 'M' : g.date > copyEnd ? 'A' : 'W'));
+      const inP = (g) => (pByUnit.get(unit(g.gush, g.parcel, g.sub)) || []).some((d) => Math.abs(dayDiff(g.date, d.date)) <= 1);
+      const status = gs2.slice(0, 40).map((g) => (inP(g) ? 'M' : g.date >= lateFrom ? 'L' : 'W'));
       out({ kind: 'compareStreet', city, street: name, directoryCodes: ids, govmap: { n: gs2.length, latest: gD.slice(-1)[0], d90: within(gD, today, 90) },
         propx: { n: pS.length, latest: pD.slice(-1)[0] || null, d90: within(pD, today, 90) },
-        recentGovmapInPropx: { matched: status.filter((x) => x === 'M').length, missingWithinCopy: status.filter((x) => x === 'W').length, afterCopy: status.filter((x) => x === 'A').length, of: status.length },
-        sample: gs2.slice(0, 4).map((g) => ({ g: gOut(g), inPropx: !!pIdx.get(key(g.date, g.gush, g.parcel, g.sub)) })) });
+        recentGovmapInPropx: { matched: status.filter((x) => x === 'M').length, reportedLate: status.filter((x) => x === 'L').length, olderMissing: status.filter((x) => x === 'W').length, of: status.length },
+        sample: gs2.slice(0, 4).map((g) => ({ g: gOut(g), inPropx: inP(g) })) });
     }
   }
   out({ kind: 'fixtureCandidates', n: fixture.length, rows: fixture });
