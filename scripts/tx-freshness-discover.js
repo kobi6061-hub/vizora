@@ -143,16 +143,18 @@ const iso = (d) => new Date(d).toISOString().slice(0, 10);
 const minusDays = (d, k) => iso(Date.parse(d + 'T00:00:00Z') - k * 864e5);
 const num = (v) => { if (v == null || v === '') return null; const n = Number(String(v).replace(/,/g, '')); return Number.isFinite(n) ? n : null; };
 
-async function govmapRows(names, from, to) {
+/* the GovMap-layer search answers HTTP 500 to any date filter (observed 19.10.2026), so a city is paged newest first with no
+   date filter and the paging stops at the first page that ends before `from` (future-dated source rows sort first) */
+async function govmapRows(names, from) {
   const rows = [];
   for (const name of names) {
-    for (let offset = 0, guard = 0; guard < 120; guard++) {
-      const p = `/api/deals/govmap/search?settlement=${encodeURIComponent(name)}&date_from=${from}&date_to=${to}&sort=date_desc&limit=200&offset=${offset}`;
+    for (let offset = 0, guard = 0; guard < 200; guard++) {
+      const p = `/api/deals/govmap/search?settlement=${encodeURIComponent(name)}&sort=date_desc&limit=200&offset=${offset}`;
       const r = await overGet(p);
       const b = rowsOf(r.json) || [];
       if (r.status !== 200) { out({ kind: 'compare', step: 'govmap-page', name, offset, status: r.status, body: trim(r.text, 300) }); break; }
-      rows.push(...b); offset += b.length;
-      if (b.length < 200) break;
+      rows.push(...b.filter((g) => String(g.deal_date).slice(0, 10) >= from)); offset += b.length;
+      if (b.length < 200 || String(b[b.length - 1].deal_date).slice(0, 10) < from) break;
     }
   }
   return rows;
@@ -177,7 +179,7 @@ async function compare(names, fromArg) {
   for (const city of names) {
     const code = CITY_CODES[city] || null;
     const spell = gNames.filter((n) => normCity(n) === normCity(city));
-    const G = (await govmapRows(spell, from, today)).map((g) => ({ ...g, sub: num(g.sub_parcel), gush: num(g.gush), parcel: num(g.parcel), amount: num(g.deal_amount), area: num(g.asset_area), rooms: num(g.rooms), date: String(g.deal_date).slice(0, 10) }));
+    const G = (await govmapRows(spell, from)).map((g) => ({ ...g, sub: num(g.sub_parcel), gush: num(g.gush), parcel: num(g.parcel), amount: num(g.deal_amount), area: num(g.asset_area), rooms: num(g.rooms), date: String(g.deal_date).slice(0, 10) }));
     const sh = code ? EV.shardOf(code) : null;
     const P = sh ? EV.dealsOf(sh).map((x) => ({ ...x.deal, streetCodes: x.streets.map((s) => s.code), gushN: num(x.deal.gush), helkaN: num(x.deal.helka), subN: num(x.deal.subParcel) })).filter((d) => d.date >= from) : [];
     const key = (date, gush, parcel, sub) => `${date}|${gush}|${parcel}|${sub}`;
