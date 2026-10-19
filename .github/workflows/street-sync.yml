@@ -1,0 +1,65 @@
+# PROPX · weekly sync of the official Israel street directory (Population and Immigration Authority, data.gov.il).
+#
+# scripts/street-sync.js reads EVERY row of the street registry and of the street-synonyms registry (paged; a short read
+# fails), keeps identity on the official codes (st:<locality>:<street>), never deletes (a code that leaves the registry
+# stays 'historical'), appends ADDED / RENAMED / RETIRED / RESTORED to data/geo/streets/history.jsonl, stores a raw
+# snapshot when the content changed, and commits data/geo/streets/. Nothing outside data/geo/streets/ is written.
+# A failed source keeps the stored directory and turns the run red.
+
+name: Weekly street-directory sync
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'   # Mondays 04:23 UTC (the registry is republished daily; its content changes slowly)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and report only — write and commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: street-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline street tests (must pass before any data is written)
+        run: if [ -f test/streets.test.js ]; then node test/streets.test.js; else echo 'no street tests yet'; fi
+      - name: Read the official street + synonyms registries
+        id: sync
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then node scripts/street-sync.js --dry-run; else node scripts/street-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/geo/streets
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 3 attempts.' >&2
+          exit 1
+      - name: Fail the run if the source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "street-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1
