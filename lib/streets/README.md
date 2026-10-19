@@ -51,10 +51,13 @@ the placeholder (no named street) — they are searchable as localities.
 
 ## 2 · Search
 
-`lib/geo/registry.js` `searchGeo(query, limit, {near})`, served by `GET /api/geo/search?q=&near=&limit=`. The index (165,427
-keys, 392,038 postings) is prebuilt from the directory (`aliasKeys` per official name and per synonym — street-type words,
-honorifics, geresh / gershayim, hyphen ↔ space, final letters, doubled vav / yud, an optional leading ה; a later word of a
-name is a discovery key). Postings reference official codes (`locality × 100000 + code`), so a directory change touches only
+`lib/geo/registry.js` `searchGeo(query, limit, {near})`, served by `GET /api/geo/search?q=&near=&limit=`. The index (169,275
+keys, 428,408 postings; schema 3) is prebuilt from the directory (`aliasKeys` per official name and per synonym — street-type
+words incl. שכונת / שכ, honorifics, geresh / gershayim, hyphen ↔ space, final letters, doubled vav / yud, an optional leading
+ה, the Arabic article אל- / א- as an optional prefix; a later word of a name is a discovery key). The query is normalized the
+same way, and also loses niqqud, bidi marks and list separators (`, ; / \ |`). A house number typed with the street ("הרצל 12
+פתח תקווה") names no street: when no street matched the query exactly, it is read again without the number
+(`meta.houseNumber`), and the number picks nothing. Postings reference official codes (`locality × 100000 + code`), so a directory change touches only
 its own postings; a stale index (directory files' sha256 differ) is refused and rebuilt in memory.
 
 Ranking — the selected locality is `near` (the page sends the locality in view) or a locality named inside the query
@@ -63,8 +66,12 @@ Ranking — the selected locality is `near` (the page sends the locality in view
 1. exact official name in the selected locality · 2. exact synonym there · 3. prefix there
 4. exact official name elsewhere · 5. exact synonym elsewhere · 6. normalized / discovery matches (never an identity change)
 
-Inside a tier: the typed full name before a variant key of it, the selected locality first, the larger locality (its number
-of official named streets) first, the shorter name. An exact locality name leads the list; a query that is itself a locality
+Inside a tier: the typed name, then the same name with its type word spelled another way ("שד" = "שדרות"), then the name
+without its type word, then any other variant key; the selected locality first; in discovery (tier 6) a name that starts
+with the query first; the larger locality (its number of official named streets) first; the shorter name. A query ending in
+a non-final letter ("הגנ" while typing) never meets a final-letter name as exact (tier 6). A split part that is only a
+street-type word or an honorific is no street; a locality still being typed scopes its three largest completions.
+`inSelectedLocality` says `near` (the locality in view) or `named` (named in the query). An exact locality name leads the list; a query that is itself a locality
 name is not split; a query that is itself an official street name keeps that street first and the split reading right after
 it. Historical rows rank after current ones of the same tier and are labelled. `meta.moreStreets` drives the page's "add a
 locality" hint.

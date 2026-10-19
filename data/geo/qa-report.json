@@ -1,5 +1,5 @@
 {
- "at": "2026-10-19T10:34:36.360Z",
+ "at": "2026-10-19T11:15:10.235Z",
  "checks": [
   {
    "name": "every directory locality is a registry locality",
@@ -38,7 +38,7 @@
   {
    "name": "alias index built for every street",
    "ok": true,
-   "detail": "149246 keys for 62265 streets"
+   "detail": "158107 keys for 62265 streets"
   },
   {
    "name": "neighborhood layer loaded (partial coverage is expected & disclosed)",
@@ -203,7 +203,7 @@
   {
    "name": "locality \"בית שמש\" resolves",
    "ok": true,
-   "detail": "בית שמש | ש 144"
+   "detail": "בית שמש | בית שמש הותיקה"
   },
   {
    "name": "  \"בית שמש\" has searchable streets (460) or only the locality placeholder",
@@ -218,7 +218,7 @@
   {
    "name": "locality \"נתניה\" resolves",
    "ok": true,
-   "detail": "נתניה | בן ציון נתניהו"
+   "detail": "נתניה | נתניהו יוני"
   },
   {
    "name": "  \"נתניה\" has searchable streets (1048) or only the locality placeholder",
@@ -463,7 +463,7 @@
   {
    "name": "locality \"חורפיש\" resolves",
    "ok": true,
-   "detail": "חורפיש | עאבר חורפיש 89"
+   "detail": "חורפיש | אל-ח'ורפיש"
   },
   {
    "name": "  \"חורפיש\" has searchable streets (109) or only the locality placeholder",
@@ -566,6 +566,6 @@
   "streetsPendingOfficialCode": 0,
   "orphanStreets": 0,
   "duplicateCanonicalStreetIds": 0,
-  "aliasSearchKeys": 149246
+  "aliasSearchKeys": 158107
  }
 }

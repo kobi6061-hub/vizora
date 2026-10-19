@@ -2681,7 +2681,7 @@ he:{
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
   geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
-  geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר",
+  geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר", geoNamed:"ביישוב שבחיפוש", geoHouse:n=>`מספר בית ${n} אינו חלק מזהות הרחוב — הרחוב מוצג; המספר לא שימש לבחירה`,
   geoMore:n=>`עוד ${fmtInt(n)} התאמות — הוסיפו שם יישוב (למשל „הרצל פתח תקווה")`,
   geoLyr:"מרשם ארצי", geoClose:"סגור",
   geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
@@ -3252,8 +3252,8 @@ en:{
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
   geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
-  geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality",
-  geoMore:n=>`${fmtInt(n)} more matches — add a locality name (e.g. “Herzl Petah Tikva”)`,
+  geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality", geoNamed:"in the locality you typed", geoHouse:n=>`House number ${n} is not part of a street's identity — the street is shown; the number picked nothing`,
+  geoMore:n=>`${fmtInt(n)} more matches — add a locality name in Hebrew (e.g. “הרצל פתח תקווה”)`,
   geoLyr:"National registry", geoClose:"Close",
   geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
   geoPend:"official code pending — updates on the next registry refresh",
@@ -6964,7 +6964,7 @@ function geoPinSVG(sf){
   return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
 }
-let geoLast={q:"",near:"",list:[],more:0},geoTimer=null,geoBusy="";
+let geoLast={q:"",near:"",list:[],more:0,house:""},geoTimer=null,geoBusy="",geoSeq=0,geoShown=[];
 /* the selected locality for street ranking: the registry locality / street in view, else the board's city (or the city of
    the board's neighbourhood); never a district or the country */
 function geoNear(){
@@ -6979,17 +6979,22 @@ function geoSug(q){
   if(qq.length<2)return[];
   if(geoLast.q!==qq||geoLast.near!==near){
     clearTimeout(geoTimer);geoBusy=qq;
+    const seq=++geoSeq;
     geoTimer=setTimeout(async()=>{
-      let list=[],more=0;
+      let list=[],more=0,house="";
       try{
         const r=await fetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""));
         if(r.ok){const d=await r.json();
           /* official registry streets are never filtered or replaced; a registry
              locality the board already lists as a city appears once, as that city */
-          list=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he)).slice(0,10);
-          more=(d.meta&&d.meta.moreStreets)||0;}
+          const all=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he));
+          list=all.slice(0,10);
+          /* "more" counts every street not shown: the server's remainder + the streets this list cut */
+          more=((d.meta&&d.meta.moreStreets)||0)+all.slice(10).filter(g=>g.kind==="street").length;
+          house=(d.meta&&d.meta.houseNumber)||"";}
       }catch(e){/* offline/standalone: the national layer is unavailable */}
-      geoLast={q:qq,near,list,more};if(geoBusy===qq)geoBusy="";
+      if(seq!==geoSeq)return;   /* a newer query was sent: this answer is stale */
+      geoLast={q:qq,near,list,more,house};if(geoBusy===qq)geoBusy="";
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },170);
@@ -7239,7 +7244,7 @@ function initSearch(){
     const cities=LOCATIONS.filter(l=>l.type==="city"&&match(l)).slice(0,7);
     const nbhds=LOCATIONS.filter(l=>(l.type==="nbhd"||l.type==="sub")&&match(l)).slice(0,9);
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
-    const geos=geoSug(q),ints=intelSug(q);
+    const geos=geoSug(q),ints=intelSug(q);geoShown=geos;
     results=[...cities,...nbhds,...dists];
     if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
     else{
@@ -7249,8 +7254,9 @@ function initSearch(){
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
       if(geos.length)html+=`<div class="sp-group">${t.geoGroup}</div>`+geos.map((g,i)=>
         `<button class="sp-item" data-geoi="${i}" role="option">
-          <span><bdi>${inE(g.he)}</bdi>${g.kind==="street"?` <small>· <bdi>${inE(g.city)}</bdi>${g.matchedName?` · ${inE(t.geoSynOf(g.matchedName))}`:""}${g.status==="historical"?` · ${t.geoHist}`:""}${g.inSelectedLocality?` · ${t.geoHere}`:""}</small>`:g.moatza?` <small>· ${inE(g.moatza)}</small>`:""}</span>
+          <span><bdi>${inE(g.he)}</bdi>${g.kind==="street"?` <small>· <bdi>${inE(g.city)}</bdi>${g.matchedName?` · ${inE(t.geoSynOf(g.matchedName))}`:""}${g.status==="historical"?` · ${t.geoHist}`:""}${g.inSelectedLocality?` · ${g.inSelectedLocality==="named"?t.geoNamed:t.geoHere}`:""}</small>`:g.moatza?` <small>· ${inE(g.moatza)}</small>`:""}</span>
           <span class="sp-tag">${geoKindTag(g,t)}</span></button>`).join("")
+          +(geoLast.house&&geoLast.q===q.trim()?`<div class="sp-empty sp-more">${inE(t.geoHouse(geoLast.house))}</div>`:"")
           +(geoLast.more>0&&geoLast.q===q.trim()?`<div class="sp-empty sp-more">${t.geoMore(geoLast.more)}</div>`:"");
       if(ints.length)html+=`<div class="sp-group">${IT().tab.developers} · ${IT().tab.projects} · ${IT().ty.tender}</div>`+ints.map((h,i)=>
         `<button class="sp-item" data-inti="${i}" role="option"><span><bdi>${inE(h.label)}</bdi>${inHitSub(h)?` <small>· ${inE(inHitSub(h))}</small>`:""}</span>
@@ -7262,7 +7268,7 @@ function initSearch(){
       e.preventDefault();selectLocation(b.dataset.go);input.value="";close();
     }));
     pop.querySelectorAll("[data-geoi]").forEach(b=>b.addEventListener("mousedown",e=>{
-      e.preventDefault();openGeoView(geoLast.list[+b.dataset.geoi]);input.value="";close();
+      e.preventDefault();openGeoView(geos[+b.dataset.geoi]);input.value="";close();
     }));
     pop.querySelectorAll("[data-inti]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();intelPick(intelLast.list[+b.dataset.inti],input);input.value="";close();
@@ -7284,7 +7290,7 @@ function initSearch(){
       items[activeIdx]?.scrollIntoView({block:"nearest"});
     }else if(e.key==="Enter"&&activeIdx>=0&&items[activeIdx]){
       const it=items[activeIdx];
-      if(it.dataset.geoi!==undefined)openGeoView(geoLast.list[+it.dataset.geoi]);
+      if(it.dataset.geoi!==undefined)openGeoView(geoShown[+it.dataset.geoi]);
       else if(it.dataset.inti!==undefined)intelPick(intelLast.list[+it.dataset.inti],input);
       else selectLocation(it.dataset.go);
       input.value="";close();

@@ -431,6 +431,27 @@ t('review: one permit per request on a street (the layer repeats rows), shards r
   assert.match(view, /tile\(t\.period,E\.swept&&w\?/, 'a locality outside the sweep shows no window'); assert.match(view, /"lim"/);
   for (const k of ['one:', 'exists:', 'zero:', 'nbBasis:', 'rung:', 'in12:']) assert.equal((page.match(new RegExp('\\b' + k, 'g')) || []).length >= 2, true, k + ' he + en');
 });
+t('review (search): house numbers, pasted marks, separators, type words alone, the Arabic article, שכונת, mid-word finals, near vs named, the page keeps the list it rendered', () => {
+  const top = (q, o) => R.searchGeo(q, 12, o || {}).matches.filter((m) => m.kind === 'street');
+  const h = R.searchGeo('הרצל 12 פתח תקווה', 12); assert.equal(h.matches.find((m) => m.kind === 'street').id, 'st:7900:213'); assert.equal(h.meta.houseNumber, '12');
+  assert.equal(top('רח 8 אכסאל')[0].he, 'רח 8', 'a number that is part of an official name is never stripped');
+  assert.equal(top('הֶרְצֵל', { near: 7900 })[0].id, 'st:7900:213', 'niqqud');
+  assert.equal(top('‏הרצל‏', { near: 7900 })[0].id, 'st:7900:213', 'bidi marks');
+  assert.equal(top('הרצל, פתח תקווה')[0].id, 'st:7900:213', 'a comma is a space');
+  /* "רחוב פתח תקווה": never a street "רחוב" in Petah Tikva (the moshav רחוב, loc:854, may scope a street "פתח תקווה") */
+  assert.ok(!R.searchGeo('רחוב פתח תקווה', 12).meta.scopes.some((x) => x.locality === 'loc:7900'), 'a street-type word alone is no street');
+  const w = SD.load().streets.find((x) => x.name === 'אל-וורוד' && x.status === 'current');
+  assert.ok(top('וורוד').some((m) => m.he === 'אל-וורוד'), 'the Arabic article is an optional prefix'); assert.ok(w);
+  const sh = SD.load().streets.find((x) => /^שכ /.test(x.name) && x.status === 'current' && x.cityCode === 7900);
+  if (sh) assert.ok(top('שכונת ' + sh.name.slice(3), { near: 7900 }).slice(0, 3).some((m) => m.id === sh.id), 'שכונת = שכ');
+  assert.ok(top('הגנ').every((m) => !(m.tier < 6 && /[םןץףך]$/.test(m.he))), 'a query ending mid-word never meets a final-letter name as exact');
+  assert.equal(top('הרצל', { near: 7900 })[0].inSelectedLocality, 'near'); assert.equal(top('הרצל פתח תקווה')[0].inSelectedLocality, 'named');
+  assert.equal(top('שדרות רוטשילד', { near: 5000 })[0].id, 'st:5000:1103');
+  assert.equal(top('שד רוטשילד', { near: 5000 })[0].id, 'st:5000:1103', 'the type word spelled another way is exact');
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.match(page, /if\(seq!==geoSeq\)return;/, 'a stale answer is dropped'); assert.match(page, /openGeoView\(geos\[\+b\.dataset\.geoi\]\)/); assert.match(page, /openGeoView\(geoShown\[\+it\.dataset\.geoi\]\)/);
+  assert.ok(!/Herzl Petah Tikva/.test(page), 'the English hint shows a query that works (Hebrew)');
+});
 t('workflows: the evidence sweep tests before it writes, commits only data/streets/evidence, reads GET-only one request a second; the directory sync rebuilds the index', () => {
   const y = fs.readFileSync(path.join(ROOT, '.github/workflows/street-evidence-sync.yml'), 'utf8');
   assert.ok(y.indexOf('node test/streets.test.js') < y.indexOf('node scripts/street-evidence-sync.js'));

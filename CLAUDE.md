@@ -24,14 +24,16 @@
   offered as a street), 6000–6999 ADDRESS AREA, 7000–8999 SITE; nothing deleted — a retired code stays `historical`; legacy `stp:` ids map
   through `legacy-ids.json`) + a prebuilt search index (`search-index.json`, checked by the directory files' sha256; `lib/geo/registry.js`
   ranks 1 exact in the selected locality · 2 synonym there · 3 prefix there · 4 exact elsewhere · 5 synonym elsewhere · 6 discovery;
-  `near` = the locality in view) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
+  `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
   register (over.org.il; 36 months ending on the copy's latest deal; one request a second; only when the copy changes) joined to the
   directory through the parcel crosswalk — OBSERVED only when every address of the parcel is on the one street (POSSIBLE = corner /
-  truncated / unresolved, listed apart, never aggregated); dwelling universe, priced = whole property; SUPPORTED ≥ 10 · LIMITED 5–9 ·
-  INSUFFICIENT 1–4 (price "—") · NONE (never a zero price); the locality / verified-neighbourhood / CBS city figures are CONTEXT ("These
+  truncated / unresolved / a dropped street-type word, listed apart, never aggregated); dwelling universe (mostly-land natures
+  excluded), priced = whole property for ≥ ₪100,000 (several units for one consideration unpriced); SUPPORTED ≥ 10 · LIMITED 5–9 ·
+  INSUFFICIENT 1–4 (price "—") · NONE (never a zero price); the 12-month change on ₪/m² only with 30 + 30 deals and a 95 % interval;
+  a shard matched against an older directory is re-matched offline; the locality / verified-neighbourhood / CBS city figures are CONTEXT ("These
   figures describe the surrounding market, not observed prices on this street."); Tel Aviv permits / sites by exact address.
   `GET /api/intel?view=street|streetCoverage`; the page's geo view renders Street Intelligence for a street (`siHTML`, one-minute ·
-  five-minute · deep dive). Registry group `streets` (11 terms, 7 missing reasons, section `street`); Trust `datagov:streets` +
+  five-minute · deep dive). Registry group `streets` (11 terms, 8 missing reasons, section `street`); Trust `datagov:streets` +
   `over:street-evidence`. See `lib/streets/README.md`.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
