@@ -3,7 +3,8 @@
 #
 # The sweep reads every settlement's deals of the 36 months that end on the copy's latest deal, splitting each window by
 # date until every query answers in one page (completeness proven per window), one request a second. It runs again only
-# when the publisher's copy changes (stats.scraped_at) — a weekly check costs one request. A sweep that does not finish in
+# when the publisher's copy changes (stats.scraped_at) — a daily check costs three requests, so a new copy is swept the day
+# it appears (P0 freshness audit 19.10.2026: the check was weekly). An OLDER copy than the stored one is refused. A sweep that does not finish in
 # one job keeps progress.json and the next run (scheduled or dispatched) resumes it. data/streets/evidence/ and
 # data/streets/model/ (the STREET VALUE MODEL, rebuilt after a complete sweep when an input changed) are bot-written.
 
@@ -11,7 +12,7 @@ name: Street evidence sync
 
 on:
   schedule:
-    - cron: '41 3 * * 2'   # Tuesdays 03:41 UTC: one request when the copy is unchanged
+    - cron: '41 3 * * *'   # every day 03:41 UTC: three requests when the copy is unchanged
   workflow_dispatch:
     inputs:
       force:

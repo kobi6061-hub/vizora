@@ -1,0 +1,3674 @@
+[
+ {
+  "id": "taxes:nadlan-register",
+  "vertical": "transactions",
+  "target": null,
+  "priority": 1,
+  "owner": "רשות המסים בישראל — מידע נדל\"ן (המאגר הישן)",
+  "ownerEn": "Israel Tax Authority — real-estate information register (legacy system)",
+  "name": "nadlan.taxes.gov.il — startpage.aspx (the register the republished copy was taken from)",
+  "url": "https://nadlan.taxes.gov.il/svinfonadlan2010/startpage.aspx",
+  "accessMethod": "HTTPS GET of the public start page only (no form post, no session).",
+  "classification": "RESTRICTED",
+  "verdict": "BLOCKED",
+  "why": "From the GitHub runner the host does not answer (connection failure — \"fetch failed\", run 39327144424). Since 29.09.2026 the register sits behind an identification screen against automated reading (lib/gov/README.md). PROPX does not bypass it.",
+  "freshness": "unknown to PROPX (not readable)",
+  "joinKey": null,
+  "contains": "every reported deal (date, consideration, nature, area, rooms, build year, block / parcel / sub-parcel, share) — the source of the republished copy",
+  "limitations": [
+   "not machine-readable for PROPX: connection refused from the runner; identification screen since 29.09.2026",
+   "an authorized feed (GOV_TAXAUTH_ENDPOINT — a data-sharing agreement) would activate lib/gov/providers/taxAuthority.js with zero mapping work"
+  ],
+  "evidence": {
+   "run": 39327144424,
+   "result": "fetch failed"
+  },
+  "auditedAt": "2026-10-19",
+  "auditedBy": "scripts/tx-freshness-discover.js --official"
+ },
+ {
+  "id": "nadlan.gov.il:deals",
+  "vertical": "transactions",
+  "target": null,
+  "priority": 1,
+  "owner": "אתר הנדל\"ן הממשלתי (nadlan.gov.il)",
+  "ownerEn": "The government real-estate site (nadlan.gov.il)",
+  "name": "nadlan.gov.il — deals search (single-page app)",
+  "url": "https://www.nadlan.gov.il/",
+  "accessMethod": "HTTPS GET of the page and its public scripts only.",
+  "classification": "RESTRICTED",
+  "verdict": "BLOCKED",
+  "why": "The page answers (HTTP 200, CloudFront) and loads Google reCAPTCHA Enterprise (www.google.com/recaptcha/enterprise.js?render=…) — its data calls are CAPTCHA-protected. Reading them automatically would be a CAPTCHA bypass: not done (run 39327144424).",
+  "freshness": "the official display of the Tax Authority deals — not readable by PROPX",
+  "joinKey": null,
+  "limitations": [
+   "reCAPTCHA Enterprise in front of the data — never bypassed",
+   "a person can verify any deal there by hand (the acceptance fixture lists the keys to look up)"
+  ],
+  "evidence": {
+   "run": 39327144424,
+   "status": 200,
+   "markers": [
+    "recaptcha"
+   ]
+  },
+  "auditedAt": "2026-10-19",
+  "auditedBy": "scripts/tx-freshness-discover.js --official"
+ },
+ {
+  "id": "govmap:deals-layer",
+  "vertical": "transactions",
+  "target": null,
+  "priority": 1,
+  "owner": "GovMap — המפה הממשלתית (שכבת עסקאות נדל\"ן, lay=16)",
+  "ownerEn": "GovMap — the State mapping portal (real-estate deals layer, lay=16)",
+  "name": "GovMap real-estate deals API",
+  "url": "https://www.govmap.gov.il/?lay=16",
+  "accessMethod": "HTTPS GET (home page + one deals-API read).",
+  "classification": "RESTRICTED",
+  "verdict": "BLOCKED",
+  "why": "CloudFront HTTP 403 \"Request blocked\" to the GitHub runner on the whole site (home and API), as to Vercel since late 09.2026; the daily tx-sync has been REFUSED on every run since 01.10.2026 (60 runs). Not worked around.",
+  "freshness": "not readable by PROPX",
+  "joinKey": "block / parcel / sub-parcel + date",
+  "limitations": [
+   "refused at the CDN — not worked around",
+   "the layer is the same deals nadlan.gov.il shows"
+  ],
+  "evidence": {
+   "run": 39327144424,
+   "status": 403,
+   "txSyncRuns": "data/transactions/sync-runs.jsonl (60 × REFUSED / FAILED, 01–19.10.2026)"
+  },
+  "auditedAt": "2026-10-19",
+  "auditedBy": "scripts/tx-freshness-discover.js --official"
+ },
+ {
+  "id": "datagov:tax-deals",
+  "vertical": "transactions",
+  "target": null,
+  "priority": 3,
+  "owner": "data.gov.il",
+  "ownerEn": "data.gov.il",
+  "name": "an open dataset of real-estate transactions",
+  "url": "https://data.gov.il/api/3/action/package_search",
+  "classification": "UNUSABLE",
+  "verdict": "REJECT",
+  "why": "No dataset: package_search for עסקאות נדל\"ן · עסקאות מקרקעין · מידע נדל\"ן · רשות המסים · מיסוי מקרקעין · nadlan · real estate transactions → 0 results each (run 39327144424).",
+  "evidence": {
+   "run": 39327144424,
+   "results": 0
+  },
+  "auditedAt": "2026-10-19",
+  "auditedBy": "scripts/tx-freshness-discover.js --official"
+ },
+ {
+  "id": "over:govmap-layer",
+  "vertical": "transactions",
+  "target": null,
+  "priority": 1,
+  "owner": "גרסאות לעם (over.org.il) — עותק של שכבת העסקאות של GovMap",
+  "ownerEn": "over.org.il — a copy of the GovMap deals layer (lay=16)",
+  "name": "over.org.il /api/deals/govmap/* (table public.govmap_deals)",
+  "url": "https://www.over.org.il/api/deals/govmap/stats",
+  "accessMethod": "HTTPS GET, keyless, documented OpenAPI: /api/deals/govmap/{stats,settlements,search,points}; search pages newest first (limit ≤ 200, offset ≤ 100,000); ANY date filter answers HTTP 500 (19.10.2026).",
+  "classification": "CONFIRMED_STRUCTURED_API",
+  "verdict": "DOCUMENT-ONLY",
+  "why": "A NEWER copy than the register copy PROPX reads (loaded 08.10.2026 vs scraped 19.09.2026; latest deal 28.09.2026 vs 17.09.2026), with real addresses (street + house as GovMap prints them). Not read yet: integrating a second republication with these defects is an owner decision, and it is not a superset of the register copy.",
+  "freshness": "loaded_at 2026-10-08T01:50:12Z · last_deal 2026-09-28 · 2,500,941 deals · version 4 · dataset 4174aac2-c8b2-443e-9425-3773ce47c8da",
+  "joinKey": "block · parcel · date (±1 day) · amount (₪1,000 truncation) · area — sub-parcel numbers differ between the channels",
+  "contains": "deal_id, deal_date, deal_amount, settlement, street, house_num, floor, asset_area, rooms, property_type, deal_nature, gush / parcel / sub_parcel, polygon_id, lon / lat",
+  "limitations": [
+   "not a government channel — a republication of the official GovMap layer",
+   "a second deal-id series (11361…) repeats deals with the date ONE DAY EARLIER and no property type (a UTC conversion of a local midnight)",
+   "dates as published run 1900–2048: 15 future-dated rows in the eight cities' last 13 months",
+   "amounts truncated to ₪1,000 (508 of the matched deals)",
+   "its own sub-parcel numbering: 8,721 of 19,531 matched deals carry another sub-parcel than the register",
+   "≈84,000 deals without a settlement (findable by block / parcel only); GovMap returns at most 500 deals per point",
+   "not a superset of the register: 4,387 dwelling deals of the register copy (8 cities, 13 months) are not in it under the same parcel / date / amount"
+  ],
+  "evidence": {
+   "run": 39329664397,
+   "window": "2025-09-18 → 2026-10-19",
+   "cities": [
+    {
+     "city": "פתח תקווה",
+     "code": 7900,
+     "govmapRows": 2465,
+     "propxRows": 2292,
+     "propxDwellingRows": 2076,
+     "sameDeal": 1679,
+     "match": 808,
+     "matchAmountTruncated": 91,
+     "fieldDifference": 780,
+     "possiblySameDeal": 5,
+     "missingInPropxReportedLate": 251,
+     "missingInPropxOlder": 528,
+     "futureDatedAtSource": 2,
+     "extraInPropx": 481,
+     "diffKinds": {
+      "sub-parcel": 532,
+      "amount:share-of-property": 164,
+      "rooms": 93,
+      "amount": 3,
+      "area": 1
+     },
+     "latest": {
+      "govmap": "2026-09-02",
+      "propxDwelling": "2026-07-18"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 189,
+       "d365today": 2323,
+       "d90copy": 404,
+       "d365copy": 2463
+      },
+      "propxDwelling": {
+       "d90today": 0,
+       "d365today": 1956,
+       "d90copy": 133,
+       "d365copy": 2076
+      }
+     },
+     "monthly": "2025-09:73/71 2025-10:172/154 2025-11:306/286 2025-12:325/299 2026-01:263/248 2026-02:194/204 2026-03:247/240 2026-04:123/127 2026-05:234/199 2026-06:221/191 2026-07:200/57 2026-08:103/0 2026-09:2/0",
+     "missingWhy": {
+      "late:דירה": 191,
+      "late:(none)": 59,
+      "late:קרקע": 1,
+      "not-found:דירה": 106,
+      "not-found:בנין": 29,
+      "not-found:(none)": 361,
+      "not-found:קרקע": 30,
+      "not-found:משק חקלאי": 2
+     },
+     "extraWhy": {
+      "whole:late-window": 5,
+      "share:late-window": 1,
+      "whole": 324,
+      "share": 151
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 3,
+      "FOUND_DIFFERENT_FIELDS": 0,
+      "NOT_IN_GOVMAP_COPY": 9,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "תל אביב-יפו",
+     "code": 5000,
+     "govmapRows": 6479,
+     "propxRows": 5016,
+     "propxDwellingRows": 4558,
+     "sameDeal": 3804,
+     "match": 744,
+     "matchAmountTruncated": 94,
+     "fieldDifference": 2966,
+     "possiblySameDeal": 12,
+     "missingInPropxReportedLate": 334,
+     "missingInPropxOlder": 2325,
+     "futureDatedAtSource": 4,
+     "extraInPropx": 998,
+     "diffKinds": {
+      "rooms": 121,
+      "sub-parcel": 2542,
+      "amount:share-of-property": 309,
+      "amount": 18,
+      "date": 5,
+      "area": 14,
+      "date:govmap-one-day-earlier": 3
+     },
+     "latest": {
+      "govmap": "2026-08-30",
+      "propxDwelling": "2026-07-26"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 209,
+       "d365today": 6093,
+       "d90copy": 585,
+       "d365copy": 6475
+      },
+      "propxDwelling": {
+       "d90today": 1,
+       "d365today": 4202,
+       "d90copy": 103,
+       "d365copy": 4558
+      }
+     },
+     "monthly": "2025-09:265/248 2025-10:342/316 2025-11:743/675 2025-12:904/713 2026-01:490/389 2026-02:517/398 2026-03:795/515 2026-04:562/331 2026-05:767/507 2026-06:699/432 2026-07:277/34 2026-08:114/0",
+     "missingWhy": {
+      "late:דירה": 159,
+      "late:(none)": 169,
+      "late:קרקע": 4,
+      "late:בנין": 2,
+      "not-found:דירה": 498,
+      "not-found:(none)": 1709,
+      "not-found:בנין": 51,
+      "not-found:קרקע": 67
+     },
+     "extraWhy": {
+      "whole:late-window": 4,
+      "share": 576,
+      "whole": 418
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 0,
+      "NOT_IN_GOVMAP_COPY": 12,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "ירושלים",
+     "code": 3000,
+     "govmapRows": 5137,
+     "propxRows": 4758,
+     "propxDwellingRows": 4306,
+     "sameDeal": 3507,
+     "match": 1407,
+     "matchAmountTruncated": 125,
+     "fieldDifference": 1975,
+     "possiblySameDeal": 7,
+     "missingInPropxReportedLate": 311,
+     "missingInPropxOlder": 1312,
+     "futureDatedAtSource": 0,
+     "extraInPropx": 1039,
+     "diffKinds": {
+      "sub-parcel": 1500,
+      "amount:share-of-property": 340,
+      "rooms": 150,
+      "amount": 10,
+      "area": 5,
+      "date": 3,
+      "date:govmap-one-day-earlier": 1
+     },
+     "latest": {
+      "govmap": "2026-09-01",
+      "propxDwelling": "2026-08-24"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 200,
+       "d365today": 4767,
+       "d90copy": 611,
+       "d365copy": 5137
+      },
+      "propxDwelling": {
+       "d90today": 10,
+       "d365today": 3960,
+       "d90copy": 185,
+       "d365copy": 4306
+      }
+     },
+     "monthly": "2025-09:220/215 2025-10:361/338 2025-11:565/552 2025-12:716/624 2026-01:487/441 2026-02:515/463 2026-03:508/474 2026-04:343/273 2026-05:493/455 2026-06:514/380 2026-07:324/90 2026-08:90/1 2026-09:1/0",
+     "missingWhy": {
+      "late:דירה": 230,
+      "late:(none)": 69,
+      "late:בנין": 10,
+      "late:קרקע": 2,
+      "not-found:דירה": 443,
+      "not-found:בנין": 74,
+      "not-found:קרקע": 65,
+      "not-found:(none)": 730
+     },
+     "extraWhy": {
+      "whole:late-window": 8,
+      "share:late-window": 4,
+      "whole": 566,
+      "share": 461
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 3,
+      "NOT_IN_GOVMAP_COPY": 9,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "חיפה",
+     "code": 4000,
+     "govmapRows": 4398,
+     "propxRows": 3566,
+     "propxDwellingRows": 3308,
+     "sameDeal": 2899,
+     "match": 1378,
+     "matchAmountTruncated": 54,
+     "fieldDifference": 1467,
+     "possiblySameDeal": 2,
+     "missingInPropxReportedLate": 420,
+     "missingInPropxOlder": 1074,
+     "futureDatedAtSource": 3,
+     "extraInPropx": 566,
+     "diffKinds": {
+      "sub-parcel": 1052,
+      "amount:share-of-property": 274,
+      "rooms": 152,
+      "amount": 3
+     },
+     "latest": {
+      "govmap": "2026-09-02",
+      "propxDwelling": "2026-08-23"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 384,
+       "d365today": 4072,
+       "d90copy": 690,
+       "d365copy": 4395
+      },
+      "propxDwelling": {
+       "d90today": 55,
+       "d365today": 3076,
+       "d90copy": 231,
+       "d365copy": 3308
+      }
+     },
+     "monthly": "2025-09:192/141 2025-10:326/260 2025-11:518/395 2025-12:537/408 2026-01:446/345 2026-02:441/339 2026-03:424/326 2026-04:283/215 2026-05:296/398 2026-06:359/330 2026-07:280/122 2026-08:291/29 2026-09:2/0",
+     "missingWhy": {
+      "late:דירה": 301,
+      "late:(none)": 115,
+      "late:בנין": 3,
+      "late:קרקע": 1,
+      "not-found:דירה": 510,
+      "not-found:(none)": 509,
+      "not-found:קרקע": 28,
+      "not-found:בנין": 27
+     },
+     "extraWhy": {
+      "whole:late-window": 18,
+      "share:late-window": 2,
+      "whole": 421,
+      "share": 125
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 1,
+      "NOT_IN_GOVMAP_COPY": 11,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "באר שבע",
+     "code": 9000,
+     "govmapRows": 2958,
+     "propxRows": 2495,
+     "propxDwellingRows": 2371,
+     "sameDeal": 2143,
+     "match": 1206,
+     "matchAmountTruncated": 32,
+     "fieldDifference": 905,
+     "possiblySameDeal": 2,
+     "missingInPropxReportedLate": 351,
+     "missingInPropxOlder": 462,
+     "futureDatedAtSource": 0,
+     "extraInPropx": 271,
+     "diffKinds": {
+      "sub-parcel": 673,
+      "rooms": 110,
+      "amount:share-of-property": 129,
+      "amount": 2,
+      "area": 2
+     },
+     "latest": {
+      "govmap": "2026-09-03",
+      "propxDwelling": "2026-07-27"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 263,
+       "d365today": 2797,
+       "d90copy": 521,
+       "d365copy": 2958
+      },
+      "propxDwelling": {
+       "d90today": 6,
+       "d365today": 2211,
+       "d90copy": 117,
+       "d365copy": 2371
+      }
+     },
+     "monthly": "2025-09:95/95 2025-10:174/177 2025-11:288/271 2025-12:358/336 2026-01:252/241 2026-02:269/260 2026-03:230/227 2026-04:332/262 2026-05:269/239 2026-06:284/213 2026-07:212/50 2026-08:194/0 2026-09:1/0",
+     "missingWhy": {
+      "late:דירה": 273,
+      "late:(none)": 78,
+      "not-found:דירה": 112,
+      "not-found:(none)": 323,
+      "not-found:בנין": 19,
+      "not-found:קרקע": 8
+     },
+     "extraWhy": {
+      "whole:late-window": 4,
+      "share": 79,
+      "whole": 188
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 1,
+      "FOUND_DIFFERENT_FIELDS": 1,
+      "NOT_IN_GOVMAP_COPY": 10,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "ראשון לציון",
+     "code": 8300,
+     "govmapRows": 2624,
+     "propxRows": 2439,
+     "propxDwellingRows": 1669,
+     "sameDeal": 1830,
+     "match": 631,
+     "matchAmountTruncated": 32,
+     "fieldDifference": 1167,
+     "possiblySameDeal": 3,
+     "missingInPropxReportedLate": 200,
+     "missingInPropxOlder": 586,
+     "futureDatedAtSource": 5,
+     "extraInPropx": 226,
+     "diffKinds": {
+      "sub-parcel": 964,
+      "rooms": 41,
+      "amount:share-of-property": 164,
+      "amount": 10,
+      "date": 5,
+      "area": 4,
+      "date:govmap-one-day-earlier": 2
+     },
+     "latest": {
+      "govmap": "2026-09-02",
+      "propxDwelling": "2026-07-21"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 133,
+       "d365today": 2483,
+       "d90copy": 341,
+       "d365copy": 2619
+      },
+      "propxDwelling": {
+       "d90today": 0,
+       "d365today": 1564,
+       "d90copy": 50,
+       "d365copy": 1669
+      }
+     },
+     "monthly": "2025-09:84/62 2025-10:130/102 2025-11:268/186 2025-12:354/223 2026-01:264/213 2026-02:392/251 2026-03:250/201 2026-04:209/143 2026-05:213/158 2026-06:234/112 2026-07:144/18 2026-08:73/0 2026-09:4/0",
+     "missingWhy": {
+      "late:דירה": 133,
+      "late:קרקע": 5,
+      "late:(none)": 60,
+      "late:בנין": 2,
+      "not-found:קרקע": 43,
+      "not-found:דירה": 118,
+      "not-found:(none)": 404,
+      "not-found:בנין": 21
+     },
+     "extraWhy": {
+      "whole:late-window": 3,
+      "share:late-window": 1,
+      "whole": 129,
+      "share": 93
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 1,
+      "NOT_IN_GOVMAP_COPY": 11,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "נתניה",
+     "code": 7400,
+     "govmapRows": 2893,
+     "propxRows": 2640,
+     "propxDwellingRows": 2388,
+     "sameDeal": 2044,
+     "match": 924,
+     "matchAmountTruncated": 60,
+     "fieldDifference": 1060,
+     "possiblySameDeal": 13,
+     "missingInPropxReportedLate": 211,
+     "missingInPropxOlder": 624,
+     "futureDatedAtSource": 1,
+     "extraInPropx": 488,
+     "diffKinds": {
+      "sub-parcel": 752,
+      "rooms": 141,
+      "amount:share-of-property": 176,
+      "amount": 10,
+      "date:govmap-one-day-earlier": 6,
+      "date": 2,
+      "area": 4
+     },
+     "latest": {
+      "govmap": "2026-09-02",
+      "propxDwelling": "2026-08-05"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 185,
+       "d365today": 2663,
+       "d90copy": 323,
+       "d365copy": 2892
+      },
+      "propxDwelling": {
+       "d90today": 18,
+       "d365today": 2186,
+       "d90copy": 73,
+       "d365copy": 2388
+      }
+     },
+     "monthly": "2025-09:120/119 2025-10:300/219 2025-11:331/248 2025-12:331/323 2026-01:275/256 2026-02:586/619 2026-03:196/184 2026-04:121/117 2026-05:173/129 2026-06:201/132 2026-07:110/27 2026-08:146/15 2026-09:2/0",
+     "missingWhy": {
+      "late:דירה": 122,
+      "late:(none)": 84,
+      "late:בנין": 5,
+      "not-found:דירה": 101,
+      "not-found:(none)": 492,
+      "not-found:קרקע": 18,
+      "not-found:בנין": 13
+     },
+     "extraWhy": {
+      "whole:late-window": 3,
+      "whole": 293,
+      "share": 192
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 5,
+      "NOT_IN_GOVMAP_COPY": 7,
+      "LOOKUP_FAILED": 0
+     }
+    },
+    {
+     "city": "אשדוד",
+     "code": 70,
+     "govmapRows": 2456,
+     "propxRows": 2057,
+     "propxDwellingRows": 1884,
+     "sameDeal": 1625,
+     "match": 689,
+     "matchAmountTruncated": 20,
+     "fieldDifference": 916,
+     "possiblySameDeal": 4,
+     "missingInPropxReportedLate": 215,
+     "missingInPropxOlder": 612,
+     "futureDatedAtSource": 0,
+     "extraInPropx": 318,
+     "diffKinds": {
+      "sub-parcel": 706,
+      "amount:share-of-property": 113,
+      "rooms": 92,
+      "amount": 18,
+      "date": 7,
+      "area": 9,
+      "date:govmap-one-day-earlier": 2
+     },
+     "latest": {
+      "govmap": "2026-08-30",
+      "propxDwelling": "2026-09-07"
+     },
+     "counts": {
+      "govmap": {
+       "d90today": 159,
+       "d365today": 2342,
+       "d90copy": 331,
+       "d365copy": 2456
+      },
+      "propxDwelling": {
+       "d90today": 7,
+       "d365today": 1765,
+       "d90copy": 86,
+       "d365copy": 1884
+      }
+     },
+     "monthly": "2025-09:82/79 2025-10:126/133 2025-11:211/188 2025-12:289/249 2026-01:185/174 2026-02:162/165 2026-03:159/170 2026-04:158/116 2026-05:592/411 2026-06:237/159 2026-07:146/34 2026-08:109/3 2026-09:0/3",
+     "missingWhy": {
+      "late:(none)": 62,
+      "late:דירה": 153,
+      "not-found:דירה": 114,
+      "not-found:(none)": 485,
+      "not-found:בנין": 7,
+      "not-found:קרקע": 6
+     },
+     "extraWhy": {
+      "whole:late-window": 10,
+      "share:late-window": 1,
+      "whole": 255,
+      "share": 52
+     },
+     "extraLookup": {
+      "FOUND_UNDER_OTHER_SETTLEMENT": 0,
+      "FOUND_DIFFERENT_FIELDS": 2,
+      "NOT_IN_GOVMAP_COPY": 10,
+      "LOOKUP_FAILED": 0
+     }
+    }
+   ],
+   "totals": {
+    "govmapRows": 29410,
+    "propxDwellingRows": 22560,
+    "sameDeal": 19531,
+    "match": 7787,
+    "matchAmountTruncated": 508,
+    "fieldDifference": 11236,
+    "possiblySameDeal": 48,
+    "missingInPropxReportedLate": 2293,
+    "missingInPropxOlder": 7523,
+    "futureDatedAtSource": 15,
+    "extraInPropx": 4387
+   },
+   "streets": [
+    {
+     "city": "פתח תקווה",
+     "street": "שחם",
+     "govmap": {
+      "n": 91,
+      "latest": "2026-08-30",
+      "d90": 4
+     },
+     "propx": {
+      "n": 13,
+      "latest": "2026-07-05",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 24,
+      "reportedLate": 5,
+      "olderMissing": 11,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-30",
+        "שחם",
+        "31",
+        "6393/348/141",
+        2820000,
+        80,
+        3,
+        "דירה",
+        3661713710
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-12",
+        "שחם",
+        "23",
+        "6393/344/60",
+        4115000,
+        135,
+        6,
+        null,
+        11361480299
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-03",
+        "שחם",
+        "23",
+        "6393/344/59",
+        4100000,
+        141,
+        6,
+        null,
+        11361480297
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "שחם",
+        "31",
+        "6393/348/142",
+        3555000,
+        124,
+        5,
+        "דירה",
+        3660765091
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "פתח תקווה",
+     "street": "שלום צלח",
+     "govmap": {
+      "n": 57,
+      "latest": "2026-08-20",
+      "d90": 2
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 31,
+      "reportedLate": 4,
+      "olderMissing": 5,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-20",
+        "שלום צלח",
+        "17",
+        "6320/138/2",
+        2200000,
+        58,
+        3,
+        "דירה",
+        3661389548
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "שלום צלח",
+        "3",
+        "6320/193/19",
+        1820000,
+        77,
+        3,
+        "דירה",
+        3660558814
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-09",
+        "שלום צלח",
+        "35",
+        "6320/159/8",
+        2190000,
+        74,
+        3,
+        "דירה",
+        3660563135
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-08",
+        "שלום צלח",
+        "35",
+        "6320/159/7",
+        2190000,
+        74,
+        3,
+        null,
+        11361473173
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "פתח תקווה",
+     "street": "מבצע דקל",
+     "govmap": {
+      "n": 55,
+      "latest": "2026-07-30",
+      "d90": 2
+     },
+     "propx": {
+      "n": 36,
+      "latest": "2026-07-01",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 38,
+      "reportedLate": 2,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-30",
+        "מבצע דקל",
+        "16",
+        "6366/174/48",
+        4950000,
+        145,
+        6,
+        "דירה",
+        3661023481
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "מבצע דקל",
+        "16",
+        "6366/174/47",
+        4950000,
+        145,
+        6,
+        null,
+        11361475550
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-01",
+        "מבצע דקל",
+        "16",
+        "6366/174/49",
+        4100000,
+        126,
+        5,
+        "דירה",
+        3659887261
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-30",
+        "מבצע דקל",
+        "16",
+        "6366/174/46",
+        4100000,
+        126,
+        5,
+        null,
+        11361475549
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "פתח תקווה",
+     "street": "נחלת צבי",
+     "govmap": {
+      "n": 14,
+      "latest": "2026-08-31",
+      "d90": 1
+     },
+     "propx": {
+      "n": 14,
+      "latest": "2026-06-23",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 12,
+      "reportedLate": 1,
+      "olderMissing": 1,
+      "of": 14
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-31",
+        "נחלת צבי",
+        "16",
+        "6378/195/14",
+        2035000,
+        99,
+        4,
+        "דירה",
+        3661706083
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-25",
+        "נחלת צבי",
+        "39",
+        "6378/141/10",
+        1740000,
+        81,
+        3,
+        "דירה",
+        3660054504
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-23",
+        "נחלת צבי",
+        "59",
+        "6355/121/8",
+        2000000,
+        88,
+        4,
+        "דירה",
+        3659336783
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-22",
+        "נחלת צבי",
+        "7",
+        "6378/36/1",
+        1960000,
+        85,
+        4,
+        "דירה",
+        3660154264
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "פתח תקווה",
+     "street": "פרופ' שור",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-25",
+      "d90": 1
+     },
+     "propx": {
+      "n": 1,
+      "latest": "2025-12-28",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-25",
+        "פרופ' שור",
+        "12",
+        "6361/437/14",
+        1740000,
+        94,
+        3.5,
+        "דירה",
+        3661573959
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2025-12-28",
+        "פרופ' שור",
+        "1",
+        "6361/412/42",
+        1767600,
+        71,
+        3,
+        "דירה",
+        3654107938
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2025-12-28",
+        "פרופ' שור",
+        "1",
+        "6361/412/42",
+        1166000,
+        71,
+        3,
+        "דירה",
+        3654106256
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "תל אביב-יפו",
+     "street": "בתיה",
+     "govmap": {
+      "n": 244,
+      "latest": "2026-07-30",
+      "d90": 6
+     },
+     "propx": {
+      "n": 1,
+      "latest": "2025-11-16",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 15,
+      "reportedLate": 6,
+      "olderMissing": 19,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-30",
+        "בתיה",
+        "2",
+        "6896/204/427",
+        585000,
+        1,
+        null,
+        "קרקע",
+        6309731900
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-30",
+        "בתיה",
+        "2",
+        "6896/204/428",
+        5941000,
+        79,
+        3,
+        "דירה",
+        6310043600
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-30",
+        "בתיה",
+        "2",
+        "6896/204/428",
+        5911000,
+        94,
+        4,
+        "דירה",
+        6309377050
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "בתיה",
+        "2",
+        "6896/204/423",
+        5868880,
+        94,
+        4,
+        null,
+        11361505521
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "תל אביב-יפו",
+     "street": "קרמינצקי",
+     "govmap": {
+      "n": 171,
+      "latest": "2026-07-01",
+      "d90": 0
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 35,
+      "reportedLate": 0,
+      "olderMissing": 5,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-01",
+        "קרמינצקי",
+        "5",
+        "7095/11/88",
+        4179000,
+        72,
+        3,
+        "דירה",
+        6308135900
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-30",
+        "קרמינצקי",
+        "5",
+        "7095/11/87",
+        4179511,
+        72,
+        3,
+        null,
+        11361515167
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-30",
+        "קרמינצקי",
+        "5",
+        "7095/11/89",
+        4204000,
+        70,
+        3,
+        "דירה",
+        6308528100
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-29",
+        "קרמינצקי",
+        "5",
+        "7095/11/86",
+        4204943,
+        70,
+        3,
+        null,
+        11361515166
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "תל אביב-יפו",
+     "street": "הרצל",
+     "govmap": {
+      "n": 88,
+      "latest": "2026-07-16",
+      "d90": 0
+     },
+     "propx": {
+      "n": 74,
+      "latest": "2026-07-08",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 33,
+      "reportedLate": 2,
+      "olderMissing": 5,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-16",
+        "הרצל",
+        "176",
+        "7053/111/18",
+        4475000,
+        114,
+        5,
+        "דירה",
+        6309556050
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-15",
+        "הרצל",
+        "176",
+        "7053/111/5",
+        4475000,
+        114,
+        5,
+        null,
+        11361513553
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-08",
+        "הרצל",
+        "176",
+        "7053/111/19",
+        4315000,
+        99,
+        4,
+        "דירה",
+        6308713350
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-07-07",
+        "הרצל",
+        "176",
+        "7053/111/3",
+        4315638,
+        99,
+        4,
+        null,
+        11361513551
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "תל אביב-יפו",
+     "street": "בנימין מינץ",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-08-19",
+      "d90": 4
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 8,
+      "reportedLate": 6,
+      "olderMissing": 1,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-19",
+        "בנימין מינץ",
+        "10",
+        "6636/707/15",
+        4556000,
+        108,
+        5,
+        "דירה",
+        6309943000
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-18",
+        "בנימין מינץ",
+        "10",
+        "6636/707/8",
+        4556980,
+        108,
+        5,
+        null,
+        11361497902
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "בנימין מינץ",
+        "10",
+        "6636/707/16",
+        5562000,
+        108,
+        5,
+        "דירה",
+        6309923600
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-27",
+        "בנימין מינץ",
+        "10",
+        "6636/707/13",
+        5562535,
+        108,
+        5,
+        null,
+        11361497894
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "תל אביב-יפו",
+     "street": "נהלל",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-27",
+      "d90": 1
+     },
+     "propx": {
+      "n": 1,
+      "latest": "2026-01-27",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 1,
+      "reportedLate": 1,
+      "olderMissing": 1,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-27",
+        "נהלל",
+        "14",
+        "7110/176/2",
+        2700000,
+        66,
+        3,
+        "דירה",
+        6310263850
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-03-23",
+        "נהלל",
+        "20",
+        "7110/196/16",
+        2305100,
+        57,
+        2,
+        "דירה",
+        6303969550
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-01-27",
+        "נהלל",
+        "15",
+        "7110/174/18",
+        4300000,
+        135,
+        4,
+        "דירה",
+        6301902900
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "ירושלים",
+     "street": "יפו",
+     "govmap": {
+      "n": 143,
+      "latest": "2026-07-30",
+      "d90": 14
+     },
+     "propx": {
+      "n": 66,
+      "latest": "2026-07-07",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 26,
+      "reportedLate": 14,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-30",
+        "יפו",
+        "161",
+        "30107/291/132",
+        4156000,
+        52,
+        2,
+        "דירה",
+        3786899100
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-30",
+        "יפו",
+        "161",
+        "30107/291/132",
+        3335000,
+        47,
+        2,
+        "דירה",
+        3786896910
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-30",
+        "יפו",
+        "161",
+        "30107/291/132",
+        3574000,
+        47,
+        2,
+        "דירה",
+        3786898620
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-30",
+        "יפו",
+        "161",
+        "30107/291/132",
+        4207000,
+        53,
+        2,
+        "דירה",
+        3786897150
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "ירושלים",
+     "street": "ישראל זנגוויל",
+     "govmap": {
+      "n": 97,
+      "latest": "2026-08-12",
+      "d90": 4
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 23,
+      "reportedLate": 7,
+      "olderMissing": 10,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-12",
+        "ישראל זנגוויל",
+        "11",
+        "30412/122/2",
+        2940000,
+        73,
+        3,
+        "דירה",
+        3786587010
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "ישראל זנגוויל",
+        "5",
+        "30343/137/27",
+        2644000,
+        74,
+        3,
+        "דירה",
+        3786615720
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "ישראל זנגוויל",
+        "5",
+        "30343/137/26",
+        2644250,
+        74,
+        3,
+        null,
+        11361377496
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "ישראל זנגוויל",
+        "5",
+        "30343/137/28",
+        4170000,
+        96,
+        4,
+        "דירה",
+        3786577800
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "ירושלים",
+     "street": "בית לחם",
+     "govmap": {
+      "n": 75,
+      "latest": "2026-07-27",
+      "d90": 1
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 34,
+      "reportedLate": 4,
+      "olderMissing": 2,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-27",
+        "בית לחם",
+        "160",
+        "30129/66/143",
+        2210000,
+        48,
+        2,
+        "דירה",
+        3786165990
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-20",
+        "בית לחם",
+        "101",
+        "30187/29/17",
+        2959100,
+        71,
+        4,
+        "דירה",
+        3786737250
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-09",
+        "בית לחם",
+        "168",
+        "30129/67/13",
+        5300700,
+        125,
+        4,
+        "דירה",
+        3786012810
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-08",
+        "בית לחם",
+        "168",
+        "30129/67/4",
+        5245000,
+        125,
+        4,
+        null,
+        11361373514
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "ירושלים",
+     "street": "קורא הדורות",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-08-10",
+      "d90": 4
+     },
+     "propx": {
+      "n": 11,
+      "latest": "2026-07-12",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 11,
+      "reportedLate": 4,
+      "olderMissing": 0,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-10",
+        "קורא הדורות",
+        "6",
+        "30115/48/24",
+        1979808,
+        36,
+        2,
+        null,
+        11361373235
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-05",
+        "קורא הדורות",
+        "29",
+        "30117/59/10",
+        2240000,
+        87,
+        3,
+        "דירה",
+        3786618210
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-04",
+        "קורא הדורות",
+        "29",
+        "30117/59/8",
+        2240000,
+        87,
+        3,
+        null,
+        11361373287
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-04",
+        "קורא הדורות",
+        "29",
+        "30117/59/9",
+        4240000,
+        87,
+        3,
+        null,
+        11361373288
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "ירושלים",
+     "street": "גלבר",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-24",
+      "d90": 1
+     },
+     "propx": {
+      "n": 3,
+      "latest": "2025-12-17",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-24",
+        "גלבר",
+        "15",
+        "30413/146/68",
+        4150000,
+        136,
+        5,
+        "דירה",
+        3787068390
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2025-12-17",
+        "גלבר",
+        "18",
+        "30190/10/20",
+        3200000,
+        110,
+        4,
+        "דירה",
+        3759536010
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2025-11-04",
+        "גלבר",
+        "16",
+        "30190/11/27",
+        2650000,
+        110,
+        3.5,
+        "דירה",
+        3758333400
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "חיפה",
+     "street": "אמציהו המלך",
+     "govmap": {
+      "n": 67,
+      "latest": "2026-08-06",
+      "d90": 7
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 34,
+      "reportedLate": 4,
+      "olderMissing": 2,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-06",
+        "אמציהו המלך",
+        "4",
+        "10751/18/73",
+        2670000,
+        126,
+        5,
+        "דירה",
+        5051493000
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-05",
+        "אמציהו המלך",
+        "7",
+        "10751/13/159",
+        2850000,
+        121,
+        5,
+        "דירה",
+        5051505200
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-05",
+        "אמציהו המלך",
+        "4",
+        "10751/18/4",
+        2670000,
+        126,
+        5,
+        null,
+        11361305444
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-04",
+        "אמציהו המלך",
+        "7",
+        "10751/13/158",
+        2850000,
+        122,
+        5,
+        null,
+        11361305269
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "חיפה",
+     "street": "אריאל שרון",
+     "govmap": {
+      "n": 50,
+      "latest": "2026-08-16",
+      "d90": 3
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 30,
+      "reportedLate": 6,
+      "olderMissing": 4,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-16",
+        "אריאל שרון",
+        "1",
+        "11188/175/245",
+        2760000,
+        139,
+        5,
+        null,
+        11361310771
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "אריאל שרון",
+        "1",
+        "11188/175/246",
+        1950000,
+        83,
+        3.5,
+        "דירה",
+        5050570640
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "אריאל שרון",
+        "1",
+        "11188/175/244",
+        1950000,
+        83,
+        4,
+        null,
+        11361310770
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-16",
+        "אריאל שרון",
+        "1",
+        "11188/175/247",
+        3350000,
+        176,
+        6,
+        "דירה",
+        5050546240
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "חיפה",
+     "street": "יד לבנים",
+     "govmap": {
+      "n": 48,
+      "latest": "2026-07-26",
+      "d90": 1
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 35,
+      "reportedLate": 2,
+      "olderMissing": 3,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-26",
+        "יד לבנים",
+        "196",
+        "10921/20/25",
+        1200000,
+        65,
+        3,
+        "דירה",
+        5051113880
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-09",
+        "יד לבנים",
+        "200",
+        "10921/22/22",
+        1000000,
+        65,
+        3,
+        "דירה",
+        5049028520
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-07-09",
+        "יד לבנים",
+        "92",
+        "11720/64/40",
+        1200000,
+        86,
+        4,
+        "דירה",
+        5048882640
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-07-08",
+        "יד לבנים",
+        "92",
+        "11720/64/16",
+        1240000,
+        87,
+        5,
+        "דירה",
+        5048830520
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "חיפה",
+     "street": "הפרחים",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-08-19",
+      "d90": 2
+     },
+     "propx": {
+      "n": 13,
+      "latest": "2026-07-16",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 11,
+      "reportedLate": 2,
+      "olderMissing": 2,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-19",
+        "הפרחים",
+        "1",
+        "11192/274/30",
+        1065000,
+        52,
+        3,
+        "דירה",
+        5051438880
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-17",
+        "הפרחים",
+        "5",
+        "11192/288/59",
+        1140000,
+        54,
+        3,
+        "דירה",
+        5051191080
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-16",
+        "הפרחים",
+        "11",
+        "11192/270/59",
+        1460000,
+        90,
+        4,
+        "דירה",
+        5049392240
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-03",
+        "הפרחים",
+        "11",
+        "11192/270/19",
+        1200000,
+        69,
+        3,
+        "דירה",
+        5047303000
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "חיפה",
+     "street": "מרטין בובר",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-31",
+      "d90": 3
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 0,
+      "reportedLate": 3,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-31",
+        "מרטין בובר",
+        "22",
+        "11192/195/11",
+        1930000,
+        95,
+        5,
+        "דירה",
+        5051757720
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-16",
+        "מרטין בובר",
+        "14",
+        "11192/192/5",
+        2330000,
+        169,
+        6,
+        "דירה",
+        5051140880
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-06",
+        "מרטין בובר",
+        "13",
+        "11192/178/1",
+        2000000,
+        93,
+        4,
+        "דירה",
+        5050994040
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "באר שבע",
+     "street": "תאנה",
+     "govmap": {
+      "n": 84,
+      "latest": "2026-08-27",
+      "d90": 8
+     },
+     "propx": {
+      "n": 43,
+      "latest": "2026-07-01",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 31,
+      "reportedLate": 9,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-27",
+        "תאנה",
+        "7",
+        "38009/52/33",
+        1556000,
+        83,
+        3,
+        "דירה",
+        11360943090
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-26",
+        "תאנה",
+        "7",
+        "38009/52/22",
+        1556979,
+        83,
+        3,
+        null,
+        11361402086
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-26",
+        "תאנה",
+        "7",
+        "38009/52/34",
+        1946000,
+        128,
+        5,
+        "דירה",
+        11360781990
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-25",
+        "תאנה",
+        "7",
+        "38009/52/17",
+        1946979,
+        128,
+        5,
+        null,
+        11361402080
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "באר שבע",
+     "street": "נחל קדרון",
+     "govmap": {
+      "n": 76,
+      "latest": "2026-08-27",
+      "d90": 8
+     },
+     "propx": {
+      "n": 51,
+      "latest": "2026-07-23",
+      "d90": 1
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 30,
+      "reportedLate": 8,
+      "olderMissing": 2,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-27",
+        "נחל קדרון",
+        "20",
+        "38675/18/133",
+        1650000,
+        140,
+        5,
+        "דירה",
+        11360643840
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-24",
+        "נחל קדרון",
+        "5",
+        "38463/30/26",
+        1750000,
+        123,
+        5,
+        "דירה",
+        11360785050
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-23",
+        "נחל קדרון",
+        "5",
+        "38463/30/14",
+        1750000,
+        123,
+        5,
+        null,
+        11361408764
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-10",
+        "נחל קדרון",
+        "5",
+        "38463/30/27",
+        1630000,
+        105,
+        4,
+        "דירה",
+        11359345410
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "באר שבע",
+     "street": "רוזמרין",
+     "govmap": {
+      "n": 61,
+      "latest": "2026-08-19",
+      "d90": 6
+     },
+     "propx": {
+      "n": 63,
+      "latest": "2026-07-07",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 32,
+      "reportedLate": 6,
+      "olderMissing": 2,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-19",
+        "רוזמרין",
+        "10",
+        "38492/39/34",
+        1720000,
+        132,
+        5,
+        "דירה",
+        11360542770
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-06",
+        "רוזמרין",
+        "21",
+        "38491/13/62",
+        1660000,
+        130,
+        5,
+        "דירה",
+        11359893150
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-01",
+        "רוזמרין",
+        "28",
+        "38490/52/59",
+        1800000,
+        127,
+        5,
+        "דירה",
+        11358464400
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-31",
+        "רוזמרין",
+        "28",
+        "38490/52/58",
+        1800000,
+        128,
+        5,
+        null,
+        11361409685
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "באר שבע",
+     "street": "דוד ניב ניב",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-09-03",
+      "d90": 2
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 10,
+      "reportedLate": 4,
+      "olderMissing": 1,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-09-03",
+        "דוד ניב ניב",
+        "7",
+        "38189/3/52",
+        1350000,
+        131,
+        4,
+        "דירה",
+        11361260070
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-26",
+        "דוד ניב ניב",
+        "5",
+        "38191/7/18",
+        1750000,
+        192,
+        5,
+        "דירה",
+        11360784330
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-16",
+        "דוד ניב ניב",
+        "11",
+        "38189/59/68",
+        1100000,
+        90,
+        3,
+        "דירה",
+        11357399250
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-13",
+        "דוד ניב ניב",
+        "17",
+        "38189/58/22",
+        1800000,
+        102,
+        4,
+        "דירה",
+        11358352620
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "באר שבע",
+     "street": "בודנהיימר",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-27",
+      "d90": 1
+     },
+     "propx": {
+      "n": 3,
+      "latest": "2026-01-22",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-27",
+        "בודנהיימר",
+        "28",
+        "38372/2/71",
+        1400000,
+        123,
+        4,
+        "דירה",
+        11360836890
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-01-22",
+        "בודנהיימר",
+        "10",
+        "38372/5/14",
+        1920000,
+        150,
+        5,
+        "דירה",
+        11344444740
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2025-12-03",
+        "בודנהיימר",
+        "10",
+        "38372/5/13",
+        2000000,
+        147,
+        5,
+        "דירה",
+        11280145770
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "ראשון לציון",
+     "street": "אסתר ארדיטי",
+     "govmap": {
+      "n": 176,
+      "latest": "2026-08-22",
+      "d90": 13
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 20,
+      "reportedLate": 14,
+      "olderMissing": 6,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-22",
+        "אסתר ארדיטי",
+        "14",
+        "4237/134/21",
+        3630000,
+        153,
+        6,
+        null,
+        11361430969
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-16",
+        "אסתר ארדיטי",
+        "13",
+        "4237/77/29",
+        3745000,
+        153,
+        6,
+        null,
+        11361431272
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-11",
+        "אסתר ארדיטי",
+        "2",
+        "4237/121/5",
+        2915000,
+        100,
+        4,
+        "דירה",
+        10607418108
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-08-10",
+        "אסתר ארדיטי",
+        "14",
+        "4237/134/7",
+        3620000,
+        153,
+        6,
+        null,
+        11361430994
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "ראשון לציון",
+     "street": "הרמטכ\"לים",
+     "govmap": {
+      "n": 52,
+      "latest": "2026-05-28",
+      "d90": 0
+     },
+     "propx": {
+      "n": 45,
+      "latest": "2026-06-10",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 39,
+      "reportedLate": 0,
+      "olderMissing": 1,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-05-28",
+        "הרמטכ\"לים",
+        "22",
+        "4237/144/20",
+        3250000,
+        134,
+        5,
+        "דירה",
+        10600791600
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-27",
+        "הרמטכ\"לים",
+        "22",
+        "4237/144/21",
+        3325000,
+        134,
+        5,
+        "דירה",
+        10599998052
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-26",
+        "הרמטכ\"לים",
+        "22",
+        "4237/144/14",
+        3325000,
+        134,
+        5,
+        null,
+        11361431025
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-20",
+        "הרמטכ\"לים",
+        "18",
+        "4237/142/7",
+        3430000,
+        143,
+        6,
+        "דירה",
+        10599989148
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "ראשון לציון",
+     "street": "יוסף לישנסקי",
+     "govmap": {
+      "n": 48,
+      "latest": "2026-07-07",
+      "d90": 0
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 38,
+      "reportedLate": 1,
+      "olderMissing": 1,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-07",
+        "יוסף לישנסקי",
+        "2",
+        "3946/520/24",
+        1411000,
+        89,
+        0,
+        "בנין",
+        10606443624
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-11",
+        "יוסף לישנסקי",
+        "2",
+        "3946/520/25",
+        1238000,
+        89,
+        0,
+        "בנין",
+        10604589156
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-05-19",
+        "יוסף לישנסקי",
+        "2",
+        "3946/520/26",
+        1138000,
+        77,
+        0,
+        "בנין",
+        10601372880
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-14",
+        "יוסף לישנסקי",
+        "2",
+        "3946/520/27",
+        1389000,
+        90,
+        0,
+        "בנין",
+        10600759008
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "ראשון לציון",
+     "street": "נורדאו",
+     "govmap": {
+      "n": 14,
+      "latest": "2026-09-02",
+      "d90": 1
+     },
+     "propx": {
+      "n": 7,
+      "latest": "2026-07-06",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 12,
+      "reportedLate": 1,
+      "olderMissing": 1,
+      "of": 14
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-09-02",
+        "נורדאו",
+        "18",
+        "3935/122/12",
+        1800000,
+        90,
+        4,
+        "דירה",
+        10609351452
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-06",
+        "נורדאו",
+        "36",
+        "3936/45/6",
+        1950000,
+        79,
+        3.5,
+        "דירה",
+        10603854492
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-21",
+        "נורדאו",
+        "34",
+        "3936/300/34",
+        2635000,
+        111,
+        4.5,
+        "דירה",
+        10602701508
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-20",
+        "נורדאו",
+        "34",
+        "3936/300/21",
+        2635000,
+        111,
+        4,
+        null,
+        11361413747
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "ראשון לציון",
+     "street": "היקב",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-27",
+      "d90": 1
+     },
+     "propx": {
+      "n": 1,
+      "latest": "2026-03-25",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-27",
+        "היקב",
+        "9",
+        "5039/7/12",
+        2400000,
+        81,
+        4,
+        "דירה",
+        10608714648
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-03-25",
+        "היקב",
+        "9",
+        "5039/7/13",
+        2390000,
+        90,
+        4,
+        "דירה",
+        10594295292
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2025-09-30",
+        "היקב",
+        "9",
+        "5039/7/11",
+        10750000,
+        480,
+        null,
+        "בנין",
+        10529324400
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "נתניה",
+     "street": "בן צבי",
+     "govmap": {
+      "n": 227,
+      "latest": "2026-08-04",
+      "d90": 1
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 38,
+      "reportedLate": 2,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-04",
+        "בן צבי",
+        "128",
+        "9216/93/130",
+        2650000,
+        107,
+        4,
+        "דירה",
+        9339487238
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-15",
+        "בן צבי",
+        "100",
+        "7941/44/14",
+        1425000,
+        69,
+        3,
+        "דירה",
+        9338451312
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-05-05",
+        "בן צבי",
+        "72",
+        "7932/362/24",
+        1990000,
+        64,
+        2,
+        "דירה",
+        9334757676
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-04-14",
+        "בן צבי",
+        "126",
+        "9216/93/84",
+        2950000,
+        133,
+        5,
+        "דירה",
+        9332455462
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "נתניה",
+     "street": "שמורק",
+     "govmap": {
+      "n": 146,
+      "latest": "2026-05-31",
+      "d90": 0
+     },
+     "propx": {
+      "n": 183,
+      "latest": "2026-05-31",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 39,
+      "reportedLate": 0,
+      "olderMissing": 1,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-05-31",
+        "שמורק",
+        "16",
+        "7932/355/3",
+        4050000,
+        182,
+        4,
+        "דירה",
+        9336679678
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-25",
+        "שמורק",
+        "16",
+        "7932/355/3",
+        3050000,
+        114,
+        4,
+        "דירה",
+        9336180326
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-02-26",
+        "שמורק",
+        "16",
+        "7932/355/1",
+        2946000,
+        100,
+        4,
+        "דירה",
+        9330745544
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-02-26",
+        "שמורק",
+        "16",
+        "7932/355/10",
+        3022000,
+        100,
+        4,
+        "דירה",
+        9330759086
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "נתניה",
+     "street": "נורדאו",
+     "govmap": {
+      "n": 62,
+      "latest": "2026-08-05",
+      "d90": 1
+     },
+     "propx": {
+      "n": 106,
+      "latest": "2026-06-22",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 39,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-05",
+        "נורדאו",
+        "59",
+        "7944/25/12",
+        1800000,
+        63,
+        2.5,
+        "דירה",
+        9339518466
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-22",
+        "נורדאו",
+        "51",
+        "7944/26/2",
+        2190000,
+        63,
+        2.5,
+        "דירה",
+        9337251032
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-11",
+        "נורדאו",
+        "51",
+        "7944/26/2",
+        2190000,
+        63,
+        2.5,
+        "דירה",
+        9336991514
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-06-07",
+        "נורדאו",
+        "15",
+        "7945/31/2",
+        2175000,
+        82,
+        3,
+        "דירה",
+        9335213886
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "נתניה",
+     "street": "אירוס הארגמן",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-08-14",
+      "d90": 2
+     },
+     "propx": {
+      "n": 13,
+      "latest": "2026-05-12",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 12,
+      "reportedLate": 2,
+      "olderMissing": 1,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-14",
+        "אירוס הארגמן",
+        "44",
+        "8628/15/11",
+        2070000,
+        109,
+        4,
+        "דירה",
+        9340080644
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-22",
+        "אירוס הארגמן",
+        "31",
+        "8628/13/7",
+        1950000,
+        93,
+        4,
+        "דירה",
+        9339337018
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-29",
+        "אירוס הארגמן",
+        "5",
+        "8628/8/14",
+        2470000,
+        97,
+        5,
+        "דירה",
+        9338528864
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-05-12",
+        "אירוס הארגמן",
+        "5",
+        "8628/8/16",
+        2250000,
+        119,
+        5,
+        "דירה",
+        9334235088
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "נתניה",
+     "street": "נעמן בלקינד",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-05",
+      "d90": 1
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-05",
+        "נעמן בלקינד",
+        "5",
+        "8284/109/12",
+        1237000,
+        55,
+        3,
+        "דירה",
+        9339340126
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-04-23",
+        "נעמן בלקינד",
+        "7",
+        "8284/110/8",
+        225000,
+        42,
+        3,
+        "דירה",
+        9333141812
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-02-03",
+        "נעמן בלקינד",
+        "5",
+        "8284/109/4",
+        1380000,
+        53,
+        3,
+        "דירה",
+        9328476260
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "אשדוד",
+     "street": "הדקל",
+     "govmap": {
+      "n": 46,
+      "latest": "2026-07-30",
+      "d90": 4
+     },
+     "propx": {
+      "n": 32,
+      "latest": "2026-06-30",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 36,
+      "reportedLate": 4,
+      "olderMissing": 0,
+      "of": 40
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-30",
+        "הדקל",
+        "7",
+        "2088/148/120",
+        2345000,
+        76,
+        3,
+        "דירה",
+        10607574600
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "הדקל",
+        "7",
+        "2088/148/119",
+        2345000,
+        76,
+        3,
+        null,
+        11361358290
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "הדקל",
+        "1",
+        "2088/150/37",
+        3340000,
+        110,
+        4,
+        "דירה",
+        10607568468
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-28",
+        "הדקל",
+        "1",
+        "2088/150/32",
+        3340000,
+        110,
+        4,
+        null,
+        11361358455
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "אשדוד",
+     "street": "אברהם שפירא",
+     "govmap": {
+      "n": 35,
+      "latest": "2026-08-05",
+      "d90": 2
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 31,
+      "reportedLate": 4,
+      "olderMissing": 0,
+      "of": 35
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-05",
+        "אברהם שפירא",
+        "29",
+        "2456/68/74",
+        1920000,
+        102,
+        4,
+        "דירה",
+        10607711184
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-29",
+        "אברהם שפירא",
+        "1",
+        "2456/57/12",
+        1710000,
+        105,
+        2,
+        "דירה",
+        10607715384
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-14",
+        "אברהם שפירא",
+        "29",
+        "2456/68/74",
+        2670000,
+        98,
+        4,
+        "דירה",
+        10604789412
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-07-08",
+        "אברהם שפירא",
+        "21",
+        "2456/66/13",
+        1675000,
+        71,
+        3,
+        "דירה",
+        10605252336
+       ],
+       "inPropx": false
+      }
+     ]
+    },
+    {
+     "city": "אשדוד",
+     "street": "דב גור",
+     "govmap": {
+      "n": 35,
+      "latest": "2026-07-29",
+      "d90": 2
+     },
+     "propx": {
+      "n": 0,
+      "latest": null,
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 32,
+      "reportedLate": 3,
+      "olderMissing": 0,
+      "of": 35
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-07-29",
+        "דב גור",
+        "8",
+        "2458/3/9",
+        1750000,
+        80,
+        3.5,
+        "דירה",
+        10608899700
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-27",
+        "דב גור",
+        "41",
+        "2456/71/13",
+        1465000,
+        52,
+        3,
+        "דירה",
+        10606052856
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-09",
+        "דב גור",
+        "3",
+        "2457/17/13",
+        1600000,
+        96,
+        5,
+        "דירה",
+        10604541360
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-28",
+        "דב גור",
+        "35",
+        "2456/72/13",
+        1650000,
+        62,
+        3,
+        "דירה",
+        10603211556
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "אשדוד",
+     "street": "חטיבת הנגב",
+     "govmap": {
+      "n": 15,
+      "latest": "2026-08-23",
+      "d90": 1
+     },
+     "propx": {
+      "n": 44,
+      "latest": "2026-07-01",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 13,
+      "reportedLate": 1,
+      "olderMissing": 1,
+      "of": 15
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-23",
+        "חטיבת הנגב",
+        "15",
+        "2464/20/2",
+        2270000,
+        123,
+        5,
+        "דירה",
+        10608718764
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-07-01",
+        "חטיבת הנגב",
+        "31",
+        "2463/7/10",
+        1975000,
+        67,
+        3,
+        "דירה",
+        10604879544
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-06-08",
+        "חטיבת הנגב",
+        "2",
+        "2464/111/15",
+        1375000,
+        62,
+        3,
+        "דירה",
+        10602273864
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2026-05-26",
+        "חטיבת הנגב",
+        "6",
+        "2464/52/17",
+        1420000,
+        60,
+        3,
+        "דירה",
+        10599910104
+       ],
+       "inPropx": true
+      }
+     ]
+    },
+    {
+     "city": "אשדוד",
+     "street": "הרב הרצוג",
+     "govmap": {
+      "n": 3,
+      "latest": "2026-08-16",
+      "d90": 1
+     },
+     "propx": {
+      "n": 2,
+      "latest": "2026-03-02",
+      "d90": 0
+     },
+     "latestGovmapDealsInPropx": {
+      "matched": 2,
+      "reportedLate": 1,
+      "olderMissing": 0,
+      "of": 3
+     },
+     "sample": [
+      {
+       "g": [
+        "2026-08-16",
+        "הרב הרצוג",
+        "3",
+        "2066/335/48",
+        1120000,
+        42,
+        2,
+        "דירה",
+        10608554628
+       ],
+       "inPropx": false
+      },
+      {
+       "g": [
+        "2026-03-02",
+        "הרב הרצוג",
+        "18",
+        "2066/363/10",
+        1300000,
+        39,
+        2,
+        "דירה",
+        10591356384
+       ],
+       "inPropx": true
+      },
+      {
+       "g": [
+        "2025-12-24",
+        "הרב הרצוג",
+        "3",
+        "2066/335/2",
+        605000,
+        48,
+        2,
+        "דירה",
+        10584267540
+       ],
+       "inPropx": true
+      }
+     ]
+    }
+   ]
+  },
+  "auditedAt": "2026-10-19",
+  "auditedBy": "scripts/tx-freshness-discover.js --over / --compare"
+ }
+]

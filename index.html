@@ -574,6 +574,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .st-lead{font-size:13.5px;color:var(--ink);font-weight:600}
 .st-state{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;border-radius:99px;padding:3px 10px;border:1px solid var(--hairline)}
 .st-state.SUPPORTED{color:var(--conf-high)} .st-state.LIMITED{color:var(--brass)} .st-state.INSUFFICIENT,.st-state.NONE,.st-state.NOT_SWEPT,.st-state.UNKNOWN{color:var(--ink-3);border-style:dashed}
+/* transaction freshness (lib/gov/freshness.js): the copy's dates apart, its state, the stale banner — on every transaction surface */
+.txf{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--hairline);border-radius:9px;font-size:12px;line-height:1.55;color:var(--ink-2)}
+.txf-banner{display:block;margin:0 0 7px;padding:6px 9px;border-radius:7px;border:1px solid var(--conf-low);color:var(--conf-low);font-weight:800;letter-spacing:.03em;font-size:11.5px}
+.txf-row{display:flex;flex-wrap:wrap;gap:3px 16px}
+.txf-row b{color:var(--ink);font-weight:700}
+.txf-st{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:1px 8px;border:1px solid var(--hairline)}
+.txf-st.CURRENT{color:var(--conf-high)} .txf-st.RECENT{color:var(--brass)} .txf-st.STALE,.txf-st.VERY_STALE{color:var(--conf-low)} .txf-st.SOURCE_LAG_UNKNOWN{color:var(--ink-3);border-style:dashed}
+.txf-note{display:block;margin-top:4px;color:var(--ink-3)}
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:12px}
 .st-grid .gv-m .v{font-size:15.5px}
 .st-grid .gv-m .s{font-size:11px;color:var(--ink-3);line-height:1.45}
@@ -2712,7 +2720,8 @@ he:{
   txOfficialBadge:"מקור רשמי · רשות המסים (דרך GovMap) · נתון נצפה",
   txLatestInSrc:d=>`עסקה אחרונה במקור: ${d}`, txSynced:d=>`סנכרון אחרון: ${d}`,
   txTabAll:"הכול", txTabNew:"דירות חדשות", txTabNewProb:"חדשות (לפי שנת בנייה)", txTabSec:"יד שנייה", txTabUnk:"לא מסווג",
-  txP12:"12 חודשים", txP24:"24 חודשים", txP36:"3 שנים", txP60:"5 שנים", txPAll:"כל התקופה",
+  txP12:"12 חודשים", txP24:"24 חודשים", txP36:"3 שנים", txP60:"5 שנים", txPAll:"כל התקופה", txP30d:"30 ימים", txP90d:"90 ימים", txP6:"6 חודשים",
+  txNotRefreshed:d=>`כיסוי העסקאות האחרון לא רוענן: העותק שבידי PROPX מסתיים בעסקה מ-${d}, ולכן היעדר עסקאות בתקופה הזו אינו אומר שלא היו.`,
   txMapToggle:"הצג עסקאות על המפה", txModeFixture:"מצב אימות מקומי — נתוני בדיקה",
   txSumN:"עסקאות", txSumNObs:p=>`עסקאות שנצפו · ${p}`, txSumRange:"טווח תאריכים בתצוגה", txSmallTag:"מדגם קטן", txSmall:n=>`מדגם קטן — החציון מבוסס על ${n} עסקאות בלבד: בפחות מ-10 תצפיות רווח הסמך (95%) של החציון, בלי הנחת התפלגות, משתרע כמעט על כל המדגם; קראו את החציון כתצפית, לא כמגמה`, txSumMed:"מחיר חציוני", txSumMedPsm:"חציון ₪/מ״ר", txSumAvgPsm:"ממוצע ₪/מ״ר", txSumLatest:"עסקה אחרונה",
   txThin:n=>`רק ${n} עסקאות — מדגם לא מספיק לחציון מהימן; הנתונים מוצגים כתצפיות בודדות`,
@@ -3283,7 +3292,8 @@ en:{
   txOfficialBadge:"Official source · Israel Tax Authority (via GovMap) · observed data",
   txLatestInSrc:d=>`Latest transaction in source: ${d}`, txSynced:d=>`Last sync: ${d}`,
   txTabAll:"All", txTabNew:"New homes", txTabNewProb:"New (by build year)", txTabSec:"Second-hand", txTabUnk:"Unclassified",
-  txP12:"12 months", txP24:"24 months", txP36:"3 years", txP60:"5 years", txPAll:"All available",
+  txP12:"12 months", txP24:"24 months", txP36:"3 years", txP60:"5 years", txPAll:"All available", txP30d:"Last 30 days", txP90d:"Last 90 days", txP6:"6 months",
+  txNotRefreshed:d=>`Recent transaction coverage has not been refreshed: the copy PROPX holds ends with a deal of ${d}, so no deals in this period does not mean there were none.`,
   txMapToggle:"Show sold deals on map", txModeFixture:"local verification mode — test data",
   txSumN:"Transactions", txSumNObs:p=>`Observed deals · ${p}`, txSumRange:"Date range shown", txSmallTag:"small sample", txSmall:n=>`Small sample — the median rests on only ${n} deals: below 10 observations the distribution-free 95% interval of the median spans almost the whole sample; read the median as an observation, not a trend`, txSumMed:"Median price", txSumMedPsm:"Median ₪/m²", txSumAvgPsm:"Average ₪/m²", txSumLatest:"Latest deal",
   txThin:n=>`Only ${n} transactions — insufficient sample for a reliable median; shown as individual observations`,
@@ -4913,7 +4923,7 @@ const PT_DOM={
   gxspv:"text,text,text,text,text,text,text,text",
   gxedges:"text,text,text,text,text,date,text",
   gxmem:"text,text,text,text,text,number,number,text",
-  stdeals:"date,text,number,number,currency,currency,number,-",
+  stdeals:"date,text,number,number,currency,currency,number,text,text,-",
   stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
   stperm:"date,text,text,number,text",
@@ -5197,7 +5207,11 @@ let txDebug=null;
 const TX_MATURITY_DAYS=120;
 const txMaturityBound=()=>new Date(Date.now()-TX_MATURITY_DAYS*864e5).toISOString().slice(0,10);
 const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
-  tab:"all",months:24,mapOn:false,key:"",err:null,unavailable:[]};
+  tab:"all",months:24,days:null,mapOn:false,key:"",err:null,unavailable:[]};
+/* the period filter: last 30 / 90 days by DAYS, then 6 / 12 / 24 months, then all available (P0 freshness audit) */
+const TX_PERIODS=t=>[["d30",t.txP30d],["d90",t.txP90d],["m6",t.txP6],["m12",t.txP12],["m24",t.txP24],["m240",t.txPAll]];
+const txPerKey=()=>txState.days?"d"+txState.days:"m"+txState.months;
+const txPerParams=p=>{if(txState.days){p.set("days",String(txState.days));p.delete("months")}else p.set("months",String(txState.months));return p};
 
 /* which real place the current view is asking about */
 function txQueryFor(){
@@ -5215,14 +5229,14 @@ function txQueryFor(){
 async function txFetch(force){
   const q=txQueryFor();
   if(!q||!q.city){txState.status="scope";txState.rows=[];txState.key="";renderTx();return}
-  const key=[q.city,q.street||"",q.house||"",txState.months].join("|");
+  const key=[q.city,q.street||"",q.house||"",txPerKey()].join("|");
   if(!force&&key===txState.key&&txState.status!=="idle")return;
   /* a new geography must never show the previous one's rows while loading */
   txState.key=key;txState.status="loading";
   txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];
   txState.more=false;txState.nextOffset=0;txState.moreBusy=false;txState.moreErr=null;txState.allCapped=false;
   renderTx();renderMap(true);
-  const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120"});
+  const p=txPerParams(new URLSearchParams({city:q.city,limit:"120"}));
   if(q.street)p.set("street",q.street);
   if(q.house)p.set("house",String(q.house));
   try{
@@ -5264,8 +5278,8 @@ async function txMore(){
   if(!q||!q.city||!txState.scope||txState.moreBusy||!txState.more&&!txState.moreErr)return;
   const key=txState.key;
   txState.moreBusy=true;txState.moreErr=null;renderTx();
-  const p=new URLSearchParams({city:q.city,months:String(txState.months),limit:"120",
-    offset:String(txState.nextOffset),level:txState.scope.level,_:String(Date.now())});
+  const p=txPerParams(new URLSearchParams({city:q.city,limit:"120",
+    offset:String(txState.nextOffset),level:txState.scope.level,_:String(Date.now())}));
   if(q.street)p.set("street",q.street);
   if(q.house)p.set("house",String(q.house));
   try{
@@ -5331,6 +5345,15 @@ async function txLoadAll(){
    spans the whole sample at n = 6–8 and runs from the 2nd to the 2nd-last observation at n = 9–11 — below 10 a median
    says little beyond the sample's range. No confidence level is claimed above it either. */
 const TX_SMALL_N=10;
+/* an empty period means "no deals" only when the copy is CURRENT / RECENT and covers at least half of it (lib/gov/freshness.js
+   recent()) — otherwise the copy simply does not reach it */
+function txPeriodUncovered(F){
+  if(!F)return true;
+  if(F.stale||!F.latestTransactionDate)return true;
+  const days=txState.days||Math.round(txState.months*30.44);
+  const from=Date.parse(new Date(Date.now()-days*864e5).toISOString().slice(0,10));
+  return (Date.parse(F.latestTransactionDate)-from)/864e5<days/2;
+}
 function renderTx(){
   const t=T(),he=state.lang==="he";
   const sec=el("txSection");if(!sec)return;
@@ -5349,8 +5372,8 @@ function renderTx(){
   const nOther=txNonResidential().length;
   el("txBar").innerHTML=`
     <span class="tx-tabs">${tabBtn("all",t.txTabAll,R.length)}${tabBtn("new",nNew&&nConf===nNew?t.txTabNew:t.txTabNewProb,nNew)}${tabBtn("second",t.txTabSec,nSec)}${nUnk?tabBtn("unknown",t.txTabUnk,nUnk):""}${nOther?tabBtn("other",t.txTabOther,nOther):""}</span>
-    <select class="tx-sel" id="txMonths">${[[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]]
-      .map(([v,l])=>`<option value="${v}"${txState.months===v?" selected":""}>${l}</option>`).join("")}</select>
+    <select class="tx-sel" id="txMonths">${TX_PERIODS(t)
+      .map(([v,l])=>`<option value="${v}"${txPerKey()===v?" selected":""}>${l}</option>`).join("")}</select>
     <button class="tx-sel" id="txMapBtn" aria-pressed="${txState.mapOn}">${t.txMapToggle}</button>
     <span style="flex:1"></span>
     <span class="tx-src">${txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:""}</span>`;
@@ -5411,7 +5434,7 @@ function renderTx(){
   const prices=priced.map(r=>r.price).filter(Boolean);
   const psms=priced.map(txPsm).filter(Boolean);
   const dates=statRows.map(r=>r.date).filter(Boolean).sort(),latest=dates[dates.length-1],first=dates[0];
-  const perLbl=([[12,t.txP12],[24,t.txP24],[36,t.txP36],[60,t.txP60],[240,t.txPAll]].find(([v])=>v===txState.months)||[0,""])[1];
+  const perLbl=(TX_PERIODS(t).find(([v])=>v===txPerKey())||[0,""])[1];
   const small=prices.length<TX_SMALL_N,wk=small?' class="weak"':"";
   el("txSum").hidden=!prices.length;
   if(prices.length)el("txSum").innerHTML=[
@@ -5427,7 +5450,7 @@ function renderTx(){
   el("txWarn").hidden=!(prices.length>0&&small);
   const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
   const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
-  el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
+  el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`${txFreshHTML(M.freshness)}<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
     :`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
   if(thin)el("txWarn").textContent=streetLevel
     ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
@@ -5445,6 +5468,7 @@ function renderTx(){
     :st==="scope"?t.txNoScope
     :(!hasAny&&st==="empty")?(M&&M.sourceAnswered===false
         ?(txState.unavailable.some(u=>/no settlement/.test(u.reason||""))?t.txNoMatch:t.txNoAnswerEmpty)
+        :M&&M.sourceAnswered===true&&txPeriodUncovered(M.freshness)?t.txNotRefreshed(dmy(M.freshness.latestTransactionDate||M.latestInRegister||""))
         :M&&M.sourceAnswered===true?t.txZero
         :(txState.unavailable.length?t.txNoMatch:t.txZero))
     :(!hasAny&&st==="ok")?t.txOnlyNonRes(txState.rows.length):"";
@@ -5533,7 +5557,7 @@ function initTx(){
     if(e.target.closest("[data-txall]")){txLoadAll();return}
   });
   sec.addEventListener("change",e=>{
-    if(e.target.id==="txMonths"){txState.months=+e.target.value;txFetch(true)}
+    if(e.target.id==="txMonths"){const v=String(e.target.value);if(v[0]==="d"){txState.days=+v.slice(1)}else{txState.days=null;txState.months=+v.replace(/^m/,"")}txFetch(true)}
   });
 }
 
@@ -7026,6 +7050,33 @@ function geoKindTag(g,t){return g.kind!=="street"?t.geoTagLoc:g.streetKind==="ar
    The official street (identity) and the register deals OBSERVED on it are separate layers: a street with no observed deal
    is a full street page ("no observed transactions" — never a zero price); a street price appears only from 5 priced deals;
    the locality / neighbourhood figures are CONTEXT, printed apart with the sentence that says so. */
+/* ── transaction freshness strip (lib/gov/freshness.js): every transaction surface states how fresh the universe is — the
+   copy's date, its latest deal, PROPX's check, the state; a stale copy is a banner, an empty recent period is never "no
+   deals" unless the copy is current and was checked recently ── */
+const TXF={he:{st:{CURRENT:"עדכני",RECENT:"חדש יחסית",STALE:"לא עדכני",VERY_STALE:"לא עדכני מאוד",SOURCE_LAG_UNKNOWN:"פיגור מקור לא ידוע"},
+    banner:d=>`נתוני העסקאות עשויים להיות לא עדכניים · עותק המקור האחרון: ${d}`,latest:"העסקה האחרונה שנצפתה",latestLoc:"העסקה האחרונה ביישוב",checked:"המקור נבדק",
+    source:"מקור",srcName:(c,l)=>`מאגר רשות המסים — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}`,state:"מצב",
+    newer:(c,l)=>`קיים עותק חדש יותר של שכבת העסקאות של GovMap (${c}, עסקה אחרונה ${l}) — PROPX עדיין לא קוראת אותו.`,
+    notRefreshed:"כיסוי העסקאות האחרון לא רוענן.",noRecent:(c)=>`אין עסקאות ב-90 הימים האחרונים — המקור נבדק ${c}.`,age:n=>`בן ${n} ימים`},
+  en:{st:{CURRENT:"CURRENT",RECENT:"RECENT",STALE:"STALE",VERY_STALE:"VERY STALE",SOURCE_LAG_UNKNOWN:"SOURCE LAG UNKNOWN"},
+    banner:d=>`TRANSACTION DATA MAY BE STALE · Latest source snapshot: ${d}`,latest:"Latest observed transaction",latestLoc:"Latest in the locality",checked:"Source checked",
+    source:"Source",srcName:(c,l)=>`Tax Authority register — independent republication (over.org.il), copy ${c}, latest deal in it ${l}`,state:"State",
+    newer:(c,l)=>`A newer copy of the GovMap deals layer exists (${c}, latest deal ${l}) — PROPX does not read it yet.`,
+    notRefreshed:"Recent transaction coverage has not been refreshed.",noRecent:(c)=>`No transactions in the last 90 days — the source was checked ${c}.`,age:n=>`${n} days old`}};
+function txFreshHTML(F,opt={}){
+  if(!F)return "";
+  const t=TXF[state.lang==="en"?"en":"he"],dmy=v=>v?String(v).slice(0,10).split("-").reverse().join("."):"—";
+  const snap=F.snapshotDate||(F.snapshotAt?String(F.snapshotAt).slice(0,10):null);
+  const r90=F.recent&&F.recent[90]?F.recent[90].kind:null;
+  const nw=(F.newerCopies||[])[0];
+  return `<div class="txf" data-txf="${F.state}">${F.stale?`<span class="txf-banner" role="status">${t.banner(dmy(snap))}</span>`:""}
+    <div class="txf-row"><span><b>${t.latest}:</b> <span class="num">${dmy(F.latestObservedTransaction)}</span></span>${opt.locality&&F.localityLatestTransaction?`<span><b>${t.latestLoc}:</b> <span class="num">${dmy(F.localityLatestTransaction)}</span></span>`:""}
+      <span><b>${t.checked}:</b> <span class="num">${dmy(F.checkedAt)}</span></span>
+      <span><b>${t.state}:</b> <span class="txf-st ${F.state}">${t.st[F.state]||F.state}</span>${F.ageDays!=null?` <span class="num">(${t.age(F.ageDays)})</span>`:""} ${xpBtn("transaction_freshness")}</span></div>
+    <span class="txf-note"><b>${t.source}:</b> ${t.srcName(dmy(snap),dmy(F.latestTransactionDate))} ${xpBtn("transaction_reporting_lag")}</span>
+    ${r90==="COVERAGE_NOT_REFRESHED"?`<span class="txf-note">${t.notRefreshed} ${xpMiss("tx_coverage_not_refreshed")}</span>`:r90==="NO_RECENT_TRANSACTIONS"?`<span class="txf-note">${t.noRecent(dmy(F.checkedAt))}</span>`:""}
+    ${nw?`<span class="txf-note">${t.newer(dmy(String(nw.snapshotAt).slice(0,10)),dmy(nw.latestTransactionDate))}</span>`:""}</div>`;
+}
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */
     obsH:"שוק הרחוב שנצפה",obsSub:"חציון המכירות שנרשמו ברחוב ב-36 חודשים — כל הגדלים, חדשות ויד שנייה, כפי שנמכרו (לא מותאם לזמן ולא לסוג הדירה)",modH:"הערכת PROPX לרחוב",modChip:"מודל · הערכת PROPX",perSqm:"למ״ר",
@@ -7061,12 +7112,12 @@ const SIT={he:{lyr:"מודיעין רחוב",
       INSUFFICIENT:(n)=>`נצפו ${fmtInt(n)} עסקאות מתומחרות בלבד — מחיר לא מוצג ("—"); העסקאות ברשימה.`,NONE:()=>"אף עסקת דיור במרשם לא שויכה אליו בוודאות. זה לא מחיר אפס.",
       NOT_SWEPT:()=>"היישוב לא נכלל בסריקת העסקאות האחרונה.",UNKNOWN:()=>"ראיות השוק טרם נשמרו בגרסה זו."},
     nsWhy:{"not-in-register-copy":"בעותק מרשם העסקאות אין שם יישוב שממופה לקוד היישוב הזה — אין ממנו עסקאות ברמת הרחוב (זה לא מחיר אפס).","sweep-pending":"הסריקה של היישוב טרם הושלמה או נכשלה — היא תנסה שוב בריצה הבאה.","stale-shard":"הסריקה השמורה של היישוב היא של חלון אחר — היא לא מוצגת עד הסריקה הבאה."},
-    kind:{street:"רחוב",area:"אזור כתובת",site:"אתר"},hist:"היסטורי — לא במרשם הנוכחי",id:"מזהה רחוב רשמי",observed:"נצפו",priced:"מתומחרות",last12:"12 חודשים אחרונים",copy:"עותק המרשם",check:"בדיקת PROPX",
+    kind:{street:"רחוב",area:"אזור כתובת",site:"אתר"},hist:"היסטורי — לא במרשם הנוכחי",id:"מזהה רחוב רשמי",observed:"נצפו",priced:"מתומחרות",last12:"12 חודשים אחרונים",copy:"עותק המרשם",check:"בדיקת PROPX",ingested:"נקלט ב-PROPX",
     of:(a,b)=>`${a} עד ${b}`,loading:"טוען את הרחוב…",err:"לא ניתן לטעון את מודיעין הרחוב.",
     dist:"התפלגות (רק בשוק נתמך)",p10:"טווח מחירים P10–P90",rooms:"תמהיל חדרים",size:"תמהיל שטחים (מ״ר)",change:"שינוי 12 חודשים מול 12 שקדמו",mean:"ממוצע (לצד החציון)",
     ctx:"הקשר — השוק הסובב",ctxNote:"הנתונים האלה מתארים את השוק הסובב, לא מחירים שנצפו ברחוב הזה.",ctxLoc:(c)=>`חציון עסקאות הדיור ב${c} (אותו חלון)`,ctxSqm:"חציון ₪ למ״ר ביישוב",ctxN:"עסקאות דיור מתומחרות ביישוב",
     ctxCbs:(c)=>`מחיר עסקה ממוצע — ${c} (הלמ״ס, לוח 2.2, כלל הדירות)`,ctxNb:(n)=>`חציון עסקאות בשכונה ${n} (קישור רחוב מאומת)`,ctxNbNo:"שכונה: אין קישור מאומת — PROPX לא מסיקה שכונה.",
-    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",bulk:(n)=>`סכום זהה ל-${n} יחידות באותו יום — לא מתומחר`,notMarket:"סכום סמלי — לא מתומחר",portionNA:"חלק לא ידוע",
+    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה","סוג נכס","גוש/חלקה/תת",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",bulk:(n)=>`סכום זהה ל-${n} יחידות באותו יום — לא מתומחר`,notMarket:"סכום סמלי — לא מתומחר",portionNA:"חלק לא ידוע",
     band:"טווח 95%",notDist:"לא ניתן להבחין משינוי אפס",area:"שטח חציוני",minmax:"מינימום–מקסימום",
     excl:(o)=>`לא בחישוב המחיר: ${fmtInt(o.notMarket)} סכומים סמליים (מתחת ל-₪100,000) · ${fmtInt(o.bulk)} יחידות עם סכום זהה באותו יום · ${fmtInt(o.partial)} מכירות חלקיות · ${fmtInt(o.portionMissing)} בלי חלק נמכר`,shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
     possible:"עסקאות אפשריות (ייתכן) — לא בחציון",pcols:["תאריך","כתובות החלקה","למה רק ייתכן","מחיר"],reasons:{"multi-street-parcel":"חלקה ביותר מרחוב אחד","address-list-truncated":"רשימת הכתובות קטועה","unresolved-address-on-parcel":"כתובת בחלקה לא זוהתה","ambiguous-address-on-parcel":"כתובת בחלקה עמומה"},
@@ -7110,12 +7161,12 @@ const SIT={he:{lyr:"מודיעין רחוב",
       INSUFFICIENT:(n)=>`Only ${fmtInt(n)} priced deals were observed — no price is shown ("—"); the deals are listed.`,NONE:()=>"No register dwelling deal was attached to it with certainty. This is not a zero price.",
       NOT_SWEPT:()=>"Its locality was not in the latest deals sweep.",UNKNOWN:()=>"The market evidence is not stored in this version yet."},
     nsWhy:{"not-in-register-copy":"The deals register copy lists no settlement name mapped to this locality's code — no street-level deals come from it (this is not a zero price).","sweep-pending":"The locality's sweep has not finished or failed — the next run tries again.","stale-shard":"The stored sweep of the locality is of another window — it is not shown until the next sweep."},
-    kind:{street:"street",area:"address area",site:"site"},hist:"historical — no longer in the registry",id:"Official street id",observed:"observed",priced:"priced",last12:"last 12 months",copy:"register copy",check:"PROPX check",
+    kind:{street:"street",area:"address area",site:"site"},hist:"historical — no longer in the registry",id:"Official street id",observed:"observed",priced:"priced",last12:"last 12 months",copy:"register copy",check:"PROPX check",ingested:"stored by PROPX",
     of:(a,b)=>`${a} to ${b}`,loading:"Loading the street…",err:"The street intelligence could not be loaded.",
     dist:"Distribution (supported market only)",p10:"Price range P10–P90",rooms:"Rooms mix",size:"Size mix (m²)",change:"Latest 12 months vs the 12 before",mean:"Mean (beside the median)",
     ctx:"Context — the surrounding market",ctxNote:"These figures describe the surrounding market, not observed prices on this street.",ctxLoc:(c)=>`Median dwelling deal in ${c} (same window)`,ctxSqm:"Locality median ₪ per m²",ctxN:"Priced dwelling deals in the locality",
     ctxCbs:(c)=>`Average transaction price — ${c} (CBS Table 2.2, all dwellings)`,ctxNb:(n)=>`Median deal in the ${n} neighbourhood (verified street link)`,ctxNbNo:"Neighbourhood: no verified link — PROPX never infers a neighbourhood.",
-    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",bulk:(n)=>`one amount on ${n} units that day — not priced`,notMarket:"nominal amount — not priced",portionNA:"portion unknown",
+    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built","Property type","Block/parcel/sub",""],pnew:"PROBABLE NEW",partial:"partial sale",bulk:(n)=>`one amount on ${n} units that day — not priced`,notMarket:"nominal amount — not priced",portionNA:"portion unknown",
     band:"95% band",notDist:"not distinguishable from no change",area:"median area",minmax:"min–max",
     excl:(o)=>`Not in the price figures: ${fmtInt(o.notMarket)} nominal amounts (under ₪100,000) · ${fmtInt(o.bulk)} units sharing one amount that day · ${fmtInt(o.partial)} partial sales · ${fmtInt(o.portionMissing)} without a stated portion`,shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
     possible:"Possible matches (POSSIBLE) — not in the median",pcols:["Date","Parcel addresses","Why only possible","Price"],reasons:{"multi-street-parcel":"parcel on more than one street","address-list-truncated":"address list truncated","unresolved-address-on-parcel":"an address on the parcel not resolved","ambiguous-address-on-parcel":"an address on the parcel is ambiguous"},
@@ -7180,7 +7231,7 @@ function siHTML(g){
     tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}${st.sqmLimited?` · ${t.states.LIMITED}`:""}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):"",st&&st.medianPricePerSqm!=null&&(lim||st.sqmLimited)?"lim":""),
     /* the window and the copy describe a swept locality only — a locality outside the sweep shows "—" */
     tile(t.period,E.swept&&w?t.of(siDate(w.from),siDate(w.to)):"—","",""),
-    tile(t.fresh,E.swept&&src.scrapedAt?siDate(src.scrapedAt):"—",E.swept&&src.scrapedAt?`${t.copy} · ${t.check} ${siDate(src.checkedAt)}`:"",""),
+    tile(t.fresh,E.swept&&src.scrapedAt?siDate(src.scrapedAt):"—",E.swept&&src.scrapedAt?`${t.copy} · ${t.ingested} ${siDate(src.ingestedAt)}${D.freshness&&D.freshness.checkedAt?` · ${t.check} ${siDate(D.freshness.checkedAt)}`:""}`:"",xpBtn("transaction_freshness")),
   ].join("");
   const hist=I.status==="historical",exists=t.exists(noun,hist,I.retiredAt?siDate(I.retiredAt):"");
   const kn=`<div class="st-kn"><div><h4>${t.knows}</h4><ul>${(D.knows||[]).map(k=>`<li>${k==="official-street"?exists:t.kn[k]||k}${k==="official-synonyms"?`: <bdi>${I.synonyms.map(inE).join(" · ")}</bdi>`:""}</li>`).join("")}</ul></div>
@@ -7210,7 +7261,9 @@ function siHTML(g){
     five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
       <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+      <td class="num">${d.yearBuilt||"—"}</td><td class="w">${ldE(d.nature||"—")}</td><td class="num"><bdi>${d.gush?ldE(`${d.gush}/${d.helka}${d.subParcel!=null&&d.subParcel!==""?"/"+d.subParcel:""}`):"—"}</bdi></td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+    if(D.freshness){const tf=TXF[state.lang==="en"?"en":"he"],dm=v=>v?String(v).slice(0,10).split("-").reverse().join("."):"—";
+      five+=`<p class="gv-note">${tf.source}: ${tf.srcName(dm(D.freshness.snapshotDate),dm(D.freshness.latestTransactionDate))} ${xpBtn("transaction_reporting_lag")}</p>`}
     if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
   }
   /* deep dive */
@@ -7323,6 +7376,7 @@ function siHTML(g){
   return `<div class="geo-cov"><span class="geo-chip">${t.kind[I.kind]||I.kind}</span>${I.status==="historical"?`<span class="geo-chip"><b>${t.hist}</b></span>`:""}
       <span class="geo-chip num"><bdi>${ldE(I.id)}</bdi></span>${I.district&&LOC[I.district]?`<span class="geo-chip">${heName(LOC[I.district])}</span>`:""}${xpBtn("street_directory")}</div>
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
+    ${txFreshHTML(D.freshness,{locality:true})}
     ${pair}
     <div class="st-grid">${tiles}</div>${kn}
     <details class="st-sec" open><summary>${t.five}</summary>${five}</details>

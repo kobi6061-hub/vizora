@@ -191,7 +191,9 @@ function fixtureDirs(tenders, lotteries) {
     const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
     for (const [k, f] of Object.entries(v.functions)) if (f.includeFiles) assert.ok(f.includeFiles.length <= 256, `${k}: includeFiles is ${f.includeFiles.length} characters — Vercel rejects the whole deployment`);
     const inc = v.functions['api/intel.js'].includeFiles;
-    for (const need of ['data/land/tenders.json', 'data/land/meta.json', 'data/housing/', 'data/market/latest.json', 'data/transactions/sync-runs.jsonl', 'data/geo/']) assert.ok(inc.includes(need), need);
+    for (const need of ['data/land/tenders.json', 'data/land/meta.json', 'data/housing/', 'data/market/latest.json', 'data/geo/']) assert.ok(inc.includes(need), need);
+    /* the transaction run log + the freshness monitor's answer (P0 freshness audit): named, or covered by the folder's glob */
+    assert.ok(inc.includes('data/transactions/sync-runs.jsonl') || inc.includes('data/transactions/*.json*'), 'data/transactions run log + freshness');
     assert.ok(!/lots-|raw/.test(inc), 'the lot shards and raw snapshots are not bundled');
   });
 

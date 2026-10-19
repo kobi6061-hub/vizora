@@ -102,6 +102,29 @@
   creation); ASCII-only addresses; an invited row shows no account state; disabled owners do not count as owners; sign-in failures
   make the same store call for every address; role-wide default privileges start future objects closed; the page signs out with an
   intent POST before the logout link; the test adapter binds every value. NOT ACTIVATED (see `supabase/private/README.md`).
+- `lib/gov/freshness.js` + `scripts/tx-freshness.js` + `.github/workflows/tx-freshness.yml` + `data/transactions/freshness*.json*` +
+  `scripts/tx-freshness-discover.js` + `.github/workflows/tx-freshness-discover.yml` + `lib/trust/discovery/2026-10-19-transactions.json` +
+  `test/tx-freshness.test.js` (+ `test/fixtures/tx-acceptance-2026-10-19.json`, 96 real deals) = P0 TRANSACTION FRESHNESS (19.10.2026). FIVE
+  DATES never collapsed: transaction date · source snapshot (`scraped_at`) · source publication (no channel states it → null + reason) · PROPX
+  ingestion (the shard's sweep date, `ingestedAt` in the street read) · PROPX check (the latest run that reached the source). STATE of the copy
+  by its age — CURRENT ≤ 7 d · RECENT ≤ 21 · STALE ≤ 45 · VERY STALE > 45 · SOURCE LAG UNKNOWN (no date, or the source not reached for 8 days);
+  thresholds from measured source behaviour (`F.BASIS`: the 19.09 copy held ≈ 41 % of July / ≈ 13 % of August 2026; a copy 19 days newer held
+  2,342 more Jul–Sep deals in the 8 largest cities ≈ 1.4 % of 90 days' volume per day). "No recent transactions" only when the copy is CURRENT /
+  RECENT, checked ≤ 8 days and covers ≥ half the period — else "Recent transaction coverage has not been refreshed."; a period after the copy's
+  latest deal has NO count (null, never 0). Every transaction surface (Street Intelligence `txFreshHTML(D.freshness)`, the transactions section
+  `M.freshness`) shows latest observed transaction · source checked · source + copy · state + ⓘ (`transaction_freshness`,
+  `transaction_reporting_lag`: "Transactions may appear after the transaction date because real-estate transactions are reported and processed
+  after signing.") and, when stale, the banner "TRANSACTION DATA MAY BE STALE · Latest source snapshot: …". Period filters 30 / 90 DAYS (`days=`)
+  · 6 / 12 / 24 months · all. The street deal table adds property type + block/parcel/sub + a source line. The evidence check is DAILY (three
+  requests; an OLDER copy is refused — `F.olderCopy`, never backwards); the daily monitor (five GETs) writes register copy · GovMap-layer copy ·
+  official channels · PROPX latest / counts · lag · alerts MATERIAL_LAG / NEW_COPY_NOT_SWEPT / OLDER_COPY_SERVED / VOLUME_DROP (Trust
+  `propx:tx-freshness`, `SOURCE_LAG` alerts; `over:street-evidence` SOURCE_STALE when the copy is stale; an offline `rebuilt` run is not a check).
+  AUDIT (19.10.2026): official channels NOT machine-readable — nadlan.taxes.gov.il refuses the runner, nadlan.gov.il behind reCAPTCHA Enterprise,
+  GovMap CloudFront 403, no data.gov.il dataset — none bypassed; a NEWER republished copy exists (over.org.il GovMap layer 16, loaded 08.10.2026,
+  latest deal 28.09.2026) with defects (a second deal-id series one day earlier, future dates, ₪1,000 truncation, own sub-parcel numbering,
+  ≈84k rows without a settlement) — NOT read (owner decision); 8-city comparison: 19,531 same deals (7,787 exact · 508 truncated · 11,236 field
+  differences, mostly sub-parcel numbering) · 2,293 late-reported deals missing in PROPX · 4,387 register dwelling deals not in the GovMap copy.
+  The Street Value Model's inputs are untouched (`evidence.js` byte-identical).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

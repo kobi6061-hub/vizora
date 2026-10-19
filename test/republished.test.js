@@ -262,7 +262,8 @@ const mk = (opts) => { const fetchImpl = overFetch(opts); const p = new OverDeal
     }
   });
   await t('a frozen copy is not "still updating": its date and limits replace the maturity line', () => {
-    assert.match(body, /el\("txFresh"\)\.innerHTML=viaRepub&&M\.snapshotAt\?`<span class="note">\$\{t\.txRegNote\(dmy\(M\.snapshotAt\)\)\}<\/span>`/);
+    /* P0 freshness audit (19.10.2026): the copy's freshness strip (lib/gov/freshness.js) precedes the frozen-copy note */
+    assert.match(body, /el\("txFresh"\)\.innerHTML=viaRepub&&M\.snapshotAt\?`\$\{txFreshHTML\(M\.freshness\)\}<span class="note">\$\{t\.txRegNote\(dmy\(M\.snapshotAt\)\)\}<\/span>`/);
   });
   await t('statistics: a share of a property is never priced; no average over register rows; medians stay', () => {
     assert.match(INDEX, /const txPsm=t=>\{if\(t\.partialSale\)return null;/);
@@ -270,7 +271,8 @@ const mk = (opts) => { const fetchImpl = overFetch(opts); const p = new OverDeal
     assert.match(body, /\[t\.txSumAvgPsm,viaRepub\?/);
   });
   await t('empty states: no answer, no match and a real zero are three different messages', () => {
-    assert.match(body, /M&&M\.sourceAnswered===false\s*\?\(txState\.unavailable\.some\(u=>\/no settlement\/\.test\(u\.reason\|\|""\)\)\?t\.txNoMatch:t\.txNoAnswerEmpty\)\s*:M&&M\.sourceAnswered===true\?t\.txZero/);
+    /* a real zero only where the copy covers the period — otherwise "coverage has not been refreshed" (P0 freshness audit) */
+    assert.match(body, /M&&M\.sourceAnswered===false\s*\?\(txState\.unavailable\.some\(u=>\/no settlement\/\.test\(u\.reason\|\|""\)\)\?t\.txNoMatch:t\.txNoAnswerEmpty\)\s*:M&&M\.sourceAnswered===true&&txPeriodUncovered\(M\.freshness\)\?t\.txNotRefreshed\([^\n]*\n\s*:M&&M\.sourceAnswered===true\?t\.txZero/);
   });
   await t('source text is escaped before it enters the page; the pager continues the same scope', () => {
     assert.match(body, /return calcEsc\(a\)\+more;/);

@@ -97,7 +97,7 @@
   "framework": null,
   "functions": {
     "api/gov/transactions.js": {
-      "includeFiles": "data/geo/localities.json"
+      "includeFiles": "{data/geo/localities.json,data/transactions/freshness.json,data/streets/evidence/meta.json,data/streets/evidence/sync-runs.jsonl}"
     },
     "api/housing.js": {
       "includeFiles": "data/housing/*.json*"
@@ -110,7 +110,7 @@
       "includeFiles": "data/transactions/watch.json"
     },
     "api/intel.js": {
-      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/sync-runs.jsonl,data/geo/*.json,data/renewal/*.json*,data/cbs-sales/*.json*,data/rental/*.json*,data/radar/*.json}"
+      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/*.json*,data/geo/*.json,data/renewal/*.json*,data/cbs-sales/*.json*,data/rental/*.json*,data/radar/*.json}"
     }
   },
   "rewrites": [

@@ -35,6 +35,7 @@ const M = require('../lib/streets/match');
 const EV = require('../lib/streets/evidence');
 const SW = require('../lib/streets/sweep');
 const { classifyPropertyType } = require('../lib/gov/propertyType');
+const FR = require('../lib/gov/freshness');
 const { windowOf, normalize, buildShard, rematch } = SW;
 const num = (v) => { if (v == null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
@@ -133,6 +134,15 @@ function finish(meta, run, D) {
     const scrapedAt = stats && stats.scraped_at ? String(stats.scraped_at) : null;
     if (!scrapedAt || !stats.last_deal) throw new Error('the register copy states no scrape date / latest deal — nothing swept');
     const prevMeta = readJson('meta.json');
+    /* never backwards: a copy OLDER than the one PROPX holds (an earlier scrape date or latest deal) is refused, whatever
+       --force says — a newer record is never replaced by an older mirror row */
+    const older = prevMeta && prevMeta.source ? FR.olderCopy(prevMeta.source, { scrapedAt, lastDeal: stats.last_deal }) : null;
+    if (older) {
+      Object.assign(run, { status: 'refused', scrapedAt, error: `the publisher serves an older copy — ${older} — nothing replaced`, finishedAt: new Date().toISOString(), requests });
+      fs.appendFileSync(path.join(DIR, 'sync-runs.jsonl'), JSON.stringify(run) + '\n');
+      console.error(run.error);
+      return;
+    }
     let progress = readJson('progress.json');
     if (progress && progress.scrapedAt !== scrapedAt) progress = null;          // the copy changed under an unfinished sweep: start over
     const only = argVal('only') ? new Set(String(argVal('only')).split(',').map(Number)) : null;

@@ -1,0 +1,54 @@
+# PROPX · daily transaction-freshness monitor (READ-ONLY; separate from the weekly model rebuild).
+#
+# scripts/tx-freshness.js asks each transaction channel what it holds today — the register copy PROPX reads, the GovMap-layer
+# copy it does not read, the official channels (recorded when they refuse or sit behind a CAPTCHA, never bypassed) — compares
+# it with PROPX's stored universe and writes the lag, the freshness state and the alerts to data/transactions/freshness.json
+# (+ freshness-runs.jsonl, append-only). Five requests a day; no transaction is written. data/transactions/ is bot-written.
+
+name: Transactions — daily freshness monitor
+
+on:
+  schedule:
+    - cron: '23 5 * * *'   # every day 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tx-freshness
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check every transaction channel (read-only)
+        id: check
+        run: |
+          set +e
+          node scripts/tx-freshness.js
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/transactions/freshness.json data/transactions/freshness-runs.jsonl
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "Transactions freshness: $(node -e 'const f=require("./data/transactions/freshness.json");console.log(`${f.freshness.state} · copy ${String(f.propx.snapshotAt||"").slice(0,10)} · latest ${f.propx.copyLatestDeal} · ${f.alerts.filter(a=>!a.informational).map(a=>a.kind).join(", ")||"no alert"}`)')"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
+      - name: Fail the run if the register copy did not answer
+        if: steps.check.outputs.code != '0'
+        run: |
+          echo "tx-freshness exited with ${{ steps.check.outputs.code }} — the register copy did not answer (see above)." >&2
+          exit 1

@@ -58,6 +58,7 @@
 //                     (identity, synonyms, kind, status), its register evidence (OBSERVED deals only, sample state, medians, the deal list;
 //                     POSSIBLE deals apart), the locality / verified-neighbourhood CONTEXT apart, exact Tel Aviv permit / site links,
 //                     what PROPX knows and does not know; 404 for an id the official directory does not hold
+//   view=txFreshness     how fresh the transaction universe is: the copy's dates apart, its state, the daily monitor's answer
 //   view=streetCoverage  the coverage audit (lib/streets/coverage.js): official rows · canonical · searchable · synonyms · with transactions ·
 //                     sample states — national / by district / by locality, reconciled
 //   view=street → `model`: the PROPX STREET ESTIMATE (lib/streets/value-read.js, a separate MODEL layer — never the observed market):
@@ -165,6 +166,12 @@ module.exports = async (req, res) => {
       const ready = await DD.prepare(opt);
       const out = GROUP.group({ developer: p.developer || null, company: p.developer ? null : (p.company || null), project: p.developer ? null : (p.project || null) }, ready);
       return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' });
+    }
+    /* how fresh the transaction universe is (lib/gov/freshness.js + the daily monitor's latest answer) — never a deal */
+    if (view === 'txFreshness') {
+      const FRESH = require('../lib/gov/freshness');
+      let monitor = null; try { monitor = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'data', 'transactions', 'freshness.json'), 'utf8')); } catch { /* not run yet */ }
+      return send(res, 200, { freshness: FRESH.fromDisk(), monitor, states: FRESH.STATES, thresholds: FRESH.THRESHOLDS, basis: FRESH.BASIS });
     }
     if (view === 'street' || view === 'streetCoverage') {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });

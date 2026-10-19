@@ -172,6 +172,21 @@ transaction date; the lag is then at most `first_seen_at − transaction_date`
 bucket only — no average or median is computed or published until enough deals
 are observed and the method is reviewed; the page claims no reporting delay.
 
+## Transaction freshness (`freshness.js`, P0 audit 19.10.2026)
+
+One contract for how fresh the transaction universe is — five dates kept apart (transaction · source snapshot · source
+publication [never stated by the register: null + reason] · PROPX ingestion · PROPX check), a state of the copy by its age
+(CURRENT ≤ 7 days · RECENT ≤ 21 · STALE ≤ 45 · VERY STALE > 45 · SOURCE LAG UNKNOWN), and what an empty recent period means
+(`recent()`: NO_RECENT_TRANSACTIONS only for a CURRENT / RECENT copy checked ≤ 8 days that covers ≥ half the period, else
+COVERAGE_NOT_REFRESHED; `periods()` gives a period after the copy's latest deal no count — never 0). The thresholds come from
+measured source behaviour (`BASIS`, ledger `lib/trust/discovery/2026-10-19-transactions.json`). `evidenceFreshness()` / `fromDisk()`
+describe the stored street-evidence copy (+ the daily monitor's newer copies); `scope()` adds a street's / locality's latest
+observed deal and period coverage; `live()` describes a live read of the register copy (`GET /api/gov/transactions` →
+`meta.freshness`); `olderCopy()` refuses a copy older than the stored one. `GET /api/intel?view=txFreshness` returns the block and
+the monitor's answer. The daily monitor `scripts/tx-freshness.js` (`tx-freshness.yml`) records the register copy, the GovMap-layer
+copy (not read by PROPX), the official channels (refused / CAPTCHA — never bypassed), PROPX's latest deal and counts, the lag and
+the alerts in `data/transactions/freshness.json` + `freshness-runs.jsonl`.
+
 ## Caching & historical snapshots (`store.js`)
 
 `MemoryStore` (default; per warm lambda) and `FileStore`

@@ -17,6 +17,7 @@
 'use strict';
 
 const { getService, serviceMode } = require('./_service');
+const FRESH = require('../../lib/gov/freshness');
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -43,7 +44,7 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     return res.end(JSON.stringify({ error: 'bad-level' }));
   }
-  const filters = { limit: Math.min(200, num('limit') || 100), months: num('months') || 24, radiusM: num('radius') || undefined,
+  const filters = { limit: Math.min(200, num('limit') || 100), months: num('months') || 24, days: num('days') || undefined, radiusM: num('radius') || undefined,
     offset: offset || 0, level: g('level') || undefined };
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -74,7 +75,7 @@ module.exports = async (req, res) => {
     const via = out.transactions.some((t) => t.deliveredVia === 'over.org.il') ? 'over.org.il'
       : out.transactions.length ? 'GovMap' : null;
     out.meta = {
-      months: filters.months, mode: serviceMode(), byPropertyClass: cls,
+      months: filters.days ? null : filters.months, days: filters.days || null, mode: serviceMode(), byPropertyClass: cls,
       sourceFamily: 'OFFICIAL_GOVERNMENT',
       sourceAuthority: 'רשות המסים', deliveredVia: via,
       channel: via === 'over.org.il' ? 'independent-republication' : via ? 'government' : null,
@@ -93,6 +94,11 @@ module.exports = async (req, res) => {
       sourceCoverage: cov,
       withStreetName: out.transactions.filter((t) => t.street).length,
     };
+    /* how fresh the universe behind these rows is (lib/gov/freshness.js) — the copy's dates apart, its state, the newest row,
+       what an empty 30 / 90 days means; for the register copy only (GovMap rows carry their own sync) */
+    out.meta.freshness = via === 'over.org.il' || (cov && cov.snapshotAt)
+      ? FRESH.live({ snapshotAt: out.meta.snapshotAt, lastDeal: out.meta.latestInRegister, checkedAt: out.meta.syncedAt, dates })
+      : null;
     delete out.diagnostics;
     delete out.answered;
     res.end(JSON.stringify(out));
