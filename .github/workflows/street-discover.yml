@@ -1,0 +1,50 @@
+# PROPX · Israel street directory — official source discovery (read-only).
+#
+# Runs scripts/street-discover.js on a GitHub runner (data.gov.il and over.org.il answer here, not from the Claude
+# sandbox) and prints what the street registry, the street-synonyms registry and the republished deals register
+# publish: packages, resources, fields, row counts, special rows, API paths. Read-only: nothing is written or committed.
+
+name: Street directory — source discovery (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'catalogue | resource (one resource: fields + sample) | profile (the whole table) | over (over.org.il API paths)'
+        type: choice
+        options: [catalogue, resource, profile, over]
+        default: catalogue
+      resource:
+        description: 'data.gov.il resource id (resource / profile)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: street-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          RESOURCE: ${{ inputs.resource }}
+        run: |
+          case "$MODE" in
+            resource) node scripts/street-discover.js --resource "$RESOURCE" ;;
+            profile)  node scripts/street-discover.js --profile "$RESOURCE" ;;
+            over)     node scripts/street-discover.js --over ;;
+            *)        node scripts/street-discover.js --catalogue ;;
+          esac
