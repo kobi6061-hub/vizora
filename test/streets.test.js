@@ -240,14 +240,17 @@ rows.push(deal(monthsBack(8), []));                                             
 const shard = SW.buildShard(PT, ['פתח תקווה'], rows, { window: W, scrapedAt: '2026-09-19 11:07:39+00', fetchedAt: '2026-10-19T10:00:00Z' }, D);
 fs.writeFileSync(path.join(FIX, PT + '.json'), JSON.stringify(shard));
 fs.writeFileSync(path.join(FIX, '1263.json'), JSON.stringify(SW.buildShard(1263, ['כפר ורדים'], [], { window: W, scrapedAt: '2026-09-19 11:07:39+00', fetchedAt: '2026-10-19T10:00:00Z' }, D)));
-fs.writeFileSync(path.join(FIX, 'meta.json'), JSON.stringify({ schema: 1, source: { name: 'TEST FIXTURE', channel: 'independent-republication', scrapedAt: '2026-09-19 11:07:39+00', lastDeal: W.to }, window: W, sweep: { status: 'COMPLETE' } }));
-fs.writeFileSync(path.join(FIX, 'summary.json'), JSON.stringify(EV.summarize(FIX, D)));
+const FIX_META = { schema: 1, source: { name: 'TEST FIXTURE', channel: 'independent-republication', scrapedAt: '2026-09-19 11:07:39+00', lastDeal: W.to }, window: W, sweep: { status: 'COMPLETE' }, settlements: { noDealsInWindow: [2640] } };
+fs.writeFileSync(path.join(FIX, 'meta.json'), JSON.stringify(FIX_META));
+/* a shard of an EARLIER window (a locality the latest sweep did not reach): stale — never read as current */
+fs.writeFileSync(path.join(FIX, '8300.json'), JSON.stringify(SW.buildShard(8300, ['ראשון לציון'], [deal('2022-05-01', ['הרצל 5'], { settlement: 'ראשון לציון', settlement_code: '8300' })], { window: { from: '2020-01-01', to: '2022-12-31', months: 36 }, scrapedAt: 'old', fetchedAt: 'old' }, D)));
+fs.writeFileSync(path.join(FIX, 'summary.json'), JSON.stringify(EV.summarize(FIX, D, FIX_META)));
 const street = (id) => ST.street(id, { dir: FIX, limit: 500 });
 
-t('sample states: ≥ 10 priced = SUPPORTED (median, P10–P90, change from 10 + 10); 5 = LIMITED (median, no percentiles); 4 = INSUFFICIENT (—); 0 = NONE', () => {
+t('sample states: ≥ 10 priced = SUPPORTED (median, P10–P90; a change only from 30 + 30); 5 = LIMITED (median, no percentiles); 4 = INSUFFICIENT (—); 0 = NONE', () => {
   const s = street(HERZL).evidence.stats;
   assert.equal(s.state, 'SUPPORTED'); assert.equal(s.priced, 23); assert.ok(s.medianPrice > 0 && s.priceRange && s.priceRange.p10 <= s.medianPrice && s.priceRange.p90 >= s.medianPrice);
-  assert.ok(s.change.pct != null && s.change.recentN >= 10 && s.change.priorN >= 10);
+  assert.equal(s.change.pct, null, 'a change needs 30 + 30 deals with ₪/m² — 12 + 11 is not enough'); assert.match(s.change.reason, /30/);
   const five = street(FIVE).evidence.stats; assert.equal(five.state, 'LIMITED'); assert.ok(five.medianPrice > 0); assert.equal(five.priceRange, null); assert.equal(five.change.pct, null);
   const four = street(FOUR).evidence.stats; assert.equal(four.state, 'INSUFFICIENT'); assert.equal(four.medianPrice, null); assert.equal(four.medianPricePerSqm, null); assert.equal(street(FOUR).evidence.deals.length, 4, 'the deals are still listed');
   assert.equal(street(ONE).evidence.stats.state, 'INSUFFICIENT');
@@ -315,6 +318,78 @@ t('coverage: national = Σ districts = Σ localities; the states add up to the c
   assert.ok(Object.values(c.reconcile).every(Boolean), JSON.stringify(c.reconcile));
   assert.equal(c.totals.withTransactions, 5, 'הרצל · העצמאות (by its synonym) · FIVE · FOUR · ONE — a POSSIBLE deal adds none');
   assert.equal(c.totals.SUPPORTED, 1); assert.equal(c.totals.LIMITED, 1);
+});
+
+t('review: a shard of an earlier window is stale (NOT_SWEPT, never counted); a locality with no deal in the window is NONE, not NOT_SWEPT', () => {
+  const rishon = D.streets.find((s) => s.cityCode === 8300 && s.n === 'הרצל');
+  const r = EV.street(rishon.id, { dir: FIX }); assert.equal(r.state, 'NOT_SWEPT'); assert.equal(r.stale, true);
+  const sum = JSON.parse(fs.readFileSync(path.join(FIX, 'summary.json'), 'utf8')); assert.equal(sum.counts.staleShards, 1); assert.equal(sum.localities[8300], undefined);
+  const rh = D.streets.find((s) => s.cityCode === 2640 && s.kind === 'street');
+  const n = EV.street(rh.id, { dir: FIX }); assert.equal(n.swept, true); assert.equal(n.stats.state, 'NONE'); assert.equal(EV.stateOf(sum, 2640, rh.code), 'NONE');
+});
+t('review: units of one date, amount and parcel on several sub-parcels each count as observed and none is priced; fully identical rows are one transaction', () => {
+  const rows = ['001', '002', '003'].map((sub) => deal('2026-01-10', ['הרצל 9'], { gush: 7777, amount: 8400000, sub_parcel: sub }));
+  rows.push(deal('2026-02-10', ['הרצל 9'], { gush: 7778, amount: 2000000 }), deal('2026-02-10', ['הרצל 9'], { gush: 7778, amount: 2000000 }));
+  rows.push(deal('2026-03-10', ['הרצל 9'], { gush: 7779, amount: null, sub_parcel: '001' }), deal('2026-03-10', ['הרצל 9'], { gush: 7779, amount: null, sub_parcel: '002' }));
+  const sh = SW.buildShard(PT, ['פתח תקווה'], rows, { window: W }, D);
+  const ds = EV.dealsOf(sh).map((x) => x.deal);
+  const same = ds.filter((d) => d.sameConsideration === 3); assert.equal(same.length, 3, 'three units observed'); assert.ok(same.every((d) => !d.priced && d.pricePerSqm === null));
+  assert.equal(ds.filter((d) => d.date === '2026-02-10').length, 1); assert.equal(ds.find((d) => d.date === '2026-02-10').copies, 2);
+  assert.equal(ds.filter((d) => d.date === '2026-03-10').length, 2, 'rows without an amount are never grouped');
+});
+t('review: a historical (retired) row answers only when no current row does; a loose name join (a dropped type word) is POSSIBLE; a stated-less list of 3 is not complete', () => {
+  assert.equal(M.matchDeal(M.localityIndex(D, 2600), ['שדה התעופה 5'], 1).streets[0].id, 'st:2600:740');
+  const cs = D.streets.find((s) => s.cityCode === 166 && s.n === 'השומר');
+  const loose = M.matchDeal(M.localityIndex(D, 166), ['כיכר השומר 2'], 1); assert.equal(loose.state, 'POSSIBLE'); assert.ok(loose.reasons.includes('loose-name-match')); assert.equal(loose.streets[0].id, cs.id);
+  /* Ashdod (70): official 'שדרות הים התיכון', no synonym 'שד …' — the canonical type spelling is a STRONG rung */
+  const sv = M.matchDeal(M.localityIndex(D, 70), ['שד הים התיכון 5'], 1); assert.equal(sv.state, 'OBSERVED'); assert.equal(sv.streets[0].id, 'st:70:698'); assert.equal(sv.streets[0].via, 'spelling-variant');
+  /* Petah Tikva's official street is plain 'רוטשילד': dropping a street-type word is a loose join → POSSIBLE */
+  assert.equal(M.matchDeal(LI, ['שדרות רוטשילד 5'], 1).state, 'POSSIBLE');
+  assert.equal(M.spellKey('שדרות בן גוריון'), M.spellKey('שד בן-גוריון')); assert.notEqual(M.spellKey('כיכר השומר'), M.spellKey('השומר'));
+  const cut = M.matchDeal(LI, ['הרצל 1', 'הרצל 3', 'הרצל 5'], null); assert.equal(cut.state, 'POSSIBLE'); assert.ok(cut.reasons.includes('address-list-truncated'));
+});
+t('review: a row of another settlement fails the locality — never relabelled', () => {
+  assert.throws(() => SW.buildShard(2660, ['יבנה'], [deal('2026-01-10', ['הדקל 2'], { settlement: 'גן יבנה', settlement_code: '166' })], { window: W }, D), /another settlement/);
+});
+t('review: a nominal consideration (< ₪100,000) or a ₪/m² below ₪2,000 is not a market sale — counted, never priced, never ₪0', () => {
+  const sh = SW.buildShard(PT, ['פתח תקווה'], [deal('2026-01-10', ['הרצל 1'], { amount: 1 }), deal('2026-01-11', ['הרצל 1'], { amount: 150000, area_sqm: 100 })], { window: W }, D);
+  const [a, b] = EV.dealsOf(sh).map((x) => x.deal).sort((x, y) => x.amount - y.amount);
+  assert.equal(a.notMarket, true); assert.equal(a.priced, false); assert.equal(a.pricePerSqm, null);
+  assert.equal(b.priced, true); assert.equal(b.pricePerSqm, null, '₪1,500 / m² is not a dwelling price'); assert.equal(b.sqmImplausible, true);
+  const st = EV.stats([a, b].map((d) => ({ ...d, match: 'OBSERVED' })), W.to); assert.equal(st.notMarket, 1); assert.ok(st.medianPrice === null && st.priceRange === null);
+});
+t('review: PROBABLE NEW follows the product\'s one rule (build year = deal year or deal year − 1); a later build year is not classified', () => {
+  const mk = (yb) => EV.dealsOf(SW.buildShard(PT, ['פתח תקווה'], [deal('2026-03-01', ['הרצל 1'], { year_built: yb })], { window: W }, D))[0].deal;
+  assert.equal(mk(2026).probableNew, true); assert.equal(mk(2025).probableNew, true); assert.equal(mk(2024).probableNew, false);
+  assert.equal(mk(2029).probableNew, false); assert.equal(mk(2029).buildYearAfterDeal, true);
+});
+t('review: the dwelling allow-list tolerates the register\'s apostrophes; "מגורים" stays a named exclusion', () => {
+  assert.ok(EV.DWELLING_NATURES.has(EV.natureKey('קוטג׳ טורי')) && EV.DWELLING_NATURES.has(EV.natureKey('קוטג’ חד משפחתי')));
+  assert.ok(!EV.DWELLING_NATURES.has(EV.natureKey('מגורים')) && EV.EXCLUDED_NATURES.has('מגורים'));
+});
+t('review: calendar windows — 12 months back from 17.09.2026 starts on 18.09.2025; a leap-day window keeps 01.03; no window end → no counts', () => {
+  const d = (date) => ({ date, priced: true, amount: 2e6, pricePerSqm: 25000, areaSqm: 80, match: 'OBSERVED' });
+  const st = EV.stats([d('2025-09-17'), d('2025-09-18'), d('2024-09-17'), d('2024-09-18')], '2026-09-17');
+  assert.equal(st.last12, 1); assert.equal(st.last24, 3);
+  assert.equal(SW.windowOf('2028-02-29').from, '2025-03-01');
+  assert.equal(EV.stats([d('2019-01-01')], null).last12, null);
+});
+t('review: ₪/m² stands on its own count (≥ 10 plain, 5–9 labelled limited) — never inverted between states', () => {
+  const ds = Array.from({ length: 10 }, (_, i) => ({ date: '2026-0' + (1 + (i % 8)) + '-10', priced: true, amount: 2e6 + i * 1e4, areaSqm: i < 7 ? 80 : null, pricePerSqm: i < 7 ? 25000 + i : null, match: 'OBSERVED' }));
+  const st = EV.stats(ds, W.to); assert.equal(st.state, 'SUPPORTED'); assert.ok(st.medianPricePerSqm > 0); assert.equal(st.sqmLimited, true);
+});
+t('review: the 12-month change is on ₪/m², needs 30 + 30, carries a 95 % interval, and a mix shift alone does not read as a price change', () => {
+  let seed = 5; const r = () => ((seed = (seed * 48271) % 2147483647) / 2147483647);
+  const mk = (n, from, to, ppsqm, area) => Array.from({ length: n }, (_, i) => { const day = new Date(Date.parse(from) + ((Date.parse(to) - Date.parse(from)) * (i + 0.5)) / n).toISOString().slice(0, 10);
+    const p = Math.round(ppsqm * (0.85 + 0.3 * r())); return { date: day, priced: true, areaSqm: area, amount: p * area, pricePerSqm: p, match: 'OBSERVED' }; });
+  const flat = EV.stats([...mk(35, '2025-09-20', '2026-09-15', 25000, 120), ...mk(35, '2024-09-20', '2025-09-15', 25000, 80)], W.to);
+  assert.ok(flat.change.pct != null && Math.abs(flat.change.pct) < 8, 'a size shift is not a price change: ' + flat.change.pct);
+  assert.equal(flat.change.distinguishable, false); assert.ok(flat.change.interval95[0] < 0 && flat.change.interval95[1] > 0);
+  assert.equal(flat.change.recentMedianArea, 120); assert.equal(flat.change.priorMedianArea, 80);
+  const up = EV.stats([...mk(35, '2025-09-20', '2026-09-15', 30000, 90), ...mk(35, '2024-09-20', '2025-09-15', 24000, 90)], W.to);
+  assert.equal(up.change.distinguishable, true); assert.ok(up.change.pct > 15 && up.change.interval95[0] > 0);
+  const again = EV.stats([...mk(35, '2025-09-20', '2026-09-15', 30000, 90), ...mk(35, '2024-09-20', '2025-09-15', 24000, 90)], W.to);
+  assert.ok(again.change.interval95.length === 2, 'deterministic interval');
 });
 
 /* ───────────────────────── API · page · workflows ───────────────────────── */

@@ -34,6 +34,7 @@ const SD = require('../lib/streets/directory');
 const M = require('../lib/streets/match');
 const EV = require('../lib/streets/evidence');
 const SW = require('../lib/streets/sweep');
+const { classifyPropertyType } = require('../lib/gov/propertyType');
 const { windowOf, normalize, buildShard, rematch } = SW;
 const num = (v) => { if (v == null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
@@ -81,7 +82,7 @@ const sweepWindow = (name, from, to, first, st) => SW.sweepWindow(name, from, to
 
 function finish(meta, run, D) {
   fs.mkdirSync(DIR, { recursive: true });
-  const summary = EV.summarize(DIR, D);
+  const summary = EV.summarize(DIR, D, meta);
   meta.counts = summary.counts;
   meta.directory = D.fileHash;
   writeJson('summary.json', summary);
@@ -121,15 +122,19 @@ function finish(meta, run, D) {
     const settlements = await get('/api/deals/settlements');
     const list = (settlements && (settlements.data || settlements)) || [];
     /* settlement names → locality codes */
-    const byCode = new Map(), unmapped = [];
+    const byCode = new Map(), unmapped = [], outsideCodes = new Set();
     let outside = 0;
     for (const s of list) {
       if (!s || !s.settlement) continue;
-      if (s.last_deal && String(s.last_deal).slice(0, 10) < window.from) { outside++; continue; }
+      if (s.last_deal && String(s.last_deal).slice(0, 10) < window.from) {
+        outside++; const oc = num(s.settlement_code) != null ? num(s.settlement_code) : num(s.resolved_code);
+        if (oc != null && D.localities.has(oc)) outsideCodes.add(oc);
+        continue;
+      }
       const code = num(s.settlement_code) != null ? num(s.settlement_code) : num(s.resolved_code);
       if (code == null || !D.localities.has(code)) { unmapped.push({ settlement: s.settlement, deals: num(s.deals), resolvedName: s.resolved_name || null }); continue; }
       if (!byCode.has(code)) byCode.set(code, []);
-      byCode.get(code).push(s.settlement);
+      if (!byCode.get(code).includes(s.settlement)) byCode.get(code).push(s.settlement);   // a name listed twice is swept once
     }
     const codes = [...byCode.keys()].filter((c) => !only || only.has(c)).sort((a, b) => a - b);
     progress = progress || { scrapedAt, startedAt, window, done: [], failed: [] };
@@ -141,7 +146,11 @@ function finish(meta, run, D) {
       source: { name: 'Tax Authority deals register — republished copy (over.org.il)', base: BASE, channel: 'independent-republication', scrapedAt,
         lastDeal: String(stats.last_deal).slice(0, 10), firstDeal: stats.first_deal || null, datasetId: stats.dataset_id || null, registerUrl: stats.source_url || null, deals: num(stats.deals) },
       window, dwellingNatures: [...EV.DWELLING_NATURES], natures: ((natures && natures.data) || []).map((n) => ({ nature: n.nature, deals: num(n.deals), note: n.note || null })),
-      settlements: { total: list.length, outsideWindow: outside, mapped: [...byCode.values()].reduce((n, l) => n + l.length, 0), localities: byCode.size, unmapped },
+      settlements: { total: list.length, outsideWindow: outside, mapped: [...byCode.values()].reduce((n, l) => n + l.length, 0), localities: byCode.size, unmapped,
+        /* a locality whose every register name has its latest deal before the window: swept by the list — no deal in the window */
+        noDealsInWindow: [...outsideCodes].filter((c) => !byCode.has(c)).sort((a, b) => a - b) },
+      /* register natures the shared classifier calls residential but the dwelling universe does not list (a human decides) */
+      naturesReview: ((natures && natures.data) || []).map((n) => n.nature).filter((n) => n && classifyPropertyType(n).residential && !EV.DWELLING_NATURES.has(EV.natureKey(n)) && !EV.EXCLUDED_NATURES.has(EV.natureKey(n))),
       sweep: { status: 'RUNNING', startedAt: progress.startedAt, updatedAt: fetchedAt, done: progress.done.length, of: codes.length, failed: progress.failed } };
     const st = { leaves: 0, splits: 0, pagedDays: 0, rows: 0, duplicates: 0 };
     writeJson('progress.json', progress);
@@ -155,7 +164,9 @@ function finish(meta, run, D) {
           rows.push(...await sweepWindow(name, window.from, window.to, first, st));
         }
         const n = normalize(rows); st.rows += n.kept.length; st.duplicates += n.duplicates;
-        const shard = buildShard(code, byCode.get(code), n.kept, { window, scrapedAt, fetchedAt }, D);
+        /* the codes a row of this locality may carry: its own, and those of the register names resolved to it */
+        const codesOf = list.filter((x) => byCode.get(code).includes(x.settlement)).map((x) => num(x.settlement_code)).filter((c) => c != null);
+        const shard = buildShard(code, byCode.get(code), n.kept, { window, scrapedAt, fetchedAt, codes: codesOf }, D);
         shard.duplicatesCollapsed = n.duplicates;
         shard.contentHash = hashOf(shard.rows.concat(shard.parcels));
         writeJson(code + '.json', shard);

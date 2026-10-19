@@ -7010,7 +7010,9 @@ const SIT={he:{lyr:"מודיעין רחוב",roomsW:"חד׳",sqmW:"מ״ר",statu
     dist:"התפלגות (רק בשוק נתמך)",p10:"טווח מחירים P10–P90",rooms:"תמהיל חדרים",size:"תמהיל שטחים (מ״ר)",change:"שינוי 12 חודשים מול 12 שקדמו",mean:"ממוצע (לצד החציון)",
     ctx:"הקשר — השוק הסובב",ctxNote:"הנתונים האלה מתארים את השוק הסובב, לא מחירים שנצפו ברחוב הזה.",ctxLoc:(c)=>`חציון עסקאות הדיור ב${c} (אותו חלון)`,ctxSqm:"חציון ₪ למ״ר ביישוב",ctxN:"עסקאות דיור מתומחרות ביישוב",
     ctxCbs:(c)=>`מחיר עסקה ממוצע — ${c} (הלמ״ס, לוח 2.2, כלל הדירות)`,ctxNb:(n)=>`שכונה ${n} (קישור רחוב מאומת)`,ctxNbNo:"שכונה: אין קישור מאומת — PROPX לא מסיקה שכונה.",
-    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
+    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",bulk:(n)=>`סכום זהה ל-${n} יחידות באותו יום — לא מתומחר`,notMarket:"סכום סמלי — לא מתומחר",portionNA:"חלק לא ידוע",
+    band:"טווח 95%",notDist:"לא ניתן להבחין משינוי אפס",area:"שטח חציוני",minmax:"מינימום–מקסימום",
+    excl:(o)=>`לא בחישוב המחיר: ${fmtInt(o.notMarket)} סכומים סמליים (מתחת ל-₪100,000) · ${fmtInt(o.bulk)} יחידות עם סכום זהה באותו יום · ${fmtInt(o.partial)} מכירות חלקיות · ${fmtInt(o.portionMissing)} בלי חלק נמכר`,shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
     possible:"עסקאות אפשריות (ייתכן) — לא בחציון",pcols:["תאריך","כתובות החלקה","למה רק ייתכן","מחיר"],reasons:{"multi-street-parcel":"חלקה ביותר מרחוב אחד","address-list-truncated":"רשימת הכתובות קטועה","unresolved-address-on-parcel":"כתובת בחלקה לא זוהתה","ambiguous-address-on-parcel":"כתובת בחלקה עמומה"},
     permits:"היתרי בנייה ואתרים בכתובות ברחוב (עיריית תל אביב-יפו)",permCols:["נפתח","בקשה / היתר","סוג","יח״ד","שלב"],sites:"אתרי בנייה",siteCols:["תחילה","תיק","מצב","כתובת"],multi:(n)=>`הרשומה נוקבת ב-${n} רחובות`,
     ident:"זהות רשמית",syn:"שמות נרדפים רשמיים",first:"נראה לראשונה במרשם",regUpd:"עדכון המרשם",method:"שיטה",rungs:"שלבי התאמה שנעשה בהם שימוש",nonDw:"עסקאות שאינן דיור ברחוב (לא בחציון)",
@@ -7029,7 +7031,9 @@ const SIT={he:{lyr:"מודיעין רחוב",roomsW:"חד׳",sqmW:"מ״ר",statu
     dist:"Distribution (supported market only)",p10:"Price range P10–P90",rooms:"Rooms mix",size:"Size mix (m²)",change:"Latest 12 months vs the 12 before",mean:"Mean (beside the median)",
     ctx:"Context — the surrounding market",ctxNote:"These figures describe the surrounding market, not observed prices on this street.",ctxLoc:(c)=>`Median dwelling deal in ${c} (same window)`,ctxSqm:"Locality median ₪ per m²",ctxN:"Priced dwelling deals in the locality",
     ctxCbs:(c)=>`Average transaction price — ${c} (CBS Table 2.2, all dwellings)`,ctxNb:(n)=>`Neighbourhood ${n} (verified street link)`,ctxNbNo:"Neighbourhood: no verified link — PROPX never infers a neighbourhood.",
-    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
+    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",bulk:(n)=>`one amount on ${n} units that day — not priced`,notMarket:"nominal amount — not priced",portionNA:"portion unknown",
+    band:"95% band",notDist:"not distinguishable from no change",area:"median area",minmax:"min–max",
+    excl:(o)=>`Not in the price figures: ${fmtInt(o.notMarket)} nominal amounts (under ₪100,000) · ${fmtInt(o.bulk)} units sharing one amount that day · ${fmtInt(o.partial)} partial sales · ${fmtInt(o.portionMissing)} without a stated portion`,shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
     possible:"Possible matches (POSSIBLE) — not in the median",pcols:["Date","Parcel addresses","Why only possible","Price"],reasons:{"multi-street-parcel":"parcel on more than one street","address-list-truncated":"address list truncated","unresolved-address-on-parcel":"an address on the parcel not resolved","ambiguous-address-on-parcel":"an address on the parcel is ambiguous"},
     permits:"Building permits and sites at addresses on the street (Tel Aviv-Yafo municipality)",permCols:["Opened","Request / permit","Type","Units","Stage"],sites:"Construction sites",siteCols:["Start","File","State","Address"],multi:(n)=>`the record names ${n} streets`,
     ident:"Official identity",syn:"Official synonyms",first:"First seen in the directory",regUpd:"Registry update",method:"Method",rungs:"Match rungs used",nonDw:"Non-dwelling deals on the street (not in the median)",
@@ -7069,8 +7073,8 @@ function siHTML(g){
     tile(t.status,chip,"",xpBtn("street_market_evidence_status")),
     tile(t.latest,st&&st.latest?siDate(st.latest.date):"—",st&&st.latest?[st.latest.amount!=null?fmtNIS(st.latest.amount):null,st.latest.rooms?`${st.latest.rooms} ${t.roomsW}`:null,st.latest.areaSqm?`${fmtInt(st.latest.areaSqm)} ${t.sqmW}`:null].filter(Boolean).join(" · "):"",xpBtn("street_observed_deal")),
     tile(t.sample,st?`${fmtInt(st.observed)} ${t.observed}`:"—",st?`${fmtInt(priced)} ${t.priced} · ${fmtInt(st.last12)} ${t.last12}`:"",xpBtn("street_sample_size")),
-    tile(t.median,medianV,st&&st.medianPrice!=null?(state==="LIMITED"?t.states.LIMITED:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded")),
-    tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):""),
+    tile(t.median,medianV,st&&st.medianPrice!=null?(state==="LIMITED"?`${t.states.LIMITED} · n=${fmtInt(priced)}${st.priceMinMax?` · ${t.minmax} ${fmtNIS(st.priceMinMax.min)}–${fmtNIS(st.priceMinMax.max)}`:""}`:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded")),
+    tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}${st.sqmLimited?` · ${t.states.LIMITED}`:""}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):""),
     tile(t.period,w?t.of(siDate(w.from),siDate(w.to)):"—","",""),
     tile(t.fresh,src.scrapedAt?siDate(src.scrapedAt):"—",src.scrapedAt?`${t.copy} · ${t.check} ${siDate(src.checkedAt)}`:"",""),
   ].join("");
@@ -7081,7 +7085,9 @@ function siHTML(g){
   if(st&&st.state==="SUPPORTED"){
     const mix=o=>o?Object.entries(o).filter(([,v])=>v).map(([k,v])=>`${k}: ${fmtInt(v)}`).join(" · "):"—";
     five+=`<h4>${t.dist}</h4><div class="st-grid">${tile(t.p10,st.priceRange?`${fmtNIS(st.priceRange.p10)} – ${fmtNIS(st.priceRange.p90)}`:"—","","")}${tile(t.mean,st.meanPrice!=null?fmtNIS(st.meanPrice):"—","","")}
-      ${tile(t.change,st.change&&st.change.pct!=null?fmtPct(st.change.pct):"—",st.change&&st.change.pct!=null?`n=${st.change.recentN} / ${st.change.priorN}`:"",st.change&&st.change.pct==null?xpMiss("street_change_insufficient"):"")}
+      ${tile(t.change,st.change&&st.change.pct!=null?(st.change.distinguishable?fmtPct(st.change.pct):`≈ ${fmtPct(st.change.pct)}`):"—",
+        st.change&&st.change.pct!=null?`${t.band} ${fmtPct(st.change.interval95[0])} … ${fmtPct(st.change.interval95[1])}${st.change.distinguishable?"":` · ${t.notDist}`} · ₪/m² · n=${st.change.recentN} / ${st.change.priorN} · ${t.area} ${st.change.priorMedianArea} → ${st.change.recentMedianArea}`:"",
+        st.change&&st.change.pct==null?xpMiss("street_change_insufficient"):xpBtn("street_sample_size"))}
       ${tile(t.rooms,"",mix(st.rooms),"")}${tile(t.size,"",mix(st.size),"")}</div>`;
   }
   const C=D.context||{},L=C.locality||{};
@@ -7096,7 +7102,8 @@ function siHTML(g){
     five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
       <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+    if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
   }
   /* deep dive */
   let deep="";

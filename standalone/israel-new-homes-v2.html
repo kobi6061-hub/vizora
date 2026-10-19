@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="f35da3f7d61128fed3deb2fd1057659fbc22a89481210d7e0935b4236bb1f509">
+<meta name="propx-source-sha256" content="7e54562ccc6513cd8029e0838661f50be7c1f6131188d1cb4cff07a22069071b">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2966,7 +2966,9 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       methodology: bi('שלבים: קוד רחוב (לא זמין בערוץ) → שם רשמי → שם נרדף → שם מנורמל; שני רחובות באותו שלב — לא נבחר אף אחד.', 'Rungs: street code (not available on this channel) → official name → synonym → normalized name; two streets on one rung — none is chosen.'),
       interpretation: bi('"ייתכן" מוצג בנפרד ואינו נספר.', 'A POSSIBLE deal is listed apart and never counted.'),
       notAs: bi('לא כל העסקאות ברחוב (עסקאות בלי כתובת אינן משויכות), ולא התאמה לפי קרבה או גאומטריה.', 'Not every deal on the street (deals with no address are not attached), and not a match by proximity or geometry.'),
-      limitations: [bi('פרסום מחדש עצמאי של מאגר רשות המסים (over.org.il) — לא ערוץ ממשלתי; עותק מתוארך.', 'An independent republication of the Tax Authority register (over.org.il) — not a government channel; a dated copy.')],
+      limitations: [bi('פרסום מחדש עצמאי של מאגר רשות המסים (over.org.il) — לא ערוץ ממשלתי; עותק מתוארך.', 'An independent republication of the Tax Authority register (over.org.il) — not a government channel; a dated copy.'),
+        bi('עסקאות מדווחות באיחור: החודשים האחרונים של החלון חסרים בחלקם.', 'Deals are reported late: the last months of the window are partly empty.'),
+        bi('פרויקט גדול עם כניסות רבות (יותר מ-3 כתובות לחלקה) אינו נכנס לרחוב אבל נכנס להקשר היישובי — חלק מהפער בין החציונים נובע מכך.', 'A large multi-entrance project (more than 3 addresses on its parcel) does not enter a street but does enter the locality context — part of the gap between the two medians comes from this.')],
       evidence: bi('עמוד הרחוב → רשימת העסקאות · "ייתכן" בנפרד', 'the street page → the deal list · POSSIBLE apart'),
       freshness: { observation: bi('תאריך העסקה', 'the deal date'), publication: bi('scraped_at של העותק', 'the copy\'s scraped_at'), check: bi('הסריקה האחרונה של PROPX', 'PROPX\'s latest sweep') } }),
     T({ id: 'street_market_evidence_status', group: 'streets', title: bi('מצב ראיות השוק ברחוב', 'Street market evidence status'),
@@ -2976,7 +2978,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       source: { ids: ['over:street-evidence'] }, cls: 'DERIVED',
       formula: bi('עסקאות דיור מתומחרות שנצפו: 10 ומעלה = ראיות מספקות · 5–9 = ראיות מוגבלות · 1–4 = מדגם לא מספיק (מחיר "—") · 0 = לא נצפו עסקאות', 'priced OBSERVED dwelling deals: ≥ 10 = SUPPORTED · 5–9 = LIMITED · 1–4 = INSUFFICIENT (price "—") · 0 = NO OBSERVED TRANSACTIONS'),
       inputs: [bi('עסקאות דיור (דירה, דירת גן / גג, קוטג׳, בית בודד) שנצפו ברחוב', 'dwelling deals (flat, garden / roof flat, cottage, detached house) observed on the street')],
-      methodology: bi('מתומחרת = כל הנכס נמכר (חלק = 1) בסכום חיובי. הספים נקבעו אחרי בחינת ההתפלגות; 10 תואם את כלל המדגם הקטן של PROPX.', 'Priced = the whole property sold (portion = 1) for a positive amount. The thresholds were set after inspecting the distribution; 10 matches PROPX\'s small-sample rule.'),
+      methodology: bi('מתומחרת = כל הנכס נמכר (חלק = 1) בסכום של ₪100,000 לפחות; סכום סמלי, תמורה אחת לכמה יחידות או חלק לא ידוע נספרים ואינם מתומחרים. הספים: 10 תואם את כלל המדגם הקטן של PROPX; 5 הוא המדגם הקטן ביותר שהחציון שלו אינו ערך של עסקה אחת או שתיים.', 'Priced = the whole property sold (portion = 1) for at least ₪100,000; a nominal amount, one consideration for several units or an unknown portion are counted and never priced. The thresholds: 10 matches PROPX\'s small-sample rule; 5 is the smallest sample whose median is not one or two deals\' value.'),
       interpretation: bi('"לא נצפו עסקאות" אינו מחיר אפס ואינו "אין עסקאות ברחוב" — רק שאין עסקה ששויכה אליו בוודאות.', '"No observed transactions" is not a zero price and not "no deals on the street" — only that no deal was attached to it with certainty.'),
       notAs: bi('לא דירוג רחוב, לא אומדן נזילות ולא ציון.', 'Not a street rating, not a liquidity estimate and not a score.'),
       limitations: [LIM.smallSample],
@@ -2987,7 +2989,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       why: bi('החציון עמיד בפני עסקה חריגה (בניין שלם, דירת פאר); הממוצע מוצג לצדו ומסומן.', 'The median resists an outlier (a whole building, a luxury flat); the mean is shown beside it, labelled.'),
       unit: bi('₪', '₪'), geography: bi('רחוב', 'Street'), period: bi('36 החודשים שמסתיימים בעסקה האחרונה בעותק', 'The 36 months ending on the copy\'s latest deal'),
       source: { ids: ['over:street-evidence'] }, cls: 'DERIVED',
-      formula: bi('חציון(סכום) על עסקאות דיור מתומחרות שנצפו ברחוב; מעוגל ל-1,000 ₪; P10–P90 רק מ-10 עסקאות', 'median(amount) over the street\'s priced OBSERVED dwelling deals; rounded to ₪1,000; P10–P90 only from 10 deals'),
+      formula: bi('חציון(סכום) על עסקאות דיור מתומחרות ונבדלות שנצפו ברחוב; מעוגל ל-1,000 ₪; ב-5–9 עסקאות מוצגים גם המינימום והמקסימום; P10–P90 רק מ-10 עסקאות', 'median(amount) over the street\'s distinct priced OBSERVED dwelling deals; rounded to ₪1,000; with 5–9 deals the minimum and maximum are shown beside it; P10–P90 only from 10 deals'),
       inputs: [bi('סכום העסקה כפי שדווח', 'the deal amount as reported')],
       methodology: bi('תמהיל של דירות חדשות ויד שנייה, גדלים שונים; אין נרמול איכות.', 'A mix of new and second-hand dwellings of different sizes; no quality adjustment.'),
       interpretation: bi('השוו לחציון היישוב באותו חלון — הוא מוצג בנפרד כהקשר.', 'Compare with the locality median in the same window — shown apart, as context.'),
@@ -3000,7 +3002,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       why: bi('מנטרל בחלקו את גודל הדירה; עדיין תמהיל של חדש ויד שנייה.', 'Partly neutralises flat size; still a mix of new and second-hand.'),
       unit: bi('₪ למ״ר', '₪ per m²'), geography: bi('רחוב', 'Street'), period: bi('36 החודשים שמסתיימים בעסקה האחרונה בעותק', 'The 36 months ending on the copy\'s latest deal'),
       source: { ids: ['over:street-evidence'] }, cls: 'DERIVED',
-      formula: bi('חציון(סכום ÷ שטח) על עסקאות דיור מתומחרות עם שטח חיובי; מכירה חלקית לעולם אינה מתומחרת למ״ר', 'median(amount ÷ area) over priced dwelling deals with a positive area; a partial sale is never priced per m²'),
+      formula: bi('חציון(סכום ÷ שטח) על עסקאות דיור מתומחרות עם שטח חיובי ו-₪2,000 למ״ר לפחות; בספירה משלו: 10 ומעלה רגיל, 5–9 מסומן כמוגבל; מכירה חלקית לעולם אינה מתומחרת למ״ר', 'median(amount ÷ area) over priced dwelling deals with a positive area and at least ₪2,000 per m²; on its own count: 10 or more plain, 5–9 labelled limited; a partial sale is never priced per m²'),
       inputs: [bi('סכום ושטח כפי שדווחו', 'amount and area as reported')],
       methodology: bi('השטח הוא השטח המדווח במרשם (ייתכן ברוטו או נטו לפי הדיווח).', 'The area is the register\'s reported area (gross or net as reported).'),
       interpretation: bi('לבדיקה מהירה של רמת מחירים ברחוב מול היישוב.', 'A quick check of the street\'s price level against the locality.'),
@@ -3013,9 +3015,9 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       why: bi('נתון בלי גודל מדגם אי אפשר לשפוט.', 'A figure without its sample size cannot be judged.'),
       unit: bi('עסקאות', 'deals'), geography: bi('רחוב', 'Street'), period: bi('12 · 24 · 36 חודשים', '12 · 24 · 36 months'),
       source: { ids: ['over:street-evidence'] }, cls: 'DERIVED',
-      formula: bi('ספירת עסקאות דיור שנצפו (כולן) · מתומחרות · עם שטח; ובחלונות 12 / 24 / 36 חודשים', 'count of OBSERVED dwelling deals (all) · priced · with an area; and in 12 / 24 / 36-month windows'),
+      formula: bi('ספירת עסקאות דיור נבדלות שנצפו (כולן) · מתומחרות · עם ₪ למ״ר; ובחלונות של 12 / 24 / 36 חודשים קלנדריים', 'count of distinct OBSERVED dwelling transactions (all) · priced · with a ₪ per m²; and in 12 / 24 / 36 calendar-month windows'),
       inputs: [bi('עסקאות שנצפו ברחוב', 'deals observed on the street')],
-      methodology: bi('שינוי לאורך זמן רק כששני חצאי ה-12 חודשים מכילים 10 עסקאות מתומחרות לפחות כל אחד.', 'Change over time only when both 12-month halves hold at least 10 priced deals each.'),
+      methodology: bi('שורות שחוזרות על אותה עסקה נספרות פעם אחת; תמורה אחת לכמה יחידות היא עסקה אחת שאינה מתומחרת. שינוי לאורך זמן — על ₪ למ״ר, רק כשבכל חצי של 12 חודשים 30 עסקאות לפחות, עם טווח 95% (אתחול חוזר); טווח שחוצה את האפס = "לא ניתן להבחין משינוי אפס"; השטח החציוני של כל חצי מוצג לצדו.', 'Rows repeating one deal count once; one consideration for several units is one unpriced transaction. Change over time — on ₪ per m², only when each 12-month half holds at least 30 deals, with a 95 % band (bootstrap); a band spanning zero = "not distinguishable from no change"; each half\'s median area is shown beside it.'),
       interpretation: bi('מדגם קטן מסומן; אין אחוז שינוי ממדגם קטן.', 'A small sample is marked; no percentage change from a small sample.'),
       notAs: bi('לא מספר הדירות ברחוב ולא מחזור המכירות.', 'Not the number of flats on the street and not the sales turnover.'),
       evidence: bi('עמוד הרחוב', 'the street page'),
@@ -3945,7 +3947,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     street_locality_not_swept: { label: bi('ראיות שוק ביישוב', 'Market evidence in the locality'), why: bi('היישוב לא נסרק בסריקה האחרונה (אין לו עסקאות בחלון, שמו במרשם העסקאות לא קושר לסמל רשמי, או שהקריאה שלו נכשלה).', 'The locality was not swept in the latest sweep (no deals in the window, its register name has no official code, or its read failed).'), unlock: bi('הסריקה הבאה.', 'The next sweep.'), ids: ['locality-not-swept'] },
     street_evidence_not_loaded: { label: bi('ראיות שוק ברמת הרחוב', 'Street-level market evidence'), why: bi('הסריקה של מרשם העסקאות עדיין לא נשמרה בגרסה הזו.', 'The sweep of the deals register is not yet stored in this version.'), unlock: bi('הרצה של סנכרון ראיות הרחוב.', 'A run of the street evidence sync.'), ids: ['evidence-not-loaded'] },
     street_neighbourhood_unlinked: { label: bi('הקשר שכונתי', 'Neighbourhood context'), why: bi('אין קישור מאומת בין הרחוב לשכונה; PROPX לא מסיקה שכונה משם, קרבה או אזור סטטיסטי.', 'There is no verified link between the street and a neighbourhood; PROPX never infers a neighbourhood from a name, proximity or a statistical area.'), unlock: bi('קישור רחוב–שכונה מאומת (רשות מקומית / מרשם).', 'A verified street–neighbourhood link (municipality / registry).'), ids: ['neighbourhood-unlinked'] },
-    street_change_insufficient: { label: bi('שינוי לאורך זמן', 'Change over time'), why: bi('שני חצאי 12 החודשים צריכים 10 עסקאות מתומחרות לפחות כל אחד.', 'Each 12-month half needs at least 10 priced deals.'), unlock: bi('יותר עסקאות ברחוב.', 'More deals on the street.'), ids: ['street-change-insufficient'] },
+    street_change_insufficient: { label: bi('שינוי לאורך זמן', 'Change over time'), why: bi('כל חצי של 12 חודשים צריך 30 עסקאות לפחות עם מחיר למ״ר; ממדגם קטן יותר השינוי הוא בעיקר רעש.', 'Each 12-month half needs at least 30 deals with a price per m²; from a smaller sample the change is mostly noise.'), unlock: bi('יותר עסקאות ברחוב.', 'More deals on the street.'), ids: ['street-change-insufficient'] },
     street_permits_not_covered: { label: bi('היתרים ופרויקטים ברחוב', 'Permits and projects on the street'), why: bi('רק עיריית תל אביב-יפו מפרסמת היתרים ואתרי בנייה בכתובת שאפשר לקרוא; ביישובים אחרים אין מקור כזה בכיסוי.', 'Only Tel Aviv-Yafo publishes permits and construction sites by address in a readable form; other localities have no such source in coverage.'), unlock: bi('שכבת היתרים עירונית פתוחה ביישוב.', 'An open municipal permit layer in the locality.'), ids: ['permits-outside-tlv', 'no-tlv-permits'] },
     cbs_average_price_no_row: { label: bi('מחיר עסקה ממוצע — כלל הדירות', 'Average transaction price — all dwellings'), why: bi('לוח 2.2 של הלמ״ס מפרסם ממוצע לכלל הדירות רק לישראל, לששת המחוזות ול-18 הערים הגדולות (מעל 100,000 תושבים). לאזור הזה אין שורה משלו — PROPX לא ממלאת אותה מהמחוז ולא מהאומדן.', 'CBS Table 2.2 publishes an all-dwellings average only for Israel, the six districts and the 18 big cities (above 100,000 residents). This area has no row of its own — PROPX does not fill it from the district or from the estimate.'), unlock: bi('שורה של האזור בפרסום רשמי של הלמ״ס (או מקור רשמי אחר לממוצע עסקאות באזור).', 'A row for the area in an official CBS publication (or another official source of the area\'s average transaction price).'), ids: ['price-no-row'] },
     /* Sponsor X-Ray (lib/group) */
@@ -9202,7 +9204,9 @@ const SIT={he:{lyr:"מודיעין רחוב",roomsW:"חד׳",sqmW:"מ״ר",statu
     dist:"התפלגות (רק בשוק נתמך)",p10:"טווח מחירים P10–P90",rooms:"תמהיל חדרים",size:"תמהיל שטחים (מ״ר)",change:"שינוי 12 חודשים מול 12 שקדמו",mean:"ממוצע (לצד החציון)",
     ctx:"הקשר — השוק הסובב",ctxNote:"הנתונים האלה מתארים את השוק הסובב, לא מחירים שנצפו ברחוב הזה.",ctxLoc:(c)=>`חציון עסקאות הדיור ב${c} (אותו חלון)`,ctxSqm:"חציון ₪ למ״ר ביישוב",ctxN:"עסקאות דיור מתומחרות ביישוב",
     ctxCbs:(c)=>`מחיר עסקה ממוצע — ${c} (הלמ״ס, לוח 2.2, כלל הדירות)`,ctxNb:(n)=>`שכונה ${n} (קישור רחוב מאומת)`,ctxNbNo:"שכונה: אין קישור מאומת — PROPX לא מסיקה שכונה.",
-    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
+    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",bulk:(n)=>`סכום זהה ל-${n} יחידות באותו יום — לא מתומחר`,notMarket:"סכום סמלי — לא מתומחר",portionNA:"חלק לא ידוע",
+    band:"טווח 95%",notDist:"לא ניתן להבחין משינוי אפס",area:"שטח חציוני",minmax:"מינימום–מקסימום",
+    excl:(o)=>`לא בחישוב המחיר: ${fmtInt(o.notMarket)} סכומים סמליים (מתחת ל-₪100,000) · ${fmtInt(o.bulk)} יחידות עם סכום זהה באותו יום · ${fmtInt(o.partial)} מכירות חלקיות · ${fmtInt(o.portionMissing)} בלי חלק נמכר`,shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
     possible:"עסקאות אפשריות (ייתכן) — לא בחציון",pcols:["תאריך","כתובות החלקה","למה רק ייתכן","מחיר"],reasons:{"multi-street-parcel":"חלקה ביותר מרחוב אחד","address-list-truncated":"רשימת הכתובות קטועה","unresolved-address-on-parcel":"כתובת בחלקה לא זוהתה","ambiguous-address-on-parcel":"כתובת בחלקה עמומה"},
     permits:"היתרי בנייה ואתרים בכתובות ברחוב (עיריית תל אביב-יפו)",permCols:["נפתח","בקשה / היתר","סוג","יח״ד","שלב"],sites:"אתרי בנייה",siteCols:["תחילה","תיק","מצב","כתובת"],multi:(n)=>`הרשומה נוקבת ב-${n} רחובות`,
     ident:"זהות רשמית",syn:"שמות נרדפים רשמיים",first:"נראה לראשונה במרשם",regUpd:"עדכון המרשם",method:"שיטה",rungs:"שלבי התאמה שנעשה בהם שימוש",nonDw:"עסקאות שאינן דיור ברחוב (לא בחציון)",
@@ -9221,7 +9225,9 @@ const SIT={he:{lyr:"מודיעין רחוב",roomsW:"חד׳",sqmW:"מ״ר",statu
     dist:"Distribution (supported market only)",p10:"Price range P10–P90",rooms:"Rooms mix",size:"Size mix (m²)",change:"Latest 12 months vs the 12 before",mean:"Mean (beside the median)",
     ctx:"Context — the surrounding market",ctxNote:"These figures describe the surrounding market, not observed prices on this street.",ctxLoc:(c)=>`Median dwelling deal in ${c} (same window)`,ctxSqm:"Locality median ₪ per m²",ctxN:"Priced dwelling deals in the locality",
     ctxCbs:(c)=>`Average transaction price — ${c} (CBS Table 2.2, all dwellings)`,ctxNb:(n)=>`Neighbourhood ${n} (verified street link)`,ctxNbNo:"Neighbourhood: no verified link — PROPX never infers a neighbourhood.",
-    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
+    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",bulk:(n)=>`one amount on ${n} units that day — not priced`,notMarket:"nominal amount — not priced",portionNA:"portion unknown",
+    band:"95% band",notDist:"not distinguishable from no change",area:"median area",minmax:"min–max",
+    excl:(o)=>`Not in the price figures: ${fmtInt(o.notMarket)} nominal amounts (under ₪100,000) · ${fmtInt(o.bulk)} units sharing one amount that day · ${fmtInt(o.partial)} partial sales · ${fmtInt(o.portionMissing)} without a stated portion`,shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
     possible:"Possible matches (POSSIBLE) — not in the median",pcols:["Date","Parcel addresses","Why only possible","Price"],reasons:{"multi-street-parcel":"parcel on more than one street","address-list-truncated":"address list truncated","unresolved-address-on-parcel":"an address on the parcel not resolved","ambiguous-address-on-parcel":"an address on the parcel is ambiguous"},
     permits:"Building permits and sites at addresses on the street (Tel Aviv-Yafo municipality)",permCols:["Opened","Request / permit","Type","Units","Stage"],sites:"Construction sites",siteCols:["Start","File","State","Address"],multi:(n)=>`the record names ${n} streets`,
     ident:"Official identity",syn:"Official synonyms",first:"First seen in the directory",regUpd:"Registry update",method:"Method",rungs:"Match rungs used",nonDw:"Non-dwelling deals on the street (not in the median)",
@@ -9261,8 +9267,8 @@ function siHTML(g){
     tile(t.status,chip,"",xpBtn("street_market_evidence_status")),
     tile(t.latest,st&&st.latest?siDate(st.latest.date):"—",st&&st.latest?[st.latest.amount!=null?fmtNIS(st.latest.amount):null,st.latest.rooms?`${st.latest.rooms} ${t.roomsW}`:null,st.latest.areaSqm?`${fmtInt(st.latest.areaSqm)} ${t.sqmW}`:null].filter(Boolean).join(" · "):"",xpBtn("street_observed_deal")),
     tile(t.sample,st?`${fmtInt(st.observed)} ${t.observed}`:"—",st?`${fmtInt(priced)} ${t.priced} · ${fmtInt(st.last12)} ${t.last12}`:"",xpBtn("street_sample_size")),
-    tile(t.median,medianV,st&&st.medianPrice!=null?(state==="LIMITED"?t.states.LIMITED:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded")),
-    tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):""),
+    tile(t.median,medianV,st&&st.medianPrice!=null?(state==="LIMITED"?`${t.states.LIMITED} · n=${fmtInt(priced)}${st.priceMinMax?` · ${t.minmax} ${fmtNIS(st.priceMinMax.min)}–${fmtNIS(st.priceMinMax.max)}`:""}`:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded")),
+    tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}${st.sqmLimited?` · ${t.states.LIMITED}`:""}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):""),
     tile(t.period,w?t.of(siDate(w.from),siDate(w.to)):"—","",""),
     tile(t.fresh,src.scrapedAt?siDate(src.scrapedAt):"—",src.scrapedAt?`${t.copy} · ${t.check} ${siDate(src.checkedAt)}`:"",""),
   ].join("");
@@ -9273,7 +9279,9 @@ function siHTML(g){
   if(st&&st.state==="SUPPORTED"){
     const mix=o=>o?Object.entries(o).filter(([,v])=>v).map(([k,v])=>`${k}: ${fmtInt(v)}`).join(" · "):"—";
     five+=`<h4>${t.dist}</h4><div class="st-grid">${tile(t.p10,st.priceRange?`${fmtNIS(st.priceRange.p10)} – ${fmtNIS(st.priceRange.p90)}`:"—","","")}${tile(t.mean,st.meanPrice!=null?fmtNIS(st.meanPrice):"—","","")}
-      ${tile(t.change,st.change&&st.change.pct!=null?fmtPct(st.change.pct):"—",st.change&&st.change.pct!=null?`n=${st.change.recentN} / ${st.change.priorN}`:"",st.change&&st.change.pct==null?xpMiss("street_change_insufficient"):"")}
+      ${tile(t.change,st.change&&st.change.pct!=null?(st.change.distinguishable?fmtPct(st.change.pct):`≈ ${fmtPct(st.change.pct)}`):"—",
+        st.change&&st.change.pct!=null?`${t.band} ${fmtPct(st.change.interval95[0])} … ${fmtPct(st.change.interval95[1])}${st.change.distinguishable?"":` · ${t.notDist}`} · ₪/m² · n=${st.change.recentN} / ${st.change.priorN} · ${t.area} ${st.change.priorMedianArea} → ${st.change.recentMedianArea}`:"",
+        st.change&&st.change.pct==null?xpMiss("street_change_insufficient"):xpBtn("street_sample_size"))}
       ${tile(t.rooms,"",mix(st.rooms),"")}${tile(t.size,"",mix(st.size),"")}</div>`;
   }
   const C=D.context||{},L=C.locality||{};
@@ -9288,7 +9296,8 @@ function siHTML(g){
     five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
       <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+    if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
   }
   /* deep dive */
   let deep="";
