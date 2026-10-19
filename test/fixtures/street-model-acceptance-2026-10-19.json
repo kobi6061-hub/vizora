@@ -1,0 +1,134 @@
+{
+ "builtAt": "2026-10-19T16:02:36.261Z",
+ "modelVersion": "psvm-1.0.0",
+ "cases": [
+  {
+   "n": 1,
+   "name": "50+ independent observations on the street → STRONG, the street level carries most of the estimate",
+   "id": "st:1247:304",
+   "tier": "STRONG",
+   "value": 14000,
+   "streetNEff": 50.1,
+   "streetWeight": 0.93
+  },
+  {
+   "n": 2,
+   "name": "10–20 observations → observed SUPPORTED stays; the model sits beside it",
+   "id": "st:1015:306",
+   "observed": "SUPPORTED",
+   "observedMedian": 28870,
+   "model": 31200,
+   "tier": "STANDARD"
+  },
+  {
+   "n": 3,
+   "name": "5–9 observations → observed LIMITED stays LIMITED; the model is not STRONG unless ≥ 2 parcels and recent",
+   "id": "st:1015:170",
+   "observed": "LIMITED",
+   "model": 27100,
+   "tier": "STANDARD"
+  },
+  {
+   "n": 4,
+   "name": "1–4 observations → observed INSUFFICIENT (price \"—\") stays; the model may estimate with parent evidence",
+   "id": "st:1015:112",
+   "observed": "INSUFFICIENT",
+   "model": 27800,
+   "tier": "STANDARD",
+   "streetWeight": 0.346
+  },
+  {
+   "n": 5,
+   "name": "zero observations on the street → an estimate only from its blocks / neighbourhood, never STRONG; else MODEL UNAVAILABLE",
+   "id": "st:1015:110",
+   "tier": "LIMITED",
+   "value": 25800,
+   "unavailableId": "st:1015:101",
+   "unavailableReason": "no-street-specific-evidence"
+  },
+  {
+   "n": 6,
+   "name": "one project dominates the street → largest parcel stated; never STRONG",
+   "id": "st:1031:426",
+   "tier": "LIMITED",
+   "deals": 49,
+   "parcels": 1,
+   "nEff": 3.6
+  },
+  {
+   "n": 7,
+   "name": "one parcel with a few deals → nEff below its deal count; never STRONG",
+   "id": "st:1015:194",
+   "tier": "STANDARD",
+   "deals": 5,
+   "nEff": 2.5
+  },
+  {
+   "n": 8,
+   "name": "a mostly probable-new street → the estimate is for an EXISTING reference dwelling; \"new (probable)\" is a stated input",
+   "id": "st:1020:192",
+   "probableNewShare": 93,
+   "referenceExisting": 15770,
+   "newProbable": 19830
+  },
+  {
+   "n": 9,
+   "name": "a mostly existing street → the reference dwelling matches its stock; no new-home premium applied",
+   "id": "st:1020:128",
+   "value": 17500,
+   "tier": "STRONG"
+  },
+  {
+   "n": 10,
+   "name": "high-volume locality (Tel Aviv-Yafo) → STRONG estimates with the city validated on its own held-out deals",
+   "id": "st:5000:1002",
+   "value": 51400,
+   "cityMdape": 10.8,
+   "cityN": 1388
+  },
+  {
+   "n": 11,
+   "name": "small locality → an estimate only with enough locality depth (n_eff ≥ 8), never STRONG below 300",
+   "id": "st:1015:110",
+   "tier": "LIMITED",
+   "localityNEff": 220.5,
+   "thinId": "st:1024:101"
+  },
+  {
+   "n": 12,
+   "name": "verified neighbourhood → its level appears with its own weight",
+   "id": "st:7900:1028",
+   "tier": "LIMITED",
+   "neighbourhoodWeight": 0.385
+  },
+  {
+   "n": 13,
+   "name": "no neighbourhood link → the estimate stands on street + blocks + locality, no neighbourhood weight",
+   "id": "st:1015:112",
+   "tier": "STANDARD"
+  },
+  {
+   "n": 14,
+   "name": "stale direct evidence (latest street deal > 18 months) → never STRONG; the date is stated",
+   "id": "st:1015:114",
+   "tier": "STANDARD",
+   "latestStreetDeal": "2024-11-07"
+  },
+  {
+   "n": 15,
+   "name": "unusual size mix → each comparable is translated to the reference dwelling (dwelling adjustment stated per comparable)",
+   "id": "st:70:138",
+   "comparables": 122,
+   "medianArea": 155,
+   "largeFlats": 85,
+   "value": 27300
+  },
+  {
+   "n": 16,
+   "name": "weak-coverage locality → MODEL UNAVAILABLE with its reason, never a locality figure in the street's place",
+   "id": "st:1298:101",
+   "reason": "locality-not-in-register-copy",
+   "failedValidationLocality": 4100
+  }
+ ]
+}

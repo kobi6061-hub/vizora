@@ -1,0 +1,155 @@
+{
+ "builtAt": "2026-10-19T16:02:59.564Z",
+ "population": {
+  "deals": 342471,
+  "dwelling": 266890,
+  "pricedDwelling": 194141,
+  "modelRows": 191786
+ },
+ "fields": [
+  {
+   "field": "transaction date",
+   "allDeals": 100,
+   "dwelling": 100,
+   "pricedDwelling": 100,
+   "source": "register",
+   "interpretation": "the deal date",
+   "decision": "USED — calendar quarter of the time index"
+  },
+  {
+   "field": "transaction price",
+   "allDeals": 100,
+   "dwelling": 100,
+   "pricedDwelling": 100,
+   "source": "register (declared amount where stated)",
+   "interpretation": "whole-property consideration (portion = 1, ≥ ₪100,000)",
+   "decision": "USED — the target (₪ per m²)"
+  },
+  {
+   "field": "area (m²)",
+   "allDeals": 91.5,
+   "dwelling": 98.3,
+   "pricedDwelling": 99,
+   "source": "register",
+   "interpretation": "the dwelling area; < 20 m² is a placeholder (≈ 750 deals at 1 m²)",
+   "decision": "USED — log area; the target's denominator"
+  },
+  {
+   "field": "rooms",
+   "allDeals": 73.7,
+   "dwelling": 94,
+   "pricedDwelling": 95.4,
+   "source": "register",
+   "interpretation": "room count",
+   "decision": "USED — area per room (adopted after validation: MdAPE 10.0 → 9.7 %)"
+  },
+  {
+   "field": "street",
+   "allDeals": 38.6,
+   "dwelling": 43.9,
+   "pricedDwelling": 42,
+   "source": "PROPX match (lib/streets/match.js)",
+   "interpretation": "OBSERVED = every address of the parcel on one street",
+   "decision": "USED — the street level (POSSIBLE / UNRESOLVED never)"
+  },
+  {
+   "field": "street number",
+   "allDeals": 59,
+   "dwelling": 67.1,
+   "pricedDwelling": 65,
+   "source": "the publisher's parcel crosswalk",
+   "interpretation": "house numbers of the parcel",
+   "decision": "REJECTED as a feature — the parcel already identifies the building"
+  },
+  {
+   "field": "locality",
+   "allDeals": 100,
+   "dwelling": 100,
+   "pricedDwelling": 100,
+   "source": "register settlement → CBS code",
+   "interpretation": "the locality",
+   "decision": "USED — the locality level"
+  },
+  {
+   "field": "parcel (block / parcel)",
+   "allDeals": 100,
+   "dwelling": 100,
+   "pricedDwelling": 100,
+   "source": "register",
+   "interpretation": "cadastral block (gush) and parcel (helka)",
+   "decision": "USED — block level, parcel design weights, grouped holdout"
+  },
+  {
+   "field": "build year",
+   "allDeals": 80.2,
+   "dwelling": 97.8,
+   "pricedDwelling": 99.3,
+   "source": "register",
+   "interpretation": "the year the building was / will be completed",
+   "decision": "USED — age band, PROBABLE NEW, built after the deal (off-plan)"
+  },
+  {
+   "field": "probable new",
+   "allDeals": 12.2,
+   "dwelling": 14.6,
+   "pricedDwelling": 16.3,
+   "source": "lib/gov/classify.js (build year = deal year or year before)",
+   "interpretation": "PROBABLE NEW — never confirmed",
+   "decision": "USED — premium term"
+  },
+  {
+   "field": "property nature",
+   "allDeals": 100,
+   "dwelling": 100,
+   "pricedDwelling": 100,
+   "source": "register",
+   "interpretation": "dwelling type",
+   "decision": "USED — flat / garden / roof / cottage / house"
+  },
+  {
+   "field": "floor",
+   "allDeals": 0,
+   "dwelling": 0,
+   "pricedDwelling": 0,
+   "source": "not in the register copy",
+   "interpretation": "—",
+   "decision": "UNAVAILABLE — not used; the apartment profile does not ask for it"
+  },
+  {
+   "field": "coordinates",
+   "allDeals": 0,
+   "dwelling": 0,
+   "pricedDwelling": 0,
+   "source": "not in the register copy (localities have a centroid only)",
+   "interpretation": "—",
+   "decision": "UNAVAILABLE — no distance feature; location comes from the cadastral block"
+  },
+  {
+   "field": "verified neighbourhood",
+   "allDeals": null,
+   "dwelling": null,
+   "pricedDwelling": null,
+   "source": "PROPX verified street links (72 links, 7 cities)",
+   "interpretation": "a street → neighbourhood link checked by hand",
+   "decision": "USED — neighbourhood level where linked (no measurable effect in validation)"
+  },
+  {
+   "field": "verified project",
+   "allDeals": 0,
+   "dwelling": 0,
+   "pricedDwelling": 0,
+   "source": "no project id in the register",
+   "interpretation": "—",
+   "decision": "UNAVAILABLE — a development proxy (block + build year, built within 10 years) is used for leakage control only"
+  },
+  {
+   "field": "subsidized-programme parcel",
+   "allDeals": 8,
+   "dwelling": 9.5,
+   "pricedDwelling": 11.4,
+   "source": "Israel Land Authority tenders (subsidized / lottery track, exact block + parcel)",
+   "interpretation": "a parcel marketed under a subsidized programme — many units at a capped price",
+   "decision": "USED — its own coefficient (never a claim that a sale was subsidized)"
+  }
+ ]
+}
