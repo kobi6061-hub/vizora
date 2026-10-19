@@ -26,9 +26,9 @@
    "en": "recent months are revised in later releases (observed: Tel Aviv-Yafo Mar–May 2026 — 1,137 in release 216/2026, 1,210 in release 317/2026). PROPX keeps every version."
   }
  },
- "syncedAt": "2026-10-18T16:01:09.848Z",
- "checkedAt": "2026-10-18T16:01:09.848Z",
- "status": "PARTIAL",
+ "syncedAt": "2026-10-19T18:46:17.835Z",
+ "checkedAt": "2026-10-19T18:46:17.835Z",
+ "status": "UNCHANGED",
  "sourceUpdate": "2026-10-07",
  "freshness": {
   "state": "CURRENT",
@@ -3643,9 +3643,7 @@
      "annual": 6125,
      "sumOfMonths": 6125
     }
-   },
-   "stale": true,
-   "lastError": "HTTP 500 from https://apis.cbs.gov.il/series/data/path?id=44,10,2,1,5074&format=json&download=false&lang=he&startperiod=01-2022&endperiod=12-2026"
+   }
   },
   "d-south": {
    "cbs": 5075,
@@ -4244,9 +4242,7 @@
      "annual": 7914,
      "sumOfMonths": 7914
     }
-   },
-   "stale": true,
-   "lastError": "HTTP 500 from https://apis.cbs.gov.il/series/data/path?id=44,10,2,1,5075&format=json&download=false&lang=he&startperiod=01-2022&endperiod=12-2026"
+   }
   },
   "jsr": {
    "cbs": 5076,
@@ -4849,9 +4845,7 @@
      "annual": 453,
      "sumOfMonths": 453
     }
-   },
-   "stale": true,
-   "lastError": "HTTP 500 from https://apis.cbs.gov.il/series/data/path?id=44,10,2,1,5076&format=json&download=false&lang=he&startperiod=01-2022&endperiod=12-2026"
+   }
   }
  },
  "inventory": {
@@ -4967,8 +4961,7 @@
    ]
   ],
   "sourceUpdate": "2026-10-07",
-  "seriesId": 574362,
-  "stale": true
+  "seriesId": 574362
  },
  "monthsSupply": {
   "measure": "months_supply",
@@ -5083,8 +5076,7 @@
    ]
   ],
   "sourceUpdate": "2026-10-07",
-  "seriesId": 574500,
-  "stale": true
+  "seriesId": 574500
  },
  "subsidized": {
   "measure": "new_sold_subsidized",
@@ -5199,8 +5191,7 @@
    ]
   ],
   "sourceUpdate": "2026-10-07",
-  "seriesId": 574354,
-  "stale": true
+  "seriesId": 574354
  },
  "reconciliation": {
   "months": [
