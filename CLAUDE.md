@@ -64,16 +64,30 @@
   ₪2,730,000 is the CBS ISRAEL-TOTAL average of ALL dwellings (Table 2.2, Q2 2026: ₪2,435,000 — `PRICE_BASIS.il`) × the assumed 1.12
   new-build premium (git d0f696c), NOT Central District (₪2,731,500, only numerically close); the national row never takes a district's
   value; the official headline series are read under CBS 5069 "Israel — total" (sales, inventory) and index 70000; the price cards print
-  their basis (geography · population · period · premium as an assumption), the delta under the price is labelled as the new-homes
-  INDEX change, and every headline card has an ⓘ (registry group `board`: definition · geography · population · period · source · class
-  · what it does not mean).
+  their basis (geography · population · period · source), the delta under the price is labelled as the new-homes INDEX change, and
+  every headline card has an ⓘ (registry group `board`: definition · geography · population · period · source · class · what it does
+  not mean).
   PRESENTATION (owner's decision 19.10.2026, "official first, model second"): the national board's FIRST card is the CBS figure itself —
   "Average transaction price — Israel" ₪2,435,000, OFFICIAL, Q2 2026, all dwelling transactions (new + second-hand), registry term
   `cbs_average_transaction_price`, Trust source `cbs:average-dwelling-price` (TRANSCRIBED, not synced); the ×1.12 figure follows on its own
-  dashed card "Estimated new-home price ≈ ₪2.73M", MODEL (`vcOf` country price / sqm = mod; districts / cities unchanged — the capital
-  model reads them), its +12% assumption printed, term `new_home_price_estimate` ("CBS does not publish this figure as the official
-  national average price of a new dwelling"); under a filter the official card is "—" (never split, never replaced by the estimate).
-  Gates 1–6 in the test; `natPrice()` reads `PRICE_BASIS.il` only.
+  dashed card "Estimated new-home price ≈ ₪2.73M", MODEL, term `new_home_price_estimate`; under a filter the official card is "—" (never
+  split, never replaced by the estimate). Gates 1–6 in the test.
+- `test/price-cards.test.js` = THE PRICE PAIR AT EVERY LEVEL (P0, 19.10.2026): one contract (`pricePair(l)` in `index.html`) for Israel,
+  districts, cities, neighbourhoods — the board's KPI strip, the profile card and the data-basis card read it; selecting a geography
+  never changes what a card means. CARD 1 "Average transaction price — <place>" / "מחיר עסקה ממוצע — <place>", chip "All dwellings — new +
+  second-hand" / "כלל הדירות — חדשות + יד שנייה" = the geography's OWN row of CBS Table 2.2 "Average Prices of Dwellings" (Price
+  Statistics Monthly, last produced for No. 7/2026; read on a PROPX runner 19.10.2026, cbs-sales-discover.yml run 39211103296;
+  `PRICE_SRC` + `PRICE_BASIS`: Israel ₪2,435,000 · the 6 districts · 18 big cities by CBS code, Q2 2026 provisional), OFFICIAL — no own
+  row → "—" + "No supported all-dwellings average is currently available for this geography." (MISSING `cbs_average_price_no_row`),
+  never the district's row, never the estimate. CARD 2 "Estimated new-home price — <place>" / "מחיר מוערך לדירה חדשה — <place>", chip
+  "PROPX estimate" / "הערכת PROPX" = LOCATIONS base.price, MODEL always (`vcOf` price / sqm = mod for every board read; only the capital
+  model's data basis, `base`, keeps its district / city reading); with a Table 2.2 row it is cbs × 1.12 rounded to ₪10,000 (21 district /
+  city estimates rebuilt 19.10.2026 — Central District stood on ≈ ₪2.48M); NO formula (× 1.12 / +12%) on any card, chip or basis line —
+  level 1 of the ⓘ is "This is a PROPX estimate of the average price of a new dwelling for the selected geography."; the method is level
+  2. The per-m² card is "Estimated new-home price per m²", MODEL (not rebuilt — Table 2.2 has no per-m² figure). The board table, map
+  metric and buy-price cell name the estimate ("Est. new-home price"). Consequence: the deal calculator no longer offers to copy a board
+  price (it copies DERIVED only, and the board price is MODEL). 19 gates incl. the 14 the request lists (he / en parity, poisoned
+  district rows, doubled estimates, every geography).
 - `test/calculator.test.js` = the deal calculator (`#calc`, `calcEngine`, `calcIrr`): visible,
   independent of the capital model, missing inputs → UNAVAILABLE (never defaulted), no silent
   appreciation.

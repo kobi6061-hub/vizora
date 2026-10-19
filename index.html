@@ -2206,7 +2206,11 @@ const UPDATED_AT = "2026-08";
    Derivation (mid-2026 snapshot, retrieved 30.08.2026):
    · price/sqm — CBS general city averages (Q4-2025–Q2-2026 publications) × 1.12
      new-build premium (published range 10–15%); psm ≈ price/95m² where no
-     published figure — estimates
+     published figure — estimates. Since 19.10.2026 every place with its own
+     row in CBS Table 2.2 (Israel, the 6 districts, 18 big cities — PRICE_BASIS)
+     carries that row's Q2 2026 average × 1.12; the rest keep the 30.08.2026
+     estimate. The board shows these prices as PROPX's new-home ESTIMATE (MODEL)
+     beside the all-dwellings average (card 1, PRICE_BASIS or "—")
    · yoy/y3 — general trend − 0.5pp (published gap between the CBS new-homes
      index −2.0% y/y and the general index −1.5%, May–Jun 2026); city-verified
      trends where published (Ashkelon, Ramla, Rehovot)
@@ -2236,16 +2240,38 @@ const UPDATED_AT = "2026-08";
      STATIC only while it equals the cited figure.
    · neighborhoods/subs — real, recognized localities (CBS statistical-area /
      municipal naming); every figure is a city-anchored estimate               */
-/* the NATIONAL board price's lineage (data-integrity audit 19.10.2026). The Israel row is the CBS average transaction price of ALL
-   dwellings for ISRAEL — TOTAL (Table 2.2, Q2 2026: ₪2,435,000 — the national row of this file before 29.08.2026) × the assumed 1.12
-   new-build premium (commit d0f696c), rounded to ₪10,000 = ₪2,730,000. It is never a district's figure: Central District's ₪2,731,500
-   (the same table) is a different row whose value is only numerically close. The per-m² base ₪26,500 has no separately recorded
-   source. test/headline-metrics.test.js pins this; the overview's price cards print it.
-   PRESENTATION (owner's decision 19.10.2026 — OFFICIAL first, MODEL second): the national headline is the CBS figure itself
-   (cbs, OFFICIAL — transcribed from the named table and period; the label holds only while the value shown equals it), and the
-   ×premium figure (LOCATIONS.il.base.price) is shown after it, apart, as PROPX's new-home ESTIMATE (MODEL). CBS does not publish
-   ₪2,730,000 as the national average price of a new dwelling. */
-const PRICE_BASIS={il:{cbs:2435000,cbsPsm:26500,premium:1.12,geo:"Israel — total",table:"2.2",period:"2026-Q2",pop:"all dwelling transactions, new + second-hand",transcribed:"19.10.2026"}};
+/* THE PRICE PAIR's basis (owner's decision 19.10.2026 — every geography: card 1 = the all-dwellings average, card 2 = PROPX's estimate).
+   Source: CBS Table 2.2 "Average Prices of Dwellings (NIS thousand), by residential district, big cities and size groups", Price
+   Statistics Monthly — last produced for No. 7/2026 and carried unchanged in editions 7, 8 and 9/2026 (…/Madad/DocLib/2026/price07aa ·
+   price08aa · price09aa/aa2_2_e.pdf), read on a PROPX GitHub runner on 19.10.2026 (cbs-sales-discover.yml, run 39211103296) and
+   transcribed here. Q2 2026 (IV–VI); CBS marks the last quarter provisional. Population: dwellings of 1–6 rooms in the Dwellings Price
+   Index sample — new AND second-hand — with no quality adjustment; government-subsidised transactions excluded since Q4 2022; the
+   national row includes Judea and Samaria; city rows exist only for CBS's big cities (above 100,000 residents).
+   cbs = the row's Q2 2026 average in ₪ · n = transactions in the quarter · code = the CBS row code (district 1–6 · locality code) ·
+   row = the row label as printed.
+   CARD 1 = the geography's OWN row, OFFICIAL while the value shown equals it; no row → "—" (never the district's row, never the
+   estimate). CARD 2 = LOCATIONS base.price, PROPX's new-home ESTIMATE (MODEL): with a row it is cbs × PRICE_SRC.premium rounded to
+   ₪10,000 (test/price-cards.test.js); without one it is the estimate recorded on 30.08.2026 (§1 header).
+   Lineage (audit 19.10.2026): the Israel row was already ₪2,435,000 × 1.12 = ₪2,730,000 (git d0f696c). 21 district / city estimates
+   were rebuilt from these rows — e.g. Central District stood on ≈ ₪2.48M (₪2,780,000 ÷ 1.12), which matches no quarter of this
+   table; its own row is ₪2,731,500 (a different row from Israel's ₪2,435,000). The national per-m² base cbsPsm (₪26,500) has no
+   separately recorded source, and Table 2.2 publishes no per-m² figure — no per-m² estimate was rebuilt. */
+const PRICE_SRC={table:"2.2",period:"2026-Q2",provisional:true,edition:"Price Statistics Monthly No. 7/2026",premium:1.12,
+  pop:"all dwelling transactions, new + second-hand",url:"https://www.cbs.gov.il/he/publications/Madad/DocLib/2026/price09aa/aa2_2_e.pdf",transcribed:"19.10.2026"};
+const PRICE_BASIS={
+  il:{cbs:2435000,n:13024,cbsPsm:26500,geo:"Israel — total",row:"Total"},
+  "d-jm":{cbs:2910700,n:1174,code:1,row:"Jerusalem District - 1"},"d-north":{cbs:1520300,n:1094,code:2,row:"North District - 2"},
+  "d-haifa":{cbs:1933300,n:1984,code:3,row:"Haifa District - 3"},"d-center":{cbs:2731500,n:2916,code:4,row:"center District - 4"},
+  "d-ta":{cbs:3576800,n:2514,code:5,row:"Tel Aviv District - 5"},"d-south":{cbs:1658400,n:2868,code:6,row:"South District - 6"},
+  ashdod:{cbs:2257200,n:484,code:70,row:"Ashdod - 70"},ashkelon:{cbs:1729100,n:488,code:7100,row:"Ashkelon - 7100"},
+  "beer-sheva":{cbs:1236200,n:538,code:9000,row:"Beer Sheva - 9000"},"beit-shemesh":{cbs:2438300,n:308,code:2610,row:"Beit Shemesh -2610"},
+  "bnei-brak":{cbs:2310300,n:202,code:6100,row:"Bnei Brak - 6100"},"bat-yam":{cbs:2258100,n:195,code:6200,row:"Bat Yam - 6200"},
+  herzliya:{cbs:3578100,n:114,code:6400,row:"Herzlliya - 6400"},hadera:{cbs:2097300,n:153,code:6500,row:"Hadera - 6500"},
+  holon:{cbs:2350500,n:223,code:6600,row:"Holon - 6600"},haifa:{cbs:1816400,n:618,code:4000,row:"Haifa - 4000"},
+  jerusalem:{cbs:3058500,n:782,code:3000,row:"Jerusalem - 3000"},"kfar-saba":{cbs:2941100,n:123,code:6900,row:"Kfar Saba - 6900"},
+  netanya:{cbs:2644300,n:275,code:7400,row:"Netanya - 7400"},"petah-tikva":{cbs:2518600,n:468,code:7900,row:"Petah Tiqwa - 7900"},
+  rishon:{cbs:2618400,n:405,code:8300,row:"Rishon Lezion - 8300"},rehovot:{cbs:2673700,n:227,code:8400,row:"Rehovot - 8400"},
+  "ramat-gan":{cbs:3070000,n:299,code:8600,row:"Ramat Gan - 8600"},tlv:{cbs:4553500,n:1010,code:5000,row:"Tel Aviv - 5000"}};
 const LOCATIONS = [
   {id:"il",type:"country",parent:null,he:"ישראל",en:"Israel",lat:31.5,lng:34.9,o:"tl",
     base:{price:2730000,sqm:29700,rent:5430,yoy:-2.0,y3:4.8,rentYoy:3.5,tx:34000,listings:84990}},
@@ -2253,15 +2279,15 @@ const LOCATIONS = [
   {id:"d-north",type:"district",parent:"il",he:"מחוז הצפון",en:"Northern District",lat:32.95,lng:35.4,
     base:{price:1700000,sqm:17400,rent:3490,yoy:1.1,y3:7.9,rentYoy:3.5,tx:4600,listings:9500}},
   {id:"d-haifa",type:"district",parent:"il",he:"מחוז חיפה",en:"Haifa District",lat:32.6,lng:35.0,
-    base:{price:1990000,sqm:21800,rent:3960,yoy:-2.3,y3:5.3,rentYoy:3.5,tx:3800,listings:7000}},
+    base:{price:2170000,sqm:21800,rent:3960,yoy:-2.3,y3:5.3,rentYoy:3.5,tx:3800,listings:7000}},
   {id:"d-center",type:"district",parent:"il",he:"מחוז המרכז",en:"Central District",lat:32.05,lng:34.95,o:"l",
-    base:{price:2780000,sqm:28600,rent:5820,yoy:-4.6,y3:2.9,rentYoy:3.5,tx:8200,listings:20990}},
+    base:{price:3060000,sqm:28600,rent:5820,yoy:-4.6,y3:2.9,rentYoy:3.5,tx:8200,listings:20990}},
   {id:"d-ta",type:"district",parent:"il",he:"מחוז תל אביב",en:"Tel Aviv District",lat:32.07,lng:34.8,o:"l",
-    base:{price:3750000,sqm:44800,rent:6850,yoy:-2.2,y3:3.7,rentYoy:3.5,tx:6700,listings:26170}},
+    base:{price:4010000,sqm:44800,rent:6850,yoy:-2.2,y3:3.7,rentYoy:3.5,tx:6700,listings:26170}},
   {id:"d-jm",type:"district",parent:"il",he:"מחוז ירושלים",en:"Jerusalem District",lat:31.78,lng:35.2,
-    base:{price:3080000,sqm:32500,rent:5650,yoy:1.3,y3:6.7,rentYoy:3.5,tx:4200,listings:8200}},
+    base:{price:3260000,sqm:32500,rent:5650,yoy:1.3,y3:6.7,rentYoy:3.5,tx:4200,listings:8200}},
   {id:"d-south",type:"district",parent:"il",he:"מחוז הדרום",en:"Southern District",lat:31.0,lng:34.8,
-    base:{price:1800000,sqm:18800,rent:3920,yoy:-0.4,y3:6.1,rentYoy:3.5,tx:7400,listings:13400}},
+    base:{price:1860000,sqm:18800,rent:3920,yoy:-0.4,y3:6.1,rentYoy:3.5,tx:7400,listings:13400}},
 
   {id:"tlv",type:"city",parent:"d-ta",he:"תל אביב-יפו",en:"Tel Aviv-Yafo",lat:32.07,lng:34.78,o:"tl",
     base:{price:5100000,sqm:63700,rent:7780,yoy:-2.2,y3:3.5,rentYoy:4.1,tx:4100,listings:9720}},
@@ -2270,13 +2296,13 @@ const LOCATIONS = [
   {id:"givatayim",type:"city",parent:"d-ta",he:"גבעתיים",en:"Givatayim",lat:32.072,lng:34.81,e:1,
     base:{price:3530000,sqm:37200,rent:6620,yoy:-2.0,y3:4.1,rentYoy:3.7,tx:180,listings:700}},
   {id:"bnei-brak",type:"city",parent:"d-ta",he:"בני ברק",en:"Bnei Brak",lat:32.084,lng:34.833,
-    base:{price:2740000,sqm:28800,rent:5140,yoy:-1.5,y3:4.7,rentYoy:3.9,tx:450,listings:1200}},
+    base:{price:2590000,sqm:28800,rent:5140,yoy:-1.5,y3:4.7,rentYoy:3.9,tx:450,listings:1200}},
   {id:"holon",type:"city",parent:"d-ta",he:"חולון",en:"Holon",lat:32.01,lng:34.77,
-    base:{price:2620000,sqm:27600,rent:4910,yoy:-2.3,y3:3.9,rentYoy:3.8,tx:500,listings:1500}},
+    base:{price:2630000,sqm:27600,rent:4910,yoy:-2.3,y3:3.9,rentYoy:3.8,tx:500,listings:1500}},
   {id:"bat-yam",type:"city",parent:"d-ta",he:"בת ים",en:"Bat Yam",lat:32.017,lng:34.745,
-    base:{price:2760000,sqm:29100,rent:5180,yoy:-3.0,y3:3.3,rentYoy:3.8,tx:450,listings:1400}},
+    base:{price:2530000,sqm:29100,rent:5180,yoy:-3.0,y3:3.3,rentYoy:3.8,tx:450,listings:1400}},
   {id:"herzliya",type:"city",parent:"d-ta",he:"הרצליה",en:"Herzliya",lat:32.166,lng:34.84,
-    base:{price:4000000,sqm:40000,rent:6940,yoy:-2.5,y3:3.1,rentYoy:3.3,tx:190,listings:800}},
+    base:{price:4010000,sqm:40000,rent:6940,yoy:-2.5,y3:3.1,rentYoy:3.3,tx:190,listings:800}},
   {id:"or-yehuda",type:"city",parent:"d-ta",he:"אור יהודה",en:"Or Yehuda",lat:32.03,lng:34.85,e:1,
     base:{price:2690000,sqm:28300,rent:5040,yoy:-2.2,y3:3.7,rentYoy:4.0,tx:200,listings:600}},
   {id:"ramat-hasharon",type:"city",parent:"d-ta",he:"רמת השרון",en:"Ramat HaSharon",lat:32.146,lng:34.84,e:1,o:"l",
@@ -2299,19 +2325,19 @@ const LOCATIONS = [
   {id:"rhs-yearim",type:"nbhd",parent:"ramat-hasharon",he:"קריית יערים",en:"Kiryat Yearim",dx:3,dy:-6,e:1,
     base:{price:4430000,sqm:47700,rent:8600,yoy:-2.2,y3:3.7,rentYoy:4.0,tx:10,listings:40}},
   {id:"petah-tikva",type:"city",parent:"d-center",he:"פתח תקווה",en:"Petah Tikva",lat:32.09,lng:34.887,
-    base:{price:2710000,sqm:29500,rent:5300,yoy:-4.3,y3:2.6,rentYoy:4.0,tx:520,listings:1600}},
+    base:{price:2820000,sqm:29500,rent:5300,yoy:-4.3,y3:2.6,rentYoy:4.0,tx:520,listings:1600}},
   {id:"rishon",type:"city",parent:"d-center",he:"ראשון לציון",en:"Rishon LeZion",lat:31.96,lng:34.8,
-    base:{price:2670000,sqm:29100,rent:5810,yoy:-4.8,y3:2.3,rentYoy:4.5,tx:480,listings:1450}},
+    base:{price:2930000,sqm:29100,rent:5810,yoy:-4.8,y3:2.3,rentYoy:4.5,tx:480,listings:1450}},
   {id:"netanya",type:"city",parent:"d-center",he:"נתניה",en:"Netanya",lat:32.32,lng:34.855,o:"t",
-    base:{price:2730000,sqm:28700,rent:5130,yoy:-4.0,y3:3.2,rentYoy:4.4,tx:950,listings:2250}},
+    base:{price:2960000,sqm:28700,rent:5130,yoy:-4.0,y3:3.2,rentYoy:4.4,tx:950,listings:2250}},
   {id:"kfar-saba",type:"city",parent:"d-center",he:"כפר סבא",en:"Kfar Saba",lat:32.175,lng:34.912,
-    base:{price:3360000,sqm:31100,rent:6310,yoy:-4.5,y3:2.7,rentYoy:6.0,tx:210,listings:800}},
+    base:{price:3290000,sqm:31100,rent:6310,yoy:-4.5,y3:2.7,rentYoy:6.0,tx:210,listings:800}},
   {id:"raanana",type:"city",parent:"d-center",he:"רעננה",en:"Ra'anana",lat:32.19,lng:34.87,o:"l",
     base:{price:3580000,sqm:32600,rent:6590,yoy:-4.9,y3:2.1,rentYoy:4.2,tx:230,listings:1470}},
   {id:"modiin",type:"city",parent:"d-center",he:"מודיעין-מכבים-רעות",en:"Modi'in",lat:31.9,lng:35.01,e:1,
     base:{price:2860000,sqm:27200,rent:6050,yoy:-4.4,y3:2.8,rentYoy:4.1,tx:310,listings:950}},
   {id:"rehovot",type:"city",parent:"d-center",he:"רחובות",en:"Rehovot",lat:31.894,lng:34.81,
-    base:{price:2630000,sqm:27700,rent:5220,yoy:3.6,y3:5.5,rentYoy:4.2,tx:450,listings:1150}},
+    base:{price:2990000,sqm:27700,rent:5220,yoy:3.6,y3:5.5,rentYoy:4.2,tx:450,listings:1150}},
   {id:"lod",type:"city",parent:"d-center",he:"לוד",en:"Lod",lat:31.951,lng:34.896,e:1,o:"tl",
     base:{price:2070000,sqm:21800,rent:4110,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:900,listings:3060}},
   {id:"ramla",type:"city",parent:"d-center",he:"רמלה",en:"Ramla",lat:31.929,lng:34.866,e:1,
@@ -2329,23 +2355,23 @@ const LOCATIONS = [
   {id:"elad",type:"city",parent:"d-center",he:"אלעד",en:"El'ad",lat:32.052,lng:34.951,e:1,o:"l",
     base:{price:2130000,sqm:22400,rent:4220,yoy:-4.6,y3:2.9,rentYoy:4.2,tx:300,listings:1070}},
   {id:"jerusalem",type:"city",parent:"d-jm",he:"ירושלים",en:"Jerusalem",lat:31.77,lng:35.21,o:"t",
-    base:{price:3420000,sqm:36000,rent:5580,yoy:1.3,y3:6.9,rentYoy:3.2,tx:1150,listings:10100}},
+    base:{price:3430000,sqm:36000,rent:5580,yoy:1.3,y3:6.9,rentYoy:3.2,tx:1150,listings:10100}},
   {id:"beit-shemesh",type:"city",parent:"d-jm",he:"בית שמש",en:"Beit Shemesh",lat:31.75,lng:34.99,
-    base:{price:2770000,sqm:29200,rent:4760,yoy:1.5,y3:7.1,rentYoy:3.2,tx:850,listings:2000}},
+    base:{price:2730000,sqm:29200,rent:4760,yoy:1.5,y3:7.1,rentYoy:3.2,tx:850,listings:2000}},
   {id:"haifa",type:"city",parent:"d-haifa",he:"חיפה",en:"Haifa",lat:32.79,lng:34.99,
-    base:{price:2020000,sqm:23700,rent:3560,yoy:-2.3,y3:5.4,rentYoy:3.8,tx:650,listings:2400}},
+    base:{price:2030000,sqm:23700,rent:3560,yoy:-2.3,y3:5.4,rentYoy:3.8,tx:650,listings:2400}},
   {id:"hadera",type:"city",parent:"d-haifa",he:"חדרה",en:"Hadera",lat:32.437,lng:34.92,e:1,
-    base:{price:2180000,sqm:22900,rent:4090,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:550,listings:1600}},
+    base:{price:2350000,sqm:22900,rent:4090,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:550,listings:1600}},
   {id:"kiryat-ata",type:"city",parent:"d-haifa",he:"קריית אתא",en:"Kiryat Ata",lat:32.8,lng:35.11,e:1,o:"l",
     base:{price:1740000,sqm:18300,rent:3260,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:350,listings:1220}},
   {id:"kiryat-bialik",type:"city",parent:"d-haifa",he:"קריית ביאליק",en:"Kiryat Bialik",lat:32.83,lng:35.09,e:1,o:"l",
     base:{price:1790000,sqm:18800,rent:3360,yoy:-2.3,y3:5.3,rentYoy:3.8,tx:300,listings:1060}},
   {id:"ashdod",type:"city",parent:"d-south",he:"אשדוד",en:"Ashdod",lat:31.8,lng:34.65,
-    base:{price:2200000,sqm:23100,rent:4480,yoy:-0.9,y3:4.9,rentYoy:4.6,tx:520,listings:1900}},
+    base:{price:2530000,sqm:23100,rent:4480,yoy:-0.9,y3:4.9,rentYoy:4.6,tx:520,listings:1900}},
   {id:"beer-sheva",type:"city",parent:"d-south",he:"באר שבע",en:"Be'er Sheva",lat:31.25,lng:34.79,
-    base:{price:1390000,sqm:15500,rent:3280,yoy:0.3,y3:7.3,rentYoy:5.2,tx:780,listings:2300}},
+    base:{price:1380000,sqm:15500,rent:3280,yoy:0.3,y3:7.3,rentYoy:5.2,tx:780,listings:2300}},
   {id:"ashkelon",type:"city",parent:"d-south",he:"אשקלון",en:"Ashkelon",lat:31.667,lng:34.573,
-    base:{price:1930000,sqm:20300,rent:4170,yoy:10.2,y3:11.5,rentYoy:4.0,tx:700,listings:1800}},
+    base:{price:1940000,sqm:20300,rent:4170,yoy:10.2,y3:11.5,rentYoy:4.0,tx:700,listings:1800}},
   {id:"kiryat-gat",type:"city",parent:"d-south",he:"קריית גת",en:"Kiryat Gat",lat:31.61,lng:34.77,e:1,o:"l",
     base:{price:1740000,sqm:18300,rent:3760,yoy:-0.4,y3:6.1,rentYoy:4.0,tx:550,listings:2410}},
   {id:"ofakim",type:"city",parent:"d-south",he:"אופקים",en:"Ofakim",lat:31.314,lng:34.62,e:1,o:"tl",
@@ -2502,16 +2528,15 @@ he:{
   est:"אומדן", perMonth:"לחודש", perYear:"לשנה", yoyLbl:"שינוי שנתי",
   vcName:{raw:"רשמי",static:"סטטי",der:"נגזר",mod:"מודל",na:"חסר",usr:"הנחת משתמש"},
   vcTip:{raw:"ערך רשמי שמקורו, תקופתו ומועד בדיקתו נשמרו במערכת",static:"הוזן ידנית מפרסום מצוטט ומתוארך — עותק המקור לא נשמר במערכת, ולכן אינו מסווג כרשמי",der:"חושב בנוסחה מוצהרת מנתונים מפרסומים מצוטטים",mod:"אומדן מודל — אינו תצפית",na:"אין נתון שתומך בערך, ולכן לא מוצג",usr:"ערך שהזנתם — הנחה שלכם, לא נתון"},
-  perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"למ״ס א׳–ב׳ 2026 + פרמיית ~12%",
+  perYoy:"מאי–יוני 2026", perY3:"עד מאי–יוני 2026", perPrice:"אמצע 2026 · אומדן",
   nhIdxLbl:"מדד מחירי דירות חדשות · שינוי שנתי",xpInfo:"הסבר",
-  basisIl:(v,p,pct)=>`אומדן PROPX: ${v} (הלמ״ס, כל הדירות, ישראל — סך הכל, רבעון ב׳ 2026) × ${p} — הנחה: פרמיה של ${pct} לדירה חדשה. הלמ״ס אינה מפרסמת סכום זה כממוצע הארצי של דירה חדשה.`,
-  basisIlPsm:(v,p,pct)=>`אומדן PROPX: ${v} למ״ר (כל הדירות, אמצע 2026 — מקור הבסיס לא תועד) × ${p} — הנחה: ${pct} לדירה חדשה`,
-  offPriceL:"מחיר עסקה ממוצע — ישראל",offPriceS:"רבעון ב׳ 2026 · הלמ״ס, לוח 2.2",offPriceB:"ישראל — סך הכל (לא מחוז) · נתון הלמ״ס כפי שפורסם · הועתק ידנית ב-19.10.2026",
-  offNaFilt:"הלמ״ס מפרסמת ממוצע אחד לכל הדירות — אין מקור שמפצל אותו לפי חדרים / סוג",
-  nhEstL:"מחיר דירה חדשה — אומדן",nhEstS:(p,pct)=>`הממוצע הרשמי × ${p} · הנחה: ${pct} לדירה חדשה`,psmEst:"מחיר למ״ר — דירה חדשה, אומדן",
-  popAll:"כל עסקאות הדירות · חדשות + יד שנייה",popEst:"דירה חדשה · אומדן PROPX — לא נתון רשמי",
+  basisEstB:p=>`הערכת PROPX למחיר הממוצע של דירה חדשה ב${p} — לא נתון רשמי של הלמ״ס. השיטה ב-ⓘ.`,
+  basisPsmB:p=>`הערכת PROPX למחיר למ״ר של דירה חדשה ב${p} — לא נתון רשמי. השיטה ב-ⓘ.`,
+  offPriceL:p=>`מחיר עסקה ממוצע — ${p}`,offPrice0:"מחיר עסקה ממוצע (כלל הדירות)",offPriceS:"רבעון ב׳ 2026 · הלמ״ס, לוח 2.2",offPriceB:(p,B,k)=>`${k==="country"?"ישראל — סך הכל (כולל יהודה ושומרון; לא מחוז)":`${p} — השורה של הלמ״ס לאזור עצמו (${k==="district"?"מחוז "+B.code:"סמל יישוב "+B.code})`} · ${fmtInt(B.n)} עסקאות · נתון הלמ״ס כפי שפורסם; הרבעון האחרון ארעי · הועתק ${PRICE_SRC.transcribed}`,
+  offNaFilt:"הממוצע של הלמ״ס חל על כלל הדירות באזור — הלוח אינו מפצל אותו לפי המסנן",offNaGeo:"אין כרגע ממוצע נתמך של כלל הדירות לאזור זה.",
+  nhEstL:p=>`מחיר מוערך לדירה חדשה — ${p}`,nhEst0:"מחיר מוערך לדירה חדשה",nhEstS:"דירה חדשה · מודל — לא נתון רשמי",psmEst:"מחיר מוערך למ״ר — דירה חדשה",
+  popAll:"כלל הדירות — חדשות + יד שנייה",popEst:"הערכת PROPX",
   kpiNoteSaleNat:"רשמי קודם, מודל אחריו: מחיר העסקה הממוצע של הלמ״ס לכל הדירות, ואחריו אומדן PROPX לדירה חדשה · בכל כרטיס: סיווג ותקופה",
-  basisArea:"ממוצע הלמ״ס של האזור לכל הדירות × 1.12 פרמיית דירה חדשה (הנחה)",basisEst:"אומדן מעוגן לעיר / למחוז — אין פרסום ישיר לאזור",
   basisFiltered:"מסנן פעיל: מוכפל במכפילי הדגמה — מודל",
   perRent:"למ״ס + פרמיית 8% — הנחת מודל", perRentQ1:"למ״ס רבעון א׳ 2026", perRentCity:"למ״ס 2025",
   evTitle:"מכירות — ראיות (RAW · DERIVED · DISPLAY)",
@@ -2519,16 +2544,16 @@ he:{
   naShort:"—", naMedianWhy:"דורש עסקאות רשמיות בכיסוי מספק", yieldFormula:"שכ״ד שנתי ÷ מחיר",
   provNote:"כל ערך מסווג: רשמי · סטטי · נגזר · מודל · חסר",
   mapTitle:"מפת מחירי הדירות החדשות בישראל", mapNote:"לחיצה על אזור מעדכנת את כל הלוח",
-  mAvg:"מחיר ממוצע",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
+  mAvg:"מחיר מוערך לדירה חדשה",mPsm:"מחיר למ״ר",mYoy:"שינוי שנתי",mRent:"שכירות",mYield:"תשואה",
   rankExp:"האזורים היקרים בישראל",rankExpIn:"האזורים היקרים ביותר",rankUp:"העלייה החדה ביותר",rankYield:"התשואה הגבוהה ביותר",rankRent:"השכירות הגבוהה ביותר",
   trendTitle:"מגמת מחירים", vcNA:"חסר",
   trendNAWhy:"היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.",
   trendNANext:"השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.",
   svrTitle:"מכירה מול שכירות", svrNote:"תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן לדירה חדשה מקבלן",
-  svrBuy:"מחיר רכישה ממוצע",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
+  svrBuy:"מחיר מוערך לדירה חדשה",svrRent:"שכירות חודשית ממוצעת",svrAnnual:"שכירות שנתית",svrYield:"תשואה ברוטו",svrRatio:"יחס מחיר / שכירות",
   svrYears:"שנות שכירות", svrFormula:(p,r,y)=>`אם נכס באזור עולה <b class="num">${p}</b> והשכירות הממוצעת היא <b class="num">${r}</b> לחודש — התשואה הברוטו המשוערת היא <b class="num">${y}</b>.`,
   tblNbhd:"שכונות באזור", tblCities:"ערים באזור", tblDistricts:"מחוזות בישראל",
-  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר ממוצע",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי שנתי",thTx:"מכירות דירות חדשות",thListings:"מלאי",
+  thName:"שכונה",thNameCity:"עיר",thNameDist:"מחוז",thPrice:"מחיר מוערך (דירה חדשה)",thPsm:"מחיר למ״ר",thRent:"שכירות ממוצעת",thYield:"תשואה",thYoy:"שינוי שנתי",thTx:"מכירות דירות חדשות",thListings:"מלאי",
   areas:"אזורים", filtered:"מסונן",
   fRooms:"חדרים",fType:"סוג נכס",fArea:"שטח",fCond:"שלב בנייה",
   rAll:"הכל",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -3072,16 +3097,15 @@ en:{
   est:"estimate", perMonth:"per month", perYear:"per year", yoyLbl:"Annual change",
   vcName:{raw:"Official",static:"Static",der:"Derived",mod:"Modelled",na:"Missing",usr:"User assumption"},
   vcTip:{raw:"Official value whose source, period and check time are stored in the system",static:"Entered by hand from a cited, dated publication — no copy of the source is stored, so it is not classed official",der:"Computed by a stated formula from cited published figures",mod:"Model estimate — not an observation",na:"No data supports this value, so none is shown",usr:"A value you entered — your assumption, not data"},
-  perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"CBS Q1–Q2 2026 + ~12% premium",
+  perYoy:"May–Jun 2026", perY3:"to May–Jun 2026", perPrice:"mid-2026 · estimate",
   nhIdxLbl:"New-homes price index · annual change",xpInfo:"Explain",
-  basisIl:(v,p,pct)=>`PROPX estimate: ${v} (CBS, all dwellings, Israel — total, Q2 2026) × ${p} — an assumed ${pct} new-build premium. CBS does not publish this figure as the national average price of a new dwelling.`,
-  basisIlPsm:(v,p,pct)=>`PROPX estimate: ${v} per m² (all dwellings, mid-2026 — the base's source was not recorded) × ${p} — an assumed ${pct} for a new home`,
-  offPriceL:"Average transaction price — Israel",offPriceS:"Q2 2026 · CBS Table 2.2",offPriceB:"Israel — total (not a district) · the CBS figure as published · transcribed 19.10.2026",
-  offNaFilt:"CBS publishes one average for all dwellings — no source splits it by rooms / type",
-  nhEstL:"Estimated new-home price",nhEstS:(p,pct)=>`official average × ${p} · assumed ${pct} new-build premium`,psmEst:"Price per m² — new-home estimate",
-  popAll:"All dwelling transactions · new + second-hand",popEst:"New homes · PROPX estimate — not an official figure",
+  basisEstB:p=>`A PROPX estimate of the average price of a new dwelling in ${p} — not an official CBS figure. Method in ⓘ.`,
+  basisPsmB:p=>`A PROPX estimate of the price per m² of a new dwelling in ${p} — not an official figure. Method in ⓘ.`,
+  offPriceL:p=>`Average transaction price — ${p}`,offPrice0:"Average transaction price (all dwellings)",offPriceS:"Q2 2026 · CBS Table 2.2",offPriceB:(p,B,k)=>`${k==="country"?"Israel — total (includes Judea and Samaria; not a district)":`${p} — its own CBS row (${k==="district"?"district "+B.code:"locality code "+B.code})`} · ${fmtInt(B.n)} transactions · the CBS figure as published; the last quarter is provisional · transcribed ${PRICE_SRC.transcribed}`,
+  offNaFilt:"CBS's average covers every dwelling in the area — the board does not split it by the filter",offNaGeo:"No supported all-dwellings average is currently available for this geography.",
+  nhEstL:p=>`Estimated new-home price — ${p}`,nhEst0:"Estimated new-home price",nhEstS:"New dwelling · model — not an official figure",psmEst:"Estimated new-home price per m²",
+  popAll:"All dwellings — new + second-hand",popEst:"PROPX estimate",
   kpiNoteSaleNat:"Official first, model second: the CBS average transaction price of all dwellings, then PROPX's new-home estimate · class and period on every card",
-  basisArea:"CBS area average of all dwellings × 1.12 new-build premium (assumption)",basisEst:"An estimate anchored to the city / district — no direct publication for the area",
   basisFiltered:"Filter on: multiplied by demonstration multipliers — MODEL",
   perRent:"CBS + 8% premium — model assumption", perRentQ1:"CBS Q1 2026", perRentCity:"CBS 2025",
   evTitle:"Sales — evidence (RAW · DERIVED · DISPLAY)",
@@ -3089,16 +3113,16 @@ en:{
   naShort:"—", naMedianWhy:"Requires official deals with sufficient coverage", yieldFormula:"annual rent ÷ price",
   provNote:"Every value is classed: official · static · derived · modelled · missing",
   mapTitle:"Israel new-home price map", mapNote:"Click a region to update the whole board",
-  mAvg:"Avg price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
+  mAvg:"Est. new-home price",mPsm:"Per m²",mYoy:"Annual change",mRent:"Rent",mYield:"Yield",
   rankExp:"Israel's most expensive areas",rankExpIn:"Most expensive areas",rankUp:"Fastest-rising areas",rankYield:"Highest gross yield",rankRent:"Highest rents",
   trendTitle:"Price trend", vcNA:"Missing",
   trendNAWhy:"Official local price history has not been collected yet, so no trend chart is shown here.",
   trendNANext:"The latest annual change is on the overview cards, with its source and period. A chart will return only from official series actually collected.",
   svrTitle:"Sale vs. rent", svrNote:"Gross yield = annual rent ÷ purchase price × 100 · new-home estimate",
-  svrBuy:"Avg purchase price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
+  svrBuy:"Est. new-home price",svrRent:"Avg monthly rent",svrAnnual:"Annual rent",svrYield:"Gross yield",svrRatio:"Price / rent ratio",
   svrYears:"years of rent", svrFormula:(p,r,y)=>`If a property here costs <b class="num">${p}</b> and average rent is <b class="num">${r}</b> a month — the estimated gross yield is <b class="num">${y}</b>.`,
   tblNbhd:"Neighborhoods in this area", tblCities:"Cities in this area", tblDistricts:"Districts of Israel",
-  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Avg price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"Annual change",thTx:"New-home sales",thListings:"Inventory",
+  thName:"Neighborhood",thNameCity:"City",thNameDist:"District",thPrice:"Est. new-home price",thPsm:"Per m²",thRent:"Avg rent",thYield:"Yield",thYoy:"Annual change",thTx:"New-home sales",thListings:"Inventory",
   areas:"areas", filtered:"Filtered",
   fRooms:"Rooms",fType:"Type",fArea:"Area",fCond:"Stage",
   rAll:"All",r12:"1–2",r3:"3",r4:"4",r5:"5",r6:"6+",
@@ -3847,9 +3871,10 @@ function msShown(l){
 function vcOf(l,field,base){   /* base: the unfiltered board value (the capital model reads l.base) */
   const est=!!l.e||l.type==="nbhd"||l.type==="sub",filt=!base&&filtersActive();
   switch(field){
-    case "price":case "sqm":   /* the country row is the ×1.12 new-home ESTIMATE — MODEL (owner's decision 19.10.2026); its official
-                                  figure is PRICE_BASIS.il, shown first. District / city rows keep their class (the capital model reads it). */
-      return filt||est||l.type==="country"?"mod":"der";
+    case "price":case "sqm":   /* every board price is PROPX's ×1.12 new-home ESTIMATE — MODEL, at every level (owner's decision
+                                  19.10.2026); the all-dwellings average beside it is pricePair().off. Only the capital model's DATA BASIS
+                                  (base) keeps reading a district / city row anchored on a CBS row as cited (unchanged). */
+      return !base||filt||est||l.type==="country"?"mod":"der";
     case "yoy":   /* national = the CBS new-homes index: RAW only from the live snapshot */
       return l.id==="il"&&MKT.nh?"raw":isStatic(l,"yoy")?"static":est?"mod":"der";
     case "y3":case "rentYoy":return est?"mod":"der";
@@ -3880,14 +3905,15 @@ function vcPer(l,field,base){
   return "";
 }
 const vcTag=cls=>`<span class="vc ${cls}" title="${T().vcTip[cls]}">${T().vcName[cls]}</span>`;
-/* the national price pair (owner's decision 19.10.2026): off = the CBS average transaction price of ALL dwellings, Israel — total
-   (OFFICIAL only while the shown value equals the cited figure; a filter never splits it → "—"); est = PROPX's ×premium new-home
-   estimate (LOCATIONS.il, MODEL). Read only from PRICE_BASIS.il — never from a district row. */
-const premPct=B=>ltr("+"+Math.round((B.premium-1)*100)+"%");   /* "+12%" — kept left-to-right inside Hebrew text */
-function natPrice(){
-  const B=PRICE_BASIS.il;if(!B)return null;
-  const off=filtersActive()?{show:false}:{show:true,v:B.cbs,cls:"raw"};
-  return{B,off,est:{v:metricsOf("il").price,cls:vcOf(LOC.il,"price")}};
+/* THE PRICE PAIR — one contract for every geography (owner's decision 19.10.2026): the board, the profile card and every level read it.
+   off = card 1, the CBS average transaction price of ALL dwellings (new + second-hand) for THIS geography's OWN Table 2.2 row
+         (PRICE_BASIS[l.id]) — OFFICIAL only while the value shown equals the cited figure. No own row → "—" with its reason: never the
+         parent district's row, never the estimate, never a city figure made up. A filter never splits it → "—".
+   est = card 2, PROPX's new-home ESTIMATE (metricsOf → LOCATIONS base.price) — MODEL, always, at every level. */
+function pricePair(l){
+  const B=PRICE_BASIS[l.id]||null;
+  const off=!B?{show:false,why:"none"}:filtersActive()?{show:false,why:"filter"}:{show:true,v:B.cbs,cls:"raw"};
+  return{B,off,est:{v:metricsOf(l.id).price,cls:"mod"}};
 }
 /* A ranking — places ordered by a value, a #1/#2/#3 list or a "leader" mark —
    is shown only when EVERY ranked value is RAW (official, stored provenance).
@@ -4120,21 +4146,19 @@ function renderKPIs(skeleton){
   /* the national index change is a different series and period than the price above it — its label says which (audit 19.10.2026) */
   const idxLbl=f=>f==="yoy"&&l.id==="il"&&MKT.nh?t.nhIdxLbl:t.yoyLbl;
   const dl=f=>`${idxLbl(f)} · ${vcPer(l,f)} · ${t.vcName[vcOf(l,f)]}`;
-  /* every price card names its own basis: geography · population · period · source (the Israel row = the CBS national total, never a district) */
-  const B=!filtersActive()&&PRICE_BASIS[l.id];
-  const basisOf=f=>filtersActive()?t.basisFiltered:B?(f==="price"?t.basisIl(fmtNIS(B.cbs),B.premium,premPct(B)):t.basisIlPsm(fmtNIS(B.cbsPsm),B.premium,premPct(B))):vcOf(l,f)==="mod"?t.basisEst:t.basisArea;
-  /* the national price — OFFICIAL first, MODEL second (owner's decision 19.10.2026): the CBS average transaction price of ALL
-     dwellings (PRICE_BASIS.il.cbs) heads the board; PROPX's ×premium new-home estimate follows as its own MODEL card with its
-     assumption in view. The estimate never takes the headline; no district value reaches either card (test/headline-metrics.test.js). */
-  const NAT=state.mode==="sale"&&l.id==="il"?natPrice():null;
+  /* THE PRICE PAIR (pricePair, owner's decision 19.10.2026) — the same two cards, in the same order, at EVERY level: card 1 = the
+     all-dwellings average of this geography's OWN CBS row (OFFICIAL), or "—" with its reason; card 2 = PROPX's new-home estimate
+     (MODEL). Selecting a geography never changes what a card means. No formula on a card — the method is in its ⓘ (level 2); no
+     district value reaches a city's card 1 (test/price-cards.test.js). */
+  const PP=state.mode==="sale"?pricePair(l):null,place=heName(l),filt=filtersActive();
   const yoyXp=l.id==="il"&&MKT.nh?"new_homes_price_index_change":"board_annual_change_estimate";
   const cards=(state.mode==="sale"?[
-    NAT&&(NAT.off.show?{k:"offPrice",l:t.offPriceL,v:NAT.off.v,f:fmtNIS,vc:NAT.off.cls,s:t.offPriceS,b:t.offPriceB,xp:"cbs_average_transaction_price",pop:"all"}
-      :{k:"offPrice",l:t.offPriceL,na:t.offNaFilt,pop:"all"}),
-    NAT?{k:"price",l:t.nhEstL,v:m.price,f:v=>"≈ "+fmtCompact(v),vc:vcOf(l,"price"),s:t.nhEstS(NAT.B.premium,premPct(NAT.B)),b:basisOf("price"),xp:"new_home_price_estimate",pop:"est"}
-      :{k:"price",l:t.avgPrice,v:m.price,f:fmtNIS,vc:vcOf(l,"price"),d:m.yoy,dl:dl("yoy"),b:basisOf("price"),xp:"board_average_price"},
+    PP.off.show?{k:"offPrice",l:t.offPriceL(place),v:PP.off.v,f:fmtNIS,vc:PP.off.cls,s:t.offPriceS,b:t.offPriceB(place,PP.B,l.type),xp:"cbs_average_transaction_price",pop:"all"}
+      :PP.off.why==="filter"?{k:"offPrice",l:t.offPriceL(place),na:t.offNaFilt,xp:"cbs_average_transaction_price",pop:"all"}
+      :{k:"offPrice",l:t.offPriceL(place),na:t.offNaGeo,xm:"cbs_average_price_no_row",pop:"all"},
+    {k:"price",l:t.nhEstL(place),v:PP.est.v,f:v=>"≈ "+fmtCompact(v),vc:PP.est.cls,s:t.nhEstS,b:filt?t.basisFiltered:t.basisEstB(place),xp:"new_home_price_estimate",pop:"est"},
     {k:"median",l:t.medPrice,na:t.naMedianWhy},
-    {k:"sqm",l:NAT?t.psmEst:t.psm,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null,b:basisOf("sqm"),xp:NAT?"new_home_price_per_sqm_estimate":"board_price_per_sqm",pop:NAT?"est":null},
+    {k:"sqm",l:t.psmEst,v:m.sqm,f:v=>fmtNIS(v),vc:vcOf(l,"sqm"),s:vcPer(l,"sqm"),n:nat?(m.sqm/nat.sqm-1)*100:null,b:filt?t.basisFiltered:t.basisPsmB(place),xp:"new_home_price_per_sqm_estimate",pop:"est"},
     {k:"yoy",l:idxLbl("yoy"),v:m.yoy,f:v=>fmtPct(v),cls:deltaCls(m.yoy),vc:vcOf(l,"yoy"),s:vcPer(l,"yoy"),xp:yoyXp},
     (x=>x.show?{k:"tx",l:t.tx,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"official_new_home_sales"}:{k:"tx",l:t.tx,na:x.why})(txShown(l)),
     {k:"y3",l:t.y3,v:m.y3,f:v=>fmtPct(v),cls:deltaCls(m.y3),vc:vcOf(l,"y3"),s:vcPer(l,"y3"),xp:"board_three_year_change"},
@@ -4145,7 +4169,7 @@ function renderKPIs(skeleton){
     {k:"rentYoy",l:t.yoyLbl,v:m.rentYoy,f:v=>fmtPct(v),cls:deltaCls(m.rentYoy),vc:vcOf(l,"rentYoy"),s:vcPer(l,"rentYoy"),xp:"board_average_rent"},
     {k:"yield",l:t.grossYield,v:m.grossYield,f:v=>v.toFixed(1)+"%",vc:vcOf(l,"yield"),s:t.yieldFormula,xp:"board_gross_yield"},
     (x=>x.show?{k:"listings",l:t.listings,v:x.v,f:()=>x.text,vc:x.cls,s:x.per,xp:"unsold_inventory"}:{k:"listings",l:t.listings,na:x.why})(invShown(l)),
-  ]).filter(Boolean);   /* both lists: the national official card is absent elsewhere */
+  ]).filter(Boolean);
   const KICO={
     offPrice:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
     price:'<path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/>',
@@ -4163,7 +4187,7 @@ function renderKPIs(skeleton){
   };
   const KTONE={offPrice:"b",price:"b",median:"v",sqm:"o",yoy:"g",tx:"v",y3:"b",
     rent:"b",rentMedian:"v",rentPsm:"o",rentYoy:"g",yield:"g",listings:"v"};
-  const cmpOf=c=>c.na?`<span>${c.na}</span>`
+  const cmpOf=c=>c.na?`<span>${c.na}</span>${c.xm?xpMiss(c.xm):c.xp?xpBtn(c.xp):""}`
     :vcTag(c.vc)+(c.d!==undefined?deltaHTML(c.d,true)+`<span>${c.dl}</span>`
       :c.n!=null?`<span class="mc num ${c.n>=0?"up":"down"}">${fmtPct(c.n)} ${t.vsNat}</span>`
       :`<span>${c.s||""}</span>`)+(c.xp?xpBtn(c.xp):"");
@@ -4480,7 +4504,7 @@ function renderProfile(){
   const chain=chainOf(l).map(heName).reverse().join(" · ");
   const sale=state.mode==="sale";
   const primV=sale?m.price:m.rent;
-  const NP=sale&&l.id==="il"?natPrice():null;   /* the country: OFFICIAL first, MODEL second */
+  const PP=sale?pricePair(l):null;   /* every level: the all-dwellings average (or "—"), then PROPX's new-home estimate (MODEL) */
   const yf=sale?"yoy":"rentYoy";
   const stat=(lb,v,f,s)=>`<div class="stat"><div class="l">${lb}</div><div class="v num">${v}</div><div class="s">${vcTag(vcOf(l,f))}${s?` ${s}`:""}</div></div>`;
   el("profileCard").innerHTML=`
@@ -4494,16 +4518,16 @@ function renderProfile(){
         ${CI_EXTERNAL&&["city","nbhd","sub"].includes(l.type)?`<button class="pf-score" type="button" data-ciopen="1" title="${t.ciTeaserCTA}"><span>${t.ciScoreT}</span><b class="num">${ciEval(l.id,state.ci.h,state.ci.strat).score}</b></button>`:""}
       </div>
     </div>
-    <div class="asset-price">${NP?`
+    <div class="asset-price">${PP?`
       <div class="ap-off">
-        <div class="ap-l">${t.offPriceL} ${NP.off.show?vcTag(NP.off.cls):vcTag("na")}</div>
-        <div class="ap-v num">${NP.off.show?fmtNIS(NP.off.v):"—"}</div>
-        <div class="ap-d"><span>${NP.off.show?`${t.offPriceS} · ${t.popAll}`:t.offNaFilt}</span></div>
+        <div class="ap-l">${t.offPriceL(heName(l))} ${PP.off.show?vcTag(PP.off.cls):vcTag("na")}</div>
+        <div class="ap-v num">${PP.off.show?fmtNIS(PP.off.v):"—"}</div>
+        <div class="ap-d"><span>${PP.off.show?`${t.offPriceS} · ${t.popAll}`:PP.off.why==="filter"?t.offNaFilt:t.offNaGeo}</span></div>
       </div>
       <div class="ap-est">
-        <div class="ap-l">${t.nhEstL} ${vcTag(NP.est.cls)}</div>
-        <div class="ap-v2 num">≈ ${fmtCompact(NP.est.v)}</div>
-        <div class="ap-d"><span>${t.nhEstS(NP.B.premium,premPct(NP.B))} · ${t.popEst}</span></div>
+        <div class="ap-l">${t.nhEstL(heName(l))} ${vcTag(PP.est.cls)}</div>
+        <div class="ap-v2 num">≈ ${fmtCompact(PP.est.v)}</div>
+        <div class="ap-d"><span>${t.popEst} · ${t.nhEstS}</span></div>
       </div>`:`
       <div>
         <div class="ap-l">${sale?t.avgPrice:t.avgRent} ${vcTag(vcOf(l,sale?"price":"rent"))}</div>
@@ -4512,8 +4536,8 @@ function renderProfile(){
       </div>`}
     </div>
     <div class="stats">
-      ${stat(t.psm,fmtNIS(m.sqm),"sqm")}
-      ${stat(sale?t.avgRent:t.avgPrice,fmtNIS(sale?m.rent:m.price),sale?"rent":"price",sale?t.perMonth:"")}
+      ${stat(t.psmEst,fmtNIS(m.sqm),"sqm")}
+      ${stat(sale?t.avgRent:t.nhEst0,fmtNIS(sale?m.rent:m.price),sale?"rent":"price",sale?t.perMonth:"")}
       ${stat(t.svrYield,m.grossYield.toFixed(1)+"%","yield")}
       ${(x=>`<div class="stat"><div class="l">${t.tx}</div><div class="v num">${x.show?x.text:"—"}</div><div class="s">${vcTag(x.cls)} ${x.show?x.per:x.why}</div></div>`)(txShown(l))}
       ${(x=>`<div class="stat"><div class="l">${t.listings}</div><div class="v num">${x.show?x.text:"—"}</div><div class="s">${vcTag(x.cls)} ${x.show?x.per:x.why}</div></div>`)(invShown(l))}
@@ -5092,10 +5116,11 @@ function renderInsights(){
 function renderConfidence(){
   const t=T(),l=LOC[state.locId];
   const F=state.mode==="sale"
-    ?[["price",t.avgPrice],["sqm",t.psm],["yoy",t.yoyLbl],["y3",t.y3],["tx",t.tx],["listings",t.listings]]
+    ?[["offPrice",t.offPrice0],["price",t.nhEst0],["sqm",t.psmEst],["yoy",t.yoyLbl],["y3",t.y3],["tx",t.tx],["listings",t.listings]]
     :[["rent",t.avgRent],["rentPsm",t.rpsm],["rentYoy",t.yoyLbl],["yield",t.grossYield],["listings",t.listings]];
   const by={raw:[],static:[],der:[],mod:[],na:[]};
-  for(const[f,lb]of F)by[f==="tx"?txShown(l).cls:f==="listings"?invShown(l).cls:vcOf(l,f)].push(`${lb} <span class="bs-p">(${vcPer(l,f)})</span>`);
+  const PP=pricePair(l),offPer=PP.off.show?t.offPriceS:PP.off.why==="filter"?t.offNaFilt:t.offNaGeo;
+  for(const[f,lb]of F)by[f==="offPrice"?(PP.off.show?PP.off.cls:"na"):f==="tx"?txShown(l).cls:f==="listings"?invShown(l).cls:vcOf(l,f)].push(`${lb} <span class="bs-p">(${f==="offPrice"?offPer:vcPer(l,f)})</span>`);
   const row=(c,items)=>items.length?`<div class="bs-row">${vcTag(c)}<span>${items.join(" · ")}</span></div>`:"";
   el("confCard").innerHTML=row("raw",by.raw)+row("static",by.static)+row("der",by.der)+row("mod",by.mod)+
     `<div class="bs-row">${vcTag("na")}<span>${by.na.concat(t.basisNA).join(" · ")}</span></div>`+
