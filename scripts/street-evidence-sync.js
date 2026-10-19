@@ -80,6 +80,29 @@ async function search(name, from, to, offset = 0) {
 }
 const sweepWindow = (name, from, to, first, st) => SW.sweepWindow(name, from, to, first, st, search);
 
+/** the register's settlement names → locality codes (settlement_code, else the publisher's resolved_code); a name whose latest
+    deal is before the window is outside it; a name with no code in the directory is unmapped (listed, not swept) */
+function settlementsOf(list, window, D) {
+  const byCode = new Map(), unmapped = [], outsideCodes = new Set();
+  let outside = 0;
+  for (const s of list) {
+    if (!s || !s.settlement) continue;
+    const code = num(s.settlement_code) != null ? num(s.settlement_code) : num(s.resolved_code);
+    if (s.last_deal && String(s.last_deal).slice(0, 10) < window.from) { outside++; if (code != null && D.localities.has(code)) outsideCodes.add(code); continue; }
+    if (code == null || !D.localities.has(code)) { unmapped.push({ settlement: s.settlement, deals: num(s.deals), resolvedName: s.resolved_name || null }); continue; }
+    if (!byCode.has(code)) byCode.set(code, []);
+    if (!byCode.get(code).includes(s.settlement)) byCode.get(code).push(s.settlement);   // a name listed twice is swept once
+  }
+  return { byCode, unmapped, outside, outsideCodes };
+}
+const settlementsBlock = (list, { byCode, unmapped, outside, outsideCodes }) => ({ total: list.length, outsideWindow: outside,
+  mapped: [...byCode.values()].reduce((n, l) => n + l.length, 0), localities: byCode.size, unmapped,
+  /* a locality whose every register name has its latest deal before the window: swept by the list — no deal in the window */
+  noDealsInWindow: [...outsideCodes].filter((c) => !byCode.has(c)).sort((a, b) => a - b) });
+/* register natures the shared classifier calls residential but the dwelling universe does not list (a human decides) */
+const naturesReview = (natures) => ((natures && natures.data) || []).map((n) => n.nature)
+  .filter((n) => n && classifyPropertyType(n).residential && !EV.DWELLING_NATURES.has(EV.natureKey(n)) && !EV.EXCLUDED_NATURES.has(EV.natureKey(n)));
+
 function finish(meta, run, D) {
   fs.mkdirSync(DIR, { recursive: true });
   const summary = EV.summarize(DIR, D, meta);
@@ -118,7 +141,17 @@ function finish(meta, run, D) {
          (codes never move; a renamed / added street or synonym can change a parcel's state) */
       const cur = D.meta ? D.meta.contentHash : null; let rematched = 0;
       if (cur) for (const f of fs.readdirSync(DIR).filter((x) => /^\d+\.json$/.test(x))) { const sh = readJson(f); if (sh && sh.directory !== cur) { writeJson(f, rematch(sh, D)); rematched++; } }
-      if (rematched) finish(prevMeta, run, D);
+      /* the settlement list of the same copy is read again (two requests): the localities with no deal in the window and the
+         unmapped names follow the directory as it is now; a locality newly mapped by it waits for the next sweep */
+      const nat = await get('/api/deals/natures'), sl = await get('/api/deals/settlements');
+      const list = (sl && (sl.data || sl)) || [];
+      if (list.length) {
+        const m = settlementsOf(list, prevMeta.window, D);
+        prevMeta.settlements = settlementsBlock(list, m); prevMeta.naturesReview = naturesReview(nat);
+        const unswept = [...m.byCode.keys()].filter((c) => !fs.existsSync(path.join(DIR, c + '.json')));
+        if (unswept.length) prevMeta.settlements.awaitingSweep = unswept.sort((a, b) => a - b);
+      }
+      finish(prevMeta, run, D);
       Object.assign(run, { status: 'unchanged', scrapedAt, rematched, finishedAt: new Date().toISOString(), requests });
       fs.appendFileSync(path.join(DIR, 'sync-runs.jsonl'), JSON.stringify(run) + '\n');
       console.log('the register copy has not changed since the last complete sweep (' + scrapedAt + ')');
@@ -128,21 +161,7 @@ function finish(meta, run, D) {
     const natures = await get('/api/deals/natures');
     const settlements = await get('/api/deals/settlements');
     const list = (settlements && (settlements.data || settlements)) || [];
-    /* settlement names → locality codes */
-    const byCode = new Map(), unmapped = [], outsideCodes = new Set();
-    let outside = 0;
-    for (const s of list) {
-      if (!s || !s.settlement) continue;
-      if (s.last_deal && String(s.last_deal).slice(0, 10) < window.from) {
-        outside++; const oc = num(s.settlement_code) != null ? num(s.settlement_code) : num(s.resolved_code);
-        if (oc != null && D.localities.has(oc)) outsideCodes.add(oc);
-        continue;
-      }
-      const code = num(s.settlement_code) != null ? num(s.settlement_code) : num(s.resolved_code);
-      if (code == null || !D.localities.has(code)) { unmapped.push({ settlement: s.settlement, deals: num(s.deals), resolvedName: s.resolved_name || null }); continue; }
-      if (!byCode.has(code)) byCode.set(code, []);
-      if (!byCode.get(code).includes(s.settlement)) byCode.get(code).push(s.settlement);   // a name listed twice is swept once
-    }
+    const { byCode, unmapped, outside, outsideCodes } = settlementsOf(list, window, D);
     const codes = [...byCode.keys()].filter((c) => !only || only.has(c)).sort((a, b) => a - b);
     progress = progress || { scrapedAt, startedAt, window, done: [], failed: [] };
     /* a locality that failed in an earlier run of this sweep is tried again (once per run) */
@@ -153,11 +172,8 @@ function finish(meta, run, D) {
       source: { name: 'Tax Authority deals register — republished copy (over.org.il)', base: BASE, channel: 'independent-republication', scrapedAt,
         lastDeal: String(stats.last_deal).slice(0, 10), firstDeal: stats.first_deal || null, datasetId: stats.dataset_id || null, registerUrl: stats.source_url || null, deals: num(stats.deals) },
       window, dwellingNatures: [...EV.DWELLING_NATURES], natures: ((natures && natures.data) || []).map((n) => ({ nature: n.nature, deals: num(n.deals), note: n.note || null })),
-      settlements: { total: list.length, outsideWindow: outside, mapped: [...byCode.values()].reduce((n, l) => n + l.length, 0), localities: byCode.size, unmapped,
-        /* a locality whose every register name has its latest deal before the window: swept by the list — no deal in the window */
-        noDealsInWindow: [...outsideCodes].filter((c) => !byCode.has(c)).sort((a, b) => a - b) },
-      /* register natures the shared classifier calls residential but the dwelling universe does not list (a human decides) */
-      naturesReview: ((natures && natures.data) || []).map((n) => n.nature).filter((n) => n && classifyPropertyType(n).residential && !EV.DWELLING_NATURES.has(EV.natureKey(n)) && !EV.EXCLUDED_NATURES.has(EV.natureKey(n))),
+      settlements: settlementsBlock(list, { byCode, unmapped, outside, outsideCodes }),
+      naturesReview: naturesReview(natures),
       sweep: { status: 'RUNNING', startedAt: progress.startedAt, updatedAt: fetchedAt, done: progress.done.length, of: codes.length, failed: progress.failed } };
     const st = { leaves: 0, splits: 0, pagedDays: 0, rows: 0, duplicates: 0 };
     writeJson('progress.json', progress);
