@@ -76,9 +76,11 @@ name is not split; a query that is itself an official street name keeps that str
 it. Historical rows rank after current ones of the same tier and are labelled. `meta.moreStreets` drives the page's "add a
 locality" hint.
 
-Measured (19.10.2026, all 62,265 searchable rows): name + selected locality top-7 62,261 → 62,265 after the review fixes
-(top-1 100 % on a 1-in-20 sample); "street locality" top-7 100 %; synonym + locality top-7 100 %. Cold load ≈ 1.0 s (was
-3.9 s), warm queries 1–20 ms.
+Measured (19.10.2026, after the four reviews, every one of the 62,265 searchable rows): name + selected locality — top-7
+62,265 (100 %), top-1 62,257; "street locality" typed together — top-7 62,265 (100 %); the name alone — top-7 49,014 (a name
+shared by many localities needs its locality: the "add a locality" hint). Synonyms (every second one, 43,054): + selected
+locality 43,053, + locality name 43,052 — the two left are a one-letter synonym ("ג") and a truncated one ("…הל-"). Cold load
+≈ 0.8 s (was 3.9 s), warm queries 1–20 ms.
 
 ## 3 · Street market evidence
 
