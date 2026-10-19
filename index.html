@@ -607,7 +607,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .sv-apt{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin:6px 0}
 .sv-apt label{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:700;color:var(--ink-3)}
 .sv-apt input,.sv-apt select{width:110px;font:inherit;font-size:13px;padding:5px 7px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
-.sv-aptres{margin-top:8px;max-width:520px} .sv-eff{margin:4px 0 0;padding-inline-start:18px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
+.sv-aptres{margin-top:8px;max-width:520px} .sv-rng{font-size:14px;font-weight:600;color:var(--ink-2);margin:2px 0 6px} .nw{white-space:nowrap} .sv-refs{color:var(--ink-2);font-size:12.5px} .sv-tn{font-size:11px;color:var(--ink-3)} .sv-na{color:var(--ink-3)!important} .sv-apt select{width:auto} @media (max-width:640px){.sv-apt input,.sv-apt select,.sv-apt button{min-height:40px}} .sv-eff{margin:4px 0 0;padding-inline-start:18px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
 .gv-m.lim{border-style:dashed}
 .gv-m.lim .v{color:var(--brass)}
 .st-ctx.muted .gv-m .v{color:var(--ink-3)}
@@ -4914,7 +4914,7 @@ const PT_DOM={
   gxedges:"text,text,text,text,text,date,text",
   gxmem:"text,text,text,text,text,number,number,text",
   stdeals:"date,text,number,number,currency,currency,number,-",
-  stcomp:"text,text,text,date,currency,number,currency,number,number,number,number,currency,number",
+  stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
   stperm:"date,text,text,number,text",
   stsite:"date,text,text,text"};
@@ -7028,26 +7028,26 @@ function geoKindTag(g,t){return g.kind!=="street"?t.geoTagLoc:g.streetKind==="ar
    the locality / neighbourhood figures are CONTEXT, printed apart with the sentence that says so. */
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */
-    obsH:"שוק הרחוב שנצפה",obsSub:"מה שנצפה בעסקאות ברחוב",modH:"הערכת PROPX לרחוב",modChip:"מודל · הערכת PROPX",perSqm:"למ״ר",
-    modRef:(m)=>`לדירת ייחוס: דירה קיימת בבניין, ${m.areaSqm} מ״ר (כ-3.5 חדרים), נכון ל-${siDate(m.asOf)}`,
-    modTier:{STRONG:"ראיות מודל חזקות",STANDARD:"ראיות מודל רגילות",LIMITED:"ראיות מודל מוגבלות",UNAVAILABLE:"מודל לא זמין"},modEv:"ראיות המודל",
-    modRange:"טווח המודל (80% מעסקאות שלא נראו)",modUn:"מודל לא זמין",
-    modWhy:"למה ההערכה הזו?",latestEv:"ראיית השוק האחרונה",mainLim:"המגבלה העיקרית",
-    lvlName:{street:"עסקאות שנצפו ברחוב",block:"עסקאות בגושים שנוגעים ברחוב",neighbourhood:"עסקאות בשכונה המאומתת",locality:"עסקאות ביישוב (עוגן)"},
-    whyLine:(name,l,w)=>`${name}: ${l.n===1?"עסקה אחת":fmtInt(l.n)+" עסקאות"} ${l.parcels===1?"בחלקה אחת":"ב-"+fmtInt(l.parcels)+" חלקות"} (≈ ${l.nEff<10?l.nEff.toFixed(1):fmtInt(l.nEff)} תצפיות אפקטיביות) · משקל ${Math.round(w*100)}% בהערכה`,
-    whyAge:(m)=>`גיל חציוני של עסקאות ההשוואה: ${fmtInt(m)} חודשים`,whyPar:(p)=>`תרומת החלקה הגדולה ביותר: ${p}%`,
-    whyAdj:(p)=>`ההתאמה העיקרית: מדד המחוז של PROPX (${p>=0?"+":""}${p}% בממוצע לעסקאות ההשוואה) ותרגום כל עסקה לדירת הייחוס`,
+    obsH:"שוק הרחוב שנצפה",obsSub:"חציון המכירות שנרשמו ברחוב ב-36 חודשים — כל הגדלים, חדשות ויד שנייה, כפי שנמכרו (לא מותאם לזמן ולא לסוג הדירה)",modH:"הערכת PROPX לרחוב",modChip:"מודל · הערכת PROPX",perSqm:"למ״ר",
+    modRefShort:"לדירה קיימת טיפוסית של 85 מ״ר (כ-3.5 חדרים) — לא הדירה הספציפית שלכם; להערכה לדירה מסוימת ראו למטה",modRef:(m)=>`דירת הייחוס: דירה קיימת בבניין, ${m.areaSqm} מ״ר, בגיל האופייני במחוז, במחיר שוק (לא מסלול מסובסד) · רמת המחירים של ${m.q||"—"} (הרבעון האחרון שדווח במלואו; עסקאות עד ${siDate(m.asOf)}). הערכת מודל — לא שומה ולא מחיר של דירה מסוימת.`,
+    modTier:{STRONG:"ראיות מודל חזקות",STANDARD:"ראיות מודל רגילות",LIMITED:"ראיות מודל מוגבלות",UNAVAILABLE:"מודל לא זמין"},tierNote:"רמת הראיות, לא רמת הדיוק",modAround:"ההערכה משתמשת גם במכירות סביב הרחוב, ולכן יכולה להתקיים כשלרחוב עצמו יש מעט מדי.",modEv:"ראיות המודל",
+    modRange:"טווח תיקוף",modRangeNote:"בבדיקה, 8 מכל 10 מכירות נפלו במרחק כזה מהערכת המודל",modRangeWide:"הורחב לפי התיקוף ביישוב",modUn:"מודל לא זמין",
+    modWhy:"למה ההערכה הזו?",latestEv:"המכירה האחרונה ששימשה",gapH:"למה השניים שונים",gap:(g,x)=>`ההערכה ${g<0?"נמוכה":"גבוהה"} ב-${Math.abs(g)}% מהחציון שנצפה. עסקאות הרחוב: חציון ${fmtInt(x.medianAreaSqm)} מ״ר${x.newOrOffPlanPct?`, ${x.newOrOffPlanPct}% חדשות / על הנייר`:""}${x.subsidyTrackPct?`, ${x.subsidyTrackPct}% בחלקות מסלול מסובסד`:""}; החציון שנצפה אינו מותאם לזמן ולסוג הדירה. ההערכה — לדירת הייחוס (קיימת, 85 מ״ר): תרגום עסקאות הרחוב אליה ${x.dwellingAdjustmentPct>=0?"+":""}${x.dwellingAdjustmentPct}%${x.otherPct?`; ${x.otherPct}% מהמשקל מהגושים, מהשכונה ומהיישוב`:""}.`,mainLim:"המגבלה העיקרית",
+    lvlName:{street:"עסקאות שנצפו ברחוב",block:"עסקאות בגושים שנוגעים ברחוב",neighbourhood:"עסקאות בשכונה המאומתת",locality:"עסקאות ביישוב (רמה כללית)"},lvlShort:{street:"רחוב",block:"גושים",neighbourhood:"שכונה",locality:"יישוב"},
+    whyLine:(name,l,w)=>`${name}: ${l.n===1?"עסקה אחת":fmtInt(l.n)+" עסקאות"} ${l.parcels===1?"בחלקה אחת":"ב-"+fmtInt(l.parcels)+" חלקות"} (נחשבות כ-${fmtInt(Math.max(1,Math.round(l.nEff)))} מכירות בלתי תלויות${l.nEff<0.7*l.n?" — רבות באותו בניין":""}) · משקל ${Math.round(w*100)}% בהערכה`,
+    whyAge:(m)=>`זמן חציוני מאז עסקאות ההשוואה: ${fmtInt(m)} חודשים`,whyPar:(p)=>`תרומת החלקה הגדולה ביותר: ${p}%`,
+    whyAdj:(p)=>`ההתאמה העיקרית: מדד המחוז של PROPX (⁦${p>=0?"+":""}${p}%⁩ בממוצע לעסקאות ההשוואה) ותרגום כל עסקה לדירת הייחוס`,
     whyNot:"לא נעשה שימוש: ממוצע מחוזי או עירוני כמחיר הרחוב, נתוני הלמ״ס כמחיר רחוב, מחירים מבוקשים.",
-    unav:{"no-street-specific-evidence":"אין ראיות ספציפיות לרחוב — לא נצפו עסקאות ברחוב ולא בגושים שנוגעים בו","street-specific-evidence-thin":"הראיות הספציפיות לרחוב דלות מדי (פחות מ-5 תצפיות אפקטיביות בגושים)","locality-evidence-thin":"מעט מדי עסקאות דיור מתומחרות ביישוב לעיגון הערכה","locality-no-deals-in-window":"אין עסקאות ביישוב בחלון של 36 החודשים","locality-not-in-register-copy":"היישוב אינו בעותק מרשם העסקאות","market-validation-failed":"המודל נכשל בתיקוף על עסקאות שלא נראו ביישוב הזה","model-not-built":"המודל טרם נבנה בגרסה זו","street-not-in-model-build":"הרחוב נוסף למדריך אחרי בניית המודל האחרונה"},
-    lim:{unavailable:(r)=>`אין הערכת מודל: ${r}. נתון יישובי או מחוזי לבדו אינו שווי של רחוב.`,conc:"חלקה אחת מחזיקה את רוב העסקאות שנצפו ברחוב — הממוצע שנצפה מתאר בעיקר אותה",noObs:"אין מחיר רחוב שנצפה — ההערכה נשענת על הגושים, השכונה והיישוב סביב הרחוב",cap:"הדיוק המאומת של המודל ביישוב הזה מוגבל",limited:"ראיות דלות — הטווח רחב",std:"דירה מסוימת יכולה להיות שונה מאוד מדירת הייחוס — קומה, מצב וכיוון אינם במרשם"},
-    aptH:"הערכת PROPX לדירה",aptSqm:"שטח (מ״ר)",aptRooms:"חדרים",aptNew:"דירה",aptNewOpt:{existing:"קיימת",new:"חדשה (כנראה)"},aptBuilt:"שנת בנייה",aptType:"סוג",
-    aptTypes:{flat:"דירה בבניין",garden:"דירת גן",roof:"דירת גג",cottage:"קוטג׳",house:"בית בודד"},aptGo:"הערכה",aptVal:"שווי מוערך",aptRange:"טווח המודל",
-    aptEff:{area:"שטח",rooms:"חדרים",newness:"חדשה / קיימת",age:"גיל",type:"סוג"},aptNote:"הערכת מודל של PROPX לפרופיל שבחרת — לא שומה, לא מחיר מבוקש ולא מחיר מכירה מובטח.",
-    aptErr:{"area-out-of-range":"שטח בין 20 ל-600 מ״ר","rooms-out-of-range":"חדרים בין 1 ל-12","no-street-estimate":"אין הערכת רחוב"},
-    compsH:"עסקאות ההשוואה של המודל",compsGo:"הצגת עסקאות ההשוואה",compsLoading:"טוען…",compsCols:["רמה","רחוב","בית","תאריך","מחיר","מ״ר","₪ למ״ר","חדרים","שנת בנייה","התאמת זמן","התאמת דירה","שווי ייחוס משתמע","תרומה"],
-    compsMore:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,compsBad:"החישוב מחדש לא תאם את הבנייה השמורה — מוצגת ההערכה השמורה.",
-    compsNone:{"evidence-changed-since-build":"המודל נבנה על עותק קודם של מרשם העסקאות; ההערכה השמורה עומדת עד הבנייה הבאה, ועסקאות ההשוואה שלה אינן מחושבות מחדש מהעותק החדש.",_:"עסקאות ההשוואה אינן זמינות כרגע לרחוב הזה."},
-    methH:"שיטת המודל ותיקוף",methVer:"גרסת המודל",methBuilt:"נבנה",methCut:"חיתוך האימון",methVal:(v)=>`על עסקאות שלא נראו: שגיאה חציונית ${v.mdape}% · P80 ${v.p80ape}% · P90 ${v.p90ape}% (n=${fmtInt(v.n)})`,
+    unav:{"no-street-specific-evidence":"אין ראיות ספציפיות לרחוב — לא נצפו עסקאות ברחוב ולא בגושים שנוגעים בו","street-specific-evidence-thin":"הראיות הספציפיות לרחוב דלות מדי (פחות מ-5 תצפיות אפקטיביות בגושים)","locality-evidence-thin":"המרשם מכיל מעט מדי עסקאות דיור מתומחרות ביישוב לעיגון הערכה — מגבלת כיסוי של המקור, לא מדד לפעילות השוק","locality-no-deals-in-window":"אין עסקאות ביישוב בחלון של 36 החודשים","locality-not-in-register-copy":"היישוב אינו בעותק מרשם העסקאות","market-validation-failed":"המודל נכשל בתיקוף על עסקאות מבחן ביישוב הזה","model-not-built":"המודל טרם נבנה בגרסה זו","street-not-in-model-build":"הרחוב נוסף למדריך אחרי בניית המודל האחרונה"},
+    lim:{unavailable:()=>"PROPX לא משלימה את החסר בממוצע עירוני או מחוזי; נתוני השוק הסובב למטה הם הקשר בלבד.",conc:"חלקה אחת מחזיקה את רוב העסקאות שנצפו ברחוב — החציון שנצפה מתאר בעיקר אותה",noObs:(lv)=>`אין מחיר רחוב שנצפה — ההערכה נשענת על ${lv}`,locHeavy:(p,n,d)=>`${p}% מההערכה הם רמת המחירים הכללית ביישוב — ${n===1?"לרחוב יש מכירה אחת":n?`לרחוב יש ${fmtInt(n)} מכירות`:"לרחוב אין מכירות"}${d?` (האחרונה ${d})`:""}.`,stale:(d)=>`המכירה האחרונה ברחוב עצמו היא מ-${d} — ההערכה נשענת על ראיה ישנה`,lvJoin:{block:"הגושים שנוגעים ברחוב",neighbourhood:"השכונה המאומתת",locality:"היישוב"},and:" ו",cap:"הדיוק המאומת של המודל ביישוב הזה מוגבל",limited:"ראיות דלות — הטווח רחב",std:"דירה מסוימת יכולה להיות שונה מאוד מדירת הייחוס — קומה, מצב וכיוון אינם במרשם"},
+    aptH:"הערכת PROPX לדירה",aptSqm:"שטח (מ״ר)",aptSqmNote:"שטח כפי שמדווח במרשם (נטו או ברוטו); שטח במודעות הוא לרוב ברוטו. בין 25 ל-250 מ״ר.",aptRooms:"חדרים (רשות)",aptNew:"מצב",aptNewOpt:{existing:"יד שנייה",new:"דירה חדשה"},aptBuilt:"שנת בנייה (רשות, למשל 1995)",builtW:"נבנתה",aptBuiltNote:(y)=>`שנת בנייה ${y-1} ומעלה נחשבת חדשה (לפי כלל שנת הבנייה); בדירה חדשה שנת הבנייה אינה גיל.`,aptType:"סוג",
+    aptTypes:{flat:"דירה בבניין",garden:"דירת גן",roof:"דירת גג"},aptNoHouse:"קוטג׳ / בית בודד: לא מוערך — שווי צמוד קרקע תלוי בשטח המגרש, שאינו במרשם.",aptGo:"הערכה",aptVal:"הערכת מודל לפרופיל שבחרת",aptRange:"טווח תיקוף",aptNewBy:"נחשבת חדשה לפי שנת הבנייה",
+    aptEff:{area:"שטח",rooms:"חדרים",newness:"חדשה / יד שנייה",age:"גיל הבניין",type:"סוג"},aptEffH:"השפעה על המחיר למ״ר, לעומת דירת הייחוס:",aptEffV:{area:(v)=>`${fmtInt(v)} מ״ר (ייחוס 85)`,rooms:(v)=>v?`${v} (ייחוס 25 מ״ר לחדר)`:"לא צוינו — הונח 25 מ״ר לחדר",newness:(v)=>v==="existing"?"יד שנייה (ייחוס)":"דירה חדשה",age:(v)=>v?`נבנתה ${v}`:"לא צוינה — הונח הגיל הטיפוסי במחוז",type:(v,T)=>T[v]||v},aptNote:"הערכת מודל של PROPX לפרופיל שבחרת — לא שומה, לא מחיר מבוקש ולא מחיר מכירה מובטח. בבדיקה על עסקאות מבחן, כמחצית סטו ביותר מ-10% מהערכת המודל.",
+    aptErr:{"area-out-of-range":"שטח בין 25 ל-250 מ״ר","rooms-out-of-range":"חדרים בין 1 ל-12","no-street-estimate":"אין הערכת רחוב","built-out-of-range":"שנת בנייה בין 1900 לשנת ההערכה","type-not-modelled":"קוטג׳ / בית בודד: לא מוערך — שווי צמוד קרקע תלוי בשטח המגרש, שאינו במרשם.","type-sample-thin":"במחוז אין מספיק עסקאות מהסוג הזה כדי להעריך את השפעתו — נסו דירה בבניין.",offline:"אין חיבור — נסו שוב"},
+    compsH:"עסקאות ההשוואה של המודל",subTag:"חלקת מסלול מסובסד",compsGo:"הצגת עסקאות ההשוואה",compsLoading:"טוען…",compsCols:["רמה","תאריך","₪ למ״ר","התאמת זמן (למחירי רבעון העוגן)","התאמה לדירת הייחוס","₪ למ״ר כדירת ייחוס","משקל בהערכה","רחוב","בית","מחיר","מ״ר","חדרים","שנת בנייה"],
+    compsMore:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,compsBad:"החישוב מחדש לא תאם את הבנייה השמורה — מוצגת ההערכה השמורה.",compsShare:"עסקאות באותה חלקה חולקות את משקלה — לכן משקל זהה בשורות סמוכות.",
+    compsNone:{"evidence-changed-since-build":"המודל נבנה על עותק קודם של מרשם העסקאות; ההערכה השמורה עומדת עד הבנייה הבאה, ועסקאות ההשוואה שלה אינן מחושבות מחדש מהעותק החדש.","recomputation-mismatch":"החישוב מחדש לא תאם את הבנייה השמורה — מוצגת ההערכה השמורה, בלי עסקאות ההשוואה.",_:"עסקאות ההשוואה אינן זמינות כרגע לרחוב הזה."},
+    methH:"שיטת המודל ותיקוף",methVer:"גרסת המודל",methBuilt:"נבנה",methCut:"חיתוך האימון",methVal:(v)=>`חצי ממכירות המבחן בטווח ${v.mdape}% · 8 מכל 10 בטווח ${v.p80ape}% · 9 מכל 10 בטווח ${v.p90ape}% (n=${fmtInt(v.n)})`,methLocNone:"לא נבדק ביישוב הזה",methLocNoneS:"פחות מ-300 עסקאות מבחן ביישוב — הדיוק הארצי ודיוק רמת הראיות בלבד",
     methNat:"ארצי",methTier:"ברמת הראיות הזו",methLoc:"ביישוב הזה",one:"קריאה של דקה — מה ידוע על הרחוב",in12:(n)=>`${n} ב-12 החודשים שבסוף החלון`,
     noun:{street:"הרחוב",area:"אזור הכתובת",site:"האתר"},at:{street:"ברחוב",area:"באזור הכתובת",site:"באתר"},
     exists:(k,hist,ret)=>hist?`${k} היה במרשם הרחובות הרשמי${ret?` עד ${ret}`:""} ואינו מופיע בו עוד (היסטורי).`:`${k} קיים במרשם הרחובות הרשמי.`,
@@ -7077,26 +7077,26 @@ const SIT={he:{lyr:"מודיעין רחוב",
     kn:{"official-street":"הרחוב קיים במרשם הרחובות הרשמי","official-synonyms":"השמות הנרדפים הרשמיים שלו","observed-deals":"עסקאות דיור שנצפו ברחוב ב-36 חודשים","street-median":"חציון מחיר העסקה ברחוב","possible-deals":"עסקאות בחלקות שנוגעות ברחוב (מוצגות בנפרד)","probable-new":"עסקאות כנראה חדשות (לפי שנת הבנייה)","tlv-permits":"היתרים ואתרי בנייה בכתובות ברחוב (תל אביב-יפו)"},
     nk:{"asking-prices":"מחירים מבוקשים — עסקה אינה מחיר מבוקש, ואין מקור מודעות","rents":"שכר דירה ברחוב","confirmed-new":"אישור מכירת יזם — המרשם אינו מסמן דירה חדשה","deals-after-copy":"עסקאות שדווחו אחרי תאריך העותק","no-observed-deals":"עסקאות ברחוב — אף עסקה לא שויכה בוודאות","street-price-insufficient":"מחיר רחוב — פחות מ-5 עסקאות מתומחרות","unaddressed-deals":"עסקאות בלי כתובת בהצלבה — נספרות ליישוב בלבד","no-tlv-permits":"היתרים ברחוב — לא נמצאו בשכבת תל אביב-יפו","permits-outside-tlv":"היתרים ופרויקטים ברחוב — מקור לפי כתובת קיים רק בתל אביב-יפו","neighbourhood-unlinked":"שכונה — אין קישור מאומת","locality-not-swept":"עסקאות ביישוב — היישוב לא נסרק","evidence-not-loaded":"ראיות שוק — טרם נטענו"}},
   en:{lyr:"Street intelligence",
-    obsH:"Observed street market",obsSub:"what the street's deals show",modH:"PROPX street estimate",modChip:"MODEL · PROPX estimate",perSqm:"per m²",
-    modRef:(m)=>`for a reference dwelling: an existing flat in a building, ${m.areaSqm} m² (about 3.5 rooms), as of ${siDate(m.asOf)}`,
-    modTier:{STRONG:"STRONG MODEL EVIDENCE",STANDARD:"STANDARD MODEL EVIDENCE",LIMITED:"LIMITED MODEL EVIDENCE",UNAVAILABLE:"MODEL UNAVAILABLE"},modEv:"Model evidence",
-    modRange:"Model range (80 % of unseen deals)",modUn:"MODEL UNAVAILABLE",
-    modWhy:"Why this estimate?",latestEv:"Latest market evidence",mainLim:"Main limitation",
-    lvlName:{street:"Deals observed on the street",block:"Deals in the blocks touching the street",neighbourhood:"Deals in the verified neighbourhood",locality:"Deals in the locality (anchor)"},
-    whyLine:(name,l,w)=>`${name}: ${l.n===1?"1 deal":fmtInt(l.n)+" deals"} in ${l.parcels===1?"1 parcel":fmtInt(l.parcels)+" parcels"} (≈ ${l.nEff<10?l.nEff.toFixed(1):fmtInt(l.nEff)} effective observations) · ${Math.round(w*100)}% of the estimate`,
-    whyAge:(m)=>`Median comparable age: ${fmtInt(m)} months`,whyPar:(p)=>`Largest parcel contribution: ${p}%`,
+    obsH:"Observed street market",obsSub:"median of the street's recorded sales in 36 months — all sizes, new and existing, as sold (not adjusted for time or dwelling)",modH:"PROPX street estimate",modChip:"MODEL · PROPX estimate",perSqm:"per m²",
+    modRefShort:"for a typical existing 85 m² flat (≈ 3.5 rooms) — not your specific flat; see the apartment estimate below",modRef:(m)=>`The reference dwelling: an existing flat in a building, ${m.areaSqm} m², of the district's typical age, market-priced (not a subsidized programme) · price level of ${m.q||"—"} (the latest fully reported quarter; deals to ${siDate(m.asOf)}). A model estimate — not an appraisal and not the price of any specific flat.`,
+    modTier:{STRONG:"STRONG MODEL EVIDENCE",STANDARD:"STANDARD MODEL EVIDENCE",LIMITED:"LIMITED MODEL EVIDENCE",UNAVAILABLE:"MODEL UNAVAILABLE"},tierNote:"the evidence base, not the accuracy",modAround:"The estimate also uses sales around the street, so it can exist where the street alone has too few.",modEv:"Model evidence",
+    modRange:"Validation range",modRangeNote:"in tests, 8 of 10 sales fell this close to the model",modRangeWide:"widened by this locality's validation",modUn:"MODEL UNAVAILABLE",
+    modWhy:"Why this estimate?",latestEv:"Latest market evidence (most recent sale used)",gapH:"Why the two differ",gap:(g,x)=>`The estimate is ${Math.abs(g)}% ${g<0?"below":"above"} the observed median. The street's deals: median ${fmtInt(x.medianAreaSqm)} m²${x.newOrOffPlanPct?`, ${x.newOrOffPlanPct}% new / off-plan`:""}${x.subsidyTrackPct?`, ${x.subsidyTrackPct}% on subsidized-track parcels`:""}; the observed median is not adjusted for time or dwelling. The estimate is for the reference dwelling (existing, 85 m²): translating the street's deals to it moves them ${x.dwellingAdjustmentPct>=0?"+":""}${x.dwellingAdjustmentPct}%${x.otherPct?`; ${x.otherPct}% of the weight comes from the blocks, the neighbourhood and the locality`:""}.`,mainLim:"Main limitation",
+    lvlName:{street:"Deals observed on the street",block:"Deals in the blocks touching the street",neighbourhood:"Deals in the verified neighbourhood",locality:"Deals in the locality (general level)"},lvlShort:{street:"Street",block:"Blocks",neighbourhood:"Neighbourhood",locality:"Locality"},
+    whyLine:(name,l,w)=>`${name}: ${l.n===1?"1 deal":fmtInt(l.n)+" deals"} in ${l.parcels===1?"1 parcel":fmtInt(l.parcels)+" parcels"} (counts as ≈ ${fmtInt(Math.max(1,Math.round(l.nEff)))} independent sales${l.nEff<0.7*l.n?" — many are in one building":""}) · ${Math.round(w*100)}% of the estimate`,
+    whyAge:(m)=>`Median time since the comparables: ${fmtInt(m)} months`,whyPar:(p)=>`Largest parcel contribution: ${p}%`,
     whyAdj:(p)=>`Main adjustment: PROPX's district index (${p>=0?"+":""}${p}% on average across the comparables) and translating every deal to the reference dwelling`,
     whyNot:"Not used: a district or city average as the street's price, CBS figures as a street price, asking prices.",
-    unav:{"no-street-specific-evidence":"no street-specific evidence — no deals observed on the street or in the blocks touching it","street-specific-evidence-thin":"the street-specific evidence is too thin (fewer than 5 effective observations in its blocks)","locality-evidence-thin":"too few priced dwelling deals in the locality to anchor an estimate","locality-no-deals-in-window":"no deals in the locality in the 36-month window","locality-not-in-register-copy":"the locality is not in the deals register copy","market-validation-failed":"the model failed validation on unseen deals in this locality","model-not-built":"the model is not built in this version","street-not-in-model-build":"the street joined the directory after the latest model build"},
-    lim:{unavailable:(r)=>`No model estimate: ${r}. A locality or district figure alone is not a street's value.`,conc:"One parcel holds most of the street's observed deals — the observed median mostly describes it",noObs:"No observed street price — the estimate rests on the blocks, the neighbourhood and the locality around the street",cap:"The model's validated accuracy in this locality is limited",limited:"Thin evidence — the range is wide",std:"A given flat can differ a lot from the reference dwelling — floor, condition and aspect are not in the register"},
-    aptH:"PROPX apartment estimate",aptSqm:"Area (m²)",aptRooms:"Rooms",aptNew:"Dwelling",aptNewOpt:{existing:"existing",new:"new (probable)"},aptBuilt:"Build year",aptType:"Type",
-    aptTypes:{flat:"flat in a building",garden:"garden flat",roof:"roof flat",cottage:"cottage",house:"detached house"},aptGo:"Estimate",aptVal:"Estimated value",aptRange:"Model range",
-    aptEff:{area:"area",rooms:"rooms",newness:"new / existing",age:"age",type:"type"},aptNote:"A PROPX model estimate for the profile you chose — not an appraisal, an asking price or a guaranteed sale price.",
-    aptErr:{"area-out-of-range":"area between 20 and 600 m²","rooms-out-of-range":"rooms between 1 and 12","no-street-estimate":"no street estimate"},
-    compsH:"The model's comparables",compsGo:"Show the comparables",compsLoading:"Loading…",compsCols:["Level","Street","House","Date","Price","m²","₪ per m²","Rooms","Built","Time adj.","Dwelling adj.","Implied reference value","Contribution"],
-    compsMore:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,compsBad:"The recomputation did not match the stored build — the stored estimate is shown.",
-    compsNone:{"evidence-changed-since-build":"The model was built on an earlier copy of the deals register; the stored estimate stands until the next build, and its comparables are not recomputed from the newer copy.",_:"The comparables are not available for this street right now."},
-    methH:"Model method and validation",methVer:"Model version",methBuilt:"Built",methCut:"Training cutoff",methVal:(v)=>`On unseen deals: median error ${v.mdape}% · P80 ${v.p80ape}% · P90 ${v.p90ape}% (n=${fmtInt(v.n)})`,
+    unav:{"no-street-specific-evidence":"no street-specific evidence — no deals observed on the street or in the blocks touching it","street-specific-evidence-thin":"the street-specific evidence is too thin (fewer than 5 effective observations in its blocks)","locality-evidence-thin":"the register holds too few priced dwelling deals in the locality to anchor an estimate — a coverage limit of the source, not a measure of market activity","locality-no-deals-in-window":"no deals in the locality in the 36-month window","locality-not-in-register-copy":"the locality is not in the deals register copy","market-validation-failed":"the model failed validation on held-out deals in this locality","model-not-built":"the model is not built in this version","street-not-in-model-build":"the street joined the directory after the latest model build"},
+    lim:{unavailable:()=>"PROPX does not fill the gap with a city or district average; the surrounding-market figures below are context only.",conc:"One parcel holds most of the street's observed deals — the observed median mostly describes it",noObs:(lv)=>`No observed street price — the estimate rests on ${lv}`,locHeavy:(p,n,d)=>`${p}% of this estimate is the locality's general level — the street has ${n===1?"one sale":n?fmtInt(n)+" sales":"no sale"}${d?` (latest ${d})`:""}.`,stale:(d)=>`The street's own latest sale is from ${d} — the estimate rests on old evidence`,lvJoin:{block:"the blocks touching the street",neighbourhood:"the verified neighbourhood",locality:"the locality"},and:" and ",cap:"The model's validated accuracy in this locality is limited",limited:"Thin evidence — the range is wide",std:"A given flat can differ a lot from the reference dwelling — floor, condition and aspect are not in the register"},
+    aptH:"PROPX apartment estimate",aptSqm:"Area (m²)",aptSqmNote:"Area as reported in the register (net or gross); listings usually quote gross. 25–250 m².",aptRooms:"Rooms (optional)",aptNew:"Status",aptNewOpt:{existing:"second-hand",new:"new build"},aptBuilt:"Build year (optional, e.g. 1995)",builtW:"built",aptBuiltNote:(y)=>`A build year of ${y-1} or later counts as new (the build-year rule); for a new flat the build year is not an age.`,aptType:"Type",
+    aptTypes:{flat:"flat in a building",garden:"garden flat",roof:"roof flat"},aptNoHouse:"Cottage / detached house: not estimated — a ground-level home's value depends on its plot, which the register does not carry.",aptGo:"Estimate",aptVal:"Model estimate for the profile you entered",aptRange:"Validation range",aptNewBy:"counted as new by its build year",
+    aptEff:{area:"area",rooms:"rooms",newness:"new / second-hand",age:"building age",type:"type"},aptEffH:"Effect on the price per m², vs the reference flat:",aptEffV:{area:(v)=>`${fmtInt(v)} m² (ref. 85)`,rooms:(v)=>v?`${v} (ref. 25 m² per room)`:"not given — 25 m² per room used",newness:(v)=>v==="existing"?"second-hand (reference)":"new build",age:(v)=>v?`built ${v}`:"not given — the district's typical age used",type:(v,T)=>T[v]||v},aptNote:"A PROPX model estimate for the profile you entered — not an appraisal, an asking price or a guaranteed sale price. In held-out tests about half of the deals differed from the model by more than 10 %.",
+    aptErr:{"area-out-of-range":"area between 25 and 250 m²","rooms-out-of-range":"rooms between 1 and 12","no-street-estimate":"no street estimate","built-out-of-range":"build year between 1900 and the estimate's year","type-not-modelled":"Cottage / detached house: not estimated — a ground-level home's value depends on its plot, which the register does not carry.","type-sample-thin":"The district has too few sales of this type to estimate its effect — try a flat in a building.",offline:"No connection — try again"},
+    compsH:"The model's comparables",subTag:"subsidized-track parcel",compsGo:"Show the comparables",compsLoading:"Loading…",compsCols:["Level","Date","₪ per m²","Time adjustment (to the anchor quarter's prices)","Adjustment to the reference flat","₪/m² as the reference flat","Weight in the estimate","Street","House","Price","m²","Rooms","Built"],
+    compsMore:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,compsBad:"The recomputation did not match the stored build — the stored estimate is shown.",compsShare:"Deals in one parcel share its weight — hence identical weights in adjacent rows.",
+    compsNone:{"evidence-changed-since-build":"The model was built on an earlier copy of the deals register; the stored estimate stands until the next build, and its comparables are not recomputed from the newer copy.","recomputation-mismatch":"The recomputation did not match the stored build — the stored estimate is shown, without its comparables.",_:"The comparables are not available for this street right now."},
+    methH:"Model method and validation",methVer:"Model version",methBuilt:"Built",methCut:"Training cutoff",methVal:(v)=>`Half of test sales within ${v.mdape}% · 8 in 10 within ${v.p80ape}% · 9 in 10 within ${v.p90ape}% (n=${fmtInt(v.n)})`,methLocNone:"Not validated in this locality",methLocNoneS:"fewer than 300 held-out deals here — national and evidence-tier accuracy only",
     methNat:"National",methTier:"In this evidence tier",methLoc:"In this locality",one:"One-minute read — what is known about the street",in12:(n)=>`${n} in the window's last 12 months`,
     noun:{street:"The street",area:"The address area",site:"The site"},at:{street:"on the street",area:"in the address area",site:"at the site"},
     exists:(k,hist,ret)=>hist?`${k} was in the official street directory${ret?` until ${ret}`:""} and is no longer listed (historical).`:`${k} is in the official street directory.`,
@@ -7240,13 +7240,16 @@ function siHTML(g){
   const MD=D.model||{},mOk=!!(MD.available&&MD.value!=null),mTier=MD.tier||"UNAVAILABLE";
   const obsCard=`<div class="sv-card sv-obs"><div class="sv-h">${t.obsH} ${xpBtn("street_market_evidence_status")}</div>
     <div class="sv-v num">${sqmV}${st&&st.medianPricePerSqm!=null?` <span class="sv-u">${t.perSqm}</span>`:""}</div>
-    <div class="sv-s">${chip}${st&&st.medianPricePerSqm!=null?` · n=${fmtInt(st.withSqm)}`:""}${E.concentration?` · ${ldE(t.conc(E.concentration))}`:""}</div></div>`;
+    <div class="sv-s">${chip}${st&&st.medianPricePerSqm!=null?` · n=${fmtInt(st.withSqm)}`:""}${E.concentration?` · ${ldE(t.conc(E.concentration))}`:""}</div>
+    ${st&&st.medianPricePerSqm!=null?`<div class="sv-ref">${t.obsSub}</div>`:""}</div>`;
   const unR=MD.reason?(t.unav[MD.reason]||MD.reason):t.unav["model-not-built"];
   const modCard=`<div class="sv-card sv-mod"><div class="sv-h">${t.modH} <span class="vc mod">${t.modChip}</span> ${xpBtn("street_value_estimate")}</div>
-    <div class="sv-v num">${mOk?fmtNIS(MD.value):"—"}${mOk?` <span class="sv-u">${t.perSqm}</span>`:""}</div>
-    <div class="sv-s">${mOk?`<span class="sv-tier ${mTier}">${t.modTier[mTier]}</span> ${xpBtn("street_model_evidence")}`:`<span class="sv-tier UNAVAILABLE">${t.modUn}</span> ${xpMiss(MD.reason==="market-validation-failed"?"street_model_market_failed":/^locality/.test(MD.reason||"")?"street_model_locality_thin":MD.available===false?"street_model_not_built":"street_model_unavailable")}`}</div>
-    ${mOk&&MD.range?`<div class="sv-s">${t.modRange}: ${ltr(`${fmtNIS(MD.range.lo)}–${fmtNIS(MD.range.hi)}`)} ${xpBtn("street_model_range")}</div>`:""}
-    ${mOk&&MD.reference?`<div class="sv-ref">${t.modRef({areaSqm:MD.reference.areaSqm,asOf:MD.meta&&MD.meta.asOf})}</div>`:`<div class="sv-ref">${ldE(unR)}</div>`}</div>`;
+    <div class="sv-v num${mOk?"":" sv-na"}">${mOk?fmtNIS(MD.value):"—"}${mOk?` <span class="sv-u">${t.perSqm}</span>`:""}</div>
+    ${mOk?`<div class="sv-s sv-refs">${t.modRefShort}</div>`:""}
+    <div class="sv-s">${mOk?`<span class="sv-tier ${mTier}">${t.modTier[mTier]}</span> <span class="sv-tn">${t.tierNote}</span> ${xpBtn("street_model_evidence")}`:`<span class="sv-tier UNAVAILABLE">${t.modUn}</span> ${xpMiss(MD.reason==="market-validation-failed"?"street_model_market_failed":/^locality/.test(MD.reason||"")?"street_model_locality_thin":MD.available===false?"street_model_not_built":"street_model_unavailable")}`}</div>
+    ${mOk&&MD.range?`<div class="sv-s">${t.modRange}: <span class="nw">${ltr(`${fmtNIS(MD.range.lo)}–${fmtNIS(MD.range.hi)}`)}</span> — ${t.modRangeNote}${MD.range.widenedBy?` (${t.modRangeWide})`:""} ${xpBtn("street_model_range")}</div>`:""}
+    ${mOk&&!(st&&st.medianPricePerSqm!=null)?`<div class="sv-s">${t.modAround}</div>`:""}
+    ${mOk&&MD.reference?`<div class="sv-ref">${t.modRef({areaSqm:MD.reference.areaSqm,asOf:MD.meta&&MD.meta.asOf,q:MD.meta&&MD.meta.priceLevelQuarter})}</div>`:`<div class="sv-ref">${ldE(unR.charAt(0).toUpperCase()+unR.slice(1))}</div>`}</div>`;
   /* why this estimate: the levels it rests on, the comparables' age, the largest parcel, the main adjustment, what was not used */
   let why="";
   if(mOk){const L=MD.levels||{},W=MD.weights||{},Y=MD.why||{};
@@ -7260,23 +7263,36 @@ function siHTML(g){
   const lates=[st&&st.latest?st.latest.date:null,...(mOk?["street","block","neighbourhood"].map(k=>MD.levels&&MD.levels[k]?MD.levels[k].latest:null):[])].filter(Boolean).sort();
   const latestEv=lates.length?siDate(lates[lates.length-1]):"—";
   const cap=MD.meta&&MD.meta.marketCap;
-  const mainLim=!mOk?t.lim.unavailable(unR):E.concentration?t.lim.conc:!(st&&st.medianPricePerSqm!=null)?t.lim.noObs:cap?t.lim.cap:mTier==="LIMITED"?t.lim.limited:t.lim.std;
+  /* the main limitation, from the levels the estimate actually used */
+  const MW=MD.weights||{},ML=MD.levels||{},used=["block","neighbourhood","locality"].filter(k=>ML[k]&&(MW[k]||0)>=0.005).map(k=>t.lim.lvJoin[k]);
+  const lvTxt=used.length>1?used.slice(0,-1).join(", ")+t.lim.and+used[used.length-1]:used[0]||"";
+  const sLatest=ML.street&&ML.street.latest,staleS=sLatest&&MD.meta&&MD.meta.asOf&&((Date.parse(MD.meta.asOf)-Date.parse(sLatest))/864e5>548);
+  const mainLim=!mOk?t.lim.unavailable():(MW.locality||0)>=0.5?t.lim.locHeavy(Math.round(MW.locality*100),ML.street?ML.street.n:0,sLatest?siDate(sLatest).slice(3):null)
+    :E.concentration?t.lim.conc:!(st&&st.medianPricePerSqm!=null)?t.lim.noObs(lvTxt):staleS?t.lim.stale(siDate(sLatest)):cap?t.lim.cap:mTier==="LIMITED"?t.lim.limited:t.lim.std;
+  /* when the observed median and the estimate differ by ≥ 10 %, say why: the street's mix, the time basis, the reference dwelling */
+  let gapLine="";
+  {const SX=MD.why&&MD.why.street,om=st&&st.medianPricePerSqm;
+    if(mOk&&SX&&om){const g=Math.round((MD.value/om-1)*100);
+      if(Math.abs(g)>=10)gapLine=`<span><b>${t.gapH}:</b> ${ldE(t.gap(g,{...SX,otherPct:Math.round((1-((MD.weights||{}).street||0))*100)}))}</span>`}}
   const pair=`<div class="sv-pair">${obsCard}${modCard}</div>${why}
-    <div class="sv-facts"><span><b>${t.latestEv}:</b> ${latestEv}</span><span><b>${t.mainLim}:</b> ${ldE(mainLim)}</span></div>`;
+    <div class="sv-facts"><span><b>${t.latestEv}:</b> ${latestEv}</span><span><b>${t.mainLim}:</b> ${ldE(mainLim)}</span>${gapLine}</div>`;
   /* the apartment estimate (five-minute read) */
   const A=siState.apt;
+  const asOfY=Number(String((MD.meta&&MD.meta.asOf)||"2026").slice(0,4));
   const aptForm=mOk?`<h4>${t.aptH} ${xpBtn("street_apartment_estimate")}</h4><form class="sv-apt" data-siapt="1">
-    <label>${t.aptSqm}<input name="sqm" type="number" min="20" max="600" step="1" value="${A&&A.profile?A.profile.sqm:100}" required></label>
-    <label>${t.aptRooms}<input name="rooms" type="number" min="1" max="12" step="0.5" value="${A&&A.profile&&A.profile.rooms?A.profile.rooms:4}"></label>
+    <label>${t.aptSqm}<input name="sqm" type="number" min="25" max="250" step="1" value="${A&&A.profile?A.profile.sqm:85}" required></label>
+    <label>${t.aptRooms}<input name="rooms" type="number" min="1" max="12" step="0.5" value="${A&&A.profile?(A.profile.rooms||""):3.5}"></label>
     <label>${t.aptNew}<select name="newness">${["existing","new"].map(v=>`<option value="${v}"${A&&A.profile&&A.profile.newness===v?" selected":""}>${t.aptNewOpt[v]}</option>`).join("")}</select></label>
-    <label>${t.aptBuilt}<input name="built" type="number" min="1900" max="2040" step="1" value="${A&&A.profile&&A.profile.built?A.profile.built:""}"></label>
+    <label>${t.aptBuilt}<input name="built" type="number" min="1900" max="${asOfY}" step="1" value="${A&&A.profile&&A.profile.built?A.profile.built:""}"></label>
     <label>${t.aptType}<select name="type">${Object.keys(t.aptTypes).map(v=>`<option value="${v}"${A&&A.profile&&A.profile.type===v?" selected":""}>${t.aptTypes[v]}</option>`).join("")}</select></label>
     <button type="submit" class="chip">${t.aptGo}</button></form>
+    <p class="gv-note">${t.aptSqmNote} ${t.aptBuiltNote(asOfY)} ${t.aptNoHouse}</p>
     ${siState.aptErr?`<p class="gv-note">${ldE(t.aptErr[siState.aptErr]||siState.aptErr)}</p>`:""}
-    ${A?`<div class="sv-card sv-mod sv-aptres"><div class="sv-h">${t.aptVal} <span class="vc mod">${t.modChip}</span></div><div class="sv-v num">${fmtNIS(A.value)}</div>
-      <div class="sv-s">${ldE(`${A.profile.rooms?A.profile.rooms+" "+t.roomsW+" · ":""}${A.profile.sqm} ${t.sqmW} · ${t.aptNewOpt[A.profile.newness]}${A.profile.built?" · "+A.profile.built:""} · ${t.aptTypes[A.profile.type]}`)} · ${fmtNIS(A.ppsqm)} ${t.perSqm}</div>
-      ${A.range?`<div class="sv-s">${t.aptRange}: ${ltr(`${fmtNIS(A.range.lo)}–${fmtNIS(A.range.hi)}`)}</div>`:""}
-      <ul class="sv-eff">${A.effects.map(f=>`<li>${t.aptEff[f.input]||f.input}: ${ltr(`${f.effectPct>=0?"+":""}${f.effectPct}%`)}</li>`).join("")}</ul><p class="gv-note">${t.aptNote}</p></div>`:""}`:"";
+    ${A?`<div class="sv-card sv-mod sv-aptres"><div class="sv-h">${t.aptVal} <span class="vc mod">${t.modChip}</span></div>
+      <div class="sv-v num">${fmtNIS(A.value)}</div>
+      ${A.range?`<div class="sv-rng num">${t.aptRange}: <span class="nw">${ltr(`${fmtNIS(A.range.lo)}–${fmtNIS(A.range.hi)}`)}</span> — ${t.modRangeNote}</div>`:""}
+      <div class="sv-s">${ldE(`${A.profile.rooms?A.profile.rooms+" "+t.roomsW+" · ":""}${A.profile.sqm} ${t.sqmW} · ${t.aptNewOpt[A.profile.newness]}${A.profile.newBy?" ("+t.aptNewBy+")":""}${A.profile.built?" · "+t.builtW+" "+A.profile.built:""} · ${t.aptTypes[A.profile.type]||A.profile.type}`)} · ${fmtNIS(A.ppsqm)} ${t.perSqm}</div>
+      <div class="sv-s">${t.aptEffH}</div><ul class="sv-eff">${A.effects.map(f=>`<li>${t.aptEff[f.input]||f.input} — ${ldE(t.aptEffV[f.input]?t.aptEffV[f.input](f.input==="newness"?(f.value==="existing"?"existing":"new"):f.value,t.aptTypes):String(f.value))}: ${ltr(`${f.effectPct>=0?"+":""}${f.effectPct}%`)}</li>`).join("")}</ul><p class="gv-note">${t.aptNote}</p></div>`:""}`:"";
   five=aptForm+five;
   /* deep dive: the comparables (loaded on demand) and the method / validation */
   const CP=siState.comps;
@@ -7286,16 +7302,17 @@ function siHTML(g){
   else if(!CP.comparables)comps+=`<p class="gv-note">${t.compsNone[CP.note]||t.compsNone._}</p>`;
   else{const rowsC=[];for(const lvlK of ["street","block","neighbourhood","locality"]){const c=(CP.comparables||{})[lvlK];if(!c)continue;for(const r of c.rows)rowsC.push([lvlK,r,c.total])}
     comps+=(CP.consistent===false?`<p class="gv-note">${t.compsBad}</p>`:"")+`<div class="st-wrap"><table class="st-tbl" data-ptdom="stcomp"><thead><tr>${t.compsCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rowsC.map(([k,r])=>`<tr>
-      <td class="w">${t.lvlName[k]}</td><td class="w"><bdi>${ldE(r.street||(r.touches?r.touches.join(" · "):"—"))}</bdi></td><td class="num">${ldE(r.house||"—")}</td><td class="num" data-v="${ldE(r.date)}">${siDate(r.date)}</td>
-      <td class="num" data-v="${r.amount}">${fmtNIS(r.amount)}</td><td class="num" data-v="${r.areaSqm!=null?r.areaSqm:""}">${siNum(r.areaSqm)}</td><td class="num" data-v="${r.ppsqm}">${fmtNIS(r.ppsqm)}</td><td class="num" data-v="${r.rooms!=null?r.rooms:""}">${r.rooms!=null?r.rooms:"—"}</td>
-      <td class="num" data-v="${r.yearBuilt||""}">${r.yearBuilt||"—"}${r.probableNew?` <span class="st-tag">${t.pnew}</span>`:""}${r.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}</td>
+      <td class="w">${t.lvlShort[k]}</td><td class="num" data-v="${ldE(r.date)}">${siDate(r.date)}</td><td class="num" data-v="${r.ppsqm}">${fmtNIS(r.ppsqm)}</td>
       <td class="num" data-v="${r.timeAdjustmentPct}">${ltr(`${r.timeAdjustmentPct>=0?"+":""}${r.timeAdjustmentPct}%`)}</td><td class="num" data-v="${r.dwellingAdjustmentPct}">${ltr(`${r.dwellingAdjustmentPct>=0?"+":""}${r.dwellingAdjustmentPct}%`)}</td>
-      <td class="num" data-v="${r.impliedReferencePpsqm}">${fmtNIS(r.impliedReferencePpsqm)}</td><td class="num" data-v="${r.contributionPct}">${r.contributionPct}%</td></tr>`).join("")}</tbody></table></div>
-      <p class="gv-note">${["street","block","neighbourhood","locality"].filter(k=>(CP.comparables||{})[k]).map(k=>`${t.lvlName[k]}: ${t.compsMore((CP.comparables[k].rows||[]).length,CP.comparables[k].total)} · ${CP.comparables[k].contributionPct}%`).join(" · ")}</p>`;}
+      <td class="num" data-v="${r.impliedReferencePpsqm}">${fmtNIS(r.impliedReferencePpsqm)}</td><td class="num" data-v="${r.contributionPct}">${r.contributionPct}%</td>
+      <td class="w"><bdi>${ldE(r.street||(r.touches?r.touches.join(" · "):"—"))}</bdi></td><td class="num">${ldE(r.house||"—")}</td>
+      <td class="num" data-v="${r.amount}">${fmtNIS(r.amount)}</td><td class="num" data-v="${r.areaSqm!=null?r.areaSqm:""}">${siNum(r.areaSqm)}</td><td class="num" data-v="${r.rooms!=null?r.rooms:""}">${r.rooms!=null?r.rooms:"—"}</td>
+      <td class="num" data-v="${r.yearBuilt||""}">${r.yearBuilt||"—"}${r.probableNew?` <span class="st-tag">${t.pnew}</span>`:""}${r.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}${r.subsidyParcel?` <span class="st-tag">${t.subTag}</span>`:""}</td></tr>`).join("")}</tbody></table></div>
+      <p class="gv-note">${["street","block","neighbourhood","locality"].filter(k=>(CP.comparables||{})[k]).map(k=>`${t.lvlName[k]}: ${t.compsMore((CP.comparables[k].rows||[]).length,CP.comparables[k].total)} · ${CP.comparables[k].contributionPct}%`).join(" · ")} · ${t.compsShare}</p>`;}
   let meth="";
   if(MD.available){const V=MD.validation||{},M=MD.meta||{};
     meth=`<h4>${t.methH} ${xpBtn("street_model_validation")}</h4><div class="st-grid">${tile(t.methVer,ldE(M.modelVersion||"—"),`${t.methBuilt} ${siDate(M.builtAt)} · ${t.methCut} ${siDate(M.trainingCutoff)}`,"")}
-      ${V.national?tile(t.methNat,`${V.national.mdape}%`,ldE(t.methVal(V.national)),""):""}${V.tier&&mOk?tile(`${t.methTier}`,`${V.tier.mdape}%`,ldE(t.methVal(V.tier)),""):""}${V.locality?tile(t.methLoc,`${V.locality.mdape}%`,ldE(t.methVal(V.locality)),""):""}</div>`;}
+      ${V.national?tile(t.methNat,`${V.national.mdape}%`,ldE(t.methVal(V.national)),""):""}${V.tier&&mOk?tile(`${t.methTier}`,`${V.tier.mdape}%`,ldE(t.methVal(V.tier)),""):""}${V.locality?tile(t.methLoc,`${V.locality.mdape}%`,ldE(t.methVal(V.locality)),""):tile(t.methLoc,t.methLocNone,t.methLocNoneS,"")}</div>`;}
   deep=comps+meth+deep;
   /* the lead names what the row is (street / address area / site, current / historical); an observed sample with no
      priced deal says why there is no price */
@@ -7309,7 +7326,7 @@ function siHTML(g){
     ${pair}
     <div class="st-grid">${tiles}</div>${kn}
     <details class="st-sec" open><summary>${t.five}</summary>${five}</details>
-    <details class="st-sec"><summary>${t.deep}</summary>${deep}</details>
+    <details class="st-sec"${siState.comps||siState.compsLoading?" open":""}><summary>${t.deep}</summary>${deep}</details>
     <div class="st-acts"><button type="button" class="chip" data-stdos="${I.cityCode}">${t.acts.dossier}</button><button type="button" class="chip" data-stlive="1">${t.acts.live}</button></div>
     <p class="gv-src">${t.src(src.scrapedAt?siDate(src.scrapedAt):"—")}</p>`;
 }
@@ -7349,7 +7366,8 @@ function renderGeoView(){
     body.querySelectorAll("[data-stdos]").forEach(b=>b.addEventListener("click",()=>{dsOpen("locality",b.dataset.stdos);const d=el("dossier");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}));
     body.querySelectorAll("[data-stlive]").forEach(b=>b.addEventListener("click",()=>inGoSection("txSection")));
     body.querySelectorAll("[data-sicomp]").forEach(b=>b.addEventListener("click",()=>siComps(g.id)));
-    body.querySelectorAll("[data-siapt]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();siApt(g.id,new FormData(f))}));
+    body.querySelectorAll("[data-siapt]").forEach(f=>{f.addEventListener("submit",e=>{e.preventDefault();siApt(g.id,new FormData(f))});
+      const nw=f.querySelector("[name=newness]"),bu=f.querySelector("[name=built]");const sync=()=>{bu.disabled=nw.value==="new";if(bu.disabled)bu.value=""};nw.addEventListener("change",sync);sync()});
     return;
   }
   const res=(k)=>`<span class="r">${lvl}${k?` · ${k}`:""}</span>`;

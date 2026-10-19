@@ -177,11 +177,11 @@ streets, built in a temp directory, never read by the product).
 - `GET /api/intel?view=street&id=st:<l>:<s>[&limit≤500]` — Street Intelligence (404 for an id the directory does not hold)
 - `GET /api/intel?view=streetCoverage` — the coverage audit
 
-## 6 · Street Value Model (MODEL — 19.10.2026)
+## 6 · Street Value Model (MODEL — 19.10.2026, `psvm-1.1.0`)
 
 A separate MODEL layer beside the observed street market. The observed read (§3) is never replaced, re-labelled or
 re-thresholded: SUPPORTED ≥ 10 · LIMITED 5–9 · INSUFFICIENT 1–4 (price "—") · NONE stay exactly as they are. The model answers a
-different question — *what is a reference dwelling on this street worth per m², estimated from the street's own deals and the
+different question — *what does a reference dwelling on this street sell for per m², estimated from the street's own deals and the
 most relevant surrounding evidence?* — and says **MODEL UNAVAILABLE** whenever the evidence does not support a street-level
 answer. It is a PROPX ESTIMATE: never an appraisal, an official value, a fair value, an asking price or a guaranteed sale price.
 
@@ -197,106 +197,124 @@ answer. It is a PROPX ESTIMATE: never an appraisal, an official value, a fair va
 | street (OBSERVED) | 42.0 % | used — the street level; POSSIBLE / UNRESOLVED deals never price a street |
 | street number | 65.0 % | rejected as a feature (the parcel already identifies the building) |
 | subsidized-programme parcel | 11.4 % | used — ILA subsidized / lottery-track tender parcels (exact block + parcel): a coefficient, never a finding that a sale was subsidized |
-| verified neighbourhood | 72 links, 7 cities | used where linked |
-| floor · coordinates · verified project | 0 % | unavailable (not in the register copy) — no floor input, no distance feature; a development proxy (block + build year, built ≤ 10 years before the deal) is used for leakage control only |
+| verified neighbourhood | 72 links, 7 cities | used where linked (official name / synonym / spelling only) |
+| floor · coordinates · verified project | 0 % | unavailable (not in the register copy) — no floor input, no distance feature; a development proxy (block + build year ± 1, built ≤ 10 years before the deal) is used for leakage control only |
 
-### Method (`psvm-1.0.0`, features `psvm-features-1`, validation `psvm-validation-1`)
+### Method
 
 1. **Target**: log ₪/m² of one transaction. The street estimate = the value per m² of the REFERENCE DWELLING (an existing flat in
    a multi-unit building, 85 m², ≈ 3.5 rooms = 25 m² per room, the district's typical existing-home age mix, not a
-   subsidized-track parcel) as of the window's last deal.
+   subsidized-track parcel) at its district index's ANCHOR quarter.
 2. **Hedonic + time index per district**: weighted least squares of log ₪/m² on log area, area per room, PROBABLE NEW, off-plan,
    age band, dwelling type, subsidized-track parcel and one effect per calendar quarter, with a fixed effect per cadastral BLOCK
-   absorbed by within-block demeaning (the index compares dwellings in the same block, not a changing mix). Outliers beyond
-   4 robust SD are flagged and refitted without (3,986 of 191,786 rows). A district under 3,000 rows takes the national fit,
-   labelled. The index is PROPX's own (DERIVED, district level) — not a CBS series and never presented as a city trend; each
-   comparable keeps its date, quarter, adjustment and source.
-3. **Comparable → reference value**: z = log ₪/m² − β·(features − reference) + (anchor − quarter effect). The anchor is the
-   index's latest quarter.
-4. **Levels**: the STREET (its OBSERVED deals), its BLOCKS (other deals in the cadastral blocks of the parcels that touch the street
-   — OBSERVED or POSSIBLE parcels give the location, never a price on the street), the VERIFIED NEIGHBOURHOOD, the LOCALITY.
-   Parcel design weights: one parcel's n deals count n / (1 + (n − 1)·ρ), ρ = 0.26 estimated (one-way ANOVA on block-demeaned
-   residuals) — a 200-sale tower ≈ 3.8 effective observations.
-5. **Credibility shrinkage** locality → neighbourhood → block → street, weight n_eff / (n_eff + k), k = σ²_within / τ²_between by
-   method of moments (k_street 3.78, k_block 0.66; k_neighbourhood = k_block). No hand-set weight.
-6. **Availability**: a locality with n_eff < 8 cannot anchor; a street with no own deals, < 5 effective observations in its
+   absorbed by within-block demeaning. Outliers beyond 4 robust SD are flagged and refitted without (a national-fallback district
+   takes only the national flags of its own rows). A district under 3,000 rows takes the national fit, labelled. The index is
+   PROPX's own (DERIVED, district level) — not a CBS series, never a city trend; each comparable keeps its date, quarter,
+   adjustment and source. Every new / off-plan / age-banded row is centred on the district's existing-home age mix (an existing
+   flat of unstated age IS the reference mix).
+3. **Anchor**: the latest quarter the register has REPORTED — a quarter with < 60 % of the mean count of the four before it is
+   still filling (the copy lags: 2026Q3 held 3,559 rows against ≈ 13,000 a quarter, and early-reported deals are not a random
+   sample) and the anchor steps back. In production every district anchors at 2026Q2; in the back-filled validation folds the
+   cutoff quarter stays the anchor.
+4. **Comparable → reference value**: z = log ₪/m² − β·(features − reference) + (anchor − quarter effect).
+5. **Levels**: the STREET (its OBSERVED deals), its BLOCKS (other deals in the cadastral blocks of the parcels that touch the street
+   — OBSERVED or POSSIBLE parcels give the location, never a price on the street; a street matched only on the loose
+   `normalized-name` rung never locates a parcel), the VERIFIED NEIGHBOURHOOD, the LOCALITY. Parcel design weights: one parcel's n
+   deals count n / (1 + (n − 1)·ρ), ρ = 0.26 (one-way ANOVA on block-demeaned log ₪/m² — slightly conservative against ρ ≈ 0.22
+   on hedonic residuals) — a 200-sale tower ≈ 3.8 effective observations.
+6. **Credibility shrinkage** locality → neighbourhood → block → street, weight n_eff / (n_eff + k), k = σ²_within / τ²_between by
+   method of moments (σ² with the n_eff / (n_eff − 1) correction; a street's parent = the OTHER deals of its blocks): k_street
+   3.38, k_block 0.95 (k_neighbourhood = k_block — immaterial).
+7. **Availability**: a locality with n_eff < 8 cannot anchor; a street with no own deals, < 5 effective observations in its
    blocks and no verified neighbourhood is MODEL UNAVAILABLE — a locality or district figure alone is never a street's value.
-7. **Evidence tiers** (`TIER_RULE`, no confidence percentage): STRONG = own n_eff ≥ 1.5 from ≥ 2 parcels, latest own deal ≤ 18
-   months, locality n_eff ≥ 300 · STANDARD = own n_eff ≥ 1.5 or block n_eff ≥ 20 · LIMITED = some own deals, block n_eff ≥ 5 or a
-   verified neighbourhood · else UNAVAILABLE. A locality with ≥ 50 held-out deals whose own MdAPE > 25 % publishes nothing
-   (Katzrin); MdAPE > 15 % or P80 > 30 % caps it at LIMITED (Sderot, Nof HaGalil, Kiryat Shmona).
-8. **Model range** = the 10th–90th percentile of log(actual / model) of held-out deals of the tier (≥ 200), applied to the
-   estimate — a validation-based range for one transaction, not a confidence interval and not a guaranteed sale range.
-9. **Apartment estimate** (`view=streetApartment`): the stored street level re-priced for a stated profile (area 20–600 m², rooms
-   1–12 or the reference 25 m² per room, existing / new (probable), build year, type) with each input's effect stated. No floor.
-10. Gradient boosting / other ML was not adopted: the explainable estimator already beats every baseline by 3.4–5.4 points of
-    MdAPE, and the remaining error is dominated by what the register does not carry (floor, condition, aspect, exact location).
+8. **Evidence tiers** (`TIER_RULE`, no confidence percentage) describe the EVIDENCE BASE, not the accuracy: STRONG = own n_eff ≥
+   1.5 from ≥ 2 parcels, latest own deal ≤ 18 months, locality n_eff ≥ 300 · STANDARD = own n_eff ≥ 1.5 or block n_eff ≥ 20 ·
+   LIMITED = some own deals, block n_eff ≥ 5 or a verified neighbourhood · else UNAVAILABLE. A locality with ≥ 50 held-out deals
+   whose own MdAPE > 25 % publishes nothing (Katzrin); MdAPE > 15 % or P80 > 30 % caps it at LIMITED (Sderot, Nof HaGalil, Kiryat
+   Shmona, Yeruham). STRONG and STANDARD are equally accurate per deal (below): deal-level noise (a street's own deals spread ≈ 0.16–0.23 in
+   log) swamps the street-level error, and STRONG's locality condition selects large mixed-stock cities. Kept as stated evidence
+   states — the page says "the evidence base, not the accuracy".
+9. **Validation range** = the 10th–90th percentile of log(actual / model) of held-out deals of the tier (≥ 200), widened (never
+   narrowed) to the locality's own band where it holds ≥ 300 held-out deals (39 localities) — a measure of the model's typical
+   error, not a confidence interval and not a guaranteed sale range.
+10. **Apartment estimate** (`view=streetApartment`): the stored street level re-priced for a flat in a building / garden flat /
+    roof flat of 25–250 m², rooms (or the reference 25 m² per room), second-hand with a build year (or the district's age mix) or
+    new (stated, or a build year of the as-of year or the year before); a garden / roof effect only where ≥ 100 within-block
+    sales of that type fitted it; cottages and detached houses are not estimated (plot value, not in the register). Value to
+    ₪10,000, ₪/m² to ₪100, each input's effect stated per m². No floor.
+11. Gradient boosting / other ML was not adopted: the remaining error is dominated by what the register does not carry (floor,
+    condition, aspect, exact location), and an opaque fit would lose the comparable-by-comparable explanation.
 
-### Validation (`data/streets/model/validation.json`)
+### Validation (`data/streets/model/validation.json`, `psvm-validation-2`)
 
-Three forward folds (cutoffs 18.03.2025 · 18.09.2025 · 18.03.2026); every parameter, comparable and location link dated before
-the cutoff; test = the OBSERVED street deals of the next 6 months, priced as of the cutoff; GROUPED HOLDOUT — the test deal's
-parcel and its development are removed from every level. 29,832 held-out deals, 28,413 published (95.2 %).
+Three forward folds (cutoffs 18.03.2025 · 18.09.2025 · 18.03.2026, each tested on the 6 months after it — a month-arithmetic
+overflow once cut fold B to 3.5 months); every parameter, comparable and location link dated before the cutoff; test = the OBSERVED
+street deals priced as of the cutoff; GROUPED HOLDOUT — the test deal's parcel and its development (same block, build year ± 1,
+built ≤ 10 years before) are removed from every level and every baseline. 35,599 held-out deals, 33,854 published (95.1 %; the
+national figures count the structural tiers BEFORE the locality caps — Katzrin's deals stay in, conservative).
 
-| | MdAPE | P80 | P90 | MdAE ₪/m² | MdAE (deal) |
-|---|---|---|---|---|---|
-| PROPX model | **9.6 %** | **19.9 %** | **28.0 %** | **₪2,000** | ₪180,279 |
-| locality median (same 28,413 deals) | 15.0 % | 29.5 % | 40.4 % | ₪3,055 | |
-| same-street median, 12 months (23,584) | 13.6 % (model 9.5) | 28.2 % (19.6) | | ₪2,844 | |
-| recent similar comparables (28,267) | 13.0 % (model 9.6) | 26.8 % (19.9) | | ₪2,629 | |
-| verified-neighbourhood median (498) | 17.9 % (model 13.7) | 42.8 % (29.7) | | ₪6,430 | |
+| Same held-out deals | MdAPE | P80 | P90 | MdAE ₪/m² |
+|---|---|---|---|---|
+| **PROPX model** (33,854) | **9.7 %** | **20.2 %** | **28.0 %** | **₪2,029** (₪183,459 per deal) |
+| hedonic + index, locality level only (33,854) | 12.1 % | 25.3 % | | ₪2,504 |
+| recent similar comparables (33,686; model 9.7) | 12.9 % | 26.9 % | | ₪2,642 |
+| same-street median, 12 months (27,780; model 9.6) | 14.0 % | 28.6 % | | ₪2,909 |
+| locality median (33,854) | 15.1 % | 29.4 % | | ₪3,077 |
+| verified-neighbourhood median (575; model 13.6) | 17.9 % | 41.2 % | | ₪6,317 |
 
-By tier (all folds): STRONG 9.4 % · STANDARD 9.2 % · LIMITED 12.3 % (P80 19.3 / 18.8 / 25.4). Fold C with caps and ranges from
-A + B: the 80 % range held 82.2 % (STRONG) · 83.3 % (STANDARD) · 85.3 % (LIMITED) of unseen deals. By district: Central 8.1 % ·
-Tel Aviv 9.0 % · Jerusalem 9.9 % · South 10.5 % · Haifa 10.6 % · North 11.5 %. Known biases: the cheapest deals (< ₪12,000/m²)
-are over-estimated (median −11.5 %), the dearest (≥ ₪45,000/m²) under-estimated (+9.0 %) — a street level describes the typical
-dwelling, not the extremes; probable-new deals have MdAPE 11.6 % (bias −3.8 %).
+The hedonic + index locality-only line is the honest incremental baseline: the street / block / neighbourhood structure adds 2.4
+points of MdAPE; the raw medians mostly measure the dwelling translation. By fold: A 9.5 % · B 10.2 % · C 9.4 %. By tier (all
+folds): STRONG 9.6 % · STANDARD 9.1 % · LIMITED 12.2 %; fold C with caps and bands from A + B: STRONG 9.3 % · STANDARD 9.1 % ·
+LIMITED 12.8 %, and the 80 % band held 83.0 % · 83.5 % · 83.2 % of unseen deals (85.4 % · 84.3 % · 85.5 % with the locality
+widening). By district: Central ≈ 8 % · Tel Aviv ≈ 9 % · Jerusalem ≈ 10 % · South / Haifa ≈ 10.5 % · North ≈ 11.5 %. Bias by
+the MODEL's value is small (< ₪12,000/m² −0.3 %, ≥ ₪45,000 −1.8 %; banding by the actual price shows −11 % / +9 % — regression to
+the mean, `byActualPriceBand`). By newness: existing −1.4 %, probable new −0.8 % (was −3.8 % before the age-mix centring fix),
+OFF-PLAN +4.4 % (the model under-prices sales before completion — stated, not corrected). The tier rule, the caps, the rooms
+feature and the anchor rule were chosen with folds A–C in view; only the fold-C band check is held out from those choices — the
+next register copy's six months are the lock-box test. Subsidy parcels, OBSERVED matches and neighbourhood links are read from
+current data, not as of each cutoff.
 
-Ablation (the same 25,169 held-out deals every variant predicts; all three folds):
+Ablation (`psvm-1.1.0`; the same 29,841 held-out deals every variant predicts; all three folds):
 
 | Variant | MdAPE | P80 | P90 | Deals it can price | Note |
 |---|---|---|---|---|---|
-| full model | 9.53 % | 19.68 % | 27.59 % | 28,795 | |
-| no hedonic translation | 12.77 % | 25.35 % | 34.60 % | 28,795 | the dwelling translation is worth 3.2 points |
-| no time adjustment | 9.37 % | 19.46 % | 27.16 % | 28,795 | median bias fold A +2.24 % (full −0.46 %); fold C −0.22 % (full −1.80 %) |
-| no block level | 9.93 % | 20.69 % | 29.28 % | 25,179 | blocks add 0.4 points and 12.6 % more priceable deals |
-| no neighbourhood level | 9.53 % | 19.68 % | 27.59 % | 28,795 | no measurable effect (72 verified links) |
-| recency weighting, 12-month half-life | 9.48 % | 19.71 % | 27.60 % | 28,780 | immaterial (0.05) — not adopted |
+| full model | 9.66 % | 19.97 % | 27.73 % | 34,374 | |
+| no hedonic translation | 13.04 % | 25.71 % | 34.70 % | 34,374 | the dwelling translation is worth 3.4 points |
+| no time adjustment | 9.65 % | 19.82 % | 27.39 % | 34,374 | median bias fold A +2.64 % (full −0.18 %), fold C +0.03 % (full −1.53 %) |
+| no block level | 10.05 % | 20.73 % | 28.96 % | 29,852 | blocks add 0.4 points and 15.1 % more priceable deals |
+| no neighbourhood level | 9.66 % | 19.97 % | 27.73 % | 34,374 | no measurable effect (72 verified links) |
+| recency weighting, 12-month half-life | 9.57 % | 19.91 % | 27.75 % | 34,356 | ≤ 0.1 point — not adopted |
 
-The time adjustment is KEPT although it costs 0.16 points of MdAPE: without it a comparable from three years ago enters at its old
-price, which biased the rising-market fold A by +2.2 %; with it the late-2025 / 2026 flattening shows as a −1.8 % median bias in fold
-C (the index's latest quarter carried forward). The trade-off is stated, not hidden.
+The time adjustment is KEPT: it costs nothing in MdAPE and removes the +2.6 % bias a three-year-old comparable carries into a rising
+market (fold A); in the flattening fold C it leaves −1.5 %. Stated, not hidden.
 
 ### Coverage
 
-Of 62,265 searchable streets, 15,485 (24.9 %) receive an estimate. MODEL UNAVAILABLE: no street-specific evidence 26,891 ·
-locality evidence thin 16,414 (mostly localities with few registered priced deals) · street evidence thin 1,363 · the locality is
-not in the register copy 1,192 · no deals in the window 882 · failed validation 38. The binding constraint is LOCATION LINKAGE:
-a street with no deal of its own has no coordinates and no parcel to tie it to a block, so it cannot borrow its surroundings.
-Judea and Samaria (3,053 streets): the register copy holds almost no priced dwelling deals there (Ma'ale Adumim n_eff ≈ 1) — no
-estimate anywhere in the area. By observed state: SUPPORTED streets 99.6 % estimated · LIMITED 99.9 % · INSUFFICIENT 88.5 % · NONE
-7.3 %. By district: Tel Aviv 48.8 % · Central 30.7 % · South 30.2 % · Haifa 27.5 % · Jerusalem 23.5 % · North 9.6 % · Judea and
-Samaria 0 %. Major cities: Be'er Sheva 48.3 % · Haifa 47.8 % · Ashdod 46.6 % · Petah Tikva 46.3 % · Netanya 43.2 % · Rishon LeZion
-42.4 % · Tel Aviv-Yafo 40.9 % · Jerusalem 23.3 %. By district, locality (≥ 100 searchable streets), observed state and tier:
-`validation.json` → `coverage`.
+Of 62,265 searchable rows, 15,433 (24.8 %) receive an estimate; of the 57,162 STREETS (address areas and sites excluded), 15,383
+(26.9 %). MODEL UNAVAILABLE: no street-specific evidence 26,976 · locality evidence thin 16,413 (a coverage limit of the register
+copy: few priced deals) · street evidence thin 1,331 · the locality is not in the register copy 1,192 · no deals in the window 882 ·
+failed validation 38. The binding constraint is LOCATION LINKAGE: a street with no deal of its own has no coordinates and no parcel
+to tie it to a block. Judea and Samaria (3,053 rows): the register copy holds almost no priced dwelling deals there — no estimate.
+By district, locality (≥ 100 rows), observed state, row kind and tier: `validation.json` → `coverage`.
 
 ### Artifacts, refresh, versioning
 
-`model.json` (parameters at full precision, tier rule, ranges, caps, outlier keys, subsidy parcels, counts, inputs) ·
-`estimates.json` (one row per searchable street) · `validation.json` · `audit.json` · `history.jsonl` (append-only: one record per
-build with its reason FIRST_BUILD / DATA / MODEL / DATA+MODEL, and every street whose estimate moved ≥ 5 % or changed tier,
-before → after). The weekly evidence workflow runs `street-model-build.js --if-stale` after a COMPLETE sweep: it rebuilds only when
-an input changed (evidence copy · directory · land parcels · model code / versions), runs `test/street-model.test.js`, and restores
-the previous model if either fails. At request time nothing is fitted: the estimate is the stored row; WHY THIS ESTIMATE and the
-comparables are recomputed from one locality shard with the stored parameters and checked against the stored level
-(`consistent`); after a new copy and before a rebuild the comparables are withheld (`evidence-changed-since-build`).
+`model.json` (parameters at full precision, anchor quarters, tier rule, ranges + locality ranges, caps, outlier keys, subsidy
+parcels, type sample counts, counts, inputs) · `estimates.json` (one row per searchable street + the street's own mix for the
+reconciliation) · `validation.json` · `audit.json` · `history.jsonl` (append-only: one record per build with its reason
+FIRST_BUILD / DATA / MODEL / DATA+MODEL, and every street whose estimate moved ≥ 5 % or changed tier, before → after; the 1.0.0 →
+1.1.0 review rebuild is recorded as MODEL). The build's inputs: the evidence copy (scraped_at, window, summary sha), the directory
+hash, the land tenders, and the code + rules (value-model, value-validate, the build, evidence.js cleaning, match.js, classify.js,
+neighbourhood links). The weekly evidence workflow runs `street-model-build.js --if-stale` after a COMPLETE sweep, runs
+`test/street-model.test.js`, and restores the previous model if either fails. At request time nothing is fitted: the estimate is the
+stored row; WHY THIS ESTIMATE and the comparables are recomputed from one locality shard with the stored parameters and shown only
+when they reproduce the stored level (`consistent`) and the evidence copy / summary / directory are the build's.
 
 ### API
 
 - `GET /api/intel?view=street&id=` — Street Intelligence + `model` (the stored estimate, class MODEL, with levels, weights, range,
-  validation and versioning)
-- `GET /api/intel?view=streetModel&id=[&limit≤300]` — WHY THIS ESTIMATE: comparables by level (no personal data), contribution,
-  time and dwelling adjustments, implied reference value, `consistent`
-- `GET /api/intel?view=streetApartment&id=&sqm=[&rooms=&newness=existing|new&built=&type=]` — the apartment estimate
+  validation (fold C for the tier), price-level quarter and versioning)
+- `GET /api/intel?view=streetModel&id=[&limit≤300]` — WHY THIS ESTIMATE: comparables by level (no personal data), weight, time
+  and dwelling adjustments, ₪/m² as the reference flat, `consistent`
+- `GET /api/intel?view=streetApartment&id=&sqm=[&rooms=&newness=existing|new&built=&type=flat|garden|roof]` — the apartment estimate
 - `GET /api/intel?view=streetModelValidation` — the validation + coverage report
-

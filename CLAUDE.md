@@ -40,31 +40,36 @@
   `over:street-evidence`. See `lib/streets/README.md`.
 - `lib/streets/value-{model,validate,read}.js` + `scripts/street-model-build.js` + `data/streets/model/` + `test/street-model.test.js`
   (+ `test/fixtures/street-model-acceptance-2026-10-19.json`, a snapshot of the 16 acceptance cases) = PROPX STREET VALUE MODEL
-  (19.10.2026): a MODEL layer BESIDE the observed street market — never replacing, re-labelling or re-thresholding it (SUPPORTED /
-  LIMITED / INSUFFICIENT / NONE unchanged; `lib/streets/street.js` / `evidence.js` never read the model). Estimate = ₪/m² of a
-  REFERENCE DWELLING (existing flat, 85 m², 25 m²/room, the district's existing-home age mix) on the street: within-block hedonic +
-  quarterly index per district (block fixed effects, outliers > 4 robust SD refitted without, < 3,000 rows → national fit), each
-  comparable translated to the reference (date · quarter · adjustment kept), levels STREET (OBSERVED deals) · BLOCKS (cadastral blocks
-  of parcels touching the street — location only) · VERIFIED NEIGHBOURHOOD · LOCALITY, parcel design weights n/(1+(n−1)ρ) (ρ
-  estimated ≈ 0.26 — a tower is never its sale count), credibility shrinkage with k = σ²_within/τ²_between (method of moments).
-  MODEL UNAVAILABLE without street-specific evidence (own deals, ≥ 5 effective in its blocks, or a verified neighbourhood) or when
-  the locality's n_eff < 8 — a locality / district figure is never a street's value. Tiers STRONG / STANDARD / LIMITED /
-  UNAVAILABLE (`TIER_RULE`: STRONG needs own evidence from ≥ 2 parcels, ≤ 18 months, locality n_eff ≥ 300; a locality's own held-out
-  MdAPE > 25 % → UNAVAILABLE, > 15 % or P80 > 30 % → LIMITED); no confidence percentage. "Model range" = the tier's 10th–90th
-  percentile of held-out log errors (≥ 200 deals; never a confidence interval / guaranteed range). Validation: 3 forward folds
-  (cutoffs 2025-03-18 · 2025-09-18 · 2026-03-18, 6-month tests of OBSERVED street deals, nothing dated after the cutoff, GROUPED
-  holdout of the test parcel + its development from every level): MdAPE 9.6 % · P80 19.9 % · P90 28.0 % · MdAE ₪2,000/m² on 28,413
-  held-out deals, beating the locality median (15.0 %), same-street median (13.6 %), recent comparables (13.0 %) and neighbourhood
-  median (17.9 %) on the same deals; coverage 15,485 / 62,265 searchable streets (24.9 %). The apartment estimate re-prices the
-  stored level for area · rooms · new (probable) / existing · build year · type (no floor — not in the register). Artifacts
-  `model.json` · `estimates.json` · `validation.json` (incl. `coverage` by district / locality / observed state / tier) · `audit.json`
-  · append-only `history.jsonl` (reason DATA / MODEL, material changes ≥ 5 % or tier). Rebuilt by the weekly evidence workflow
-  (`--if-stale`, COMPLETE sweep only, gates, previous model restored on failure); request time never fits — WHY THIS ESTIMATE is
-  recomputed from one shard and checked (`consistent`). `GET /api/intel?view=street` (+ `model`) · `streetModel` · `streetApartment`
-  · `streetModelValidation`; the Street Intelligence page shows OBSERVED (solid) and MODEL (dashed, MODEL chip) cards side by side +
-  WHY THIS ESTIMATE · latest market evidence · main limitation, the apartment form, the comparables (`stcomp`) and method /
-  validation. Registry group `streetModel` (7 terms, 4 missing reasons), Trust `propx:street-model`. Never APPRAISAL / SHAMAI /
-  OFFICIAL / FAIR VALUE. See `lib/streets/README.md` § 6.
+  (19.10.2026, `psvm-1.1.0` after four independent reviews): a MODEL layer BESIDE the observed street market — never replacing,
+  re-labelling or re-thresholding it (SUPPORTED / LIMITED / INSUFFICIENT / NONE unchanged; `street.js` / `evidence.js` never read the
+  model). Estimate = ₪/m² of a REFERENCE DWELLING (existing flat, 85 m², 25 m²/room, the district's existing-home age mix) at its
+  district index's ANCHOR = the latest REPORTED quarter (a quarter with < 60 % of the four before it is still filling — 2026Q2 in
+  production): within-block hedonic + quarterly index per district (block fixed effects, outliers > 4 robust SD refitted without,
+  < 3,000 rows → national fit; new / off-plan / age-banded rows centred on the age mix), each comparable translated to the reference
+  (date · quarter · adjustment kept), levels STREET (OBSERVED deals) · BLOCKS (cadastral blocks of parcels touching the street —
+  location only; a loose `normalized-name` match never locates) · VERIFIED NEIGHBOURHOOD · LOCALITY, parcel design weights
+  n/(1+(n−1)ρ) (ρ ≈ 0.26 — a tower is never its sale count), credibility shrinkage k = σ²_within/τ²_between (method of moments,
+  leave-street-out parent). MODEL UNAVAILABLE without street-specific evidence (own deals, ≥ 5 effective in its blocks, or a verified
+  neighbourhood) or when the locality's n_eff < 8 — a locality / district figure is never a street's value. Tiers STRONG / STANDARD /
+  LIMITED / UNAVAILABLE describe the EVIDENCE BASE, not the accuracy (`TIER_RULE`: STRONG = own evidence from ≥ 2 parcels, ≤ 18
+  months, locality n_eff ≥ 300; a locality's own held-out MdAPE > 25 % → UNAVAILABLE, > 15 % or P80 > 30 % → LIMITED); no confidence
+  percentage. "Validation range" = the tier's 10th–90th percentile of held-out log errors (≥ 200), widened to the locality's own band
+  where ≥ 300 (never a confidence interval / guaranteed range). Validation `psvm-validation-2`: 3 forward folds (cutoffs 2025-03-18 ·
+  2025-09-18 · 2026-03-18, 6 months each — `VV.plusMonths`), nothing dated after the cutoff, GROUPED holdout (test parcel + its
+  development: block + build year ± 1) from every level and baseline: MdAPE 9.7 % · P80 20.2 % · P90 28.0 % · MdAE ₪2,029/m² on 33,854
+  held-out deals; baselines on the same deals: hedonic + index locality-only 12.1 % (the street structure adds 2.4 points), recent
+  comparables 12.9 %, same-street median 14.0 %, locality median 15.1 %; known bias: OFF-PLAN +4.4 % (stated). Coverage 15,433 /
+  62,265 searchable rows (24.8 %; streets only 26.9 %). The apartment estimate (flat / garden / roof, 25–250 m², rooms, second-hand
+  with build year or new; garden / roof only with ≥ 100 within-block sales in the district; cottages / houses NOT estimated; ₪10,000
+  rounding; each effect per m²). Artifacts `model.json` · `estimates.json` · `validation.json` (+ `coverage` by district / locality /
+  observed state / row kind / tier) · `audit.json` · append-only `history.jsonl` (reason FIRST_BUILD / DATA / MODEL / DATA+MODEL,
+  material changes ≥ 5 % or tier). Rebuilt by the weekly evidence workflow (`--if-stale` on evidence · directory · land · code +
+  rules; COMPLETE sweep only; gates; previous model restored on failure); request time never fits — WHY THIS ESTIMATE is recomputed
+  from one shard and shown only when it reproduces the stored level on the build's copy. `GET /api/intel?view=street` (+ `model`) ·
+  `streetModel` · `streetApartment` · `streetModelValidation`; the page shows OBSERVED (solid) and MODEL (dashed, MODEL chip) cards
+  side by side + why · latest market evidence · main limitation (from the levels used) · "why the two differ" (≥ 10 %), the apartment
+  form, the comparables (`stcomp`) and method / validation. Registry group `streetModel` (7 terms, 4 missing reasons), Trust
+  `propx:street-model`. Never APPRAISAL / SHAMAI / OFFICIAL / FAIR VALUE. See `lib/streets/README.md` § 6.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
