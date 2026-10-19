@@ -63,17 +63,32 @@ async function profile(id) {
     if (!r.records.length || offset >= total) break;
   }
   const fields = Object.keys(rows[0] || {});
+  const num = (v) => { const n = Number(String(v).trim()); return Number.isFinite(n) ? n : null; };
   out({ kind: 'profile', id, total, read: rows.length, fields });
   // which field is which (the registry's column names are Hebrew / transliterated): print value shapes per field
   for (const f of fields) {
     const vals = rows.map((x) => x[f]);
     const distinct = new Set(vals.map((v) => String(v).trim()));
     const nums = vals.map((v) => Number(String(v).trim())).filter((n) => Number.isFinite(n));
-    out({ kind: 'field', f, distinct: distinct.size, numeric: nums.length, min: nums.length ? Math.min(...nums) : null, max: nums.length ? Math.max(...nums) : null,
+    out({ kind: 'field', f, distinct: distinct.size, numeric: nums.length, min: nums.length ? nums.reduce((a, b) => Math.min(a, b)) : null, max: nums.length ? nums.reduce((a, b) => Math.max(a, b)) : null,
       sample: [...distinct].slice(0, 8) });
   }
   // special codes: the street-code field is the numeric one with values up to ~9999 and many repeats across localities
-  const num = (v) => { const n = Number(String(v).trim()); return Number.isFinite(n) ? n : null; };
+  /* the synonyms registry: name status values, synonyms whose official code is / is not an official row of the same locality */
+  if (fields.includes('official_code') && fields.includes('street_name_status')) {
+    const st = new Map(); for (const x of rows) { const k = String(x.street_name_status).trim(); st.set(k, (st.get(k) || 0) + 1); }
+    out({ kind: 'synStatus', values: [...st] });
+    const off = new Set(rows.filter((x) => num(x.street_code) === num(x.official_code)).map((x) => `${num(x.city_code)}:${num(x.street_code)}`));
+    const syn = rows.filter((x) => num(x.street_code) !== num(x.official_code));
+    const orphan = syn.filter((x) => !off.has(`${num(x.city_code)}:${num(x.official_code)}`));
+    out({ kind: 'synShape', officialRows: rows.length - syn.length, synonymRows: syn.length, synonymTargetMissing: orphan.length,
+      sampleSyn: syn.slice(0, 30).map((x) => [x.city_code, x.city_name, x.street_code, x.street_name, x.street_name_status, x.official_code].map((v) => String(v).trim()).join(' | ')),
+      sampleOrphan: orphan.slice(0, 15).map((x) => [x.city_code, x.city_name, x.street_code, x.street_name, x.street_name_status, x.official_code].map((v) => String(v).trim()).join(' | ')),
+      tlvSample: rows.filter((x) => num(x.city_code) === 5000 && /רוטשילד|אבן גבירול|דיזנגוף|ז.בוטינסקי/.test(String(x.street_name))).slice(0, 25).map((x) => [x.street_code, x.street_name, x.street_name_status, x.official_code].map((v) => String(v).trim()).join(' | ')) });
+    const perStreet = new Map(); for (const x of syn) { const k = `${num(x.city_code)}:${num(x.official_code)}`; perStreet.set(k, (perStreet.get(k) || 0) + 1); }
+    out({ kind: 'synPerStreet', streetsWithSynonyms: perStreet.size, max: [...perStreet.values()].reduce((a, b) => Math.max(a, b), 0),
+      regions: [...new Set(rows.map((x) => `${String(x.region_code).trim()} ${String(x.region_name).trim()}`))].slice(0, 20) });
+  }
   const cand = fields.filter((f) => /סמל_רחוב|street_code|semel_rechov|רחוב.*סמל|סמל.*רחוב/i.test(f));
   const cityF = fields.filter((f) => /סמל_ישוב|city_code|semel_yeshuv|ישוב.*סמל|סמל.*ישוב/i.test(f));
   out({ kind: 'columns', streetCode: cand, cityCode: cityF });
