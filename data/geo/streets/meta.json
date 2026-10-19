@@ -1,0 +1,49 @@
+{
+ "schema": 1,
+ "sources": {
+  "streets": {
+   "id": "9ad3862c-8391-4b2f-84a4-2d4c68625f4b",
+   "package": "321",
+   "name": "רשימת רחובות בישראל - מתעדכן",
+   "publisher": "רשות האוכלוסין וההגירה",
+   "publisherEn": "Population and Immigration Authority",
+   "lastModified": "2026-10-19T00:30:18.810557",
+   "rows": 63577
+  },
+  "synonyms": {
+   "id": "bf185c7f-1a4e-4662-88c5-fa118a244bda",
+   "package": "israel-streets-synom",
+   "name": "רשימת רחובות בישראל - קובץ עם סינונימיים - מתעדכן",
+   "publisher": "רשות האוכלוסין וההגירה",
+   "publisherEn": "Population and Immigration Authority",
+   "lastModified": "2026-10-12T00:30:14.819837",
+   "rows": 152136
+  }
+ },
+ "fetchedAt": "2026-10-19T09:35:35.935Z",
+ "checkedAt": "2026-10-19T09:35:35.935Z",
+ "contentHash": "93ea88e50c2f0c92d3411ebf3e78f2d8269297e4ab11c2d9b82f8ff4ca784d1d",
+ "counts": {
+  "officialRows": 63577,
+  "current": 63577,
+  "historical": 4,
+  "byKind": {
+   "locality": 1316,
+   "street": 57162,
+   "area": 5005,
+   "site": 94
+  },
+  "localities": 1316,
+  "synonymRows": 152136,
+  "synonyms": 88556,
+  "rejected": 0,
+  "synRejected": 0
+ },
+ "reconcile": {
+  "officialRowsInSynonyms": 63580,
+  "inStreetsNotInSynonyms": 0,
+  "inSynonymsNotInStreets": 3,
+  "synTargetMissing": 3
+ },
+ "kindRule": "street 100–5999 & 9001–9999 · area 6000–6999 · site 7000–8999 · locality placeholder 9000"
+}
