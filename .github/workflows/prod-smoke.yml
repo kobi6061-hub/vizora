@@ -58,6 +58,11 @@ jobs:
           probe "/api/intel?view=dd&developer=x" "302 307" login.html
           probe "/api/intel?view=ddCoverage&city=5000" "302 307" login.html
           probe "/api/intel?view=group&company=511399388" "302 307" login.html
+          probe "/api/geo/search?q=%D7%94%D7%A8%D7%A6%D7%9C&near=5000" "302 307" login.html
+          probe "/api/intel?view=street&id=st:5000:461" "302 307" login.html
+          probe "/api/intel?view=streetCoverage" "302 307" login.html
+          probe "/data/streets/evidence/meta.json" "302 307 404" ""
+          probe "/data/geo/streets/directory.json" "302 307 404" ""
           probe "/api/login-anything" "302 307" login.html
           probe "/api/identity?op=status" "302 307" login.html
           probe "/api/loginx" "302 307" login.html
