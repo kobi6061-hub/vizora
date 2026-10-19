@@ -30,7 +30,10 @@
   truncated / unresolved / a dropped street-type word, listed apart, never aggregated); dwelling universe (mostly-land natures
   excluded), priced = whole property for ≥ ₪100,000 (several units for one consideration unpriced); SUPPORTED ≥ 10 · LIMITED 5–9 ·
   INSUFFICIENT 1–4 (price "—") · NONE (never a zero price); the 12-month change on ₪/m² only with 30 + 30 deals and a 95 % interval;
-  a shard matched against an older directory is re-matched offline; the locality / verified-neighbourhood / CBS city figures are CONTEXT ("These
+  a shard matched against an older directory is re-matched offline; one parcel holding ≥ 50 % of the priced deals is stated
+  beside the median; a build year after the deal is tagged, never PROBABLE NEW; a locality without evidence says why (no register
+  name maps to its code · sweep pending · stale shard). First complete sweep 19.10.2026: 1,036 localities, 342,471 deals
+  (2023-09-18…2026-09-17), 13,015 streets with an observed dwelling deal (SUPPORTED 2,295 · LIMITED 1,926 · INSUFFICIENT 8,794); the locality / verified-neighbourhood / CBS city figures are CONTEXT ("These
   figures describe the surrounding market, not observed prices on this street."); Tel Aviv permits / sites by exact address.
   `GET /api/intel?view=street|streetCoverage`; the page's geo view renders Street Intelligence for a street (`siHTML`, one-minute ·
   five-minute · deep dive). Registry group `streets` (11 terms, 8 missing reasons, section `street`); Trust `datagov:streets` +
