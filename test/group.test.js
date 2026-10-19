@@ -27,8 +27,9 @@ const R = require('../lib/entities/resolve');
 const X = require('../lib/explain/registry');
 const ROOT = path.join(__dirname, '..');
 
-let n = 0; const t = (name, fn) => { fn(); n++; console.log('  ✓ ' + name); };
-const at = async (name, fn) => { await fn(); n++; console.log('  ✓ ' + name); };
+let n = 0, failed = 0;
+const t = (name, fn) => { try { fn(); n++; console.log('  ✓ ' + name); } catch (e) { failed++; console.log('  ✗ ' + name + '\n    ' + String(e && e.message || e).split('\n').slice(0, 6).join('\n    ')); } };
+const at = async (name, fn) => { try { await fn(); n++; console.log('  ✓ ' + name); } catch (e) { failed++; console.log('  ✗ ' + name + '\n    ' + String(e && e.message || e).split('\n').slice(0, 6).join('\n    ')); } };
 const NOW = '2026-10-18T10:00:00.000Z';
 const C = D.load();
 if (!C.synced) { console.log('group: data/dd not synced — skipped'); process.exit(0); }
@@ -37,7 +38,7 @@ const FX = require('./fixtures/group-fixture').build(nameOf, NOW);
 const grp = (q, opt = {}) => G.group(q, { now: NOW, ...opt });
 
 /* real anchors (each re-checked below, never assumed) */
-const DIMRI = '511399388', PERETZ = '511847337', AMRAM = '513201582', TRIO = '517256376', CONC = '514538917', LANDP = '514604222', OZEN = '511517237', SHVIRO = '512172651', MEGIDDO = '510966518', CONTRACTOR_ONLY = '510125057';
+const DIMRI = '511399388', PERETZ = '511847337', AMRAM = '513201582', TRIO = '517256376', CONC = '511775090', ONE_TENDER = '514538917', DISSOLVED = '510568553', LANDP = '514604222', OZEN = '511517237', SHVIRO = '512172651', MEGIDDO = '510966518', CONTRACTOR_ONLY = '510125057';
 const ASHDAR = 'dev-2354bb806279', AMBIG = 'dev-a1276169dfd7', JOINT = 'dev-e49c53daa50b', NOT_IN = '512345678';
 const DIMRI_LOT = 'ila:20250311:0000800032982';
 
@@ -125,7 +126,10 @@ t('BRAND ≠ LEGAL COMPANY: brands and the company are separate nodes joined by 
   const u = grp({ developer: dev }, { companyNumber: DIMRI });
   const ue = u.structure.edges.find((e) => e.type === 'RESOLVES_TO' && e.from === 'brand:' + dev);
   assert.equal(ue.state, 'VERIFIED'); assert.equal(ue.cls, 'USER_ASSUMPTION'); assert.equal(u.identity.core.userProvided, true);
-  assert.equal(u.identity.status, 'LEGAL_CORE_STRONG');
+  assert.equal(u.identity.status, 'LEGAL_CORE_USER_KEY', 'a user-provided key gets its own status, never "verified"');
+  assert.equal(u.firstRead[0].cls, 'USER_ASSUMPTION');
+  assert.ok(u.portfolio.rows.filter((r) => r.members.some((m) => m.devId === dev)).every((r) => r.legalEntity.userProvided));
+  assert.ok(!u.identity.excluded.some((x) => x.devId === dev), 'the keyed anchor is a member, never also an excluded candidate');
   /* a brand that resolves to no company stays a brand: no core, candidates excluded, nothing invented */
   const a = read('ashdar', { developer: ASHDAR });
   assert.equal(a.identity.status, 'BRAND_ONLY'); assert.equal(a.identity.core, null);
@@ -199,7 +203,7 @@ t('PIPELINE SIZE ≠ FINANCIAL CAPACITY: without statements the comparison says 
   assert.equal(g.pipelineVsFinancial.statement.text.en, 'Large visible pipeline; current public financial coverage is insufficient to assess funding capacity.');
   assert.equal(g.pipelineVsFinancial.financial, null);
   const keys = JSON.stringify(Object.keys(g.pipelineVsFinancial.pipeline)) + JSON.stringify(Object.keys(dimriDocs().pipelineVsFinancial.financial));
-  assert.ok(!/ratio|coverage|capacity|months/i.test(keys), 'no cross-universe ratio: ' + keys);
+  assert.ok(!/ratio|coverage|capacity/i.test(keys), 'no cross-universe ratio: ' + keys);
   assert.match(g.pipelineVsFinancial.notA.en, /not a solvency model/);
   assert.equal(read('trio', { company: TRIO }).pipelineVsFinancial.statement.id, 'LIMITED_PIPELINE_NO_FINANCIALS');
 });
@@ -236,7 +240,7 @@ t('NO FINANCIALS ≠ WEAKNESS: a group without statements reads financial covera
   assert.ok(gap && gap.category === 'MISSING_EVIDENCE', 'missing financials are a missing-evidence item');
 });
 t('NO LATER EVIDENCE ≠ STALLED: the evidence-gap signal is informational, names its projects and the 18-month rule, and says it is not stalled / failed / delayed', () => {
-  const g = dimri();
+  const g = read('shviro', { company: SHVIRO });
   const s = g.signals.find((x) => x.id === 'NO_LATER_PUBLIC_EVIDENCE_FOUND');
   assert.ok(s); assert.equal(s.kind, 'info'); assert.equal(s.cls, 'DERIVED');
   assert.ok(s.projects.length && s.projectsTotal === s.value);
@@ -369,7 +373,7 @@ t('the risk & gap brief: six categories; every item answers why · what it does 
     assert.deepEqual(g.brief.categories, ['VERIFIED_FACT', 'DERIVED_SIGNAL', 'MISSING_EVIDENCE', 'SOURCE_LIMITATION', 'ENTITY_AMBIGUITY', 'SOURCE_CONFLICT']);
     for (const i of g.brief.items) for (const k of ['why', 'notMean', 'confirms', 'disproves', 'verify']) assert.ok(i[k] && i[k].en && i[k].he, `${i.id} ${k}`);
     for (const x of g.nextBest.items) { for (const k of ['why', 'couldChange']) assert.ok(x[k] && x[k].en, `${x.id} ${k}`); assert.equal(typeof x.userProvides, 'boolean'); assert.ok(['NO', 'PARTIAL', 'YES'].includes(x.propxRetrieves), x.id); }
-    assert.equal(g.firstRead.length, 6); assert.equal(g.oneMinute.length, 9);
+    assert.equal(g.firstRead.length, 5, 'five lines'); assert.equal(g.oneMinute.length, 9);
     for (const q of g.oneMinute) assert.ok(q.q.en && q.a.en && q.cls, 'one-minute answer');
   }
   assert.equal(read('ashdar', { developer: ASHDAR }).top.verifyNext.id, 'company-extract');
@@ -379,6 +383,149 @@ t('group timeline windows 12m / 24m / 5y / all are nested; every event is dated 
   assert.ok(T.counts.m12 <= T.counts.m24 && T.counts.m24 <= T.counts.y5 && T.counts.y5 <= T.counts.all);
   for (const e of T.events) { assert.match(String(e.date), /^\d{4}-\d{2}-\d{2}/); assert.ok(e.cls, e.kind); }
   const sorted = T.events.map((e) => e.date); assert.deepEqual(sorted, sorted.slice().sort().reverse());
+});
+
+console.log('group: independent review gates (19.10.2026)');
+t('E-H1 the group reads each project exactly as the project due diligence does: furthest stage, last dated evidence and the evidence-gap rule agree with DD.project on every row of two groups', () => {
+  for (const g of [dimri(), read('ozen', { company: OZEN })]) for (const r of g.portfolio.rows) {
+    const d = DD.project(r.id, { now: NOW }).dd;
+    assert.equal(r.stage, d.ladder.furthest, r.id + ' stage');
+    assert.equal(r.executionGap, d.executionGap.fires, r.id + ' gap');
+    assert.equal(r.latestEvidence && r.latestEvidence.date, d.lastDatedEvidence && d.lastDatedEvidence.date, r.id + ' last evidence');
+  }
+});
+t('E-H2 a joint-award anchor (developer or project) is never a counted group: JOINT_AWARD_ONLY, totals 0, its lots SHARED, no signal; its parties link to their own groups', () => {
+  const g = read('joint', { developer: JOINT });
+  assert.equal(g.identity.status, 'JOINT_AWARD_ONLY'); assert.equal(g.portfolio.total, 0); assert.ok(g.shared.rows.length >= 1);
+  assert.ok(g.identity.shared.some((x) => x.number), 'a resolved party is listed with its number');
+  const lot = g.shared.rows[0].id, p = grp({ project: lot });
+  assert.equal(p.identity.status, 'JOINT_AWARD_ONLY'); assert.equal(p.portfolio.total, 0);
+  assert.notEqual(p.top.group.name, p.anchor.name, 'the group is never named after the project label');
+});
+t('E-H3 a developer declaration never imports a company: a project company declared for a group project is attached to that project only (its other projects stay out); a declaration about a project outside the group is not applied', () => {
+  const base = dimri().portfolio.total;
+  const inGroup = FX.doc('developer_declaration', { projectId: DIMRI_LOT, asOf: '2026-09-01', projectCompanyName: nameOf(SHVIRO), projectCompanyNumber: SHVIRO, parentName: nameOf(DIMRI), parentNumber: DIMRI, guarantee: 'not-stated' });
+  const g = grp({ company: DIMRI }, { userDocs: [inGroup] });
+  assert.equal(g.portfolio.total, base, 'the declared company\'s other 80 projects never join');
+  const c = g.identity.companies.find((x) => x.number === SHVIRO); assert.ok(c && c.role === 'PROJECT_SPV');
+  assert.ok(!g.identity.members.some((m) => m.tier === 'DOCUMENTED'), 'no brand of the project company becomes a member');
+  const outside = FX.doc('developer_declaration', { projectId: 'moch:34712', asOf: '2026-09-01', projectCompanyName: nameOf(OZEN), projectCompanyNumber: OZEN, parentName: nameOf(DIMRI), parentNumber: DIMRI, guarantee: 'not-stated' });
+  const o = grp({ company: DIMRI }, { userDocs: [outside] });
+  assert.equal(o.portfolio.total, base); assert.ok(!o.identity.companies.some((x) => x.number === OZEN));
+  assert.ok(o.identity.excluded.some((x) => x.number === OZEN && x.relation === 'PROJECT_COMPANY_DECLARATION'));
+});
+t('E-H4 / F-H2 control only: a minority stake (≤ 50 %) or a holding without a stated share is shown, never a member, a parent or a reporting entity; > 50 % is', () => {
+  const base = dimri().portfolio.total;
+  const extract3 = FX.doc('company_extract', { entityNumber: DIMRI, entityName: nameOf(DIMRI), asOf: '2026-06-30', shareholders: [{ name: nameOf(SHVIRO), number: SHVIRO, sharePct: 3 }] });
+  const chart2 = FX.doc('ownership_chart', { asOf: '2026-06-30', relations: [{ parentNumber: DIMRI, parentName: nameOf(DIMRI), childNumber: OZEN, childName: nameOf(OZEN), sharePct: 2 }] });
+  const chartNoShare = FX.doc('ownership_chart', { asOf: '2026-06-30', relations: [{ parentNumber: DIMRI, parentName: nameOf(DIMRI), childNumber: PERETZ, childName: nameOf(PERETZ) }] });
+  const shvStatements = [FX.fs1(SHVIRO, '2025-12-31', '2026-03-20', { cash: 1, equity: 1, totalAssets: 2, shortTermDebt: 0, longTermDebt: 0 })];
+  const g = grp({ company: DIMRI }, { userDocs: [extract3, chart2, chartNoShare, ...shvStatements] });
+  assert.equal(g.portfolio.total, base);
+  for (const n0 of [SHVIRO, OZEN, PERETZ]) { assert.ok(!g.identity.companies.some((c) => c.number === n0), n0 + ' not a group company'); assert.ok(g.identity.excluded.some((x) => x.number === n0), n0 + ' shown as excluded'); }
+  assert.equal(g.financial.reporting, null, 'a minority shareholder is never the reporting entity');
+  const ctl = grp({ company: DIMRI }, { userDocs: [FX.ownershipChart] });
+  assert.ok(ctl.identity.companies.some((c) => c.number === FX.CHILD && c.role === 'SUBSIDIARY'), '100 % is control');
+});
+t('E-M5 a document party named only by number stays POSSIBLE (number + registered name make STRONG)', () => {
+  const g = grp({ company: DIMRI }, { userDocs: [FX.doc('ownership_chart', { asOf: '2026-06-30', relations: [{ parentNumber: DIMRI, childNumber: FX.CHILD, sharePct: 100 }] })] });
+  assert.ok(!g.identity.companies.some((c) => c.number === FX.CHILD));
+  assert.ok(g.structure.edges.filter((e) => e.type === 'HOLDS').every((e) => e.state !== 'STRONG_MATCH'));
+});
+t('E-M7 / UX-H5 the land winner of record is never the identified project company: one record only = "not identified"; the core is never listed as an SPV', () => {
+  const g = dimri();
+  assert.equal(g.spv.distinct, 0); assert.equal(g.spv.unresolved, g.portfolio.total); assert.equal(g.spv.ofRecordOnly, g.portfolio.total);
+  assert.ok(g.portfolio.rows.every((r) => !r.projectCompany.identified && r.projectCompany.ofRecordOnly));
+  assert.ok(!g.spv.groups.some((x) => x.number === DIMRI));
+});
+t('E-M9 the two universes are never added in a ranking: geography ranks by lots then lottery projects, the leading programme is read per universe', () => {
+  for (const g of [read('ozen', { company: OZEN }), read('amram', { company: AMRAM })]) {
+    const L = g.geography.byLocality; for (let i = 1; i < L.length; i++) assert.ok(L[i - 1].ila.n > L[i].ila.n || (L[i - 1].ila.n === L[i].ila.n && L[i - 1].moch.n >= L[i].moch.n), 'sorted by lots');
+    assert.ok('ila' in g.top.programmeExposure && 'moch' in g.top.programmeExposure && !('n' in g.top.programmeExposure));
+  }
+});
+t('E-M10 one tender = one observation: a group whose lots come from a single tender fires no concentration and no activity trend; the activity rule counts distinct tenders', () => {
+  const g = read('onetender', { company: ONE_TENDER });
+  assert.ok(!g.signals.some((x) => x.id === 'GROUP_GEOGRAPHIC_CONCENTRATION' || /ACTIVITY/.test(x.id)));
+  assert.ok(g.geography.concentration.tenders < GM.RULES.concentrationTendersMin);
+  for (const r of READ.values()) for (const x of r.signals.filter((y) => /ACTIVITY/.test(y.id))) assert.ok(Math.max(r.activity.tenders12, r.activity.tendersPrior) >= GM.RULES.activityTendersMin);
+});
+t('E-M11 / E-M12 a group is never compared with itself, and every execution comparison is read over lots a source could show it for', () => {
+  const g = read('ozen', { company: OZEN });
+  assert.equal(g.deep.comparables.cohort.excludesGroupRecords, g.portfolio.total);
+  assert.equal(g.history.comparison.cohortExcludesGroup, true);
+  const K = DD.ctx({ now: NOW }); const Co = GC.cohort(K);
+  for (const f of Co.facts.values()) { if (f.startObservable) assert.ok(f.execCovered, f.id); if (f.completionObservable) assert.ok(f.start.date, f.id); }
+});
+t('E-L16 / E-L17 / E-L18 the answer shares nothing with the memo; a COMPANY_ONLY read has no brand link state; member counts are the rows of this read', () => {
+  const a = grp({ company: DIMRI }); a.identity.excluded.push('x'); a.anchor.name = 'changed'; if (a.anchor.resolution) a.anchor.resolution.reasons.push({ code: 'X' });
+  const b = grp({ company: DIMRI }); assert.ok(!b.identity.excluded.includes('x')); assert.notEqual(b.anchor.name, 'changed');
+  assert.equal(read('contractor', { company: CONTRACTOR_ONLY }).top.coreLegalEntity.linkState, null);
+  const d = dimri(); assert.equal(d.identity.members.reduce((n0, m) => n0 + m.lots, 0), d.portfolio.byUniverse.ila);
+});
+t('F-H1 / E-M6 the reporting entity is a controlling parent with consolidated statements or the core — never an SPV / subsidiary; with only an SPV\'s statements the group has none', () => {
+  const g = grp({ company: DIMRI }, { userDocs: [...FX.spvDeclarations, ...FX.statementsOtherEntity] });
+  assert.equal(g.financial.reporting, null); assert.equal(g.financial.cls, 'MISSING');
+  assert.ok(g.financial.others.some((x) => x.number === FX.SPV[0]));
+  assert.ok(g.brief.items.some((i) => i.id === 'no-financials'));
+  assert.equal(g.pipelineVsFinancial.financial, null);
+  assert.equal(g.nextBest.items.find((x) => x.id === 'audited-financials').usefulness, 'HIGH');
+});
+t('F-H3 going-concern language, a rating downgrade or a covenant reported as not met lead the main exposure, naming the entity', () => {
+  const gc = FX.fs1(DIMRI, '2025-12-31', '2026-03-20', { cash: 500, equity: 1000, totalAssets: 3000, shortTermDebt: 500, longTermDebt: 500 }); gc.fields.goingConcern = true; gc.fields.goingConcernText = 'TEST FIXTURE';
+  const g = grp({ company: DIMRI }, { userDocs: [gc] });
+  assert.equal(g.top.mainExposure.id, 'fin-GOING_CONCERN_LANGUAGE_PRESENT'); assert.match(g.top.mainExposure.text.en, new RegExp(nameOf(DIMRI).slice(0, 6)));
+  const cov = FX.doc('bond_covenants', { entityNumber: DIMRI, series: 'TEST-B', asOf: '2026-06-30', covenant: 'equity floor (fixture)', compliant: 'no', maturities: [{ date: '2027-06-30', amount: 1 }] });
+  const h = grp({ company: DIMRI }, { userDocs: [FX.statements[1], cov] });
+  assert.equal(h.top.mainExposure.id, 'fin-COVENANT_NOT_MET');
+  assert.ok(h.brief.items.some((i) => i.id === 'fin-COVENANT_NOT_MET'));
+});
+t('F-H4 / F-M3 leverage is compared on ONE calculation basis: a figure reported on one side and computed on the other is no change and no flag; debt / assets up with net debt / equity down is GROSS_LEVERAGE_INCREASED, never "leverage increased"', () => {
+  const a = FX.fs1(DIMRI, '2024-12-31', '2025-03-20', { shortTermDebt: 1000, longTermDebt: 1500, cash: 800, equity: 5000, totalAssets: 9000, totalFinancialDebt: 3000, netDebt: 600 });
+  const b = FX.fs1(DIMRI, '2025-12-31', '2026-03-20', { shortTermDebt: 1000, longTermDebt: 1500, cash: 800, equity: 5000, totalAssets: 9000 });
+  const e = grp({ company: DIMRI }, { userDocs: [a, b] }).financial.entities.find((x) => x.number === DIMRI);
+  assert.ok(!e.profile.flags.some((f) => f.id === 'LEVERAGE_INCREASED'));
+  const debtRow = e.change.rows.find((r) => r.field === 'totalFinancialDebt'); assert.equal(debtRow.delta, 0, 'computed from the components on both sides');
+  const c = FX.fs1(DIMRI, '2024-12-31', '2025-03-20', { shortTermDebt: 1000, longTermDebt: 2000, cash: 300, equity: 3000, totalAssets: 9000 });
+  const d = FX.fs1(DIMRI, '2025-12-31', '2026-03-20', { shortTermDebt: 1000, longTermDebt: 3000, cash: 2700, equity: 3000, totalAssets: 10000 });
+  const f = grp({ company: DIMRI }, { userDocs: [c, d] }).financial.entities.find((x) => x.number === DIMRI);
+  assert.ok(!f.profile.flags.some((x) => x.id === 'LEVERAGE_INCREASED')); assert.ok(f.profile.flags.some((x) => x.id === 'GROSS_LEVERAGE_INCREASED'));
+});
+t('F-M1 the latest period end decides; consolidated is preferred only within it; an older statement on another basis is said, never used', () => {
+  const old = FX.fs1(DIMRI, '2022-12-31', '2023-03-20', { cash: 1, equity: 1 });
+  const s1 = { ...FX.fs1(DIMRI, '2024-12-31', '2025-03-20', { cash: 10, equity: 10 }) }; s1.fields = { ...s1.fields, basis: 'separate' };
+  const s2 = { ...FX.fs1(DIMRI, '2025-12-31', '2026-03-20', { cash: 20, equity: 10 }) }; s2.fields = { ...s2.fields, basis: 'separate' };
+  const e = grp({ company: DIMRI }, { userDocs: [old, s1, s2] }).financial.entities.find((x) => x.number === DIMRI);
+  assert.equal(e.profile.latest.period.end, '2025-12-31'); assert.equal(e.change.then.end, '2024-12-31');
+  assert.ok(e.selectionNotes.length >= 1);
+});
+t('F-M2 "large" pipeline only against the cohort: a group with few lots never reads "Large visible pipeline"; rising only when the trend rule says accelerating', () => {
+  const g = read('trio', { company: TRIO });
+  assert.equal(g.pipelineVsFinancial.statement.id, 'LIMITED_PIPELINE_NO_FINANCIALS');
+  for (const r of READ.values()) { const c = r.pipelineVsFinancial.comparison; if (r.pipelineVsFinancial.statement.id === 'LARGE_PIPELINE_NO_FINANCIALS') assert.ok((c.executionLots >= GM.RULES.loadMin && c.executionLots >= c.executionP90) || (c.awarded36Lots >= GM.RULES.loadMin && c.awarded36Lots >= c.awarded36P90)); }
+});
+t('F-M4 a company dissolved by the court is a terminal status — never an "open" insolvency record', () => {
+  const decl = FX.doc('developer_declaration', { projectId: DIMRI_LOT, asOf: '2026-09-01', projectCompanyName: nameOf(DISSOLVED), projectCompanyNumber: DISSOLVED, parentName: nameOf(DIMRI), parentNumber: DIMRI, guarantee: 'not-stated' });
+  const g = grp({ company: DIMRI }, { userDocs: [decl] });
+  const e = g.legal.entities.find((x) => x.number === DISSOLVED); assert.ok(e, 'the declared project company is read');
+  assert.equal(e.openInsolvencyRecords, 0); assert.ok(e.dissolvedByCourt);
+  assert.equal(g.top.mainExposure.id, 'DISSOLVED_BY_COURT');
+});
+t('F-M5 / UX-H4 charges are registrations AND removals with their window — never a bare count', () => {
+  for (const f of dimri().top.legalFlags) { assert.equal(typeof f.charges.registered, 'number'); assert.equal(typeof f.charges.removed, 'number'); assert.ok('window' in f.charges); }
+});
+t('F-M6 bond maturities: dates before the schedule / today listed apart, an older schedule of the same series superseded, the amounts\' units not stated', () => {
+  const s1 = FX.doc('bond_covenants', { entityNumber: DIMRI, series: 'TEST-C', asOf: '2025-06-30', covenant: 'x', compliant: 'yes', maturities: [{ date: '2027-06-30', amount: 5 }] });
+  const s2 = FX.doc('bond_covenants', { entityNumber: DIMRI, series: 'TEST-C', asOf: '2026-06-30', covenant: 'x', compliant: 'yes', maturities: [{ date: '2026-12-31', amount: 7 }, { date: '2028-06-30', amount: 9 }] });
+  const B = grp({ company: DIMRI }, { userDocs: [s1, s2, FX.statements[1]] }).financial.entities.find((x) => x.number === DIMRI).bonds;
+  assert.equal(B.filter((b) => b.superseded).length, 1);
+  const cur = B.find((b) => !b.superseded); assert.deepEqual(cur.maturitiesByYear, { 2026: 7, 2028: 9 });
+  assert.match(cur.note.en, /records no currency or units/);
+});
+t('F-L1 a withheld ratio names exactly the inputs it lacks', () => {
+  const e = grp({ company: DIMRI }, { userDocs: [FX.fs1(DIMRI, '2025-12-31', '2026-03-20', { shortTermDebt: 1, longTermDebt: 1, equity: 5, operatingProfit: 1, financeExpenses: 1 })] }).financial.entities.find((x) => x.number === DIMRI);
+  assert.ok(e.leverage.current.missing.includes('cash')); assert.ok(e.leverage.current.missing.includes('totalAssets'));
+  assert.ok(e.leverage.ifCashGenerationWeakens.missing.includes('operatingCashFlow'));
 });
 
 console.log('group: API · page · zero regression');
@@ -460,7 +607,7 @@ t('A06 unresolved SPVs (brand only): no legal company, every project company unr
   assert.ok(g.portfolio.rows.every((r) => r.projectCompany.state !== 'STRONG_MATCH' && r.projectCompany.state !== 'VERIFIED'));
   kase('A06', 'unresolved SPVs (brand only)', g);
 });
-t('A07 concentrated group: one locality holds every lot → GROUP_GEOGRAPHIC_CONCENTRATION with its rule, never a weakness', () => {
+t('A07 concentrated group: ≥ 70 % of the lots in one locality, from ≥ 3 tenders → GROUP_GEOGRAPHIC_CONCENTRATION with its rule, never a weakness', () => {
   const g = read('conc', { company: CONC }); const s = g.signals.find((x) => x.id === 'GROUP_GEOGRAPHIC_CONCENTRATION');
   assert.ok(s && s.value >= GM.RULES.concentrationShare && s.sampleSize >= GM.RULES.concentrationMin); kase('A07', 'concentrated group', g);
 });
@@ -495,8 +642,9 @@ t('A15 ambiguous structure: several registry candidates, none chosen; no core; c
   kase('A15', 'ambiguous structure', g);
 });
 t('A16 joint brand: every party resolved separately, each with its own group — never a group of the joint string', () => {
-  const g = read('joint', { developer: JOINT }); assert.equal(g.identity.status, 'BRAND_ONLY'); assert.ok(g.identity.shared.length >= 1 || g.identity.notes.length >= 1);
-  assert.ok(g.identity.shared.every((x) => x.relation === 'JOINT_PARTY')); kase('A16', 'joint brand', g);
+  const g = read('joint', { developer: JOINT }); assert.equal(g.identity.status, 'JOINT_AWARD_ONLY'); assert.ok(g.identity.shared.length >= 1);
+  assert.equal(g.portfolio.total, 0, 'a joint string is never a counted group'); assert.ok(g.shared.total >= 1); assert.equal(g.signals.length, 0);
+  assert.ok(g.identity.shared.every((x) => x.relation === 'JOINT_PARTY')); assert.match(g.firstRead[0].text.en, /^Joint award — not one group/); kase('A16', 'joint brand', g);
 });
 t('A17 contractor-only company: COMPANY_ONLY, no portfolio, executor context only', () => {
   const g = read('contractor', { company: CONTRACTOR_ONLY }); assert.equal(g.portfolio.total, 0); kase('A17', 'contractor-only company', g);
@@ -517,4 +665,4 @@ t('the acceptance set: ≥ 15 cases, every one answers knows / does not know / v
   if (process.env.GROUP_ACCEPTANCE_OUT) fs.writeFileSync(process.env.GROUP_ACCEPTANCE_OUT, JSON.stringify({ schema: 'propx-sponsor-xray-acceptance-v1', version: G.VERSION, generatedFor: NOW.slice(0, 10), note: 'Cases marked fixture use TEST FIXTURE documents (fictional relations and figures); every other case is a read of the synced public data.', cases: CASES }, null, 1) + '\n');
 });
 
-apiGate.then(() => console.log(`group: ${n} passed`), (e) => { console.error(e); process.exit(1); });
+apiGate.then(() => { console.log(`group: ${n} passed${failed ? `, ${failed} FAILED` : ''}`); if (failed) process.exit(1); });

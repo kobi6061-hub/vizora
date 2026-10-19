@@ -379,22 +379,29 @@
 - `lib/group/` + `test/group.test.js` (+ `test/fixtures/group-fixture.js`, a labelled TEST FIXTURE of fictional documents;
   `test/fixtures/group-acceptance-2026-10-19.json`) = SPONSOR X-RAY — DEVELOPER GROUP INTELLIGENCE (19.10.2026): "show me the entire
   real-estate group" behind a brand / legal company / company number / project / SPV, composed only from the existing read models
-  (`lib/entities` registry + resolution, `lib/dd` ladder / project company / financial / legal; `lib/dd/index.js` exports internals
-  read-only) and user documents. Tiers: CORE (brand spellings STRONG / VERIFIED to one legal company) + DOCUMENTED (a user document,
-  both parties found in the registry by number + registered name) are counted, each project once per universe (ILA lots ≠ MoCH
-  lottery projects, never added); SHARED (joint-award parties) and POSSIBLE / AMBIGUOUS never. Status LEGAL_CORE_VERIFIED / _STRONG
-  (the weakest core link) · COMPANY_ONLY · BRAND_ONLY · NOT_IN_COVERAGE; every edge with state · source · date · class · why · what it
-  does not prove; HOLDS ≠ GUARANTEES (explicit declaration only). Furthest verified stage (8 buckets, only STRONG / VERIFIED links move
-  it), OBSERVED EXECUTION LOAD (never "capacity utilization"), the execution record vs the NATIONAL COHORT (`cohort.js`: the same
-  `recordFacts` over ≈ 6,900 records, memoised; censoring-aware horizons 36 / 72 months; one tender = one observation; a speed label
-  only with ≥ 3 own / ≥ 30 cohort), 12 deterministic signals (`RULES`, no score), geography (the exact concentration statement),
-  programme from the source's track only, land pipeline (AWARDED ≠ SOLD), per-entity financials only (no aggregation, SPV liabilities
-  never rolled up; THEN → NOW on the comparable period; the leverage explainer — no invented-input scenario), pipeline vs financial
-  position (side by side, no ratio across universes), SPV exposure, structure map, legal timeline (exact entity; CHARGE ≠ DISTRESS),
+  (`lib/entities` registry + resolution, `lib/dd` ladder / project company / financial / legal — each row read exactly as `DD.project`
+  reads it; `lib/dd/index.js` exports internals read-only) and user documents. Tiers: CORE (brand spellings STRONG / VERIFIED to one
+  legal company) + DOCUMENTED (a user document stating CONTROL — > 50 % or a declared parent — both parties found in the registry by
+  number + the registered name stated) are counted, each project once per universe (ILA lots ≠ MoCH lottery projects, never added,
+  never added in a ranking); SHARED (joint-award parties; a joint string as anchor = JOINT_AWARD_ONLY), minority / unstated holdings,
+  POSSIBLE / AMBIGUOUS never. A declared project company is attached to its declared group project only — it never imports a company.
+  Status LEGAL_CORE_VERIFIED / _STRONG (the weakest core link) · _USER_KEY (a user-provided number) · COMPANY_ONLY · BRAND_ONLY ·
+  JOINT_AWARD_ONLY · NOT_IN_COVERAGE; every edge with state · source · date · class · why · what it does not prove; HOLDS ≠ GUARANTEES
+  (explicit declaration only); a project company is IDENTIFIED only with ≥ 2 independent records (the land winner of record ≠ it). Furthest verified stage (8 buckets, only STRONG / VERIFIED links move
+  it), OBSERVED EXECUTION LOAD (never "capacity utilization"; with its coverage context), the execution record vs the NATIONAL COHORT
+  (`cohort.js`: the same `recordFacts` over ≈ 6,900 records, memoised; the group's own records always excluded; only COVERED lots —
+  Tel Aviv-Yafo or a MoCH progress join — and censoring-aware horizons; one tender = one observation; a speed label only with ≥ 3 own /
+  ≥ 30 cohort), deterministic signals (`RULES`, no score; concentration and activity need ≥ 3 tenders; LIMITED_COMPLETION_EVIDENCE is a
+  coverage statement), geography (the exact concentration statement), programme from the source's track only, land pipeline (AWARDED ≠
+  SOLD), per-entity financials only (no aggregation, SPV liabilities never rolled up; reporting entity = a controlling parent with
+  consolidated statements, else the core, else none; the latest period end; THEN → NOW on the comparable period AND one calculation
+  basis; net debt / equity decides the leverage flag; covenant not met; the leverage explainer — no invented-input scenario), pipeline
+  vs financial position (side by side, no ratio across universes; "large" only vs the groups' P90), SPV exposure, structure map, legal
+  timeline (exact entity; CHARGE ≠ DISTRESS; closed Receiver case ≠ current insolvency; dissolved ≠ open),
   group timeline, risk & gap brief (6 categories), next best evidence, first read / one minute / top. `GET|POST /api/intel?view=group
   &developer=|company=|project=`; the page's entity drawer kind `group` (one-minute · five-minute · deep dive) + "VIEW DEVELOPER GROUP"
   / "VIEW GROUP / SPONSOR" entries and a "Group ↗" search action; registry group `group` (38 terms, signal rules, 7 missing reasons,
-  entity type). 14 truth gates + review gates + 19 acceptance cases. See `lib/group/README.md`.
+  entity type). 14 truth gates + review gates + 20 independent-review gates + 19 acceptance cases. See `lib/group/README.md`.
 - `altaris/` + `test/altaris.test.js` = the ALTARIS Capital Allocation Engine (`/altaris`, one `rewrites` entry in
   `vercel.json`): an isolated institutional underwriting module comparing BUY / FINANCE / HYBRID for a residential deal —
   its own page, styles (PROPX tokens copied, not shared), a pure engine (`altaris/engine.js`: dated monthly cash flows,

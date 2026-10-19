@@ -19,19 +19,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 3 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: be'er sheva (20 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added (+15 lots under 5 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 3 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 24 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "No exposure rule fired; largest market: Be'er Sheva (20 lots; 22% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a public / bond-issuing company's reports exist on MAYA, but the sources (MAYA / TASE / MAGNA) refuse a non-browser client — they can be uploaded as a user document",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "108 projects without an identified project company (108 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 108 STRONG",
-    "88 projects without later public evidence for 18+ months (17 where a covered source could show it; 71 — a coverage gap)",
+    "88 projects without later public evidence for 18+ months (0 where a covered source could show it; 88 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -40,7 +40,7 @@
     "registry status of 511399388: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 17 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 3 of 70 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): LAND 5 · COMPLETION 3 · NO_LATER_EVIDENCE 84"
    ],
    "unresolved": [
@@ -54,7 +54,7 @@
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
     "ownership-chart: the group's ownership chart",
-    "company-extract: a current company extract of the core company"
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -69,19 +69,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "פרץ בוני הנגב (1993) בע\"מ · company 511847337 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "33 ILA lots (3,693 units of capacity) · 8 lottery projects (925 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 4 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: ashqelon (6 lots · 3 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "33 ILA lots (3,693 units of capacity) · 8 lottery projects (925 first-lottery units) — two universes, never added (+3 lots under 2 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 4 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 6 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "No exposure rule fired; largest market: Ashqelon (6 lots · 3 lottery projects; 18% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "41 projects without an identified project company (41 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 41 STRONG",
-    "31 projects without later public evidence for 18+ months (8 where a covered source could show it; 23 — a coverage gap)",
+    "31 projects without later public evidence for 18+ months (0 where a covered source could show it; 31 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -90,7 +90,7 @@
     "registry status of 511847337: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 8 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 4 of 26 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): LAND 1 · COMPLETION 4 · NO_LATER_EVIDENCE 28"
    ],
    "unresolved": [
@@ -100,8 +100,8 @@
    "seesFirst": "פרץ בוני הנגב (1993) בע\"מ · company 511847337 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -117,18 +117,18 @@
    "knows": [
     "עמרם אברהם חברה לבנין בע\"מ · company 513201582 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
     "65 ILA lots (9,463 units of capacity) · 40 lottery projects (3,691 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: elat (16 lots · 13 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Elat (16 lots · 13 lottery projects; 25% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a public / bond-issuing company's reports exist on MAYA, but the sources (MAYA / TASE / MAGNA) refuse a non-browser client — they can be uploaded as a user document",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "105 projects without an identified project company (105 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 105 STRONG",
-    "72 projects without later public evidence for 18+ months (40 where a covered source could show it; 32 — a coverage gap)",
+    "72 projects without later public evidence for 18+ months (0 where a covered source could show it; 72 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -137,7 +137,8 @@
     "registry status of 513201582: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 40 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 0 of 24 lots awarded 72+ months ago are in a source that could show a completion",
+    "RECENT_PROJECT_ACTIVITY_ACCELERATING: tenders won: 7 in the 12 months to the read date (11 lots) vs 3 in the prior 12 (4 lots)",
     "stages (ILA): LAND 11 · NO_LATER_EVIDENCE 54"
    ],
    "unresolved": [
@@ -150,7 +151,7 @@
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
     "ownership-chart: the group's ownership chart",
-    "company-extract: a current company extract of the core company"
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -165,17 +166,17 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "טריו אדנים יזמות ובניין בע\"מ · company 517256376 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "2 ILA lots (134 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: ma'alot-tarshiha (1 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "2 ILA lots (134 units of capacity) · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Ma'alot-Tarshiha (1 lots; 50% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "2 projects without an identified project company (2 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 2 STRONG",
     "project-level sales pace — no source"
    ],
@@ -191,8 +192,8 @@
    "seesFirst": "טריו אדנים יזמות ובניין בע\"מ · company 517256376 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -207,19 +208,18 @@
    "structure": "DOCUMENTED",
    "knows": [
     "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 3 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: be'er sheva (20 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added (+15 lots under 5 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 3 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 24 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "No exposure rule fired; largest market: Be'er Sheva (20 lots; 22% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a public / bond-issuing company's reports exist on MAYA, but the sources (MAYA / TASE / MAGNA) refuse a non-browser client — they can be uploaded as a user document",
     "no financial statements for the group's entities in coverage",
-    "3 projects without an identified project company (STRONG / VERIFIED)",
+    "108 projects without an identified project company (105 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 105 STRONG",
-    "88 projects without later public evidence for 18+ months (17 where a covered source could show it; 71 — a coverage gap)",
+    "88 projects without later public evidence for 18+ months (0 where a covered source could show it; 88 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -231,7 +231,7 @@
     "registry status of 511474553: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 17 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 3 of 70 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): LAND 5 · COMPLETION 3 · NO_LATER_EVIDENCE 84"
    ],
    "unresolved": [
@@ -274,18 +274,17 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "אשדר חברה לבנייה בע\"מ · BRAND ONLY — the legal company is not resolved",
-    "10 ILA lots (2,104 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: qiryat ono (4 lots · 0 lottery projects)",
-    "which legal company stands behind the brand",
-    "the company number and extract of the legal company behind the brand"
+    "10 ILA lots (2,104 units of capacity) · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Qiryat Ono (4 lots; 40% of the lots, concentration threshold 70%)",
+    "which legal company stands behind the brand → the company number and extract of the legal company behind the brand"
    ],
    "doesNotKnow": [
     "which legal company stands behind the brand",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities (a user document only)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
-    "10 projects without an identified project company (STRONG / VERIFIED)",
+    "10 projects without an identified project company (0 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 0 STRONG",
     "10 projects without later public evidence for 18+ months (0 where a covered source could show it; 10 — a coverage gap)",
     "project-level sales pace — no source"
@@ -295,6 +294,7 @@
     "10 ILA lots · 0 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)"
    ],
    "derived": [
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 0 of 10 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): NO_LATER_EVIDENCE 10"
    ],
    "unresolved": [],
@@ -310,43 +310,48 @@
    "title": "concentrated group",
    "anchor": {
     "type": "company",
-    "id": "514538917",
-    "name": "נ.י.צ.ג. נדל\"ן בע\"מ"
+    "id": "511775090",
+    "name": "אסום - חברה קבלנית לבנין בע\"מ"
    },
    "status": "LEGAL_CORE_STRONG",
    "structure": "NOT_IN_COVERAGE",
    "knows": [
-    "נ.י.צ.ג. נדל\"ן בע\"מ · company 514538917 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "15 ILA lots (43 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "100% of the group's lots (15 of 15) in one locality: afula",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "אסום - חברה קבלנית לבנין בע\"מ · company 511775090 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
+    "20 ILA lots (1,568 units of capacity) · 10 lottery projects (1,504 first-lottery units) — two universes, never added (+17 lots under 3 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 16 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "70% of the group's lots (14 of 20) in one locality: Sederot — High concentration means the observed portfolio depends more heavily on one market. It does not by itself indicate financial weakness.",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
-    "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 15 STRONG",
-    "15 projects without later public evidence for 18+ months (0 where a covered source could show it; 15 — a coverage gap)",
+    "30 projects without an identified project company (30 of them — only the winner / developer on one record)",
+    "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 30 STRONG",
+    "20 projects without later public evidence for 18+ months (0 where a covered source could show it; 20 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
-    "legal core 514538917 נ.י.צ.ג. נדל\"ן בע\"מ (VERIFIED; brand links STRONG_MATCH)",
-    "15 ILA lots · 0 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)",
-    "registry status of 514538917: active"
+    "legal core 511775090 אסום - חברה קבלנית לבנין בע\"מ (VERIFIED; brand links STRONG_MATCH)",
+    "20 ILA lots · 10 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)",
+    "registry status of 511775090: active"
    ],
    "derived": [
-    "GROUP_GEOGRAPHIC_CONCENTRATION: 100% of the group's lots (15 of 15) in one locality: afula",
-    "stages (ILA): NO_LATER_EVIDENCE 15"
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 0 of 20 lots awarded 72+ months ago are in a source that could show a completion",
+    "GROUP_GEOGRAPHIC_CONCENTRATION: 70% of the group's lots (14 of 20) in one locality: Sederot",
+    "stages (ILA): NO_LATER_EVIDENCE 20"
    ],
-   "unresolved": [],
-   "seesFirst": "נ.י.צ.ג. נדל\"ן בע\"מ · company 514538917 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
+   "unresolved": [
+    "אסום חברה קבלנית לבניין בע\"מ — POSSIBLE (CANDIDATE_OF)",
+    "אסום חברה קבלנית לבניין בעמ — POSSIBLE (CANDIDATE_OF)",
+    "אסום חב' קבלנית לבניין בע\"מ — POSSIBLE (CANDIDATE_OF)"
+   ],
+   "seesFirst": "אסום - חברה קבלנית לבנין בע\"מ · company 511775090 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -362,18 +367,18 @@
    "knows": [
     "עמרם אברהם חברה לבנין בע\"מ · company 513201582 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
     "65 ILA lots (9,463 units of capacity) · 40 lottery projects (3,691 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: elat (16 lots · 13 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Elat (16 lots · 13 lottery projects; 25% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a public / bond-issuing company's reports exist on MAYA, but the sources (MAYA / TASE / MAGNA) refuse a non-browser client — they can be uploaded as a user document",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "105 projects without an identified project company (105 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 105 STRONG",
-    "72 projects without later public evidence for 18+ months (40 where a covered source could show it; 32 — a coverage gap)",
+    "72 projects without later public evidence for 18+ months (0 where a covered source could show it; 72 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -382,7 +387,8 @@
     "registry status of 513201582: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 40 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 0 of 24 lots awarded 72+ months ago are in a source that could show a completion",
+    "RECENT_PROJECT_ACTIVITY_ACCELERATING: tenders won: 7 in the 12 months to the read date (11 lots) vs 3 in the prior 12 (4 lots)",
     "stages (ILA): LAND 11 · NO_LATER_EVIDENCE 54"
    ],
    "unresolved": [
@@ -395,7 +401,7 @@
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
     "ownership-chart: the group's ownership chart",
-    "company-extract: a current company extract of the core company"
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -410,17 +416,17 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "סלם יעקב א.י. השקעות ונכסים בע\"מ · company 514604222 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "14 ILA lots (1,642 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: nofit (4 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "14 ILA lots (1,642 units of capacity) · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Nofit (4 lots; 29% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "14 projects without an identified project company (14 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 14 STRONG",
     "6 projects without later public evidence for 18+ months (0 where a covered source could show it; 6 — a coverage gap)",
     "project-level sales pace — no source"
@@ -431,7 +437,7 @@
     "registry status of 514604222: active"
    ],
    "derived": [
-    "RECENT_PROJECT_ACTIVITY_ACCELERATING: new observed activity: 8 in the last 12 months vs 0 in the prior 12 (lots won + first lotteries)",
+    "RECENT_PROJECT_ACTIVITY_ACCELERATING: tenders won: 7 in the 12 months to the read date (8 lots) vs 0 in the prior 12 (0 lots)",
     "stages (ILA): LAND 8 · NO_LATER_EVIDENCE 6"
    ],
    "unresolved": [
@@ -440,8 +446,8 @@
    "seesFirst": "סלם יעקב א.י. השקעות ונכסים בע\"מ · company 514604222 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -456,19 +462,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "אחים אוזן חברה לבניה בע\"מ · company 511517237 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "61 ILA lots (3,228 units of capacity) · 19 lottery projects (1,161 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 8 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: ofaqim (16 lots · 6 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "61 ILA lots (3,228 units of capacity) · 19 lottery projects (1,161 first-lottery units) — two universes, never added (+14 lots under 1 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 8 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 9 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "award → construction start lengthened: median 9.7 → 15.9 months",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "80 projects without an identified project company (80 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 80 STRONG",
-    "56 projects without later public evidence for 18+ months (19 where a covered source could show it; 37 — a coverage gap)",
+    "56 projects without later public evidence for 18+ months (0 where a covered source could show it; 56 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -477,7 +483,8 @@
     "registry status of 511517237: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 19 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "EXECUTION_TIME_LENGTHENING: award → construction start lengthened: median 9.7 → 15.9 months",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 8 of 61 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): COMPLETION 8 · NO_LATER_EVIDENCE 53"
    ],
    "unresolved": [
@@ -486,8 +493,8 @@
    "seesFirst": "אחים אוזן חברה לבניה בע\"מ · company 511517237 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -502,19 +509,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "שבירו הנדסה בניה והשקעות בע\"מ · company 512172651 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "67 ILA lots (8,366 units of capacity) · 13 lottery projects (1,621 first-lottery units) — two universes, never added",
-    "9 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: rosh haayin (15 lots · 3 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "67 ILA lots (8,366 units of capacity) · 13 lottery projects (1,621 first-lottery units) — two universes, never added (+1 lots under 1 possible spelling(s) — not counted)",
+    "9 lots linked to start evidence with no completion evidence (9 of them only in MoCH reports to 2024-03-01) · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 22 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "No exposure rule fired; largest market: Rosh Haayin (15 lots · 3 lottery projects; 22% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "80 projects without an identified project company (80 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 80 STRONG",
-    "57 projects without later public evidence for 18+ months (15 where a covered source could show it; 42 — a coverage gap)",
+    "57 projects without later public evidence for 18+ months (2 where a covered source could show it; 55 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -523,7 +530,8 @@
     "registry status of 512172651: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 15 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 10 of 49 lots awarded 72+ months ago are in a source that could show a completion",
+    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 2 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
     "stages (ILA): LAND 4 · CONSTRUCTION 9 · NO_LATER_EVIDENCE 54"
    ],
    "unresolved": [
@@ -540,8 +548,8 @@
    "seesFirst": "שבירו הנדסה בניה והשקעות בע\"מ · company 512172651 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -556,17 +564,17 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 3 lots and 0 projects with completion / occupancy evidence",
-    "leverage increased: net debt / equity 0.42 → 1.08; debt / assets 0.32 → 0.44",
-    "the ownership structure: parents, subsidiaries and SPVs",
-    "the group's ownership chart"
+    "92 ILA lots (9,004 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added (+15 lots under 5 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 3 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 24 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "י.ח. דמרי בניה ופיתוח בע\"מ: leverage increased: net debt / equity 0.42 → 1.08; debt / assets 0.32 → 0.44",
+    "the ownership structure: parents, subsidiaries and SPVs → the group's ownership chart"
    ],
    "doesNotKnow": [
     "the ownership structure: parents, subsidiaries and SPVs",
     "the group's ownership structure is not in coverage",
+    "108 projects without an identified project company (108 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 108 STRONG",
-    "88 projects without later public evidence for 18+ months (17 where a covered source could show it; 71 — a coverage gap)",
+    "88 projects without later public evidence for 18+ months (0 where a covered source could show it; 88 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -575,7 +583,7 @@
     "registry status of 511399388: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 17 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 3 of 70 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): LAND 5 · COMPLETION 3 · NO_LATER_EVIDENCE 84"
    ],
    "unresolved": [
@@ -588,8 +596,8 @@
    "seesFirst": "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "ownership-chart: the group's ownership chart",
-    "company-extract: a current company extract of the core company",
-    "project-spv-identity: the project companies (SPVs)"
+    "project-spv-identity: the project companies (SPVs)",
+    "company-extract: a current company extract of the core company"
    ],
    "fixture": true
   },
@@ -605,17 +613,17 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "מגידו השקעות ובניה בע\"מ · company 510966518 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "13 ILA lots (709 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 6 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: harish (2 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "13 ILA lots (709 units of capacity) · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 6 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Harish (2 lots; 15% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "13 projects without an identified project company (13 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 13 STRONG",
     "7 projects without later public evidence for 18+ months (0 where a covered source could show it; 7 — a coverage gap)",
     "project-level sales pace — no source"
@@ -626,6 +634,7 @@
     "registry status of 510966518: active"
    ],
    "derived": [
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 6 of 13 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): COMPLETION 6 · NO_LATER_EVIDENCE 7"
    ],
    "unresolved": [
@@ -634,8 +643,8 @@
    "seesFirst": "מגידו השקעות ובניה בע\"מ · company 510966518 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -650,19 +659,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "אחים אוזן חברה לבניה בע\"מ · company 511517237 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "61 ILA lots (3,228 units of capacity) · 19 lottery projects (1,161 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 8 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: ofaqim (16 lots · 6 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "61 ILA lots (3,228 units of capacity) · 19 lottery projects (1,161 first-lottery units) — two universes, never added (+14 lots under 1 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 8 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 9 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "award → construction start lengthened: median 9.7 → 15.9 months",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
+    "80 projects without an identified project company (80 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 80 STRONG",
-    "56 projects without later public evidence for 18+ months (19 where a covered source could show it; 37 — a coverage gap)",
+    "56 projects without later public evidence for 18+ months (0 where a covered source could show it; 56 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -671,7 +680,8 @@
     "registry status of 511517237: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 19 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "EXECUTION_TIME_LENGTHENING: award → construction start lengthened: median 9.7 → 15.9 months",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 8 of 61 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): COMPLETION 8 · NO_LATER_EVIDENCE 53"
    ],
    "unresolved": [
@@ -680,8 +690,8 @@
    "seesFirst": "אחים אוזן חברה לבניה בע\"מ · company 511517237 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -714,20 +724,19 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "אי. אס. איי אחזקות בע\"מ · BRAND ONLY — the legal company is not resolved",
-    "3 ILA lots (363 units of capacity) · 1 lottery projects (125 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: mevasseret ziyyon (1 lots · 1 lottery projects)",
-    "which legal company stands behind the brand",
-    "the company number and extract of the legal company behind the brand"
+    "3 ILA lots (363 units of capacity) · 1 lottery projects (125 first-lottery units) — two universes, never added (+0 lots and 1 lottery projects under 1 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No exposure rule fired; largest market: Bet Shemesh (2 lots; 67% of the lots, concentration threshold 70%)",
+    "which legal company stands behind the brand → the company number and extract of the legal company behind the brand"
    ],
    "doesNotKnow": [
     "which legal company stands behind the brand",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities (a user document only)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
-    "4 projects without an identified project company (STRONG / VERIFIED)",
+    "4 projects without an identified project company (0 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 0 STRONG",
-    "3 projects without later public evidence for 18+ months (1 where a covered source could show it; 2 — a coverage gap)",
+    "3 projects without later public evidence for 18+ months (0 where a covered source could show it; 3 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -735,7 +744,6 @@
     "3 ILA lots · 1 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 1 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
     "stages (ILA): NO_LATER_EVIDENCE 3"
    ],
    "unresolved": [
@@ -776,42 +784,38 @@
      ]
     }
    },
-   "status": "BRAND_ONLY",
+   "status": "JOINT_AWARD_ONLY",
    "structure": "NOT_IN_COVERAGE",
    "knows": [
-    "סלע בינוי והשקעות מקבוצת אמנון מסילות בע\"מ, משכנות בראל בע\"מ, צור טאואר בנייה בע\"מ · BRAND ONLY — the legal company is not resolved",
-    "5 ILA lots (1,214 units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "100% of the group's lots (5 of 5) in one locality: qiryat bialik",
-    "which legal company stands behind the brand",
-    "the company number and extract of the legal company behind the brand"
+    "Joint award — not one group: סלע בינוי והשקעות מקבוצת אמנון מסילות בע\"מ, משכנות בראל בע\"מ, צור טאואר בנייה בע\"מ · 1 part(ies) resolved, each with its own group",
+    "5 project(s) in the joint award — shared, counted for no party",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No development activity observed in the sources in coverage — nothing to assess",
+    "each joint-award party's own group, and the split of rights between them → the latest audited financial statements"
    ],
    "doesNotKnow": [
-    "which legal company stands behind the brand",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "each joint-award party's own group, and the split of rights between them",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities (a user document only)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
-    "5 projects without an identified project company (STRONG / VERIFIED)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 0 STRONG",
-    "5 projects without later public evidence for 18+ months (0 where a covered source could show it; 5 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
     "no legal core",
-    "5 ILA lots · 0 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)"
+    "0 ILA lots · 0 MoCH lottery projects (OFFICIAL records, CORE + DOCUMENTED only)"
    ],
    "derived": [
-    "GROUP_GEOGRAPHIC_CONCENTRATION: 100% of the group's lots (5 of 5) in one locality: qiryat bialik",
-    "stages (ILA): NO_LATER_EVIDENCE 5"
+    "stages (ILA): —"
    ],
    "unresolved": [
     "משכנות בראל בע\"מ — SHARED joint award"
    ],
-   "seesFirst": "סלע בינוי והשקעות מקבוצת אמנון מסילות בע\"מ, משכנות בראל בע\"מ, צור טאואר בנייה בע\"מ · BRAND ONLY — the legal company is not resolved",
+   "seesFirst": "Joint award — not one group: סלע בינוי והשקעות מקבוצת אמנון מסילות בע\"מ, משכנות בראל בע\"מ, צור טאואר בנייה בע\"מ · 1 part(ies) resolved, each with its own group",
    "verifyNext": [
-    "company-extract: the company number and extract of the legal company behind the brand",
     "audited-financials: the latest audited financial statements",
-    "ownership-chart: the group's ownership chart"
+    "ownership-chart: the group's ownership chart",
+    "project-spv-identity: the project companies (SPVs)"
    ]
   },
   {
@@ -826,15 +830,14 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "פוגל שרות קירור בע\"מ · company 510125057 · COMPANY ONLY — no observed brand resolves to it",
-    "0 ILA lots (— units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "no notable exposure observed in the sources in coverage",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "0 ILA lots · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No development activity observed in the sources in coverage — nothing to assess",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a private company does not publish its statements — request audited statements from the sponsor (a user document)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 0 STRONG",
@@ -868,15 +871,14 @@
    "structure": "NOT_IN_COVERAGE",
    "knows": [
     "512345678 · NOT IN COVERAGE — the number is not among the companies PROPX keeps",
-    "0 ILA lots (— units of capacity) · 0 lottery projects (— first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 0 lots and 0 projects with completion / occupancy evidence",
-    "no notable exposure observed in the sources in coverage",
-    "the company's record — the number is not among the companies PROPX keeps",
-    "the company number and extract of the legal company behind the brand"
+    "0 ILA lots · 0 lottery projects — two universes, never added",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 0 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start",
+    "No development activity observed in the sources in coverage — nothing to assess",
+    "the company's record — the number is not among the companies PROPX keeps → the company number and extract of the legal company behind the brand"
    ],
    "doesNotKnow": [
     "the company's record — the number is not among the companies PROPX keeps",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities (a user document only)",
     "no financial statements for the group's entities in coverage",
     "the group's ownership structure is not in coverage",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 0 STRONG",
@@ -909,18 +911,18 @@
    "structure": "DOCUMENTED",
    "knows": [
     "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
-    "94 ILA lots (9,138 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added",
-    "0 in observed execution (0 current active site) · 3 lots and 0 projects with completion / occupancy evidence",
-    "largest observed market: be'er sheva (20 lots · 0 lottery projects)",
-    "the financial position — no statements in coverage",
-    "the latest audited financial statements"
+    "94 ILA lots (9,138 units of capacity) · 16 lottery projects (1,477 first-lottery units) — two universes, never added (+15 lots under 5 possible spelling(s) — not counted)",
+    "0 lots linked to start evidence with no completion evidence · 0 on a current active site · 3 lots and 0 lottery projects with completion / occupancy evidence · coverage: dated starts only from MoCH reports to 2024-03-01 and Tel Aviv; across all lots only 5% show a start · separately: the company is the registered executing contractor on 24 active Ministry of Labour sites (not linked to a lot, not counted)",
+    "No exposure rule fired; largest market: Be'er Sheva (20 lots; 21% of the lots, concentration threshold 70%)",
+    "the financial position — no statements in coverage → the latest audited financial statements"
    ],
    "doesNotKnow": [
     "the financial position — no statements in coverage",
-    "PROPX does not currently have machine-readable audited financial statements for the group's entities; the public sources (MAYA / TASE / MAGNA) refuse a non-browser client",
+    "PROPX does not currently have machine-readable audited financial statements for the group's entities; a public / bond-issuing company's reports exist on MAYA, but the sources (MAYA / TASE / MAGNA) refuse a non-browser client — they can be uploaded as a user document",
     "no financial statements for the group's entities in coverage",
+    "110 projects without an identified project company (110 of them — only the winner / developer on one record)",
     "no project has a VERIFIED project company (an official project-level identifier is not in coverage) — 110 STRONG",
-    "88 projects without later public evidence for 18+ months (17 where a covered source could show it; 71 — a coverage gap)",
+    "88 projects without later public evidence for 18+ months (0 where a covered source could show it; 88 — a coverage gap)",
     "project-level sales pace — no source"
    ],
    "verified": [
@@ -930,7 +932,7 @@
     "registry status of 517256376: active"
    ],
    "derived": [
-    "NO_LATER_PUBLIC_EVIDENCE_FOUND: 17 projects where a source in coverage could show later evidence, and no dated public evidence was found for 18+ months (below completion)",
+    "LIMITED_COMPLETION_EVIDENCE: the completion record is limited by coverage: only 3 of 70 lots awarded 72+ months ago are in a source that could show a completion",
     "stages (ILA): LAND 7 · COMPLETION 3 · NO_LATER_EVIDENCE 84"
    ],
    "unresolved": [
@@ -944,8 +946,8 @@
    "seesFirst": "י.ח. דמרי בניה ופיתוח בע\"מ · company 511399388 · LEGAL CORE — STRONG MATCH by the identical registered name (not VERIFIED)",
    "verifyNext": [
     "audited-financials: the latest audited financial statements",
-    "company-extract: a current company extract of the core company",
-    "project-spv-identity: the project companies (SPVs)"
+    "project-spv-identity: the project companies (SPVs)",
+    "company-extract: a current company extract of the core company"
    ],
    "fixture": true
   }

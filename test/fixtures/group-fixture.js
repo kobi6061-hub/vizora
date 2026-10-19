@@ -34,7 +34,7 @@ function build(nameOf, NOW) {
   const statementsOtherEntity = [fs1(SPV[0], '2025-12-31', '2026-03-25', { cash: 10000, shortTermDebt: 250000, longTermDebt: 0, equity: 20000, totalAssets: 300000 })];
   const bonds = [doc('bond_covenants', { entityNumber: CORE, series: 'TEST-SERIES-A', asOf: '2026-06-30', covenant: 'equity ≥ threshold (fixture)', threshold: '1,500,000', actual: '2,400,000', compliant: 'yes', maturities: [{ date: '2027-06-30', amount: 400000 }, { date: '2028-06-30', amount: 400000 }] })];
   const litigation = [doc('litigation_disclosure', { entityNumber: CORE, asOf: '2026-06-30', kind: 'lawsuit', court: 'TEST FIXTURE court', caseNumber: 'TEST-0001', amount: 1000, currency: 'ILS', status: 'pending', material: 'not-stated' })];
-  return { CORE, SPV, LOTS, CHILD, OTHER, spvDeclarations, ownershipChart, mismatchChart, statements, statementsOtherEntity, bonds, litigation };
+  return { CORE, SPV, LOTS, CHILD, OTHER, doc, fs1, spvDeclarations, ownershipChart, mismatchChart, statements, statementsOtherEntity, bonds, litigation };
 }
 
 module.exports = { build };
