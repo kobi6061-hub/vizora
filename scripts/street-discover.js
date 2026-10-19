@@ -115,7 +115,40 @@ async function over() {
   }
 }
 
+/* --over-probe [settlementCode] [street] — the exact shapes of the street-relevant answers, a dozen sequential GETs, one second
+   apart (a volunteer project's public API: polite by construction) */
+async function overProbe(code = '7900', street = 'העצמאות', city = 'פתח תקווה') {
+  const B = 'https://www.over.org.il';
+  const e = encodeURIComponent;
+  const calls = [
+    ['deals/stats', '/api/deals/stats'],
+    ['deals/natures', '/api/deals/natures'],
+    ['govmap/stats', '/api/deals/govmap/stats'],
+    ['breakdown(city)', `/api/deals/breakdown?settlement_code=${code}&limit=60`],
+    ['breakdown(city,street)', `/api/deals/breakdown?settlement_code=${code}&street=${e(street)}&limit=60`],
+    ['series(city,street)', `/api/deals/series?settlement_code=${code}&street=${e(street)}`],
+    ['search(city,street)', `/api/deals/search?settlement_code=${code}&street=${e(street)}&limit=5&date_from=2023-01-01`],
+    ['search(city,street-prefix)', `/api/deals/search?settlement_code=${code}&street=${e(street.slice(0, 3))}&limit=3`],
+    ['nadlan/streets', `/api/nadlan/streets?q=${e(street)}&settlement=${code}&limit=20`],
+    ['nadlan/address', `/api/nadlan/address?city=${e(city)}&street=${e(street)}&number=1&deals=false`],
+    ['govmap/settlements', '/api/deals/govmap/settlements'],
+    ['govmap/search(city,street)', `/api/deals/govmap/search?settlement=${e(city)}&street=${e(street)}&limit=5&date_from=2023-01-01`],
+  ];
+  for (const [label, p] of calls) {
+    try {
+      const r = await get(B + p);
+      const j = r.json;
+      const rows = j && (Array.isArray(j) ? j : j.data || j.results || j.items || j.streets || null);
+      out({ kind: 'overProbe', label, url: p, status: r.status, keys: j && !Array.isArray(j) ? Object.keys(j).slice(0, 30) : null,
+        n: Array.isArray(rows) ? rows.length : null, total: j && (j.total ?? j.count ?? null), head: trim(Array.isArray(rows) ? rows.slice(0, 6) : j, 2200),
+        notes: j && (j.notes || j.caveats) ? trim(j.notes || j.caveats, 900) : undefined });
+    } catch (err) { out({ kind: 'overProbe', label, url: p, error: err.message }); }
+    await new Promise((ok) => setTimeout(ok, 1000));
+  }
+}
+
 (async () => {
+  if (args.includes('--over-probe')) return overProbe(opt('--over-probe') || undefined, opt('--street') || undefined, opt('--city') || undefined);
   if (args.includes('--catalogue')) return catalogue();
   if (args.includes('--resource')) return resource(opt('--resource'));
   if (args.includes('--profile')) return profile(opt('--profile'));
