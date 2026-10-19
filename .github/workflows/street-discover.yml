@@ -12,14 +12,14 @@ on:
       mode:
         description: 'catalogue | resource (one resource: fields + sample) | profile (the whole table) | over (over.org.il API paths)'
         type: choice
-        options: [catalogue, resource, profile, over, over-probe]
+        options: [catalogue, resource, profile, over, over-probe, over-sweep]
         default: catalogue
       resource:
         description: 'data.gov.il resource id (resource / profile) · over-probe: settlement code'
         type: string
         default: ''
       street:
-        description: 'over-probe: street name · city name, separated by |'
+        description: 'over-probe: street name · city name, separated by | · over-sweep: settlement names separated by |'
         type: string
         default: ''
 
@@ -51,6 +51,7 @@ jobs:
             resource) node scripts/street-discover.js --resource "$RESOURCE" ;;
             profile)  node scripts/street-discover.js --profile "$RESOURCE" ;;
             over)     node scripts/street-discover.js --over ;;
+            over-sweep) node scripts/street-discover.js --over-sweep "$STREET" ;;
             over-probe) node scripts/street-discover.js --over-probe "${RESOURCE:-7900}" ${STREET:+--street "${STREET%%|*}" --city "${STREET#*|}"} ;;
             *)        node scripts/street-discover.js --catalogue ;;
           esac

@@ -8,6 +8,7 @@
 //   node scripts/street-discover.js --resource <id>             one resource: fields, total, last modified, sample rows
 //   node scripts/street-discover.js --profile <id>              the WHOLE table (paged): code ranges, special rows, duplicates
 //   node scripts/street-discover.js --over                      over.org.il's OpenAPI: every path + parameters (deals register)
+//   node scripts/street-discover.js --over-sweep "<a>|<b>"      a settlement sweep sample + its match to the street directory
 
 'use strict';
 
@@ -162,7 +163,86 @@ async function overProbe(code = '7900', street = 'העצמאות', city = 'פת�
   }
 }
 
+/* --over-sweep "<settlement>|<settlement>…" — what a settlement-wide sweep of the republished register returns, before PROPX
+   builds street evidence on it: the settlement list (names ↔ CBS codes), then per settlement three pages of the last 36
+   months (200 rows each) and one street query; the parcel-crosswalk addresses of each row are matched, ON THE RUNNER, to the
+   official street directory committed in this repository (official name · synonym · alias key · none) and summarised.
+   Sequential GETs one second apart; nothing is written. */
+async function overSweep(names) {
+  const B = 'https://www.over.org.il';
+  const e = encodeURIComponent;
+  const pause = () => new Promise((ok) => setTimeout(ok, 1000));
+  const SD = require('../lib/streets/directory');
+  const { aliasKeys } = require('../lib/geo/aliases');
+  const D = SD.load();
+  const st = await get(B + '/api/deals/stats'); await pause();
+  const last = st.json && st.json.last_deal ? String(st.json.last_deal) : null;
+  const from = last ? new Date(Date.parse(last) - 3 * 365.25 * 86400e3).toISOString().slice(0, 10) : '2023-09-17';
+  out({ kind: 'overSweep', step: 'stats', status: st.status, head: trim(st.json, 600), dateFrom: from });
+  const sl = await get(B + '/api/deals/settlements'); await pause();
+  const rows = (sl.json && (sl.json.data || sl.json)) || [];
+  const codes = new Map();
+  for (const r of rows) { const c = r.settlement_code == null || r.settlement_code === '' ? null : Number(r.settlement_code); if (!codes.has(c)) codes.set(c, []); codes.get(c).push(r.settlement); }
+  out({ kind: 'overSweep', step: 'settlements', status: sl.status, n: rows.length, keys: rows[0] ? Object.keys(rows[0]) : null, head: trim(rows.slice(0, 4), 800),
+    withCode: rows.filter((r) => r.settlement_code != null && r.settlement_code !== '').length,
+    codeInDirectory: rows.filter((r) => D.localities.has(Number(r.settlement_code))).length,
+    codesWithSeveralNames: [...codes].filter(([c, n]) => c != null && n.length > 1).slice(0, 15),
+    resolvedCodeDiffers: rows.filter((r) => r.resolved_code != null && String(r.resolved_code) !== String(r.settlement_code)).slice(0, 10) });
+  for (const asked of names) {
+    const meta = rows.find((r) => r.settlement === asked) || rows.find((r) => SD.normName(r.settlement) === SD.normName(asked));
+    const name = meta ? meta.settlement : asked;
+    const code = meta ? Number(meta.settlement_code || meta.resolved_code) : null;
+    const loc = D.localities.get(code);
+    /* the directory's names of this locality: official name → ids, synonym → ids, alias key → ids */
+    const byName = new Map(), bySyn = new Map(), byKey = new Map();
+    const add = (m, k, id) => { if (!m.has(k)) m.set(k, new Set()); m.get(k).add(id); };
+    for (const x of D.streets) if (x.cityCode === code && x.kind !== 'locality') { add(byName, x.n, x.id); for (const k of aliasKeys(x.name)) add(byKey, k, x.id); }
+    for (const y of D.synonyms) if (y.cityCode === code) { const id = SD.streetId(y.cityCode, y.officialCode); add(bySyn, y.n, id); for (const k of aliasKeys(y.name)) add(byKey, k, id); }
+    const tally = { rows: 0, natures: {}, withAddresses: 0, nAddr: {}, totalGtShown: 0, multiStreetParcels: 0,
+      streetMatch: { official: 0, synonym: 0, aliasKey: 0, ambiguous: 0, none: 0 }, noneSample: [], ambiguousSample: [], keys: null, sample: [] };
+    for (let page = 0; page < 3; page++) {
+      const url = `/api/deals/search?settlement=${e(name)}&date_from=${from}&sort=date_desc&limit=200&offset=${page * 200}`;
+      const r = await get(B + url); await pause();
+      if (page === 0) out({ kind: 'overSweep', step: 'page0', settlement: name, code, inDirectory: !!loc, status: r.status, keys: r.json ? Object.keys(r.json) : null,
+        total: r.json && r.json.total, totalCapped: r.json && r.json.total_capped, extra: r.json ? trim(Object.fromEntries(Object.entries(r.json).filter(([k]) => k !== 'data')), 700) : trim(r.text, 300) });
+      const data = (r.json && r.json.data) || [];
+      for (const d of data) {
+        tally.rows++; tally.keys = tally.keys || Object.keys(d);
+        if (tally.sample.length < 4) tally.sample.push(trim(d, 900));
+        tally.natures[d.nature] = (tally.natures[d.nature] || 0) + 1;
+        const addrs = Array.isArray(d.addresses) ? d.addresses : [];
+        tally.nAddr[addrs.length] = (tally.nAddr[addrs.length] || 0) + 1;
+        if (addrs.length) tally.withAddresses++;
+        if (Number(d.addresses_total) > addrs.length) tally.totalGtShown++;
+        const streets = new Set();
+        for (const a of addrs) {
+          const t = String(typeof a === 'string' ? a : (a && (a.street || a.address)) || '').trim();
+          const m = t.match(/^(.*\S)\s+(\d+\s*[א-ת]?)$/); const sn = SD.normName(m ? m[1] : t);
+          let ids = byName.get(sn), how = 'official';
+          if (!ids) { ids = bySyn.get(sn); how = 'synonym'; }
+          if (!ids) { ids = null; for (const k of aliasKeys(sn)) if (byKey.has(k)) { ids = byKey.get(k); break; } how = 'aliasKey'; }
+          if (!ids) { tally.streetMatch.none++; if (tally.noneSample.length < 12) tally.noneSample.push(t); continue; }
+          if (ids.size > 1) { tally.streetMatch.ambiguous++; if (tally.ambiguousSample.length < 6) tally.ambiguousSample.push([t, [...ids]]); continue; }
+          tally.streetMatch[how]++; streets.add([...ids][0]);
+        }
+        if (streets.size > 1) tally.multiStreetParcels++;
+      }
+      if (data.length < 200) break;
+    }
+    out({ kind: 'overSweep', step: 'summary', settlement: name, code, ...tally, sample: undefined });
+    for (const x of tally.sample) out({ kind: 'overSweep', step: 'row', settlement: name, row: x });
+    const anyStreet = [...byName.keys()][0];
+    if (anyStreet) {
+      const r = await get(B + `/api/deals/search?settlement=${e(name)}&street=${e(anyStreet)}&date_from=${from}&limit=5`); await pause();
+      out({ kind: 'overSweep', step: 'streetQuery', settlement: name, street: anyStreet, status: r.status,
+        extra: r.json ? trim(Object.fromEntries(Object.entries(r.json).filter(([k]) => k !== 'data')), 900) : trim(r.text, 300),
+        rows: r.json && r.json.data ? r.json.data.map((d) => trim({ date: d.date, gush: d.gush, helka: d.helka, addresses: d.addresses, addresses_total: d.addresses_total }, 400)) : null });
+    }
+  }
+}
+
 (async () => {
+  if (args.includes('--over-sweep')) return overSweep(String(opt('--over-sweep') || 'פתח תקווה').split('|').map((x) => x.trim()).filter(Boolean));
   if (args.includes('--over-probe')) return overProbe(opt('--over-probe') || undefined, opt('--street') || undefined, opt('--city') || undefined);
   if (args.includes('--catalogue')) return catalogue();
   if (args.includes('--resource')) return resource(opt('--resource'));
