@@ -13,10 +13,26 @@
   data layer (provider architecture, normalized transaction schema, snapshots; see `lib/gov/README.md`).
 - `lib/geo/` + `api/geo/` + `data/geo/` + `scripts/build-geo-registry.py` + `scripts/geo-audit.js`
   = the national geography registry (every official locality + street, canonical codes, search API,
-  coverage audit). `lib/geo/boundaries.js` + `scripts/build-geo-boundaries.py` + `test/geo-boundaries.test.js` (18.10.2026) = the map's
+  coverage audit; streets from the official directory since 19.10.2026 — see STREET INTELLIGENCE below). `lib/geo/boundaries.js` + `scripts/build-geo-boundaries.py` + `test/geo-boundaries.test.js` (18.10.2026) = the map's
   geography: the six CBS district boundaries, the country outline and the West Bank / Gaza areas from Natural Earth 1:10m (public
   domain; inputs not committed), `[lat, lng]` rings, geometry only — no market value; the page's `#map` draws them with a true-aspect
   equirectangular projection (the hand-drawn constants stay as the fallback), inlined in the offline build (see `lib/geo/README.md`).
+- `lib/streets/` + `data/geo/streets/` + `data/streets/evidence/` + `scripts/street-sync.js` + `scripts/street-evidence-sync.js` +
+  `scripts/street-discover.js` + `.github/workflows/street-{sync,evidence-sync,discover}.yml` + `test/streets.test.js` = STREET
+  INTELLIGENCE (19.10.2026): the OFFICIAL street directory (Population and Immigration Authority, data.gov.il resources 9ad3862c… +
+  synonyms bf185c7f…, read whole weekly; identity `st:<locality>:<street code>`, never a name; code 9000 = the locality (stored, never
+  offered as a street), 6000–6999 ADDRESS AREA, 7000–8999 SITE; nothing deleted — a retired code stays `historical`; legacy `stp:` ids map
+  through `legacy-ids.json`) + a prebuilt search index (`search-index.json`, checked by the directory files' sha256; `lib/geo/registry.js`
+  ranks 1 exact in the selected locality · 2 synonym there · 3 prefix there · 4 exact elsewhere · 5 synonym elsewhere · 6 discovery;
+  `near` = the locality in view) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
+  register (over.org.il; 36 months ending on the copy's latest deal; one request a second; only when the copy changes) joined to the
+  directory through the parcel crosswalk — OBSERVED only when every address of the parcel is on the one street (POSSIBLE = corner /
+  truncated / unresolved, listed apart, never aggregated); dwelling universe, priced = whole property; SUPPORTED ≥ 10 · LIMITED 5–9 ·
+  INSUFFICIENT 1–4 (price "—") · NONE (never a zero price); the locality / verified-neighbourhood / CBS city figures are CONTEXT ("These
+  figures describe the surrounding market, not observed prices on this street."); Tel Aviv permits / sites by exact address.
+  `GET /api/intel?view=street|streetCoverage`; the page's geo view renders Street Intelligence for a street (`siHTML`, one-minute ·
+  five-minute · deep dive). Registry group `streets` (11 terms, 7 missing reasons, section `street`); Trust `datagov:streets` +
+  `over:street-evidence`. See `lib/streets/README.md`.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).

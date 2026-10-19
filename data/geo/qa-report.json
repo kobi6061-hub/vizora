@@ -1,5 +1,5 @@
 {
- "at": "2026-10-19T09:59:46.029Z",
+ "at": "2026-10-19T10:34:36.360Z",
  "checks": [
   {
    "name": "every directory locality is a registry locality",
@@ -83,7 +83,7 @@
   {
    "name": "locality \"ירושלים\" resolves",
    "ok": true,
-   "detail": "ירושלים | שד' ירושלים"
+   "detail": "ירושלים | ירושלים"
   },
   {
    "name": "  \"ירושלים\" has searchable streets (4382) or only the locality placeholder",
@@ -113,7 +113,7 @@
   {
    "name": "locality \"פתח תקווה\" resolves",
    "ok": true,
-   "detail": "פתח תקווה | פתח תקוה"
+   "detail": "פתח תקווה | פתח תקווה"
   },
   {
    "name": "  \"פתח תקווה\" has searchable streets (1165) or only the locality placeholder",
@@ -428,7 +428,7 @@
   {
    "name": "  street \"כיכר זמורה · כפר תבור\" resolves",
    "ok": true,
-   "detail": "זמורה·כפר תבור | כיכר זמורה·כפר תבור"
+   "detail": "כיכר זמורה·כפר תבור | זמורה·כפר תבור"
   },
   {
    "name": "locality \"מטולה\" resolves",
@@ -518,7 +518,7 @@
   {
    "name": "\"הרצל\" returns city-qualified rows from multiple cities",
    "ok": true,
-   "detail": "ירושלים, תל אביב - יפו, ראשון לציון, באר שבע, חיפה, פתח תקווה, נתניה, אשקלון, אשדוד, רחובות, רמת גן, חדרה, כפר סבא, לוד"
+   "detail": "תל אביב - יפו, ראשון לציון, באר שבע, חיפה, פתח תקווה, נתניה, אשקלון, רחובות, רמת גן, חדרה, כפר סבא, לוד, הוד השרון, בית שמש"
   },
   {
    "name": "every street row carries a canonical id (never bare name)",

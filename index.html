@@ -570,6 +570,27 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .gv-m .l{font-size:11px;color:var(--ink-3);font-weight:600}
 .gv-m .v{font-size:16.5px;font-weight:800}
 .gv-m .r{font-size:10px;font-weight:700;color:var(--brass)}
+/* Street Intelligence (lib/streets): one-minute tiles · five-minute read · deep dive */
+.st-lead{font-size:13.5px;color:var(--ink);font-weight:600}
+.st-state{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;border-radius:99px;padding:3px 10px;border:1px solid var(--hairline)}
+.st-state.SUPPORTED{color:var(--conf-high)} .st-state.LIMITED{color:var(--brass)} .st-state.INSUFFICIENT,.st-state.NONE,.st-state.NOT_SWEPT,.st-state.UNKNOWN{color:var(--ink-3);border-style:dashed}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:12px}
+.st-grid .gv-m .v{font-size:15.5px}
+.st-grid .gv-m .s{font-size:11px;color:var(--ink-3);line-height:1.45}
+.st-kn{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+.st-kn h4{font-size:11.5px;font-weight:800;letter-spacing:.04em;color:var(--ink-2);margin:0 0 6px}
+.st-kn ul{margin:0;padding-inline-start:18px;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.st-sec{margin-top:14px;border-top:1px solid var(--hairline);padding-top:10px}
+.st-sec>summary{cursor:pointer;font-size:12.5px;font-weight:800;color:var(--ink);list-style-position:inside}
+.st-sec h4{font-size:12px;font-weight:800;color:var(--ink-2);margin:12px 0 6px}
+.st-ctx{border:1px dashed var(--hairline);border-radius:11px;padding:10px 12px;margin-top:8px}
+.st-ctx .gv-note{margin:0 0 8px}
+.st-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.st-tbl th,.st-tbl td{padding:6px 8px;border-bottom:1px solid var(--hairline);text-align:start;white-space:nowrap}
+.st-tbl td.w{white-space:normal;min-width:180px}
+.st-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.st-tag{font-size:9.5px;font-weight:800;border:1px solid var(--hairline);border-radius:99px;padding:1px 7px;color:var(--brass)}
+.st-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
 /* ============================ rankings tabs ============================ */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
@@ -4870,7 +4891,11 @@ const PT_DOM={
   gxloc:"text,number,number,number,number,date",
   gxspv:"text,text,text,text,text,text,text,text",
   gxedges:"text,text,text,text,text,date,text",
-  gxmem:"text,text,text,text,text,number,number,text"};
+  gxmem:"text,text,text,text,text,number,number,text",
+  stdeals:"date,text,number,number,currency,currency,number,-",
+  stposs:"date,text,text,currency",
+  stperm:"date,text,text,number,text",
+  stsite:"date,text,text,text"};
 /* a sortable day key for the periods the dossier prints (ISO day, "YYYY-MM" month, "YYYY-Qn" quarter) — the cell keeps its displayed text */
 const ptDayKey=v=>{if(!v)return "";const s=String(v);let m=s.match(/^(\d{4})-Q([1-4])$/);if(m)return `${m[1]}-${("0"+m[2]*3).slice(-2)}-31`;m=s.match(/^(\d{4})-(\d{2})$/);if(m)return `${m[1]}-${m[2]}-31`;return s.slice(0,10)};
 function ptDomAll(root,o={}){
@@ -6969,12 +6994,147 @@ function geoSug(q){
 }
 /* the tag of a registry hit: street · address area · site · locality */
 function geoKindTag(g,t){return g.kind!=="street"?t.geoTagLoc:g.streetKind==="area"?t.geoTagArea:g.streetKind==="site"?t.geoTagSite:t.geoTagSt}
+
+/* ---------- STREET INTELLIGENCE (GET /api/intel?view=street, lib/streets/street.js) ----------
+   The official street (identity) and the register deals OBSERVED on it are separate layers: a street with no observed deal
+   is a full street page ("no observed transactions" — never a zero price); a street price appears only from 5 priced deals;
+   the locality / neighbourhood figures are CONTEXT, printed apart with the sentence that says so. */
+const SIT={he:{lyr:"מודיעין רחוב",roomsW:"חד׳",sqmW:"מ״ר",status:"מצב ראיות השוק",latest:"עסקה אחרונה שנצפתה",sample:"מדגם העסקאות",median:"חציון מחיר עסקה",sqm:"חציון ₪ למ״ר",period:"תקופת התצפית",fresh:"עדכניות הנתונים",
+    knows:"מה PROPX יודעת",notKnows:"מה PROPX לא יודעת",five:"קריאה של חמש דקות — התפלגות, הקשר ועסקאות",deep:"צלילה לעומק — התאמות אפשריות, היתרים, זהות ושיטה",
+    states:{SUPPORTED:"שוק רחוב נתמך",LIMITED:"ראיות רחוב מוגבלות",INSUFFICIENT:"מדגם רחוב לא מספיק",NONE:"לא נצפו עסקאות",NOT_SWEPT:"היישוב לא נסרק",UNKNOWN:"ראיות השוק טרם נטענו"},
+    lead:{SUPPORTED:(n)=>`${fmtInt(n)} עסקאות דיור מתומחרות נצפו ברחוב ב-36 חודשים — מספיק לחציון רחוב.`,LIMITED:(n)=>`${fmtInt(n)} עסקאות דיור מתומחרות נצפו ברחוב ב-36 חודשים — חציון מוצג כראיה מוגבלת.`,
+      INSUFFICIENT:(n)=>`נצפו ${fmtInt(n)} עסקאות מתומחרות בלבד — מחיר רחוב לא מוצג ("—"); העסקאות ברשימה.`,NONE:()=>"הרחוב קיים במרשם הרשמי; אף עסקת דיור במרשם לא שויכה אליו בוודאות. זה לא מחיר אפס.",
+      NOT_SWEPT:()=>"הרחוב קיים במרשם הרשמי; היישוב לא נכלל בסריקת העסקאות האחרונה.",UNKNOWN:()=>"הרחוב קיים במרשם הרשמי; ראיות השוק טרם נשמרו בגרסה זו."},
+    kind:{street:"רחוב",area:"אזור כתובת",site:"אתר"},hist:"היסטורי — לא במרשם הנוכחי",id:"מזהה רחוב רשמי",observed:"נצפו",priced:"מתומחרות",last12:"12 חודשים אחרונים",copy:"עותק המרשם",check:"בדיקת PROPX",
+    of:(a,b)=>`${a} עד ${b}`,loading:"טוען את הרחוב…",err:"לא ניתן לטעון את מודיעין הרחוב.",
+    dist:"התפלגות (רק בשוק נתמך)",p10:"טווח מחירים P10–P90",rooms:"תמהיל חדרים",size:"תמהיל שטחים (מ״ר)",change:"שינוי 12 חודשים מול 12 שקדמו",mean:"ממוצע (לצד החציון)",
+    ctx:"הקשר — השוק הסובב",ctxNote:"הנתונים האלה מתארים את השוק הסובב, לא מחירים שנצפו ברחוב הזה.",ctxLoc:(c)=>`חציון עסקאות הדיור ב${c} (אותו חלון)`,ctxSqm:"חציון ₪ למ״ר ביישוב",ctxN:"עסקאות דיור מתומחרות ביישוב",
+    ctxCbs:(c)=>`מחיר עסקה ממוצע — ${c} (הלמ״ס, לוח 2.2, כלל הדירות)`,ctxNb:(n)=>`שכונה ${n} (קישור רחוב מאומת)`,ctxNbNo:"שכונה: אין קישור מאומת — PROPX לא מסיקה שכונה.",
+    deals:"העסקאות שנצפו ברחוב",cols:["תאריך","בית","חדרים","מ״ר","מחיר","₪ למ״ר","שנת בנייה",""],pnew:"כנראה חדשה",partial:"מכירה חלקית",shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
+    possible:"עסקאות אפשריות (ייתכן) — לא בחציון",pcols:["תאריך","כתובות החלקה","למה רק ייתכן","מחיר"],reasons:{"multi-street-parcel":"חלקה ביותר מרחוב אחד","address-list-truncated":"רשימת הכתובות קטועה","unresolved-address-on-parcel":"כתובת בחלקה לא זוהתה","ambiguous-address-on-parcel":"כתובת בחלקה עמומה"},
+    permits:"היתרי בנייה ואתרים בכתובות ברחוב (עיריית תל אביב-יפו)",permCols:["נפתח","בקשה / היתר","סוג","יח״ד","שלב"],sites:"אתרי בנייה",siteCols:["תחילה","תיק","מצב","כתובת"],multi:(n)=>`הרשומה נוקבת ב-${n} רחובות`,
+    ident:"זהות רשמית",syn:"שמות נרדפים רשמיים",first:"נראה לראשונה במרשם",regUpd:"עדכון המרשם",method:"שיטה",rungs:"שלבי התאמה שנעשה בהם שימוש",nonDw:"עסקאות שאינן דיור ברחוב (לא בחציון)",
+    acts:{dossier:"תיק השוק של היישוב",live:"עסקאות ברחוב במרשם (קריאה חיה)"},src:(c)=>`מקורות: מרשם הרחובות הרשמי (רשות האוכלוסין וההגירה, data.gov.il) · עסקאות: עותק מאגר רשות המסים שפורסם מחדש ב-over.org.il (לא ערוץ ממשלתי), עותק מ-${c}`,
+    kn:{"official-street":"הרחוב קיים במרשם הרחובות הרשמי","official-synonyms":"השמות הנרדפים הרשמיים שלו","observed-deals":"עסקאות דיור שנצפו ברחוב ב-36 חודשים","street-median":"חציון מחיר העסקה ברחוב","possible-deals":"עסקאות בחלקות שנוגעות ברחוב (מוצגות בנפרד)","probable-new":"עסקאות כנראה חדשות (לפי שנת הבנייה)","tlv-permits":"היתרים ואתרי בנייה בכתובות ברחוב (תל אביב-יפו)"},
+    nk:{"asking-prices":"מחירים מבוקשים — עסקה אינה מחיר מבוקש, ואין מקור מודעות","rents":"שכר דירה ברחוב","confirmed-new":"אישור מכירת יזם — המרשם אינו מסמן דירה חדשה","deals-after-copy":"עסקאות שדווחו אחרי תאריך העותק","no-observed-deals":"עסקאות ברחוב — אף עסקה לא שויכה בוודאות","street-price-insufficient":"מחיר רחוב — פחות מ-5 עסקאות מתומחרות","unaddressed-deals":"עסקאות בלי כתובת בהצלבה — נספרות ליישוב בלבד","no-tlv-permits":"היתרים ברחוב — לא נמצאו בשכבת תל אביב-יפו","permits-outside-tlv":"היתרים ופרויקטים ברחוב — מקור לפי כתובת קיים רק בתל אביב-יפו","neighbourhood-unlinked":"שכונה — אין קישור מאומת","locality-not-swept":"עסקאות ביישוב — היישוב לא נסרק","evidence-not-loaded":"ראיות שוק — טרם נטענו"}},
+  en:{lyr:"Street intelligence",roomsW:"rooms",sqmW:"m²",status:"Market evidence status",latest:"Latest observed transaction",sample:"Transaction sample",median:"Median transaction price",sqm:"Median ₪ per m²",period:"Observation period",fresh:"Data freshness",
+    knows:"What PROPX knows",notKnows:"What PROPX does not know",five:"Five-minute read — distribution, context and deals",deep:"Deep dive — possible matches, permits, identity and method",
+    states:{SUPPORTED:"SUPPORTED STREET MARKET",LIMITED:"LIMITED STREET EVIDENCE",INSUFFICIENT:"INSUFFICIENT STREET SAMPLE",NONE:"NO OBSERVED TRANSACTIONS",NOT_SWEPT:"LOCALITY NOT SWEPT",UNKNOWN:"MARKET EVIDENCE NOT LOADED"},
+    lead:{SUPPORTED:(n)=>`${fmtInt(n)} priced dwelling deals were observed on the street in 36 months — enough for a street median.`,LIMITED:(n)=>`${fmtInt(n)} priced dwelling deals were observed on the street in 36 months — the median is shown as limited evidence.`,
+      INSUFFICIENT:(n)=>`Only ${fmtInt(n)} priced deals were observed — no street price is shown ("—"); the deals are listed.`,NONE:()=>"The street is in the official directory; no register dwelling deal was attached to it with certainty. This is not a zero price.",
+      NOT_SWEPT:()=>"The street is in the official directory; its locality was not in the latest deals sweep.",UNKNOWN:()=>"The street is in the official directory; the market evidence is not stored in this version yet."},
+    kind:{street:"street",area:"address area",site:"site"},hist:"historical — no longer in the registry",id:"Official street id",observed:"observed",priced:"priced",last12:"last 12 months",copy:"register copy",check:"PROPX check",
+    of:(a,b)=>`${a} to ${b}`,loading:"Loading the street…",err:"The street intelligence could not be loaded.",
+    dist:"Distribution (supported market only)",p10:"Price range P10–P90",rooms:"Rooms mix",size:"Size mix (m²)",change:"Latest 12 months vs the 12 before",mean:"Mean (beside the median)",
+    ctx:"Context — the surrounding market",ctxNote:"These figures describe the surrounding market, not observed prices on this street.",ctxLoc:(c)=>`Median dwelling deal in ${c} (same window)`,ctxSqm:"Locality median ₪ per m²",ctxN:"Priced dwelling deals in the locality",
+    ctxCbs:(c)=>`Average transaction price — ${c} (CBS Table 2.2, all dwellings)`,ctxNb:(n)=>`Neighbourhood ${n} (verified street link)`,ctxNbNo:"Neighbourhood: no verified link — PROPX never infers a neighbourhood.",
+    deals:"Deals observed on the street",cols:["Date","House","Rooms","m²","Price","₪ per m²","Built",""],pnew:"PROBABLE NEW",partial:"partial sale",shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
+    possible:"Possible matches (POSSIBLE) — not in the median",pcols:["Date","Parcel addresses","Why only possible","Price"],reasons:{"multi-street-parcel":"parcel on more than one street","address-list-truncated":"address list truncated","unresolved-address-on-parcel":"an address on the parcel not resolved","ambiguous-address-on-parcel":"an address on the parcel is ambiguous"},
+    permits:"Building permits and sites at addresses on the street (Tel Aviv-Yafo municipality)",permCols:["Opened","Request / permit","Type","Units","Stage"],sites:"Construction sites",siteCols:["Start","File","State","Address"],multi:(n)=>`the record names ${n} streets`,
+    ident:"Official identity",syn:"Official synonyms",first:"First seen in the directory",regUpd:"Registry update",method:"Method",rungs:"Match rungs used",nonDw:"Non-dwelling deals on the street (not in the median)",
+    acts:{dossier:"The locality's market dossier",live:"Register deals on this street (live read)"},src:(c)=>`Sources: the official street directory (Population and Immigration Authority, data.gov.il) · deals: the Tax Authority register as republished by over.org.il (not a government channel), copy of ${c}`,
+    kn:{"official-street":"The street is in the official street directory","official-synonyms":"Its official synonyms","observed-deals":"Dwelling deals observed on the street in 36 months","street-median":"The street's median transaction price","possible-deals":"Deals on parcels touching the street (listed apart)","probable-new":"Probably-new deals (by build year)","tlv-permits":"Permits and construction sites at addresses on the street (Tel Aviv-Yafo)"},
+    nk:{"asking-prices":"Asking prices — a deal is not an asking price, and there is no listings source","rents":"Rents on the street","confirmed-new":"A confirmed developer sale — the register has no new-home flag","deals-after-copy":"Deals reported after the copy's date","no-observed-deals":"Deals on the street — none attached with certainty","street-price-insufficient":"A street price — fewer than 5 priced deals","unaddressed-deals":"Deals with no address in the crosswalk — locality-level only","no-tlv-permits":"Permits on the street — none found in the Tel Aviv-Yafo layer","permits-outside-tlv":"Permits and projects on the street — an address-level source exists only in Tel Aviv-Yafo","neighbourhood-unlinked":"Neighbourhood — no verified link","locality-not-swept":"Deals in the locality — not swept","evidence-not-loaded":"Market evidence — not loaded yet"}}};
+const siT=()=>SIT[state.lang==="en"?"en":"he"];
+const siState={id:null,data:null,err:null,loading:false};
+async function siLoad(id){
+  if(siState.id===id&&(siState.data||siState.loading))return;
+  Object.assign(siState,{id,data:null,err:null,loading:true});
+  try{const r=await fetch("/api/intel?view=street&limit=200&id="+encodeURIComponent(id));
+    if(siState.id!==id)return;
+    if(r.ok)siState.data=await r.json();else siState.err=r.status}
+  catch(e){if(siState.id===id)siState.err="offline"}
+  if(siState.id===id){siState.loading=false;renderGeoView()}
+}
+const siDate=d=>d?String(d).slice(0,10).split("-").reverse().join("."):"—";
+const siMoney=v=>v==null?"—":fmtNIS(v);
+const siNum=v=>v==null?"—":fmtInt(v);
+const siMissMap={"no-observed-deals":"street_no_observed_transactions","street-price-insufficient":"street_insufficient_sample","locality-not-swept":"street_locality_not_swept","evidence-not-loaded":"street_evidence_not_loaded","neighbourhood-unlinked":"street_neighbourhood_unlinked","permits-outside-tlv":"street_permits_not_covered","no-tlv-permits":"street_permits_not_covered"};
+function siHTML(g){
+  const t=siT(),S=siState;
+  if(S.id!==g.id||S.loading)return `<p class="gv-note">${t.loading}</p>`;
+  if(!S.data)return `<p class="gv-note">${t.err}</p>`;
+  const D=S.data,I=D.identity,E=D.evidence||{},st=E.stats||null;
+  const state=E.swept?st.state:E.state==="NOT_SWEPT"?"NOT_SWEPT":"UNKNOWN";
+  const w=E.window||null,src=E.source||{};
+  const priced=st?st.priced:0;
+  const chip=`<span class="st-state ${state}">${t.states[state]}</span>`;
+  const miss=k=>xpMiss(siMissMap[k]||k);
+  const tile=(l,v,sub,x)=>`<div class="gv-m"><span class="l">${l} ${x||""}</span><span class="v num">${v}</span>${sub?`<span class="s">${sub}</span>`:""}</div>`;
+  const medianV=st&&st.medianPrice!=null?fmtNIS(st.medianPrice):"—";
+  const sqmV=st&&st.medianPricePerSqm!=null?fmtNIS(st.medianPricePerSqm):"—";
+  const tiles=[
+    tile(t.status,chip,"",xpBtn("street_market_evidence_status")),
+    tile(t.latest,st&&st.latest?siDate(st.latest.date):"—",st&&st.latest?[st.latest.amount!=null?fmtNIS(st.latest.amount):null,st.latest.rooms?`${st.latest.rooms} ${t.roomsW}`:null,st.latest.areaSqm?`${fmtInt(st.latest.areaSqm)} ${t.sqmW}`:null].filter(Boolean).join(" · "):"",xpBtn("street_observed_deal")),
+    tile(t.sample,st?`${fmtInt(st.observed)} ${t.observed}`:"—",st?`${fmtInt(priced)} ${t.priced} · ${fmtInt(st.last12)} ${t.last12}`:"",xpBtn("street_sample_size")),
+    tile(t.median,medianV,st&&st.medianPrice!=null?(state==="LIMITED"?t.states.LIMITED:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded")),
+    tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):""),
+    tile(t.period,w?t.of(siDate(w.from),siDate(w.to)):"—","",""),
+    tile(t.fresh,src.scrapedAt?siDate(src.scrapedAt):"—",src.scrapedAt?`${t.copy} · ${t.check} ${siDate(src.checkedAt)}`:"",""),
+  ].join("");
+  const kn=`<div class="st-kn"><div><h4>${t.knows}</h4><ul>${(D.knows||[]).map(k=>`<li>${t.kn[k]||k}${k==="official-synonyms"?`: <bdi>${I.synonyms.map(inE).join(" · ")}</bdi>`:""}</li>`).join("")}</ul></div>
+    <div><h4>${t.notKnows}</h4><ul>${(D.doesNotKnow||[]).map(k=>`<li>${t.nk[k]||k} ${siMissMap[k]?miss(k):""}</li>`).join("")}</ul></div></div>`;
+  /* five-minute read */
+  let five="";
+  if(st&&st.state==="SUPPORTED"){
+    const mix=o=>o?Object.entries(o).filter(([,v])=>v).map(([k,v])=>`${k}: ${fmtInt(v)}`).join(" · "):"—";
+    five+=`<h4>${t.dist}</h4><div class="st-grid">${tile(t.p10,st.priceRange?`${fmtNIS(st.priceRange.p10)} – ${fmtNIS(st.priceRange.p90)}`:"—","","")}${tile(t.mean,st.meanPrice!=null?fmtNIS(st.meanPrice):"—","","")}
+      ${tile(t.change,st.change&&st.change.pct!=null?fmtPct(st.change.pct):"—",st.change&&st.change.pct!=null?`n=${st.change.recentN} / ${st.change.priorN}`:"",st.change&&st.change.pct==null?xpMiss("street_change_insufficient"):"")}
+      ${tile(t.rooms,"",mix(st.rooms),"")}${tile(t.size,"",mix(st.size),"")}</div>`;
+  }
+  const C=D.context||{},L=C.locality||{};
+  const cov=coveredIdByName(I.city||""),B=cov&&PRICE_BASIS[cov]?PRICE_BASIS[cov]:null;
+  five+=`<h4>${t.ctx} ${xpBtn("street_context")}</h4><div class="st-ctx"><p class="gv-note"><b>${t.ctxNote}</b></p><div class="st-grid">
+    ${tile(t.ctxLoc(inE(I.city||"")),L.medianPrice!=null?fmtNIS(L.medianPrice):"—",L.priced!=null?`n=${fmtInt(L.priced)} · ${vcTag("der")}`:"",L.medianPrice==null&&L.reason?miss(L.reason):"")}
+    ${tile(t.ctxSqm,L.medianPricePerSqm!=null?fmtNIS(L.medianPricePerSqm):"—","","")}
+    ${B?tile(t.ctxCbs(inE(I.city||"")),fmtNIS(B.cbs),`${PRICE_SRC.period} · ${vcTag("raw")}`,xpBtn("cbs_average_transaction_price")):""}
+    ${C.neighbourhood&&C.neighbourhood.resolved?tile(t.ctxNb(inE(C.neighbourhood.name)),C.neighbourhood.stats&&C.neighbourhood.stats.medianPrice!=null?fmtNIS(C.neighbourhood.stats.medianPrice):"—",C.neighbourhood.stats?`n=${fmtInt(C.neighbourhood.stats.priced)}`:"",""):""}
+    </div>${C.neighbourhood&&!C.neighbourhood.resolved?`<p class="gv-note" style="margin:8px 0 0">${t.ctxNbNo} ${miss("neighbourhood-unlinked")}</p>`:""}</div>`;
+  if(E.swept&&E.deals&&E.deals.length){
+    five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
+      <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
+      <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
+      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  /* deep dive */
+  let deep="";
+  if(E.swept&&E.possible&&E.possible.length){
+    deep+=`<h4>${t.possible} <span class="num">(${fmtInt(E.possibleTotal)})</span></h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stposs"><thead><tr>${t.pcols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.possible.map(d=>`<tr>
+      <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="w"><bdi>${ldE((d.parcelAddresses||[]).join(" · "))}</bdi>${d.parcelAddressesTotal>(d.parcelAddresses||[]).length?` <span class="num">(${d.parcelAddresses.length}/${d.parcelAddressesTotal})</span>`:""}</td>
+      <td class="w">${(d.reasons||[]).map(r=>t.reasons[r]||r).join(" · ")}</td><td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):"—"}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  const Lk=D.links||{};
+  if(Lk.permits&&Lk.permits.length){
+    deep+=`<h4>${t.permits} <span class="num">(${fmtInt(Lk.totals.permits)})</span></h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stperm"><thead><tr>${t.permCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${Lk.permits.map(p=>`<tr>
+      <td class="num" data-v="${ldE(p.opened||"")}">${siDate(p.opened)}</td><td class="num">${ldE(p.request)}${p.permit?` / ${ldE(p.permit)}`:""}</td><td class="w">${ldE(p.type||"—")}${p.streetsNamed>1?` <span class="sub">· ${t.multi(p.streetsNamed)}</span>`:""}</td><td class="num">${p.units!=null?p.units:"—"}</td><td class="w">${ldE(p.stage||"—")}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  if(Lk.sites&&Lk.sites.length){
+    deep+=`<h4>${t.sites} <span class="num">(${fmtInt(Lk.totals.sites)})</span></h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stsite"><thead><tr>${t.siteCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${Lk.sites.map(x=>`<tr>
+      <td class="num" data-v="${ldE(x.start||"")}">${siDate(x.start)}</td><td class="num">${ldE(x.tik)}</td><td class="w">${ldE(x.state||"—")}</td><td class="w"><bdi>${ldE(x.address||"—")}</bdi></td></tr>`).join("")}</tbody></table></div>`;
+  }
+  const Dir=D.directory||{};
+  deep+=`<h4>${t.ident} ${xpBtn("official_street_id")}</h4><div class="st-grid">${tile(t.id,`<bdi>${ldE(I.id)}</bdi>`,"",xpBtn("street_row_kind"))}
+    ${tile(t.syn,"",I.synonyms.length?`<bdi>${I.synonyms.map(inE).join(" · ")}</bdi>`:"—",I.synonyms.length?xpBtn("street_synonym"):"")}
+    ${tile(t.first,siDate(I.firstSeen),I.retiredAt?`${t.hist} · ${siDate(I.retiredAt)}`:"","")}${tile(t.regUpd,siDate(Dir.registryUpdated),`${t.check} ${siDate(Dir.checkedAt)}`,xpBtn("street_directory"))}</div>`;
+  if(E.swept){const r=E.matchRungs||{};
+    deep+=`<h4>${t.method}</h4><p class="gv-note">${t.rungs}: ${Object.entries(r).map(([k,v])=>`${ldE(k)} ${fmtInt(v)}`).join(" · ")||"—"}${E.nonDwelling&&E.nonDwelling.count?` · ${t.nonDw}: ${fmtInt(E.nonDwelling.count)}`:""}</p>`}
+  const lead=(t.lead[state]||t.lead.UNKNOWN)(priced);
+  return `<div class="geo-cov"><span class="geo-chip">${t.kind[I.kind]||I.kind}</span>${I.status==="historical"?`<span class="geo-chip"><b>${t.hist}</b></span>`:""}
+      <span class="geo-chip num"><bdi>${ldE(I.id)}</bdi></span>${I.district&&LOC[I.district]?`<span class="geo-chip">${heName(LOC[I.district])}</span>`:""}${xpBtn("street_directory")}</div>
+    <p class="gv-note st-lead">${lead}</p>
+    <div class="st-grid">${tiles}</div>${kn}
+    <details class="st-sec" open><summary>${t.five}</summary>${five}</details>
+    <details class="st-sec"><summary>${t.deep}</summary>${deep}</details>
+    <div class="st-acts"><button type="button" class="chip" data-stdos="${I.cityCode}">${t.acts.dossier}</button><button type="button" class="chip" data-stlive="1">${t.acts.live}</button></div>
+    <p class="gv-src">${t.src(src.scrapedAt?siDate(src.scrapedAt):"—")}</p>`;
+}
 let _geoNav=false;
 function openGeoView(g){
   if(!g)return;
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
   state.geo=g;
+  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||"")))siLoad(g.id);
   if(g.kind==="locality"){const code=g.code!=null?String(g.code):String(g.id||"").replace(/^loc:/,"");if(/^\d+$/.test(code))dsOpen("locality",code)}
   const d=g.district&&LOC[g.district]?g.district:null;
   state.geoAnchor=covered||d||"il";
@@ -6998,6 +7158,13 @@ function renderGeoView(){
   const m=metricsOf(anchor);
   const tx=txShown(a),inv=invShown(a),ms=msShown(a);
   el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${g.city}`:g.he;
+  {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?siT().lyr:t.geoLyr}
+  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){
+    const body=el("geoBody");body.innerHTML=siHTML(g);ptDomAll(body);
+    body.querySelectorAll("[data-stdos]").forEach(b=>b.addEventListener("click",()=>{dsOpen("locality",b.dataset.stdos);const d=el("dossier");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}));
+    body.querySelectorAll("[data-stlive]").forEach(b=>b.addEventListener("click",()=>inGoSection("txSection")));
+    return;
+  }
   const res=(k)=>`<span class="r">${lvl}${k?` · ${k}`:""}</span>`;
   const rows=[
     [t.geoMPrice,fmtNIS(m.price),"price"],

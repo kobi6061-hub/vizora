@@ -33,11 +33,13 @@ const crypto = require('node:crypto');
 const SD = require('../lib/streets/directory');
 const M = require('../lib/streets/match');
 const EV = require('../lib/streets/evidence');
+const SW = require('../lib/streets/sweep');
+const { windowOf, normalize, buildShard, rematch } = SW;
+const num = (v) => { if (v == null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
 const BASE = process.env.STREET_EVIDENCE_BASE || 'https://www.over.org.il';
 const DIR = EV.DIR;
 const UA = 'PROPX-street-evidence/1.0 (+https://github.com/kobi6061-hub/vizora)';
-const PAGE = 200;
 const GAP_MS = Number(process.env.STREET_EVIDENCE_GAP_MS || 1000);
 const args = process.argv.slice(2);
 const has = (f) => args.includes('--' + f);
@@ -68,113 +70,14 @@ async function get(p, params = {}) {
   }
 }
 
-/* ── dates (YYYY-MM-DD, UTC days) ── */
-const dayOf = (s) => Math.round(Date.parse(s + 'T00:00:00Z') / 86400e3);
-const dateOf = (d) => new Date(d * 86400e3).toISOString().slice(0, 10);
-function windowOf(lastDeal) {
-  const to = String(lastDeal).slice(0, 10);
-  const t = new Date(to + 'T00:00:00Z'); t.setUTCFullYear(t.getUTCFullYear() - EV.WINDOW_MONTHS / 12);
-  return { from: dateOf(dayOf(t.toISOString().slice(0, 10)) + 1), to, months: EV.WINDOW_MONTHS };
-}
-
-/* ── one settlement over [from, to], provably complete ── */
+/* one page of the register for a settlement and a date range */
 async function search(name, from, to, offset = 0) {
-  const b = await get('/api/deals/search', { settlement: name, date_from: from, date_to: to, sort: 'date_desc', limit: PAGE, offset });
+  const b = await get('/api/deals/search', { settlement: name, date_from: from, date_to: to, sort: 'date_desc', limit: SW.PAGE, offset });
   const data = Array.isArray(b.data) ? b.data : [];
   const total = Number(b.total);
   return { data, total: Number.isFinite(total) ? total : null, capped: !!b.total_capped };
 }
-async function sweepWindow(name, from, to, first, st) {
-  const r = first || await search(name, from, to);
-  if (!r.capped && r.total != null && r.total <= PAGE) {
-    if (r.data.length !== r.total) throw new Error(`${name} ${from}…${to}: ${r.data.length} rows of ${r.total}`);
-    st.leaves++; return r.data;
-  }
-  const a = dayOf(from), z = dayOf(to);
-  if (a === z) {
-    /* one day with more than a page. Every row of the day ties on the sort key, so offset pages may overlap and skip:
-       the day is paged again until the DISTINCT rows reach the day's total, or two consecutive passes return the same
-       multiset adding up to it (rows the register itself repeats are stable across passes; overlaps are not) */
-    if (r.capped || r.total == null) throw new Error(`${name} ${from}: a single day beyond the count cap`);
-    const union = new Map();
-    let prev = null;
-    for (let pass = 1; pass <= 8; pass++) {
-      const rows = pass === 1 ? [...r.data] : [];
-      while (rows.length < r.total) { const p = await search(name, from, to, rows.length); if (!p.data.length) break; rows.push(...p.data); }
-      const ms = new Map();
-      for (const d of rows) { const k = JSON.stringify(d); ms.set(k, (ms.get(k) || 0) + 1); if (!union.has(k)) union.set(k, d); }
-      if (union.size === r.total) { st.pagedDays++; st.dayPasses = (st.dayPasses || 0) + pass; return [...union.values()]; }
-      const sig = [...ms].sort().join('\n');
-      if (prev === sig && rows.length === r.total) { st.pagedDays++; st.dayPasses = (st.dayPasses || 0) + pass; return rows; }
-      prev = sig;
-    }
-    throw new Error(`${name} ${from}: the day's pages do not add up to its ${r.total} rows`);
-  }
-  /* split into parts expected to hold ~120 rows each (at least 2) */
-  const span = z - a + 1;
-  const parts = Math.min(span, Math.max(2, r.capped || r.total == null ? 36 : Math.ceil(r.total / 120)));
-  const out = []; let sum = 0;
-  for (let i = 0; i < parts; i++) {
-    const f = a + Math.floor((span * i) / parts), t = a + Math.floor((span * (i + 1)) / parts) - 1;
-    if (t < f) continue;
-    const child = await search(name, dateOf(f), dateOf(t));
-    const rows = await sweepWindow(name, dateOf(f), dateOf(t), child, st);
-    sum += rows.length; out.push(...rows);
-  }
-  if (!r.capped && r.total != null && sum !== r.total) throw new Error(`${name} ${from}…${to}: the parts hold ${sum} rows, the window ${r.total}`);
-  st.splits++;
-  return out;
-}
-
-/* ── normalization: the source's fields verbatim, in columns; identical copies of one deal collapsed only where the copy
-      repeats a coded row without its settlement code (observed 19.10.2026) ── */
-const num = (v) => { if (v == null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
-const txt = (v) => (v == null ? null : String(v).replace(/\s+/g, ' ').trim() || null);
-function normalize(rows) {
-  const fp = (d) => [d.date, d.amount, d.nature, d.area_sqm, d.rooms, d.year_built, d.portion_fraction, d.gush, d.helka, d.sub_parcel].join('|');
-  const coded = new Set(rows.filter((d) => d.settlement_code != null && d.settlement_code !== '').map(fp));
-  let duplicates = 0;
-  const kept = rows.filter((d) => { if ((d.settlement_code == null || d.settlement_code === '') && coded.has(fp(d))) { duplicates++; return false; } return true; });
-  return { kept, duplicates };
-}
-
-/** the shard of one locality from its settlements' rows (match against the directory included) */
-function buildShard(code, names, rows, meta, D) {
-  const LI = M.localityIndex(D, code);
-  const natures = [], natIdx = new Map(), parcels = [], parIdx = new Map(), setNames = [...names];
-  const nat = (n) => { const k = n || ''; if (!natIdx.has(k)) { natIdx.set(k, natures.length); natures.push(k); } return natIdx.get(k); };
-  const par = (d) => {
-    const addrs = (Array.isArray(d.addresses) ? d.addresses : []).map(txt).filter(Boolean);
-    const total = num(d.addresses_total);
-    const k = [d.gush, d.helka, total, addrs.join('|')].join('#');
-    if (!parIdx.has(k)) {
-      const m = M.matchDeal(LI, addrs, total);
-      parIdx.set(k, parcels.length);
-      parcels.push([txt(d.gush), txt(d.helka), m.addressesTotal, addrs, m.state, m.streets.map((s) => [SD.parseId(s.id).streetCode, s.via, s.houses]), m.reasons]);
-    }
-    return parIdx.get(k);
-  };
-  const out = rows.map((d) => [
-    String(d.date || '').slice(0, 10) || null, num(d.amount), nat(txt(d.nature)), num(d.area_sqm), num(d.rooms), num(d.year_built),
-    num(d.portion_fraction), txt(d.sub_parcel), par(d),
-    num(d.declared_amount) != null && num(d.declared_amount) !== num(d.amount) ? num(d.declared_amount) : null,
-    Math.max(0, setNames.indexOf(txt(d.settlement))),
-  ]);
-  out.sort((x, y) => (y[0] || '').localeCompare(x[0] || '') || (x[8] - y[8]) || String(x[7]).localeCompare(String(y[7])) || (x[1] || 0) - (y[1] || 0));
-  return { schema: EV.SHARD_SCHEMA, cityCode: code, settlements: setNames, window: meta.window, scrapedAt: meta.scrapedAt, fetchedAt: meta.fetchedAt,
-    directory: D.fileHash, natures, parcelColumns: EV.PARCEL_COLUMNS, parcels, columns: EV.ROW_COLUMNS, rows: out };
-}
-
-/** re-match a stored shard to the directory as it is now (offline) */
-function rematch(shard, D) {
-  const LI = M.localityIndex(D, shard.cityCode);
-  for (const p of shard.parcels) {
-    const m = M.matchDeal(LI, p[3], p[2]);
-    p[4] = m.state; p[5] = m.streets.map((s) => [SD.parseId(s.id).streetCode, s.via, s.houses]); p[6] = m.reasons;
-  }
-  shard.directory = D.fileHash;
-  return shard;
-}
+const sweepWindow = (name, from, to, first, st) => SW.sweepWindow(name, from, to, first, st, search);
 
 function finish(meta, run, D) {
   fs.mkdirSync(DIR, { recursive: true });

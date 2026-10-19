@@ -54,6 +54,12 @@
 //                     geography, programme, land pipeline, financial view per legal entity, pipeline vs financial position, SPVs,
 //                     corporate structure, legal / corporate timeline, group timeline, matrix, risk & gap brief, next best evidence
 //   view=group (POST) the same read with the user's documents in the body { userDocs: [...] } — validated, used for this read only, never stored
+//   view=street       STREET INTELLIGENCE (lib/streets/street.js): id=st:<locality code>:<street code> [limit ≤ 500] → the official street
+//                     (identity, synonyms, kind, status), its register evidence (OBSERVED deals only, sample state, medians, the deal list;
+//                     POSSIBLE deals apart), the locality / verified-neighbourhood CONTEXT apart, exact Tel Aviv permit / site links,
+//                     what PROPX knows and does not know; 404 for an id the official directory does not hold
+//   view=streetCoverage  the coverage audit (lib/streets/coverage.js): official rows · canonical · searchable · synonyms · with transactions ·
+//                     sample states — national / by district / by locality, reconciled
 
 'use strict';
 
@@ -70,6 +76,8 @@ let SUPPLY = null; try { SUPPLY = require('../lib/supply/pipeline'); } catch { /
 let GRAPH = null; try { GRAPH = require('../lib/graph'); } catch { /* the knowledge graph ships separately */ }
 let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence layer ships separately */ }
 let GROUP = null; try { GROUP = require('../lib/group'); } catch { /* Sponsor X-Ray ships separately */ }
+let STREETS = null; try { STREETS = { street: require('../lib/streets/street').street, coverage: require('../lib/streets/coverage').coverage }; } catch { /* street intelligence ships separately */ }
+let STREET_COVERAGE = null;
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
 
@@ -150,6 +158,13 @@ module.exports = async (req, res) => {
       const ready = await DD.prepare(opt);
       const out = GROUP.group({ developer: p.developer || null, company: p.developer ? null : (p.company || null), project: p.developer ? null : (p.project || null) }, ready);
       return out ? send(res, 200, out) : send(res, 404, { error: 'not-found' });
+    }
+    if (view === 'street' || view === 'streetCoverage') {
+      if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });
+      if (view === 'streetCoverage') { STREET_COVERAGE = STREET_COVERAGE || STREETS.coverage(); return send(res, 200, STREET_COVERAGE); }
+      if (!/^st:\d{1,5}:\d{1,5}$/.test(String(p.id || ''))) return send(res, 400, { error: 'id must be st:<locality code>:<street code>' });
+      const out = STREETS.street(p.id, { limit: p.limit });
+      return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
     }
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));

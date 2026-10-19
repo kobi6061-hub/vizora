@@ -9,6 +9,14 @@ because a deal was reported on it.
 ISRAEL → locality → neighborhood (where resolvable) → street → address
 ```
 
+## Streets — the official directory (19.10.2026)
+
+Streets now come from the Population and Immigration Authority's official street registry + its synonyms registry
+(`data/geo/streets/`, weekly `scripts/street-sync.js`; see `lib/streets/README.md`): 62,265 searchable rows (street · address
+area · site; code 9000 is the locality itself) and 86,108 synonyms, served from a prebuilt index with selected-locality ranking.
+`data/geo/streets-index.json` below is the 2026-08-31 mirror, kept as the input of the legacy-id reconciliation
+(`data/geo/streets/legacy-ids.json`); the search no longer reads it.
+
 ## Files
 
 | File | Role |
