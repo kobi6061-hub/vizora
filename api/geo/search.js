@@ -1,7 +1,8 @@
-// GET /api/geo/search?q=… — national autocomplete over the canonical Israel
-// geography registry (every official locality + street; see lib/geo).
-// Session-gated by the site middleware. The registry loads once per warm
-// instance; responses are cacheable per query.
+// GET /api/geo/search?q=…[&near=<locality code | loc:id | name>][&limit=…] — national autocomplete over the canonical
+// Israel geography: every official locality and every official street / address area / site of the Population and
+// Immigration Authority's street registry (+ its official synonyms; lib/geo/registry.js, lib/streets/). `near` is the
+// selected locality: its streets rank first. Session-gated by the site middleware. The directory + prebuilt index load
+// once per warm instance; responses are cacheable per query.
 
 'use strict';
 
@@ -20,7 +21,8 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'private, max-age=3600');  // registry is slow-moving
   try {
     const t0 = Date.now();
-    const out = searchGeo(q, Math.min(20, Number(url.searchParams.get('limit')) || 12));
+    const near = (url.searchParams.get('near') || '').slice(0, 80) || null;
+    const out = searchGeo(q.slice(0, 120), Math.min(20, Math.max(1, Number(url.searchParams.get('limit')) || 12)), { near });
     out.meta.tookMs = Date.now() - t0;
     out.meta.neighborhoodLayer = coverage();
     res.end(JSON.stringify(out));

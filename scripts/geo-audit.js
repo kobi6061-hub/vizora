@@ -5,8 +5,8 @@
 //   node scripts/geo-audit.js            — audit + randomized QA
 //   node scripts/geo-audit.js --seed 7   — reproducible sample
 //
-// Checks (per the national-coverage directive):
-//   1. registry counts match the build meta;
+// Checks (per the national-coverage directive; since 19.10.2026 over the OFFICIAL street directory, data/geo/streets/):
+//   1. registry counts reconcile with the directory (every official row except the locality placeholder is searchable);
 //   2. mandated locality list (all Israeli locality types) resolves;
 //   3. RANDOM 100 localities + 500 streets: each must appear in search,
 //      resolve to the correct locality, and carry a canonical id;
@@ -35,13 +35,17 @@ const check = (name, ok, detail) => {
 };
 
 console.log('registry');
-const meta = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'geo', 'registry-meta.json'), 'utf8'));
-check('locality count matches build meta', G.localities.length === meta.counts.localities,
-  `${G.localities.length} vs ${meta.counts.localities}`);
-check('street count matches build meta', G.streets.length === meta.counts.streets,
-  `${G.streets.length} vs ${meta.counts.streets}`);
+const SD = require('../lib/streets/directory');
+const D = SD.load();
+const dirRows = D.streets.length, dirPlaceholders = D.streets.filter((x) => x.kind === SD.KIND.LOCALITY).length;
+check('every directory locality is a registry locality', [...D.localities.keys()].every((c) => G.byCode.has(c)),
+  `${D.localities.size} directory localities`);
+check('searchable rows = directory rows − locality placeholders', G.streets.length === dirRows - dirPlaceholders,
+  `${G.streets.length} vs ${dirRows} − ${dirPlaceholders}`);
+check('one locality placeholder (code 9000) per directory locality', dirPlaceholders === D.localities.size && G.placeholders.size === D.localities.size,
+  `${dirPlaceholders} placeholders · ${D.localities.size} localities`);
 const cov = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'geo', 'coverage-report.json'), 'utf8'));
-check('build set-difference proof recorded as PASS', cov.setDifferencePass === true, JSON.stringify(cov.localities));
+check('build set-difference proof recorded as PASS (legacy locality build)', cov.setDifferencePass === true, JSON.stringify(cov.localities));
 
 console.log('structural integrity (orphans · duplicates · aliases · neighborhoods)');
 const locNames = new Set(G.localities.map((l) => l.n));
@@ -53,8 +57,11 @@ const canonicalId = (s2) => (s2.cityCode && s2.streetCode) ? `st:${s2.cityCode}:
 for (const s2 of G.streets) idCount.set(canonicalId(s2), (idCount.get(canonicalId(s2)) || 0) + 1);
 const dupIds = [...idCount].filter(([, n]) => n > 1);
 check('no duplicate canonical street ids', dupIds.length === 0, dupIds.slice(0, 3).map((d) => d[0]).join(', '));
-const withStreets = new Set(G.streets.map((s2) => s2.nc));
-check('no locality without streets', G.localities.every((l) => withStreets.has(l.n)));
+/* the registry is an address registry: a locality with no named street has only its placeholder (an address that is the
+   locality itself) — searchable as a locality, never as an invented street */
+const withRows = new Set([...G.streets.map((s2) => s2.cityCode), ...G.placeholders.keys()]);
+check('every coded locality of the directory has at least one official row', [...D.localities.keys()].every((c) => withRows.has(c)));
+report.localitiesWithPlaceholderOnly = [...D.localities.keys()].filter((c) => !(G.streetsByCode.get(c) || []).length).length;
 let aliasKeyCount = 0;
 for (const s2 of G.streets) aliasKeyCount += aliasKeys(s2.street).length;
 check('alias index built for every street', aliasKeyCount >= G.streets.length,
@@ -103,8 +110,8 @@ for (const name of MANDATED) {
   const hit = r.matches.find((m) => m.kind === 'locality' && normHe(m.he) === normHe(name));
   check(`locality "${name}" resolves`, !!hit, r.matches.slice(0, 2).map((m) => m.he).join(' | ') || 'no matches');
   if (hit) {
-    const streets = G.streetsByCity.get(normHe(name)) || [];
-    check(`  "${name}" has searchable streets (${streets.length})`, streets.length > 0, 'no street rows');
+    const streets = G.streetsByCode.get(hit.code) || [];
+    check(`  "${name}" has searchable streets (${streets.length}) or only the locality placeholder`, streets.length > 0 || G.placeholders.has(hit.code), 'no official row');
     if (streets.length > 1) {
       const s = streets[Math.floor(rnd() * streets.length)];
       const sr = searchGeo(`${s.street} ${s.city}`, 8);
@@ -159,7 +166,7 @@ for (let i = 0; i < 40; i++) {
   if (hit && hit.id && hit.cityId) noTxPass++;
 }
 check('40 random streets resolve with canonical + locality id regardless of transaction data', noTxPass === 40, noTxPass + '/40');
-const unresolvedNb = searchGeo('הזית חורפיש', 8).matches.find((m) => m.kind === 'street');
+const unresolvedNb = searchGeo('אלזיתון חורפיש', 8).matches.find((m) => m.kind === 'street');
 check('a street with unresolved neighborhood is still fully searchable',
   !!unresolvedNb, unresolvedNb ? unresolvedNb.neighborhoodStatus : 'not found');
 

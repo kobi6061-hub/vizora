@@ -2655,6 +2655,8 @@ he:{
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
   geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
+  geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר",
+  geoMore:n=>`עוד ${fmtInt(n)} התאמות — הוסיפו שם יישוב (למשל „הרצל פתח תקווה")`,
   geoLyr:"מרשם ארצי", geoClose:"סגור",
   geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
   geoPend:"סמל רשמי בהקצאה — יתעדכן ברענון המרשם",
@@ -3224,6 +3226,8 @@ en:{
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
   geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
+  geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality",
+  geoMore:n=>`${fmtInt(n)} more matches — add a locality name (e.g. “Herzl Petah Tikva”)`,
   geoLyr:"National registry", geoClose:"Close",
   geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
   geoPend:"official code pending — updates on the next registry refresh",
@@ -6930,22 +6934,32 @@ function geoPinSVG(sf){
   return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
 }
-let geoLast={q:"",list:[]},geoTimer=null,geoBusy="";
+let geoLast={q:"",near:"",list:[],more:0},geoTimer=null,geoBusy="";
+/* the selected locality for street ranking: the registry locality / street in view, else the board's city (or the city of
+   the board's neighbourhood); never a district or the country */
+function geoNear(){
+  const g=state.geo;
+  if(g){const c=g.kind==="street"?g.cityCode:g.code;if(c!=null)return String(c)}
+  const l=LOC[state.locId];if(!l||l.type==="country"||l.type==="district")return"";
+  const city=l.type==="city"?l:chainOf(l).find(x=>x.type==="city");
+  return city?city.he:"";
+}
 function geoSug(q){
-  const qq=q.trim();
+  const qq=q.trim(),near=geoNear();
   if(qq.length<2)return[];
-  if(geoLast.q!==qq){
+  if(geoLast.q!==qq||geoLast.near!==near){
     clearTimeout(geoTimer);geoBusy=qq;
     geoTimer=setTimeout(async()=>{
-      let list=[];
+      let list=[],more=0;
       try{
-        const r=await fetch("/api/geo/search?q="+encodeURIComponent(qq));
+        const r=await fetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""));
         if(r.ok){const d=await r.json();
           /* official registry streets are never filtered or replaced; a registry
              locality the board already lists as a city appears once, as that city */
-          list=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he)).slice(0,7);}
+          list=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he)).slice(0,10);
+          more=(d.meta&&d.meta.moreStreets)||0;}
       }catch(e){/* offline/standalone: the national layer is unavailable */}
-      geoLast={q:qq,list};if(geoBusy===qq)geoBusy="";
+      geoLast={q:qq,near,list,more};if(geoBusy===qq)geoBusy="";
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },170);
@@ -6953,6 +6967,8 @@ function geoSug(q){
   }
   return geoLast.list;
 }
+/* the tag of a registry hit: street · address area · site · locality */
+function geoKindTag(g,t){return g.kind!=="street"?t.geoTagLoc:g.streetKind==="area"?t.geoTagArea:g.streetKind==="site"?t.geoTagSite:t.geoTagSt}
 let _geoNav=false;
 function openGeoView(g){
   if(!g)return;
@@ -6994,7 +7010,7 @@ function renderGeoView(){
   ];
   el("geoBody").innerHTML=`
     <div class="geo-cov">
-      <span class="geo-chip">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}${g.pendingCode?` · <b>${t.geoPend}</b>`:""}</span>
+      <span class="geo-chip">${geoKindTag(g,t)}${g.pendingCode?` · <b>${t.geoPend}</b>`:""}</span>
       ${g.moatza?`<span class="geo-chip">${g.moatza}</span>`:""}
       ${g.streetsCount?`<span class="geo-chip num">${t.geoStreetsN(g.streetsCount)}</span>`:""}
     </div>
@@ -7028,8 +7044,9 @@ function initSearch(){
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
       if(geos.length)html+=`<div class="sp-group">${t.geoGroup}</div>`+geos.map((g,i)=>
         `<button class="sp-item" data-geoi="${i}" role="option">
-          <span>${g.he}${g.kind==="street"?` <small>· ${g.city}</small>`:g.moatza?` <small>· ${g.moatza}</small>`:""}</span>
-          <span class="sp-tag">${g.kind==="street"?t.geoTagSt:t.geoTagLoc}</span></button>`).join("");
+          <span><bdi>${inE(g.he)}</bdi>${g.kind==="street"?` <small>· <bdi>${inE(g.city)}</bdi>${g.matchedName?` · ${inE(t.geoSynOf(g.matchedName))}`:""}${g.status==="historical"?` · ${t.geoHist}`:""}${g.inSelectedLocality?` · ${t.geoHere}`:""}</small>`:g.moatza?` <small>· ${inE(g.moatza)}</small>`:""}</span>
+          <span class="sp-tag">${geoKindTag(g,t)}</span></button>`).join("")
+          +(geoLast.more>0&&geoLast.q===q.trim()?`<div class="sp-empty sp-more">${t.geoMore(geoLast.more)}</div>`:"");
       if(ints.length)html+=`<div class="sp-group">${IT().tab.developers} · ${IT().tab.projects} · ${IT().ty.tender}</div>`+ints.map((h,i)=>
         `<button class="sp-item" data-inti="${i}" role="option"><span><bdi>${inE(h.label)}</bdi>${inHitSub(h)?` <small>· ${inE(inHitSub(h))}</small>`:""}</span>
           <span class="sp-tag">${inE(IT().ty[h.type]||h.type)}</span></button>`).join("");
