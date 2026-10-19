@@ -4,7 +4,8 @@
 # The sweep reads every settlement's deals of the 36 months that end on the copy's latest deal, splitting each window by
 # date until every query answers in one page (completeness proven per window), one request a second. It runs again only
 # when the publisher's copy changes (stats.scraped_at) — a weekly check costs one request. A sweep that does not finish in
-# one job keeps progress.json and the next run (scheduled or dispatched) resumes it. data/streets/evidence/ is bot-written.
+# one job keeps progress.json and the next run (scheduled or dispatched) resumes it. data/streets/evidence/ and
+# data/streets/model/ (the STREET VALUE MODEL, rebuilt after a complete sweep when an input changed) are bot-written.
 
 name: Street evidence sync
 
@@ -57,11 +58,27 @@ jobs:
           if [ -n "$ONLY" ]; then ARGS="$ARGS --only $ONLY"; fi
           node scripts/street-evidence-sync.js $ARGS
           echo "code=$?" >> "$GITHUB_OUTPUT"
+      # The STREET VALUE MODEL (scripts/street-model-build.js) is rebuilt only when one of its inputs changed (evidence copy ·
+      # directory · land parcels · model code / versions) and only on a COMPLETE sweep; its gates run on the new build, and a
+      # failed build or gate restores the previous model (the observed evidence is committed either way).
+      - name: Rebuild the street value model when an input changed
+        id: model
+        run: |
+          set +e
+          node scripts/street-model-build.js --if-stale > "$RUNNER_TEMP/model.txt" 2>&1
+          code=$?
+          if [ $code -eq 0 ] && [ -f test/street-model.test.js ]; then node test/street-model.test.js; code=$?; fi
+          tail -c 2000 "$RUNNER_TEMP/model.txt"
+          if [ $code -ne 0 ]; then
+            echo 'Street value model build or gates failed — the previous model is kept.' >&2
+            git checkout -- data/streets/model 2>/dev/null; git clean -fdq data/streets/model 2>/dev/null
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Commit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/streets/evidence
+          git add data/streets/evidence data/streets/model
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Street evidence: run log' > "$RUNNER_TEMP/summary.txt"
           git commit -q -F "$RUNNER_TEMP/summary.txt"
@@ -75,4 +92,9 @@ jobs:
         if: steps.sync.outputs.code != '0'
         run: |
           echo "street-evidence-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1
+      - name: Fail the run if the street value model failed
+        if: steps.model.outputs.code != '0'
+        run: |
+          echo "the street value model build / gates exited with ${{ steps.model.outputs.code }} — the previous model was kept." >&2
           exit 1
