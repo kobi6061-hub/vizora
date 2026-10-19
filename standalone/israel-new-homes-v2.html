@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="fbaa6a88f0d9f60d86366fd155678a62ffe3fd92acae24ab96377fe5de850d81">
+<meta name="propx-source-sha256" content="e853b4a5e3c37366ec7fff6e01033b7066aadc89aa7f9c1fdf12a039c66734b0">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -9257,6 +9257,8 @@ const SIT={he:{lyr:"מודיעין רחוב",one:"קריאה של דקה — מ�
     kn:{"official-street":"The street is in the official street directory","official-synonyms":"Its official synonyms","observed-deals":"Dwelling deals observed on the street in 36 months","street-median":"The street's median transaction price","possible-deals":"Deals on parcels touching the street (listed apart)","probable-new":"Probably-new deals (by build year)","tlv-permits":"Permits and construction sites at addresses on the street (Tel Aviv-Yafo)"},
     nk:{"asking-prices":"Asking prices — a deal is not an asking price, and there is no listings source","rents":"Rents on the street","confirmed-new":"A confirmed developer sale — the register has no new-home flag","deals-after-copy":"Deals reported after the copy's date","no-observed-deals":"Deals on the street — none attached with certainty","street-price-insufficient":"A street price — fewer than 5 priced deals","unaddressed-deals":"Deals with no address in the crosswalk — locality-level only","no-tlv-permits":"Permits on the street — none found in the Tel Aviv-Yafo layer","permits-outside-tlv":"Permits and projects on the street — an address-level source exists only in Tel Aviv-Yafo","neighbourhood-unlinked":"Neighbourhood — no verified link","locality-not-swept":"Deals in the locality — not swept","evidence-not-loaded":"Market evidence — not loaded yet"}}};
 const siT=()=>SIT[state.lang==="en"?"en":"he"];
+/* the registry's English locality names are CBS's lower-case transliterations ("petah tiqwa") — title-cased for display only */
+const enTitle=s=>s?String(s).replace(/(^|[\s\-'(])(\p{Ll})/gu,(m,a,c)=>a+c.toUpperCase()):s;
 const siState={id:null,data:null,err:null,loading:false};
 async function siLoad(id){
   if(siState.id===id&&(siState.data||siState.loading))return;
@@ -9284,7 +9286,7 @@ function siHTML(g){
   const lim=state==="LIMITED";
   const tile=(l,v,sub,x,cls)=>`<div class="gv-m${cls?" "+cls:""}"><span class="l">${l} ${x||""}</span><span class="v num">${v}</span>${sub?`<span class="s">${sub}</span>`:""}</div>`;
   const ltr=v=>`<bdi dir="ltr">${v}</bdi>`;
-  const cityN=t===SIT.en&&I.cityEn?I.cityEn:I.city||"";
+  const cityN=t===SIT.en&&I.cityEn?enTitle(I.cityEn):I.city||"";
   const noun=t.noun[I.kind]||t.noun.street,at=t.at[I.kind]||t.at.street;
   const medianV=st&&st.medianPrice!=null?fmtNIS(st.medianPrice):"—";
   const sqmV=st&&st.medianPricePerSqm!=null?fmtNIS(st.medianPricePerSqm):"—";
@@ -9395,7 +9397,7 @@ function renderGeoView(){
   const aName=heName(a);
   const m=metricsOf(anchor);
   const tx=txShown(a),inv=invShown(a),ms=msShown(a);
-  el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${g.city}`:g.he;
+  el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${state.lang==="en"&&g.cityEn?enTitle(g.cityEn):g.city}`:g.he;
   {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?siT().lyr:t.geoLyr}
   if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){
     const body=el("geoBody");body.innerHTML=siHTML(g);ptDomAll(body);
