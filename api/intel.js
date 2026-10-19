@@ -60,6 +60,12 @@
 //                     what PROPX knows and does not know; 404 for an id the official directory does not hold
 //   view=streetCoverage  the coverage audit (lib/streets/coverage.js): official rows · canonical · searchable · synonyms · with transactions ·
 //                     sample states — national / by district / by locality, reconciled
+//   view=street → `model`: the PROPX STREET ESTIMATE (lib/streets/value-read.js, a separate MODEL layer — never the observed market):
+//                     value per m² of the reference dwelling, model evidence tier, validation-based range, why summary, versions
+//   view=streetModel  id=… [limit ≤ 300] → WHY THIS ESTIMATE + the comparables by level (recomputed from the locality's shard and checked
+//                     against the stored build)
+//   view=streetApartment  id=… sqm= [rooms= newness=existing|new built= type=flat|garden|roof|cottage|house] → the apartment estimate (MODEL)
+//   view=streetModelValidation  the out-of-sample validation report of the street value model
 
 'use strict';
 
@@ -77,6 +83,7 @@ let GRAPH = null; try { GRAPH = require('../lib/graph'); } catch { /* the knowle
 let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence layer ships separately */ }
 let GROUP = null; try { GROUP = require('../lib/group'); } catch { /* Sponsor X-Ray ships separately */ }
 let STREETS = null; try { STREETS = { street: require('../lib/streets/street').street, coverage: require('../lib/streets/coverage').coverage }; } catch { /* street intelligence ships separately */ }
+let SVM = null; try { SVM = require('../lib/streets/value-read'); } catch { /* the street value model ships separately */ }
 let STREET_COVERAGE = null;
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
@@ -163,7 +170,17 @@ module.exports = async (req, res) => {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });
       if (view === 'streetCoverage') { STREET_COVERAGE = STREET_COVERAGE || STREETS.coverage(); return send(res, 200, STREET_COVERAGE); }
       if (!/^st:\d{1,5}:\d{1,5}$/.test(String(p.id || ''))) return send(res, 400, { error: 'id must be st:<locality code>:<street code>' });
-      const out = STREETS.street(p.id, { limit: p.limit });
+      const obs = STREETS.street(p.id, { limit: p.limit });
+      /* the MODEL layer travels beside the observed read under its own key — the observed object is never changed */
+      const out = obs && { ...obs, model: (SVM && SVM.estimate(obs.id)) || { available: false, reason: SVM ? 'street-not-in-model-build' : 'model-not-built' } };
+      return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
+    }
+    if (view === 'streetModel' || view === 'streetApartment' || view === 'streetModelValidation') {
+      if (!SVM) return send(res, 404, { error: 'street value model not available' });
+      if (view === 'streetModelValidation') { const v = SVM.validation(); return v ? send(res, 200, v) : send(res, 404, { error: 'model-not-built' }); }
+      if (!/^st:\d{1,5}:\d{1,5}$/.test(String(p.id || ''))) return send(res, 400, { error: 'id must be st:<locality code>:<street code>' });
+      const out = view === 'streetModel' ? SVM.explain(p.id, { limit: p.limit })
+        : SVM.apartment(p.id, { sqm: p.sqm, rooms: p.rooms, newness: p.newness, built: p.built, type: p.type });
       return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
     }
     if (view === 'status') return send(res, 200, Q.status());
