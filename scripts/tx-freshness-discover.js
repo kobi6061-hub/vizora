@@ -132,9 +132,134 @@ async function over() {
   }
 }
 
-/* ── per city: the GovMap-layer copy vs what PROPX stores ── */
-async function compare(names, from) {
-  out({ kind: 'compare', note: 'not yet implemented in this probe version', names, from });
+/* ── per city: the GovMap-layer copy vs what PROPX stores ──
+   The GovMap-layer copy (over.org.il `govmap_deals`, "the deals as GovMap publishes them in layer 16 — the same deals the
+   government real-estate site shows") is a second, independent extraction of the Tax Authority's deals; PROPX stores the
+   register copy (nadlan.taxes.gov.il). A deal is keyed by date · block · parcel · sub-parcel (both sources print them);
+   amount / area / rooms are then compared. Nothing is reconciled: every difference is printed with its class. */
+const normCity = (s) => String(s || '').replace(/["'״׳\s\-–]/g, '').replace(/וו/g, 'ו').replace(/יי/g, 'י');
+const CITY_CODES = { 'תל אביב-יפו': 5000, 'ירושלים': 3000, 'פתח תקווה': 7900, 'חיפה': 4000, 'באר שבע': 9000, 'ראשון לציון': 8300, 'נתניה': 7400, 'אשדוד': 70 };
+const iso = (d) => new Date(d).toISOString().slice(0, 10);
+const minusDays = (d, k) => iso(Date.parse(d + 'T00:00:00Z') - k * 864e5);
+const num = (v) => { if (v == null || v === '') return null; const n = Number(String(v).replace(/,/g, '')); return Number.isFinite(n) ? n : null; };
+
+async function govmapRows(names, from, to) {
+  const rows = [];
+  for (const name of names) {
+    for (let offset = 0, guard = 0; guard < 120; guard++) {
+      const p = `/api/deals/govmap/search?settlement=${encodeURIComponent(name)}&date_from=${from}&date_to=${to}&sort=date_desc&limit=200&offset=${offset}`;
+      const r = await overGet(p);
+      const b = rowsOf(r.json) || [];
+      if (r.status !== 200) { out({ kind: 'compare', step: 'govmap-page', name, offset, status: r.status, body: trim(r.text, 300) }); break; }
+      rows.push(...b); offset += b.length;
+      if (b.length < 200) break;
+    }
+  }
+  return rows;
+}
+
+async function compare(names, fromArg) {
+  const EV = require('../lib/streets/evidence');
+  const SD = require('../lib/streets/directory');
+  const D = SD.load();
+  const S = EV.store();
+  const today = iso(Date.now());
+  const copyEnd = S.meta.source.lastDeal;
+  const from = fromArg || minusDays(today, 400);
+  const gs = await overGet('/api/deals/govmap/stats');
+  const st = await overGet('/api/deals/stats');
+  out({ kind: 'compare', step: 'sources', today, from, propx: { scrapedAt: S.meta.source.scrapedAt, lastDeal: copyEnd, window: S.meta.window },
+    registerCopyNow: st.json && { scraped_at: st.json.scraped_at, last_deal: st.json.last_deal, dataset_id: st.json.dataset_id },
+    govmapCopyNow: gs.json && { loaded_at: gs.json.loaded_at, last_deal: gs.json.last_deal, version: gs.json.version, dataset_id: gs.json.dataset_id, deals: gs.json.deals } });
+  const gl = await overGet('/api/deals/govmap/settlements');
+  const gNames = (rowsOf(gl.json) || []).map((x) => x.settlement);
+  const fixture = [];
+  for (const city of names) {
+    const code = CITY_CODES[city] || null;
+    const spell = gNames.filter((n) => normCity(n) === normCity(city));
+    const G = (await govmapRows(spell, from, today)).map((g) => ({ ...g, sub: num(g.sub_parcel), gush: num(g.gush), parcel: num(g.parcel), amount: num(g.deal_amount), area: num(g.asset_area), rooms: num(g.rooms), date: String(g.deal_date).slice(0, 10) }));
+    const sh = code ? EV.shardOf(code) : null;
+    const P = sh ? EV.dealsOf(sh).map((x) => ({ ...x.deal, streetCodes: x.streets.map((s) => s.code), gushN: num(x.deal.gush), helkaN: num(x.deal.helka), subN: num(x.deal.subParcel) })).filter((d) => d.date >= from) : [];
+    const key = (date, gush, parcel, sub) => `${date}|${gush}|${parcel}|${sub}`;
+    const pIdx = new Map(); for (const d of P) { const k = key(d.date, d.gushN, d.helkaN, d.subN); if (!pIdx.has(k)) pIdx.set(k, []); pIdx.get(k).push(d); }
+    const gIdx = new Map(); for (const g of G) { const k = key(g.date, g.gush, g.parcel, g.sub); if (!gIdx.has(k)) gIdx.set(k, []); gIdx.get(k).push(g); }
+    /* the loose key: the same unit and amount on another date (a date the two channels print differently) */
+    const lkey = (gush, parcel, sub, amount) => `${gush}|${parcel}|${sub}|${amount}`;
+    const pLoose = new Map(); for (const d of P) { const k = lkey(d.gushN, d.helkaN, d.subN, d.amount); if (!pLoose.has(k)) pLoose.set(k, []); pLoose.get(k).push(d); }
+    const cls = { MATCH: 0, FIELD_DIFFERENCE: 0, DATE_DIFFERENCE: 0, MISSING_IN_PROPX_WITHIN_COPY: 0, MISSING_IN_PROPX_AFTER_COPY: 0, FUTURE_DATED_AT_SOURCE: 0, EXTRA_IN_PROPX: 0 };
+    const samples = Object.fromEntries(Object.keys(cls).map((k) => [k, []]));
+    const diffKinds = {};
+    const push = (k, o) => { cls[k]++; if (samples[k].length < 8) samples[k].push(o); };
+    const gOut = (g) => [g.date, g.street, g.house_num, `${g.gush}/${g.parcel}/${g.sub}`, g.amount, g.area, g.rooms, g.property_type || g.deal_nature, g.deal_id];
+    const pOut = (d) => [d.date, (d.parcelAddresses || []).slice(0, 2).join(' · '), `${d.gushN}/${d.helkaN}/${d.subN}`, d.amount, d.areaSqm, d.rooms, d.nature, d.yearBuilt];
+    const matched = new Set();
+    const cand = [];
+    for (const g of G) {
+      if (g.date > today) { push('FUTURE_DATED_AT_SOURCE', gOut(g)); continue; }
+      const k = key(g.date, g.gush, g.parcel, g.sub);
+      const ps = pIdx.get(k);
+      if (ps && ps.length) {
+        const d = ps.find((x) => !matched.has(x) && x.amount === g.amount) || ps.find((x) => !matched.has(x)) || ps[0];
+        matched.add(d);
+        const diffs = [];
+        if (d.amount !== g.amount) diffs.push('amount');
+        if (g.area != null && d.areaSqm != null && Math.abs(g.area - d.areaSqm) > 1) diffs.push('area');
+        if (g.rooms != null && d.rooms != null && g.rooms !== d.rooms) diffs.push('rooms');
+        if (diffs.length) { push('FIELD_DIFFERENCE', { govmap: gOut(g), propx: pOut(d), diffs }); for (const x of diffs) diffKinds[x] = (diffKinds[x] || 0) + 1; }
+        else {
+          cls.MATCH++;
+          if (samples.MATCH.length < 8) samples.MATCH.push(gOut(g));
+          if (g.street && d.date > minusDays(copyEnd, 150)) cand.push({ city, code, street: g.street, house: g.house_num, date: g.date, gush: g.gush, parcel: g.parcel, sub: g.sub,
+            amount: g.amount, areaSqm: g.area, rooms: g.rooms, govmapType: g.property_type || g.deal_nature || null, registerNature: d.nature, yearBuilt: d.yearBuilt, govmapDealId: g.deal_id,
+            propxStreetCodes: d.streetCodes, propxMatch: d.match });
+        }
+        continue;
+      }
+      const loose = (pLoose.get(lkey(g.gush, g.parcel, g.sub, g.amount)) || []).find((x) => !matched.has(x));
+      if (loose) { matched.add(loose); push('DATE_DIFFERENCE', { govmap: gOut(g), propx: pOut(loose) }); continue; }
+      push(g.date <= copyEnd ? 'MISSING_IN_PROPX_WITHIN_COPY' : 'MISSING_IN_PROPX_AFTER_COPY', gOut(g));
+    }
+    for (const d of P) if (!matched.has(d) && d.dwelling && d.date <= today) push('EXTRA_IN_PROPX', pOut(d));
+    /* acceptance candidates: up to 12 per city, newest first, one per street before a second, every property type early */
+    const seenSt = new Map(), seenTy = new Set();
+    cand.sort((a, b) => b.date.localeCompare(a.date));
+    const chosen = [];
+    for (const pass of [0, 1, 2]) for (const c of cand) {
+      if (chosen.length >= 12 || chosen.includes(c)) continue;
+      const ty = c.govmapType || c.registerNature, ns = seenSt.get(c.street) || 0;
+      if (pass === 0 && (seenTy.has(ty) || ns)) continue;
+      if (pass === 1 && ns) continue;
+      chosen.push(c); seenSt.set(c.street, ns + 1); seenTy.add(ty);
+    }
+    fixture.push(...chosen);
+    /* time profile: monthly counts on both sides, latest dates, counts over 90 / 365 days (to today and to the copy's end) */
+    const month = (xs) => { const m = {}; for (const x of xs) { const k = x.slice(0, 7); m[k] = (m[k] || 0) + 1; } return m; };
+    const gDates = G.map((g) => g.date).filter((d) => d <= today), pDw = P.filter((d) => d.dwelling).map((d) => d.date);
+    const within = (ds, ref, k) => ds.filter((d) => d > minusDays(ref, k) && d <= ref).length;
+    const gm = month(gDates), pm = month(pDw);
+    const types = {}; for (const g of G) { const k = g.property_type || g.deal_nature || '(none)'; types[k] = (types[k] || 0) + 1; }
+    out({ kind: 'compare', city, code, govmapSpellings: spell, govmapRows: G.length, propxRows: P.length, propxDwellingRows: pDw.length, classes: cls, diffKinds,
+      latest: { govmap: gDates.sort().slice(-1)[0] || null, propxDwelling: pDw.sort().slice(-1)[0] || null },
+      counts: { govmap: { d90today: within(gDates, today, 90), d365today: within(gDates, today, 365), d90copy: within(gDates, copyEnd, 90), d365copy: within(gDates, copyEnd, 365) },
+        propxDwelling: { d90today: within(pDw, today, 90), d365today: within(pDw, today, 365), d90copy: within(pDw, copyEnd, 90), d365copy: within(pDw, copyEnd, 365) } },
+      monthly: Object.keys({ ...gm, ...pm }).sort().map((m) => `${m}:${gm[m] || 0}/${pm[m] || 0}`).join(' '), govmapTypes: types });
+    out({ kind: 'compareSamples', city, samples });
+    /* streets: the three busiest GovMap streets of the last 365 days + one of medium and one of low activity */
+    const byStreet = new Map(); for (const g of G) { if (!g.street || g.date > today) continue; if (!byStreet.has(g.street)) byStreet.set(g.street, []); byStreet.get(g.street).push(g); }
+    const ranked = [...byStreet].sort((a, b) => b[1].length - a[1].length);
+    const pick = [...ranked.slice(0, 3), ranked.find(([, v]) => v.length >= 8 && v.length <= 15), ranked.find(([, v]) => v.length >= 2 && v.length <= 3)].filter((x, i, a) => x && a.indexOf(x) === i);
+    for (const [name, gs2] of pick) {
+      const ids = D.streets.filter((s) => s.cityCode === code && SD.normName(s.name) === SD.normName(name)).map((s) => s.code);
+      const pS = P.filter((d) => d.dwelling && d.streetCodes.some((c) => ids.includes(c)));
+      const gD = gs2.map((g) => g.date).sort(), pD = pS.map((d) => d.date).sort();
+      const status = gs2.slice(0, 40).map((g) => (pIdx.get(key(g.date, g.gush, g.parcel, g.sub)) ? 'M' : g.date > copyEnd ? 'A' : 'W'));
+      out({ kind: 'compareStreet', city, street: name, directoryCodes: ids, govmap: { n: gs2.length, latest: gD.slice(-1)[0], d90: within(gD, today, 90) },
+        propx: { n: pS.length, latest: pD.slice(-1)[0] || null, d90: within(pD, today, 90) },
+        recentGovmapInPropx: { matched: status.filter((x) => x === 'M').length, missingWithinCopy: status.filter((x) => x === 'W').length, afterCopy: status.filter((x) => x === 'A').length, of: status.length },
+        sample: gs2.slice(0, 4).map((g) => ({ g: gOut(g), inPropx: !!pIdx.get(key(g.date, g.gush, g.parcel, g.sub)) })) });
+    }
+  }
+  out({ kind: 'fixtureCandidates', n: fixture.length, rows: fixture });
 }
 
 (async () => {
