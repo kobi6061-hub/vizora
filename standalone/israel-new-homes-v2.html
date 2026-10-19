@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="e853b4a5e3c37366ec7fff6e01033b7066aadc89aa7f9c1fdf12a039c66734b0">
+<meta name="propx-source-sha256" content="0e21dd538b04e5e55ec4b2b348d60554b30003f67d88bff612495dc7edad7c56">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2996,7 +2996,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       source: { ids: ['over:street-evidence'] }, cls: 'DERIVED',
       formula: bi('חציון(סכום) על עסקאות דיור מתומחרות ונבדלות שנצפו ברחוב; מעוגל ל-1,000 ₪; ב-5–9 עסקאות מוצגים גם המינימום והמקסימום; P10–P90 רק מ-10 עסקאות', 'median(amount) over the street\'s distinct priced OBSERVED dwelling deals; rounded to ₪1,000; with 5–9 deals the minimum and maximum are shown beside it; P10–P90 only from 10 deals'),
       inputs: [bi('סכום העסקה כפי שדווח', 'the deal amount as reported')],
-      methodology: bi('תמהיל של דירות חדשות ויד שנייה, גדלים שונים; אין נרמול איכות.', 'A mix of new and second-hand dwellings of different sizes; no quality adjustment.'),
+      methodology: bi('תמהיל של דירות חדשות ויד שנייה, גדלים שונים; אין נרמול איכות. כשחלקה אחת מחזיקה לפחות מחצית העסקאות המתומחרות (בניין או פרויקט אחד), העמוד אומר זאת ליד החציון — החציון מתאר בעיקר אותה.', 'A mix of new and second-hand dwellings of different sizes; no quality adjustment. When one parcel holds at least half of the priced deals (one building or project), the page says so beside the median — the median mostly describes it.'),
       interpretation: bi('השוו לחציון היישוב באותו חלון — הוא מוצג בנפרד כהקשר.', 'Compare with the locality median in the same window — shown apart, as context.'),
       notAs: bi('לא שווי של דירה מסוימת, לא מחיר מבוקש ולא מחיר דירה חדשה.', 'Not the value of a given flat, not an asking price and not a new-home price.'),
       limitations: [LIM.smallSample],
@@ -9209,12 +9209,14 @@ const SIT={he:{lyr:"מודיעין רחוב",one:"קריאה של דקה — מ�
     exists:(k,hist,ret)=>hist?`${k} היה במרשם הרחובות הרשמי${ret?` עד ${ret}`:""} ואינו מופיע בו עוד (היסטורי).`:`${k} קיים במרשם הרחובות הרשמי.`,
     zero:(n,at)=>`נצפו ${n} עסקאות דיור ${at}, אף אחת לא מתומחרת (מכירה חלקית, סכום סמלי או סכום אחד לכמה יחידות) — מחיר לא מוצג ("—").`,
     nbBasis:(n)=>`עסקאות שנצפו ב-${n} הרחובות המקושרים לשכונה (רחובות שלמים)`,
+    conc:(o)=>`${fmtInt(o.n)} מתוך ${fmtInt(o.of)} העסקאות המתומחרות בחלקה אחת${o.houses.length?` (מס׳ ${o.houses.join(", ")})`:""} — החציון מתאר בעיקר אותה`,byad:"שנת בנייה אחרי שנת העסקה",
     rung:{"official-name":"שם רשמי","official-synonym":"שם נרדף רשמי","spelling-variant":"כתיב אחר של סוג הרחוב","normalized-name":"שם מנורמל (ייתכן)"},roomsW:"חד׳",sqmW:"מ״ר",status:"מצב ראיות השוק",latest:"עסקה אחרונה שנצפתה",sample:"מדגם העסקאות",median:"חציון מחיר עסקה",sqm:"חציון ₪ למ״ר",period:"תקופת התצפית",fresh:"עדכניות הנתונים",
     knows:"מה PROPX יודעת",notKnows:"מה PROPX לא יודעת",five:"קריאה של חמש דקות — התפלגות, הקשר ועסקאות",deep:"צלילה לעומק — התאמות אפשריות, היתרים, זהות ושיטה",
     states:{SUPPORTED:"שוק רחוב נתמך",LIMITED:"ראיות רחוב מוגבלות",INSUFFICIENT:"מדגם רחוב לא מספיק",NONE:"לא נצפו עסקאות",NOT_SWEPT:"היישוב לא נסרק",UNKNOWN:"ראיות השוק טרם נטענו"},
     lead:{SUPPORTED:(n,at)=>`${fmtInt(n)} עסקאות דיור מתומחרות נצפו ${at} ב-36 חודשים — מספיק לחציון.`,LIMITED:(n,at)=>`${fmtInt(n)} עסקאות דיור מתומחרות נצפו ${at} ב-36 חודשים — החציון מוצג כראיה מוגבלת.`,
       INSUFFICIENT:(n)=>`נצפו ${fmtInt(n)} עסקאות מתומחרות בלבד — מחיר לא מוצג ("—"); העסקאות ברשימה.`,NONE:()=>"אף עסקת דיור במרשם לא שויכה אליו בוודאות. זה לא מחיר אפס.",
       NOT_SWEPT:()=>"היישוב לא נכלל בסריקת העסקאות האחרונה.",UNKNOWN:()=>"ראיות השוק טרם נשמרו בגרסה זו."},
+    nsWhy:{"not-in-register-copy":"בעותק מרשם העסקאות אין שם יישוב שממופה לקוד היישוב הזה — אין ממנו עסקאות ברמת הרחוב (זה לא מחיר אפס).","sweep-pending":"הסריקה של היישוב טרם הושלמה או נכשלה — היא תנסה שוב בריצה הבאה.","stale-shard":"הסריקה השמורה של היישוב היא של חלון אחר — היא לא מוצגת עד הסריקה הבאה."},
     kind:{street:"רחוב",area:"אזור כתובת",site:"אתר"},hist:"היסטורי — לא במרשם הנוכחי",id:"מזהה רחוב רשמי",observed:"נצפו",priced:"מתומחרות",last12:"12 חודשים אחרונים",copy:"עותק המרשם",check:"בדיקת PROPX",
     of:(a,b)=>`${a} עד ${b}`,loading:"טוען את הרחוב…",err:"לא ניתן לטעון את מודיעין הרחוב.",
     dist:"התפלגות (רק בשוק נתמך)",p10:"טווח מחירים P10–P90",rooms:"תמהיל חדרים",size:"תמהיל שטחים (מ״ר)",change:"שינוי 12 חודשים מול 12 שקדמו",mean:"ממוצע (לצד החציון)",
@@ -9235,12 +9237,14 @@ const SIT={he:{lyr:"מודיעין רחוב",one:"קריאה של דקה — מ�
     exists:(k,hist,ret)=>hist?`${k} was in the official street directory${ret?` until ${ret}`:""} and is no longer listed (historical).`:`${k} is in the official street directory.`,
     zero:(n,at)=>`${n} dwelling deals were observed ${at}, none of them priced (partial sales, nominal amounts or one amount for several units) — no price is shown ("—").`,
     nbBasis:(n)=>`deals observed on the ${n} streets linked to the neighbourhood (whole streets)`,
+    conc:(o)=>`${fmtInt(o.n)} of ${fmtInt(o.of)} priced deals are on one parcel${o.houses.length?` (no. ${o.houses.join(", ")})`:""} — the median mostly describes it`,byad:"build year after the deal year",
     rung:{"official-name":"official name","official-synonym":"official synonym","spelling-variant":"street-type spelling variant","normalized-name":"normalized name (possible)"},roomsW:"rooms",sqmW:"m²",status:"Market evidence status",latest:"Latest observed transaction",sample:"Transaction sample",median:"Median transaction price",sqm:"Median ₪ per m²",period:"Observation period",fresh:"Data freshness",
     knows:"What PROPX knows",notKnows:"What PROPX does not know",five:"Five-minute read — distribution, context and deals",deep:"Deep dive — possible matches, permits, identity and method",
     states:{SUPPORTED:"SUPPORTED STREET MARKET",LIMITED:"LIMITED STREET EVIDENCE",INSUFFICIENT:"INSUFFICIENT STREET SAMPLE",NONE:"NO OBSERVED TRANSACTIONS",NOT_SWEPT:"LOCALITY NOT SWEPT",UNKNOWN:"MARKET EVIDENCE NOT LOADED"},
     lead:{SUPPORTED:(n,at)=>`${fmtInt(n)} priced dwelling deals were observed ${at} in 36 months — enough for a median.`,LIMITED:(n,at)=>`${fmtInt(n)} priced dwelling deals were observed ${at} in 36 months — the median is shown as limited evidence.`,
       INSUFFICIENT:(n)=>`Only ${fmtInt(n)} priced deals were observed — no price is shown ("—"); the deals are listed.`,NONE:()=>"No register dwelling deal was attached to it with certainty. This is not a zero price.",
       NOT_SWEPT:()=>"Its locality was not in the latest deals sweep.",UNKNOWN:()=>"The market evidence is not stored in this version yet."},
+    nsWhy:{"not-in-register-copy":"The deals register copy lists no settlement name mapped to this locality's code — no street-level deals come from it (this is not a zero price).","sweep-pending":"The locality's sweep has not finished or failed — the next run tries again.","stale-shard":"The stored sweep of the locality is of another window — it is not shown until the next sweep."},
     kind:{street:"street",area:"address area",site:"site"},hist:"historical — no longer in the registry",id:"Official street id",observed:"observed",priced:"priced",last12:"last 12 months",copy:"register copy",check:"PROPX check",
     of:(a,b)=>`${a} to ${b}`,loading:"Loading the street…",err:"The street intelligence could not be loaded.",
     dist:"Distribution (supported market only)",p10:"Price range P10–P90",rooms:"Rooms mix",size:"Size mix (m²)",change:"Latest 12 months vs the 12 before",mean:"Mean (beside the median)",
@@ -9294,7 +9298,7 @@ function siHTML(g){
     tile(t.status,chip,"",xpBtn("street_market_evidence_status")),
     tile(t.latest,st&&st.latest?siDate(st.latest.date):"—",st&&st.latest?[st.latest.amount!=null?fmtNIS(st.latest.amount):null,st.latest.rooms?`${st.latest.rooms} ${t.roomsW}`:null,st.latest.areaSqm?`${fmtInt(st.latest.areaSqm)} ${t.sqmW}`:null].filter(Boolean).join(" · "):"",xpBtn("street_observed_deal")),
     tile(t.sample,st?`${fmtInt(st.observed)} ${t.observed}`:"—",st?`${fmtInt(priced)} ${t.priced}${st.last12!=null?` · ${t.in12(fmtInt(st.last12))}`:""}`:"",xpBtn("street_sample_size")),
-    tile(t.median,medianV,st&&st.medianPrice!=null?(lim?`${t.states.LIMITED} · n=${fmtInt(priced)}${st.priceMinMax?` · ${t.minmax} ${ltr(`${fmtNIS(st.priceMinMax.min)}–${fmtNIS(st.priceMinMax.max)}`)}`:""}`:`n=${fmtInt(priced)}`):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded"),lim&&st.medianPrice!=null?"lim":""),
+    tile(t.median,medianV,st&&st.medianPrice!=null?(lim?`${t.states.LIMITED} · n=${fmtInt(priced)}${st.priceMinMax?` · ${t.minmax} ${ltr(`${fmtNIS(st.priceMinMax.min)}–${fmtNIS(st.priceMinMax.max)}`)}`:""}`:`n=${fmtInt(priced)}`)+(E.concentration?` · <b>${ldE(t.conc(E.concentration))}</b>`:""):"",st&&st.medianPrice!=null?xpBtn("street_median_price"):miss(st&&st.observed?"street-price-insufficient":E.swept?"no-observed-deals":E.state==="NOT_SWEPT"?"locality-not-swept":"evidence-not-loaded"),lim&&st.medianPrice!=null?"lim":""),
     tile(t.sqm,sqmV,st&&st.medianPricePerSqm!=null?`n=${fmtInt(st.withSqm)}${st.sqmLimited?` · ${t.states.LIMITED}`:""}`:"",st&&st.medianPricePerSqm!=null?xpBtn("street_median_price_per_sqm"):"",st&&st.medianPricePerSqm!=null&&(lim||st.sqmLimited)?"lim":""),
     /* the window and the copy describe a swept locality only — a locality outside the sweep shows "—" */
     tile(t.period,E.swept&&w?t.of(siDate(w.from),siDate(w.to)):"—","",""),
@@ -9328,7 +9332,7 @@ function siHTML(g){
     five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
       <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+      <td class="num">${d.yearBuilt||"—"}</td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
     if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
   }
   /* deep dive */
@@ -9357,6 +9361,7 @@ function siHTML(g){
   /* the lead names what the row is (street / address area / site, current / historical); an observed sample with no
      priced deal says why there is no price */
   const lead=state==="INSUFFICIENT"&&!priced?t.zero(fmtInt(st.observed),at)
+    :state==="NOT_SWEPT"&&E.reason&&t.nsWhy[E.reason]?`${exists} ${t.nsWhy[E.reason]}`
     :["NONE","NOT_SWEPT","UNKNOWN"].includes(state)?`${exists} ${(t.lead[state]||t.lead.UNKNOWN)()}`
     :(t.lead[state]||t.lead.UNKNOWN)(priced,at);
   return `<div class="geo-cov"><span class="geo-chip">${t.kind[I.kind]||I.kind}</span>${I.status==="historical"?`<span class="geo-chip"><b>${t.hist}</b></span>`:""}

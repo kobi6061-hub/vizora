@@ -452,6 +452,23 @@ t('review (search): house numbers, pasted marks, separators, type words alone, t
   assert.match(page, /if\(seq!==geoSeq\)return;/, 'a stale answer is dropped'); assert.match(page, /openGeoView\(geos\[\+b\.dataset\.geoi\]\)/); assert.match(page, /openGeoView\(geoShown\[\+it\.dataset\.geoi\]\)/);
   assert.ok(!/Herzl Petah Tikva/.test(page), 'the English hint shows a query that works (Hebrew)');
 });
+t('review (real sweep): a parcel holding half the priced deals is stated beside the median; a build year after the deal is tagged, never PROBABLE NEW; reads are cached', () => {
+  const EVr = require('../lib/streets/evidence');
+  const S = EVr.store(); if (!S.available) return;   // the committed sweep (bot-written) — invariants only
+  let checked = 0;
+  for (const [k, v] of Object.entries(S.summary.streets)) {
+    if (v[1] < 5 || checked >= 60) continue;
+    const [c, sc] = k.split(':'); const e = EVr.street(`st:${c}:${sc}`); checked++;
+    if (e.concentration) { assert.ok(e.concentration.n / e.concentration.of >= 0.5); assert.equal(e.concentration.of, e.deals.filter((d) => d.priced).length); }
+    for (const d of e.deals) if (d.buildYearAfterDeal) assert.equal(d.probableNew, false, 'off-plan rows are not classified by the build-year rule');
+    assert.equal(e.stats.buildYearAfterDeal, e.deals.filter((d) => d.buildYearAfterDeal).length);
+  }
+  assert.ok(checked > 0);
+  const first = Object.keys(S.summary.localities)[0];
+  const a = EVr.locality(first), b = EVr.locality(first); assert.equal(a, b, 'the locality context is computed once per shard'); assert.equal(a.stats.change.pct, null);
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.match(page, /E\.concentration\?` · <b>\$\{ldE\(t\.conc\(E\.concentration\)\)\}<\/b>`/); assert.match(page, /d\.buildYearAfterDeal\?/);
+});
 t('workflows: the evidence sweep tests before it writes, commits only data/streets/evidence, reads GET-only one request a second; the directory sync rebuilds the index', () => {
   const y = fs.readFileSync(path.join(ROOT, '.github/workflows/street-evidence-sync.yml'), 'utf8');
   assert.ok(y.indexOf('node test/streets.test.js') < y.indexOf('node scripts/street-evidence-sync.js'));

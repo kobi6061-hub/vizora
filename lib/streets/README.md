@@ -114,29 +114,38 @@ picked. States:
 | state | rule | in the street statistics? |
 |---|---|---|
 | OBSERVED | every address of the parcel is shown (`addresses_total` = shown) and all resolve to ONE street | yes |
-| POSSIBLE | the parcel touches the street but: several streets (corner parcel) · list truncated (3 of N) · an address unresolved | **no** — listed apart |
+| POSSIBLE | the parcel touches the street but: several streets (corner parcel) · list truncated (3 of N, or no total stated with 3 shown) · an address unresolved · a name met only without its street-type word | **no** — listed apart |
 | UNRESOLVED | addresses, none resolved | no |
 | NO_ADDRESS | no address in the crosswalk | no — locality level only |
 
 **Universe and metrics** (`evidence.js`). Dwelling deals: `דירה בבית קומות` · `דירת גן` · `דירת גג` · the cottage types · `בית
 בודד` (the publisher's own advice for "flats"; `מגורים` / `ד. מגורים` are mostly land or rights and are excluded, counted
-apart). PRICED = the whole property (portion = 1) for a positive amount; ₪/m² only with a positive area; a partial sale is
-never priced. Median first (P10–P90, mean beside it, labelled); 12 / 24 / 36-month counts; latest deal; rooms and size mix;
-change = the latest 12 months' median vs the 12 before, only when each half holds ≥ 10 priced deals. PROBABLE NEW from the
-build year (≥ deal year − 1) — never CONFIRMED.
+apart). PRICED = the whole property (portion = 1) for at least ₪100,000 (a smaller amount is a nominal consideration — observed,
+not priced); ₪/m² only with a positive area and at least ₪2,000 / m²; a partial sale is never priced; identical rows are one
+transaction; units of one parcel sold the same day for one amount are observed and not priced (the register may print one
+total on every unit). Median first (P10–P90, mean beside it, labelled); 12 / 24 / 36-month calendar counts; latest deal; rooms
+and size mix; change = median ₪/m² of the latest 12 months vs the 12 before, only with ≥ 30 deals in each half, with a seeded
+95 % bootstrap interval and each half's median area and probably-new share (a mix shift is not a price change). PROBABLE NEW =
+the product's one rule (`lib/gov/classify.js`: build year = deal year or deal year − 1) — never CONFIRMED; a build year AFTER
+the deal year (an off-plan sale, or a register error) is not classified and is counted and tagged on its own. CONCENTRATION:
+when one parcel holds ≥ 50 % of a street's priced deals (≥ 5), the page says so beside the median (1,690 of the 4,221 streets
+with ≥ 5 priced deals on 19.10.2026 — e.g. Jerusalem, Jaffa Road: 248 of 270 at no. 161, 247 of them before the build year).
 
 **Sample policy** (priced OBSERVED dwelling deals in the window):
 
 | state | priced deals | shown |
 |---|---|---|
-| SUPPORTED STREET MARKET | ≥ 10 | median price, median ₪/m² (own count ≥ 10), P10–P90, mix, change (10 + 10) |
-| LIMITED STREET EVIDENCE | 5–9 | median price (and ₪/m² with ≥ 5), labelled LIMITED; no percentiles, no change |
+| SUPPORTED STREET MARKET | ≥ 10 | median price, median ₪/m² (own count ≥ 10; 5–9 labelled LIMITED), P10–P90, mix, change (30 + 30 ₪/m²) |
+| LIMITED STREET EVIDENCE | 5–9 | median price (and ₪/m² with ≥ 5) with min–max, labelled LIMITED; no percentiles, no change |
 | INSUFFICIENT STREET SAMPLE | 1–4 (or observed, none priced) | street price "—"; the deals are listed |
 | NO OBSERVED TRANSACTIONS | 0 | "no observed transactions" — never a zero price |
 
 10 matches PROPX's small-sample rule elsewhere (fewer than 10 deals is a small sample); 5 is the smallest sample whose
-median is not one or two deals' value. The thresholds are re-read against the national distribution after each full sweep
-(`coverage.js`).
+median is not one or two deals' value. Checked on the first full sweep (19.10.2026): streets by priced deals — 0: 6,187 ·
+1–4: 6,429 · 5–9: 1,926 · 10–19: 1,324 · 20–49: 788 · 50–99: 135 · 100+: 48; on 291 streets with ≥ 40 priced deals, the median
+of n resampled deals sits from the street's full median by (median · P90): n = 3 → 7.0 % · 26.7 %, n = 5 → 5.5 % · 20.9 %,
+n = 10 → 3.9 % · 14.5 %, n = 20 → 2.8 % · 10.7 %. Hence: below 5 no price; 5–9 a median labelled LIMITED with its min–max;
+≥ 10 the median with P10–P90. The thresholds are re-read after each full sweep (`coverage.js`).
 
 **Context — never the street's price.** The locality's priced dwelling deals in the same window (every address state — the
 locality is certain), DERIVED; the CBS Table 2.2 all-dwellings average where the city has its own row (OFFICIAL, the page's
