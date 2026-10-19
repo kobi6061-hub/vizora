@@ -1,0 +1,234 @@
+{
+ "schema": 1,
+ "checkedAt": "2026-10-19T22:15:21.359Z",
+ "today": "2026-10-19",
+ "contract": [
+  "transaction_date",
+  "source_snapshot_date",
+  "source_publication_date",
+  "propx_ingested_at",
+  "propx_checked_at",
+  "source_id",
+  "source_class",
+  "match_state"
+ ],
+ "register": {
+  "answered": true,
+  "status": 200,
+  "snapshotAt": "2026-09-19 11:07:39.013275+00",
+  "latestTransactionDate": "2026-09-17",
+  "deals": 3844200,
+  "datasetId": "fd06f5ae-8a4f-4120-b275-8a514ad23499",
+  "upstream": "https://nadlan.taxes.gov.il/svinfonadlan2010/startpage.aspx"
+ },
+ "govmapLayer": {
+  "answered": true,
+  "status": 200,
+  "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+  "latestTransactionDate": "2026-09-28",
+  "deals": 2500941,
+  "datasetId": "4174aac2-c8b2-443e-9425-3773ce47c8da",
+  "version": 4,
+  "upstream": "https://www.govmap.gov.il/?lay=16",
+  "readByPropx": false
+ },
+ "officialChannels": [
+  {
+   "id": "taxes:nadlan-register",
+   "url": "https://nadlan.taxes.gov.il/svinfonadlan2010/startpage.aspx",
+   "status": null,
+   "answered": false,
+   "refused": false,
+   "antiBot": null,
+   "note": "unreachable from the runner (fetch failed)"
+  },
+  {
+   "id": "nadlan.gov.il",
+   "url": "https://www.nadlan.gov.il/",
+   "status": 200,
+   "answered": false,
+   "refused": false,
+   "antiBot": "recaptcha",
+   "note": "an identification / CAPTCHA screen — not bypassed"
+  },
+  {
+   "id": "govmap.gov.il",
+   "url": "https://www.govmap.gov.il/",
+   "status": 403,
+   "answered": false,
+   "refused": true,
+   "antiBot": "the request could not be satisfied",
+   "note": "refused this runner — not worked around"
+  }
+ ],
+ "propx": {
+  "available": true,
+  "sweep": "COMPLETE",
+  "shards": 1036,
+  "snapshotAt": "2026-09-19 11:07:39.013275+00",
+  "copyLatestDeal": "2026-09-17",
+  "window": {
+   "from": "2023-09-18",
+   "to": "2026-09-17",
+   "months": 36
+  },
+  "ingestedFrom": "2026-10-19T10:13:08.961Z",
+  "ingestedTo": "2026-10-19T10:13:08.961Z",
+  "latestTransaction": "2026-09-17",
+  "latestDwellingTransaction": "2026-09-17",
+  "deals": 342471,
+  "dwellings": 266890,
+  "periodsToToday": {
+   "7": {
+    "n": null,
+    "coveredDays": 0,
+    "coverage": "NOT_COVERED"
+   },
+   "30": {
+    "n": null,
+    "coveredDays": 0,
+    "coverage": "NOT_COVERED"
+   },
+   "60": {
+    "n": 249,
+    "coveredDays": 28,
+    "coverage": "PARTLY_COVERED"
+   },
+   "90": {
+    "n": 1821,
+    "coveredDays": 58,
+    "coverage": "PARTLY_COVERED"
+   },
+   "180": {
+    "n": 19239,
+    "coveredDays": 148,
+    "coverage": "PARTLY_COVERED"
+   },
+   "365": {
+    "n": 64211,
+    "coveredDays": 333,
+    "coverage": "PARTLY_COVERED"
+   }
+  },
+  "countsToCopyEnd": {
+   "7": 2,
+   "30": 294,
+   "60": 1936,
+   "90": 6202,
+   "180": 25217,
+   "365": 68921
+  },
+  "lastSixMonths": [
+   {
+    "month": "2026-04",
+    "dwellings": 4541
+   },
+   {
+    "month": "2026-05",
+    "dwellings": 6968
+   },
+   {
+    "month": "2026-06",
+    "dwellings": 6156
+   },
+   {
+    "month": "2026-07",
+    "dwellings": 3101
+   },
+   {
+    "month": "2026-08",
+    "dwellings": 981
+   },
+   {
+    "month": "2026-09",
+    "dwellings": 72
+   }
+  ]
+ },
+ "freshness": {
+  "state": "STALE",
+  "ageDays": 30,
+  "stateReason": null,
+  "thresholds": {
+   "CURRENT": 7,
+   "RECENT": 21,
+   "STALE": 45
+  },
+  "basis": {
+   "measuredOn": "2026-10-19",
+   "registerFill": {
+    "copy": "2026-09-19",
+    "july2026Share": 0.41,
+    "august2026Share": 0.13,
+    "nationalMonthlyDwellings": 7500
+   },
+   "lateIntake": {
+    "newerCopy": "govmap-layer 2026-10-08",
+    "olderCopy": "register 2026-09-19",
+    "cities": 8,
+    "extraJulSepDeals": 2342,
+    "days": 19,
+    "perDay": 123,
+    "shareOf90DaysPerDay": 0.014
+   },
+   "source": "lib/trust/discovery/2026-10-19-transactions.json"
+  }
+ },
+ "lagDays": {
+  "snapshotAge": 30,
+  "latestTransaction": 32
+ },
+ "newerCopies": [
+  {
+   "id": "over:govmap-layer",
+   "name": "GovMap deals layer (lay=16) — republished copy (over.org.il)",
+   "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+   "latestTransactionDate": "2026-09-28",
+   "daysNewerLatestDeal": 11,
+   "daysNewerSnapshot": 19,
+   "readByPropx": false,
+   "why": "not read: the copy has known republication defects (a second deal-id series with dates one day earlier and no property type, future dates as published, amounts truncated to ₪1,000, its own sub-parcel numbering, ≈84,000 deals without a settlement, 500 deals per point) — integrating it is an owner decision"
+  }
+ ],
+ "alerts": [
+  {
+   "kind": "MATERIAL_LAG",
+   "reason": "copy-age",
+   "message": "the transaction copy PROPX reads is STALE (30 days old)",
+   "values": {
+    "state": "STALE",
+    "ageDays": 30
+   }
+  },
+  {
+   "kind": "MATERIAL_LAG",
+   "reason": "newer-copy",
+   "message": "GovMap deals layer (lay=16) — republished copy (over.org.il): latest deal 2026-09-28, 11 days after PROPX's (2026-09-17)",
+   "values": {
+    "id": "over:govmap-layer",
+    "name": "GovMap deals layer (lay=16) — republished copy (over.org.il)",
+    "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+    "latestTransactionDate": "2026-09-28",
+    "daysNewerLatestDeal": 11,
+    "daysNewerSnapshot": 19,
+    "readByPropx": false,
+    "why": "not read: the copy has known republication defects (a second deal-id series with dates one day earlier and no property type, future dates as published, amounts truncated to ₪1,000, its own sub-parcel numbering, ≈84,000 deals without a settlement, 500 deals per point) — integrating it is an owner decision"
+   }
+  },
+  {
+   "kind": "OFFICIAL_UNREACHABLE",
+   "informational": true,
+   "message": "taxes:nadlan-register: unreachable from the runner (fetch failed)"
+  },
+  {
+   "kind": "OFFICIAL_UNREACHABLE",
+   "informational": true,
+   "message": "nadlan.gov.il: an identification / CAPTCHA screen — not bypassed"
+  },
+  {
+   "kind": "OFFICIAL_UNREACHABLE",
+   "informational": true,
+   "message": "govmap.gov.il: refused this runner — not worked around"
+  }
+ ]
+}
