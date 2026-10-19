@@ -57,6 +57,7 @@ jobs:
           probe "/api/intel?view=ddStatus" "302 307" login.html
           probe "/api/intel?view=dd&developer=x" "302 307" login.html
           probe "/api/intel?view=ddCoverage&city=5000" "302 307" login.html
+          probe "/api/intel?view=group&company=511399388" "302 307" login.html
           probe "/api/login-anything" "302 307" login.html
           probe "/api/identity?op=status" "302 307" login.html
           probe "/api/loginx" "302 307" login.html
