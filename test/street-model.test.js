@@ -146,7 +146,8 @@ t('shrinkage: a one-deal street is pulled toward its parents; level shares sum t
   const lev = VM.streetLevel(9001, one, ctx, null);
   const sum = Object.values(lev.weights).reduce((a, b) => a + b, 0);
   assert.ok(Math.abs(sum - 1) < 1e-12);
-  assert.ok(lev.weights.street < 0.5, 'one deal never carries most of the estimate (' + lev.weights.street + ')');
+  /* one deal (n_eff 1) carries exactly 1 / (1 + k_street) — the estimated credibility, never a hand-set weight */
+  assert.ok(Math.abs(lev.weights.street - 1 / (1 + P0.k.street.k)) < 1e-12, 'w = n_eff / (n_eff + k)');
   const own = lev.levels.street.mean;
   const parentSide = lev.levels.block ? lev.levels.block.mean : lev.levels.locality.mean;
   assert.ok((lev.value - own) * (lev.value - parentSide) <= 1e-12, 'between its own deal and its parents');
@@ -185,6 +186,25 @@ t('tiers: STRONG needs own recent evidence from ≥ 2 parcels in a deep locality
   /* metrics on known values */
   const m = VV.metrics([{ pred: 100, actual: 100, areaSqm: 1 }, { pred: 110, actual: 100, areaSqm: 1 }, { pred: 80, actual: 100, areaSqm: 1 }]);
   assert.ok(Math.abs(m.mdape - 0.1) < 1e-12 && m.n === 3);
+});
+
+t('review fixes (mechanics): loose-name links never locate; adjacent build years are one development; new rows are age-centred; a still-filling quarter is not the anchor', () => {
+  assert.deepEqual(VM.linkStreets([{ code: 1, via: 'official-name' }, { code: 2, via: 'normalized-name' }, { code: 3, via: 'official-synonym' }]).map((x) => x.code), [1, 3]);
+  const r = { city: 9001, gush: 7, yearBuilt: 2021, project: '9001|7|2021', parcel: '9001|7/1' };
+  const ex = VM.excluder({ parcel: r.parcel, project: r.project, projects: VM.projectsOf(r) });
+  assert.ok(ex({ parcel: 'x', project: '9001|7|2022' }) && ex({ parcel: 'x', project: '9001|7|2020' }) && !ex({ parcel: 'x', project: '9001|7|2023' }) && !ex({ parcel: 'x', project: '9001|8|2021' }));
+  /* zOf / priceOf invert each other for a new row and an existing row; a new row's premium is measured against the age mix */
+  const F = P0.byDistrict['d-test'];
+  const base = { district: 'd-test', areaSqm: 85, rooms: 3.4, offPlan: false, type: 'flat', subsidyParcel: false, q: null };
+  const lvl = 10, pNew = VM.priceOf(lvl, { ...base, probNew: true, ageBand: null }, P0), pRef = VM.priceOf(lvl, { ...base, probNew: false, ageBand: null }, P0);
+  assert.ok(Math.abs((pNew - pRef) - (F.beta[1] - P0.ageRef['d-test'])) < 1e-12);
+  const tr = train0.find((x) => x.street === 62); const z = VM.zOf(tr, P0);
+  assert.ok(Math.abs(VM.priceOf(z.z - z.timeAdj, tr, P0) - tr.y) < 1e-9, 'z inverts priceOf');
+  /* the anchor steps back from a quarter holding < 60 % of the four before it */
+  const thin = SY.rows.filter((x) => !(x.date >= '2026-07-01' && x.id % 5 !== 0));
+  const Pt = VM.fit(thin, '2026-10-01');
+  assert.equal(Pt.anchorQuarter['d-test'], '2026Q2');
+  assert.equal(P0.anchorQuarter['d-test'], P0.byDistrict['d-test'].base, 'a reported quarter stays the anchor');
 });
 
 /* ───────────────────────── the committed build ───────────────────────── */
@@ -254,16 +274,27 @@ t('MODEL RANGE ≠ GUARANTEED SALE RANGE: validation-based ranges per tier (≥ 
   for (const r of PUB) {
     const rg = MODEL.ranges[r.tier];
     if (!rg) { assert.equal(r.lo, null); continue; }
-    assert.equal(r.lo, Math.round(r.value * Math.exp(rg.lo) / 100) * 100, r.id); assert.equal(r.hi, Math.round(r.value * Math.exp(rg.hi) / 100) * 100, r.id);
+    /* the tier band, widened (never narrowed) by the locality's own band where it holds ≥ 300 held-out deals */
+    const lr = MODEL.localityRanges[SD.parseId(r.id).cityCode];
+    const lo = lr ? Math.min(rg.lo, lr.lo) : rg.lo, hi = lr ? Math.max(rg.hi, lr.hi) : rg.hi;
+    assert.equal(r.lo, Math.round(r.value * Math.exp(lo) / 100) * 100, r.id); assert.equal(r.hi, Math.round(r.value * Math.exp(hi) / 100) * 100, r.id);
     assert.ok(r.lo < r.value && r.value < r.hi);
   }
   for (const [tier, c] of Object.entries(VAL.range.coverage)) { assert.ok(c.n >= 200, tier); assert.ok(c.within >= 72 && c.within <= 90, `${tier} out-of-sample coverage ${c.within} %`); }
+  for (const [tier, c] of Object.entries(VAL.range.coverageWithLocality)) assert.ok(c.within >= VAL.range.coverage[tier].within, tier + ' widening never lowers coverage');
+  for (const r of Object.values(MODEL.localityRanges)) assert.ok(r.n >= 300);
   assert.deepEqual(VAL.range.calibratedOn, ['A', 'B']); assert.equal(VAL.range.checkedOn, 'C');
   assert.match(VAL.range.method, /10th–90th percentile/);
 });
 
 t('validation: three forward folds; the model beats every baseline on the same held-out deals (MdAPE and P80)', () => {
   assert.deepEqual(VAL.design.folds.map((f) => f.id), ['A', 'B', 'C']);
+  /* each test window is the 6 calendar months after its cutoff (a month-arithmetic overflow once cut fold B to 3.5 months) */
+  for (const f of VAL.design.folds) { assert.equal(f.testEnds, VV.plusMonths(f.cutoff, 6)); assert.match(f.testEnds, /^\d{4}-(0[1-9]|1[0-2])-\d{2}$/); }
+  assert.equal(VV.plusMonths('2025-09-18', 6), '2026-03-18'); assert.equal(VV.plusMonths('2025-11-18', 3), '2026-02-18');
+  assert.ok(VAL.baselines.bHedLocality && VAL.baselines.bHedLocality.common > 20000, 'the hedonic locality-only baseline is published');
+  assert.match(VAL.design.selection, /lock-box/); assert.match(VAL.design.published, /BEFORE the locality caps/);
+  assert.ok(VAL.byPredictedBand && VAL.byActualPriceBand && !VAL.byPriceBand, 'bias by the predicted band; the actual band is labelled');
   assert.match(VAL.design.holdout, /parcel and its development/); assert.match(VAL.design.noLookAhead, /before the fold cutoff/);
   assert.ok(VAL.national.n > 20000 && VAL.national.mdape > 0 && VAL.national.p80ape > VAL.national.mdape && VAL.national.p90ape > VAL.national.p80ape);
   for (const [k, b] of Object.entries(VAL.baselines)) {
@@ -271,7 +302,7 @@ t('validation: three forward folds; the model beats every baseline on the same h
     assert.ok(b.model.mdape < b.baseline.mdape, `${k}: model ${b.model.mdape} vs ${b.baseline.mdape}`);
     assert.ok(b.model.p80ape < b.baseline.p80ape, `${k}: P80 model ${b.model.p80ape} vs ${b.baseline.p80ape}`);
   }
-  for (const k of ['byFold', 'byDistrict', 'byLocality', 'byObservedTier', 'byNewness', 'byPriceBand', 'byModelTier', 'byModelTierAllFolds']) assert.ok(VAL[k] && Object.keys(VAL[k]).length, k);
+  for (const k of ['byFold', 'byDistrict', 'byLocality', 'byObservedTier', 'byNewness', 'byActualPriceBand', 'byPredictedBand', 'byModelTier', 'byModelTierAllFolds']) assert.ok(VAL[k] && Object.keys(VAL[k]).length, k);
   assert.equal(VAL.byModelTier.holdoutFold, 'C'); assert.deepEqual(VAL.byModelTier.capsFrom, ['A', 'B']);
   /* a locality whose own held-out error fails the rule publishes nothing */
   for (const [c, cap] of Object.entries(MODEL.marketCaps)) if (cap === 'UNAVAILABLE') assert.ok(ALL.filter((r) => SD.parseId(r.id).cityCode === Number(c)).every((r) => r.value == null), 'cap ' + c);
@@ -311,7 +342,26 @@ t('request time reproduces the build: WHY THIS ESTIMATE recomputed from one loca
 t('PROBABLE NEW ≠ CONFIRMED NEW HOME · the apartment estimate: the reference profile returns the street value; inputs and their effects are stated', () => {
   const p = PUB.find((r) => r.tier === 'STRONG');
   const ref = VR.apartment(p.id, { sqm: 85, newness: 'existing' }).apartment;
-  assert.ok(Math.abs(ref.ppsqm - p.value) <= 60, `${ref.ppsqm} vs ${p.value}`);
+  assert.ok(Math.abs(ref.ppsqm - p.value) <= 100, `${ref.ppsqm} vs ${p.value}`);
+  assert.equal(ref.value % 10000, 0, 'no false precision: ₪10,000'); assert.equal(ref.ppsqm % 100, 0);
+  /* not modelled: a cottage / detached house (plot value); a build year in the future; a build year of the as-of year counts as new */
+  assert.equal(VR.apartment(p.id, { sqm: 120, type: 'house' }).apartmentReason, 'type-not-modelled');
+  assert.equal(VR.apartment(p.id, { sqm: 120, type: 'cottage' }).apartmentReason, 'type-not-modelled');
+  assert.equal(VR.apartment(p.id, { sqm: 90, built: 2040 }).apartmentReason, 'built-out-of-range');
+  assert.equal(VR.apartment(p.id, { sqm: 300 }).apartmentReason, 'area-out-of-range');
+  const yr = Number(MODEL.asOf.slice(0, 4)), nb = VR.apartment(p.id, { sqm: 85, built: yr }).apartment;
+  assert.equal(nb.profile.newness, 'new'); assert.equal(nb.profile.newBy, 'build-year'); assert.equal(nb.profile.built, null);
+  /* a garden / roof effect only where ≥ 100 within-block sales fitted it */
+  for (const [d, F] of Object.entries(MODEL.districts)) for (const ty of ['garden', 'roof']) {
+    const st = PUB.find((r) => (SD.load().localities.get(SD.parseId(r.id).cityCode) || {}).district === d);
+    if (!st) continue;
+    const a = VR.apartment(st.id, { sqm: 90, type: ty });
+    if ((F.typeN || {})[ty] >= VR.MIN_TYPE_SALES) assert.ok(a.apartment, d + ' ' + ty); else assert.equal(a.apartmentReason, 'type-sample-thin', d + ' ' + ty);
+  }
+  /* new: the premium against the reference age mix (the age-mix centring applies to new rows too) */
+  const dist = (SD.load().localities.get(SD.parseId(p.id).cityCode) || {}).district, Fd = MODEL.districts[dist];
+  const effNew = VR.apartment(p.id, { sqm: 85, newness: 'new' }).apartment.effects.find((f) => f.input === 'newness').effectPct;
+  assert.ok(Math.abs(effNew - Math.round((Math.exp(Fd.beta.probNew - Fd.ageRef) - 1) * 1000) / 10) < 0.05);
   const nw = VR.apartment(p.id, { sqm: 85, newness: 'new' }).apartment;
   const eff = nw.effects.find((f) => f.input === 'newness');
   assert.equal(eff.value, 'new (probable)'); assert.ok(eff.effectPct !== 0);
@@ -372,7 +422,7 @@ t('page: OBSERVED and MODEL in two distinct cards; MODEL chip; MODEL UNAVAILABLE
   assert.match(html, /class="sv-card sv-obs"/); assert.match(html, /class="sv-card sv-mod"/);
   assert.match(html, /\.sv-mod\{[^}]*dashed/);
   assert.match(html, /modChip:"MODEL · PROPX estimate"/); assert.match(html, /modUn:"MODEL UNAVAILABLE"/);
-  assert.match(html, /stcomp:"text,text,text,date,currency,number,currency,number,number,number,number,currency,number"/);
+  assert.match(html, /stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number"/);
   for (const k of ['STREET', 'obsH', 'modH', 'modEv', 'latestEv', 'mainLim', 'modWhy']) if (k !== 'STREET') assert.ok(html.includes(k + ':'), k);
   const sa = fs.readFileSync(path.join(ROOT, 'standalone/israel-new-homes-v2.html'), 'utf8');
   assert.ok(sa.includes('sv-card sv-mod') && sa.includes('stcomp:'), 'the offline build is rebuilt');
@@ -442,7 +492,7 @@ acc(8, 'a mostly probable-new street → the estimate is for an EXISTING referen
   assert.ok(found); const [r, s] = found;
   const a = VR.apartment(r.id, { sqm: 85, newness: 'new' }).apartment, e = VR.apartment(r.id, { sqm: 85, newness: 'existing' }).apartment;
   assert.equal(a.profile.newness, 'new'); assert.ok(a.effects.find((f) => f.input === 'newness').value === 'new (probable)');
-  assert.ok(Math.abs(e.ppsqm - r.value) <= 60, 'the street value is the EXISTING reference, whatever the street sold');
+  assert.ok(Math.abs(e.ppsqm - r.value) <= 100, 'the street value is the EXISTING reference, whatever the street sold');
   return { id: r.id, probableNewShare: Math.round(s.probableNew / s.observed * 100), referenceExisting: e.ppsqm, newProbable: a.ppsqm };
 });
 acc(9, 'a mostly existing street → the reference dwelling matches its stock; no new-home premium applied', () => {
