@@ -1,0 +1,78 @@
+# PROPX · street market evidence — a sweep of the deals register (republished copy, over.org.il) joined to the official
+# street directory (scripts/street-evidence-sync.js; lib/streets/match.js · lib/streets/evidence.js).
+#
+# The sweep reads every settlement's deals of the 36 months that end on the copy's latest deal, splitting each window by
+# date until every query answers in one page (completeness proven per window), one request a second. It runs again only
+# when the publisher's copy changes (stats.scraped_at) — a weekly check costs one request. A sweep that does not finish in
+# one job keeps progress.json and the next run (scheduled or dispatched) resumes it. data/streets/evidence/ is bot-written.
+
+name: Street evidence sync
+
+on:
+  schedule:
+    - cron: '41 3 * * 2'   # Tuesdays 03:41 UTC: one request when the copy is unchanged
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Sweep although the register copy has not changed'
+        type: boolean
+        default: false
+      only:
+        description: 'Locality codes only, comma separated (a test run — marked PARTIAL)'
+        type: string
+        default: ''
+      max_minutes:
+        description: 'Stop cleanly after this many minutes (progress kept; the next run resumes)'
+        type: string
+        default: '320'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: street-evidence-sync
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline street tests (must pass before any data is written)
+        run: if [ -f test/streets.test.js ]; then node test/streets.test.js; else echo 'no street tests yet'; fi
+      - name: Sweep the register and join it to the street directory
+        id: sync
+        env:
+          FORCE: ${{ inputs.force == true }}
+          ONLY: ${{ inputs.only }}
+          MAX_MINUTES: ${{ inputs.max_minutes || '320' }}
+        run: |
+          set +e
+          ARGS="--summary-file $RUNNER_TEMP/summary.txt --max-minutes $MAX_MINUTES"
+          if [ "$FORCE" = "true" ]; then ARGS="$ARGS --force"; fi
+          if [ -n "$ONLY" ]; then ARGS="$ARGS --only $ONLY"; fi
+          node scripts/street-evidence-sync.js $ARGS
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/streets/evidence
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Street evidence: run log' > "$RUNNER_TEMP/summary.txt"
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
+      - name: Fail the run if the sweep failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "street-evidence-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1
