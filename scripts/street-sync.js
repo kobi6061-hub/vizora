@@ -87,12 +87,23 @@ function reconcileLegacy(out, namesToCode, L, synonyms = []) {
   for (const [cityCode, , name, off] of synonyms) { const k = cityCode + '|' + normName(name), id = streetId(cityCode, off); if (!out.has(id)) continue; if (!bySyn.has(k)) bySyn.set(k, new Set()); bySyn.get(k).add(id); }
   const map = {}; const stats = { legacyRows: L.streets.length, coded: 0, codedCurrent: 0, codedHistorical: 0, provisional: 0, provisionalResolved: 0, provisionalAmbiguous: 0,
     provisionalUnmatched: 0, noCityCode: 0, cityResolvedByName: 0 };
-  const unmatchedSample = [];
+  const unmatchedSample = [], nameDiffers = [];
   for (const [cityCode, code, name, city] of L.streets) {
     if (cityCode && code) {
       stats.coded++;
       const id = streetId(cityCode, code);
-      if (out.has(id) && out.get(id).origin !== 'legacy-mirror') { stats.codedCurrent++; continue; }
+      if (out.has(id) && out.get(id).origin !== 'legacy-mirror') {
+        stats.codedCurrent++;
+        /* the code is the identity: a legacy name that differs from the official name (and from its synonyms) is recorded —
+           a rename by the registry or a code the registry reused; PROPX cannot tell which, so the id resolves to the
+           official row and the difference is listed, never hidden */
+        const off = out.get(id), k = cityCode + '|' + normName(name);
+        if (normName(off.name) !== normName(name) && !(bySyn.get(k) || new Set()).has(id)) {
+          stats.codedNameDiffers = (stats.codedNameDiffers || 0) + 1;
+          if (nameDiffers.length < 400) nameDiffers.push([id, name, off.name]);
+        }
+        continue;
+      }
       /* a code PROPX served from the 2021 coded mirror that the current registry no longer lists: kept, historical */
       if (!out.has(id)) out.set(id, { cityCode, code, name, kind: kindOf(code), status: 'historical', firstSeen: null, retiredAt: null, origin: 'legacy-mirror' });
       stats.codedHistorical++;
@@ -108,7 +119,7 @@ function reconcileLegacy(out, namesToCode, L, synonyms = []) {
     else if (cand.length > 1) { map[legacyId] = null; stats.provisionalAmbiguous++; }
     else { map[legacyId] = null; stats.provisionalUnmatched++; if (unmatchedSample.length < 60) unmatchedSample.push(`${city} | ${name}`); }
   }
-  return { builtAt: L.meta && L.meta.builtAt, reconciledAt: new Date().toISOString(), stats, unmatchedSample, map };
+  return { builtAt: L.meta && L.meta.builtAt, reconciledAt: new Date().toISOString(), stats, unmatchedSample, nameDiffers, map };
 }
 
 const hashOf = (arr) => crypto.createHash('sha256').update(JSON.stringify(arr)).digest('hex');

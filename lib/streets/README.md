@@ -33,7 +33,9 @@ that leaves the registry stays `historical` and keeps resolving.
 **Identity** — `st:<locality code>:<official street code>`. A name is never an identity: the same name in two localities is
 two streets; a synonym is a second name of one street (it resolves to the official code). The ids PROPX served before
 (`stp:` provisional ids of the 2026-08-31 mirror) map to the official id through `legacy-ids.json` (12,959 of 12,959 resolved:
-city code, else the official city name; then the official name, else a synonym).
+city code, else the official city name; then the official name, else a synonym). A coded legacy id keeps its code: where the
+mirror's name differs from today's official name and synonyms (8 rows — a rename or a code the registry reused; PROPX cannot
+tell which), the id resolves to the official row and the pair is listed in `legacy-ids.json` `nameDiffers`, never hidden.
 
 **Special rows** (audited over every row, 19.10.2026 — `street-discover.js --profile`). The registry is an ADDRESS registry:
 
@@ -85,7 +87,9 @@ a page is paged again until its distinct rows reach the day's total (offset page
 read fails that locality (its previous shard is kept; the run is PARTIAL; the next run retries it). The copy repeats some
 coded deals without their settlement code — those copies are collapsed (counted in `duplicatesCollapsed`). A sweep runs only
 when the publisher's copy changes (`scraped_at`); an unfinished sweep resumes from `progress.json`. Shards are canonical
-(an unchanged register gives byte-identical files).
+(an unchanged register gives byte-identical files). Each shard records the directory it was matched against
+(`directory` = the directory's content hash): when the copy is unchanged but the directory changed, the weekly run re-matches
+those shards offline (`rematched` in the run log; `--rebuild` re-matches all of them).
 
 **Storage.** `data/streets/evidence/<locality code>.json` — every row of the window with the source's fields in columns
 (date · amount · nature · area · rooms · year built · portion · sub-parcel · declared amount · settlement) and a parcel table
@@ -128,7 +132,9 @@ median is not one or two deals' value. The thresholds are re-read against the na
 **Context — never the street's price.** The locality's priced dwelling deals in the same window (every address state — the
 locality is certain), DERIVED; the CBS Table 2.2 all-dwellings average where the city has its own row (OFFICIAL, the page's
 `PRICE_BASIS`, never a district row); a neighbourhood only through a VERIFIED street → neighbourhood link
-(`lib/geo/neighborhoods.js`) — never inferred from a name, proximity or a statistical area. Printed under "These figures
+(`lib/geo/neighborhoods.js`) — never inferred from a name, proximity or a statistical area; its figure is the OBSERVED
+dwelling deals on the streets the links name (whole streets — a link names a street, not a stretch of it), with the streets
+listed beside it. Printed under "These figures
 describe the surrounding market, not observed prices on this street."
 
 **Links.** Tel Aviv-Yafo building permits and construction sites (`data/dd/tlv.json`, IView2) whose own address names the

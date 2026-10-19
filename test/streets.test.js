@@ -413,6 +413,24 @@ t('page: the geo search sends the selected locality, labels kind / synonym / his
   assert.match(fb('openGeoView'), /siLoad\(g\.id\)/); assert.match(fb('siLoad'), /fetch\("\/api\/intel\?view=street&limit=200&id="/);
   const view = fb('siHTML'); assert.ok(!/Math\.random|metricsOf|LOCATIONS|base\.price|vcOf\(/.test(view), 'the street view reads no board / model value');
 });
+t('review: one permit per request on a street (the layer repeats rows), shards re-matched after a directory change, legacy name differences listed, the page names the row kind and history', () => {
+  const S = require('../lib/streets/street');
+  const r = S.street('st:5000:1103');
+  if (r.links.permits.length) {
+    const keys = r.links.permits.map((p) => p.request + '|' + p.permit); assert.equal(new Set(keys).size, keys.length, 'one record per request + permit');
+    assert.ok(r.links.permits.every((p) => p.rows >= 1));
+  }
+  const sc = fs.readFileSync(path.join(ROOT, 'scripts/street-evidence-sync.js'), 'utf8');
+  assert.match(sc, /sh\.directory !== cur\) \{ writeJson\(f, rematch\(sh, D\)\)/, 'an unchanged copy still re-matches shards built on an older directory');
+  const L = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/geo/streets/legacy-ids.json'), 'utf8'));
+  assert.ok(Array.isArray(L.nameDiffers)); assert.equal(L.nameDiffers.length, L.stats.codedNameDiffers || 0);
+  for (const [id] of L.nameDiffers) assert.ok(SD.load().byId.has(id), 'a coded legacy id whose name differs still resolves to its official row');
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const i = page.indexOf('function siHTML('), view = page.slice(i, page.indexOf('\n}', i));
+  assert.match(view, /t\.exists\(noun,hist,/); assert.match(view, /t\.noun\[I\.kind\]/); assert.match(view, /state==="INSUFFICIENT"&&!priced\?t\.zero/);
+  assert.match(view, /tile\(t\.period,E\.swept&&w\?/, 'a locality outside the sweep shows no window'); assert.match(view, /"lim"/);
+  for (const k of ['one:', 'exists:', 'zero:', 'nbBasis:', 'rung:', 'in12:']) assert.equal((page.match(new RegExp('\\b' + k, 'g')) || []).length >= 2, true, k + ' he + en');
+});
 t('workflows: the evidence sweep tests before it writes, commits only data/streets/evidence, reads GET-only one request a second; the directory sync rebuilds the index', () => {
   const y = fs.readFileSync(path.join(ROOT, '.github/workflows/street-evidence-sync.yml'), 'utf8');
   assert.ok(y.indexOf('node test/streets.test.js') < y.indexOf('node scripts/street-evidence-sync.js'));

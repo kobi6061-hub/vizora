@@ -100,6 +100,8 @@ function finish(meta, run, D) {
       for (const f of fs.readdirSync(DIR).filter((x) => /^\d+\.json$/.test(x))) { writeJson(f, rematch(readJson(f), D)); n++; }
       const meta = readJson('meta.json') || {};
       const s = finish(meta, run, D);
+      Object.assign(run, { status: 'rebuilt', rematched: n, finishedAt: new Date().toISOString(), requests: 0 });
+      fs.appendFileSync(path.join(DIR, 'sync-runs.jsonl'), JSON.stringify(run) + '\n');
       console.log(`rebuilt ${n} shards`, JSON.stringify(s.counts));
       return;
     }
@@ -112,7 +114,12 @@ function finish(meta, run, D) {
     if (progress && progress.scrapedAt !== scrapedAt) progress = null;          // the copy changed under an unfinished sweep: start over
     const only = argVal('only') ? new Set(String(argVal('only')).split(',').map(Number)) : null;
     if (!progress && !only && !has('force') && prevMeta && prevMeta.source && prevMeta.source.scrapedAt === scrapedAt && prevMeta.sweep && prevMeta.sweep.status === 'COMPLETE') {
-      Object.assign(run, { status: 'unchanged', scrapedAt, finishedAt: new Date().toISOString(), requests });
+      /* the copy is unchanged, the directory may not be: a shard matched against an older directory is re-matched offline
+         (codes never move; a renamed / added street or synonym can change a parcel's state) */
+      const cur = D.meta ? D.meta.contentHash : null; let rematched = 0;
+      if (cur) for (const f of fs.readdirSync(DIR).filter((x) => /^\d+\.json$/.test(x))) { const sh = readJson(f); if (sh && sh.directory !== cur) { writeJson(f, rematch(sh, D)); rematched++; } }
+      if (rematched) finish(prevMeta, run, D);
+      Object.assign(run, { status: 'unchanged', scrapedAt, rematched, finishedAt: new Date().toISOString(), requests });
       fs.appendFileSync(path.join(DIR, 'sync-runs.jsonl'), JSON.stringify(run) + '\n');
       console.log('the register copy has not changed since the last complete sweep (' + scrapedAt + ')');
       return;
