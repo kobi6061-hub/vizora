@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "ranAt": "2026-10-20T19:48:29.482Z",
+ "ranAt": "2026-10-20T20:14:48.978Z",
  "today": "2026-10-20",
  "engine": "propx-txevents-1",
  "quick": false,
@@ -31,6 +31,8 @@
    "unplaced": 0,
    "possibleDuplicates": 8,
    "cursorAtStop": null,
+   "risingAt": [],
+   "duplicateExamples": [],
    "registerExpected": 507,
    "registerNames": [
     "פתח תקווה"
@@ -64,6 +66,8 @@
    "unplaced": 0,
    "possibleDuplicates": 0,
    "cursorAtStop": null,
+   "risingAt": [],
+   "duplicateExamples": [],
    "registerExpected": 232,
    "registerNames": [
     "זנוח"
@@ -72,10 +76,12 @@
    "govmapHistoryAccounted": 350,
    "pass": true,
    "registerSearchTotal": 232,
+   "registerSearchKeys": 116,
    "registerUndated": 0,
    "registerUndatedRows": [],
    "registerMissing": 0,
-   "registerMissingExamples": []
+   "registerMissingExamples": [],
+   "registerShownNotInSearch": 0
   },
   {
    "id": "locality:small:7",
@@ -98,6 +104,8 @@
    "unplaced": 0,
    "possibleDuplicates": 0,
    "cursorAtStop": null,
+   "risingAt": [],
+   "duplicateExamples": [],
    "registerExpected": 370,
    "registerNames": [
     "שחר"
@@ -106,75 +114,484 @@
    "govmapHistoryAccounted": 85,
    "pass": false,
    "registerSearchTotal": 370,
+   "registerSearchKeys": 185,
    "registerUndated": 0,
    "registerUndatedRows": [],
    "registerMissing": 3,
    "registerMissingExamples": [
-    "7|2025-05-10|3060/20/0|1725000",
-    "7|2025-03-04|3090/19/0|1226081",
-    "7|2025-01-01|3090/42/0|1232994"
-   ]
+    {
+     "key": "7|2025-05-10|3060/20/0|1725000",
+     "inRegisterSearch": 2,
+     "shown": 1,
+     "shownSameDay": [
+      "reg:7|2025-05-10|3060/20/0|1725000"
+     ]
+    },
+    {
+     "key": "7|2025-03-04|3090/19/0|1226081",
+     "inRegisterSearch": 2,
+     "shown": 1,
+     "shownSameDay": [
+      "reg:7|2025-03-04|3090/19/0|1226081"
+     ]
+    },
+    {
+     "key": "7|2025-01-01|3090/42/0|1232994",
+     "inRegisterSearch": 2,
+     "shown": 1,
+     "shownSameDay": [
+      "reg:7|2025-01-01|3090/42/0|1232994"
+     ]
+    }
+   ],
+   "registerShownNotInSearch": 0
   },
   {
    "id": "locality:petah-tikva",
    "code": 7900,
    "streetCode": null,
-   "pages": 153,
-   "end": false,
-   "error": "no answer within 9000 ms",
-   "events": 27167,
-   "counted": 27001,
+   "pages": 766,
+   "end": true,
+   "error": null,
+   "events": 135383,
+   "counted": 132091,
    "duplicateIds": 0,
    "risingDates": 1,
    "firstCounted": "2026-09-02",
-   "oldest": "2020-07-30",
-   "register": 25474,
+   "oldest": "1998-01-01",
+   "register": 124367,
    "registerUnmapped": 3,
    "govmapWindow": 775,
-   "govmapHistory": 915,
-   "govmapFolded": 10435,
+   "govmapHistory": 10238,
+   "govmapFolded": 73535,
    "unplaced": 0,
-   "possibleDuplicates": 166,
-   "cursorAtStop": "2020-07-29",
+   "possibleDuplicates": 3292,
+   "cursorAtStop": null,
+   "risingAt": [
+    {
+     "page": 60,
+     "before": {
+      "id": "regx:7900|2020-10-20|6401/20/0|1555000",
+      "date": "2020-10-20"
+     },
+     "after": {
+      "id": "gmh:1901825",
+      "date": "2023-08-23",
+      "source": "govmap"
+     }
+    }
+   ],
+   "duplicateExamples": [],
    "registerExpected": 124367,
    "registerNames": [
     "פתח תקווה"
    ],
    "govmapHistoryRows": 83773,
-   "govmapHistoryAccounted": 11350,
+   "govmapHistoryAccounted": 83773,
    "pass": false
   },
   {
    "id": "locality:haifa",
    "code": 4000,
    "streetCode": null,
-   "pages": 2,
-   "end": false,
-   "error": "source-unavailable",
-   "events": 200,
-   "counted": 196,
+   "pages": 765,
+   "end": true,
+   "error": null,
+   "events": 161489,
+   "counted": 156871,
    "duplicateIds": 0,
    "risingDates": 0,
    "firstCounted": "2026-09-02",
-   "oldest": "2026-08-04",
-   "register": 17,
+   "oldest": "1998-01-01",
+   "register": 133401,
    "registerUnmapped": 0,
-   "govmapWindow": 183,
-   "govmapHistory": 0,
-   "govmapFolded": 0,
+   "govmapWindow": 2367,
+   "govmapHistory": 25721,
+   "govmapFolded": 83753,
    "unplaced": 0,
-   "possibleDuplicates": 4,
+   "possibleDuplicates": 4618,
    "cursorAtStop": null,
+   "risingAt": [],
+   "duplicateExamples": [],
    "registerExpected": 133401,
    "registerNames": [
     "חיפה",
     "קרית חיים"
    ],
    "govmapHistoryRows": 109474,
-   "govmapHistoryAccounted": 0,
-   "pass": false
+   "govmapHistoryAccounted": 109474,
+   "pass": true
   }
  ],
+ "historyStreets": [
+  {
+   "street": "st:5000:2776",
+   "name": "קמואל",
+   "govmapHistoryRows": 151,
+   "govmapHistoryLatest": "2022-06-28",
+   "govmapPlacedRows": 151,
+   "govmapPlacedLatest": "2022-06-28",
+   "registerStreetSearchLatest": "2026-02-17",
+   "source": "2026-02-17",
+   "visible": "2026-02-17",
+   "visibleEvent": {
+    "id": "reg:5000|2026-02-17|6135/49/0|1980000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:5000:4646",
+   "name": "לוין קיפניס",
+   "govmapHistoryRows": 149,
+   "govmapHistoryLatest": "2023-03-06",
+   "govmapPlacedRows": 149,
+   "govmapPlacedLatest": "2023-03-06",
+   "registerStreetSearchLatest": "2026-06-24",
+   "source": "2026-06-24",
+   "visible": "2026-06-24",
+   "visibleEvent": {
+    "id": "reg:5000|2026-06-24|6615/299/134|3125000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:3000:1416",
+   "name": "פיכמן",
+   "govmapHistoryRows": 67,
+   "govmapHistoryLatest": "2023-03-20",
+   "govmapPlacedRows": 67,
+   "govmapPlacedLatest": "2023-03-20",
+   "registerStreetSearchLatest": "2023-03-20",
+   "source": "2023-03-20",
+   "visible": "2023-03-20",
+   "visibleEvent": {
+    "id": "live:3000|2023-03-20|30185/144/13|2150000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:3000:4463",
+   "name": "הצדיק מטשכנוב",
+   "govmapHistoryRows": 57,
+   "govmapHistoryLatest": "2022-09-29",
+   "govmapPlacedRows": 57,
+   "govmapPlacedLatest": "2022-09-29",
+   "registerStreetSearchLatest": "2025-04-28",
+   "source": "2025-04-28",
+   "visible": "2025-04-28",
+   "visibleEvent": {
+    "id": "reg:3000|2025-04-28|30730/13/23|1210000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:4000:275",
+   "name": "הדשנים",
+   "govmapHistoryRows": 53,
+   "govmapHistoryLatest": "2022-08-09",
+   "govmapPlacedRows": 53,
+   "govmapPlacedLatest": "2022-08-09",
+   "registerStreetSearchLatest": "2022-08-09",
+   "source": "2022-08-09",
+   "visible": "2022-08-09",
+   "visibleEvent": {
+    "id": "live:4000|2022-08-09|11548/56/18|1000000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:4000:619",
+   "name": "מיכ\"ל המשורר",
+   "govmapHistoryRows": 30,
+   "govmapHistoryLatest": "2022-06-01",
+   "govmapPlacedRows": 30,
+   "govmapPlacedLatest": "2022-06-01",
+   "registerStreetSearchLatest": "2023-05-31",
+   "source": "2023-05-31",
+   "visible": "2023-05-31",
+   "visibleEvent": {
+    "id": "live:4000|2023-05-31|10779/72/0|350018",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:7900:1312",
+   "name": "דורני שלום",
+   "govmapHistoryRows": 341,
+   "govmapHistoryLatest": "2023-07-14",
+   "govmapPlacedRows": 341,
+   "govmapPlacedLatest": "2023-07-14",
+   "registerStreetSearchLatest": "2026-06-15",
+   "source": "2026-06-15",
+   "visible": "2026-06-15",
+   "visibleEvent": {
+    "id": "reg:7900|2026-06-15|6355/799/26|2700000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:7900:537",
+   "name": "ליויק",
+   "govmapHistoryRows": 83,
+   "govmapHistoryLatest": "2023-02-08",
+   "govmapPlacedRows": 83,
+   "govmapPlacedLatest": "2023-02-08",
+   "registerStreetSearchLatest": "2023-02-08",
+   "source": "2023-02-08",
+   "visible": "2023-02-08",
+   "visibleEvent": {
+    "id": "live:7900|2023-02-08|6401/30/18|1650000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:70:679",
+   "name": "שד רוטשילד",
+   "govmapHistoryRows": 78,
+   "govmapHistoryLatest": "2022-03-23",
+   "govmapPlacedRows": 78,
+   "govmapPlacedLatest": "2022-03-23",
+   "registerStreetSearchLatest": "2026-06-09",
+   "source": "2026-06-09",
+   "visible": "2026-06-09",
+   "visibleEvent": {
+    "id": "reg:70|2026-06-09|2647/69/80|2200000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:70:858",
+   "name": "נצח ישראל",
+   "govmapHistoryRows": 43,
+   "govmapHistoryLatest": "2023-03-29",
+   "govmapPlacedRows": 43,
+   "govmapPlacedLatest": "2023-03-29",
+   "registerStreetSearchLatest": "2026-03-13",
+   "source": "2026-03-13",
+   "visible": "2026-03-13",
+   "visibleEvent": {
+    "id": "reg:70|2026-03-13|2450/5/114|1660000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:6100:903",
+   "name": "רבנו תם",
+   "govmapHistoryRows": 27,
+   "govmapHistoryLatest": "2022-11-06",
+   "govmapPlacedRows": 27,
+   "govmapPlacedLatest": "2022-11-06",
+   "registerStreetSearchLatest": "2022-11-06",
+   "source": "2022-11-06",
+   "visible": "2022-11-06",
+   "visibleEvent": {
+    "id": "live:6100|2022-11-06|6122/718/0|461500",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:6100:726",
+   "name": "רבן גמליאל",
+   "govmapHistoryRows": 24,
+   "govmapHistoryLatest": "2023-02-19",
+   "govmapPlacedRows": 24,
+   "govmapPlacedLatest": "2023-02-19",
+   "registerStreetSearchLatest": "2023-02-19",
+   "source": "2023-02-19",
+   "visible": "2023-02-19",
+   "visibleEvent": {
+    "id": "live:6100|2023-02-19|6192/172/1|1650000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:8300:457",
+   "name": "פולה בן גוריון",
+   "govmapHistoryRows": 57,
+   "govmapHistoryLatest": "2022-01-20",
+   "govmapPlacedRows": 57,
+   "govmapPlacedLatest": "2022-01-20",
+   "registerStreetSearchLatest": "2022-01-20",
+   "source": "2022-01-20",
+   "visible": "2022-01-20",
+   "visibleEvent": {
+    "id": "live:8300|2022-01-20|3927/364/35|3800000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:8300:980",
+   "name": "אח\"י משגב",
+   "govmapHistoryRows": 52,
+   "govmapHistoryLatest": "2022-05-09",
+   "govmapPlacedRows": 52,
+   "govmapPlacedLatest": "2022-05-09",
+   "registerStreetSearchLatest": "2025-05-20",
+   "source": "2025-05-20",
+   "visible": "2025-05-20",
+   "visibleEvent": {
+    "id": "reg:8300|2025-05-20|2709/123/0|1669335",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:7100:832",
+   "name": "פרידן יונתן",
+   "govmapHistoryRows": 155,
+   "govmapHistoryLatest": "2023-07-02",
+   "govmapPlacedRows": 155,
+   "govmapPlacedLatest": "2023-07-02",
+   "registerStreetSearchLatest": "2026-03-18",
+   "source": "2026-03-18",
+   "visible": "2026-03-18",
+   "visibleEvent": {
+    "id": "reg:7100|2026-03-18|1941/111/129|2220000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:7100:839",
+   "name": "תנובת השדה",
+   "govmapHistoryRows": 134,
+   "govmapHistoryLatest": "2017-03-16",
+   "govmapPlacedRows": 229,
+   "govmapPlacedLatest": "2022-05-19",
+   "registerStreetSearchLatest": "2018-08-14",
+   "source": "2022-05-19",
+   "visible": "2022-05-19",
+   "visibleEvent": {
+    "id": "gmh:826965",
+    "source": "govmap",
+    "match": "STREET_POSSIBLE"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:1031:340",
+   "name": "כצנלסון",
+   "govmapHistoryRows": 233,
+   "govmapHistoryLatest": "2023-07-18",
+   "govmapPlacedRows": 233,
+   "govmapPlacedLatest": "2023-07-18",
+   "registerStreetSearchLatest": "2026-06-01",
+   "source": "2026-06-01",
+   "visible": "2026-06-01",
+   "visibleEvent": {
+    "id": "reg:1031|2026-06-01|1881/23/5|1350000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:1031:276",
+   "name": "הנציב",
+   "govmapHistoryRows": 196,
+   "govmapHistoryLatest": "2022-05-30",
+   "govmapPlacedRows": 196,
+   "govmapPlacedLatest": "2022-05-30",
+   "registerStreetSearchLatest": "2026-05-28",
+   "source": "2026-05-28",
+   "visible": "2026-05-28",
+   "visibleEvent": {
+    "id": "reg:1031|2026-05-28|1881/37/0|1795000",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:2640:508",
+   "name": "מגדל דוד",
+   "govmapHistoryRows": 54,
+   "govmapHistoryLatest": "2022-07-04",
+   "govmapPlacedRows": 54,
+   "govmapPlacedLatest": "2022-07-04",
+   "registerStreetSearchLatest": "2022-12-29",
+   "source": "2022-12-29",
+   "visible": "2022-12-29",
+   "visibleEvent": {
+    "id": "live:2640|2022-12-29|5512/18/3|88827",
+    "source": "register",
+    "match": "STREET_REPUBLISHER_LINK"
+   },
+   "error": null,
+   "pass": true
+  },
+  {
+   "street": "st:2640:565",
+   "name": "מבצע עובדה",
+   "govmapHistoryRows": 33,
+   "govmapHistoryLatest": "2023-05-21",
+   "govmapPlacedRows": 33,
+   "govmapPlacedLatest": "2023-05-21",
+   "registerStreetSearchLatest": "2022-07-12",
+   "source": "2023-05-21",
+   "visible": "2023-05-21",
+   "visibleEvent": {
+    "id": "gmh:1518506",
+    "source": "govmap",
+    "match": "STREET_PUBLISHED_ADDRESS"
+   },
+   "error": null,
+   "pass": true
+  }
+ ],
+ "sectionsRanAt": {
+  "full": "2026-10-20T20:14:48.978Z",
+  "partial": "2026-10-20T19:48:29.482Z",
+  "periods": "2026-10-20T19:48:29.482Z",
+  "historyStreets": "2026-10-20T20:14:48.978Z",
+  "latest": "2026-10-20T19:48:29.482Z"
+ },
  "partial": [
   {
    "id": "locality:tel-aviv",
@@ -589,228 +1006,6 @@
    "liveAdded": 9,
    "newest": "2026-08-30",
    "statement": "EVENTS",
-   "pass": true
-  }
- ],
- "historyStreets": [
-  {
-   "street": "st:5000:2776",
-   "name": "קמואל",
-   "govmapHistoryRows": 151,
-   "govmapHistoryLatest": "2022-06-28",
-   "registerStreetSearchLatest": "2026-02-17",
-   "source": "2026-02-17",
-   "visible": "2026-02-17",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:5000:4646",
-   "name": "לוין קיפניס",
-   "govmapHistoryRows": 149,
-   "govmapHistoryLatest": "2023-03-06",
-   "registerStreetSearchLatest": "2026-06-24",
-   "source": "2026-06-24",
-   "visible": "2026-06-24",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:3000:1416",
-   "name": "פיכמן",
-   "govmapHistoryRows": 67,
-   "govmapHistoryLatest": "2023-03-20",
-   "registerStreetSearchLatest": "2023-03-20",
-   "source": "2023-03-20",
-   "visible": "2023-03-20",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:3000:4463",
-   "name": "הצדיק מטשכנוב",
-   "govmapHistoryRows": 57,
-   "govmapHistoryLatest": "2022-09-29",
-   "registerStreetSearchLatest": "2025-04-28",
-   "source": "2025-04-28",
-   "visible": "2025-04-28",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:4000:275",
-   "name": "הדשנים",
-   "govmapHistoryRows": 53,
-   "govmapHistoryLatest": "2022-08-09",
-   "registerStreetSearchLatest": "2022-08-09",
-   "source": "2022-08-09",
-   "visible": "2022-08-09",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:4000:619",
-   "name": "מיכ\"ל המשורר",
-   "govmapHistoryRows": 30,
-   "govmapHistoryLatest": "2022-06-01",
-   "registerStreetSearchLatest": "2023-05-31",
-   "source": "2023-05-31",
-   "visible": "2023-05-31",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:7900:1312",
-   "name": "דורני שלום",
-   "govmapHistoryRows": 341,
-   "govmapHistoryLatest": "2023-07-14",
-   "registerStreetSearchLatest": "2026-06-15",
-   "source": "2026-06-15",
-   "visible": "2026-06-15",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:7900:537",
-   "name": "ליויק",
-   "govmapHistoryRows": 83,
-   "govmapHistoryLatest": "2023-02-08",
-   "registerStreetSearchLatest": "2023-02-08",
-   "source": "2023-02-08",
-   "visible": "2023-02-08",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:70:679",
-   "name": "שד רוטשילד",
-   "govmapHistoryRows": 78,
-   "govmapHistoryLatest": "2022-03-23",
-   "registerStreetSearchLatest": "2026-06-09",
-   "source": "2026-06-09",
-   "visible": "2026-06-09",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:70:858",
-   "name": "נצח ישראל",
-   "govmapHistoryRows": 43,
-   "govmapHistoryLatest": "2023-03-29",
-   "registerStreetSearchLatest": "2026-03-13",
-   "source": "2026-03-13",
-   "visible": "2026-03-13",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:6100:903",
-   "name": "רבנו תם",
-   "govmapHistoryRows": 27,
-   "govmapHistoryLatest": "2022-11-06",
-   "registerStreetSearchLatest": "2022-11-06",
-   "source": "2022-11-06",
-   "visible": "2022-11-06",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:6100:726",
-   "name": "רבן גמליאל",
-   "govmapHistoryRows": 24,
-   "govmapHistoryLatest": "2023-02-19",
-   "registerStreetSearchLatest": "2023-02-19",
-   "source": "2023-02-19",
-   "visible": "2023-02-19",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:8300:457",
-   "name": "פולה בן גוריון",
-   "govmapHistoryRows": 57,
-   "govmapHistoryLatest": "2022-01-20",
-   "registerStreetSearchLatest": "2022-01-20",
-   "source": "2022-01-20",
-   "visible": "2022-01-20",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:8300:980",
-   "name": "אח\"י משגב",
-   "govmapHistoryRows": 52,
-   "govmapHistoryLatest": "2022-05-09",
-   "registerStreetSearchLatest": "2025-05-20",
-   "source": "2025-05-20",
-   "visible": "2025-05-20",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:7100:832",
-   "name": "פרידן יונתן",
-   "govmapHistoryRows": 155,
-   "govmapHistoryLatest": "2023-07-02",
-   "registerStreetSearchLatest": "2026-03-18",
-   "source": "2026-03-18",
-   "visible": "2026-03-18",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:7100:839",
-   "name": "תנובת השדה",
-   "govmapHistoryRows": 134,
-   "govmapHistoryLatest": "2017-03-16",
-   "registerStreetSearchLatest": "2018-08-14",
-   "source": "2018-08-14",
-   "visible": "2022-05-19",
-   "error": null,
-   "pass": false
-  },
-  {
-   "street": "st:1031:340",
-   "name": "כצנלסון",
-   "govmapHistoryRows": 233,
-   "govmapHistoryLatest": "2023-07-18",
-   "registerStreetSearchLatest": "2026-06-01",
-   "source": "2026-06-01",
-   "visible": "2026-06-01",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:1031:276",
-   "name": "הנציב",
-   "govmapHistoryRows": 196,
-   "govmapHistoryLatest": "2022-05-30",
-   "registerStreetSearchLatest": "2026-05-28",
-   "source": "2026-05-28",
-   "visible": "2026-05-28",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:2640:508",
-   "name": "מגדל דוד",
-   "govmapHistoryRows": 54,
-   "govmapHistoryLatest": "2022-07-04",
-   "registerStreetSearchLatest": "2022-12-29",
-   "source": "2022-12-29",
-   "visible": "2022-12-29",
-   "error": null,
-   "pass": true
-  },
-  {
-   "street": "st:2640:565",
-   "name": "מבצע עובדה",
-   "govmapHistoryRows": 33,
-   "govmapHistoryLatest": "2023-05-21",
-   "registerStreetSearchLatest": "2022-07-12",
-   "source": "2023-05-21",
-   "visible": "2023-05-21",
-   "error": null,
    "pass": true
   }
  ],
@@ -3816,7 +4011,12 @@
    "errors": 0
   }
  },
- "requests": 668,
- "backoffs": 1,
+ "requests": 2262,
+ "backoffs": 17,
+ "retries": 34,
+ "only": [
+  "full",
+  "historyStreets"
+ ],
  "pass": false
 }
