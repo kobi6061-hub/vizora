@@ -216,7 +216,11 @@
   reconcile pass takes the recovered code, never a shared name). The register's deals under unmapped settlement names are read and placed
   by parcel (`register-unmapped.json`, skipped when neither copy changed). The audit: every GovMap-file row in one bucket (SURFACED · SURFACED
   OR FOLDED · SURFACED FLAGGED · DUPLICATE OF SURFACED · UNPLACED · INVALID; history + window + invalid = 2,500,941), reachability per bucket
-  → DEFENSIBLE KNOWN SOURCE EVENTS NOT SURFACED = 0; latest-date parity Israel · districts · localities · 21,003 streets; the live check
+  → DEFENSIBLE KNOWN SOURCE EVENTS NOT SURFACED = 0 (20.10.2026: 6,345,141 source rows; register 342,471 window deals + 72,226 codeless
+  copies collapsed + 3,416,077 older rows read live + 5,907 placed by parcel + 7,519 unplaced; GovMap 29,395 surfaced · 2,073,823 history
+  surfaced or folded · 346,388 duplicates of surfaced · 6,225 flagged · 45,072 unplaced · 38 invalid); latest-date parity Israel · 7 districts ·
+  1,149 / 1,149 localities · 21,089 / 21,089 streets (+ 20 / 20 older-than-window streets live); full live pagings Petah Tikva / Haifa
+  (124,367 / 133,401 register deals, 83,773 / 109,474 GovMap history rows, to 1998, no event twice, dates never rise); the live check
   (runner, `txevents-all-check.yml`, `only=` re-runs sections and keeps the others' last result) pages ALL to the end, checks small
   localities deal by deal against the register's own search, the places whose newest deal predates the window and a sample of
   older-than-window streets (GovMap side = every history row the API itself places: code · published name · parcel), and waits out the

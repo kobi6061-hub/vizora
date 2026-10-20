@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-20T17:22:51.434Z",
+ "builtAt": "2026-10-20T23:14:45.337Z",
  "today": "2026-10-20",
  "engine": "propx-txevents-1",
  "universe": {
@@ -18,10 +18,125 @@
     "localities": 1036,
     "deals": 342471,
     "events": 342471,
-    "equal": true
+    "equal": true,
+    "codelessCopiesCollapsed": 72226,
+    "localitiesWithCopies": 984
    },
-   "settlements": null,
-   "unmapped": null
+   "settlements": {
+    "readAt": "2026-10-20T19:02:11.857Z",
+    "names": 1335,
+    "listedDeals": 3842029,
+    "dealsUnderNoSettlement": 2171,
+    "mapped": {
+     "names": 1145,
+     "localities": 1119,
+     "deals": 3830774
+    },
+    "unmapped": {
+     "names": 190,
+     "deals": 11255,
+     "largest": [
+      {
+       "settlement": "צהל",
+       "deals": 934,
+       "lastDeal": "2026-07-30"
+      },
+      {
+       "settlement": "רמת אפעל",
+       "deals": 851,
+       "lastDeal": "2026-06-24"
+      },
+      {
+       "settlement": "מ. א. מטה יהודה",
+       "deals": 667,
+       "lastDeal": "2026-05-07"
+      },
+      {
+       "settlement": "מ. א. משגב",
+       "deals": 641,
+       "lastDeal": "2026-05-15"
+      },
+      {
+       "settlement": "משגב",
+       "deals": 599,
+       "lastDeal": "2026-07-11"
+      },
+      {
+       "settlement": "כפר אז\"ר",
+       "deals": 482,
+       "lastDeal": "2026-03-24"
+      },
+      {
+       "settlement": "מ. א. תמר",
+       "deals": 381,
+       "lastDeal": "2026-03-12"
+      },
+      {
+       "settlement": "מ. א. הגליל העליון",
+       "deals": 380,
+       "lastDeal": "2025-10-31"
+      },
+      {
+       "settlement": "דבירה",
+       "deals": 338,
+       "lastDeal": "2026-04-06"
+      },
+      {
+       "settlement": "בת חצור",
+       "deals": 303,
+       "lastDeal": "2021-04-28"
+      },
+      {
+       "settlement": "זלפה",
+       "deals": 301,
+       "lastDeal": "2026-01-27"
+      },
+      {
+       "settlement": "בית עמרא",
+       "deals": 237,
+       "lastDeal": "2026-06-07"
+      },
+      {
+       "settlement": "גני יהודה",
+       "deals": 216,
+       "lastDeal": "2025-10-23"
+      },
+      {
+       "settlement": "מושיירפה",
+       "deals": 201,
+       "lastDeal": "2024-08-04"
+      },
+      {
+       "settlement": "מוצא תחתית",
+       "deals": 199,
+       "lastDeal": "2025-07-09"
+      }
+     ]
+    }
+   },
+   "unmapped": {
+    "readAt": "2026-10-20T19:10:26.872Z",
+    "scrapedAt": "2026-09-19 11:07:39.013275+00",
+    "names": 190,
+    "rows": 11255,
+    "requests": 317,
+    "failed": [],
+    "byState": {
+     "RESOLVED_STRONGLY": 5907,
+     "POSSIBLE_LOCATION": 4382,
+     "UNPLACED": 966
+    },
+    "byBasis": {
+     "block-parcel": 5907,
+     "parcel-in-several-localities": 454,
+     "block-only": 2603,
+     "block-in-several-localities": 1325,
+     "block-unknown-to-both-copies": 966
+    },
+    "placed": {
+     "official-locality": 5907
+    }
+   }
   },
   "govmap": {
    "file": {
@@ -59,27 +174,34 @@
   },
   "govmapWindow": {
    "INVALID": 36,
-   "SURFACED": 29394,
-   "DUPLICATE_OF_SURFACED": 312145,
-   "SURFACED_FLAGGED": 3220,
-   "UNPLACED": 2443
+   "SURFACED": 29395,
+   "DUPLICATE_OF_SURFACED": 313875,
+   "SURFACED_FLAGGED": 3222,
+   "UNPLACED": 710
   },
   "govmapHistory": {
-   "SURFACED_OR_FOLDED": 2073786,
-   "UNPLACED": 44399,
+   "SURFACED_OR_FOLDED": 2073823,
+   "UNPLACED": 44362,
    "DUPLICATE_OF_SURFACED": 32513,
    "SURFACED_FLAGGED": 3003,
    "INVALID": 2
   },
   "govmapAll": {
    "INVALID": 38,
-   "SURFACED": 29394,
-   "DUPLICATE_OF_SURFACED": 344658,
-   "SURFACED_FLAGGED": 6223,
-   "UNPLACED": 46842,
-   "SURFACED_OR_FOLDED": 2073786
+   "SURFACED": 29395,
+   "DUPLICATE_OF_SURFACED": 346388,
+   "SURFACED_FLAGGED": 6225,
+   "UNPLACED": 45072,
+   "SURFACED_OR_FOLDED": 2073823
   },
-  "register": null
+  "register": {
+   "SURFACED": 342471,
+   "DUPLICATE_OF_SURFACED": 72226,
+   "SURFACED_OR_COLLAPSED_COPY": 3416077,
+   "PLACED_BY_PARCEL": 5907,
+   "UNPLACED": 7519,
+   "note": "the register's rows under official localities: the stored window's deals (SURFACED) and the codeless copies of coded rows the sweep collapsed (DUPLICATE OF SURFACED — one deal printed twice); the older rows are listed in their locality's ALL through the live search, date-paged, each codeless copy collapsed by the same rule and counted (SURFACED OR COLLAPSED COPY); deals under unmapped names are placed by parcel or stay in Israel's list; deals the copy counts under no settlement name are in Israel's list through the national search"
+  }
  },
  "reachability": {
   "checks": [
@@ -91,9 +213,15 @@
    },
    {
     "id": "govmap-window-events",
-    "rows": 28108,
+    "rows": 28111,
     "notReachable": 0,
     "how": "the locality of every GovMap-only event is an official locality (its events, its district, Israel)"
+   },
+   {
+    "id": "govmap-window-events-in-union",
+    "rows": 28111,
+    "notReachable": 0,
+    "how": "every GovMap-only row is an event of its locality's union, or folded into the register deal it repeats"
    },
    {
     "id": "govmap-recent-events",
@@ -103,21 +231,33 @@
    },
    {
     "id": "govmap-history",
-    "rows": 2076789,
+    "rows": 2076826,
     "notReachable": 0,
     "how": "every history row belongs to an official locality whose ALL read opens its partition"
    },
    {
     "id": "govmap-history-partitions",
-    "rows": 2076789,
+    "rows": 2076826,
     "notReachable": 0,
     "how": "the per-locality partitions hold exactly the year files' rows"
    },
    {
     "id": "unplaced",
-    "rows": 46842,
+    "rows": 45072,
     "notReachable": 0,
     "how": "Israel's list and the unplaced view read data/txevents/{national/unplaced.json, history/unplaced.json.gz}"
+   },
+   {
+    "id": "register-unmapped-placed",
+    "rows": 5907,
+    "notReachable": 0,
+    "how": "placed deals are listed with their locality's events"
+   },
+   {
+    "id": "register-unmapped-unplaced",
+    "rows": 5348,
+    "notReachable": 0,
+    "how": "Israel's list (the register's national search) and the unplaced view list every deal the parcel could not place"
    }
   ],
   "localitiesWithoutDistrict": 0,
@@ -129,25 +269,29 @@
    "rows": 2539,
    "byState": {
     "UNPLACED": 50,
-    "POSSIBLE_LOCATION": 2392,
-    "RESOLVED_EXACTLY": 96,
+    "POSSIBLE_LOCATION": 660,
+    "RESOLVED_EXACTLY": 1828,
     "RESOLVED_STRONGLY": 1
    },
    "byBasis": {
     "block-unknown-to-both-copies": 50,
     "block-in-several-localities": 325,
     "block-only": 172,
-    "parcel-in-several-localities": 1895,
+    "parcel-in-several-localities": 163,
+    "register-twin": 1732,
     "settlement-code": 96,
     "block-parcel": 1
    },
    "final": {
     "UNPLACED": 50,
-    "POSSIBLE_LOCATION": 2393,
-    "RECENT_NEW": 69,
-    "IN_REGISTER_OTHER_UNIT": 27
+    "POSSIBLE_LOCATION": 660,
+    "IN_REGISTER_OTHER_UNIT": 1748,
+    "RECENT_NEW": 70,
+    "IN_REGISTER": 5,
+    "DUPLICATE_IN_SOURCE": 4,
+    "POSSIBLE_DUPLICATE_IN_SOURCE": 2
    },
-   "unplacedAfter": 2443
+   "unplacedAfter": 710
   },
   "history": {
    "rows": 54639,
@@ -166,13 +310,34 @@
     "parcel-polygon+block-parcel": 44,
     "block-parcel": 49
    },
-   "unplacedAfter": 44399
+   "unplacedAfter": 44362
   },
-  "registerUnmapped": null,
+  "registerUnmapped": {
+   "rows": 11255,
+   "byState": {
+    "RESOLVED_STRONGLY": 5907,
+    "POSSIBLE_LOCATION": 4382,
+    "UNPLACED": 966
+   },
+   "byBasis": {
+    "block-parcel": 5907,
+    "parcel-in-several-localities": 454,
+    "block-only": 2603,
+    "block-in-several-localities": 1325,
+    "block-unknown-to-both-copies": 966
+   }
+  },
   "rule": "only RESOLVED EXACTLY (the row's own official locality code, or its exact twin in the register) and RESOLVED STRONGLY (its parcel / polygon filed under exactly one locality by both copies) enter a geography; POSSIBLE LOCATION and UNPLACED stay national"
  },
  "streets": {
-  "vias": null,
+  "vias": {
+   "official-name": "the official street name",
+   "official-synonym": "an official synonym (the directory's synonym file)",
+   "spelling-variant": "a deterministic spelling variant of an official name",
+   "normalized-name": "a normalized name (type words / punctuation dropped) — POSSIBLE, never certain",
+   "ambiguous": "several official streets carry the spelling",
+   "unresolved": "no official street carries it"
+  },
   "register": {
    "distinctStrings": 19977,
    "stringsByVia": {
@@ -193,7 +358,30 @@
    },
    "basis": "the stored window's deals: every parcel address string, in its locality's official directory"
   },
-  "govmapWindow": null,
+  "govmapWindow": {
+   "distinctStrings": 19879,
+   "stringsByVia": {
+    "official-synonym": 3433,
+    "official-name": 15159,
+    "unresolved": 785,
+    "spelling-variant": 182,
+    "normalized-name": 308,
+    "ambiguous": 12
+   },
+   "rowsByVia": {
+    "no-street": 133526,
+    "official-synonym": 39858,
+    "official-name": 163970,
+    "unresolved": 6585,
+    "spelling-variant": 1027,
+    "normalized-name": 2190,
+    "ambiguous": 44,
+    "no-locality": 2
+   },
+   "codeAgreement": {
+    "source-code-not-in-directory": 213674
+   }
+  },
   "govmapHistory": {
    "distinctStrings": 30530,
    "stringsByVia": {
@@ -219,9 +407,9 @@
    }
   },
   "historyStreetBasis": {
-   "address": 951352,
+   "address": 951374,
    "address+parcel": 620499,
-   "no-address": 428935,
+   "no-address": 428950,
    "unresolved": 31947,
    "parcel": 21081,
    "conflict": 9840,
@@ -230,14 +418,14 @@
   },
   "total": {
    "stringsByVia": {
-    "official-name": 41195,
-    "unresolved": 2351,
-    "normalized-name": 881,
-    "official-synonym": 5647,
-    "ambiguous": 36,
-    "spelling-variant": 397
+    "official-name": 56354,
+    "unresolved": 3136,
+    "normalized-name": 1189,
+    "official-synonym": 9080,
+    "ambiguous": 48,
+    "spelling-variant": 579
    },
-   "distinct": 50507,
+   "distinct": 70386,
    "note": "distinct (locality, string) pairs per source, added across the three sources (a string both copies print counts in each)"
   }
  },
@@ -268,8 +456,8 @@
    "rule": "a register parcel with no street is placed on a street through the GovMap layer's own address of the same parcel: OBSERVED when one street holds every address, POSSIBLE otherwise, UNRESOLVED when none resolves — never priced"
   },
   "govmapWindow": {
-   "rows": 32511,
-   "withBlockParcel": 32511
+   "rows": 32514,
+   "withBlockParcel": 32514
   }
  },
  "latest": {
@@ -278,7 +466,7 @@
    "area": "il",
    "source": "2026-09-28",
    "visible": "2026-09-28",
-   "via": "stored-index",
+   "via": "live-check",
    "stored": "2026-09-28",
    "match": true
   },
@@ -287,7 +475,7 @@
     "area": "d-center",
     "source": "2026-09-10",
     "visible": "2026-09-10",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-10",
     "match": true
    },
@@ -295,7 +483,7 @@
     "area": "d-haifa",
     "source": "2026-09-07",
     "visible": "2026-09-07",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-07",
     "match": true
    },
@@ -303,7 +491,7 @@
     "area": "d-jm",
     "source": "2026-09-07",
     "visible": "2026-09-07",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-07",
     "match": true
    },
@@ -311,7 +499,7 @@
     "area": "d-north",
     "source": "2026-09-09",
     "visible": "2026-09-09",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-09",
     "match": true
    },
@@ -319,7 +507,7 @@
     "area": "d-south",
     "source": "2026-09-17",
     "visible": "2026-09-17",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-17",
     "match": true
    },
@@ -327,7 +515,7 @@
     "area": "d-ta",
     "source": "2026-09-28",
     "visible": "2026-09-28",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-28",
     "match": true
    },
@@ -335,798 +523,1255 @@
     "area": "js-area",
     "source": "2026-09-02",
     "visible": "2026-09-02",
-    "via": "stored-index",
+    "via": "live-check",
     "stored": "2026-09-02",
     "match": true
    }
   ],
   "localities": {
    "total": 1316,
-   "withTransactions": 1117,
-   "match": 1066,
-   "mismatch": 51,
-   "pendingLive": 51,
-   "noTransaction": 199,
+   "withTransactions": 1149,
+   "match": 1149,
+   "mismatch": 0,
+   "pendingLive": 0,
+   "noTransaction": 167,
    "byVia": {
-    "stored-union": 1066,
-    "none": 250
+    "stored-union": 1067,
+    "live-check": 249
    },
-   "mismatches": [
-    {
-     "code": 22,
-     "source": "2023-08-09",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-08-09"
-     }
-    },
-    {
-     "code": 79,
-     "source": "2022-06-29",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-06-29"
-     }
-    },
-    {
-     "code": 89,
-     "source": "2007-04-01",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2007-04-01"
-     }
-    },
-    {
-     "code": 113,
-     "source": "2020-11-21",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2020-11-21"
-     }
-    },
-    {
-     "code": 186,
-     "source": "2017-10-18",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2017-10-18"
-     }
-    },
-    {
-     "code": 250,
-     "source": "2016-04-13",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2016-04-13"
-     }
-    },
-    {
-     "code": 322,
-     "source": "2020-08-02",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2020-08-02"
-     }
-    },
-    {
-     "code": 353,
-     "source": "2022-01-12",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-01-12"
-     }
-    },
-    {
-     "code": 355,
-     "source": "2021-08-11",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-08-11"
-     }
-    },
-    {
-     "code": 366,
-     "source": "2021-08-02",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-08-02"
-     }
-    },
-    {
-     "code": 369,
-     "source": "2011-06-28",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2011-06-28"
-     }
-    },
-    {
-     "code": 376,
-     "source": "2022-09-05",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-09-05"
-     }
-    },
-    {
-     "code": 397,
-     "source": "2021-09-02",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-09-02"
-     }
-    },
-    {
-     "code": 427,
-     "source": "2001-10-01",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2001-10-01"
-     }
-    },
-    {
-     "code": 620,
-     "source": "2015-01-29",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2015-01-29"
-     }
-    },
-    {
-     "code": 694,
-     "source": "2015-03-30",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2015-03-30"
-     }
-    },
-    {
-     "code": 716,
-     "source": "2014-04-13",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2014-04-13"
-     }
-    },
-    {
-     "code": 755,
-     "source": "2023-06-11",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-06-11"
-     }
-    },
-    {
-     "code": 776,
-     "source": "2010-10-11",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2010-10-11"
-     }
-    },
-    {
-     "code": 816,
-     "source": "2023-08-22",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-08-22"
-     }
-    },
-    {
-     "code": 848,
-     "source": "2019-01-14",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2019-01-14"
-     }
-    },
-    {
-     "code": 873,
-     "source": "2022-07-27",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-07-27"
-     }
-    },
-    {
-     "code": 875,
-     "source": "2010-04-01",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2010-04-01"
-     }
-    },
-    {
-     "code": 897,
-     "source": "2021-02-18",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-02-18"
-     }
-    },
-    {
-     "code": 921,
-     "source": "2016-04-13",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2016-04-13"
-     }
-    },
-    {
-     "code": 1053,
-     "source": "2021-08-23",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-08-23"
-     }
-    },
-    {
-     "code": 1067,
-     "source": "2023-03-27",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-03-27"
-     }
-    },
-    {
-     "code": 1084,
-     "source": "2013-05-14",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2013-05-14"
-     }
-    },
-    {
-     "code": 1144,
-     "source": "2021-02-04",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-02-04"
-     }
-    },
-    {
-     "code": 1153,
-     "source": "2022-07-27",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-07-27"
-     }
-    },
-    {
-     "code": 1156,
-     "source": "2022-03-25",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-03-25"
-     }
-    },
-    {
-     "code": 1184,
-     "source": "2023-04-27",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-04-27"
-     }
-    },
-    {
-     "code": 1187,
-     "source": "2022-11-03",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-11-03"
-     }
-    },
-    {
-     "code": 1212,
-     "source": "2023-07-19",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-07-19"
-     }
-    },
-    {
-     "code": 1213,
-     "source": "2023-03-19",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-03-19"
-     }
-    },
-    {
-     "code": 1219,
-     "source": "2023-07-11",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-07-11"
-     }
-    },
-    {
-     "code": 1225,
-     "source": "2020-10-22",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2020-10-22"
-     }
-    },
-    {
-     "code": 1259,
-     "source": "2023-06-15",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-06-15"
-     }
-    },
-    {
-     "code": 1276,
-     "source": "2019-03-06",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2019-03-06"
-     }
-    },
-    {
-     "code": 1294,
-     "source": "2023-04-21",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-04-21"
-     }
-    },
-    {
-     "code": 1297,
-     "source": "2023-03-12",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-03-12"
-     }
-    },
-    {
-     "code": 1316,
-     "source": "2013-07-28",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2013-07-28"
-     }
-    },
-    {
-     "code": 1335,
-     "source": "2017-10-17",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2017-10-17"
-     }
-    },
-    {
-     "code": 1339,
-     "source": "2007-07-12",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2007-07-12"
-     }
-    },
-    {
-     "code": 1348,
-     "source": "2015-04-21",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2015-04-21"
-     }
-    },
-    {
-     "code": 1370,
-     "source": "2022-09-11",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2022-09-11"
-     }
-    },
-    {
-     "code": 3603,
-     "source": "2021-04-12",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-04-12"
-     }
-    },
-    {
-     "code": 3648,
-     "source": "2019-08-18",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2019-08-18"
-     }
-    },
-    {
-     "code": 3759,
-     "source": "2017-03-27",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2017-03-27"
-     }
-    },
-    {
-     "code": 4019,
-     "source": "2021-07-14",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2021-07-14"
-     }
-    },
-    {
-     "code": 4025,
-     "source": "2023-08-24",
-     "visible": null,
-     "via": null,
-     "reason": "LIVE_CHECK_PENDING",
-     "match": false,
-     "parts": {
-      "registerWindow": null,
-      "registerOwnLastDeal": null,
-      "govmapWindow": null,
-      "registerUnmappedPlaced": null,
-      "govmapHistory": "2023-08-24"
-     }
-    }
-   ]
+   "mismatches": []
   },
   "streets": {
-   "checked": 21003,
-   "withTransactions": 21003,
+   "checked": 21089,
+   "withTransactions": 21089,
    "mismatch": 0,
-   "ms": 556459,
+   "ms": 541535,
    "byReason": {},
-   "mismatches": []
+   "mismatches": [],
+   "olderThanWindow": {
+    "streets": 8776,
+    "withHistoryRows": 28384,
+    "liveChecked": 20,
+    "liveMatch": 20,
+    "liveMismatch": 0,
+    "liveErrors": 0,
+    "rows": [
+     {
+      "street": "st:5000:2776",
+      "name": "קמואל",
+      "govmapHistoryRows": 151,
+      "govmapHistoryLatest": "2022-06-28",
+      "govmapPlacedRows": 151,
+      "govmapPlacedLatest": "2022-06-28",
+      "registerStreetSearchLatest": "2026-02-17",
+      "source": "2026-02-17",
+      "visible": "2026-02-17",
+      "visibleEvent": {
+       "id": "reg:5000|2026-02-17|6135/49/0|1980000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:5000:4646",
+      "name": "לוין קיפניס",
+      "govmapHistoryRows": 149,
+      "govmapHistoryLatest": "2023-03-06",
+      "govmapPlacedRows": 149,
+      "govmapPlacedLatest": "2023-03-06",
+      "registerStreetSearchLatest": "2026-06-24",
+      "source": "2026-06-24",
+      "visible": "2026-06-24",
+      "visibleEvent": {
+       "id": "reg:5000|2026-06-24|6615/299/134|3125000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:3000:1416",
+      "name": "פיכמן",
+      "govmapHistoryRows": 67,
+      "govmapHistoryLatest": "2023-03-20",
+      "govmapPlacedRows": 67,
+      "govmapPlacedLatest": "2023-03-20",
+      "registerStreetSearchLatest": "2023-03-20",
+      "source": "2023-03-20",
+      "visible": "2023-03-20",
+      "visibleEvent": {
+       "id": "live:3000|2023-03-20|30185/144/13|2150000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:3000:4463",
+      "name": "הצדיק מטשכנוב",
+      "govmapHistoryRows": 57,
+      "govmapHistoryLatest": "2022-09-29",
+      "govmapPlacedRows": 57,
+      "govmapPlacedLatest": "2022-09-29",
+      "registerStreetSearchLatest": "2025-04-28",
+      "source": "2025-04-28",
+      "visible": "2025-04-28",
+      "visibleEvent": {
+       "id": "reg:3000|2025-04-28|30730/13/23|1210000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:4000:275",
+      "name": "הדשנים",
+      "govmapHistoryRows": 53,
+      "govmapHistoryLatest": "2022-08-09",
+      "govmapPlacedRows": 53,
+      "govmapPlacedLatest": "2022-08-09",
+      "registerStreetSearchLatest": "2022-08-09",
+      "source": "2022-08-09",
+      "visible": "2022-08-09",
+      "visibleEvent": {
+       "id": "live:4000|2022-08-09|11548/56/18|1000000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:4000:619",
+      "name": "מיכ\"ל המשורר",
+      "govmapHistoryRows": 30,
+      "govmapHistoryLatest": "2022-06-01",
+      "govmapPlacedRows": 30,
+      "govmapPlacedLatest": "2022-06-01",
+      "registerStreetSearchLatest": "2023-05-31",
+      "source": "2023-05-31",
+      "visible": "2023-05-31",
+      "visibleEvent": {
+       "id": "live:4000|2023-05-31|10779/72/0|350018",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:7900:1312",
+      "name": "דורני שלום",
+      "govmapHistoryRows": 341,
+      "govmapHistoryLatest": "2023-07-14",
+      "govmapPlacedRows": 341,
+      "govmapPlacedLatest": "2023-07-14",
+      "registerStreetSearchLatest": "2026-06-15",
+      "source": "2026-06-15",
+      "visible": "2026-06-15",
+      "visibleEvent": {
+       "id": "reg:7900|2026-06-15|6355/799/26|2700000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:7900:537",
+      "name": "ליויק",
+      "govmapHistoryRows": 83,
+      "govmapHistoryLatest": "2023-02-08",
+      "govmapPlacedRows": 83,
+      "govmapPlacedLatest": "2023-02-08",
+      "registerStreetSearchLatest": "2023-02-08",
+      "source": "2023-02-08",
+      "visible": "2023-02-08",
+      "visibleEvent": {
+       "id": "live:7900|2023-02-08|6401/30/18|1650000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:70:679",
+      "name": "שד רוטשילד",
+      "govmapHistoryRows": 78,
+      "govmapHistoryLatest": "2022-03-23",
+      "govmapPlacedRows": 78,
+      "govmapPlacedLatest": "2022-03-23",
+      "registerStreetSearchLatest": "2026-06-09",
+      "source": "2026-06-09",
+      "visible": "2026-06-09",
+      "visibleEvent": {
+       "id": "reg:70|2026-06-09|2647/69/80|2200000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:70:858",
+      "name": "נצח ישראל",
+      "govmapHistoryRows": 43,
+      "govmapHistoryLatest": "2023-03-29",
+      "govmapPlacedRows": 43,
+      "govmapPlacedLatest": "2023-03-29",
+      "registerStreetSearchLatest": "2026-03-13",
+      "source": "2026-03-13",
+      "visible": "2026-03-13",
+      "visibleEvent": {
+       "id": "reg:70|2026-03-13|2450/5/114|1660000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:6100:903",
+      "name": "רבנו תם",
+      "govmapHistoryRows": 27,
+      "govmapHistoryLatest": "2022-11-06",
+      "govmapPlacedRows": 27,
+      "govmapPlacedLatest": "2022-11-06",
+      "registerStreetSearchLatest": "2022-11-06",
+      "source": "2022-11-06",
+      "visible": "2022-11-06",
+      "visibleEvent": {
+       "id": "live:6100|2022-11-06|6122/718/0|461500",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:6100:726",
+      "name": "רבן גמליאל",
+      "govmapHistoryRows": 24,
+      "govmapHistoryLatest": "2023-02-19",
+      "govmapPlacedRows": 24,
+      "govmapPlacedLatest": "2023-02-19",
+      "registerStreetSearchLatest": "2023-02-19",
+      "source": "2023-02-19",
+      "visible": "2023-02-19",
+      "visibleEvent": {
+       "id": "live:6100|2023-02-19|6192/172/1|1650000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:8300:457",
+      "name": "פולה בן גוריון",
+      "govmapHistoryRows": 57,
+      "govmapHistoryLatest": "2022-01-20",
+      "govmapPlacedRows": 57,
+      "govmapPlacedLatest": "2022-01-20",
+      "registerStreetSearchLatest": "2022-01-20",
+      "source": "2022-01-20",
+      "visible": "2022-01-20",
+      "visibleEvent": {
+       "id": "live:8300|2022-01-20|3927/364/35|3800000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:8300:980",
+      "name": "אח\"י משגב",
+      "govmapHistoryRows": 52,
+      "govmapHistoryLatest": "2022-05-09",
+      "govmapPlacedRows": 52,
+      "govmapPlacedLatest": "2022-05-09",
+      "registerStreetSearchLatest": "2025-05-20",
+      "source": "2025-05-20",
+      "visible": "2025-05-20",
+      "visibleEvent": {
+       "id": "reg:8300|2025-05-20|2709/123/0|1669335",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:7100:832",
+      "name": "פרידן יונתן",
+      "govmapHistoryRows": 155,
+      "govmapHistoryLatest": "2023-07-02",
+      "govmapPlacedRows": 155,
+      "govmapPlacedLatest": "2023-07-02",
+      "registerStreetSearchLatest": "2026-03-18",
+      "source": "2026-03-18",
+      "visible": "2026-03-18",
+      "visibleEvent": {
+       "id": "reg:7100|2026-03-18|1941/111/129|2220000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:7100:839",
+      "name": "תנובת השדה",
+      "govmapHistoryRows": 134,
+      "govmapHistoryLatest": "2017-03-16",
+      "govmapPlacedRows": 229,
+      "govmapPlacedLatest": "2022-05-19",
+      "registerStreetSearchLatest": "2018-08-14",
+      "source": "2022-05-19",
+      "visible": "2022-05-19",
+      "visibleEvent": {
+       "id": "gmh:826965",
+       "source": "govmap",
+       "match": "STREET_POSSIBLE"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:1031:340",
+      "name": "כצנלסון",
+      "govmapHistoryRows": 233,
+      "govmapHistoryLatest": "2023-07-18",
+      "govmapPlacedRows": 233,
+      "govmapPlacedLatest": "2023-07-18",
+      "registerStreetSearchLatest": "2026-06-01",
+      "source": "2026-06-01",
+      "visible": "2026-06-01",
+      "visibleEvent": {
+       "id": "reg:1031|2026-06-01|1881/23/5|1350000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:1031:276",
+      "name": "הנציב",
+      "govmapHistoryRows": 196,
+      "govmapHistoryLatest": "2022-05-30",
+      "govmapPlacedRows": 196,
+      "govmapPlacedLatest": "2022-05-30",
+      "registerStreetSearchLatest": "2026-05-28",
+      "source": "2026-05-28",
+      "visible": "2026-05-28",
+      "visibleEvent": {
+       "id": "reg:1031|2026-05-28|1881/37/0|1795000",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:2640:508",
+      "name": "מגדל דוד",
+      "govmapHistoryRows": 54,
+      "govmapHistoryLatest": "2022-07-04",
+      "govmapPlacedRows": 54,
+      "govmapPlacedLatest": "2022-07-04",
+      "registerStreetSearchLatest": "2022-12-29",
+      "source": "2022-12-29",
+      "visible": "2022-12-29",
+      "visibleEvent": {
+       "id": "live:2640|2022-12-29|5512/18/3|88827",
+       "source": "register",
+       "match": "STREET_REPUBLISHER_LINK"
+      },
+      "error": null,
+      "pass": true
+     },
+     {
+      "street": "st:2640:565",
+      "name": "מבצע עובדה",
+      "govmapHistoryRows": 33,
+      "govmapHistoryLatest": "2023-05-21",
+      "govmapPlacedRows": 33,
+      "govmapPlacedLatest": "2023-05-21",
+      "registerStreetSearchLatest": "2022-07-12",
+      "source": "2023-05-21",
+      "visible": "2023-05-21",
+      "visibleEvent": {
+       "id": "gmh:1518506",
+       "source": "govmap",
+       "match": "STREET_PUBLISHED_ADDRESS"
+      },
+      "error": null,
+      "pass": true
+     }
+    ],
+    "basis": "a street whose every event is older than the stored window: its ALL read starts directly under the window with the register's street search (the republisher's address link) and the GovMap history rows on the street, newest first (SPAN gate); the stored rows cannot show the register's older street deals, so the parity is checked live on a sample"
+   },
+   "conflictsAttached": {
+    "count": 4,
+    "rows": [
+     {
+      "event": "regx:8600|2025-05-25|6176/504/56|3450000",
+      "print": "gm:3631089217",
+      "date": "2025-05-25",
+      "printStreet": "st:8600:3112",
+      "eventStreets": [
+       "st:8600:3117"
+      ]
+     },
+     {
+      "event": "regx:8600|2024-03-19|6177/30/0|2313453",
+      "print": "gm:3599252640",
+      "date": "2024-03-19",
+      "printStreet": "st:8600:1007",
+      "eventStreets": [
+       "st:8600:3307"
+      ]
+     },
+     {
+      "event": "regx:8600|2024-02-04|6177/30/0|1060909",
+      "print": "gm:3598147827",
+      "date": "2024-02-04",
+      "printStreet": "st:8600:1007",
+      "eventStreets": [
+       "st:8600:3307"
+      ]
+     },
+     {
+      "event": "regx:2400|2023-11-29|6223/94/0|350000",
+      "print": "gm:3575782737",
+      "date": "2023-11-29",
+      "printStreet": "st:2400:3105",
+      "eventStreets": [
+       "st:2400:3106"
+      ]
+     }
+    ],
+    "why": "the GovMap print of a register deal (filed under an unmapped settlement name, placed by parcel) names another street than the deal's own address: one event, on the register's street (register precedence), the print's street kept and the disagreement flagged — like every other print of a register deal, the print is the event's evidence, not an event of its own"
+   }
   }
  },
- "liveCheck": null
+ "liveCheck": {
+  "ranAt": "2026-10-20T21:34:09.155Z",
+  "pass": true,
+  "full": [
+   {
+    "id": "street:shaham-petah-tikva",
+    "pass": true,
+    "register": 634,
+    "registerExpected": 507,
+    "govmapHistoryRows": null,
+    "govmapHistoryAccounted": null,
+    "pages": 6,
+    "oldest": "1998-01-08",
+    "duplicateIds": 0,
+    "error": null,
+    "registerSearchTotal": null,
+    "registerUndated": null,
+    "registerMissing": 0,
+    "registerMissingExamples": []
+   },
+   {
+    "id": "locality:history-only:816",
+    "pass": true,
+    "register": 116,
+    "registerExpected": 232,
+    "govmapHistoryRows": 350,
+    "govmapHistoryAccounted": 350,
+    "pages": 4,
+    "oldest": "1999-09-22",
+    "duplicateIds": 0,
+    "error": null,
+    "registerSearchTotal": 232,
+    "registerUndated": 0,
+    "registerMissing": 0,
+    "registerMissingExamples": []
+   },
+   {
+    "id": "locality:small:7",
+    "pass": true,
+    "register": 185,
+    "registerExpected": 370,
+    "govmapHistoryRows": 85,
+    "govmapHistoryAccounted": 85,
+    "pages": 2,
+    "oldest": "1998-02-01",
+    "duplicateIds": 0,
+    "error": null,
+    "registerSearchTotal": 370,
+    "registerUndated": 0,
+    "registerMissing": 0,
+    "registerMissingExamples": []
+   },
+   {
+    "id": "locality:petah-tikva",
+    "pass": true,
+    "register": 124367,
+    "registerExpected": 124367,
+    "govmapHistoryRows": 83773,
+    "govmapHistoryAccounted": 83773,
+    "pages": 766,
+    "oldest": "1998-01-01",
+    "duplicateIds": 0,
+    "error": null,
+    "registerSearchTotal": null,
+    "registerUndated": null,
+    "registerMissing": null,
+    "registerMissingExamples": null
+   },
+   {
+    "id": "locality:haifa",
+    "pass": true,
+    "register": 133401,
+    "registerExpected": 133401,
+    "govmapHistoryRows": 109474,
+    "govmapHistoryAccounted": 109474,
+    "pages": 765,
+    "oldest": "1998-01-01",
+    "duplicateIds": 0,
+    "error": null,
+    "registerSearchTotal": null,
+    "registerUndated": null,
+    "registerMissing": null,
+    "registerMissingExamples": null
+   }
+  ],
+  "partial": [
+   {
+    "id": "locality:tel-aviv",
+    "pass": true,
+    "first": "2026-08-30",
+    "oldest": "1998-01-01"
+   },
+   {
+    "id": "locality:jerusalem",
+    "pass": true,
+    "first": "2026-09-01",
+    "oldest": "1998-01-01"
+   },
+   {
+    "id": "area:il",
+    "pass": true,
+    "first": "2026-09-28",
+    "oldest": "1996-09-30"
+   },
+   {
+    "id": "area:d-haifa",
+    "pass": true,
+    "first": "2026-09-07",
+    "oldest": "1998-01-01"
+   }
+  ],
+  "periods": [
+   {
+    "place": "tel-aviv",
+    "period": "d30",
+    "from": "2026-09-20",
+    "to": "2026-10-20",
+    "apiTotal": 0,
+    "storedUnion": 0,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": null,
+    "statement": "COVERAGE_INCOMPLETE",
+    "pass": true
+   },
+   {
+    "place": "tel-aviv",
+    "period": "d90",
+    "from": "2026-07-22",
+    "to": "2026-10-20",
+    "apiTotal": 160,
+    "storedUnion": 160,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "tel-aviv",
+    "period": "m6",
+    "from": "2026-04-20",
+    "to": "2026-10-20",
+    "apiTotal": 2062,
+    "storedUnion": 2062,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "tel-aviv",
+    "period": "m12",
+    "from": "2025-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 6190,
+    "storedUnion": 6190,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "tel-aviv",
+    "period": "m24",
+    "from": "2024-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 15885,
+    "storedUnion": 15885,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "jerusalem",
+    "period": "d30",
+    "from": "2026-09-20",
+    "to": "2026-10-20",
+    "apiTotal": 0,
+    "storedUnion": 0,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": null,
+    "statement": "COVERAGE_INCOMPLETE",
+    "pass": true
+   },
+   {
+    "place": "jerusalem",
+    "period": "d90",
+    "from": "2026-07-22",
+    "to": "2026-10-20",
+    "apiTotal": 177,
+    "storedUnion": 177,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-01",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "jerusalem",
+    "period": "m6",
+    "from": "2026-04-20",
+    "to": "2026-10-20",
+    "apiTotal": 1620,
+    "storedUnion": 1620,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-01",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "jerusalem",
+    "period": "m12",
+    "from": "2025-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 5228,
+    "storedUnion": 5228,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-01",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "jerusalem",
+    "period": "m24",
+    "from": "2024-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 13572,
+    "storedUnion": 13572,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-01",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "haifa",
+    "period": "d30",
+    "from": "2026-09-20",
+    "to": "2026-10-20",
+    "apiTotal": 0,
+    "storedUnion": 0,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": null,
+    "statement": "COVERAGE_INCOMPLETE",
+    "pass": true
+   },
+   {
+    "place": "haifa",
+    "period": "d90",
+    "from": "2026-07-22",
+    "to": "2026-10-20",
+    "apiTotal": 307,
+    "storedUnion": 307,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "haifa",
+    "period": "m6",
+    "from": "2026-04-20",
+    "to": "2026-10-20",
+    "apiTotal": 1442,
+    "storedUnion": 1442,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "haifa",
+    "period": "m12",
+    "from": "2025-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 4192,
+    "storedUnion": 4192,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "haifa",
+    "period": "m24",
+    "from": "2024-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 10512,
+    "storedUnion": 10512,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "petah-tikva",
+    "period": "d30",
+    "from": "2026-09-20",
+    "to": "2026-10-20",
+    "apiTotal": 0,
+    "storedUnion": 0,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": null,
+    "statement": "COVERAGE_INCOMPLETE",
+    "pass": true
+   },
+   {
+    "place": "petah-tikva",
+    "period": "d90",
+    "from": "2026-07-22",
+    "to": "2026-10-20",
+    "apiTotal": 170,
+    "storedUnion": 170,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "petah-tikva",
+    "period": "m6",
+    "from": "2026-04-20",
+    "to": "2026-10-20",
+    "apiTotal": 804,
+    "storedUnion": 804,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "petah-tikva",
+    "period": "m12",
+    "from": "2025-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 2559,
+    "storedUnion": 2559,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "petah-tikva",
+    "period": "m24",
+    "from": "2024-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 6808,
+    "storedUnion": 6808,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-09-02",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "shaham",
+    "period": "d30",
+    "from": "2026-09-20",
+    "to": "2026-10-20",
+    "apiTotal": 0,
+    "storedUnion": 0,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": null,
+    "statement": "COVERAGE_INCOMPLETE",
+    "pass": true
+   },
+   {
+    "place": "shaham",
+    "period": "d90",
+    "from": "2026-07-22",
+    "to": "2026-10-20",
+    "apiTotal": 4,
+    "storedUnion": 4,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "shaham",
+    "period": "m6",
+    "from": "2026-04-20",
+    "to": "2026-10-20",
+    "apiTotal": 14,
+    "storedUnion": 14,
+    "outside": 0,
+    "liveAdded": 0,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "shaham",
+    "period": "m12",
+    "from": "2025-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 78,
+    "storedUnion": 74,
+    "outside": 0,
+    "liveAdded": 4,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   },
+   {
+    "place": "shaham",
+    "period": "m24",
+    "from": "2024-10-19",
+    "to": "2026-10-20",
+    "apiTotal": 263,
+    "storedUnion": 254,
+    "outside": 0,
+    "liveAdded": 9,
+    "newest": "2026-08-30",
+    "statement": "EVENTS",
+    "pass": true
+   }
+  ],
+  "historyStreets": [
+   {
+    "street": "st:5000:2776",
+    "name": "קמואל",
+    "govmapHistoryRows": 151,
+    "govmapHistoryLatest": "2022-06-28",
+    "govmapPlacedRows": 151,
+    "govmapPlacedLatest": "2022-06-28",
+    "registerStreetSearchLatest": "2026-02-17",
+    "source": "2026-02-17",
+    "visible": "2026-02-17",
+    "visibleEvent": {
+     "id": "reg:5000|2026-02-17|6135/49/0|1980000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:5000:4646",
+    "name": "לוין קיפניס",
+    "govmapHistoryRows": 149,
+    "govmapHistoryLatest": "2023-03-06",
+    "govmapPlacedRows": 149,
+    "govmapPlacedLatest": "2023-03-06",
+    "registerStreetSearchLatest": "2026-06-24",
+    "source": "2026-06-24",
+    "visible": "2026-06-24",
+    "visibleEvent": {
+     "id": "reg:5000|2026-06-24|6615/299/134|3125000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:3000:1416",
+    "name": "פיכמן",
+    "govmapHistoryRows": 67,
+    "govmapHistoryLatest": "2023-03-20",
+    "govmapPlacedRows": 67,
+    "govmapPlacedLatest": "2023-03-20",
+    "registerStreetSearchLatest": "2023-03-20",
+    "source": "2023-03-20",
+    "visible": "2023-03-20",
+    "visibleEvent": {
+     "id": "live:3000|2023-03-20|30185/144/13|2150000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:3000:4463",
+    "name": "הצדיק מטשכנוב",
+    "govmapHistoryRows": 57,
+    "govmapHistoryLatest": "2022-09-29",
+    "govmapPlacedRows": 57,
+    "govmapPlacedLatest": "2022-09-29",
+    "registerStreetSearchLatest": "2025-04-28",
+    "source": "2025-04-28",
+    "visible": "2025-04-28",
+    "visibleEvent": {
+     "id": "reg:3000|2025-04-28|30730/13/23|1210000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:4000:275",
+    "name": "הדשנים",
+    "govmapHistoryRows": 53,
+    "govmapHistoryLatest": "2022-08-09",
+    "govmapPlacedRows": 53,
+    "govmapPlacedLatest": "2022-08-09",
+    "registerStreetSearchLatest": "2022-08-09",
+    "source": "2022-08-09",
+    "visible": "2022-08-09",
+    "visibleEvent": {
+     "id": "live:4000|2022-08-09|11548/56/18|1000000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:4000:619",
+    "name": "מיכ\"ל המשורר",
+    "govmapHistoryRows": 30,
+    "govmapHistoryLatest": "2022-06-01",
+    "govmapPlacedRows": 30,
+    "govmapPlacedLatest": "2022-06-01",
+    "registerStreetSearchLatest": "2023-05-31",
+    "source": "2023-05-31",
+    "visible": "2023-05-31",
+    "visibleEvent": {
+     "id": "live:4000|2023-05-31|10779/72/0|350018",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:7900:1312",
+    "name": "דורני שלום",
+    "govmapHistoryRows": 341,
+    "govmapHistoryLatest": "2023-07-14",
+    "govmapPlacedRows": 341,
+    "govmapPlacedLatest": "2023-07-14",
+    "registerStreetSearchLatest": "2026-06-15",
+    "source": "2026-06-15",
+    "visible": "2026-06-15",
+    "visibleEvent": {
+     "id": "reg:7900|2026-06-15|6355/799/26|2700000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:7900:537",
+    "name": "ליויק",
+    "govmapHistoryRows": 83,
+    "govmapHistoryLatest": "2023-02-08",
+    "govmapPlacedRows": 83,
+    "govmapPlacedLatest": "2023-02-08",
+    "registerStreetSearchLatest": "2023-02-08",
+    "source": "2023-02-08",
+    "visible": "2023-02-08",
+    "visibleEvent": {
+     "id": "live:7900|2023-02-08|6401/30/18|1650000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:70:679",
+    "name": "שד רוטשילד",
+    "govmapHistoryRows": 78,
+    "govmapHistoryLatest": "2022-03-23",
+    "govmapPlacedRows": 78,
+    "govmapPlacedLatest": "2022-03-23",
+    "registerStreetSearchLatest": "2026-06-09",
+    "source": "2026-06-09",
+    "visible": "2026-06-09",
+    "visibleEvent": {
+     "id": "reg:70|2026-06-09|2647/69/80|2200000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:70:858",
+    "name": "נצח ישראל",
+    "govmapHistoryRows": 43,
+    "govmapHistoryLatest": "2023-03-29",
+    "govmapPlacedRows": 43,
+    "govmapPlacedLatest": "2023-03-29",
+    "registerStreetSearchLatest": "2026-03-13",
+    "source": "2026-03-13",
+    "visible": "2026-03-13",
+    "visibleEvent": {
+     "id": "reg:70|2026-03-13|2450/5/114|1660000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:6100:903",
+    "name": "רבנו תם",
+    "govmapHistoryRows": 27,
+    "govmapHistoryLatest": "2022-11-06",
+    "govmapPlacedRows": 27,
+    "govmapPlacedLatest": "2022-11-06",
+    "registerStreetSearchLatest": "2022-11-06",
+    "source": "2022-11-06",
+    "visible": "2022-11-06",
+    "visibleEvent": {
+     "id": "live:6100|2022-11-06|6122/718/0|461500",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:6100:726",
+    "name": "רבן גמליאל",
+    "govmapHistoryRows": 24,
+    "govmapHistoryLatest": "2023-02-19",
+    "govmapPlacedRows": 24,
+    "govmapPlacedLatest": "2023-02-19",
+    "registerStreetSearchLatest": "2023-02-19",
+    "source": "2023-02-19",
+    "visible": "2023-02-19",
+    "visibleEvent": {
+     "id": "live:6100|2023-02-19|6192/172/1|1650000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:8300:457",
+    "name": "פולה בן גוריון",
+    "govmapHistoryRows": 57,
+    "govmapHistoryLatest": "2022-01-20",
+    "govmapPlacedRows": 57,
+    "govmapPlacedLatest": "2022-01-20",
+    "registerStreetSearchLatest": "2022-01-20",
+    "source": "2022-01-20",
+    "visible": "2022-01-20",
+    "visibleEvent": {
+     "id": "live:8300|2022-01-20|3927/364/35|3800000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:8300:980",
+    "name": "אח\"י משגב",
+    "govmapHistoryRows": 52,
+    "govmapHistoryLatest": "2022-05-09",
+    "govmapPlacedRows": 52,
+    "govmapPlacedLatest": "2022-05-09",
+    "registerStreetSearchLatest": "2025-05-20",
+    "source": "2025-05-20",
+    "visible": "2025-05-20",
+    "visibleEvent": {
+     "id": "reg:8300|2025-05-20|2709/123/0|1669335",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:7100:832",
+    "name": "פרידן יונתן",
+    "govmapHistoryRows": 155,
+    "govmapHistoryLatest": "2023-07-02",
+    "govmapPlacedRows": 155,
+    "govmapPlacedLatest": "2023-07-02",
+    "registerStreetSearchLatest": "2026-03-18",
+    "source": "2026-03-18",
+    "visible": "2026-03-18",
+    "visibleEvent": {
+     "id": "reg:7100|2026-03-18|1941/111/129|2220000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:7100:839",
+    "name": "תנובת השדה",
+    "govmapHistoryRows": 134,
+    "govmapHistoryLatest": "2017-03-16",
+    "govmapPlacedRows": 229,
+    "govmapPlacedLatest": "2022-05-19",
+    "registerStreetSearchLatest": "2018-08-14",
+    "source": "2022-05-19",
+    "visible": "2022-05-19",
+    "visibleEvent": {
+     "id": "gmh:826965",
+     "source": "govmap",
+     "match": "STREET_POSSIBLE"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:1031:340",
+    "name": "כצנלסון",
+    "govmapHistoryRows": 233,
+    "govmapHistoryLatest": "2023-07-18",
+    "govmapPlacedRows": 233,
+    "govmapPlacedLatest": "2023-07-18",
+    "registerStreetSearchLatest": "2026-06-01",
+    "source": "2026-06-01",
+    "visible": "2026-06-01",
+    "visibleEvent": {
+     "id": "reg:1031|2026-06-01|1881/23/5|1350000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:1031:276",
+    "name": "הנציב",
+    "govmapHistoryRows": 196,
+    "govmapHistoryLatest": "2022-05-30",
+    "govmapPlacedRows": 196,
+    "govmapPlacedLatest": "2022-05-30",
+    "registerStreetSearchLatest": "2026-05-28",
+    "source": "2026-05-28",
+    "visible": "2026-05-28",
+    "visibleEvent": {
+     "id": "reg:1031|2026-05-28|1881/37/0|1795000",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:2640:508",
+    "name": "מגדל דוד",
+    "govmapHistoryRows": 54,
+    "govmapHistoryLatest": "2022-07-04",
+    "govmapPlacedRows": 54,
+    "govmapPlacedLatest": "2022-07-04",
+    "registerStreetSearchLatest": "2022-12-29",
+    "source": "2022-12-29",
+    "visible": "2022-12-29",
+    "visibleEvent": {
+     "id": "live:2640|2022-12-29|5512/18/3|88827",
+     "source": "register",
+     "match": "STREET_REPUBLISHER_LINK"
+    },
+    "error": null,
+    "pass": true
+   },
+   {
+    "street": "st:2640:565",
+    "name": "מבצע עובדה",
+    "govmapHistoryRows": 33,
+    "govmapHistoryLatest": "2023-05-21",
+    "govmapPlacedRows": 33,
+    "govmapPlacedLatest": "2023-05-21",
+    "registerStreetSearchLatest": "2022-07-12",
+    "source": "2023-05-21",
+    "visible": "2023-05-21",
+    "visibleEvent": {
+     "id": "gmh:1518506",
+     "source": "govmap",
+     "match": "STREET_PUBLISHED_ADDRESS"
+    },
+    "error": null,
+    "pass": true
+   }
+  ],
+  "latest": {
+   "checked": 249,
+   "withTransactions": 82,
+   "match": 82,
+   "mismatch": 0,
+   "noTransaction": 167,
+   "errors": 0
+  },
+  "requests": 2746,
+  "backoffs": 24
+ }
 }
