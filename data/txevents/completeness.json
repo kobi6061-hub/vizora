@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-20T15:16:32.936Z",
+ "builtAt": "2026-10-20T16:16:13.726Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-20T14:36:11.846Z",
+    "checkedAt": "2026-10-20T16:08:33.452Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
@@ -50,9 +50,9 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-07-03",
-    "checkedAt": "2026-10-20T14:34:18.454Z",
+    "checkedAt": "2026-10-20T16:08:33.452Z",
     "version": 4,
-    "builtAt": "2026-10-20T14:35:50.691Z",
+    "builtAt": "2026-10-20T16:11:27.258Z",
     "state": "RECENT"
    }
   ]
@@ -68,8 +68,8 @@
   "js-area": "2026-09-02"
  },
  "newEvents": {
-  "last24h": 29325,
-  "last7d": 29325,
+  "last24h": 29394,
+  "last7d": 29394,
   "basis": "deals PROPX read for the first time in the period (the recent layer's first read per deal + the national detector's build)"
  },
  "unresolved": {
@@ -172,7 +172,7 @@
  },
  "national": {
   "built": true,
-  "builtAt": "2026-10-20T14:35:50.691Z",
+  "builtAt": "2026-10-20T16:11:27.258Z",
   "version": {
    "id": "210cd553-ea77-41ce-8afd-da27c552250d",
    "n": 4,
@@ -236,16 +236,16 @@
    }
   },
   "shown": {
-   "govmapOnly": 24922,
+   "govmapOnly": 24991,
    "possibleDuplicates": 3117,
    "kinds": {
-    "DWELLING": 11571,
-    "NON_DWELLING": 2713,
-    "TYPE_NOT_STATED": 10638
+    "DWELLING": 11584,
+    "NON_DWELLING": 2758,
+    "TYPE_NOT_STATED": 10649
    },
-   "latest": "2026-07-03",
-   "localities": 302,
-   "streets": 3356
+   "latest": "2026-07-13",
+   "localities": 307,
+   "streets": 3367
   },
   "parcelRecovery": {
    "registerParcelsWithoutStreet": 33479,
@@ -260,7 +260,10 @@
    "recovered": 6061
   },
   "diff": {
-   "previous": null
+   "previous": "210cd553-ea77-41ce-8afd-da27c552250d",
+   "added": 0,
+   "changed": 0,
+   "removed": 0
   },
   "periods": {
    "before": "< 2023-09-18",

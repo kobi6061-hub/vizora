@@ -1,8 +1,8 @@
 {
  "schema": 1,
  "engine": "propx-txevents-national-1",
- "builtAt": "2026-10-20T14:35:50.691Z",
- "code": "fd53d19701053284",
+ "builtAt": "2026-10-20T16:11:27.258Z",
+ "code": "f12a71ff603c59b7",
  "source": {
   "id": "over:govmap-national",
   "name": "GovMap deals layer (lay=16) — the published file of the republished copy (over.org.il)",
@@ -161,16 +161,16 @@
   "before-window": 1864
  },
  "shown": {
-  "govmapOnly": 24922,
+  "govmapOnly": 24991,
   "possibleDuplicates": 3117,
   "kinds": {
-   "DWELLING": 11571,
-   "NON_DWELLING": 2713,
-   "TYPE_NOT_STATED": 10638
+   "DWELLING": 11584,
+   "NON_DWELLING": 2758,
+   "TYPE_NOT_STATED": 10649
   },
-  "latest": "2026-07-03",
-  "localities": 302,
-  "streets": 3356
+  "latest": "2026-07-13",
+  "localities": 307,
+  "streets": 3367
  },
  "parcelRecovery": {
   "registerParcelsWithoutStreet": 33479,
@@ -185,6 +185,39 @@
   "recovered": 6061
  },
  "diff": {
-  "previous": null
- }
+  "previous": "210cd553-ea77-41ce-8afd-da27c552250d",
+  "added": 0,
+  "changed": 0,
+  "removed": 0
+ },
+ "recovery": {
+  "rows": 2539,
+  "byState": {
+   "UNPLACED": 50,
+   "POSSIBLE_LOCATION": 2392,
+   "RESOLVED_EXACTLY": 96,
+   "RESOLVED_STRONGLY": 1
+  },
+  "byBasis": {
+   "block-unknown-to-both-copies": 50,
+   "block-in-several-localities": 325,
+   "block-only": 172,
+   "parcel-in-several-localities": 1895,
+   "settlement-code": 96,
+   "block-parcel": 1
+  },
+  "final": {
+   "UNPLACED": 50,
+   "POSSIBLE_LOCATION": 2393,
+   "RECENT_NEW": 69,
+   "IN_REGISTER_OTHER_UNIT": 27
+  },
+  "unplaced": 2443,
+  "settlementIdAgreement": {
+   "agree": 2400502,
+   "disagree": 41
+  }
+ },
+ "unplaced": 2443,
+ "invalid": 36
 }
