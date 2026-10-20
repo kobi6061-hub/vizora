@@ -68,6 +68,13 @@ jobs:
           probe "/api/intel?view=recentLayer" "302 307" login.html
           probe "/api/intel?view=recentLayer&city=5000" "302 307" login.html
           probe "/data/streets/recent/layer.json" "302 307 404" ""
+          # the transaction events (lib/txevents): every view and the bot-written files stay behind the gate
+          probe "/api/intel?view=txEvents&code=7900&days=30" "302 307" login.html
+          probe "/api/intel?view=txLatest&district=d-ta&months=24" "302 307" login.html
+          probe "/api/intel?view=txCompleteness" "302 307" login.html
+          probe "/api/gov/transactions?city=x&street=y&months=24" "302 307" login.html
+          probe "/data/txevents/latest.json" "302 307 404" ""
+          probe "/data/txevents/national/govmap-only.json" "302 307 404" ""
           probe "/data/streets/recent/raw/index.json" "302 307 404" ""
           probe "/api/gov/transactions?city=x&days=30" "302 307" login.html
           probe "/data/transactions/freshness.json" "302 307 404" ""
