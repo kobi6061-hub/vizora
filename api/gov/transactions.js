@@ -26,7 +26,21 @@ const HIST = require('../../lib/txevents/history');
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error(`no answer within ${ms} ms`)), ms))]);
 const minusDays = (d, k) => new Date(Date.parse(String(d).slice(0, 10) + 'T00:00:00Z') - k * 864e5).toISOString().slice(0, 10);
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
+/* a history cursor: the page's upper day; `g` = the register held no older row (every one was shown), the GovMap layer's rows continue */
+const CURSOR = /^(\d{4}-\d{2}-\d{2})(g?)$/;
+const GCAP = 500;   // the layer's rows of a page past the register's oldest row: whole days, about this many
 const okRows = (x) => (x && !x.error && Array.isArray(x.transactions) ? x.transactions : []);
+/* a register read that did not answer (an error, or no source answered): never taken for "no older deals"
+   — except the register copy's own answer that it lists no settlement for the place (a real zero: its settlement list holds none) */
+const NO_SETTLEMENT = /^no settlement ".*" in the republished register$/;
+const unanswered = (x) => {
+  if (!x) return 'no answer';
+  if (x.error) return x.error;
+  if (x.answered !== false) return null;
+  const over = (x.unavailable || []).filter((u) => /over/i.test(String(u.provider || '')));
+  if (over.length && over.every((u) => NO_SETTLEMENT.test(String(u.reason || '')))) return null;
+  return 'the register copy did not answer' + (over[0] && over[0].reason ? ': ' + over[0].reason : '');
+};
 
 /**
  * ONE PAGE OF A PLACE'S HISTORY, newest first (lib/txevents/history.js): the register copy's live search for the place, paged by DATE
@@ -44,41 +58,69 @@ async function historyPage(o) {
   const ask = (f) => withTimeout(scope.kind === 'area' ? svc.getWideTransactions('national', {}, f) : scope.kind === 'parcel' ? svc.getWideTransactions('parcel', { block: String(scope.block), parcel: String(scope.parcel) }, f)
     : svc.getTransactions(location, { ...f, level }), 9000).catch((e) => ({ error: e.message }));
   const base = { offset: 0, limit: 200, months: null, days: null, dateFrom: o.dateFrom || undefined };
+  const lvl = level;
+  const winFrom = (EV.store().meta || {}).window ? EV.store().meta.window.from : null;
+  const where = scope.kind === 'area' ? { codes: scope.codes || null } : scope.kind === 'parcel' ? { code: scope.code, block: scope.block, parcel: scope.parcel } : { code: scope.code };
+  const snap = S.nationalMeta && S.nationalMeta.version ? String(S.nationalMeta.version.detectedAt || '').slice(0, 10) : null;
+  const layerRows = (from, to) => {
+    const G = [];
+    for (const r of HIST.rows(where, from, winFrom && to >= winFrom ? minusDays(winFrom, 1) : to)) {
+      const e = TX.gmEvent(HIST.asLayerRow(r), 'over:govmap-national', snap);
+      const pl = scope.kind === 'area' ? { match: 'AREA', certain: true } : TX.placeEvent(e, scope, S);
+      if (!pl) continue;
+      G.push({ ...e, id: 'gmh:' + r.oid, geo: pl, inStatistics: false, evidence: [], conflict: false, conflictFields: [], history: true, recovery: r.recovery || null, sourceStreetBasis: r.streetBasis });
+    }
+    return G;
+  };
+  /* whole days of the layer's rows, newest first, about GCAP of them: the rows kept and the next cursor (null = none left) */
+  const cut = (G) => {
+    if (G.length <= GCAP) return { keep: G, next: null };
+    const s = [...G].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const d = s[GCAP - 1].date;
+    const keep = s.filter((e) => e.date >= d);
+    return keep.length < s.length ? { keep, next: minusDays(d, 1) + 'g' } : { keep, next: null };
+  };
+  const extraOf = (lo, hi) => (o.extraLayer ? o.extraLayer(lo, hi) : []);
+
+  if (o.gOnly) {
+    /* past the register's oldest row: every register row was shown on an earlier page — read again (≤ C + 1) only as the fold's reference */
+    const live = await ask({ ...base, dateTo: HIST.addDays(C, 1) });
+    if (unanswered(live)) return { error: unanswered(live), events: [], more: true, next: C + 'g', live };
+    const refs = TX.liveEvents(okRows(live), scope, lvl);
+    const { keep, next } = cut(layerRows(o.dateFrom || null, C));
+    const F = HIST.fold(keep, refs);
+    const lo = next ? minusDays(CURSOR.exec(next)[1], 0) : (o.dateFrom ? minusDays(o.dateFrom, 1) : null);
+    const extraLayer = extraOf(lo, C);
+    return { events: [...F.shown, ...extraLayer], more: !!next, next, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: 0, live };
+  }
+
   const top = first ? C : HIST.addDays(C, 2);
   const live = await ask({ ...base, dateTo: top });
-  if (live && live.error) return { error: live.error, events: [], more: true, next: C, live };
+  if (unanswered(live)) return { error: unanswered(live), events: [], more: true, next: C, live };
   let rows = okRows(live);
   const dg = live && live.diagnostics ? live.diagnostics : {};
   const more = !!dg.more;
   let sp = HIST.span(C, rows, more, dg.floors || []);
   if (more && sp.L != null && sp.L >= C) {
     /* a day holding more deals than a page: read the page's day (and the reference days) whole */
-    const day = async (d) => { const out = []; for (let off = 0; off < 5000; off += 200) { const r = await ask({ ...base, dateFrom: d, dateTo: d, offset: off }); if (r.error) throw new Error(r.error); const x = okRows(r); out.push(...x); if (!(r.diagnostics && r.diagnostics.more) || !x.length) break; } return out; };
+    const day = async (d) => { const out = []; for (let off = 0; off < 5000; off += 200) { const r = await ask({ ...base, dateFrom: d, dateTo: d, offset: off }); if (unanswered(r)) throw new Error(unanswered(r)); const x = okRows(r); out.push(...x); if (!(r.diagnostics && r.diagnostics.more) || !x.length) break; } return out; };
     try { rows = [...await day(C), ...(first ? [] : [...await day(HIST.addDays(C, 1)), ...await day(HIST.addDays(C, 2))])]; }
     catch (e) { return { error: e.message, events: [], more: true, next: C, live }; }
     sp = { L: minusDays(C, 1), last: false };
   }
-  const lvl = level;
   const show = (t) => t.date && t.date <= C && (sp.last || sp.L == null || t.date > sp.L);
   const reg = TX.liveEvents(rows.filter(show), scope, lvl).map((e) => ({ ...e, history: true }));
   const ref = TX.liveEvents(rows.filter((t) => t.date && t.date > C), scope, lvl);
   /* the register's deals under unmapped settlement names placed in this locality (listed with the stored events): fold references too */
   if (scope.code != null) for (const e of TX.unmappedRegisterEvents(scope.code, S)) if (e.date <= HIST.addDays(C, 2) && (sp.last || sp.L == null || e.date >= sp.L)) ref.push(e);
-  /* the GovMap layer's history rows of the place in (L + 1, C + 1] */
+  /* the GovMap layer's history rows of the place in (L + 1, C + 1]; on the register's last page, its rows below too — a page of whole days */
   const gmTo = HIST.addDays(C, 1), gmFrom = sp.last || sp.L == null ? (o.dateFrom || null) : HIST.addDays(sp.L, 2);
-  const winFrom = (EV.store().meta || {}).window ? EV.store().meta.window.from : null;
-  const where = scope.kind === 'area' ? { codes: scope.codes || null } : scope.kind === 'parcel' ? { block: scope.block, parcel: scope.parcel } : { code: scope.code };
-  const snap = S.nationalMeta && S.nationalMeta.version ? String(S.nationalMeta.version.detectedAt || '').slice(0, 10) : null;
-  const G = [];
-  for (const r of HIST.rows(where, gmFrom, winFrom && gmTo >= winFrom ? minusDays(winFrom, 1) : gmTo)) {
-    const e = TX.gmEvent(HIST.asLayerRow(r), 'over:govmap-national', snap);
-    const pl = scope.kind === 'area' ? { match: 'AREA', certain: true } : TX.placeEvent(e, scope, S);
-    if (!pl) continue;
-    G.push({ ...e, id: 'gmh:' + r.oid, geo: pl, inStatistics: false, evidence: [], conflict: false, conflictFields: [], history: true, recovery: r.recovery || null, sourceStreetBasis: r.streetBasis });
-  }
+  let G = layerRows(gmFrom, gmTo), gNext = null;
+  if (sp.last) ({ keep: G, next: gNext } = cut(G));
   /* events shown beside the history without folding (an area: the stored window's GovMap events — already reconciled — and, for
      Israel, the unplaced events), in the register's own range (L, C] */
-  const extraLayer = o.extraLayer ? o.extraLayer(sp.last || sp.L == null ? (o.dateFrom ? minusDays(o.dateFrom, 1) : null) : sp.L, C) : [];
+  const lo = sp.last || sp.L == null ? (gNext ? CURSOR.exec(gNext)[1] : o.dateFrom ? minusDays(o.dateFrom, 1) : null) : sp.L;
+  const extraLayer = extraOf(lo, C);
   const F = HIST.fold(G, [...reg, ...ref]);
   const byKey = new Map(reg.map((e) => [e, e]));
   for (const f of F.folded) {
@@ -88,7 +130,8 @@ async function historyPage(o) {
     const conflictFields = kinds.filter((k) => !TX.FORMAT_ONLY.has(k)).map((k) => k.split(':')[0]);
     if (conflictFields.length) { f.r.conflict = true; f.r.conflictFields = [...new Set((f.r.conflictFields || []).concat(conflictFields))]; }
   }
-  return { events: [...reg, ...F.shown, ...extraLayer], more: !sp.last, next: sp.last ? null : sp.L, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: reg.length, live };
+  const next = sp.last ? gNext : sp.L;
+  return { events: [...reg, ...F.shown, ...extraLayer], more: !!next, next, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: reg.length, live };
 }
 
 /**
@@ -105,7 +148,8 @@ async function areaRead(svc, filters, area, g) {
   const scope = { kind: 'area', resolved: true, area, codes, how: 'area' };
   const all = g('all') === '1' || (!filters.days && Number(filters.months) >= 240);
   const P0 = TX.periodOf({ days: filters.days, months: all ? null : filters.months, all });
-  const cursor = ISO.test(g('older') || '') ? g('older') : null;
+  const cm = CURSOR.exec(g('older') || '');
+  const cursor = cm ? cm[1] : null, gOnly = !!(cm && cm[2]);
   const dateFrom = P0.from ? HIST.addDays(P0.from, 1) : undefined;
   const S = TX.stores();
   const U = require('../../lib/txevents/unplaced');
@@ -117,7 +161,7 @@ async function areaRead(svc, filters, area, g) {
     return out;
   };
   const C = cursor || P0.to;
-  const P = await historyPage({ svc, location: {}, scope, C, first: !cursor, dateFrom, extraLayer });
+  const P = await historyPage({ svc, location: {}, scope, C, first: !cursor, dateFrom, extraLayer, gOnly });
   const rows = P.events.filter((e) => TX.inPeriod(e.date, P0)).sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id)));
   const L = S.latest;
   const perDay = L ? (codes ? (L.districts[area] || {}).perDay : L.national.perDay) || {} : {};
@@ -132,7 +176,7 @@ async function areaRead(svc, filters, area, g) {
     unavailable: P.live && P.live.unavailable ? P.live.unavailable : [],
     meta: { unified: true, area: true, engine: TX.ENGINE, period: P0, statement: st, recency: rec, coverage: cov, attemptedAt: now, deliveredVia: 'over.org.il', sourceFamily: 'OFFICIAL_GOVERNMENT',
       counts: { events: rows.filter((e) => e.state !== 'POSSIBLE_DUPLICATE').length, windowEventsInPeriod: inWindow, bySourceEvents: rows.reduce((m, e) => ((m[e.sourceId] = (m[e.sourceId] || 0) + 1), m), {}) },
-      sourceCoverage: { kind: cursor ? 'unified-older' : 'unified', offset: 0, limit: rows.length, total: rows.length, more: false, olderMore: !!(P.more && !P.error), olderNext: P.error ? C : P.next, olderError: P.error || null,
+      sourceCoverage: { kind: cursor ? 'unified-older' : 'unified', offset: 0, limit: rows.length, total: rows.length, more: false, olderMore: !!(P.more || P.error), olderNext: P.error ? C + (gOnly ? 'g' : '') : P.next, olderError: P.error || null,
         folded: P.folded || 0, areaWindowTotal: inWindow, history: all && R ? { govmapRows: codes ? Object.entries(R.localities || {}).reduce((a, [c, x]) => a + (codes.has(Number(c)) ? x.rows : 0), 0) : R.shown, before: R.period && R.period.to } : null },
       note: TX.NOTE, noteHe: TX.NOTE_HE },
   };
@@ -152,17 +196,18 @@ async function unifiedRead(svc, location, filters, scope, g) {
      sends for ALL (≥ 240) is a name for "all", never a 20-year bound */
   const all = g('all') === '1' || (!filters.days && Number(filters.months) >= 240);
   const winFrom = (EV.store().meta || {}).window ? EV.store().meta.window.from : null;
-  const cursor = ISO.test(g('older') || '') ? g('older') : g('older') != null && winFrom ? minusDays(winFrom, 1) : null;
+  const cm = CURSOR.exec(g('older') || '');
+  const cursor = cm ? cm[1] : g('older') != null && winFrom ? minusDays(winFrom, 1) : null, gOnly = !!(cm && cm[2]);
   /* the live register search: for the period (the republisher's address link) */
   const liveCall = (f) => (scope.kind === 'parcel' ? Promise.resolve(null) : withTimeout(svc.getTransactions(location, f), 9000).catch((e) => ({ error: e.message })));
   const periodF = { ...filters, offset: 0, limit: 200, level: undefined, months: all ? 36 : filters.months };
   const lvl = (x) => (x && x.scope ? x.scope.level : null);
   if (cursor) {
     /* a later page of the history (period ALL): the register's live rows and the GovMap layer's, one date span */
-    const P = winFrom ? await historyPage({ svc, location, scope, C: cursor, first: cursor === minusDays(winFrom, 1) }) : { events: [], more: false, next: null };
+    const P = winFrom ? await historyPage({ svc, location, scope, C: cursor, first: cursor === minusDays(winFrom, 1) && !gOnly, gOnly }) : { events: [], more: false, next: null };
     const rows = P.events.sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id))).map(TX.wire);
     return { transactions: rows, scope: scopeOut(scope, location), unavailable: P.live && P.live.unavailable ? P.live.unavailable : [],
-      meta: { unified: true, engine: TX.ENGINE, sourceCoverage: { kind: 'unified-older', olderMore: !!(P.more && !P.error), olderNext: P.error ? cursor : P.next, olderError: P.error || null,
+      meta: { unified: true, engine: TX.ENGINE, sourceCoverage: { kind: 'unified-older', olderMore: !!(P.more || P.error), olderNext: P.error ? cursor + (gOnly ? 'g' : '') : P.next, olderError: P.error || null,
         folded: P.folded || 0, govmapHistoryShown: P.gmShown || 0, registerShown: P.regShown || 0 }, attemptedAt: now } };
   }
   /* period ALL: the first page of the history (directly under the stored window) comes with the stored events */
@@ -193,6 +238,7 @@ async function unifiedRead(svc, location, filters, scope, g) {
       sourceCoverage: { kind: 'unified', offset: U.offset, limit: U.limit, total: U.total, more: U.more, olderMore: all && (olderMore || !!(older && older.error)),
         olderNext: all && older ? (older.error ? minusDays(winFrom, 1) : older.next) : null, olderError: older && older.error ? older.error : null,
         olderTotal: olderCov ? olderCov.totalReported : null, olderTotalCapped: olderCov ? !!olderCov.totalCapped : null,
+        olderFolded: older ? older.folded || 0 : null, olderGovmapShown: older ? older.gmShown || 0 : null, olderRegisterShown: older ? older.regShown || 0 : null,
         history: all ? historyCounts(scope) : null },
       recency: rec, coverage, counts: U.counts, statement: U.statement, period: U.period, note: U.note, noteHe: U.noteHe,
       live: { answered: liveAnswered, level: lvl(live), added: extra.length, error: live && live.error ? live.error : null },

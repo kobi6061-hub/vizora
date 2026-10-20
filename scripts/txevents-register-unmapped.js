@@ -65,6 +65,15 @@ async function get(p, params = {}) {
   const unmapped = settlements.filter((s) => s.code == null && s.deals);
   console.log(JSON.stringify({ settlements: settlements.length, unmapped: unmapped.length, unmappedDeals: unmapped.reduce((a, s) => a + s.deals, 0), dealsUnderNoSettlement: num(stats.deals) - listed }));
   if (!K) { console.log('no --extract: the settlement list only'); return; }
+  /* nothing to re-read when neither copy changed: the same register copy, the same unmapped names, the same GovMap-layer version
+     (whose parcels place the deals) — the previous extraction stands */
+  const gmVersion = ((() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'txevents', 'national', 'meta.json'), 'utf8')); } catch { return {}; } })().version || {}).id || null;
+  const prev = (() => { try { return JSON.parse(fs.readFileSync(path.join(OUT, 'register-unmapped.json'), 'utf8')); } catch { return null; } })();
+  if (!args.includes('--force') && prev && prev.scrapedAt === (stats.scraped_at || null) && prev.govmapVersion === gmVersion && gmVersion
+    && JSON.stringify(prev.settlements) === JSON.stringify(unmapped.map((s) => s.settlement)) && !(prev.failed || []).length) {
+    console.log(JSON.stringify({ ok: true, unchanged: true, rows: prev.rows.length, scrapedAt: prev.scrapedAt, govmapVersion: gmVersion }));
+    return;
+  }
 
   /* every deal under every unmapped name, all years — the sweep's provably complete split */
   const search = async (name, from, to, offset = 0) => { const b = await get('/api/deals/search', { settlement: name, date_from: from, date_to: to, sort: 'date_desc', limit: SW.PAGE, offset }); const data = Array.isArray(b.data) ? b.data : []; const total = Number(b.total); return { data, total: Number.isFinite(total) ? total : null, capped: !!b.total_capped }; };
@@ -92,7 +101,7 @@ async function get(p, params = {}) {
       m ? [m.state, m.streets.map((z) => [Number(String(z.id).split(':')[2]), z.via, z.houses])] : null];
   });
   out.sort((a, b) => b[1].localeCompare(a[1]));
-  fs.writeFileSync(path.join(OUT, 'register-unmapped.json'), JSON.stringify({ schema: 1, readAt: new Date().toISOString(), scrapedAt: stats.scraped_at || null, window: { from, to },
+  fs.writeFileSync(path.join(OUT, 'register-unmapped.json'), JSON.stringify({ schema: 1, readAt: new Date().toISOString(), scrapedAt: stats.scraped_at || null, govmapVersion: gmVersion, window: { from, to },
     settlements: unmapped.map((s) => s.settlement), requests, sweep: st, failed, byState: tally, columns: COLS, rows: out }) + '\n');
   console.log(JSON.stringify({ ok: !failed.length, rows: out.length, byState: tally, requests, failed: failed.length }));
   if (failed.length) process.exitCode = 1;

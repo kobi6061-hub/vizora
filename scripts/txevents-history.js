@@ -117,7 +117,7 @@ async function build() {
       res.set(r.oid, x); tallyInto(recState, x.state); tallyInto(recBasis, x.basis);
     }
     const resolved = recover.filter((r) => /^RESOLVED/.test(res.get(r.oid).state) && D.localities.has(res.get(r.oid).code));
-    const second = resolved.length ? REC.reconcile(resolved.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(res.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M }) : null;
+    const second = resolved.length ? REC.reconcile(resolved.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(res.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M, codeOf: new Map(resolved.map((r) => [r.oid, res.get(r.oid).code])) }) : null;
     const secondRow = new Map(second ? second.rows.map((z) => [z.oid, z]) : []);
     for (const r of recover) {
       const x = res.get(r.oid);

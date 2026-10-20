@@ -125,7 +125,34 @@ function txCompleteness() {
   return { completeness: S.completeness, national: S.nationalMeta ? { version: S.nationalMeta.version, builtAt: S.nationalMeta.builtAt, file: S.nationalMeta.file && { sha256: S.nationalMeta.file.sha256, bytes: S.nationalMeta.file.bytes, rowsTotal: S.nationalMeta.file.rowsTotal },
     validation: S.nationalMeta.validation && { pass: S.nationalMeta.validation.pass, same: S.nationalMeta.validation.same, differs: S.nationalMeta.validation.differs, missing: S.nationalMeta.validation.missing }, totals: S.nationalMeta.totals, classes: S.nationalMeta.classes,
     shown: S.nationalMeta.shown, parcelRecovery: S.nationalMeta.parcelRecovery, diff: S.nationalMeta.diff } : null,
-    checks: S.nationalRuns.slice(-14), sources: TX.SOURCES };
+    checks: S.nationalRuns.slice(-14), sources: TX.SOURCES, audit: completenessAudit() };
+}
+/* the full-universe accounting (scripts/txevents-completeness.js): every source row in one bucket, reachability, recovery, streets,
+   parcels, latest-date parity — the long mismatch lists cut to their first rows */
+function completenessAudit() {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  let A = null;
+  try { A = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'txevents', 'completeness-audit.json'), 'utf8')); } catch { return null; }
+  const L = A.latest || {};
+  return { builtAt: A.builtAt, universe: A.universe, buckets: A.buckets, notSurfaced: A.defensibleKnownSourceEventsNotSurfaced, reachability: A.reachability,
+    recovery: A.recovery, streets: A.streets && { total: A.streets.total, register: A.streets.register && { distinctStrings: A.streets.register.distinctStrings, stringsByVia: A.streets.register.stringsByVia },
+      govmapWindow: A.streets.govmapWindow && { distinctStrings: A.streets.govmapWindow.distinctStrings, stringsByVia: A.streets.govmapWindow.stringsByVia },
+      govmapHistory: A.streets.govmapHistory && { distinctStrings: A.streets.govmapHistory.distinctStrings, stringsByVia: A.streets.govmapHistory.stringsByVia }, vias: A.streets.vias },
+    parcels: A.parcels, latest: { rule: L.rule, israel: L.israel, districts: L.districts,
+      localities: L.localities && { ...L.localities, mismatches: (L.localities.mismatches || []).slice(0, 20) }, streets: L.streets && { ...L.streets, mismatches: (L.streets.mismatches || []).slice(0, 20) } },
+    liveCheck: A.liveCheck };
+}
+/* UNPLACED TRANSACTION EVENTS — the national list of rows no locality can be determined for (lib/txevents/unplaced.js), newest first */
+function txUnplaced(p) {
+  const TX = require('../lib/txevents');
+  const U = require('../lib/txevents/unplaced');
+  const { rows, built } = U.load();
+  const sel = p.state ? rows.filter((r) => r.state === p.state) : rows;
+  const offset = Math.max(0, Number(p.offset) || 0), limit = Math.min(200, Math.max(1, Number(p.limit) || 100));
+  const sm = U.summary({ limit: 0 });
+  return { built, total: sel.length, offset, limit, more: offset + limit < sel.length, byState: sm.byState, byBasis: sm.byBasis, byKind: sm.byKind, byYear: sm.byYear, latest: sm.latest,
+    events: sel.slice(offset, offset + limit).map(U.event).map(TX.wire) };
 }
 function txLatest(p) {
   const TX = require('../lib/txevents');
@@ -236,6 +263,7 @@ module.exports = async (req, res) => {
       return send(res, 200, txEventsOf(q));
     }
     if (view === 'txCompleteness') return send(res, 200, txCompleteness());
+    if (view === 'txUnplaced') return send(res, 200, txUnplaced(p));
     if (view === 'txLatest') return send(res, 200, txLatest(p));
     if (view === 'street' || view === 'streetCoverage') {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });

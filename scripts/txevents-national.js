@@ -230,14 +230,14 @@ function build() {
     if (x.state !== 'POSSIBLE_LOCATION' || !x.candidates || !x.candidates.length) continue;
     const hits = [];
     for (const c of x.candidates.map((z) => z.code).filter((c) => D.localities.has(c) && EV.shardOf(c))) {
-      const one = REC.reconcile([{ ...rawByOid.get(r.oid), settlement: D.localities.get(c).he }], { window: { from: regWin.from }, loadDay, EV, D, M });
+      const one = REC.reconcile([{ ...rawByOid.get(r.oid), settlement: D.localities.get(c).he }], { window: { from: regWin.from }, loadDay, EV, D, M, codeOf: new Map([[r.oid, c]]) });
       const o = one.out.get(r.oid);
       if (o && (o.cls === 'IN_REGISTER' || o.cls === 'IN_REGISTER_OTHER_UNIT') && o.register && o.register.code === c) hits.push(c);
     }
     if (hits.length === 1) recovery.set(r.oid, { state: 'RESOLVED_EXACTLY', code: hits[0], basis: 'register-twin', candidates: x.candidates });
   }
   const resolvedRows = unplacedIn.filter((r) => /^RESOLVED/.test(recovery.get(r.oid).state) && D.localities.has(recovery.get(r.oid).code));
-  const second = resolvedRows.length ? REC.reconcile(resolvedRows.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(recovery.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M }) : null;
+  const second = resolvedRows.length ? REC.reconcile(resolvedRows.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(recovery.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M, codeOf: new Map(resolvedRows.map((r) => [r.oid, recovery.get(r.oid).code])) }) : null;
   const finalOf = (r) => { const x = recovery.get(r.oid); if (!/^RESOLVED/.test(x.state)) return x.state; const o = second && second.out.get(r.oid); return o && o.cls !== 'NO_SETTLEMENT' && o.cls !== 'UNMAPPED_SETTLEMENT' ? o.cls : 'POSSIBLE_LOCATION'; };
   for (const r of second ? second.rows : []) {
     const o = second.out.get(r.oid);

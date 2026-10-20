@@ -56,6 +56,44 @@ interchangeable (`statementOf`):
   not be read;
 - with rows, the period's uncovered tail (after the date the evidence is checked through) is named.
 
+## ALL = the whole history (closure P0, 20.10.2026)
+
+The stored window (36 months) is an optimization boundary, never the meaning of ALL. `all=1` (the page sends it for "all available")
+pages a place's history newest first, **by date** (`lib/txevents/history.js`, `api/gov/transactions.js` `historyPage`):
+
+- the **register copy** through its own live search with no lower date bound — a page shows its rows dated in (L, C]; L is the
+  highest day the settlement spellings that still hold older rows reached (`floors`); a day holding more than a page is read whole;
+  the search's 100,000-row offset cap is never reached (offset stays 0);
+- the **GovMap layer's history** (every row of the published file before the window: `data/txevents/history/gm-<year>.json.gz`,
+  regrouped per locality in `history/loc/<code>.json.gz` by `scripts/txevents-history-index.js`, read lazily) — its rows dated in
+  (L + 1, C + 1], each **folded** into the register deal it repeats (`fold`: the same unit, then the same block · parcel, ±1 day, the
+  amount equal · the layer's ₪1,000 truncation · a share); a near miss is shown as POSSIBLE DUPLICATE, never counted;
+- past the register's oldest deal the layer's rows continue in pages of whole days (≈ 500 rows, a `…g` cursor); the register rows
+  read there are fold references only (all of them were shown already);
+- a register read that does not answer is an error and a retry cursor (`olderError`), never "no older deals"; the register's own
+  "no settlement" answer is a real zero (a locality only the GovMap layer holds);
+- `area=il|d-<district>` pages the register's national search the same way, with the area's GovMap events; Israel adds the
+  UNPLACED events.
+
+## Every source row accounted for (`scripts/txevents-completeness.js` → `data/txevents/completeness-audit.json`)
+
+Every row of the GovMap file is in one bucket — SURFACED · SURFACED OR FOLDED (history) · SURFACED FLAGGED (possible duplicate) ·
+DUPLICATE OF SURFACED · UNPLACED · INVALID (future-dated / no date: kept in the evidence, never shown) — history + window + invalid =
+the file; each bucket is proven reachable through a user path (`reachability`); DEFENSIBLE KNOWN SOURCE EVENTS NOT SURFACED = the rows
+no path reaches (target 0). The register side: its own count, the deals under official localities, under settlement names no official
+locality carries (`scripts/txevents-register-unmapped.js`: every deal read, placed by its parcel — `history/register-unmapped.json`,
+the register's per-name counts and last deal in `history/register-settlements.json`) and under no settlement name (Israel's list,
+through the national search). Also: the locality recovery (`lib/txevents/recover.js`: RESOLVED EXACTLY — the row's own official code
+or its exact register twin · RESOLVED STRONGLY — its parcel / polygon filed under one locality by both copies · POSSIBLE LOCATION ·
+UNPLACED; only the first two enter a geography), the street-string audit of both copies, the parcel recovery, and LATEST-DATE PARITY:
+the newest event the sources hold vs the first the user sees, for Israel, every district, locality and street with an event. The
+places whose newest deal predates the window are checked live by `scripts/txevents-all-check.js` (`.github/workflows/txevents-all-check.yml`
+→ `data/txevents/all-check.json`: full ALL pagings, period filters, the latest event through the page's own read).
+
+UNPLACED TRANSACTION EVENTS (`lib/txevents/unplaced.js`, `view=txUnplaced`): the rows whose locality cannot be determined — in Israel's
+list and the Trust Center's unplaced list, never a locality, street or district; every source field kept; a POSSIBLE LOCATION lists
+its candidates, never picks one; never priced.
+
 ## Recency summary (every scope)
 
 LATEST KNOWN TRANSACTION (the union, not the register) · RECENT TRANSACTION SOURCES CHECKED · FRESHEST SOURCE SNAPSHOT · PRIMARY
@@ -70,12 +108,17 @@ transaction sources. Some recent transactions may appear before all pricing deta
 | `build.js` + `../../scripts/txevents-build.js` | the offline build → `data/txevents/` (`links.json`, `recent-extra.json`, `parcel-streets.json`, `latest.json`, `completeness.json`) |
 | `../../scripts/txevents-national.js` + `txevents-gpkg.py` + `.github/workflows/txevents-national.yml` | the national missed-deal detector: version check every three hours; on a new GovMap-layer version, one GET of its GeoPackage, validated against the API window, reconciled nationally → `data/txevents/national/` |
 | `../../scripts/txevents-audit.js` | the national stratified coverage audit → `data/txevents/coverage-audit.json` |
+| `history.js` + `../../scripts/txevents-history.js` + `txevents-history-index.js` | the GovMap layer's history (year + locality partitions), `fold`, `span` |
+| `unplaced.js` · `recover.js` · `kit.js` | the unplaced events; the locality recovery; the shared extract readers |
+| `../../scripts/txevents-register-unmapped.js` | the register's deals under unmapped settlement names (runner, one request a second; skipped when neither copy changed) |
+| `../../scripts/txevents-completeness.js` · `txevents-all-check.js` | the full-universe audit (offline) · the live ALL / latest check (runner) |
 | `../../scripts/tx-sources-discover.js` + `.github/workflows/tx-sources-discover.yml` | the source inventory and the regression-case capture (read-only) |
 
 API: `GET /api/gov/transactions` (the page's transactions section — the unified read for a swept locality, `unified=0` for the live
 path alone), `GET /api/intel?view=txEvents&code=|sid=|block=&parcel=&days=|months=|all=1`, `view=street` → `events`,
-`view=txCompleteness`, `view=txLatest[&district=][&days=|months=]` (a district's / the country's newest events of every source, the period's exact
+`view=txCompleteness` (+ `audit`), `view=txUnplaced[&state=][&offset=]`, `view=txLatest[&district=][&days=|months=]` (a district's / the country's newest events of every source, the period's exact
 count from the per-day tally and its statement by `statementOf` — the page lists them and never prices them as the area). Trust: `over:govmap-national`, `propx:transaction-events`. Gates:
-`test/txevents.test.js` (the P0's 14 hard gates + the regression case).
+`test/txevents.test.js` (the P0's 14 hard gates + the regression case), `test/txevents-closure.test.js` (ALL paging against a fake register, the
+fold, unanswered-register handling, areas, unplaced, periods, the full universe, latest-date parity, the regression geographies).
 
 The Street Value Model and the street statistics never read this module.

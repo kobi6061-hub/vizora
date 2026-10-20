@@ -1,0 +1,54 @@
+# PROPX · the live check of the transaction events' ALL period and of the latest-date parity (closure P0, 20.10.2026).
+#
+# Runs scripts/txevents-all-check.js on a GitHub runner (the Israeli hosts answer here, not from the Claude sandbox): the page's own
+# /api/gov/transactions read, in-process, page by page — ALL to the end for a street, small localities and two large cities; the first
+# and the oldest pages of the largest cities, Israel and a district; the period filters; and, for every official locality the stored
+# union does not cover, the first event the user sees against the newest the sources hold. GET only, one source request a second; the
+# GovMap platform (403 to servers) is not asked. Writes data/txevents/all-check.json.
+
+name: Transactions — ALL and latest-date check (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      quick:
+        description: 'Skip the two full large-city pagings'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: txevents-national
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check (read-only toward the sources)
+        env:
+          QUICK: ${{ inputs.quick }}
+        run: |
+          if [ "$QUICK" = "true" ]; then node --max-old-space-size=8000 scripts/txevents-all-check.js --quick; else node --max-old-space-size=8000 scripts/txevents-all-check.js; fi
+      - name: Commit
+        if: always()
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/txevents/all-check.json
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "Transaction events: live ALL / latest check"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1

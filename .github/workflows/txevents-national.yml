@@ -59,6 +59,8 @@ jobs:
           node --max-old-space-size=12000 scripts/txevents-national.js --build --extract "$RUNNER_TEMP/extract" --file-sha "$SHA" --file-url "$FILE_URL" --file-bytes "$BYTES" || exit 1
           # every row before the register's stored window (the layer reaches back to 1998): the history the ALL period reads
           node --max-old-space-size=12000 scripts/txevents-history.js --build --extract "$RUNNER_TEMP/extract" || restore 'History build failed'
+          # the same rows regrouped per locality (a locality / street / parcel ALL read opens one file)
+          node --max-old-space-size=8000 scripts/txevents-history-index.js || restore 'History index failed'
           # the register's deals under settlement names no official locality carries (all years, placed by parcel) + its per-settlement counts
           node --max-old-space-size=8000 scripts/txevents-register-unmapped.js --extract "$RUNNER_TEMP/extract" || echo 'register-unmapped: a settlement failed — listed in the file' >&2
           rm -rf "$RUNNER_TEMP/extract"

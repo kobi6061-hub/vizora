@@ -1,0 +1,1132 @@
+{
+ "schema": 1,
+ "builtAt": "2026-10-20T17:22:51.434Z",
+ "today": "2026-10-20",
+ "engine": "propx-txevents-1",
+ "universe": {
+  "accessibleSourceRows": 6345141,
+  "register": {
+   "copy": {
+    "scrapedAt": "2026-09-19 11:07:39.013275+00",
+    "deals": 3844200,
+    "firstDeal": "1998-01-01",
+    "lastDeal": "2026-09-17"
+   },
+   "storedWindow": {
+    "from": "2023-09-18",
+    "to": "2026-09-17",
+    "localities": 1036,
+    "deals": 342471,
+    "events": 342471,
+    "equal": true
+   },
+   "settlements": null,
+   "unmapped": null
+  },
+  "govmap": {
+   "file": {
+    "version": {
+     "id": "210cd553-ea77-41ce-8afd-da27c552250d",
+     "n": 4,
+     "detectedAt": "2026-10-08T01:47:52.610708+00:00",
+     "rows": null
+    },
+    "sha256": "a410a5226a3375a20ffb5ff4c405b1b292454e97bf87ad65afe5b972edb55069",
+    "rowsTotal": 2500941,
+    "rowsRead": 2500941,
+    "dates": {
+     "min": "1900-01-01",
+     "max": "2048-05-29"
+    }
+   },
+   "partition": {
+    "history": 2153701,
+    "window": 347238,
+    "invalidDate": 2,
+    "sum": 2500941,
+    "equal": true
+   }
+  }
+ },
+ "buckets": {
+  "meaning": {
+   "SURFACED": "an event of its own in its locality (and its street when the address resolves), its district and Israel",
+   "SURFACED_OR_FOLDED": "a history row of its locality: shown in ALL, or folded into the register deal it repeats as the page loads (that deal is shown)",
+   "SURFACED_FLAGGED": "shown as POSSIBLE DUPLICATE, never counted",
+   "DUPLICATE_OF_SURFACED": "the same deal as a surfaced event (its source evidence)",
+   "UNPLACED": "UNPLACED TRANSACTION EVENT — in Israel's list and the unplaced view, never attributed to a locality, street or district",
+   "INVALID": "INVALID / FUTURE-DATED SOURCE ROW — kept in the raw evidence and the accounting, never shown as a transaction"
+  },
+  "govmapWindow": {
+   "INVALID": 36,
+   "SURFACED": 29394,
+   "DUPLICATE_OF_SURFACED": 312145,
+   "SURFACED_FLAGGED": 3220,
+   "UNPLACED": 2443
+  },
+  "govmapHistory": {
+   "SURFACED_OR_FOLDED": 2073786,
+   "UNPLACED": 44399,
+   "DUPLICATE_OF_SURFACED": 32513,
+   "SURFACED_FLAGGED": 3003,
+   "INVALID": 2
+  },
+  "govmapAll": {
+   "INVALID": 38,
+   "SURFACED": 29394,
+   "DUPLICATE_OF_SURFACED": 344658,
+   "SURFACED_FLAGGED": 6223,
+   "UNPLACED": 46842,
+   "SURFACED_OR_FOLDED": 2073786
+  },
+  "register": null
+ },
+ "reachability": {
+  "checks": [
+   {
+    "id": "register-window",
+    "rows": 342471,
+    "notReachable": 0,
+    "how": "every stored deal is an event of its locality (TX.registerEvents = the shard's rows)"
+   },
+   {
+    "id": "govmap-window-events",
+    "rows": 28108,
+    "notReachable": 0,
+    "how": "the locality of every GovMap-only event is an official locality (its events, its district, Israel)"
+   },
+   {
+    "id": "govmap-recent-events",
+    "rows": 4403,
+    "notReachable": 0,
+    "how": "the recent layer's rows are events of an official locality"
+   },
+   {
+    "id": "govmap-history",
+    "rows": 2076789,
+    "notReachable": 0,
+    "how": "every history row belongs to an official locality whose ALL read opens its partition"
+   },
+   {
+    "id": "govmap-history-partitions",
+    "rows": 2076789,
+    "notReachable": 0,
+    "how": "the per-locality partitions hold exactly the year files' rows"
+   },
+   {
+    "id": "unplaced",
+    "rows": 46842,
+    "notReachable": 0,
+    "how": "Israel's list and the unplaced view read data/txevents/{national/unplaced.json, history/unplaced.json.gz}"
+   }
+  ],
+  "localitiesWithoutDistrict": 0,
+  "notSurfaced": 0
+ },
+ "defensibleKnownSourceEventsNotSurfaced": 0,
+ "recovery": {
+  "window": {
+   "rows": 2539,
+   "byState": {
+    "UNPLACED": 50,
+    "POSSIBLE_LOCATION": 2392,
+    "RESOLVED_EXACTLY": 96,
+    "RESOLVED_STRONGLY": 1
+   },
+   "byBasis": {
+    "block-unknown-to-both-copies": 50,
+    "block-in-several-localities": 325,
+    "block-only": 172,
+    "parcel-in-several-localities": 1895,
+    "settlement-code": 96,
+    "block-parcel": 1
+   },
+   "final": {
+    "UNPLACED": 50,
+    "POSSIBLE_LOCATION": 2393,
+    "RECENT_NEW": 69,
+    "IN_REGISTER_OTHER_UNIT": 27
+   },
+   "unplacedAfter": 2443
+  },
+  "history": {
+   "rows": 54639,
+   "byState": {
+    "UNPLACED": 4141,
+    "POSSIBLE_LOCATION": 40221,
+    "RESOLVED_EXACTLY": 10184,
+    "RESOLVED_STRONGLY": 93
+   },
+   "byBasis": {
+    "block-unknown-to-both-copies": 4141,
+    "block-only": 23942,
+    "block-in-several-localities": 13125,
+    "parcel-in-several-localities": 3154,
+    "settlement-code": 10184,
+    "parcel-polygon+block-parcel": 44,
+    "block-parcel": 49
+   },
+   "unplacedAfter": 44399
+  },
+  "registerUnmapped": null,
+  "rule": "only RESOLVED EXACTLY (the row's own official locality code, or its exact twin in the register) and RESOLVED STRONGLY (its parcel / polygon filed under exactly one locality by both copies) enter a geography; POSSIBLE LOCATION and UNPLACED stay national"
+ },
+ "streets": {
+  "vias": null,
+  "register": {
+   "distinctStrings": 19977,
+   "stringsByVia": {
+    "official-name": 18364,
+    "unresolved": 982,
+    "normalized-name": 185,
+    "official-synonym": 379,
+    "ambiguous": 12,
+    "spelling-variant": 55
+   },
+   "addressesByVia": {
+    "official-name": 350202,
+    "unresolved": 7846,
+    "normalized-name": 1700,
+    "official-synonym": 5358,
+    "ambiguous": 43,
+    "spelling-variant": 418
+   },
+   "basis": "the stored window's deals: every parcel address string, in its locality's official directory"
+  },
+  "govmapWindow": null,
+  "govmapHistory": {
+   "distinctStrings": 30530,
+   "stringsByVia": {
+    "official-name": 22831,
+    "official-synonym": 5268,
+    "unresolved": 1369,
+    "spelling-variant": 342,
+    "normalized-name": 696,
+    "ambiguous": 24
+   },
+   "rowsByVia": {
+    "official-name": 1236992,
+    "official-synonym": 351973,
+    "no-street": 495206,
+    "unresolved": 46485,
+    "spelling-variant": 8106,
+    "normalized-name": 14513,
+    "ambiguous": 421,
+    "no-locality": 5
+   },
+   "codeAgreement": {
+    "source-code-not-in-directory": 1658490
+   }
+  },
+  "historyStreetBasis": {
+   "address": 951352,
+   "address+parcel": 620499,
+   "no-address": 428935,
+   "unresolved": 31947,
+   "parcel": 21081,
+   "conflict": 9840,
+   "possible": 12714,
+   "ambiguous": 421
+  },
+  "total": {
+   "stringsByVia": {
+    "official-name": 41195,
+    "unresolved": 2351,
+    "normalized-name": 881,
+    "official-synonym": 5647,
+    "ambiguous": 36,
+    "spelling-variant": 397
+   },
+   "distinct": 50507,
+   "note": "distinct (locality, string) pairs per source, added across the three sources (a string both copies print counts in each)"
+  }
+ },
+ "parcels": {
+  "register": {
+   "deals": 342471,
+   "withBlockParcel": 342471,
+   "withoutStreet": 142769
+  },
+  "recovery": {
+   "parcelsRecovered": 6061,
+   "byState": {
+    "OBSERVED": 5810,
+    "POSSIBLE": 251
+   },
+   "national": {
+    "registerParcelsWithoutStreet": 33479,
+    "layerAddressKeys": 348813,
+    "keysOnThoseParcels": 7407,
+    "parcelsWithLayerAddress": 6486,
+    "states": {
+     "OBSERVED": 5810,
+     "POSSIBLE": 251,
+     "UNRESOLVED": 425
+    },
+    "recovered": 6061
+   },
+   "rule": "a register parcel with no street is placed on a street through the GovMap layer's own address of the same parcel: OBSERVED when one street holds every address, POSSIBLE otherwise, UNRESOLVED when none resolves — never priced"
+  },
+  "govmapWindow": {
+   "rows": 32511,
+   "withBlockParcel": 32511
+  }
+ },
+ "latest": {
+  "rule": "source = the newest valid event any source holds for the geography (the register sweep, the register's own last deal per settlement name, the GovMap layer's events, the register deals placed by parcel, the GovMap history); visible = the first event the user's ALL read shows (the stored union, or the live check for places whose newest deal is older than the stored window); POSSIBLE DUPLICATE rows excluded on both sides; future-dated rows are INVALID",
+  "israel": {
+   "area": "il",
+   "source": "2026-09-28",
+   "visible": "2026-09-28",
+   "via": "stored-index",
+   "stored": "2026-09-28",
+   "match": true
+  },
+  "districts": [
+   {
+    "area": "d-center",
+    "source": "2026-09-10",
+    "visible": "2026-09-10",
+    "via": "stored-index",
+    "stored": "2026-09-10",
+    "match": true
+   },
+   {
+    "area": "d-haifa",
+    "source": "2026-09-07",
+    "visible": "2026-09-07",
+    "via": "stored-index",
+    "stored": "2026-09-07",
+    "match": true
+   },
+   {
+    "area": "d-jm",
+    "source": "2026-09-07",
+    "visible": "2026-09-07",
+    "via": "stored-index",
+    "stored": "2026-09-07",
+    "match": true
+   },
+   {
+    "area": "d-north",
+    "source": "2026-09-09",
+    "visible": "2026-09-09",
+    "via": "stored-index",
+    "stored": "2026-09-09",
+    "match": true
+   },
+   {
+    "area": "d-south",
+    "source": "2026-09-17",
+    "visible": "2026-09-17",
+    "via": "stored-index",
+    "stored": "2026-09-17",
+    "match": true
+   },
+   {
+    "area": "d-ta",
+    "source": "2026-09-28",
+    "visible": "2026-09-28",
+    "via": "stored-index",
+    "stored": "2026-09-28",
+    "match": true
+   },
+   {
+    "area": "js-area",
+    "source": "2026-09-02",
+    "visible": "2026-09-02",
+    "via": "stored-index",
+    "stored": "2026-09-02",
+    "match": true
+   }
+  ],
+  "localities": {
+   "total": 1316,
+   "withTransactions": 1117,
+   "match": 1066,
+   "mismatch": 51,
+   "pendingLive": 51,
+   "noTransaction": 199,
+   "byVia": {
+    "stored-union": 1066,
+    "none": 250
+   },
+   "mismatches": [
+    {
+     "code": 22,
+     "source": "2023-08-09",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-08-09"
+     }
+    },
+    {
+     "code": 79,
+     "source": "2022-06-29",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-06-29"
+     }
+    },
+    {
+     "code": 89,
+     "source": "2007-04-01",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2007-04-01"
+     }
+    },
+    {
+     "code": 113,
+     "source": "2020-11-21",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2020-11-21"
+     }
+    },
+    {
+     "code": 186,
+     "source": "2017-10-18",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2017-10-18"
+     }
+    },
+    {
+     "code": 250,
+     "source": "2016-04-13",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2016-04-13"
+     }
+    },
+    {
+     "code": 322,
+     "source": "2020-08-02",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2020-08-02"
+     }
+    },
+    {
+     "code": 353,
+     "source": "2022-01-12",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-01-12"
+     }
+    },
+    {
+     "code": 355,
+     "source": "2021-08-11",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-08-11"
+     }
+    },
+    {
+     "code": 366,
+     "source": "2021-08-02",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-08-02"
+     }
+    },
+    {
+     "code": 369,
+     "source": "2011-06-28",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2011-06-28"
+     }
+    },
+    {
+     "code": 376,
+     "source": "2022-09-05",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-09-05"
+     }
+    },
+    {
+     "code": 397,
+     "source": "2021-09-02",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-09-02"
+     }
+    },
+    {
+     "code": 427,
+     "source": "2001-10-01",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2001-10-01"
+     }
+    },
+    {
+     "code": 620,
+     "source": "2015-01-29",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2015-01-29"
+     }
+    },
+    {
+     "code": 694,
+     "source": "2015-03-30",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2015-03-30"
+     }
+    },
+    {
+     "code": 716,
+     "source": "2014-04-13",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2014-04-13"
+     }
+    },
+    {
+     "code": 755,
+     "source": "2023-06-11",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-06-11"
+     }
+    },
+    {
+     "code": 776,
+     "source": "2010-10-11",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2010-10-11"
+     }
+    },
+    {
+     "code": 816,
+     "source": "2023-08-22",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-08-22"
+     }
+    },
+    {
+     "code": 848,
+     "source": "2019-01-14",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2019-01-14"
+     }
+    },
+    {
+     "code": 873,
+     "source": "2022-07-27",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-07-27"
+     }
+    },
+    {
+     "code": 875,
+     "source": "2010-04-01",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2010-04-01"
+     }
+    },
+    {
+     "code": 897,
+     "source": "2021-02-18",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-02-18"
+     }
+    },
+    {
+     "code": 921,
+     "source": "2016-04-13",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2016-04-13"
+     }
+    },
+    {
+     "code": 1053,
+     "source": "2021-08-23",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-08-23"
+     }
+    },
+    {
+     "code": 1067,
+     "source": "2023-03-27",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-03-27"
+     }
+    },
+    {
+     "code": 1084,
+     "source": "2013-05-14",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2013-05-14"
+     }
+    },
+    {
+     "code": 1144,
+     "source": "2021-02-04",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-02-04"
+     }
+    },
+    {
+     "code": 1153,
+     "source": "2022-07-27",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-07-27"
+     }
+    },
+    {
+     "code": 1156,
+     "source": "2022-03-25",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-03-25"
+     }
+    },
+    {
+     "code": 1184,
+     "source": "2023-04-27",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-04-27"
+     }
+    },
+    {
+     "code": 1187,
+     "source": "2022-11-03",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-11-03"
+     }
+    },
+    {
+     "code": 1212,
+     "source": "2023-07-19",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-07-19"
+     }
+    },
+    {
+     "code": 1213,
+     "source": "2023-03-19",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-03-19"
+     }
+    },
+    {
+     "code": 1219,
+     "source": "2023-07-11",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-07-11"
+     }
+    },
+    {
+     "code": 1225,
+     "source": "2020-10-22",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2020-10-22"
+     }
+    },
+    {
+     "code": 1259,
+     "source": "2023-06-15",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-06-15"
+     }
+    },
+    {
+     "code": 1276,
+     "source": "2019-03-06",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2019-03-06"
+     }
+    },
+    {
+     "code": 1294,
+     "source": "2023-04-21",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-04-21"
+     }
+    },
+    {
+     "code": 1297,
+     "source": "2023-03-12",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-03-12"
+     }
+    },
+    {
+     "code": 1316,
+     "source": "2013-07-28",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2013-07-28"
+     }
+    },
+    {
+     "code": 1335,
+     "source": "2017-10-17",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2017-10-17"
+     }
+    },
+    {
+     "code": 1339,
+     "source": "2007-07-12",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2007-07-12"
+     }
+    },
+    {
+     "code": 1348,
+     "source": "2015-04-21",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2015-04-21"
+     }
+    },
+    {
+     "code": 1370,
+     "source": "2022-09-11",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2022-09-11"
+     }
+    },
+    {
+     "code": 3603,
+     "source": "2021-04-12",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-04-12"
+     }
+    },
+    {
+     "code": 3648,
+     "source": "2019-08-18",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2019-08-18"
+     }
+    },
+    {
+     "code": 3759,
+     "source": "2017-03-27",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2017-03-27"
+     }
+    },
+    {
+     "code": 4019,
+     "source": "2021-07-14",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2021-07-14"
+     }
+    },
+    {
+     "code": 4025,
+     "source": "2023-08-24",
+     "visible": null,
+     "via": null,
+     "reason": "LIVE_CHECK_PENDING",
+     "match": false,
+     "parts": {
+      "registerWindow": null,
+      "registerOwnLastDeal": null,
+      "govmapWindow": null,
+      "registerUnmappedPlaced": null,
+      "govmapHistory": "2023-08-24"
+     }
+    }
+   ]
+  },
+  "streets": {
+   "checked": 21003,
+   "withTransactions": 21003,
+   "mismatch": 0,
+   "ms": 556459,
+   "byReason": {},
+   "mismatches": []
+  }
+ },
+ "liveCheck": null
+}

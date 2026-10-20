@@ -72,6 +72,12 @@ jobs:
           probe "/api/intel?view=txEvents&code=7900&days=30" "302 307" login.html
           probe "/api/intel?view=txLatest&district=d-ta&months=24" "302 307" login.html
           probe "/api/intel?view=txCompleteness" "302 307" login.html
+          probe "/api/intel?view=txUnplaced&limit=5" "302 307" login.html
+          probe "/api/gov/transactions?area=il&all=1" "302 307" login.html
+          probe "/api/gov/transactions?city=x&all=1&older=2010-01-01g" "302 307" login.html
+          probe "/data/txevents/history/meta.json" "302 307 404" ""
+          probe "/data/txevents/history/loc/index.json" "302 307 404" ""
+          probe "/data/txevents/completeness-audit.json" "302 307 404" ""
           probe "/api/gov/transactions?city=x&street=y&months=24" "302 307" login.html
           probe "/data/txevents/latest.json" "302 307 404" ""
           probe "/data/txevents/national/govmap-only.json" "302 307 404" ""
