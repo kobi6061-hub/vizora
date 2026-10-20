@@ -254,6 +254,13 @@ t('14 · NO UNEXPLAINED SOURCE ROWS — every row of both snapshots has one reco
       assert.equal(x.statement.kind === 'EVENTS', x.statement.n > 0, 'EVENTS only with events');
       if (!x.statement.n) assert.deepEqual(x.statement.text, TX.STATEMENT_TEXT[x.statement.kind]);
     }
+    /* every locality any source holds is in the area index — also those only the GovMap layer reaches (no register sweep) */
+    const LI = readJson('data/txevents/latest.json');
+    const gmCodes = new Set([...Object.keys(L.layer.byCode), ...Object.keys(S.national.byCode)].map(Number).filter((c) => c > 0));
+    for (const c of gmCodes) assert.ok(LI.localities[c], 'locality ' + c + ' is in the area index');
+    assert.ok(Object.keys(LI.localities).some((c) => !EV.shardOf(Number(c))), 'GovMap-only localities are counted');
+    assert.equal(LI.national.events, Object.values(LI.districts).reduce((a, d) => a + d.events, 0), 'the country = the sum of its districts');
+    assert.equal(LI.national.events, Object.values(LI.localities).reduce((a, x) => a + x.events, 0));
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     assert.ok(html.includes('async function txFetchArea') && html.includes('inStatistics:false,geo:{match:"LOCALITY"}'), 'an area\'s newest rows are a list, never priced as the area');
   });

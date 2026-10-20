@@ -199,7 +199,8 @@
   one table (source + copy date + state per row; a district / Israel shows its newest 300 / 500 events of every source + the period's exact count
   and statement from `view=txLatest&district=&days=|months=` — a list, never priced as the area); the Trust Center's TRANSACTION COMPLETENESS block (unexplained rows: 0). Version check every three
   hours (a new copy starts the syncs), monitor twice a day. Source inventory `lib/trust/discovery/2026-10-20-transaction-sources.json` (official
-  channels refused / CAPTCHA / no dataset — never bypassed). Regression: Petah Tikva / Shaham newest shown 05.07.2026 → 30.08.2026. See `lib/txevents/README.md`.
+  channels refused / CAPTCHA / no dataset — never bypassed). Regression: Petah Tikva / Shaham newest shown 05.07.2026 → 30.08.2026. National audit (`coverage-audit.json`): 1,065 localities (1,036
+  swept + 29 only the GovMap layer reaches — 752 events, in the area index too), 371,786 counted events, missed 0. See `lib/txevents/README.md`.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

@@ -28,7 +28,10 @@ const hash = (s) => crypto.createHash('sha1').update(String(s)).digest('hex');
 const tally = (xs, f) => xs.reduce((m, x) => { const k = f(x); m[k] = (m[k] || 0) + 1; return m; }, {});
 const max = (xs) => xs.filter(Boolean).sort().pop() || null;
 
-const codes = fs.readdirSync(EV.DIR).filter((x) => /^\d+\.json$/.test(x)).map((x) => Number(x.replace('.json', ''))).filter((c) => EV.shardOf(c)).sort((a, b) => a - b);
+/* every swept locality + every locality only the GovMap layer reaches (no register shard): their rows must surface too */
+const codeSet = new Set(fs.readdirSync(EV.DIR).filter((x) => /^\d+\.json$/.test(x)).map((x) => Number(x.replace('.json', ''))).filter((c) => EV.shardOf(c)));
+for (const byCode of [L.layer && L.layer.byCode, nat && nat.byCode]) for (const k of Object.keys(byCode || {})) codeSet.add(Number(k));
+const codes = [...codeSet].filter((c) => Number.isFinite(c) && c > 0).sort((a, b) => a - b);
 const locs = [];
 const gmRowsOf = (code) => {
   const ids = [];
@@ -69,6 +72,7 @@ for (const district of Object.keys(byDistrict)) {
   const cand = [];
   for (const l of dl) {
     const sh = EV.shardOf(l.code);
+    if (!sh) continue;
     const bySt = new Map();
     for (const x of EV.dealsOf(sh)) for (const st of x.streets) { if (!bySt.has(st.code)) bySt.set(st.code, []); bySt.get(st.code).push(x); }
     for (const [sc, xs] of bySt) cand.push({ id: `st:${l.code}:${sc}`, code: l.code, sc, n: xs.length, houses: new Set(xs.flatMap((x) => (x.streets.find((s) => s.code === sc) || {}).houses || [])).size, synonyms: (D.synByStreet.get(`st:${l.code}:${sc}`) || []).length });
@@ -94,7 +98,7 @@ for (const district of Object.keys(byDistrict)) {
 const parcelOnly = { parcelsRecovered: Object.values(Object.fromEntries([...S.parcels.entries()])).length };
 const out = {
   schema: 1, builtAt: new Date().toISOString(), today, engine: TX.ENGINE,
-  national: agg(locs),
+  national: agg(locs), withoutRegisterSweep: agg(locs.filter((x) => !EV.shardOf(x.code))),
   byDistrict: Object.fromEntries(Object.keys(byDistrict).sort().map((d) => [d, agg(locs.filter((x) => x.district === d))])),
   bySize: Object.fromEntries(['large', 'medium', 'small'].map((s) => [s, agg(locs.filter((x) => sizeOf(x.registerEvents) === s))])),
   sizeBands: { large: '≥ 5,000 register events in the window', medium: '1,000 – 4,999', small: '< 1,000' },
