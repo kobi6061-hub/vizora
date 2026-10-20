@@ -277,6 +277,9 @@ t('THE PAGE: ALL sends all=1; the Trust Center shows the full universe, the not-
   assert.match(page, /view=txUnplaced&limit=100&offset=/);
   assert.match(page, /UNPLACED:"UNPLACED TRANSACTION EVENT — not attributed to a locality, street or district"/);
   assert.match(page, /if\(!txState.days&&txState.months>=240\)p.set\("all","1"\)/);
+  /* the street view leads with the newest event of every source, above the register copy's own freshness line */
+  assert.match(page, /\$\{siLatestHTML\(D\.events\)\}\s*\$\{txFreshHTML\(D\.freshness,\{locality:true\}\)\}/);
+  assert.match(page, /function siLatestHTML\(X\)\{\s*const L=X&&X\.recency\?X\.recency\.latestKnownEvent:null;/);
   const intel = fs.readFileSync(path.join(ROOT, 'api', 'intel.js'), 'utf8');
   assert.match(intel, /if \(view === 'txUnplaced'\)/);
 });

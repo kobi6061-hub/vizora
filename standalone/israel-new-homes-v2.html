@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="81a6a621a9e7202ca8eb82a247ef632af6f3aa76a16eb871610e20623936f609">
+<meta name="propx-source-sha256" content="0f9eb5136572e20c183782fea71fb551b03c88ec19ec63c681b64a123720f4ee">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -10005,6 +10005,13 @@ function eventsTableHTML(X){
   return `<div class="ste" data-ste="${X.total}"><h4>${t.h} <span class="num">(${fmtInt(X.counts?X.counts.events:X.total)})</span> ${xpBtn("transaction_event_sources")}</h4>${txRecencyHTML(M)}
     ${X.events.length?`<div class="st-wrap"><table class="st-tbl" data-ptdom="stevents"${X.events.length<X.total?` data-ptnote="${ldE(t.more(X.events.length,X.total))}"`:""}><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:txStatementHTML(M,false)}</div>`;
 }
+/* the street's newest event of EVERY source PROPX reads — first, above the register copy's own freshness line (latest means latest) */
+function siLatestHTML(X){
+  const L=X&&X.recency?X.recency.latestKnownEvent:null;
+  if(!L)return "";
+  const x=txeT();
+  return `<div class="txe-rec" data-si-latest="${ldE(L.date)}"><div>${x.rec.latest}<b class="num">${txeDmy(L.date)}</b><span class="s">${x.src[L.sourceId]||ldE(L.sourceId)}</span></div></div>`;
+}
 function siHTML(g){
   const t=siT(),S=siState;
   if(S.id!==g.id||S.loading)return `<p class="gv-note">${t.loading}</p>`;
@@ -10178,6 +10185,7 @@ function siHTML(g){
   return `<div class="geo-cov"><span class="geo-chip">${t.kind[I.kind]||I.kind}</span>${I.status==="historical"?`<span class="geo-chip"><b>${t.hist}</b></span>`:""}
       <span class="geo-chip num"><bdi>${ldE(I.id)}</bdi></span>${I.district&&LOC[I.district]?`<span class="geo-chip">${heName(LOC[I.district])}</span>`:""}${xpBtn("street_directory")}</div>
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
+    ${siLatestHTML(D.events)}
     ${txFreshHTML(D.freshness,{locality:true})}
     ${recentLineHTML(D.recent)}
     ${countsHTML(D.transactionCounts)}

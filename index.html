@@ -7501,6 +7501,13 @@ function eventsTableHTML(X){
   return `<div class="ste" data-ste="${X.total}"><h4>${t.h} <span class="num">(${fmtInt(X.counts?X.counts.events:X.total)})</span> ${xpBtn("transaction_event_sources")}</h4>${txRecencyHTML(M)}
     ${X.events.length?`<div class="st-wrap"><table class="st-tbl" data-ptdom="stevents"${X.events.length<X.total?` data-ptnote="${ldE(t.more(X.events.length,X.total))}"`:""}><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:txStatementHTML(M,false)}</div>`;
 }
+/* the street's newest event of EVERY source PROPX reads — first, above the register copy's own freshness line (latest means latest) */
+function siLatestHTML(X){
+  const L=X&&X.recency?X.recency.latestKnownEvent:null;
+  if(!L)return "";
+  const x=txeT();
+  return `<div class="txe-rec" data-si-latest="${ldE(L.date)}"><div>${x.rec.latest}<b class="num">${txeDmy(L.date)}</b><span class="s">${x.src[L.sourceId]||ldE(L.sourceId)}</span></div></div>`;
+}
 function siHTML(g){
   const t=siT(),S=siState;
   if(S.id!==g.id||S.loading)return `<p class="gv-note">${t.loading}</p>`;
@@ -7674,6 +7681,7 @@ function siHTML(g){
   return `<div class="geo-cov"><span class="geo-chip">${t.kind[I.kind]||I.kind}</span>${I.status==="historical"?`<span class="geo-chip"><b>${t.hist}</b></span>`:""}
       <span class="geo-chip num"><bdi>${ldE(I.id)}</bdi></span>${I.district&&LOC[I.district]?`<span class="geo-chip">${heName(LOC[I.district])}</span>`:""}${xpBtn("street_directory")}</div>
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
+    ${siLatestHTML(D.events)}
     ${txFreshHTML(D.freshness,{locality:true})}
     ${recentLineHTML(D.recent)}
     ${countsHTML(D.transactionCounts)}
