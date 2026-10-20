@@ -106,20 +106,24 @@ t('UNSAFE ROWS ARE NEVER SHOWN: future-dated (after the copy\'s load day), unpla
 t('IN-SOURCE DUPLICATES: an untyped row pairs with ONE typed row of the same locality · block · parcel, amount within ₪1,000, area within 5 %, dated the same day or one day earlier — or with the row that holds the register deal of its exact amount', () => {
   const g = new Map(raw.map((x) => [Number(x.objectid), R.normalize(x)]));
   const recBy = new Map(rec.rows.map((r) => [r[0], r]));
-  let n = 0, viaReg = 0;
+  let n = 0, viaReg = 0, viaShare = 0;
   for (const r of rec.rows.filter((x) => x[1] === 'DUPLICATE_IN_SOURCE')) {
     const u = g.get(r[0]), tw = g.get(r[4]);
-    assert.ok(!u.typed, `${r[0]} is the untyped series`);
     assert.ok(tw, `${r[0]} names its twin`);
     assert.ok(tw.gush === u.gush && tw.parcel === u.parcel, `${r[0]} same block · parcel`);
+    if (r[5] === 'register-share') {
+      /* the whole-property value of a partial-sale register deal another row prints: "<date> <unit> <amount>" of that deal, its portion < 1 */
+      viaShare++; assert.ok(/REGISTER/.test(recBy.get(r[4])[1]), 'the holder holds a register deal'); continue;
+    }
+    assert.ok(!u.typed, `${r[0]} is the untyped series`);
     if (r[5] === 'register-amount') { viaReg++; assert.ok(/REGISTER/.test(recBy.get(r[4])[1]), 'the holder holds a register deal'); continue; }
     assert.ok(tw.typed); assert.ok(Math.abs(tw.amount - u.amount) < 1000); assert.ok([0, 1].includes(dayDiff(tw.date, u.date)));
     assert.ok(Math.abs(tw.area - u.area) <= Math.max(1, 0.05 * Math.max(tw.area, u.area)));
     n++;
   }
-  assert.ok(n > 1000 && viaReg >= 1, `${n} twins, ${viaReg} through the register`);
+  assert.ok(n > 1000 && viaReg >= 1 && viaShare >= 1, `${n} twins, ${viaReg} through the register's amount, ${viaShare} through a partial sale's whole value`);
   /* a typed row is the twin of at most one untyped row */
-  const twins = rec.rows.filter((x) => x[1] === 'DUPLICATE_IN_SOURCE' && x[5] !== 'register-amount').map((x) => x[4]);
+  const twins = rec.rows.filter((x) => x[1] === 'DUPLICATE_IN_SOURCE' && !/^register-/.test(x[5] || '')).map((x) => x[4]);
   assert.equal(new Set(twins).size, twins.length);
 });
 
@@ -173,16 +177,14 @@ t('THE REGISTER IS NEVER OVERWRITTEN: the engine writes only data/streets/recent
   assert.ok(meta.conflictFields['sub-parcel'] > 0 && meta.conflictFields['amount:truncated'] > 0);
 });
 
-t('THE STREET VALUE MODEL IS UNTOUCHED: the model\'s code and rule files and its register-evidence input are exactly the ones its stored build recorded (the land-tender and directory inputs move with their own daily syncs and are not this layer\'s); no recent-layer file is a model input', () => {
+t('THE STREET VALUE MODEL IS UNTOUCHED: none of the dependencies it reads moved (lib/streets/model-deps.js — code closure, evidence, directory, neighbourhood links, subsidized parcels); no recent-layer file is model code or a model input', () => {
+  const MD = require('../lib/streets/model-deps');
+  const c = MD.check();
+  assert.equal(c.stale, false, 'moved: ' + (c.moved || []).join(', '));
+  assert.ok(!MD.codeClosure().some((f) => /recent/.test(f)), 'the recent layer is not in the model\'s code closure');
   const model = readJson(path.join(ROOT, 'data', 'streets', 'model', 'model.json'));
-  const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
-  /* the same hashes scripts/street-model-build.js inputsNow() records */
-  const code = sha([['lib', 'streets', 'value-model.js'], ['lib', 'streets', 'value-validate.js'], ['scripts', 'street-model-build.js'], ['lib', 'streets', 'evidence.js'],
-    ['lib', 'streets', 'match.js'], ['lib', 'gov', 'classify.js'], ['data', 'geo', 'neighborhoods.json']].map((f) => fs.readFileSync(path.join(ROOT, ...f), 'utf8')).join('\n'));
-  assert.equal(code, model.inputs.code, 'the model code / rules are byte-identical to the stored build');
-  assert.equal(S.meta.source.scrapedAt, model.inputs.evidence.scrapedAt); assert.deepEqual(S.meta.window, model.inputs.evidence.window);
-  assert.equal(sha(fs.readFileSync(path.join(S.dir, 'summary.json'))), model.inputs.evidence.summary, 'the register evidence the model was built on is unchanged');
   assert.ok(!/recent/.test(JSON.stringify(model.inputs || {})), 'no recent-layer file among the model inputs');
+  assert.equal(S.meta.source.scrapedAt, model.inputs.evidence.scrapedAt, 'the model rests on the register copy only');
 });
 
 t('DETERMINISTIC: the stored layer is what the engine builds from the stored inputs, and shuffling the source rows changes nothing', () => {
@@ -205,6 +207,101 @@ t('THE STREET LINK: a shown row is on a street only by its published address (an
   }
   assert.ok(rows.some((x) => x.streetBasis === 'conflict' && x.streetCode == null), 'conflicting address / parcel → not attached');
   for (const [id, ix] of Object.entries(layer.byStreet)) for (const i of ix) assert.equal(`st:${layer.rows[i][col('cityCode')]}:${layer.rows[i][col('streetCode')]}`, id);
+});
+
+console.log('recent: the promotion of every shown row');
+
+const PR = require('../lib/recent/promote');
+const promo = readJson(path.join(DIR, 'promotion.json'));
+const pcol = (k) => promo.columns.indexOf(k);
+const prows = promo.rows.map((r) => Object.fromEntries(promo.columns.map((c, i) => [c, r[i]])));
+
+t('EVERY SHOWN ROW HAS EXACTLY ONE PROMOTION STATE from the five, stored beside it in the layer; the tally is the stored one', () => {
+  assert.equal(prows.length, rows.length);
+  const st = new Map(prows.map((r) => [r.oid, r.state]));
+  for (const x of rows) { assert.ok(PR.STATES.includes(x.state), x.state); assert.equal(st.get(x.oid), x.state, `${x.oid} layer state = promotion state`); }
+  const tally = Object.fromEntries(PR.STATES.map((s) => [s, prows.filter((r) => r.state === s).length]));
+  assert.deepEqual(tally, meta.promotion.byState);
+});
+
+t('THE RULES, on synthetic rows: every criterion met (share stated) → VERIFIED; then each single failure lands in its state with its reason', () => {
+  const reg = { code: 1, byParcel: new Map() };
+  const base = { oid: 1, typed: true, code: 1, placedBy: 'settlement', date: '2026-08-01', amount: 2000000, area: 100, areaM: 100, rooms: 4, gush: 10, parcel: 20, sub: 1, nature: 'דירה בבית קומות' };
+  const run = (r, o, extra = {}) => {
+    const res = { rows: [r], out: new Map([[r.oid, { cls: 'RECENT_NEW', kind: 'DWELLING', street: { code: 5, basis: 'address+parcel' }, ...o }]]), consumed: new Map(),
+      registersOf: () => [reg], parcelCodes: new Map([['10|20', [1]]]) };
+    return PR.promote(res, { raw: new Map([[r.oid, { objectid: r.oid, ...extra }]]), window: { from: '2026-07-04' }, lastDeal: '2026-09-28', snapshotSha: 'x' }).get(r.oid);
+  };
+  assert.equal(run(base, {}, { deal_part: 1 }).state, 'RECENT_OBSERVED_VERIFIED');
+  const v = run(base, {}, { deal_part: 1 });
+  assert.deepEqual(v.eligible, { count: true, median: true, pricePerSqm: true, change: false, model: false, countUnderRegisterSemantics: true });
+  const L = run(base, {}); assert.equal(L.state, 'RECENT_OBSERVED_LIMITED'); assert.deepEqual(L.reasons, ['share-not-stated']); assert.equal(L.eligible.median, false); assert.equal(L.eligible.countUnderRegisterSemantics, true);
+  assert.deepEqual(run(base, { street: { code: 5, basis: 'address' } }, { deal_part: 1 }).reasons, ['street-single-key']);
+  assert.equal(run(base, { street: { code: 5, basis: 'address' } }).eligible.countUnderRegisterSemantics, false, 'a one-key street is never counted');
+  assert.equal(run(base, { street: { code: null, basis: 'conflict' } }).state, 'RECENT_CONFLICT');
+  assert.equal(run({ ...base, typed: false }, { kind: 'TYPE_NOT_STATED' }).state, 'RECENT_UNRESOLVED');
+  assert.equal(run(base, { kind: 'NON_DWELLING' }).state, 'RECENT_CONTEXT_ONLY');
+  assert.equal(run(base, { street: { code: null, basis: 'no-address' } }).state, 'RECENT_CONTEXT_ONLY');
+  assert.equal(run(base, { street: { code: null, basis: 'unresolved' } }).state, 'RECENT_UNRESOLVED');
+  assert.equal(run({ ...base, amount: 50000 }, {}, { deal_part: 1 }).reasons.includes('below-market-amount'), true);
+  /* a register deal on the parcel the same day at a fitting amount → possible duplicate → CONFLICT; far apart in amount and area → separate */
+  reg.byParcel.set('10|20', [{ i: 0, date: '2026-08-01', amount: 2000500, areaSqm: 100, rooms: 4, portionFraction: 1, gushN: 10, helkaN: 20, subN: 3 }]);
+  const c = run(base, {}, { deal_part: 1 }); assert.equal(c.state, 'RECENT_CONFLICT'); assert.equal(c.audit.verdict, 'POSSIBLE_DUPLICATE');
+  reg.byParcel.set('10|20', [{ i: 0, date: '2026-08-01', amount: 1400000, areaSqm: 70, rooms: 3, portionFraction: 1, gushN: 10, helkaN: 20, subN: 3 }]);
+  assert.equal(run(base, {}, { deal_part: 1 }).audit.verdict, 'CONFIRMED_SEPARATE_DEAL');
+  reg.byParcel.set('10|20', [{ i: 0, date: '2026-08-01', amount: 1400000, areaSqm: 100, rooms: 4, portionFraction: 1, gushN: 10, helkaN: 20, subN: 3 }]);
+  assert.equal(run(base, {}, { deal_part: 1 }).audit.verdict, 'LIKELY_SEPARATE_DEAL');
+  reg.byParcel.set('10|20', [{ i: 0, date: '2026-08-01', amount: 1010000, areaSqm: 100, rooms: 4, portionFraction: 0.5, gushN: 10, helkaN: 20, subN: 3 }]);
+  assert.equal(run(base, {}, { deal_part: 1 }).audit.verdict, 'POSSIBLE_DUPLICATE', 'the whole-property value of a partial sale fits');
+  reg.byParcel.set('10|20', []);
+  /* a settlement name placing the row in a locality the register never lists for its parcel → CONFLICT */
+  const res2 = { rows: [base], out: new Map([[1, { cls: 'RECENT_NEW', kind: 'DWELLING', street: { code: 5, basis: 'address+parcel' } }]]), consumed: new Map(), registersOf: () => [reg], parcelCodes: new Map([['10|20', [2]]]) };
+  assert.deepEqual(PR.promote(res2, { raw: new Map([[1, { objectid: 1, deal_part: 1 }]]), window: { from: '2026-07-04' }, lastDeal: '2026-09-28', snapshotSha: 'x' }).get(1).reasons, ['locality-name-vs-parcel']);
+});
+
+t('SHARE: the copy states no share sold (no such field in any stored row), and over the deals both copies hold it prints partial sales both as the share and as the whole value — so nothing is VERIFIED and no price enters a statistic', () => {
+  const fields = new Set(raw.flatMap((g) => Object.keys(g)));
+  for (const f of PR.SHARE_FIELDS) assert.ok(!fields.has(f), f);
+  const e = meta.promotion.shareEvidence;
+  assert.ok(e.partial > 100 && e.printedShare > 0 && e.printedWhole > 0, JSON.stringify(e));
+  assert.equal(meta.promotion.byState.RECENT_OBSERVED_VERIFIED, 0);
+  for (const r of prows) {
+    if (r.state !== 'RECENT_OBSERVED_VERIFIED') { assert.equal(r.count, false); assert.equal(r.median, false); assert.equal(r.pricePerSqmEligible, false); }
+    assert.equal(r.change, false); assert.equal(r.model, false);
+    if (r.countUnderRegisterSemantics) { assert.ok(['RECENT_OBSERVED_VERIFIED', 'RECENT_OBSERVED_LIMITED'].includes(r.state)); assert.ok(r.reasons.every((x) => ['share-not-stated', 'below-market-amount', 'several-units-one-consideration'].includes(x)), r.oid); }
+  }
+});
+
+t('THE PROMOTED SET IS CLEAN: every LIMITED / VERIFIED row is a placed dwelling deal on an official street, in the window, with a block · parcel, its locality coherent with the register\'s parcel list, no conflict, no possible duplicate', () => {
+  const byOid = new Map(rows.map((x) => [x.oid, x]));
+  const recBy = new Map(rec.rows.map((r) => [r[0], r[1]]));
+  for (const p of prows.filter((r) => ['RECENT_OBSERVED_VERIFIED', 'RECENT_OBSERVED_LIMITED'].includes(r.state))) {
+    const x = byOid.get(p.oid);
+    assert.equal(x.kind, 'DWELLING'); assert.ok(x.streetCode != null); assert.ok(x.block != null && x.parcel != null);
+    assert.ok(x.date >= meta.window.from && x.date <= meta.source.lastDeal);
+    assert.equal(recBy.get(p.oid), 'RECENT_NEW');
+    assert.ok(p.audit == null || ['CONFIRMED_SEPARATE_DEAL', 'LIKELY_SEPARATE_DEAL'].includes(p.audit), `${p.oid} audit ${p.audit}`);
+    assert.ok(!p.reasons.some((r) => /conflict|duplicate|unresolved|not-stated$|no-street|not-a-dwelling/.test(r) && r !== 'share-not-stated'), p.oid + ' ' + p.reasons);
+  }
+  /* a register deal of a partial sale printed twice by the copy (share + whole value) is never shown twice */
+  assert.ok(rec.rows.some((r) => r[1] === 'DUPLICATE_IN_SOURCE' && r[5] === 'register-share'));
+});
+
+t('THE SAME-PARCEL AUDIT: the 49 reported cases are each audited against the register deal no row prints; every verdict is one of four, from tolerances no same-deal pair exceeds; POSSIBLE DUPLICATE / UNRESOLVED never reach a statistic', () => {
+  const F = readJson(path.join(ROOT, 'test', 'fixtures', 'recent-same-parcel-49.json'));
+  const byOid = new Map(prows.map((r) => [r.oid, r]));
+  assert.equal(F.oids.length, 49);
+  for (const oid of F.oids) { const p = byOid.get(oid); assert.ok(p, `${oid} still shown`); assert.equal(p.freeRegisterDeal, true, `${oid} audited against a register deal no row prints`); }
+  for (const [oid, cases] of Object.entries(promo.audits)) {
+    assert.ok(cases.length > 0);
+    for (const c of cases) assert.ok(PR.AUDIT.includes(c.verdict), c.verdict);
+    const worst = cases.reduce((w, c) => (PR.AUDIT.indexOf(c.verdict) > PR.AUDIT.indexOf(w) ? c.verdict : w), PR.AUDIT[0]);
+    assert.equal(byOid.get(Number(oid)).audit, worst, oid);
+    if (['POSSIBLE_DUPLICATE', 'UNRESOLVED'].includes(worst)) assert.ok(['RECENT_CONFLICT', 'RECENT_UNRESOLVED'].includes(byOid.get(Number(oid)).state));
+  }
+  const cal = meta.promotion.calibration;
+  assert.ok(cal.typed.pairs > 2000); assert.equal(cal.typed.overTol, 0); assert.equal(cal.untyped.overTol, 0);
+  assert.ok(cal.typed.maxAmountPct <= cal.amountTolPct && cal.typed.maxAreaPct <= cal.areaTolPct);
 });
 
 console.log('recent: the read, the API, the page');

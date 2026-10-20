@@ -4929,7 +4929,7 @@ const PT_DOM={
   gxedges:"text,text,text,text,text,date,text",
   gxmem:"text,text,text,text,text,number,number,text",
   stdeals:"date,text,number,number,currency,currency,number,text,text,-",
-  strecent:"date,text,number,number,currency,currency,text,text,text,-",strecentu:"date,text,number,number,currency,currency,text,text,text,-",strecentn:"date,text,number,number,currency,currency,text,text,text,-",
+  strecent:"date,text,number,number,currency,currency,text,text,text,text,-",strecentu:"date,text,number,number,currency,currency,text,text,text,text,-",strecentn:"date,text,number,number,currency,currency,text,text,text,text,-",
   stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
   stperm:"date,text,text,number,text",
@@ -7094,7 +7094,9 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     note:"מוצגות בנפרד: לא בחציון, לא במצב המדגם, לא בשינוי ולא בהערכת PROPX. כשעותק המרשם יתעדכן, רבות מהן יעברו לנתוני המרשם וייעלמו מכאן.",
     unav:"רשימת העסקאות החדשות יותר אינה מוצגת כרגע: השכבה הותאמה לעותק מרשם אחר מזה שמוצג — עד ההתאמה הבאה, כדי שעסקה לא תוצג פעמיים.",
     src:(c,l,k)=>`מקור: שכבת העסקאות של GovMap — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}; נבדק ${k}. לא ערוץ ממשלתי. הותאם לעותק המרשם (התאמה דטרמיניסטית — עסקה לא נספרת פעמיים).`,
-    th:"עסקאות דירה — עדיין לא במרשם",cols:["תאריך","כתובת כפי שפורסמה","חדרים","מ״ר","מחיר","₪ למ״ר","סוג נכס","גוש/חלקה/תת","שיוך לרחוב","הערה"],
+    th:"עסקאות דירה — עדיין לא במרשם",cols:["תאריך","כתובת כפי שפורסמה","חדרים","מ״ר","מחיר","₪ למ״ר","סוג נכס","גוש/חלקה/תת","שיוך לרחוב","מצב PROPX","הערה"],
+    st:{RECENT_OBSERVED_VERIFIED:"מאומתת",RECENT_OBSERVED_LIMITED:"מוגבלת",RECENT_CONTEXT_ONLY:"הקשר בלבד",RECENT_CONFLICT:"סתירה",RECENT_UNRESOLVED:"לא מוכרעת"},
+    stNote:"אף עסקה מהשכבה הזו אינה נכנסת עדיין לנתוני הרחוב. העותק אינו מציין איזה חלק מהנכס נמכר, ולכן אף עסקה אינה מאומתת למחיר.",
     basis:{address:"לפי הכתובת","address+parcel":"כתובת + חלקה",parcel:"לפי החלקה"},
     twin:(d,a)=>`מופיעה גם בסדרה השנייה של העותק: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"בסדרה המוקלדת העותק מדפיס סכומים בקפיצות של ₪1,000 (המרשם מדפיס את הסכום המדויק).",
     untH:n=>n===1?"עסקה אחת ללא סוג נכס":`${fmtInt(n)} עסקאות ללא סוג נכס`,nonH:n=>n===1?"עסקה אחת שאינה דירה":`${fmtInt(n)} עסקאות שאינן דירה`,
@@ -7107,7 +7109,9 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     note:"Listed apart: never in the median, the sample state, the change or the PROPX estimate. When the register copy refreshes, many will move into the register figures and leave this list.",
     unav:"The newer deals are not listed right now: the layer was reconciled against another register copy than the one shown — until the next reconciliation, so that no deal is shown twice.",
     src:(c,l,k)=>`Source: the GovMap deals layer — independent republication (over.org.il), copy ${c}, latest deal in it ${l}; checked ${k}. Not a government channel. Reconciled against the register copy (deterministic — no deal is counted twice).`,
-    th:"Dwelling deals — not yet in the register",cols:["Date","Address as published","Rooms","m²","Price","₪/m²","Property type","Block/parcel/sub","Street link","Note"],
+    th:"Dwelling deals — not yet in the register",cols:["Date","Address as published","Rooms","m²","Price","₪/m²","Property type","Block/parcel/sub","Street link","PROPX state","Note"],
+    st:{RECENT_OBSERVED_VERIFIED:"VERIFIED",RECENT_OBSERVED_LIMITED:"LIMITED",RECENT_CONTEXT_ONLY:"CONTEXT ONLY",RECENT_CONFLICT:"CONFLICT",RECENT_UNRESOLVED:"UNRESOLVED"},
+    stNote:"No deal from this layer enters the street's figures yet. The copy does not state the share of the property sold, so no deal is verified for its price.",
     basis:{address:"by the address","address+parcel":"address + parcel",parcel:"by the parcel"},
     twin:(d,a)=>`also in the copy's second series: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"In its typed series the copy prints amounts in ₪1,000 steps (the register prints the exact amount).",
     untH:n=>`${fmtInt(n)} ${n===1?"deal":"deals"} with no property type`,nonH:n=>`${fmtInt(n)} non-dwelling ${n===1?"deal":"deals"}`,
@@ -7130,7 +7134,7 @@ function recentTableHTML(R){
   const t=RCT[state.lang==="en"?"en":"he"];
   const row=d=>`<tr><td class="num" data-v="${ldE(d.date)}">${siDate(d.date)}</td><td class="w"><bdi>${ldE([d.street,d.house].filter(Boolean).join(" "))||"—"}</bdi></td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
     <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td>
+    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td><td class="w">${d.state?`<span class="st-tag">${t.st[d.state]||ldE(d.state)}</span>`:"—"}</td>
     <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}</td></tr>`;
   const tbl=(rows,key)=>`<div class="st-wrap"><table class="st-tbl" data-ptdom="${key}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(row).join("")}</tbody></table></div>`;
   const c=R.counts||{};
@@ -7139,7 +7143,7 @@ function recentTableHTML(R){
   if(R.typeNotStated.length)h+=`<details class="st-sec"><summary>${t.untH(c.TYPE_NOT_STATED)} ${xpBtn("recent_transaction_type_not_stated")}</summary>${R.dateNote?`<p class="gv-note">${t.untNote(R.dateNote.oneDayLater,R.dateNote.verified)}</p>`:""}${tbl(R.typeNotStated,"strecentu")}</details>`;
   if(R.nonDwelling.length)h+=`<details class="st-sec"><summary>${t.nonH(c.NON_DWELLING)}</summary>${tbl(R.nonDwelling,"strecentn")}</details>`;
   const S=R.source||{};
-  return h+`<p class="gv-note">${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
+  return h+`<p class="gv-note">${t.stNote} ${xpBtn("recent_promotion_state")} ${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
 }
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */

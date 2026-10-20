@@ -54,10 +54,11 @@ canonical order (date newest first, then object id), so the result does not depe
 register's fields are never overwritten: every disagreement is recorded beside both values (`conflicts`: sub-parcel 1,984 ·
 amount truncated 906 · amount = a share 246 · date 74 · rooms 73 · locality 30 · amount differs 11 · parcel 4 · area 2).
 
-**20.10.2026 — 11,900 rows:** CONTEXT 2,199 · FUTURE_DATED 36 · NO_SETTLEMENT 37 · UNMAPPED 1 · DUPLICATE 1,903 · AMBIGUOUS 30 ·
-POSSIBLE DUPLICATE 63 · IN_REGISTER 1,249 · IN_REGISTER_OTHER_UNIT 1,953 · POSSIBLY_IN_REGISTER 10 · **RECENT_NEW 4,419**
-(dwelling 3,404 · type not stated 878 · non-dwelling 137) in 133 localities, latest 28.09.2026; on a street 2,649 (address
-1,544 · address + parcel 1,050 · parcel 55), 1,741 streets.
+**20.10.2026 — 11,900 rows:** CONTEXT 2,199 · FUTURE_DATED 36 · NO_SETTLEMENT 37 · UNMAPPED 1 · DUPLICATE 1,919 · AMBIGUOUS 30 ·
+POSSIBLE DUPLICATE 63 · IN_REGISTER 1,249 · IN_REGISTER_OTHER_UNIT 1,953 · POSSIBLY_IN_REGISTER 10 · **RECENT_NEW 4,403**
+(dwelling 3,400 · type not stated 866 · non-dwelling 137) in 133 localities, latest 28.09.2026; on a street 2,645 (address
+1,542 · address + parcel 1,048 · parcel 55), 1,738 streets. (DUPLICATE includes 16 `register-share` rows: the copy prints a partial
+sale twice — once as the share's amount, once as the whole property's value — and only one of them is the register's deal.)
 
 Dates: the typed series carries the register's date (3,160 of 3,172 verified pairs the same day); the untyped series is one
 day earlier in 30 of 30 — stated beside every "type not stated" row.
@@ -74,12 +75,12 @@ date, so it can never take a deal a late row needs) and `auditClassify` replays 
 | Petah Tikva | 251 | 251 | 190 | 20 | 1 | 37 | 2 | 1 |
 | Tel Aviv-Yafo | 334 | 334 | 159 | 96 | 6 | 72 | 1 | 0 |
 | Jerusalem | 311 | 311 | 230 | 20 | 12 | 48 | 1 | 0 |
-| Haifa | 420 | 420 | 299 | 11 | 4 | 96 | 8 | 2 |
+| Haifa | 420 | 420 | 299 | 10 | 4 | 97 | 8 | 2 |
 | Be'er Sheva | 351 | 351 | 273 | 17 | 0 | 58 | 3 | 0 |
 | Rishon LeZion | 200 | 200 | 129 | 42 | 7 | 17 | 1 | 4 |
 | Netanya | 211 | 211 | 122 | 32 | 5 | 51 | 1 | 0 |
 | Ashdod | 215 | 215 | 152 | 13 | 0 | 49 | 0 | 1 |
-| **Total** | **2,293** | **2,293** | **1,554** | **251** | **35** | **428** | **17** | **8** |
+| **Total** | **2,293** | **2,293** | **1,554** | **250** | **35** | **429** | **17** | **8** |
 
 The 8 the comparison called missing that ARE in the register: 4 filed under a neighbouring locality (Rishon LeZion → Be'er
 Ya'akov), 3 whose register deal the comparison's one greedy pass gave to another row's weaker match, 1 with a rounded amount
@@ -100,4 +101,42 @@ the Street Intelligence page: a dashed SEPARATE LAYER line under the freshness s
 read as a separate layer; Trust `over:govmap-recent` (integrates `discovery:over:govmap-layer`); registry terms
 `recent_transaction_layer`, `recent_transaction_type_not_stated`, missing reason `recent_layer_unavailable`; the daily
 freshness monitor marks the copy `readByPropx` and raises MATERIAL_LAG `newer-copy` only for a copy the layer has not read.
-Gates: `test/recent.test.js` (17).
+Gates: `test/recent.test.js` (22).
+
+## Promotion (20.10.2026, `lib/recent/promote.js` → `promotion.json`)
+
+Which shown rows may take part in PROPX's factual statistics — decided per row, stored beside it, read by NO statistic yet. The
+first rule a row meets decides its state:
+
+| State | Rule | 20.10.2026 |
+|---|---|---|
+| RECENT_CONFLICT | settlement name vs the register's parcel list (9) · published address vs the parcel crosswalk (31) · POSSIBLE DUPLICATE of a register deal in the same-parcel audit (10) | 50 |
+| RECENT_UNRESOLVED | no property type (858) · an address that resolves to no street / several / only loosely (55) | 907 |
+| RECENT_CONTEXT_ONLY | not a dwelling (136) · no street key at all (1,041 — no address and no single-street parcel) | 1,098 |
+| RECENT_OBSERVED_LIMITED | a dwelling deal on a street, but: the street from ONE key (the published address alone — 1,381) and / or the price semantics not established (share sold not stated — every row; below ₪100,000 — 2) | 2,348 |
+| RECENT_OBSERVED_VERIFIED | locality · street (two keys, or the register's own OBSERVED parcel rule) · date · dwelling · price · area for ₪/m² · no duplicate / possible duplicate / conflict · **whole-property sale stated** · parcel coherent · provenance | **0** |
+
+**Why nothing is VERIFIED — the share.** The register states the share sold (portion) and never prices a partial sale. The GovMap-layer
+copy has no such field. Over the 2,934 dwelling deals both copies hold, 301 (10.3 %) are partial sales in the register, and the copy
+prints them as the share's amount (76), as the whole property's value (184) or otherwise (41) — no field, id series, parcel activity
+or amount pattern tells them apart (measured: partial-sale share 6.5–11.6 % in every parcel-activity band and every id series). So no
+recent-only row can show it is a whole-property sale; none enters a median or a ₪/m² while the copy states no share.
+
+**What each use may read** (`eligible` per row):
+
+| Use | VERIFIED rows | Why |
+|---|---|---|
+| street transaction count | 0 | no VERIFIED row. Separately, 967 LIMITED rows meet every identity criterion (two-key street, dwelling, date, no conflict / duplicate) and are limited only by price semantics — the register's own street count includes partial and unpriced sales, so these 967 COULD enter counts under the register's count semantics (`countUnderRegisterSemantics`); not wired |
+| street median / ₪ per m² | 0 | a median needs a whole-property market price — the share is not stated |
+| 12-month change | 0 | the change compares two windows of ONE universe; the recent layer covers only its own ~95 days, never the prior window |
+| Street Value Model inputs | 0 | a model row needs a whole-property price AND a build year (age band, PROBABLE NEW, off-plan) — the copy states neither |
+
+**The same-parcel audit** (every shown row with a register deal on its block · parcel within one day, 232 rows): per register deal,
+amounts that fit the deal's printed form → POSSIBLE DUPLICATE; amount > 2 % and area > 2 % apart → CONFIRMED SEPARATE; one of them
+> 2 % → LIKELY SEPARATE; closer → POSSIBLE DUPLICATE, unless another row already prints that register deal (→ LIKELY SEPARATE); the
+largest difference between the copies over the 2,723 whole-property deals both hold is 1.85 % (amount) / 1.92 % (area) — no same-deal
+pair exceeds the 2 % tolerances. The 49 cases reported on 20.10.2026 (a register deal no row prints, at another price): case verdicts
+CONFIRMED SEPARATE 19 · LIKELY SEPARATE 26 · POSSIBLE DUPLICATE 4 · UNRESOLVED 0 — every case listed in `AUDIT-same-parcel.md`
+(`node scripts/recent-audit-report.js --md`). POSSIBLE DUPLICATE / UNRESOLVED rows are CONFLICT / UNRESOLVED, never in a statistic.
+
+The page's recent table carries the state per deal ("PROPX state", ⓘ `recent_promotion_state`).
