@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'inventory | case'
+        description: 'inventory | case | history'
         type: choice
-        options: [inventory, case]
+        options: [inventory, case, history]
         default: inventory
       case:
         description: 'case: <city>|<street>[|<house>]'
@@ -41,4 +41,4 @@ jobs:
           MODE: ${{ inputs.mode }}
           CASE: ${{ inputs.case }}
         run: |
-          if [ "$MODE" = "case" ]; then node scripts/tx-sources-discover.js --case "$CASE"; else node scripts/tx-sources-discover.js --inventory; fi
+          if [ "$MODE" = "case" ]; then node scripts/tx-sources-discover.js --case "$CASE"; elif [ "$MODE" = "history" ]; then node scripts/tx-sources-discover.js --history; else node scripts/tx-sources-discover.js --inventory; fi

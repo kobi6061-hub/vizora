@@ -157,10 +157,73 @@ async function caseRun(spec) {
   out({ kind: 'case', label: 'govmap-layer', status: r.status, rows: rows.length, first12: rows.slice(0, 12).map((g) => [String(g.deal_date).slice(0, 10), g.deal_amount, g.street, g.house_num, `${g.gush}/${g.parcel}/${g.sub_parcel}`, g.property_type]) });
 }
 
+/* ── the history probe (closure P0, 20.10.2026): what PROPX needs to surface the WHOLE history — the register version's files (format,
+   size, header), the live search's limits (no locality, past 10,000, no lower date bound), every locality's register count and latest
+   deal. GET only; one file's first 4 KB by a Range request — never a bulk download here. ── */
+async function historyProbe() {
+  for (const [name, ds] of [['register', REGISTER_DS], ['govmap', GOVMAP_DS]]) {
+    const v = await get(`${OVER}/api/v1/datasets/${ds}/versions`);
+    const vs = Array.isArray(v.json) ? v.json : [];
+    const res = vs[0] ? vs[0].resources || [] : [];
+    const fmt = res.reduce((m, x) => ((m[String(x.format || '').toLowerCase() || '?'] = (m[String(x.format || '').toLowerCase() || '?'] || 0) + 1), m), {});
+    out({ kind: 'history', label: `over:${name}:resources`, status: v.status, versions: vs.length, latest: vs[0] ? { n: vs[0].version_number, id: vs[0].id, detected: vs[0].detected_at } : null,
+      resources: res.length, formats: fmt, keys: res[0] ? Object.keys(res[0]) : null,
+      sample: res.slice(0, 12).map((x) => ({ name: x.name, format: x.format, size: x.size || x.bytes || x.file_size || null, url: x.download_url })),
+      big: res.filter((x) => /תל אביב|ירושלים|^all|whole|full|combined|file\./i.test(String(x.name) + ' ' + String(x.download_url))).slice(0, 8).map((x) => ({ name: x.name, format: x.format, size: x.size || null, url: x.download_url })) });
+    /* sizes of a few files (HEAD) and the first 4 KB of the first CSV-like file */
+    for (const x of res.filter((y) => /csv|parquet|gpkg|json/i.test(String(y.format) + String(y.download_url))).slice(0, 3)) {
+      try {
+        const h = await fetch(x.download_url, { method: 'HEAD', headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(TIMEOUT) });
+        out({ kind: 'history', label: `over:${name}:head`, name: x.name, status: h.status, bytes: Number(h.headers.get('content-length')) || null, type: h.headers.get('content-type') });
+      } catch (e) { out({ kind: 'history', label: `over:${name}:head`, name: x.name, error: e.message }); }
+      await pause(500);
+    }
+    const csv = res.find((y) => /csv/i.test(String(y.format) + String(y.download_url)));
+    if (csv) {
+      try {
+        const r = await fetch(csv.download_url, { headers: { 'User-Agent': UA, Range: 'bytes=0-4095' }, signal: AbortSignal.timeout(TIMEOUT) });
+        const t = await r.text();
+        out({ kind: 'history', label: `over:${name}:csv-head`, name: csv.name, status: r.status, lines: t.split('\n').slice(0, 4).map((l) => l.slice(0, 700)) });
+      } catch (e) { out({ kind: 'history', label: `over:${name}:csv-head`, error: e.message }); }
+      await pause(500);
+    }
+    if (name === 'register') out({ kind: 'history', label: 'over:register:all-resources', names: res.map((x) => x.name).slice(0, 2000) });
+  }
+  /* the live search's limits */
+  const s = (q) => `${OVER}/api/deals/search?${new URLSearchParams(q)}`;
+  const brief2 = (r) => ({ status: r.status, total: r.json && r.json.total, capped: r.json && r.json.total_capped, n: r.json && Array.isArray(r.json.data) ? r.json.data.length : null,
+    dates: r.json && Array.isArray(r.json.data) ? r.json.data.map((d) => String(d.deal_date || d.date || '').slice(0, 10)) : null, keys: r.json && r.json.data && r.json.data[0] ? Object.keys(r.json.data[0]) : null,
+    error: r.json && r.json.detail ? trim(r.json.detail, 300) : r.error || null });
+  for (const q of [
+    { sort: 'date_desc', limit: 3 },                                                       // no locality at all
+    { settlement: 'תל אביב יפו', sort: 'date_asc', limit: 3 },                              // the oldest deal, no lower bound
+    { settlement: 'תל אביב יפו', sort: 'date_desc', limit: 3, offset: 10000 },              // past the counted 10,000
+    { settlement: 'תל אביב יפו', sort: 'date_desc', limit: 3, offset: 150000 },
+    { settlement: 'תל אביב יפו', sort: 'date_desc', limit: 3, date_to: '2006-01-01' },     // before the 240-month bound
+    { settlement: 'פתח תקווה', street: 'שחם', sort: 'date_asc', limit: 3 },
+    { gush: '6393', helka: '348', sort: 'date_desc', limit: 3 },                           // a parcel filter, if the search has one
+  ]) { const r = await get(s(q)); out({ kind: 'history', label: 'over:search', asked: q, ...brief2(r) }); }
+  const g = await get(`${OVER}/api/deals/govmap/search?${new URLSearchParams({ sort: 'date_asc', limit: 3 })}`);
+  out({ kind: 'history', label: 'over:govmap-search', ...brief2(g) });
+  /* the OpenAPI parameters of the deals endpoints */
+  const spec = await get(OVER + '/openapi.json');
+  const P = spec.json && spec.json.paths ? spec.json.paths : {};
+  for (const [p, o] of Object.entries(P).filter(([k]) => /\/api\/(deals|nadlan)/.test(k))) {
+    for (const [m, d] of Object.entries(o)) out({ kind: 'history', label: 'over:openapi', path: p, method: m, params: (d.parameters || []).map((x) => `${x.name}${x.required ? '*' : ''}:${(x.schema && (x.schema.type || x.schema.anyOf && 'anyOf')) || ''}`) });
+  }
+  /* every locality's register count and latest deal */
+  const st = await get(`${OVER}/api/deals/settlements`);
+  const L = st.json && Array.isArray(st.json.data) ? st.json.data : Array.isArray(st.json) ? st.json : [];
+  out({ kind: 'history', label: 'over:settlements', status: st.status, n: L.length, deals: L.reduce((a, x) => a + (Number(x.deals) || 0), 0), keys: L[0] ? Object.keys(L[0]) : null,
+    rows: L.map((x) => [x.settlement, x.settlement_code, x.resolved_code, Number(x.deals) || 0, x.last_deal ? String(x.last_deal).slice(0, 10) : null, x.first_deal ? String(x.first_deal).slice(0, 10) : null]) });
+  for (const p of ['/api/deals/stats', '/api/deals/govmap/stats']) { const r = await get(OVER + p); out({ kind: 'history', label: 'over:' + p, status: r.status, body: trim(r.json || r.text, 2500) }); }
+}
+
 (async () => {
   try {
-    if (args.includes('--inventory')) await inventory();
+    if (args.includes('--history')) await historyProbe();
+    else if (args.includes('--inventory')) await inventory();
     else if (args.includes('--case')) await caseRun(opt('--case'));
-    else { console.error('usage: --inventory | --case "<city>|<street>[|<house>]"'); process.exit(2); }
+    else { console.error('usage: --inventory | --history | --case "<city>|<street>[|<house>]"'); process.exit(2); }
   } catch (e) { out({ kind: 'error', error: e.message, stack: trim(e.stack, 800) }); process.exit(1); }
 })();
