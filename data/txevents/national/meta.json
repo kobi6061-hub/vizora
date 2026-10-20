@@ -1,0 +1,190 @@
+{
+ "schema": 1,
+ "engine": "propx-txevents-national-1",
+ "builtAt": "2026-10-20T14:35:50.691Z",
+ "code": "fd53d19701053284",
+ "source": {
+  "id": "over:govmap-national",
+  "name": "GovMap deals layer (lay=16) — the published file of the republished copy (over.org.il)",
+  "datasetId": "4174aac2-c8b2-443e-9425-3773ce47c8da",
+  "channel": "independent-republication"
+ },
+ "version": {
+  "id": "210cd553-ea77-41ce-8afd-da27c552250d",
+  "n": 4,
+  "detectedAt": "2026-10-08T01:47:52.610708+00:00",
+  "rows": null
+ },
+ "file": {
+  "url": "https://pub-63c02556dabd4956af9500eb8fe7198c.r2.dev/datasets/4174aac2-c8b2-443e-9425-3773ce47c8da/v1/3aa83ccb_file.gpkg",
+  "sha256": "a410a5226a3375a20ffb5ff4c405b1b292454e97bf87ad65afe5b972edb55069",
+  "bytes": 709758976,
+  "table": "layer",
+  "columns": [
+   "fid",
+   "objectId",
+   "settlementId",
+   "settlementNameHeb",
+   "settlementNameEng",
+   "streetCode",
+   "streetNameHeb",
+   "streetNameEng",
+   "houseNum",
+   "floorNo",
+   "assetArea",
+   "dealAmount",
+   "dealId",
+   "propertyTypeDescription",
+   "dealNatureDescription",
+   "assetRoomNum",
+   "neighborhood",
+   "dealDate",
+   "gushNum",
+   "parcelNum",
+   "subParcelNum",
+   "polygonId"
+  ],
+  "rowsTotal": 2500941,
+  "rowsRead": 2500941,
+  "dates": {
+   "min": "1900-01-01",
+   "max": "2048-05-29"
+  },
+  "years": {
+   "1900": 1,
+   "1996": 1,
+   "1998": 42906,
+   "1999": 49141,
+   "2000": 40508,
+   "2001": 44120,
+   "2002": 46701,
+   "2003": 44776,
+   "2004": 47484,
+   "2005": 46982,
+   "2006": 49235,
+   "2007": 79763,
+   "2008": 78450,
+   "2009": 88744,
+   "2010": 97419,
+   "2011": 81493,
+   "2012": 96656,
+   "2013": 107009,
+   "2014": 99069,
+   "2015": 117750,
+   "2016": 111093,
+   "2017": 97037,
+   "2018": 99985,
+   "2019": 107747,
+   "2020": 103117,
+   "2021": 168276,
+   "2022": 134201,
+   "2023": 95498,
+   "2024": 139655,
+   "2025": 123305,
+   "2026": 62789,
+   "2027": 18,
+   "2028": 6,
+   "2029": 1,
+   "2030": 3,
+   "2048": 1
+  }
+ },
+ "register": {
+  "scrapedAt": "2026-09-19 11:07:39.013275+00",
+  "lastDeal": "2026-09-17",
+  "window": {
+   "from": "2023-09-18",
+   "to": "2026-09-17",
+   "months": 36
+  }
+ },
+ "recentWindow": {
+  "from": "2026-07-04",
+  "to": "2026-10-08"
+ },
+ "loadDay": "2026-10-08",
+ "windowRows": 349102,
+ "reconciledRows": 349102,
+ "validation": {
+  "checked": true,
+  "apiSnapshot": "aa7267d12488c51e8e88f7e51ab5df6ab6e49d025bae8dc04381688a2037706a",
+  "apiCopyVersion": 4,
+  "fileVersion": 4,
+  "sameVersion": true,
+  "apiRows": 11900,
+  "same": 11900,
+  "differs": 0,
+  "missing": 0,
+  "dealIdSame": 11900,
+  "fileOnlyInApiWindow": 0,
+  "examples": [],
+  "pass": true
+ },
+ "classes": {
+  "future": {
+   "FUTURE_DATED": 36
+  },
+  "after-register": {
+   "RECENT_NEW": 1
+  },
+  "recent-overlap": {
+   "RECENT_NEW": 4402,
+   "IN_REGISTER_OTHER_UNIT": 1953,
+   "IN_REGISTER": 1249,
+   "DUPLICATE_IN_SOURCE": 1919,
+   "POSSIBLE_DUPLICATE_IN_SOURCE": 63,
+   "POSSIBLY_IN_REGISTER": 10,
+   "NO_SETTLEMENT": 37,
+   "AMBIGUOUS_DUPLICATE": 30,
+   "UNMAPPED_SETTLEMENT": 1
+  },
+  "register-window": {
+   "IN_REGISTER_OTHER_UNIT": 140736,
+   "IN_REGISTER": 114616,
+   "RECENT_NEW": 24922,
+   "DUPLICATE_IN_SOURCE": 51645,
+   "POSSIBLE_DUPLICATE_IN_SOURCE": 1492,
+   "NO_SETTLEMENT": 2394,
+   "POSSIBLY_IN_REGISTER": 1143,
+   "AMBIGUOUS_DUPLICATE": 482,
+   "UNMAPPED_SETTLEMENT": 107
+  },
+  "before-window": {
+   "CONTEXT_BEFORE_WINDOW": 1864
+  }
+ },
+ "totals": {
+  "future": 36,
+  "after-register": 1,
+  "recent-overlap": 9664,
+  "register-window": 337537,
+  "before-window": 1864
+ },
+ "shown": {
+  "govmapOnly": 24922,
+  "possibleDuplicates": 3117,
+  "kinds": {
+   "DWELLING": 11571,
+   "NON_DWELLING": 2713,
+   "TYPE_NOT_STATED": 10638
+  },
+  "latest": "2026-07-03",
+  "localities": 302,
+  "streets": 3356
+ },
+ "parcelRecovery": {
+  "registerParcelsWithoutStreet": 33479,
+  "layerAddressKeys": 348813,
+  "keysOnThoseParcels": 7407,
+  "parcelsWithLayerAddress": 6486,
+  "states": {
+   "OBSERVED": 5810,
+   "POSSIBLE": 251,
+   "UNRESOLVED": 425
+  },
+  "recovered": 6061
+ },
+ "diff": {
+  "previous": null
+ }
+}
