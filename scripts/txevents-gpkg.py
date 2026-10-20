@@ -65,8 +65,9 @@ def main():
                 return low[n]
         return None
     c_date = col('deal_date', 'dealdate', 'date')
-    c_set, c_st, c_house = col('settlement', 'settlementname', 'city'), col('street', 'streetname'), col('house_num', 'housenum', 'house')
-    c_gush, c_parcel = col('gush', 'block'), col('parcel', 'helka')
+    c_set, c_st, c_house = col('settlement', 'settlementnameheb', 'settlementname', 'city'), col('street', 'streetnameheb', 'streetname'), col('house_num', 'housenum', 'house')
+    c_gush, c_parcel = col('gush', 'gushnum', 'block'), col('parcel', 'parcelnum', 'helka')
+    c_setid, c_stcode = col('settlementid', 'settlement_code'), col('streetcode', 'street_code')
     years = defaultdict(int)
     agg = {}
     n = nwin = 0
@@ -79,7 +80,7 @@ def main():
                 years[d[:4]] += 1
                 dmin = d if dmin is None or d < dmin else dmin
                 dmax = d if dmax is None or d > dmax else dmax
-            k = (r.get(c_set), r.get(c_gush), r.get(c_parcel), r.get(c_st), r.get(c_house))
+            k = (r.get(c_set), r.get(c_gush), r.get(c_parcel), r.get(c_st), r.get(c_house), r.get(c_setid) if c_setid else None, r.get(c_stcode) if c_stcode else None)
             if k[1] is not None and k[2] is not None:
                 a = agg.get(k)
                 if a is None:
@@ -96,10 +97,10 @@ def main():
                 w.write(json.dumps(o, ensure_ascii=False, separators=(',', ':')) + '\n')
     with gzip.open(os.path.join(out, 'parcels.jsonl.gz'), 'wt', encoding='utf-8') as p:
         for k, a in agg.items():
-            p.write(json.dumps([k[0], k[1], k[2], k[3], k[4], a[0], a[1], a[2]], ensure_ascii=False, separators=(',', ':')) + '\n')
+            p.write(json.dumps([k[0], k[1], k[2], k[3], k[4], a[0], a[1], a[2], k[5], k[6]], ensure_ascii=False, separators=(',', ':')) + '\n')
     schema = {'table': T['table'], 'columns': T['columns'], 'geometry': T['geometry'], 'total': T['total'], 'read': n, 'window': {'from': frm, 'rows': nwin},
               'dates': {'min': dmin, 'max': dmax}, 'years': dict(sorted(years.items())), 'parcelAddressKeys': len(agg),
-              'map': {'date': c_date, 'settlement': c_set, 'street': c_st, 'house': c_house, 'gush': c_gush, 'parcel': c_parcel}}
+              'map': {'date': c_date, 'settlement': c_set, 'street': c_st, 'house': c_house, 'gush': c_gush, 'parcel': c_parcel, 'settlementId': c_setid, 'streetCode': c_stcode}}
     json.dump(schema, open(os.path.join(out, 'schema.json'), 'w'), ensure_ascii=False, indent=1)
     print(json.dumps({k: schema[k] for k in ('table', 'total', 'read', 'window', 'dates', 'parcelAddressKeys', 'columns', 'map')}, ensure_ascii=False))
     with gzip.open(os.path.join(out, 'window.jsonl.gz'), 'rt', encoding='utf-8') as w:

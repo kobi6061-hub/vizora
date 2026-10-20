@@ -104,13 +104,24 @@ async function download(url, file) {
 }
 
 /* ── --build ── */
-const FIELDS = ['deal_id', 'deal_date', 'deal_amount', 'settlement', 'street', 'house_num', 'gush', 'parcel', 'sub_parcel', 'asset_area', 'rooms', 'property_type', 'deal_nature'];
+/* the fields a row is compared on (the deal id is compared apart: the file and the API may number deals in different series) */
+const FIELDS = ['deal_date', 'deal_amount', 'settlement', 'street', 'house_num', 'gush', 'parcel', 'sub_parcel', 'asset_area', 'rooms', 'property_type', 'deal_nature'];
 const lowerKeys = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k.toLowerCase(), v]));
-/** a file row → the API's field names (the file may name the object id differently) */
+/* the published file names its columns in camelCase (objectId · dealId · dealDate · dealAmount · settlementNameHeb · streetNameHeb · houseNum ·
+   floorNo · assetArea · assetRoomNum · propertyTypeDescription · dealNatureDescription · gushNum · parcelNum · subParcelNum · polygonId) and
+   carries three the API does not serve (settlementId · streetCode · neighborhood) — mapped to the API's names, the extra three kept */
+const FILE_MAP = { dealid: 'deal_id', dealdate: 'deal_date', dealamount: 'deal_amount', settlementnameheb: 'settlement', streetnameheb: 'street', housenum: 'house_num',
+  floorno: 'floor', assetarea: 'asset_area', assetroomnum: 'rooms', propertytypedescription: 'property_type', dealnaturedescription: 'deal_nature',
+  gushnum: 'gush', parcelnum: 'parcel', subparcelnum: 'sub_parcel', polygonid: 'polygon_id', settlementid: 'settlement_id', streetcode: 'street_code' };
+const numOrNull = (v) => (v == null || v === '' ? null : /^-?\d+(\.\d+)?$/.test(String(v).trim()) ? Number(v) : v);
+/** a file row → the API's field names */
 function apiRow(o0) {
   const o = lowerKeys(o0);
+  for (const [k, v] of Object.entries(FILE_MAP)) if (o[k] !== undefined && o[v] === undefined) { o[v] = o[k]; delete o[k]; }
   if (o.objectid == null) o.objectid = o.fid != null ? o.fid : o.ogc_fid != null ? o.ogc_fid : o.id;
+  o.objectid = numOrNull(o.objectid);
   if (o.deal_date != null) o.deal_date = String(o.deal_date).slice(0, 10);
+  for (const k of ['deal_amount', 'asset_area', 'rooms', 'gush', 'parcel', 'sub_parcel', 'deal_id']) if (o[k] != null) o[k] = numOrNull(o[k]);
   return o;
 }
 const norm = (v) => (v == null || v === '' ? null : typeof v === 'number' ? v : /^-?\d+(\.\d+)?$/.test(String(v).trim()) ? Number(v) : String(v).trim());
@@ -144,15 +155,16 @@ function build() {
     const byOid = new Map(raw.map((g) => [Number(g.objectid), g]));
     const from = snap.window.contextFrom || snap.window.from;
     const apiOids = new Set(api.map((g) => Number(g.objectid)));
-    let same = 0, differs = 0, missing = 0; const diffs = [];
+    let same = 0, differs = 0, missing = 0, dealIdSame = 0; const diffs = [];
     for (const a of api) {
       const f = byOid.get(Number(a.objectid));
       if (!f) { missing++; continue; }
+      if (String(a.deal_id) === String(f.deal_id)) dealIdSame++;
       if (rowHash(a) === rowHash(f)) same++; else { differs++; if (diffs.length < 8) diffs.push({ oid: a.objectid, api: FIELDS.map((k) => a[k]), file: FIELDS.map((k) => f[k]) }); }
     }
     const fileOnly = raw.filter((g) => g.deal_date >= from && g.deal_date <= String(snap.copy.loadedAt).slice(0, 10) && !apiOids.has(Number(g.objectid))).length;
     const sameVersion = !!(version && snap.copy && Number(snap.copy.version) === Number(version.n));
-    validation = { checked: true, apiSnapshot: snap.sha256, apiCopyVersion: snap.copy.version, fileVersion: version ? version.n : null, sameVersion, apiRows: api.length, same, differs, missing, fileOnlyInApiWindow: fileOnly, examples: diffs,
+    validation = { checked: true, apiSnapshot: snap.sha256, apiCopyVersion: snap.copy.version, fileVersion: version ? version.n : null, sameVersion, apiRows: api.length, same, differs, missing, dealIdSame, fileOnlyInApiWindow: fileOnly, examples: diffs,
       pass: sameVersion ? differs + missing + fileOnly <= Math.max(5, 0.002 * api.length) : true };
     if (!validation.pass) throw new Error('the file does not reproduce the API window: ' + JSON.stringify({ same, differs, missing, fileOnly, columns: schema.columns, examples: diffs.slice(0, 3) }));
   }
@@ -208,10 +220,12 @@ function build() {
   const parcelFile = path.join(dir, 'parcels.jsonl.gz');
   let parcelKeys = 0, placedKeys = 0;
   if (fs.existsSync(parcelFile)) {
-    for (const [settlement, gush, parcel, street, house, n, , last] of readGz(parcelFile)) {
+    for (const [settlement, gush, parcel, street, house, n, , last, settlementId] of readGz(parcelFile)) {
       parcelKeys++;
       if (!street) continue;
-      const code = settlement ? place(settlement) : null;
+      /* the locality: the file's own settlement code when it is an official locality code, else the name */
+      const sid = settlementId != null && settlementId !== '' ? Number(settlementId) : null;
+      const code = sid != null && D.localities.has(sid) ? sid : settlement ? place(settlement) : null;
       if (code == null) continue;
       const k = `${code}|${Number(gush)}|${Number(parcel)}`;
       if (!want.has(k)) continue;
