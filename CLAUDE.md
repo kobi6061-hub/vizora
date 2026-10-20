@@ -201,6 +201,25 @@
   hours (a new copy starts the syncs), monitor twice a day. Source inventory `lib/trust/discovery/2026-10-20-transaction-sources.json` (official
   channels refused / CAPTCHA / no dataset — never bypassed). Regression: Petah Tikva / Shaham newest shown 05.07.2026 → 30.08.2026. National audit (`coverage-audit.json`): 1,065 localities (1,036
   swept + 29 only the GovMap layer reaches — 752 events, in the area index too), 371,786 counted events, missed 0. See `lib/txevents/README.md`.
+- `lib/txevents/{history,unplaced,recover,kit}.js` + `scripts/txevents-{history,history-index,register-unmapped,completeness,all-check}.js` +
+  `data/txevents/history/` + `data/txevents/completeness-audit.json` + `data/txevents/all-check.json` + `.github/workflows/txevents-all-check.yml` +
+  `test/txevents-closure.test.js` = P0 TRANSACTION COMPLETENESS CLOSURE (20.10.2026): ALL (`all=1`) is the WHOLE history — the 36-month window
+  is an optimization only. A page is a DATE span: the register's live search (no lower bound, offset always 0; per-spelling `floors`; a
+  day over a page read whole) in (L, C] + the GovMap layer's history rows (every row of the file before the window, year partitions
+  `gm-<year>.json.gz` regrouped per locality in `history/loc/<code>.json.gz`, hash-checked against the year files) in (L+1, C+1], each FOLDED
+  into the register deal it repeats (same unit / parcel, ±1 day, amount equal · ₪1,000 truncation · share; a near miss = POSSIBLE
+  DUPLICATE); past the register's oldest deal the layer continues in whole-day pages (`…g` cursor); a register read that does not answer
+  is an error + retry cursor, never "no older deals" (its own "no settlement" is a real zero). `area=il|d-…` pages the national search;
+  Israel carries the UNPLACED events (`view=txUnplaced`; never a locality / street / district; POSSIBLE LOCATION lists candidates, never
+  picks). Locality recovery (`recover.js`): RESOLVED EXACTLY (own official code · exact register twin) · RESOLVED STRONGLY (parcel /
+  polygon filed under one locality by both copies) · POSSIBLE LOCATION · UNPLACED — only the first two enter a geography (the second
+  reconcile pass takes the recovered code, never a shared name). The register's deals under unmapped settlement names are read and placed
+  by parcel (`register-unmapped.json`, skipped when neither copy changed). The audit: every GovMap-file row in one bucket (SURFACED · SURFACED
+  OR FOLDED · SURFACED FLAGGED · DUPLICATE OF SURFACED · UNPLACED · INVALID; history + window + invalid = 2,500,941), reachability per bucket
+  → DEFENSIBLE KNOWN SOURCE EVENTS NOT SURFACED = 0; latest-date parity Israel · districts · localities · 21,003 streets; the live check
+  (runner) pages ALL to the end and checks the places whose newest deal predates the window. Trust Center: the full universe + the
+  unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
+  `transaction_completeness_universe` · `latest_date_parity`. Prices / statistics / the Street Value Model untouched.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

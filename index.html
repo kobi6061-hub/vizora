@@ -5421,7 +5421,7 @@ function txCols(){const t=T();return[
 const TX_ALL_CAP=3000;
 async function txLoadAll(){
   const key=txState.key;txState.allCapped=false;
-  while(txState.key===key&&(txState.more||txState.olderMore)&&!txState.moreErr&&txState.rows.length<TX_ALL_CAP)await txMore();
+  while(txState.key===key&&(txState.more||txState.olderMore)&&!txState.moreErr&&!txState.olderErr&&txState.rows.length<TX_ALL_CAP)await txMore();   /* a history page the register did not answer stops the loop ("load more" retries it) */
   if(txState.key===key&&(txState.more||txState.olderMore)&&txState.rows.length>=TX_ALL_CAP){txState.allCapped=true;renderTx()}
 }
 /* small-sample rule for observed deals: fewer than 10 → "small sample", medians de-emphasised, no trend read.
@@ -10406,7 +10406,7 @@ function txcUnpLoad(){
 }
 function txcUnpRender(){
   const box=el("txcUnpBody");if(!box)return;const u=TXC[state.lang==="en"?"en":"he"].u;
-  box.innerHTML=`<div class="tbl-wrap"><table class="tbl" data-txc-unp-table><thead><tr>${u.cols.map(c=>`<th>${inE(c)}</th>`).join("")}</tr></thead><tbody>${txcUnp.rows.map(e=>{const x=e.unplaced||{},g=e.geo||{};
+  box.innerHTML=`<div class="tbl-scroll"><table class="tbl" data-txc-unp-table><thead><tr>${u.cols.map(c=>`<th>${inE(c)}</th>`).join("")}</tr></thead><tbody>${txcUnp.rows.map(e=>{const x=e.unplaced||{},g=e.geo||{};
     return `<tr data-txid="${inE(e.id)}"><td class="num">${inE(e.date||"—")}</td><td class="num">${e.price!=null?fmtInt(e.price):"—"}</td><td>${inE(e.city||"—")}</td><td>${inE([e.street,e.houseNumber].filter(Boolean).join(" ")||"—")}</td><td class="num">${inE([e.block,e.parcel,e.subParcel].map(v=>v==null?"—":v).join("/"))}</td><td>${inE(u.stt[x.state]||x.state||"—")}${(g.candidates||[]).length?` <span class="sub">(${g.candidates.map(c=>inE(String(c))).join(", ")})</span>`:""}</td><td class="sub">${inE(x.basis||"—")}</td></tr>`}).join("")}</tbody></table></div>
     ${txcUnp.more?`<button type="button" class="btn" data-txc-unp-more>${u.more}</button>`:""}`;
 }
