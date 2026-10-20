@@ -157,10 +157,29 @@
   share sold not stated · < ₪100,000 · one consideration for several units) · RECENT_OBSERVED_VERIFIED (every criterion incl. a STATED
   whole-property sale) — 20.10.2026: 0 · 2,348 LIMITED · 1,098 · 50 · 907. NOTHING IS VERIFIED: the copy has no share field and prints the
   10.3 % partial sales (both copies' 2,934 dwelling deals) as the share or the whole value indistinguishably; eligible for count / median /
-  ₪/m² / 12-month change / model: 0 each (967 LIMITED rows meet every identity criterion — count-safe under the register's count semantics,
-  not wired). Same-parcel audit (232 rows; tolerances 2 % amount / area — no same-deal pair exceeds them): the 49 reported cases (fixture
+  ₪/m² / 12-month change / model: 0 each. Same-parcel audit (232 rows; tolerances 2 % amount / area — no same-deal pair exceeds them): the 49 reported cases (fixture
   `test/fixtures/recent-same-parcel-49.json`) → CONFIRMED SEPARATE 19 · LIKELY SEPARATE 26 · POSSIBLE DUPLICATE 4; POSSIBLE DUPLICATE /
-  UNRESOLVED never in a statistic. Page: "PROPX state" per recent deal (`recent_promotion_state`). No statistic reads the promotion yet.
+  UNRESOLVED never in a statistic. Page: "PROPX state" per recent deal (`recent_promotion_state`).
+  OWNERSHIP SHARE (20.10.2026; `scripts/recent-share-audit.js` → `share-audit.json`, `lib/recent/AUDIT-ownership-share.md`, runner probes
+  `tx-freshness-discover --share` / `--share-history`): no GovMap-layer field (19 fields, no portion) or pair of fields tells a partial sale from
+  a whole one over the 2,934 deals both copies hold (the only pure leaves use unit / parcel ACTIVITY — excluded by rule); no shared deal id; the
+  register states the portion but exists as ONE scrape (versions v1–v5, 18–19.09.2026) and its publisher reports its scraper blocked since —
+  so every recent-only deal's semantics are UNKNOWN and VERIFIED stays 0. LIFECYCLE (`lib/recent/lifecycle.js`, append-only
+  `promotion-history.jsonl`): every shown deal OBSERVED once (copy · first read · register copy read against · verbatim row hash); only a NEWER
+  register copy holding the same transaction (strong match) CONFIRMS it — semantics from the register's portion (1 → WHOLE_PROPERTY / MULTI_UNIT ·
+  < 1, "0.000" included → PARTIAL_SHARE · none → stays LIMITED), another locality / not a dwelling / a duplicate print → CONFLICT; VERIFIED needs
+  identity + stated semantics, a price only for WHOLE_PROPERTY ≥ ₪100,000; a confirmed deal is counted THROUGH THE REGISTER (never twice); the
+  same copy never confirms (RESTATED, cause ENGINE); deals the newer GovMap copy drops are carried (LEFT_COPY, never shown); nothing rewritten.
+  20.10.2026: 4,403 OBSERVED · 0 confirmed. THREE COUNTS (`lib/recent/counts.js`, `view=street` → `transactionCounts` street + locality,
+  `view=recentLayer&city=`): RECORDED TRANSACTION EVENTS (register observed dwelling deals + recent rows passing every `EVENT_GATES` gate — 967)
+  · VERIFIED DWELLING TRANSACTIONS (register observed + recent VERIFIED — 0) · PRICED TRANSACTIONS USED IN STATISTICS (register priced + recent
+  VERIFIED whole — 0), never one number; registry `recorded_transaction_events` · `verified_dwelling_transactions` · `priced_transactions_in_statistics`
+  · `recent_promotion_lifecycle`; the page's counts block + "PRICE NOT USED IN MARKET STATISTICS · OWNERSHIP SHARE NOT STATED" on each recent
+  price (no ₪/m² on an unused price) + its source fields. SIMULATION (`lib/recent/simulate.js`, `scripts/recent-simulate.js` →
+  `simulation.json`): the register blinded from the window's first day, then arriving (a historical window a year back + today's window). Lag statistics (median ·
+  P80 · P90 · max · bands 0–7 / 8–21 / 22–45 / 46–90 / 90+ days, first read → confirming copy) live in `meta.json → lifecycle.lag` — empty
+  until a newer register copy confirms a deal; not measurable from one register copy.
+  `test/recent-lifecycle.test.js`. The observed figures and the Street Value Model read none of it.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

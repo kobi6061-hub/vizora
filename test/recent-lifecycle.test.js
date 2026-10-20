@@ -142,6 +142,15 @@ t('CONFIRMATION never rewrites history: the observation of a confirmed deal is t
   assert.ok(arr.filter((x) => x.event === 'CONFIRMED' && x.from === 'RECENT_OBSERVED_LIMITED' && x.to === 'RECENT_OBSERVED_VERIFIED').length > 500);
 });
 
+t('LAG: the ledger summary states n · median · P80 · P90 · max and the bands 0–7 / 8–21 / 22–45 / 46–90 / 90+ days — empty, with its reason, while nothing is confirmed', () => {
+  const L = LC.summary(ledger).lag;
+  assert.deepEqual(Object.keys(L.bands), ['0–7', '8–21', '22–45', '46–90', '90+']);
+  const confirmed = LC.summary(ledger).confirmed;
+  if (!confirmed) { assert.equal(L.n, 0); assert.equal(L.median, null); assert.equal(L.max, null); assert.ok(L.reason); assert.ok(Object.values(L.bands).every((x) => x === 0)); }
+  else assert.equal(Object.values(L.bands).reduce((a, b) => a + b, 0), L.n);
+  assert.deepEqual(meta.lifecycle.lag.bands ? Object.keys(meta.lifecycle.lag.bands) : Object.keys(L.bands), Object.keys(L.bands));
+});
+
 t('the SAME register copy never "confirms" (an engine reclassification is RESTATED, cause ENGINE); a closed deal takes no further event; a rerun is silent', () => {
   const same = LC.step(LC.fold(obs), { ...ctxA, register: BLIND });
   assert.ok(!same.some((e) => e.event === 'CONFIRMED'), 'never a confirmation from the copy the deal was read against');
