@@ -49,24 +49,42 @@ const quick = process.argv.includes('--quick');
 const today = new Date().toISOString().slice(0, 10);
 const BASE = process.env.STREET_EVIDENCE_BASE || 'https://www.over.org.il';
 
-async function call(params) {
+async function call1(params) {
   const req = { method: 'GET', url: '/api/gov/transactions?' + new URLSearchParams(params).toString(), headers: {} };
   let body = '';
   const res = { statusCode: 200, setHeader() {}, end(b) { body = b; } };
   await handler(req, res);
-  return JSON.parse(body);
+  const b = JSON.parse(body);
+  b.__status = res.statusCode;
+  return b;
 }
+/* the page's own retry: a page refused (503 · retry) or a history read that did not answer is asked again, as the user's "load more"
+   / retry would — after 30 s, 60 s, 90 s, 120 s; the last answer is kept with its error */
+let retries = 0;
+const transient = (b) => b.__status === 503 || !!b.error || !!(b.meta && b.meta.sourceCoverage && b.meta.sourceCoverage.olderError);
+async function call(params) {
+  let b = await call1(params);
+  for (let attempt = 1; attempt <= 4 && transient(b); attempt++) {
+    retries++;
+    console.log(JSON.stringify({ retry: attempt, params: { ...params, city: params.city ? '…' : undefined }, error: b.error || (b.meta && b.meta.sourceCoverage && b.meta.sourceCoverage.olderError) || b.__status }));
+    await new Promise((ok) => setTimeout(ok, 30000 * attempt));
+    b = await call1(params);
+  }
+  return b;
+}
+const only = (() => { const a = process.argv.find((x) => x.startsWith('--only=')); return a ? new Set(a.slice(7).split(',').filter(Boolean)) : null; })();
+const want = (part) => !only || only.has(part);
 const counted = (t) => t.state !== 'POSSIBLE_DUPLICATE';
 
 /** ALL for one place, page by page as the page reads it; `maxPages` stops early (the first pages), `older` starts at a cursor */
 async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
-  const seen = new Map(), dups = [];
-  let rising = 0, prev = null, pages = 0, folded = 0, end = false, error = null, first = null, last = null;
+  const seen = new Map(), dups = [], risingAt = [];
+  let rising = 0, prev = null, prevId = null, pages = 0, folded = 0, end = false, error = null, first = null, last = null;
   const take = (rows) => {
     for (const t of rows) {
       if (seen.has(t.id)) dups.push(t.id); else seen.set(t.id, t);
-      if (prev && t.date && t.date > prev) rising++;
-      if (t.date) prev = t.date;
+      if (prev && t.date && t.date > prev) { rising++; if (risingAt.length < 10) risingAt.push({ page: pages, before: { id: prevId, date: prev }, after: { id: t.id, date: t.date, source: t.source } }); }
+      if (t.date) { prev = t.date; prevId = t.id; }
       if (!first && t.date && counted(t)) first = t.date;
       if (t.date) last = t.date;
     }
@@ -101,7 +119,7 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   return { pages, end, error, events: ev.length, counted: ev.filter(counted).length, duplicateIds: dups.length, risingDates: rising, firstCounted: first, oldest: last,
     register: reg.length, registerUnmapped: ev.filter((t) => /^regx:/.test(String(t.id))).length, govmapWindow: ev.filter((t) => /^gm:/.test(String(t.id))).length,
     govmapHistory: ev.filter((t) => /^gmh:/.test(String(t.id))).length, govmapFolded: folded, unplaced: ev.filter((t) => /^gmu:/.test(String(t.id))).length,
-    possibleDuplicates: ev.length - ev.filter(counted).length, cursorAtStop: cursor, ids: ev.map((t) => t.id) };
+    possibleDuplicates: ev.length - ev.filter(counted).length, cursorAtStop: cursor, risingAt, duplicateExamples: dups.slice(0, 10), ids: ev.map((t) => t.id) };
 }
 
 (async () => {
@@ -123,8 +141,9 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   const winFrom = out.window ? out.window.from : null;
   const histRows = (code) => HIST.rows({ code }, null, winFrom ? HIST.addDays(winFrom, -1) : null);
 
-  /* 1. ALL to the end */
   const name = (c) => D.localities.get(c).he;
+  if (want('full')) {
+  /* 1. ALL to the end */
   const smallWithWindow = [...regByCode.entries()].filter(([c, x]) => x.deals >= 150 && x.deals <= 400 && D.localities.get(c)).sort((a, b) => a[0] - b[0])[0];
   const full = [
     { id: 'street:shaham-petah-tikva', params: { city: name(7900), street: 'שחם', sid: 'st:7900:156' }, code: 7900, streetCode: 156 },
@@ -165,8 +184,9 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     const shown = new Map();
     for (const id of st.ids || []) { const m = /^(?:reg|live):(.*?)(?:#\d+)?$/.exec(String(id)); if (m) shown.set(m[1], (shown.get(m[1]) || 0) + 1); }
     let missing = 0; const examples = [];
-    for (const [k, n] of want) { const d = n - (shown.get(k) || 0); if (d > 0) { missing += d; if (examples.length < 10) examples.push(k); } }
-    Object.assign(st, { registerSearchTotal: total, registerUndated: undated, registerUndatedRows: undatedRows, registerMissing: missing, registerMissingExamples: examples });
+    for (const [k, n] of want) { const d = n - (shown.get(k) || 0); if (d > 0) { missing += d; if (examples.length < 10) examples.push({ key: k, inRegisterSearch: n, shown: shown.get(k) || 0, shownSameDay: (st.ids || []).filter((id) => String(id).includes('|' + k.split('|')[1] + '|')) }); } }
+    let extra = 0; for (const [k, n] of shown) if (n > (want.get(k) || 0)) extra += n - (want.get(k) || 0);
+    Object.assign(st, { registerSearchTotal: total, registerSearchKeys: want.size, registerUndated: undated, registerUndatedRows: undatedRows, registerMissing: missing, registerMissingExamples: examples, registerShownNotInSearch: extra });
     st.pass = st.pass && missing === 0;
   }
   /* the street: every deal the register's own street search returns (all years) is one of the events shown — by its deal key */
@@ -194,6 +214,8 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     }
   }
   for (const x of out.full) delete x.ids;
+  }
+  if (want('partial')) {
   /* the largest cities, Israel and a district: the first pages and the oldest pages */
   out.partial = [];
   const partial = [
@@ -209,6 +231,8 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     console.log(JSON.stringify({ partial: p.id, first: head.firstCounted, oldest: tail.oldest, end: tail.end }));
   }
 
+  }
+  if (want('periods')) {
   /* 2. periods */
   out.periods = [];
   const PER = [{ id: 'd30', days: 30 }, { id: 'd90', days: 90 }, { id: 'm6', months: 6 }, { id: 'm12', months: 12 }, { id: 'm24', months: 24 }];
@@ -230,6 +254,8 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   }
   console.log(JSON.stringify({ periods: out.periods.length, failed: out.periods.filter((x) => !x.pass).length }));
 
+  }
+  if (want('historyStreets')) {
   /* 2b. LATEST on streets whose every event is older than the stored window: the first event ALL shows = the newest of the register's
      own street search (the republisher's address link — the only register read of a street before the window) and the GovMap layer's
      history rows on the street. Two streets per locality, the ones with the most history rows and no event in the stored window. */
@@ -237,26 +263,40 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   const streetName = (c, sc) => (D.byId.get(`st:${c}:${sc}`) || {}).name || null;
   for (const c of [5000, 3000, 4000, 7900, 70, 6100, 8300, 7100, 1031, 2640]) {
     if (!D.localities.has(c)) continue;
-    const by = new Map();
-    for (const r of histRows(c)) if (r.streetCode != null) { const x = by.get(r.streetCode) || { n: 0, latest: null }; x.n++; if (!x.latest || r.date > x.latest) x.latest = r.date; by.set(r.streetCode, x); }
+    const by = new Map(), rowsC = histRows(c);
+    for (const r of rowsC) if (r.streetCode != null) { const x = by.get(r.streetCode) || { n: 0, latest: null }; x.n++; if (!x.latest || r.date > x.latest) x.latest = r.date; by.set(r.streetCode, x); }
     let picked = 0;
     for (const [sc, x] of [...by.entries()].sort((a, b) => b[1].n - a[1].n || a[0] - b[0])) {
       if (picked >= 2) break;
       const nm = streetName(c, sc); if (!nm) continue;
       if (TX.query({ streetId: `st:${c}:${sc}`, all: true, unlimited: true, today }).total) continue;
       picked++;
+      /* the GovMap side: every history row the API itself places on the street (its official code, its published name, its parcel) */
+      const scope = TX.resolveScope({ code: c, streetId: `st:${c}:${sc}` });
+      const S = TX.stores();
+      let gmPlaced = null, gmPlacedRows = 0;
+      for (const r of rowsC) {
+        const e = TX.gmEvent(HIST.asLayerRow(r), 'over:govmap-national', null);
+        if (e.state === 'POSSIBLE_DUPLICATE' || !TX.placeEvent(e, scope, S)) continue;
+        gmPlacedRows++; if (!gmPlaced || r.date > gmPlaced) gmPlaced = r.date;
+      }
       let regLatest = null, regError = null;
       for (const n of (regByCode.get(c) || { names: [] }).names) {
-        const r = await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, street: nm, sort: 'date_desc', limit: '1' }), { headers: { Accept: 'application/json' } });
-        if (!r.ok) { regError = 'HTTP ' + r.status; continue; }
-        const b = await r.json(); const d = (b.data || [])[0];
+        let b;
+        try {
+          const r = await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, street: nm, sort: 'date_desc', limit: '1' }), { headers: { Accept: 'application/json' } });
+          if (!r.ok) { regError = 'HTTP ' + r.status; continue; }
+          b = await r.json();
+        } catch (e) { regError = e.message; continue; }
+        const d = (b.data || [])[0];
         if (d && d.date) { const dd = String(d.date).slice(0, 10); if (!regLatest || dd > regLatest) regLatest = dd; }
       }
       const b = await call({ city: name(c), street: nm, sid: `st:${c}:${sc}`, all: '1', months: '240', limit: '50' });
       const t = (b.transactions || []).find(counted);
       const sc0 = (b.meta && b.meta.sourceCoverage) || {};
-      const source = [regLatest, x.latest].filter(Boolean).sort().pop() || null;
-      const row = { street: `st:${c}:${sc}`, name: nm, govmapHistoryRows: x.n, govmapHistoryLatest: x.latest, registerStreetSearchLatest: regLatest, source, visible: t ? t.date : null,
+      const source = [regLatest, gmPlaced].filter(Boolean).sort().pop() || null;
+      const row = { street: `st:${c}:${sc}`, name: nm, govmapHistoryRows: x.n, govmapHistoryLatest: x.latest, govmapPlacedRows: gmPlacedRows, govmapPlacedLatest: gmPlaced, registerStreetSearchLatest: regLatest, source, visible: t ? t.date : null,
+        visibleEvent: t ? { id: t.id, source: t.source, match: t.geo && t.geo.match } : null,
         error: b.error || sc0.olderError || regError || null };
       row.pass = !row.error && row.source === row.visible;
       out.historyStreets.push(row);
@@ -264,6 +304,8 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     }
   }
 
+  }
+  if (want('latest')) {
   /* 3. LATEST — every official locality the stored union does not cover, through the page's own ALL read; Israel and every district */
   const latest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'txevents', 'latest.json'), 'utf8'));
   out.latest = { localities: [], areas: [] };
@@ -285,11 +327,21 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     const t = (b.transactions || []).find(counted);
     out.latest.areas.push({ area: a, visible: t ? t.date : null, storedLatest: a === 'il' ? latest.national.latest : (latest.districts[a] || {}).latest || null, error: b.error || null });
   }
+  }
+  /* a partial run (--only=…) keeps the other sections of the previous check, each with the time it ran */
+  const OUT = process.env.TXEVENTS_CHECK_OUT || path.join(ROOT, 'data', 'txevents', 'all-check.json');
+  const prevOut = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch { return null; } })();
+  out.sectionsRanAt = {};
+  for (const sec of ['full', 'partial', 'periods', 'historyStreets', 'latest']) {
+    if (want(sec)) { out.sectionsRanAt[sec] = out.ranAt; continue; }
+    out[sec] = prevOut && prevOut[sec] != null ? prevOut[sec] : (sec === 'latest' ? { localities: [], areas: [] } : []);
+    out.sectionsRanAt[sec] = prevOut ? (prevOut.sectionsRanAt && prevOut.sectionsRanAt[sec]) || prevOut.ranAt : null;
+  }
   const L = out.latest.localities;
   out.latest.summary = { checked: L.length, withTransactions: L.filter((x) => x.source).length, match: L.filter((x) => x.source && x.match).length,
     mismatch: L.filter((x) => x.source && !x.match).length, noTransaction: L.filter((x) => !x.source).length, errors: L.filter((x) => x.error).length };
-  out.requests = requests; out.backoffs = backoffs;
+  out.requests = requests; out.backoffs = backoffs; out.retries = retries; out.only = only ? [...only] : null;
   out.pass = out.full.every((x) => x.pass) && out.partial.every((x) => x.pass) && out.periods.every((x) => x.pass) && out.historyStreets.every((x) => x.pass) && out.latest.summary.mismatch === 0 && out.latest.summary.errors === 0;
-  fs.writeFileSync(process.env.TXEVENTS_CHECK_OUT || path.join(ROOT, 'data', 'txevents', 'all-check.json'), JSON.stringify(out, null, 1) + '\n');
+  fs.writeFileSync(OUT, JSON.stringify(out, null, 1) + '\n');
   console.log(JSON.stringify({ pass: out.pass, latest: out.latest.summary, areas: out.latest.areas, requests }));
 })().catch((e) => { console.error('all-check: ' + (e.stack || e.message)); process.exit(1); });

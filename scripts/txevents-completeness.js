@@ -315,8 +315,13 @@ for (const [k, source] of [...streetSource.entries()].sort()) {
 const histStreets = new Map();
 {
   const ixl = readJson(path.join(T, 'history', 'loc', 'index.json')) || { localities: {} };
-  for (const c of Object.keys(ixl.localities)) for (const r of HIST.rows({ code: Number(c) })) if (r.streetCode != null && isLoc(r.cityCode)) {
-    const k = `${r.cityCode}|${r.streetCode}`; histStreets.set(k, maxD(histStreets.get(k), r.date));
+  /* the API's own rule for a GovMap row: its official street code, else its published name in the directory, else its parcel recovered */
+  const hput = (c, sc, d) => { if (c == null || sc == null || !d) return; const k = `${c}|${sc}`; histStreets.set(k, maxD(histStreets.get(k), d)); };
+  for (const c of Object.keys(ixl.localities)) for (const r of HIST.rows({ code: Number(c) })) {
+    if (!isLoc(r.cityCode)) continue;
+    if (r.streetCode != null) { hput(r.cityCode, r.streetCode, r.date); continue; }
+    if (r.street) { const z = M.resolveStreet(LI(r.cityCode), String(r.street)); if (z && z.id) hput(r.cityCode, Number(String(z.id).split(':')[2]), r.date); continue; }
+    if (r.block != null) { const rec = S.parcels.get(`${r.cityCode}|${pnum(r.block)}|${pnum(r.parcel)}`); if (rec) for (const z of rec.streets) hput(r.cityCode, z[0], r.date); }
   }
 }
 const histOnly = [...histStreets.keys()].filter((k) => !streetSource.has(k));

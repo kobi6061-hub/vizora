@@ -15,6 +15,10 @@ on:
         description: 'Skip the two full large-city pagings'
         type: boolean
         default: false
+      only:
+        description: 'Run only these sections (comma list of full,partial,periods,historyStreets,latest); the others keep their last result'
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -26,7 +30,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,8 +39,15 @@ jobs:
       - name: Check (read-only toward the sources)
         env:
           QUICK: ${{ inputs.quick }}
+          ONLY: ${{ inputs.only }}
         run: |
-          if [ "$QUICK" = "true" ]; then node --max-old-space-size=8000 scripts/txevents-all-check.js --quick; else node --max-old-space-size=8000 scripts/txevents-all-check.js; fi
+          ARGS=""
+          if [ "$QUICK" = "true" ]; then ARGS="--quick"; fi
+          if [ -n "$ONLY" ]; then
+            case "$ONLY" in *[!a-zA-Z,]*) echo "only: letters and commas" >&2; exit 1;; esac
+            ARGS="$ARGS --only=$ONLY"
+          fi
+          node --max-old-space-size=8000 scripts/txevents-all-check.js $ARGS
       - name: Commit
         if: always()
         run: |
