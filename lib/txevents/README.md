@@ -73,7 +73,14 @@ pages a place's history newest first, **by date** (`lib/txevents/history.js`, `a
 - a register read that does not answer is an error and a retry cursor (`olderError`), never "no older deals"; the register's own
   "no settlement" answer is a real zero (a locality only the GovMap layer holds);
 - `area=il|d-<district>` pages the register's national search the same way, with the area's GovMap events; Israel adds the
-  UNPLACED events.
+  UNPLACED events;
+- a later offset page whose live parts did not answer is refused (HTTP 503, `retry: true`) — the list would be shorter than the
+  page before and an event could slide past unseen; a shifted page is never served;
+- the live register read takes every name the register files the locality's deals under: its own code, the republisher's resolution
+  of a code-less name (`resolved_code`: קרית חיים → Haifa, as the stored sweep reads it), the locality's names;
+- a register deal filed under an unmapped settlement name (placed by parcel) with no street of its own stands on the street its
+  GovMap print names (POSSIBLE, `address-of-the-govmap-print-of-this-deal`); a print naming another street than the deal's own address
+  is a CONFLICT attached to the one event (`street:differs`, register precedence, both values kept).
 
 ## Every source row accounted for (`scripts/txevents-completeness.js` → `data/txevents/completeness-audit.json`)
 
@@ -88,7 +95,10 @@ or its exact register twin · RESOLVED STRONGLY — its parcel / polygon filed u
 UNPLACED; only the first two enter a geography), the street-string audit of both copies, the parcel recovery, and LATEST-DATE PARITY:
 the newest event the sources hold vs the first the user sees, for Israel, every district, locality and street with an event. The
 places whose newest deal predates the window are checked live by `scripts/txevents-all-check.js` (`.github/workflows/txevents-all-check.yml`
-→ `data/txevents/all-check.json`: full ALL pagings, period filters, the latest event through the page's own read).
+→ `data/txevents/all-check.json`: full ALL pagings — a small locality and the regression street deal by deal against the register's
+own search —, period filters, the latest event through the page's own read for every locality the stored union does not cover, and a
+sample of streets whose every event predates the window: their first ALL event vs the register's street search + the GovMap history;
+the republisher's rate limit is waited out, never read as an answer).
 
 UNPLACED TRANSACTION EVENTS (`lib/txevents/unplaced.js`, `view=txUnplaced`): the rows whose locality cannot be determined — in Israel's
 list and the Trust Center's unplaced list, never a locality, street or district; every source field kept; a POSSIBLE LOCATION lists

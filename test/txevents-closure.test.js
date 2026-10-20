@@ -120,6 +120,29 @@ t('SPAN: a page shows the register\'s rows in (L, C] and the layer\'s in (L+1, C
   assert.equal(s.L, '2010-04-20'); assert.equal(s.gmAbove, '2010-04-21'); assert.equal(s.last, false);
 });
 
+/* (before any gate reads the fake register: the provider answers a repeated upstream call from its memory) */
+t('A LATER PAGE WHOSE LIVE PARTS DID NOT ANSWER IS REFUSED (503 · retry) — never served shorter, shifted; the first page is served with the stored events and the error stated', async () => {
+  const city = D.localities.get(FAKE.code).he;
+  const callS = async (params) => {
+    const req = { method: 'GET', url: '/api/gov/transactions?' + new URLSearchParams(params).toString(), headers: {} };
+    let body = ''; const res = { statusCode: 200, setHeader() {}, end(b) { body = b; } };
+    await handler(req, res);
+    return { status: res.statusCode, body: JSON.parse(body) };
+  };
+  FAKE.fail = true;
+  try {
+    const later = await callS({ city, all: '1', months: '240', limit: '200', offset: '200' });
+    assert.equal(later.status, 503); assert.equal(later.body.retry, true); assert.equal(later.body.error, 'source-unavailable');
+    assert.equal(later.body.transactions.length, 0, 'no shifted page');
+    const first = await callS({ city, all: '1', months: '240', limit: '200', offset: '0' });
+    assert.equal(first.status, 200); assert.ok(first.body.transactions.length > 0, 'the stored events');
+    assert.ok(first.body.meta.sourceCoverage.olderError, 'the history error is stated'); assert.equal(first.body.meta.sourceCoverage.olderMore, true, 'and can be retried');
+  } finally { FAKE.fail = false; }
+  /* a locality the register does not hold (its "no settlement" is a real zero, not a failure): later pages are served */
+  const z = await callS({ city: D.localities.get(816).he, all: '1', months: '240', limit: '5', offset: '5' });
+  assert.equal(z.status, 200); assert.ok(z.body.transactions.length > 0);
+});
+
 t('ALL = THE WHOLE HISTORY: every register deal of the locality is listed exactly once (all years), no event twice, dates never rise, and every GovMap history row is shown or folded into the register deal it repeats', async () => {
   const r = await pageAll({ city: D.localities.get(FAKE.code).he });
   assert.equal(r.error, null); assert.ok(r.end, 'paged to the end');
