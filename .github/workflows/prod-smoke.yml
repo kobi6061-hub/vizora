@@ -65,6 +65,10 @@ jobs:
           probe "/api/intel?view=streetApartment&id=st:5000:461&sqm=80" "302 307" login.html
           probe "/api/intel?view=streetModelValidation" "302 307" login.html
           probe "/api/intel?view=txFreshness" "302 307" login.html
+          probe "/api/intel?view=recentLayer" "302 307" login.html
+          probe "/api/intel?view=recentLayer&city=5000" "302 307" login.html
+          probe "/data/streets/recent/layer.json" "302 307 404" ""
+          probe "/data/streets/recent/raw/index.json" "302 307 404" ""
           probe "/api/gov/transactions?city=x&days=30" "302 307" login.html
           probe "/data/transactions/freshness.json" "302 307 404" ""
           probe "/data/streets/model/estimates.json" "302 307 404" ""
