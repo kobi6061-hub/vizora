@@ -135,6 +135,28 @@ notSurfaced += check('register-window', windowDeals, windowDeals - windowRegiste
 const natRows = S.national ? S.national.rows : [], natCols = S.national ? S.national.columns : [];
 const nci = natCols.indexOf('cityCode');
 notSurfaced += check('govmap-window-events', natRows.length, natRows.filter((r) => !isLoc(r[nci])).length, 'the locality of every GovMap-only event is an official locality (its events, its district, Israel)');
+/* and each one IS in its locality's union read — an event of its own, or folded as the second print of a register deal shown there */
+const regxPrints = new Set(), printStreetConflicts = [];
+{
+  const ndl = natCols.indexOf('dealId'), byCode = new Map();
+  for (const r of natRows) { if (!isLoc(r[nci])) continue; if (!byCode.has(r[nci])) byCode.set(r[nci], []); byCode.get(r[nci]).push('gm:' + (r[ndl] || 'o' + r[0])); }
+  let missing = 0; const examples = [];
+  for (const [code, ids] of byCode) {
+    const q = TX.query({ code, all: true, unlimited: true, today });
+    const shown = new Map(q.events.map((e) => [e.id, e]));
+    const ev = TX.layerEventsOf(code, S).evidence;
+    const folded = new Set(ev.map(([, x]) => 'gm:' + (x.dealId || 'o' + x.oid)));
+    /* a print folded into a register deal filed under an unmapped settlement name is that deal's evidence (like every other print of a
+       register deal): its street is the register's, a different street on the print is a CONFLICT ATTACHED to the event */
+    for (const [rid, x] of ev) if (/^regx:/.test(rid)) {
+      const id = 'gm:' + (x.dealId || 'o' + x.oid); regxPrints.add(id);
+      const deal = shown.get(rid);
+      if (deal && x.streetCode != null && (deal.streets || []).length && !(deal.streets || []).some((z) => z.code === x.streetCode)) printStreetConflicts.push({ event: rid, print: id, date: x.date, printStreet: `st:${code}:${x.streetCode}`, eventStreets: deal.streets.map((z) => `st:${code}:${z.code}`) });
+    }
+    for (const id of ids) if (!shown.has(id) && !folded.has(id)) { missing++; if (examples.length < 10) examples.push(`${code} ${id}`); }
+  }
+  notSurfaced += check('govmap-window-events-in-union', natRows.length, missing, 'every GovMap-only row is an event of its locality\'s union, or folded into the register deal it repeats' + (examples.length ? ' — e.g. ' + examples.join(', ') : ''));
+}
 const rlRows = RL.layer ? RL.layer.rows : [], rci = RL.layer ? RL.layer.columns.indexOf('cityCode') : -1;
 notSurfaced += check('govmap-recent-events', rlRows.length, rlRows.filter((r) => !isLoc(r[rci])).length, 'the recent layer\'s rows are events of an official locality');
 /* the history rows: each locality's own partition, an official locality */
@@ -269,8 +291,12 @@ const gmStreet = (c, sc, text, b, p, d) => {
   if (text) { const z = M.resolveStreet(LI(c), String(text)); if (z && z.id) return bump(c, Number(String(z.id).split(':')[2]), d); return; }
   if (b != null) viaParcel(c, b, p, d);
 };
+/* the register's deals under unmapped settlement names placed in a locality by parcel: their own address's street */
+if (regUnm) { const ci = regUnm.columns.indexOf('state'), ki = regUnm.columns.indexOf('code'), di = regUnm.columns.indexOf('date'), si = regUnm.columns.indexOf('streets');
+  for (const r of regUnm.rows) if (/^RESOLVED/.test(r[ci]) && isLoc(r[ki]) && r[si] && Array.isArray(r[si][1])) for (const z of r[si][1]) bump(r[ki], z[0], r[di]); }
 const nsc = natCols.indexOf('streetCode'), nst = natCols.indexOf('street'), nbl = natCols.indexOf('block'), npa = natCols.indexOf('parcel');
-for (const r of natRows) if (natCounted(r)) gmStreet(r[nci], r[nsc], r[nst], r[nbl], r[npa], r[ndi]);
+const ndl2 = natCols.indexOf('dealId');
+for (const r of natRows) if (natCounted(r) && !regxPrints.has('gm:' + (r[ndl2] || 'o' + r[0]))) gmStreet(r[nci], r[nsc], r[nst], r[nbl], r[npa], r[ndi]);
 if (RL.layer) { const sci = rlc.indexOf('streetCode'), sti = rlc.indexOf('street'), bli = rlc.indexOf('block'), pai = rlc.indexOf('parcel'), di = rlc.indexOf('date'); for (const r of rlRows) if (rlCounted(r)) gmStreet(r[rci], r[sci], r[sti], r[bli], r[pai], r[di]); }
 const streetRows = [];
 let n = 0;
@@ -284,6 +310,17 @@ for (const [k, source] of [...streetSource.entries()].sort()) {
   if (visible !== source) streetRows.push({ street: `st:${code}:${sc}`, source, visible, reason: !visible ? 'NOTHING_VISIBLE' : visible > source ? 'VISIBLE_NEWER_THAN_SOURCE' : 'VISIBLE_OLDER_THAN_SOURCE',
     newestVisible: ev.slice().sort((a, b) => b.date.localeCompare(a.date))[0] ? (({ id, date, source: s, geo }) => ({ id, date, source: s, match: geo && geo.match }))(ev.slice().sort((a, b) => b.date.localeCompare(a.date))[0]) : null });
 }
+/* streets whose every event is older than the stored window: the GovMap history rows on an official street code (the register's older
+   deals of a street are read live, through the republisher's address link — a sample is checked by scripts/txevents-all-check.js) */
+const histStreets = new Map();
+{
+  const ixl = readJson(path.join(T, 'history', 'loc', 'index.json')) || { localities: {} };
+  for (const c of Object.keys(ixl.localities)) for (const r of HIST.rows({ code: Number(c) })) if (r.streetCode != null && isLoc(r.cityCode)) {
+    const k = `${r.cityCode}|${r.streetCode}`; histStreets.set(k, maxD(histStreets.get(k), r.date));
+  }
+}
+const histOnly = [...histStreets.keys()].filter((k) => !streetSource.has(k));
+const hsLive = (allCheck && allCheck.historyStreets) || [];
 const latest = {
   rule: 'source = the newest valid event any source holds for the geography (the register sweep, the register\'s own last deal per settlement name, the GovMap layer\'s events, the register deals placed by parcel, the GovMap history); visible = the first event the user\'s ALL read shows (the stored union, or the live check for places whose newest deal is older than the stored window); POSSIBLE DUPLICATE rows excluded on both sides; future-dated rows are INVALID',
   israel: areaLatest.find((x) => x.area === 'il'),
@@ -292,7 +329,11 @@ const latest = {
     mismatch: locMis.length, pendingLive: locLatest.filter((x) => x.reason === 'LIVE_CHECK_PENDING').length, noTransaction: locLatest.filter((x) => !x.source).length,
     byVia: locLatest.reduce((m, x) => add(m, x.via || 'none'), {}), mismatches: locMis.slice(0, 200) },
   streets: { checked: Math.min(streetSource.size, streetsLimit), withTransactions: streetSource.size, mismatch: streetRows.length, ms: Date.now() - t0,
-    byReason: streetRows.reduce((m, x) => add(m, x.reason), {}), mismatches: streetRows.slice(0, 300) },
+    byReason: streetRows.reduce((m, x) => add(m, x.reason), {}), mismatches: streetRows.slice(0, 300),
+    olderThanWindow: { streets: histOnly.length, withHistoryRows: histStreets.size, liveChecked: hsLive.length, liveMatch: hsLive.filter((x) => x.pass).length,
+      liveMismatch: hsLive.filter((x) => !x.pass && !x.error).length, liveErrors: hsLive.filter((x) => x.error).length, rows: hsLive,
+      basis: 'a street whose every event is older than the stored window: its ALL read starts directly under the window with the register\'s street search (the republisher\'s address link) and the GovMap history rows on the street, newest first (SPAN gate); the stored rows cannot show the register\'s older street deals, so the parity is checked live on a sample' },
+    conflictsAttached: { count: printStreetConflicts.length, rows: printStreetConflicts.slice(0, 100), why: 'the GovMap print of a register deal (filed under an unmapped settlement name, placed by parcel) names another street than the deal\'s own address: one event, on the register\'s street (register precedence), the print\'s street kept and the disagreement flagged — like every other print of a register deal, the print is the event\'s evidence, not an event of its own' } },
 };
 
 const out = {
@@ -305,8 +346,10 @@ const out = {
   reachability: reach,
   defensibleKnownSourceEventsNotSurfaced: notSurfaced,
   recovery, streets, parcels, latest,
-  liveCheck: allCheck ? { ranAt: allCheck.ranAt, pass: allCheck.pass, full: (allCheck.full || []).map((x) => ({ id: x.id, pass: x.pass, register: x.register, registerExpected: x.registerExpected, govmapHistoryRows: x.govmapHistoryRows, govmapHistoryAccounted: x.govmapHistoryAccounted, pages: x.pages, oldest: x.oldest, duplicateIds: x.duplicateIds })),
-    partial: (allCheck.partial || []).map((x) => ({ id: x.id, pass: x.pass, first: x.head.firstCounted, oldest: x.tail.oldest })), periods: allCheck.periods, latest: allCheck.latest && allCheck.latest.summary } : null,
+  liveCheck: allCheck ? { ranAt: allCheck.ranAt, pass: allCheck.pass, full: (allCheck.full || []).map((x) => ({ id: x.id, pass: x.pass, register: x.register, registerExpected: x.registerExpected, govmapHistoryRows: x.govmapHistoryRows, govmapHistoryAccounted: x.govmapHistoryAccounted, pages: x.pages, oldest: x.oldest, duplicateIds: x.duplicateIds, error: x.error || null,
+      registerSearchTotal: x.registerSearchTotal != null ? x.registerSearchTotal : null, registerUndated: x.registerUndated != null ? x.registerUndated : null, registerMissing: x.registerMissing != null ? x.registerMissing : null, registerMissingExamples: x.registerMissingExamples || null })),
+    partial: (allCheck.partial || []).map((x) => ({ id: x.id, pass: x.pass, first: x.head.firstCounted, oldest: x.tail.oldest })), periods: allCheck.periods, historyStreets: allCheck.historyStreets || null, latest: allCheck.latest && allCheck.latest.summary,
+    requests: allCheck.requests || null, backoffs: allCheck.backoffs || 0 } : null,
 };
 fs.writeFileSync(path.join(T, 'completeness-audit.json'), JSON.stringify(out, null, 1) + '\n');
 console.log(JSON.stringify({ universe: out.universe.accessibleSourceRows, partitionEqual: govmap.partition.equal, buckets: bucketsAll, notSurfaced, reach: reach.checks.map((c) => [c.id, c.rows, c.notReachable]),

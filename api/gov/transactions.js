@@ -212,6 +212,11 @@ async function unifiedRead(svc, location, filters, scope, g) {
   }
   /* period ALL: the first page of the history (directly under the stored window) comes with the stored events */
   const [live, older] = await Promise.all([liveCall(periodF), all && winFrom ? historyPage({ svc, location, scope, C: minusDays(winFrom, 1), first: true }) : Promise.resolve(null)]);
+  /* a later page of the union is the same list cut further down: when a live part of it did not answer, the list would be shorter than
+     the page before and an event could slide past unseen — the page is refused (retry), never served shifted */
+  if ((Number(filters.offset) || 0) > 0 && ((live && live.error) || (older && older.error))) {
+    return { __status: 503, error: 'source-unavailable', retry: true, reason: (live && live.error) || older.error, transactions: [] };
+  }
   const extra = [...TX.liveEvents(okRows(live), scope, lvl(live)), ...(older ? older.events : [])];
   const olderMore = !!(older && older.more && !older.error);
   const olderCov = older && older.live && older.live.diagnostics ? older.live.diagnostics : null;
@@ -302,7 +307,11 @@ module.exports = async (req, res) => {
     if (g('newOnly') !== '1' && g('unified') !== '0') {
       const scope = TX.resolveScope({ city: location.city, street: location.street, house: location.houseNumber, block: g('block'), parcel: g('parcel'), streetId: g('sid') });
       /* every place that resolves to an official locality — swept, reached only by the GovMap layer, or holding only older deals */
-      if (scope.resolved && scope.kind !== 'unresolved') return res.end(JSON.stringify(await unifiedRead(svc, location, filters, scope, g)));
+      if (scope.resolved && scope.kind !== 'unresolved') {
+        const out = await unifiedRead(svc, location, filters, scope, g);
+        if (out.__status) { res.statusCode = out.__status; delete out.__status; }
+        return res.end(JSON.stringify(out));
+      }
     }
     const out = g('newOnly') === '1'
       ? await svc.getConfirmedNewTransactions(location, filters)

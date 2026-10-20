@@ -20,12 +20,21 @@ process.env.GOV_GOVMAP_DISABLED = '1';
 const GAP_MS = Number(process.env.TXEVENTS_CHECK_GAP_MS || 1000);
 const realFetch = globalThis.fetch;
 let lastAt = 0, requests = 0;
+let backoffs = 0;
 globalThis.fetch = async (url, init) => {
-  const wait = lastAt + GAP_MS - Date.now();
-  lastAt = Math.max(Date.now(), lastAt + GAP_MS);
-  if (wait > 0) await new Promise((ok) => setTimeout(ok, wait));
-  requests++;
-  return realFetch(url, init);
+  for (let attempt = 1; ; attempt++) {
+    const wait = lastAt + GAP_MS - Date.now();
+    lastAt = Math.max(Date.now(), lastAt + GAP_MS);
+    if (wait > 0) await new Promise((ok) => setTimeout(ok, wait));
+    requests++;
+    const r = await realFetch(url, init);
+    /* the republisher's rate limit: wait (a minute, then longer) and ask again — never read as an answer */
+    if (r.status !== 429 || attempt >= 6) return r;
+    backoffs++;
+    const pause = 60000 * attempt;
+    lastAt = Date.now() + pause;
+    await new Promise((ok) => setTimeout(ok, pause));
+  }
 };
 
 const fs = require('node:fs');
@@ -136,6 +145,30 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     out.full.push(row);
     console.log(JSON.stringify({ full: f.id, pass: row.pass, register: row.register, expected: row.registerExpected, hist, acc: row.govmapHistoryAccounted, pages: r.pages, oldest: r.oldest, error: r.error }));
   }
+  /* small places: every deal the register's own search returns for the locality's names (all years) is one of the events shown, by
+     its deal key — and the deals the register dates nowhere are counted apart */
+  for (const st of out.full.filter((x) => x.streetCode == null && x.registerExpected != null && x.registerExpected <= 10000)) {
+    const names = (regByCode.get(st.code) || { names: [] }).names;
+    const want = new Map(); let total = 0, undated = 0; const undatedRows = [];
+    for (const n of names) {
+      for (let offset = 0; ; offset += 200) {
+        const b = await (await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, sort: 'date_desc', limit: '200', offset: String(offset) }), { headers: { Accept: 'application/json' } })).json();
+        const data = Array.isArray(b.data) ? b.data : [];
+        for (const d of data) {
+          total++;
+          if (!d.date) { undated++; if (undatedRows.length < 10) undatedRows.push({ gush: d.gush, helka: d.helka, amount: d.amount, nature: d.nature }); continue; }
+          const k = TX.unitKey(st.code, String(d.date).slice(0, 10), d.gush, d.helka, d.sub_parcel, num(d.amount)); want.set(k, (want.get(k) || 0) + 1);
+        }
+        if (!data.length || offset + data.length >= Number(b.total)) break;
+      }
+    }
+    const shown = new Map();
+    for (const id of st.ids || []) { const m = /^(?:reg|live):(.*?)(?:#\d+)?$/.exec(String(id)); if (m) shown.set(m[1], (shown.get(m[1]) || 0) + 1); }
+    let missing = 0; const examples = [];
+    for (const [k, n] of want) { const d = n - (shown.get(k) || 0); if (d > 0) { missing += d; if (examples.length < 10) examples.push(k); } }
+    Object.assign(st, { registerSearchTotal: total, registerUndated: undated, registerUndatedRows: undatedRows, registerMissing: missing, registerMissingExamples: examples });
+    st.pass = st.pass && missing === 0;
+  }
   /* the street: every deal the register's own street search returns (all years) is one of the events shown — by its deal key */
   {
     const st = out.full.find((x) => x.streetCode != null);
@@ -191,10 +224,45 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     const sc = (b.meta && b.meta.sourceCoverage) || {};
     const row = { place: pl.id, period: p.id, from: per.from, to: per.to, apiTotal: sc.total, storedUnion: U.total, outside, liveAdded: b.meta && b.meta.live ? b.meta.live.added : null,
       newest: rows.find(counted) ? rows.find(counted).date : null, statement: b.meta && b.meta.statement ? b.meta.statement.kind || b.meta.statement.id || null : null };
-    row.pass = outside === 0 && sc.total === U.total;
+    /* the API adds the register's own address-link rows of the period (live) to the stored union — never fewer, never more than it added */
+    row.pass = outside === 0 && sc.total >= U.total && sc.total - U.total <= (row.liveAdded || 0);
     out.periods.push(row);
   }
   console.log(JSON.stringify({ periods: out.periods.length, failed: out.periods.filter((x) => !x.pass).length }));
+
+  /* 2b. LATEST on streets whose every event is older than the stored window: the first event ALL shows = the newest of the register's
+     own street search (the republisher's address link — the only register read of a street before the window) and the GovMap layer's
+     history rows on the street. Two streets per locality, the ones with the most history rows and no event in the stored window. */
+  out.historyStreets = [];
+  const streetName = (c, sc) => (D.byId.get(`st:${c}:${sc}`) || {}).name || null;
+  for (const c of [5000, 3000, 4000, 7900, 70, 6100, 8300, 7100, 1031, 2640]) {
+    if (!D.localities.has(c)) continue;
+    const by = new Map();
+    for (const r of histRows(c)) if (r.streetCode != null) { const x = by.get(r.streetCode) || { n: 0, latest: null }; x.n++; if (!x.latest || r.date > x.latest) x.latest = r.date; by.set(r.streetCode, x); }
+    let picked = 0;
+    for (const [sc, x] of [...by.entries()].sort((a, b) => b[1].n - a[1].n || a[0] - b[0])) {
+      if (picked >= 2) break;
+      const nm = streetName(c, sc); if (!nm) continue;
+      if (TX.query({ streetId: `st:${c}:${sc}`, all: true, unlimited: true, today }).total) continue;
+      picked++;
+      let regLatest = null, regError = null;
+      for (const n of (regByCode.get(c) || { names: [] }).names) {
+        const r = await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, street: nm, sort: 'date_desc', limit: '1' }), { headers: { Accept: 'application/json' } });
+        if (!r.ok) { regError = 'HTTP ' + r.status; continue; }
+        const b = await r.json(); const d = (b.data || [])[0];
+        if (d && d.date) { const dd = String(d.date).slice(0, 10); if (!regLatest || dd > regLatest) regLatest = dd; }
+      }
+      const b = await call({ city: name(c), street: nm, sid: `st:${c}:${sc}`, all: '1', months: '240', limit: '50' });
+      const t = (b.transactions || []).find(counted);
+      const sc0 = (b.meta && b.meta.sourceCoverage) || {};
+      const source = [regLatest, x.latest].filter(Boolean).sort().pop() || null;
+      const row = { street: `st:${c}:${sc}`, name: nm, govmapHistoryRows: x.n, govmapHistoryLatest: x.latest, registerStreetSearchLatest: regLatest, source, visible: t ? t.date : null,
+        error: b.error || sc0.olderError || regError || null };
+      row.pass = !row.error && row.source === row.visible;
+      out.historyStreets.push(row);
+      console.log(JSON.stringify({ historyStreet: row.street, source, visible: row.visible, pass: row.pass, error: row.error }));
+    }
+  }
 
   /* 3. LATEST — every official locality the stored union does not cover, through the page's own ALL read; Israel and every district */
   const latest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'txevents', 'latest.json'), 'utf8'));
@@ -220,8 +288,8 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   const L = out.latest.localities;
   out.latest.summary = { checked: L.length, withTransactions: L.filter((x) => x.source).length, match: L.filter((x) => x.source && x.match).length,
     mismatch: L.filter((x) => x.source && !x.match).length, noTransaction: L.filter((x) => !x.source).length, errors: L.filter((x) => x.error).length };
-  out.requests = requests;
-  out.pass = out.full.every((x) => x.pass) && out.partial.every((x) => x.pass) && out.periods.every((x) => x.pass) && out.latest.summary.mismatch === 0 && out.latest.summary.errors === 0;
+  out.requests = requests; out.backoffs = backoffs;
+  out.pass = out.full.every((x) => x.pass) && out.partial.every((x) => x.pass) && out.periods.every((x) => x.pass) && out.historyStreets.every((x) => x.pass) && out.latest.summary.mismatch === 0 && out.latest.summary.errors === 0;
   fs.writeFileSync(process.env.TXEVENTS_CHECK_OUT || path.join(ROOT, 'data', 'txevents', 'all-check.json'), JSON.stringify(out, null, 1) + '\n');
   console.log(JSON.stringify({ pass: out.pass, latest: out.latest.summary, areas: out.latest.areas, requests }));
 })().catch((e) => { console.error('all-check: ' + (e.stack || e.message)); process.exit(1); });
