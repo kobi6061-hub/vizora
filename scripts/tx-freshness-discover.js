@@ -21,6 +21,11 @@
 //                                                            register row and a GovMap-layer row, every per-deal / version /
 //                                                            history endpoint the spec lists — can any field or endpoint state the
 //                                                            share sold for a GovMap-layer deal?
+//   node scripts/tx-freshness-discover.js --share-history   the copies' HISTORY (20.10.2026): each dataset's version list (dates,
+//                                                            change summaries, downloadable resources), the register archive's
+//                                                            schema / first_seen–last_seen samples / closed-row files, the
+//                                                            republisher's change log, a version diff — can PROPX date when a deal
+//                                                            first appeared in each copy?
 
 'use strict';
 
@@ -410,10 +415,35 @@ async function share() {
   }
 }
 
+
+/* ── --share-history: the copies' own history — versions, archive samples (first_seen / last_seen), the change log, a diff ── */
+const GOVMAP_DS = '4174aac2-c8b2-443e-9425-3773ce47c8da', REGISTER_DS = 'fd06f5ae-8a4f-4120-b275-8a514ad23499';
+async function shareHistory() {
+  const show = async (label, p, n = 6000) => { const r = await overGet(p); out({ kind: 'shareHistory', label, asked: p, status: r.status, keys: r.json && !Array.isArray(r.json) ? Object.keys(r.json) : null, body: trim(r.json || r.text, n) }); return r; };
+  for (const [name, ds] of [['govmap', GOVMAP_DS], ['register', REGISTER_DS]]) {
+    await show(name + ':dataset', `/api/v1/datasets/${ds}`, 4000);
+    const v = await show(name + ':versions', `/api/v1/datasets/${ds}/versions`, 12000);
+    const vs = Array.isArray(v.json) ? v.json : [];
+    out({ kind: 'shareHistory', label: name + ':versions-brief', n: vs.length, versions: vs.map((x) => ({ n: x.version_number, id: x.id, detected: x.detected_at, modified: x.metadata_modified,
+      change: trim(x.change_summary, 600), resources: (x.resources || []).map((r) => ({ name: r.name, storage: r.storage, format: r.format, url: r.download_url })) })) });
+    const ids = vs.map((x) => x.id).filter(Boolean);
+    if (ids.length >= 2) await show(name + ':diff-latest-two', `/api/diff?from=${encodeURIComponent(ids[1])}&to=${encodeURIComponent(ids[0])}`, 6000);
+    await show(name + ':public', `/api/datasets/public/${ds}`, 3000);
+    await show(name + ':append-schema', `/api/append/${ds}/schema`, 4000);
+    await show(name + ':append-rows', `/api/append/${ds}/rows?limit=3`, 4000);
+    await show(name + ':append-history-files', `/api/append/${ds}/history/files`, 4000);
+  }
+  await show('register:log', '/api/deals/log', 8000);
+  /* the register archive's first_seen spread: one scrape or several? (the datastore's documented read-only SQL) */
+  await show('register:first-seen', `/api/append/${REGISTER_DS}/datastore_search_sql?sql=${encodeURIComponent('SELECT first_seen, last_seen, count(*) AS n FROM t GROUP BY 1, 2 ORDER BY 1 DESC LIMIT 20')}`, 4000);
+  await show('register:datastore-sample', `/api/append/${REGISTER_DS}/datastore_search?limit=2&include_total=true`, 4000);
+}
+
 (async () => {
   try {
     if (args.includes('--official')) await official();
     else if (args.includes('--over')) await over();
+    else if (args.includes('--share-history')) await shareHistory();
     else if (args.includes('--share')) await share();
     else if (args.includes('--recent-probe')) await recentProbe(opt('--from') || '2026-07-03');
     else if (args.includes('--compare')) await compare(String(opt('--compare') || '').split('|').filter(Boolean), opt('--from'));
