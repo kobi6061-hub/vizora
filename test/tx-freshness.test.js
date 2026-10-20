@@ -217,7 +217,7 @@ t('PERIOD FILTERS: last 30 days · last 90 days (by days) · 6 · 12 · 24 month
   assert.match(page, /const TX_PERIODS=t=>\[\["d30",t\.txP30d\],\["d90",t\.txP90d\],\["m6",t\.txP6\],\["m12",t\.txP12\],\["m24",t\.txP24\],\["m240",t\.txPAll\]\];/);
   assert.match(page, /txP30d:"Last 30 days", txP90d:"Last 90 days"/);
   const prov = fs.readFileSync(path.join(ROOT, 'lib', 'gov', 'providers', 'overDeals.js'), 'utf8');
-  assert.match(prov, /const dateFrom = days \? new Date\(this\.clock\(\) - days \* 86400e3\)/);
+  assert.match(prov, /const dateFrom = filters\.dateFrom \? String\(filters\.dateFrom\)\.slice\(0, 10\) : days \? new Date\(this\.clock\(\) - days \* 86400e3\)/, 'an explicit lower day (the history pager) first, else days as days');
   assert.match(fs.readFileSync(path.join(ROOT, 'api', 'gov', 'transactions.js'), 'utf8'), /days: num\('days'\) \|\| undefined/);
 });
 t('REAL DEAL DETAIL on the street page: date · house · rooms · m² · price · ₪/m² · build year · property type · block/parcel/sub · source — "—" when missing, never modelled', () => {

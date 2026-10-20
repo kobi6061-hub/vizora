@@ -196,6 +196,24 @@ async function build() {
   }
   fs.rmSync(tmp, { recursive: true, force: true });
 
+  /* 2b · the street-string audit over the stored window's rows too (every row of the file from the register's first day to the load
+     day): the layer's published street string in the official directory of its locality, beside the layer's own street code */
+  const auditW = { strings: new Map(), via: {}, codeAgreement: {} };
+  await KIT.eachGz(path.join(dir, 'window.jsonl.gz'), (raw) => {
+    const o = KIT.apiRow(raw);
+    if (!o.deal_date || o.deal_date < regWin.from || o.deal_date > loadDay) return;
+    const p = o.settlement ? K.place(o.settlement) : null;
+    const code = K.official(o.settlement_id) != null ? K.official(o.settlement_id) : p && p.code != null ? p.code : null;
+    if (!o.street) { tallyInto(auditW.via, 'no-street'); return; }
+    if (code == null) { tallyInto(auditW.via, 'no-locality'); return; }
+    const key = `${code}|${o.street}`;
+    let a = auditW.strings.get(key);
+    if (!a) { const z = M.resolveStreet(LI(code), o.street); a = { via: !z ? 'unresolved' : z.ambiguous ? 'ambiguous' : z.via, code: z && z.id ? Number(String(z.id).split(':')[2]) : null, rows: 0 }; auditW.strings.set(key, a); }
+    a.rows++; tallyInto(auditW.via, a.via);
+    const sc = o.street_code != null && o.street_code !== '' ? Number(o.street_code) : null;
+    tallyInto(auditW.codeAgreement, sc == null ? 'no-source-code' : !(D.byId && D.byId.has(`st:${code}:${sc}`)) ? 'source-code-not-in-directory' : a.code == null ? 'name-unresolved' : a.code === sc ? 'agree' : 'differ');
+  });
+
   /* 3 · invalid dates (the extract's own file) */
   const invalid = [];
   if (fs.existsSync(path.join(dir, 'invalid.jsonl.gz'))) await KIT.eachGz(path.join(dir, 'invalid.jsonl.gz'), (raw) => { const o = KIT.apiRow(raw); invalid.push([o.objectid, o.deal_id, o.deal_date || null, o.deal_amount, o.settlement || null, o.street || null, o.house_num || null, o.gush, o.parcel, o.sub_parcel, o.property_type || null, o.deal_nature || null, 'no date / a placeholder date before 1990']); });
@@ -210,7 +228,10 @@ async function build() {
     period: { to: regWin.from, before: `< ${regWin.from}` }, historyRows, contextRows: ctxRows, invalid: invalid.length,
     classes, perYear, shown: shownTotal, recovery: { rows: Object.values(recState).reduce((a, b) => a + b, 0), byState: recState, byBasis: recBasis, settlementIdAgreement: K.settlementIdAgreement },
     unplaced: unplaced.length, streetBasis,
-    streetAudit: { distinctStrings: strings.length, rowsByVia: audit.via, stringsByVia: strings.reduce((m, a) => tallyInto(m, a.via), {}), codeAgreement: audit.codeAgreement },
+    streetAudit: { distinctStrings: strings.length, rowsByVia: audit.via, stringsByVia: strings.reduce((m, a) => tallyInto(m, a.via), {}), codeAgreement: audit.codeAgreement,
+      window: { distinctStrings: auditW.strings.size, rowsByVia: auditW.via, stringsByVia: [...auditW.strings.values()].reduce((m, a) => tallyInto(m, a.via), {}), codeAgreement: auditW.codeAgreement },
+      vias: { 'official-name': 'the official street name', 'official-synonym': 'an official synonym (the directory\'s synonym file)', 'spelling-variant': 'a deterministic spelling variant of an official name',
+        'normalized-name': 'a normalized name (type words / punctuation dropped) — POSSIBLE, never certain', ambiguous: 'several official streets carry the spelling', unresolved: 'no official street carries it' } },
     localities, streets, files,
   };
   fs.writeFileSync(path.join(OUT, 'unplaced.json.gz'), zlib.gzipSync(JSON.stringify({ schema: 1, version: version && version.id, columns: UCOLS, rows: unplaced }), { level: 9 }));

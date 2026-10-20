@@ -3,7 +3,8 @@
  "auditedAt": "2026-10-20",
  "runs": {
   "inventory": 39437378661,
-  "caseBefore": 39437364661
+  "caseBefore": 39437364661,
+  "historyProbe": 39451852042
  },
  "method": "GET only from a GitHub runner, one request at a time with a pause; a channel behind identification / CAPTCHA / bot screens is recorded, never bypassed; paid or key-gated services are listed, never called (scripts/tx-sources-discover.js).",
  "classes": [
@@ -37,7 +38,12 @@
    "defects": null,
    "limitation": "identification screen against automated reading — not bypassed",
    "readByPropx": false,
-   "readAs": "its republication by over.org.il (over:deals-register)"
+   "readAs": "its republication by over.org.il (over:deals-register)",
+   "followUp": {
+    "category": "UNREACHABLE",
+    "why": "identification screen; fetch failed from the runner — never bypassed",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "official:nadlan.gov.il",
@@ -57,7 +63,12 @@
    "fields": "deals by address",
    "defects": null,
    "limitation": "reCAPTCHA Enterprise — not bypassed",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "UNREACHABLE",
+    "why": "reCAPTCHA Enterprise on the deal endpoints — never bypassed",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "official:gov.il-service",
@@ -77,7 +88,12 @@
    "fields": null,
    "defects": null,
    "limitation": "bot screen — not bypassed",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "UNREACHABLE",
+    "why": "Cloudflare bot screen; a service page linking to the Tax Authority site, not a dataset",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "official:govmap-layer16",
@@ -98,7 +114,12 @@
    "defects": "the layer holds > 500 deals at 27 points (the republisher's measured warning)",
    "limitation": "edge refuses — not bypassed",
    "readByPropx": false,
-   "readAs": "its republication by over.org.il (over:govmap-recent, over:govmap-national)"
+   "readAs": "its republication by over.org.il (over:govmap-recent, over:govmap-national)",
+   "followUp": {
+    "category": "UNREACHABLE",
+    "why": "CloudFront 403 to the runner and to PROPX servers — read through its republication (over:govmap-layer)",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "official:data.gov.il",
@@ -118,7 +139,12 @@
    "fields": null,
    "defects": null,
    "limitation": "no deal-level transaction dataset is published",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "NO DEAL DATASET",
+    "why": "0 packages for every transaction query",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "over:deals-register",
@@ -140,7 +166,12 @@
    "defects": "no deal id; one scrape (versions v1–v5, 18–19.09.2026); Jerusalem blocks missing (publisher's own finding)",
    "limitation": "a snapshot that stopped on 19.09.2026",
    "readByPropx": true,
-   "readAs": "the 36-month sweep (data/streets/evidence) + the transactions section's live search"
+   "readAs": "the 36-month sweep (data/streets/evidence) + the transactions section's live search",
+   "followUp": {
+    "category": "READ",
+    "why": "the register copy: 36-month sweep stored + the live search (now date-paged to 1998 for ALL)",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "over:govmap-layer",
@@ -162,7 +193,12 @@
    "defects": "a second untyped deal-id series one day earlier; future dates up to 2048; amounts truncated to ₪1,000; its own sub-parcel numbering; rows without a settlement; no ownership share",
    "limitation": "no share sold: prices never used in statistics",
    "readByPropx": true,
-   "readAs": "the recent window (lib/recent) + the whole file (scripts/txevents-national.js)"
+   "readAs": "the recent window (lib/recent) + the whole file (scripts/txevents-national.js)",
+   "followUp": {
+    "category": "READ",
+    "why": "the layer copy: recent window (API) + the whole file (all years since the closure P0)",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "over:govmap-layer:file",
@@ -183,7 +219,12 @@
    "defects": "as the layer",
    "limitation": null,
    "readByPropx": true,
-   "readAs": "the national missed-deal detector"
+   "readAs": "the national missed-deal detector",
+   "followUp": {
+    "category": "READ",
+    "why": "the version GeoPackage — every row classified (window + history + unplaced + invalid)",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "over:register:files",
@@ -203,7 +244,12 @@
    "fields": "as the register",
    "defects": "the same copy as the API",
    "limitation": "adds nothing the API sweep does not hold for the window; older history is read through the live search",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "DUPLICATE / LOWER-VALUE SOURCE",
+    "why": "51 per-locality CSV files only (probe 20.10.2026, run 39451852042), some from an earlier July scrape — a partial, older subset of the register copy the live search already serves",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "over:nadlan-crosswalk",
@@ -224,7 +270,12 @@
    "defects": "many parcels have no linked address",
    "limitation": "the same register rows — not a third source of deals",
    "readByPropx": true,
-   "readAs": "the parcel addresses inside the register sweep"
+   "readAs": "the parcel addresses inside the register sweep",
+   "followUp": {
+    "category": "READ (as part of the register)",
+    "why": "the register's own address link — not a separate source of deals",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "odata:nadlan",
@@ -244,7 +295,12 @@
    "fields": "deal date, amount, nature, rooms, floor, building year, block-parcel-sub, city, street, nadlan.gov.il key",
    "defects": "stale; older than PROPX's window start 18.09.2023 except 3½ months",
    "limitation": "adds no recent deal",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "STALE SOURCE",
+    "why": "latest deal 31.12.2023 — every deal it holds is in the register copy's history",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "odata:register-versions",
@@ -264,7 +320,12 @@
    "fields": null,
    "defects": "no resources",
    "limitation": "a pointer only",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "DUPLICATE / LOWER-VALUE SOURCE",
+    "why": "a pointer with no resources",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "municipal:gis",
@@ -284,7 +345,12 @@
    "fields": null,
    "defects": null,
    "limitation": "no municipal transaction layer found",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "NO DEAL LAYER",
+    "why": "Tel Aviv: 9 services, none deal-like; Jerusalem 403; Haifa 404",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "commercial:apify-govmap",
@@ -304,7 +370,12 @@
    "fields": null,
    "defects": null,
    "limitation": "reading GovMap / nadlan.gov.il through a paid third party would route around the refusals PROPX itself receives — not used",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "REQUIRES COMMERCIAL ACCESS",
+    "why": "paid third-party actors over GovMap's deals API (swerve/nadlan-deals) and nadlan.gov.il's open static layer (swerve/nadlan-gov-deals); could improve FRESHNESS (GovMap live vs the 08.10.2026 copy) — but they reach a channel that refuses PROPX itself; terms and lawfulness need the owner's and counsel's review; NOT integrated, NOT purchased",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "commercial:byndbiz",
@@ -317,7 +388,12 @@
    "authentication": "commercial",
    "reachable": "not called",
    "limitation": "no public API or terms for machine use",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "REQUIRES COMMERCIAL ACCESS",
+    "why": "commercial database; no public API or terms for machine use; its sources and freshness are not documented — no material gain established",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "listings:madlan-yad2",
@@ -330,7 +406,12 @@
    "authentication": "terms of use",
    "reachable": "not called",
    "limitation": "asking prices of listings, not transactions — never transaction evidence",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "ASKING-PRICE SOURCE, NOT DEAL SOURCE",
+    "why": "listings — never transaction evidence",
+    "at": "2026-10-20"
+   }
   },
   {
    "id": "user:document",
@@ -343,7 +424,12 @@
    "authentication": null,
    "reachable": null,
    "limitation": "PROPX's USER DOCUMENT channel exists for due diligence (lib/dd/userdocs.js); not a transaction-event source",
-   "readByPropx": false
+   "readByPropx": false,
+   "followUp": {
+    "category": "USER-SUPPLIED DOCUMENT",
+    "why": "the due-diligence USER DOCUMENT channel; not a transaction-event feed",
+    "at": "2026-10-20"
+   }
   }
  ],
  "regressionCase": {
@@ -392,5 +478,35 @@
     "an empty 30 / 90-day period said nothing (no statement)"
    ]
   }
+ },
+ "followUp": {
+  "at": "2026-10-20",
+  "note": "closure P0 — the 17 sources revisited once; no restriction bypassed; nothing purchased or subscribed",
+  "categories": [
+   "READ",
+   "UNREACHABLE",
+   "REQUIRES COMMERCIAL ACCESS",
+   "ASKING-PRICE SOURCE, NOT DEAL SOURCE",
+   "STALE SOURCE",
+   "DUPLICATE / LOWER-VALUE SOURCE",
+   "NO DEAL DATASET",
+   "NO DEAL LAYER",
+   "USER-SUPPLIED DOCUMENT"
+  ],
+  "commercial": {
+   "candidates": [
+    "commercial:apify-govmap (+ the \"Israel Real Estate MCP Server\", priced per use, $20 / 1,000 calls, sourced from GovMap)",
+    "commercial:byndbiz"
+   ],
+   "materialGain": "freshness only: a live GovMap read would carry deals the 08.10.2026 copy predates; completeness of history is not improved (PROPX already reads the whole layer file and the register back to 1998)",
+   "decision": "not integrated — requires the owner's approval and a terms / lawfulness review: these services reach channels that refuse PROPX's own requests",
+   "evidence": [
+    "https://apify.com/swerve/nadlan-deals",
+    "https://apify.com/swerve/nadlan-gov-deals",
+    "https://apify.com/swerve/israel-real-estate-mcp",
+    "https://www.gov.il/en/service/real_estate_information"
+   ]
+  },
+  "officialBulk": "no official licensed bulk channel was found: the Tax Authority service is free, one lookup at a time (gov.il service page)"
  }
 }

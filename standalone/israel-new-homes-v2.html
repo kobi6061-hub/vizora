@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="2fb7b18797a0e97073b62e26f85b51bd4bed2b1a2d91bcad5bb9f109b6c1629a">
+<meta name="propx-source-sha256" content="308ff8fdf18703d2d4ddb2d3017753b104b3fbe402cd5b294c4b4e6bbe0947d3">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -7689,7 +7689,7 @@ const txState={status:"idle",rows:[],curated:[],scope:null,meta:null,
 /* the period filter: last 30 / 90 days by DAYS, then 6 / 12 / 24 months, then all available (P0 freshness audit) */
 const TX_PERIODS=t=>[["d30",t.txP30d],["d90",t.txP90d],["m6",t.txP6],["m12",t.txP12],["m24",t.txP24],["m240",t.txPAll]];
 const txPerKey=()=>txState.days?"d"+txState.days:"m"+txState.months;
-const txPerParams=p=>{if(txState.days){p.set("days",String(txState.days));p.delete("months")}else p.set("months",String(txState.months));return p};
+const txPerParams=p=>{if(txState.days){p.set("days",String(txState.days));p.delete("months")}else p.set("months",String(txState.months));if(!txState.days&&txState.months>=240)p.set("all","1");return p};   /* ALL = every deal either copy holds, back to 1998 — never a 20-year bound */
 
 /* which real place the current view is asking about */
 function txQueryFor(){
@@ -7701,33 +7701,39 @@ function txQueryFor(){
   const l=LOC[state.locId];if(!l)return null;
   const c=l.type==="city"?l:cityOf(l);
   if(c)return{city:c.he,label:l.type==="city"?c.he:`${l.he} · ${c.he}`};
-  return{city:null,district:l.he,did:l.type==="district"?l.id:null,country:l.type==="country",label:l.he,en:l.en};      /* district/country view */
+  return{city:null,district:l.he,did:l.type==="district"?l.id:null,country:l.type==="country",area:l.type==="district"?l.id:"il",label:l.he,en:l.en};      /* district/country view */
 }
 
 /* a district / the country: the newest transaction events of the area (lib/txevents latest index — every source), the period's exact
    count from the per-day tally; the full list is per locality */
 async function txFetchArea(q,force){
-  const key=["area",q.did||"il",txPerKey()].join("|");
+  const key=["area",q.area,txPerKey()].join("|");
   if(!force&&key===txState.key&&txState.status!=="idle")return;
-  txState.key=key;txState.status="loading";txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];txState.more=false;txState.olderMore=false;
+  txState.key=key;txState.status="loading";txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];txState.more=false;txState.olderMore=false;txState.olderErr=null;
   renderTx();
   try{
-    const per=txState.days?"&days="+txState.days:"&months="+txState.months;
-    const r=await fetch("/api/intel?view=txLatest&limit=500"+per+(q.did?"&district="+encodeURIComponent(q.did):""),{cache:"no-store"});
+    /* every event of the area and period, page by page: the register's national search (its rows of the area), the GovMap layer's
+       events of the same days and — Israel — the unplaced events; a page is a list, never a statistic of the area */
+    const r=await fetch("/api/gov/transactions?"+txPerParams(new URLSearchParams({area:q.area,limit:"120",_:String(Date.now())})),{cache:"no-store"});
     if(!r.ok)throw new Error("HTTP "+r.status);
     const d=await r.json();
     if(txState.key!==key)return;
-    const P=d.period||{},from=P.from||null,to=P.to||new Date().toISOString().slice(0,10);
-    const top=((q.did?d.district&&d.district.top:d.national&&d.national.top)||[]).filter(e=>(!from||e.date>from)&&e.date<=to);
-    const inPer=d.statement&&d.statement.n!=null?d.statement.n:top.length;
-    txState.rows=top.map(e=>({...e,txId:e.id,sourceFamily:"OFFICIAL_GOVERNMENT",deliveredVia:"over.org.il",source:e.sourceId==="over:deals-register"?"register":"govmap",
-      propertyClass:e.kind==="DWELLING"?"residential":e.kind==="TYPE_NOT_STATED"?"type-not-stated":"commercial",psmShown:false,pricePerSqm:null,inStatistics:false,geo:{match:"LOCALITY"},newness:"unknown"}));   /* the newest rows of an area are a list, never a statistic of the area */
-    const bySrc=txState.rows.reduce((m,e)=>((m[e.sourceId]=(m[e.sourceId]||0)+1),m),{});
+    const cv=(d.meta&&d.meta.sourceCoverage)||{};
+    let rows=(d.transactions||[]).map(e=>({...e,txId:e.id})),stored=false;
+    if(cv.olderError&&!rows.length){
+      /* the register's national search did not answer: the stored newest events of the area, labelled as such */
+      const per=txState.days?"&days="+txState.days:"&months="+txState.months;
+      const s2=await(await fetch("/api/intel?view=txLatest&limit=500"+per+(q.did?"&district="+encodeURIComponent(q.did):""),{cache:"no-store"})).json();
+      if(txState.key!==key)return;
+      const P=s2.period||{},from=P.from||null,to=P.to||new Date().toISOString().slice(0,10);
+      rows=((q.did?s2.district&&s2.district.top:s2.national&&s2.national.top)||[]).filter(e=>(!from||e.date>from)&&e.date<=to).map(e=>({...e,txId:e.id,sourceFamily:"OFFICIAL_GOVERNMENT",deliveredVia:"over.org.il",source:e.sourceId==="over:deals-register"?"register":"govmap",
+        propertyClass:e.kind==="DWELLING"?"residential":e.kind==="TYPE_NOT_STATED"?"type-not-stated":"commercial",psmShown:false,pricePerSqm:null,inStatistics:false,geo:{match:"LOCALITY"},newness:"unknown"}));   /* the newest rows of an area are a list, never a statistic of the area */
+      stored=true;
+    }
+    txState.rows=rows;txState.olderMore=!stored&&!!cv.olderMore;txState.olderNext=cv.olderNext||0;txState.olderErr=cv.olderError||null;
     txState.scope={level:"area",description:q.label};
-    txState.meta={unified:true,area:true,recency:d.recency,coverage:d.coverage,counts:{events:inPer,bySourceEvents:bySrc},
-      statement:d.statement||{kind:"COVERAGE_INCOMPLETE",n:null,text:["RECENT TRANSACTION COVERAGE INCOMPLETE","כיסוי העסקאות האחרונות חלקי"]},
-      sourceCoverage:{kind:"unified",offset:0,limit:txState.rows.length,total:inPer,more:false},areaShown:txState.rows.length,areaTotal:inPer,areaName:{he:q.label,en:q.en||q.label},deliveredVia:"over.org.il"};
-    txState.status=txState.rows.length?"ok":"empty";txState.err=null;
+    txState.meta={...(d.meta||{}),unified:true,area:true,areaShown:rows.length,areaTotal:cv.areaWindowTotal,areaName:{he:q.label,en:q.en||q.label},storedFallback:stored,deliveredVia:"over.org.il"};
+    txState.status=rows.length?"ok":"empty";txState.err=null;
   }catch(e){if(txState.key!==key)return;txState.status="error";txState.err=e.message;txState.rows=[]}
   renderTx();
 }
@@ -7762,7 +7768,7 @@ async function txFetch(force){
     const cv=d.meta&&d.meta.sourceCoverage;          /* the register pages / the unified events page: where the next page starts */
     txState.more=!!(cv&&(cv.kind==="register-search"||cv.kind==="unified")&&cv.more);
     txState.nextOffset=cv&&(cv.kind==="register-search"||cv.kind==="unified")?(cv.offset||0)+(cv.limit||0):0;
-    txState.olderMore=!!(cv&&cv.kind==="unified"&&cv.olderMore);txState.olderNext=cv&&cv.olderNext||0;
+    txState.olderMore=!!(cv&&cv.kind==="unified"&&cv.olderMore);txState.olderNext=cv&&cv.olderNext||0;txState.olderErr=cv&&cv.olderError||null;
     txState.status=txState.rows.length?"ok":"empty";txState.err=null;
     const res=txResidential();
     txDebug={officialRawRows:(d.transactions||[]).length,residentialRows:res.length,
@@ -7785,13 +7791,14 @@ async function txFetch(force){
 const txRowKey=t=>t.id||[t.date,t.price,t.block,t.parcel,t.subParcel,t.dealType,txVal(t.areaSqm)].join("|");
 async function txMore(){
   const q=txQueryFor();
-  if(!q||!q.city||!txState.scope||txState.moreBusy||!txState.more&&!txState.olderMore&&!txState.moreErr)return;
+  if(!q||!(q.city||q.area)||!txState.scope||txState.moreBusy||!txState.more&&!txState.olderMore&&!txState.moreErr)return;
   const key=txState.key;
   txState.moreBusy=true;txState.moreErr=null;renderTx();
   const uni=!!(txState.meta&&txState.meta.unified);
   /* the unified read pages its events, then (period ALL) the register's history before PROPX's stored window */
   const older=uni&&!txState.more&&txState.olderMore;
-  const p=txPerParams(new URLSearchParams(older?{city:q.city,limit:"120",older:String(txState.olderNext),_:String(Date.now())}
+  const p=txPerParams(new URLSearchParams(q.area?{area:q.area,limit:"120",older:String(txState.olderNext),_:String(Date.now())}
+    :older?{city:q.city,limit:"120",older:String(txState.olderNext),_:String(Date.now())}
     :uni?{city:q.city,limit:"120",offset:String(txState.nextOffset),_:String(Date.now())}
     :{city:q.city,limit:"120",
     offset:String(txState.nextOffset),level:txState.scope.level,_:String(Date.now())}));
@@ -7807,7 +7814,8 @@ async function txMore(){
     const add=(d.transactions||[]).filter(t=>(uni||t.price)&&t.sourceFamily==="OFFICIAL_GOVERNMENT"&&!seen.has(txRowKey(t)));
     txState.rows=txState.rows.concat(add).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     const cv=d.meta&&d.meta.sourceCoverage;
-    if(cv&&cv.kind==="unified-older"){txState.olderMore=!!(cv.olderMore&&(d.transactions||[]).length);txState.olderNext=cv.olderNext||0}
+    /* a history page advances by DATE: a page whose rows were all folded into deals already shown is still a page — the next one starts lower */
+    if(cv&&cv.kind==="unified-older"){txState.olderMore=!!cv.olderMore;txState.olderNext=cv.olderNext||0;txState.olderErr=cv.olderError||null}
     else{
       txState.more=!!(cv&&(cv.kind==="register-search"||cv.kind==="unified")&&cv.more&&(d.transactions||[]).length);
       if(cv&&(cv.kind==="register-search"||cv.kind==="unified"))txState.nextOffset=(cv.offset||0)+(cv.limit||0);
@@ -7896,7 +7904,7 @@ const TXE={he:{
     live:a=>a?"":"החיפוש החי במאגר לא ענה — מוצגות העסקאות שבידי PROPX",
     prov:"עסקאות שנרשמו · מאגר רשות המסים + שכבת העסקאות של GovMap — שניהם פרסום מחדש עצמאי (over.org.il), לא ערוץ ממשלתי",
     statsNote:"החציון ו-₪ למ״ר נשענים רק על עסקאות \"בסטטיסטיקת המחיר\" (עסקת דירה שלמה במרשם, ≥ ₪100,000, ששיוכה למקום ודאי).",
-    older:(n)=>`היסטוריה ישנה יותר במרשם${n!=null?`: ${fmtInt(n)} עסקאות`:""}`,area:(d,a,b)=>`${d}: <b>${fmtInt(b)}</b> עסקאות בתקופה בכל המקורות — מוצגות ${fmtInt(a)} החדשות ביותר; לרשימה המלאה בחרו יישוב`,covU:(a,b)=>`נטענו ${a} מתוך ${b} שורות בתקופה`},
+    older:(n)=>`היסטוריה ישנה יותר במרשם${n!=null?`: ${fmtInt(n)} עסקאות`:""}`,area:(d,a,b)=>`${d}: ${b!=null?`<b>${fmtInt(b)}</b> עסקאות בתקופה בחלון השמור · `:""}נטענו ${fmtInt(a)}, מהחדשה לישנה — "טען עוד" ממשיך לעסקאות ישנות יותר בכל המקורות`,hist:(d,n)=>`לפני ${d}: עסקאות המרשם עצמו (נקראות חי, עמוד אחר עמוד) ו-${fmtInt(n)} שורות של שכבת GovMap — כל שורה שהיא עסקת מרשם מאוחדת איתה`,olderErr:"החיפוש החי במרשם לא ענה — ההיסטוריה הישנה לא נטענה; נסו שוב",covU:(a,b)=>`נטענו ${a} מתוך ${b} שורות בתקופה`},
   en:{
     st:{PRICED_IN_STATISTICS:"PRICED IN STATISTICS",VERIFIED_DWELLING:"VERIFIED DWELLING",RECORDED_EVENT:"RECORDED EVENT",LIMITED_SHARE_NOT_STATED:"LIMITED — SHARE NOT STATED",CONFLICT:"SOURCE CONFLICT",POSSIBLE_DUPLICATE:"POSSIBLE DUPLICATE"},
     src:{"over:deals-register":"Tax Authority register · copy","over:govmap-recent":"GovMap deals layer · copy","over:govmap-national":"GovMap deals layer · full file","register-live":"Tax Authority register · live search"},
@@ -7914,7 +7922,7 @@ const TXE={he:{
     live:a=>a?"":"The register's live search did not answer — showing the events PROPX holds",
     prov:"Recorded transactions · Tax Authority register + GovMap deals layer — both independent republications (over.org.il), not a government channel",
     statsNote:"Median and ₪/m² read only rows PRICED IN STATISTICS (a whole-dwelling register deal, ≥ ₪100,000, placed with certainty).",
-    older:(n)=>`older register history${n!=null?`: ${fmtInt(n)} deals`:""}`,area:(d,a,b)=>`${d}: <b>${fmtInt(b)}</b> transaction events in the period across every source — the newest ${fmtInt(a)} shown; choose a locality for the full list`,covU:(a,b)=>`${a} of ${b} rows in the period loaded`}};
+    older:(n)=>`older register history${n!=null?`: ${fmtInt(n)} deals`:""}`,area:(d,a,b)=>`${d}: ${b!=null?`<b>${fmtInt(b)}</b> transaction events in the period in the stored window · `:""}${fmtInt(a)} loaded, newest first — "load more" continues to older events of every source`,hist:(d,n)=>`before ${d}: the register's own deals (read live, page by page) and ${fmtInt(n)} GovMap-layer rows — each row that is a register deal is folded into it`,olderErr:"The register's live search did not answer — the older history was not loaded; try again",covU:(a,b)=>`${a} of ${b} rows in the period loaded`}};
 const txeT=()=>TXE[state.lang==="en"?"en":"he"];
 const txeDmy=v=>v?String(v).slice(0,10).split("-").reverse().join("."):"—";
 /** the recency summary + the coverage line + (with rows) the uncovered tail of the period */
@@ -7994,7 +8002,7 @@ function renderTx(){
   const reg=!!(covR&&covR.kind==="register-search");               /* rows from the register search (over.org.il) */
   const regTot=reg?fmtInt(covR.totalReported)+(covR.totalCapped?"+":""):"";
   const uniM=!!(M&&M.unified),Cn=uniM?M.counts||{}:null;
-  const scopeTxt=!sc?"":uniM&&M.area?txeT().area(calcEsc(M.areaName?(state.lang==="en"?M.areaName.en:M.areaName.he):sc.description),M.areaShown||0,M.areaTotal||0):uniM?((B)=>txeT().scope(calcEsc(sc.description),Cn.events||0,(B["over:deals-register"]||0)+(B["register-live"]||0),(B["over:govmap-recent"]||0)+(B["over:govmap-national"]||0),Cn.recovered||0,Cn.possibleDuplicates||0,Cn.conflicts||0))(Cn.bySourceEvents||{}):reg?(sc.level==="building"?t.txRegBuilding(calcEsc(sc.description),regTot)
+  const scopeTxt=!sc?"":uniM&&M.area?txeT().area(calcEsc(M.areaName?(state.lang==="en"?M.areaName.en:M.areaName.he):sc.description),txState.rows.length,M.areaTotal!=null?M.areaTotal:null):uniM?((B)=>txeT().scope(calcEsc(sc.description),Cn.events||0,(B["over:deals-register"]||0)+(B["register-live"]||0),(B["over:govmap-recent"]||0)+(B["over:govmap-national"]||0),Cn.recovered||0,Cn.possibleDuplicates||0,Cn.conflicts||0))(Cn.bySourceEvents||{}):reg?(sc.level==="building"?t.txRegBuilding(calcEsc(sc.description),regTot)
       :sc.level==="street"?t.txRegStreet(calcEsc(sc.description),regTot,covR.addressLink&&covR.addressLink.addresses?covR.addressLink:null)
       :t.txRegLoc(calcEsc(sc.description),regTot)+(q&&q.street&&sc.level==="locality"?" · "+t.txRegFellBack(calcEsc(q.label)):""))
     :sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
@@ -8037,7 +8045,10 @@ function renderTx(){
   const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
   const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
   /* the unified read: the union's recency summary + the period's statement first; the live register path keeps its own strip */
-  if(uniM)el("txFresh").innerHTML=`${txRecencyHTML(M)}${txStatementHTML(M,hasAny)}${txFreshHTML(M.freshness)}${pricedU.length?`<span class="note">${txeT().statsNote}</span>`:""}`;
+  /* period ALL: what the history before the stored window holds and how it is read (never a cut) */
+  const HC=M&&M.sourceCoverage&&M.sourceCoverage.history;
+  const histTxt=uniM&&HC&&HC.before?`<span class="note" data-txe-history>${txeT().hist(txeDmy(HC.before),HC.govmapRows||0)}</span>`:"";
+  if(uniM)el("txFresh").innerHTML=`${txRecencyHTML(M)}${txStatementHTML(M,hasAny)}${histTxt}${txState.olderErr?`<span class="tx-more-err" data-txe-older-err>${txeT().olderErr}</span>`:""}${txFreshHTML(M.freshness)}${pricedU.length?`<span class="note">${txeT().statsNote}</span>`:""}`;
   else el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`${txFreshHTML(M.freshness)}<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
     :`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
   if(thin)el("txWarn").textContent=streetLevel

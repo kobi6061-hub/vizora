@@ -21,39 +21,155 @@ const FRESH = require('../../lib/gov/freshness');
 const TX = require('../../lib/txevents');
 const EV = require('../../lib/streets/evidence');
 
+const HIST = require('../../lib/txevents/history');
+
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error(`no answer within ${ms} ms`)), ms))]);
 const minusDays = (d, k) => new Date(Date.parse(String(d).slice(0, 10) + 'T00:00:00Z') - k * 864e5).toISOString().slice(0, 10);
+const ISO = /^\d{4}-\d{2}-\d{2}$/;
+const okRows = (x) => (x && !x.error && Array.isArray(x.transactions) ? x.transactions : []);
+
+/**
+ * ONE PAGE OF A PLACE'S HISTORY, newest first (lib/txevents/history.js): the register copy's live search for the place, paged by DATE
+ * (the search's offset stops at 100,000 rows — a date never does), and the GovMap layer's rows of the same place and dates, each folded
+ * into the register deal it repeats. The page shows the register's rows dated in (L, C] and the layer's in (L + 1, C + 1]; two reference
+ * days above C are read so a layer row is compared with every register row it could repeat. A page that cannot advance past one day
+ * (more than a page of deals on day C) reads that day whole.
+ * @param o { svc, location, scope, C (YYYY-MM-DD, inclusive), first (the page directly under the stored window — its reference is the
+ *            stored window itself), dateFrom? (a period's first day), area? { codes, unplaced } }
+ */
+async function historyPage(o) {
+  const { svc, location, scope, C, first } = o;
+  const S = TX.stores();
+  const level = scope.kind === 'area' ? 'national' : scope.kind === 'parcel' ? 'parcel' : scope.kind === 'building' ? 'building' : scope.kind === 'street' ? 'street' : 'locality';
+  const ask = (f) => withTimeout(scope.kind === 'area' ? svc.getWideTransactions('national', {}, f) : scope.kind === 'parcel' ? svc.getWideTransactions('parcel', { block: String(scope.block), parcel: String(scope.parcel) }, f)
+    : svc.getTransactions(location, { ...f, level }), 9000).catch((e) => ({ error: e.message }));
+  const base = { offset: 0, limit: 200, months: null, days: null, dateFrom: o.dateFrom || undefined };
+  const top = first ? C : HIST.addDays(C, 2);
+  const live = await ask({ ...base, dateTo: top });
+  if (live && live.error) return { error: live.error, events: [], more: true, next: C, live };
+  let rows = okRows(live);
+  const dg = live && live.diagnostics ? live.diagnostics : {};
+  const more = !!dg.more;
+  let sp = HIST.span(C, rows, more, dg.floors || []);
+  if (more && sp.L != null && sp.L >= C) {
+    /* a day holding more deals than a page: read the page's day (and the reference days) whole */
+    const day = async (d) => { const out = []; for (let off = 0; off < 5000; off += 200) { const r = await ask({ ...base, dateFrom: d, dateTo: d, offset: off }); if (r.error) throw new Error(r.error); const x = okRows(r); out.push(...x); if (!(r.diagnostics && r.diagnostics.more) || !x.length) break; } return out; };
+    try { rows = [...await day(C), ...(first ? [] : [...await day(HIST.addDays(C, 1)), ...await day(HIST.addDays(C, 2))])]; }
+    catch (e) { return { error: e.message, events: [], more: true, next: C, live }; }
+    sp = { L: minusDays(C, 1), last: false };
+  }
+  const lvl = level;
+  const show = (t) => t.date && t.date <= C && (sp.last || sp.L == null || t.date > sp.L);
+  const reg = TX.liveEvents(rows.filter(show), scope, lvl).map((e) => ({ ...e, history: true }));
+  const ref = TX.liveEvents(rows.filter((t) => t.date && t.date > C), scope, lvl);
+  /* the register's deals under unmapped settlement names placed in this locality (listed with the stored events): fold references too */
+  if (scope.code != null) for (const e of TX.unmappedRegisterEvents(scope.code, S)) if (e.date <= HIST.addDays(C, 2) && (sp.last || sp.L == null || e.date >= sp.L)) ref.push(e);
+  /* the GovMap layer's history rows of the place in (L + 1, C + 1] */
+  const gmTo = HIST.addDays(C, 1), gmFrom = sp.last || sp.L == null ? (o.dateFrom || null) : HIST.addDays(sp.L, 2);
+  const winFrom = (EV.store().meta || {}).window ? EV.store().meta.window.from : null;
+  const where = scope.kind === 'area' ? { codes: scope.codes || null } : scope.kind === 'parcel' ? { block: scope.block, parcel: scope.parcel } : { code: scope.code };
+  const snap = S.nationalMeta && S.nationalMeta.version ? String(S.nationalMeta.version.detectedAt || '').slice(0, 10) : null;
+  const G = [];
+  for (const r of HIST.rows(where, gmFrom, winFrom && gmTo >= winFrom ? minusDays(winFrom, 1) : gmTo)) {
+    const e = TX.gmEvent(HIST.asLayerRow(r), 'over:govmap-national', snap);
+    const pl = scope.kind === 'area' ? { match: 'AREA', certain: true } : TX.placeEvent(e, scope, S);
+    if (!pl) continue;
+    G.push({ ...e, id: 'gmh:' + r.oid, geo: pl, inStatistics: false, evidence: [], conflict: false, conflictFields: [], history: true, recovery: r.recovery || null, sourceStreetBasis: r.streetBasis });
+  }
+  /* events shown beside the history without folding (an area: the stored window's GovMap events — already reconciled — and, for
+     Israel, the unplaced events), in the register's own range (L, C] */
+  const extraLayer = o.extraLayer ? o.extraLayer(sp.last || sp.L == null ? (o.dateFrom ? minusDays(o.dateFrom, 1) : null) : sp.L, C) : [];
+  const F = HIST.fold(G, [...reg, ...ref]);
+  const byKey = new Map(reg.map((e) => [e, e]));
+  for (const f of F.folded) {
+    if (!byKey.has(f.r)) continue;                                  // a reference row (shown on the page above)
+    const kinds = f.differences.map((d) => (d.includes(':') ? d : d + ':differs'));
+    f.r.evidence = (f.r.evidence || []).concat([{ sourceId: 'over:govmap-national', oid: f.g.oid, dealId: null, date: f.g.date, amount: f.g.price, cls: 'HISTORY', differences: f.differences, kinds }]);
+    const conflictFields = kinds.filter((k) => !TX.FORMAT_ONLY.has(k)).map((k) => k.split(':')[0]);
+    if (conflictFields.length) { f.r.conflict = true; f.r.conflictFields = [...new Set((f.r.conflictFields || []).concat(conflictFields))]; }
+  }
+  return { events: [...reg, ...F.shown, ...extraLayer], more: !sp.last, next: sp.last ? null : sp.L, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: reg.length, live };
+}
+
+/**
+ * A DISTRICT OR ISRAEL, any period, page by page (`area=il|d-…`): the register copy's national search (date-paged, its rows of the
+ * district's localities), the GovMap layer's events of the same days (the stored window's, already reconciled; the history's, folded) and —
+ * Israel only — the UNPLACED events (no locality can be determined: never attributed to a district). The period's exact count is the
+ * stored union's per-day tally (data/txevents/latest.json); a page lists rows, never a statistic of the area.
+ */
+async function areaRead(svc, filters, area, g) {
+  const now = new Date().toISOString();
+  const D = require('../../lib/streets/directory').load();
+  const codes = area === 'il' ? null : new Set([...D.localities.values()].filter((l) => l.district === area).map((l) => l.code));
+  if (codes && !codes.size) return { error: 'unknown-area', transactions: [] };
+  const scope = { kind: 'area', resolved: true, area, codes, how: 'area' };
+  const all = g('all') === '1' || (!filters.days && Number(filters.months) >= 240);
+  const P0 = TX.periodOf({ days: filters.days, months: all ? null : filters.months, all });
+  const cursor = ISO.test(g('older') || '') ? g('older') : null;
+  const dateFrom = P0.from ? HIST.addDays(P0.from, 1) : undefined;
+  const S = TX.stores();
+  const U = require('../../lib/txevents/unplaced');
+  const layerCodes = () => { const set = new Set(); const RL = require('../../lib/recent/read').load(); for (const m of [RL.layer && RL.layer.byCode, S.national && S.national.byCode, S.extra && S.extra.byCode]) for (const k of Object.keys(m || {})) set.add(Number(k)); return [...set].filter((c) => !codes || codes.has(c)); };
+  const extraLayer = (lo, hi) => {
+    const out = [];
+    for (const c of layerCodes()) for (const e of TX.layerEventsOf(c, S).events) if (e.date && e.date <= hi && (lo == null || e.date > lo)) out.push({ ...e, geo: { match: 'AREA', certain: true }, inStatistics: false, evidence: [], conflict: e.state === 'CONFLICT', conflictFields: e.state === 'CONFLICT' ? e.notes : [] });
+    if (!codes) for (const e of U.events({ from: lo, to: hi })) out.push(e);
+    return out;
+  };
+  const C = cursor || P0.to;
+  const P = await historyPage({ svc, location: {}, scope, C, first: !cursor, dateFrom, extraLayer });
+  const rows = P.events.filter((e) => TX.inPeriod(e.date, P0)).sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id)));
+  const L = S.latest;
+  const perDay = L ? (codes ? (L.districts[area] || {}).perDay : L.national.perDay) || {} : {};
+  const inWindow = Object.entries(perDay).reduce((a, [k, v]) => a + (TX.inPeriod(k, P0) ? v : 0), 0);
+  const cov = TX.coverageOf(5000, S).map((c) => ({ ...c, read: c.id === 'over:deals-register' ? true : c.read }));
+  const rec = TX.recencyOf(rows.length ? rows : (codes ? (L && L.districts[area] ? L.districts[area].top : []) : (L ? L.national.top : [])), cov);
+  const st = TX.statementOf(rows.length || inWindow, P0, rec, cov, { resolved: true });
+  st.text = TX.STATEMENT_TEXT[st.kind] || null;
+  const R = require('../../lib/txevents/history').meta();
+  return {
+    transactions: rows.map(TX.wire), scope: { level: 'area', area, description: area === 'il' ? 'Israel' : area, code: null },
+    unavailable: P.live && P.live.unavailable ? P.live.unavailable : [],
+    meta: { unified: true, area: true, engine: TX.ENGINE, period: P0, statement: st, recency: rec, coverage: cov, attemptedAt: now, deliveredVia: 'over.org.il', sourceFamily: 'OFFICIAL_GOVERNMENT',
+      counts: { events: rows.filter((e) => e.state !== 'POSSIBLE_DUPLICATE').length, windowEventsInPeriod: inWindow, bySourceEvents: rows.reduce((m, e) => ((m[e.sourceId] = (m[e.sourceId] || 0) + 1), m), {}) },
+      sourceCoverage: { kind: cursor ? 'unified-older' : 'unified', offset: 0, limit: rows.length, total: rows.length, more: false, olderMore: !!(P.more && !P.error), olderNext: P.error ? C : P.next, olderError: P.error || null,
+        folded: P.folded || 0, areaWindowTotal: inWindow, history: all && R ? { govmapRows: codes ? Object.entries(R.localities || {}).reduce((a, [c, x]) => a + (codes.has(Number(c)) ? x.rows : 0), 0) : R.shown, before: R.period && R.period.to } : null },
+      note: TX.NOTE, noteHe: TX.NOTE_HE },
+  };
+}
 
 /**
  * THE UNIFIED READ (lib/txevents, 20.10.2026): every transaction event PROPX holds for the place — the register sweep, the GovMap-layer
  * copy (recent window + the national detector), the parcel recovery — merged with the register copy's live search (the republisher's
  * own address link, and history older than the stored window), one event per deal, newest first, each with its source and state.
- * Used whenever the place resolves to a swept locality; otherwise the live search alone answers, as before.
+ * Used whenever the place resolves to an official locality; period ALL reaches back to the first deal either copy holds (1998), page by
+ * page by date (`older=<YYYY-MM-DD>`, historyPage).
  */
+
 async function unifiedRead(svc, location, filters, scope, g) {
   const now = new Date().toISOString();
-  const all = !filters.days && Number(filters.months) >= 240;
+  /* ALL is every deal either copy holds for the place — no lower date (the register reaches back to 1998): the months value the page
+     sends for ALL (≥ 240) is a name for "all", never a 20-year bound */
+  const all = g('all') === '1' || (!filters.days && Number(filters.months) >= 240);
   const winFrom = (EV.store().meta || {}).window ? EV.store().meta.window.from : null;
-  const olderOffset = g('older') != null ? Math.max(0, Number(g('older')) || 0) : null;
-  /* the live register search: for the period (the republisher's address link), and — period ALL — its history before the stored window */
+  const cursor = ISO.test(g('older') || '') ? g('older') : g('older') != null && winFrom ? minusDays(winFrom, 1) : null;
+  /* the live register search: for the period (the republisher's address link) */
   const liveCall = (f) => (scope.kind === 'parcel' ? Promise.resolve(null) : withTimeout(svc.getTransactions(location, f), 9000).catch((e) => ({ error: e.message })));
   const periodF = { ...filters, offset: 0, limit: 200, level: undefined, months: all ? 36 : filters.months };
-  const olderF = all && winFrom ? { ...filters, months: 240, dateTo: minusDays(winFrom, 1), offset: olderOffset || 0, limit: 200, level: undefined } : null;
-  const [live, older] = await Promise.all([olderOffset != null ? Promise.resolve(null) : liveCall(periodF), olderF ? liveCall(olderF) : Promise.resolve(null)]);
   const lvl = (x) => (x && x.scope ? x.scope.level : null);
-  const okRows = (x) => (x && !x.error && Array.isArray(x.transactions) ? x.transactions : []);
-  const extra = [...TX.liveEvents(okRows(live), scope, lvl(live)),
-    /* older history: only rows dated before the stored window (a source that ignores date_to repeats the window — never twice) */
-    ...TX.liveEvents(okRows(older).filter((t) => winFrom && t.date && t.date < winFrom), scope, lvl(older))];
-  const olderCov = older && !older.error && older.diagnostics ? older.diagnostics : null;
-  const olderMore = !!(olderCov && olderCov.more);
-  if (olderOffset != null) {
-    /* a later page of the older history alone */
-    const U = TX.query({ code: scope.code, streetId: scope.streetId, house: scope.house, block: scope.block, parcel: scope.parcel, all: true, offset: 0, limit: 500, extraEvents: extra });
-    const rows = U.events.filter((e) => e.live && winFrom && e.date < winFrom).map(TX.wire);
-    return { transactions: rows, scope: scopeOut(scope, location), unavailable: older && older.unavailable ? older.unavailable : [],
-      meta: { unified: true, engine: TX.ENGINE, sourceCoverage: { kind: 'unified-older', olderOffset, olderNext: olderOffset + 200, olderMore, olderTotal: olderCov ? olderCov.totalReported : null }, attemptedAt: now } };
+  if (cursor) {
+    /* a later page of the history (period ALL): the register's live rows and the GovMap layer's, one date span */
+    const P = winFrom ? await historyPage({ svc, location, scope, C: cursor, first: cursor === minusDays(winFrom, 1) }) : { events: [], more: false, next: null };
+    const rows = P.events.sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id))).map(TX.wire);
+    return { transactions: rows, scope: scopeOut(scope, location), unavailable: P.live && P.live.unavailable ? P.live.unavailable : [],
+      meta: { unified: true, engine: TX.ENGINE, sourceCoverage: { kind: 'unified-older', olderMore: !!(P.more && !P.error), olderNext: P.error ? cursor : P.next, olderError: P.error || null,
+        folded: P.folded || 0, govmapHistoryShown: P.gmShown || 0, registerShown: P.regShown || 0 }, attemptedAt: now } };
   }
+  /* period ALL: the first page of the history (directly under the stored window) comes with the stored events */
+  const [live, older] = await Promise.all([liveCall(periodF), all && winFrom ? historyPage({ svc, location, scope, C: minusDays(winFrom, 1), first: true }) : Promise.resolve(null)]);
+  const extra = [...TX.liveEvents(okRows(live), scope, lvl(live)), ...(older ? older.events : [])];
+  const olderMore = !!(older && older.more && !older.error);
+  const olderCov = older && older.live && older.live.diagnostics ? older.live.diagnostics : null;
   const U = TX.query({ code: scope.code, streetId: scope.streetId, house: scope.house, block: scope.block, parcel: scope.parcel,
     days: filters.days, months: filters.days ? null : filters.months, all, offset: filters.offset, limit: filters.limit, extraEvents: extra });
   const liveAnswered = !!(live && !live.error && live.answered !== false);
@@ -74,7 +190,10 @@ async function unifiedRead(svc, location, filters, scope, g) {
       snapshotAt: regSrc.scrapedAt || null, latestInRegister: regSrc.lastDeal || null,
       latestTransactionDate: rec.latestKnownEvent ? rec.latestKnownEvent.date : null,
       recordsRetrieved: U.events.length,
-      sourceCoverage: { kind: 'unified', offset: U.offset, limit: U.limit, total: U.total, more: U.more, olderMore: all && olderMore, olderNext: all ? 200 : null, olderTotal: olderCov ? olderCov.totalReported : null },
+      sourceCoverage: { kind: 'unified', offset: U.offset, limit: U.limit, total: U.total, more: U.more, olderMore: all && (olderMore || !!(older && older.error)),
+        olderNext: all && older ? (older.error ? minusDays(winFrom, 1) : older.next) : null, olderError: older && older.error ? older.error : null,
+        olderTotal: olderCov ? olderCov.totalReported : null, olderTotalCapped: olderCov ? !!olderCov.totalCapped : null,
+        history: all ? historyCounts(scope) : null },
       recency: rec, coverage, counts: U.counts, statement: U.statement, period: U.period, note: U.note, noteHe: U.noteHe,
       live: { answered: liveAnswered, level: lvl(live), added: extra.length, error: live && live.error ? live.error : null },
       /* the union's freshness, in the contract the page's freshness strip reads: the freshest copy read, the latest date the evidence
@@ -84,6 +203,15 @@ async function unifiedRead(svc, location, filters, scope, g) {
         sourceId: 'propx:transaction-events', sourceClass: 'UNION · Tax Authority register copy + GovMap-layer copy (both republished by over.org.il)' }),
     },
   };
+}
+/* what the history holds for the place before the stored window (exact counts from the builds; the register's by its own count) */
+function historyCounts(scope) {
+  const H = HIST.meta();
+  if (!H) return { govmap: null, reason: 'not-built' };
+  const L = scope.code != null ? (H.localities || {})[scope.code] : null;
+  const st = scope.streetCode != null ? (H.streets || {})[`${scope.code}|${scope.streetCode}`] || 0 : null;
+  return { before: H.period ? H.period.to : null, govmapRows: scope.kind === 'street' || scope.kind === 'building' ? st : L ? L.rows : 0, govmapEarliest: L ? L.earliest : null,
+    folding: 'each GovMap row is folded into the register deal it repeats as the pages load' };
 }
 const scopeOut = (scope, location) => ({
   level: scope.kind, code: scope.code, streetId: scope.streetId || null, house: scope.house || null, block: scope.block || null, parcel: scope.parcel || null,
@@ -123,10 +251,12 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
   try {
     const svc = getService();
+    if (g('area')) return res.end(JSON.stringify(await areaRead(svc, filters, String(g('area')), g)));
     /* the unified read whenever the place resolves to a swept locality (never for the confirmed-new guard) */
     if (g('newOnly') !== '1' && g('unified') !== '0') {
       const scope = TX.resolveScope({ city: location.city, street: location.street, house: location.houseNumber, block: g('block'), parcel: g('parcel'), streetId: g('sid') });
-      if (scope.resolved && scope.kind !== 'unresolved' && EV.shardOf(scope.code)) return res.end(JSON.stringify(await unifiedRead(svc, location, filters, scope, g)));
+      /* every place that resolves to an official locality — swept, reached only by the GovMap layer, or holding only older deals */
+      if (scope.resolved && scope.kind !== 'unresolved') return res.end(JSON.stringify(await unifiedRead(svc, location, filters, scope, g)));
     }
     const out = g('newOnly') === '1'
       ? await svc.getConfirmedNewTransactions(location, filters)

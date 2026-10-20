@@ -222,6 +222,20 @@ function build() {
     const p = r.settlement ? K.place(r.settlement) : null;
     recovery.set(r.oid, RCV.recover(K, { settlementId: g.settlement_id, polygon: g.polygon_id != null ? g.polygon_id : r.polygon, gush: r.gush, parcel: r.parcel }, p && p.codes ? p.codes : null));
   }
+  /* a POSSIBLE location with candidate localities: the register copy decides when EXACTLY ONE candidate's register holds the same deal
+     (the same unit or block · parcel, within one day, the amounts agreeing — the reconciliation's strong rule): the row is that register
+     deal's second print (RESOLVED_EXACTLY, basis register-twin). Never a weak or ambiguous match. */
+  for (const r of unplacedIn) {
+    const x = recovery.get(r.oid);
+    if (x.state !== 'POSSIBLE_LOCATION' || !x.candidates || !x.candidates.length) continue;
+    const hits = [];
+    for (const c of x.candidates.map((z) => z.code).filter((c) => D.localities.has(c) && EV.shardOf(c))) {
+      const one = REC.reconcile([{ ...rawByOid.get(r.oid), settlement: D.localities.get(c).he }], { window: { from: regWin.from }, loadDay, EV, D, M });
+      const o = one.out.get(r.oid);
+      if (o && (o.cls === 'IN_REGISTER' || o.cls === 'IN_REGISTER_OTHER_UNIT') && o.register && o.register.code === c) hits.push(c);
+    }
+    if (hits.length === 1) recovery.set(r.oid, { state: 'RESOLVED_EXACTLY', code: hits[0], basis: 'register-twin', candidates: x.candidates });
+  }
   const resolvedRows = unplacedIn.filter((r) => /^RESOLVED/.test(recovery.get(r.oid).state) && D.localities.has(recovery.get(r.oid).code));
   const second = resolvedRows.length ? REC.reconcile(resolvedRows.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(recovery.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M }) : null;
   const finalOf = (r) => { const x = recovery.get(r.oid); if (!/^RESOLVED/.test(x.state)) return x.state; const o = second && second.out.get(r.oid); return o && o.cls !== 'NO_SETTLEMENT' && o.cls !== 'UNMAPPED_SETTLEMENT' ? o.cls : 'POSSIBLE_LOCATION'; };

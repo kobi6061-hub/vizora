@@ -32,3 +32,25 @@ Machine-readable ledger: `2026-10-20-transaction-sources.json`.
 Petah Tikva / Shaham (`st:7900:156`): 24 months → 39 rows, newest **05.07.2026**; 30 and 90 days → 0 rows and no statement; 6 months →
 1 row. The GovMap layer on the same street: 30.08 · 12.08 · 03.08 · 29.07 · 14.07.2026. Why: the section read only the register's live
 search; the new towers' parcels (6393/344 · /346 · /347 · /348 · /350 · /351 · /353) have no address in the register's crosswalk.
+
+## Follow-up (closure P0, 20.10.2026 — revisited once, nothing bypassed, nothing purchased)
+
+History probe: run `39451852042` (`tx-sources-discover.js --history`, read-only). The register copy holds **3,844,200** deals (1998-01-01 →
+2026-09-17, 1,335 settlements); its search pages 200 rows, offset ≤ 100,000, filters by settlement, street, house, gush / helka, dates — so
+PROPX reads its history **by date** (never by offset). The GovMap-layer copy holds **2,500,941** rows (1996 → 2026-09-28); its whole file is
+classified (window + history + unplaced + invalid).
+
+| Category | Sources |
+|---|---|
+| READ | the register copy (sweep + live search to 1998) · the GovMap-layer copy (API window + the whole file) · its GeoPackage · the register's address link |
+| UNREACHABLE | nadlan.taxes.gov.il (identification) · nadlan.gov.il (reCAPTCHA) · gov.il service page (Cloudflare) · GovMap layer 16 (CloudFront 403) |
+| REQUIRES COMMERCIAL ACCESS | Apify actors over GovMap / nadlan.gov.il (and a per-use MCP server, $20 / 1,000 calls) · BYNDbiz |
+| ASKING-PRICE SOURCE, NOT DEAL SOURCE | Madlan / Yad2 |
+| STALE SOURCE | odata.org.il "nadlan" (latest deal 31.12.2023) |
+| DUPLICATE / LOWER-VALUE SOURCE | the register version's CSV files (51 localities only, partly a July scrape) · the odata versions pointer |
+| NO DEAL DATASET / LAYER | data.gov.il · municipal GIS |
+
+**Could a paid source improve freshness or completeness materially?** Freshness, possibly: a live GovMap read (through a paid third party)
+would carry deals the 08.10.2026 copy predates. Completeness of history, no: PROPX already reads the whole layer and the register to 1998.
+Not integrated: those services reach channels that refuse PROPX's own requests — the owner's approval and a terms / lawfulness review
+come first. No official licensed bulk channel was found (the Tax Authority service is free, one lookup at a time).
