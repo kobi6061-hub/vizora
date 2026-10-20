@@ -126,7 +126,7 @@ recent-only row can show it is a whole-property sale; none enters a median or a 
 
 | Use | VERIFIED rows | Why |
 |---|---|---|
-| street transaction count | 0 | no VERIFIED row. Separately, 967 LIMITED rows meet every identity criterion (two-key street, dwelling, date, no conflict / duplicate) and are limited only by price semantics — the register's own street count includes partial and unpriced sales, so these 967 COULD enter counts under the register's count semantics (`countUnderRegisterSemantics`); not wired |
+| street transaction count | 0 VERIFIED · **967 RECORDED TRANSACTION EVENTS** | no VERIFIED row. 967 LIMITED rows pass every event gate (`EVENT_GATES`: state · duplicate · dwelling · locality · street · date · provenance — each checked on its own, a failed gate named in `eventFailed`) and are limited only by price semantics — they enter the RECORDED TRANSACTION EVENTS count (`eligible.event`), never the verified or priced counts (see "The three counts") |
 | street median / ₪ per m² | 0 | a median needs a whole-property market price — the share is not stated |
 | 12-month change | 0 | the change compares two windows of ONE universe; the recent layer covers only its own ~95 days, never the prior window |
 | Street Value Model inputs | 0 | a model row needs a whole-property price AND a build year (age band, PROBABLE NEW, off-plan) — the copy states neither |
@@ -140,3 +140,58 @@ CONFIRMED SEPARATE 19 · LIKELY SEPARATE 26 · POSSIBLE DUPLICATE 4 · UNRESOLVE
 (`node scripts/recent-audit-report.js --md`). POSSIBLE DUPLICATE / UNRESOLVED rows are CONFLICT / UNRESOLVED, never in a statistic.
 
 The page's recent table carries the state per deal ("PROPX state", ⓘ `recent_promotion_state`).
+
+## Ownership share — the audit (20.10.2026, `scripts/recent-share-audit.js` → `share-audit.json`, `AUDIT-ownership-share.md`)
+
+Can anything PROPX can read tell whether a recent-only deal sold the WHOLE property, a PARTIAL share, several units for one
+consideration — or nothing can (UNKNOWN)? Not today:
+
+* **The GovMap-layer copy** publishes 19 fields (`objectid` · `deal_id` · `deal_date` · `deal_date_raw` · `deal_amount` · `settlement` ·
+  `street` · `house_num` · `floor` · `asset_area` · `rooms` · `property_type` · `deal_nature` · `gush` · `parcel` · `sub_parcel` · `polygon_id`
+  · `lon` · `lat`) — no portion, no declared amount, no build year; no per-deal or history endpoint. Four versions (08.07 partial · 04.08
+  capped at 1,000,000 · 03.10 · 08.10.2026), full snapshots, not a row archive.
+* **Field test** over the 2,934 dwelling deals both copies hold (301 partial in the register): no permitted field — series, floor, rooms,
+  property type, nature, sub-parcel, address, polygon form, settlement, in-source twin, id length / parity, weekday — has a value holding
+  whole-property sales only (support ≥ 30), and no pair of permitted fields does (105 pairs). The only pure leaves use the unit's or the
+  parcel's ACTIVITY in the copy (excluded by rule — activity, price and size are never a basis for the share) and were found by searching.
+* **Transaction identity**: the register publishes no deal id — no shared key; linkage = block · parcel (the layer numbers sub-parcels its
+  own way) · date (± 1 day, known series offset) · amount representation · area.
+* **The register** states the portion (`portion` "1.000" / "0.500" …, `portion_fraction`) for every row — it RESOLVES the share of every
+  deal it holds. It exists as ONE scrape (dataset versions v1–v5, 18–19.09.2026), and its publisher's change log (13.10.2026) says the
+  Tax Authority site is blocked to its scraper and the database has not been updated since 19.09.2026. `/api/nadlan/parcel/…/deals` and
+  the MCP endpoint serve the same rows. nadlan.gov.il (reCAPTCHA), GovMap (403), the Tax Authority (identification screen) — never bypassed.
+
+So the only defensible resolution is the LATE CONFIRMATION below — and its source is currently not refreshing.
+
+## The promotion lifecycle (`lib/recent/lifecycle.js` → `promotion-history.jsonl`, append-only)
+
+Every shown deal is OBSERVED once (its state, the copy, PROPX's first read, the register copy it was read against, the verbatim row's hash
+and fields). When a NEWER register copy holds the same transaction (the reconciliation's strong match: IN_REGISTER / IN_REGISTER_OTHER_UNIT
+— the same unit or parcel, ± 1 day, the amounts agreeing, the area to the metre), the deal is decided again from the register's own fields:
+portion 1 → WHOLE_PROPERTY (or MULTI_UNIT: one consideration on several sub-parcels that day) · portion < 1 → PARTIAL_SHARE ("0.000" is
+a share rounded at source) · no portion → UNKNOWN; another locality / not a dwelling → CONFLICT. The state becomes VERIFIED when identity
+holds (two-key street) and the semantics are stated; a price is used only for WHOLE_PROPERTY ≥ ₪100,000. A confirmed deal is COUNTED
+THROUGH THE REGISTER DEAL (it leaves the layer) — never twice. Events: OBSERVED · RESTATED (same copy / engine — never a confirmation) ·
+CONFIRMED · CONFLICTED (incl. a later duplicate / possible-duplicate print) · LEFT_COPY (a deal the newer GovMap copy no longer holds —
+carried from the copy that first showed it, evaluated, never shown) · WITHDRAWN. Nothing is ever rewritten: the observation stays the one
+first recorded and the confirmation is a new, dated event. `meta.json → lifecycle` summarises the ledger (states, transitions,
+confirmations by semantics, the lag from first read to the confirming copy). 20.10.2026: 4,403 OBSERVED · 0 confirmed — no newer register
+copy exists.
+
+## The three counts (`lib/recent/counts.js`, `view=street` → `transactionCounts`, `view=recentLayer&city=`)
+
+Never one number, each with its parts (register · recent) and its period (the register window extended to the latest recent event; and
+the recent window):
+
+| Count | Register part | Recent part |
+|---|---|---|
+| RECORDED TRANSACTION EVENTS | observed dwelling deals (partial and unpriced included) | rows passing every event gate (967) |
+| VERIFIED DWELLING TRANSACTIONS | observed dwelling deals | VERIFIED rows (0) |
+| PRICED TRANSACTIONS USED IN MARKET STATISTICS | priced deals (whole property ≥ ₪100,000) | VERIFIED whole-property rows (0) |
+
+User-facing: "Recent recorded transactions include transactions whose ownership share is not stated by the recent source. These
+transactions are excluded from price statistics until their pricing semantics can be verified." The street page shows the three counts
+(street + locality line); every recent deal shows its price as published with "PRICE NOT USED IN MARKET STATISTICS · Reason: OWNERSHIP
+SHARE NOT STATED" (or its state's reason), no ₪/m² on a price that is not used, and its source fields. The observed card, the median,
+the sample state, the change and the Street Value Model are unchanged.
+

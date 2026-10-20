@@ -86,6 +86,8 @@ jobs:
           if [ -f data/streets/recent/raw/index.json ]; then
             node scripts/street-recent-sync.js --reconcile; code=$?
             if [ $code -eq 0 ] && [ -f test/recent.test.js ]; then node test/recent.test.js; code=$?; fi
+            # a newer register copy is what CONFIRMS recent deals (lib/recent/lifecycle.js) — its gates run before anything is kept
+            if [ $code -eq 0 ] && [ -f test/recent-lifecycle.test.js ]; then node test/recent-lifecycle.test.js; code=$?; fi
             if [ $code -ne 0 ]; then echo 'Recent reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent 2>/dev/null; fi
           fi
           echo "code=$code" >> "$GITHUB_OUTPUT"

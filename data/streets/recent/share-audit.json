@@ -1,0 +1,981 @@
+{
+ "schema": 1,
+ "builtAt": "2026-10-20T12:15:50.654Z",
+ "runs": {
+  "share": 39418100089,
+  "shareHistory": 39418597161
+ },
+ "sources": [
+  {
+   "id": "over:deals-register",
+   "what": "the Tax Authority register as republished by over.org.il (/api/deals/search, /api/deals/parcel/{gush}/{helka}, /api/append/<dataset>/…)",
+   "shareField": "portion (\"1.000\", \"0.500\" …) and portion_fraction — STATED for every row",
+   "otherFields": [
+    "date",
+    "date_src",
+    "amount",
+    "declared_amount",
+    "nature",
+    "area_sqm",
+    "rooms",
+    "year_built",
+    "sub_parcel",
+    "settlement",
+    "settlement_code",
+    "gush",
+    "helka",
+    "addresses",
+    "addresses_total",
+    "price_per_sqm",
+    "price_per_sqm_normalized"
+   ],
+   "dealId": "none — the register publishes no deal id",
+   "copies": "ONE scrape: dataset versions v1–v5 built 18.09.2026 10:03 → 19.09.2026 11:20 (city by city); weekly poll, last 17.10.2026 — no new version; per-row first_seen (all 18–19.09.2026)",
+   "status": "BLOCKED AT ITS SOURCE — the publisher's change log (13.10.2026): \"the scraping of the Tax Authority site is blocked at the moment and the database has not been updated since 19/09/2026\"",
+   "verdict": "RESOLVES the share for a deal it holds — only after it holds it; no later copy exists or is scheduled"
+  },
+  {
+   "id": "over:govmap-recent",
+   "what": "the GovMap deals layer (lay=16) as republished by over.org.il (/api/deals/govmap/search · /points · /stats)",
+   "shareField": "NONE",
+   "otherFields": [
+    "objectid",
+    "deal_id",
+    "deal_date",
+    "deal_date_raw",
+    "deal_amount",
+    "settlement",
+    "street",
+    "house_num",
+    "floor",
+    "asset_area",
+    "rooms",
+    "property_type",
+    "deal_nature",
+    "gush",
+    "parcel",
+    "sub_parcel",
+    "polygon_id",
+    "lon",
+    "lat"
+   ],
+   "dealId": "deal_id (unique in every stored snapshot) + objectid — no key shared with the register",
+   "copies": "versions v1 08.07.2026 (313,696 rows, partial) · v2 04.08.2026 (1,000,000 — capped) · v3 03.10.2026 (2,501,231) · v4 08.10.2026 (2,500,941 — 290 fewer than v3); full snapshots (files), not a row archive; the version diff returns nothing",
+   "status": "READ (the recent layer)",
+   "verdict": "CANNOT state the share — no field, no endpoint; 27 points capped at 500 deals each by GovMap itself"
+  },
+  {
+   "id": "over:nadlan-parcel",
+   "what": "/api/nadlan/parcel/{gush}/{helka}/deals — \"every deal reported on this block/parcel\"",
+   "shareField": "the register's portion (the same rows, served by the same function as /api/deals/parcel)",
+   "verdict": "NOT A THIRD SOURCE — the register rows again"
+  },
+  {
+   "id": "over:mcp",
+   "what": "/deals/mcp — the publisher's MCP endpoint over the same register",
+   "verdict": "NOT A THIRD SOURCE"
+  },
+  {
+   "id": "nadlan.gov.il",
+   "what": "the government real-estate site",
+   "status": "behind reCAPTCHA Enterprise (19.10.2026 audit)",
+   "verdict": "NOT READ — never bypassed"
+  },
+  {
+   "id": "govmap.gov.il",
+   "what": "GovMap's own deals API",
+   "status": "CloudFront 403 to the runner",
+   "verdict": "NOT READ — never bypassed"
+  },
+  {
+   "id": "nadlan.taxes.gov.il",
+   "what": "the Tax Authority register itself",
+   "status": "identification screen against automated reading since 29.09.2026",
+   "verdict": "NOT READ — never bypassed"
+  },
+  {
+   "id": "data.gov.il",
+   "what": "open-data portal",
+   "status": "no transaction dataset",
+   "verdict": "NOTHING TO READ"
+  }
+ ],
+ "linkages": [
+  {
+   "id": "transaction-id",
+   "verdict": "NONE",
+   "why": "the register publishes no deal id; the GovMap deal_id / objectid exist only in the layer"
+  },
+  {
+   "id": "block-parcel-sub-parcel",
+   "verdict": "PARTIAL KEY",
+   "why": "block · parcel agree; the layer numbers sub-parcels its own way (1,984 sub-parcel differences among the deals both copies hold) — the reconciliation matches the unit OR the parcel, within one day, with the amounts agreeing (₪1,000 truncation or the share relation) and the area to the metre"
+  },
+  {
+   "id": "date",
+   "verdict": "KEY WITH A KNOWN OFFSET",
+   "why": "typed series: the same day (3,160 of 3,172); untyped 1136… series: the register dates it one day later (30 of 30)"
+  },
+  {
+   "id": "amount",
+   "verdict": "REPRESENTATION, NOT A KEY",
+   "why": "typed series truncated to ₪1,000; a partial sale printed as the share's amount (76) or the whole value (184) or neither (41) — the relation is checked only against a register deal that states its portion"
+  },
+  {
+   "id": "in-source twin (1136… series)",
+   "verdict": "DUPLICATE DETECTION ONLY",
+   "why": "a second print of a typed deal one day earlier — says nothing of the share"
+  },
+  {
+   "id": "register-share print",
+   "verdict": "EVIDENCE ONLY WITH THE REGISTER",
+   "why": "the layer sometimes prints a partial sale twice (share + whole value); recognisable only through the register deal's portion (16 rows on 20.10.2026)"
+  },
+  {
+   "id": "later register rows",
+   "verdict": "THE ONLY RESOLUTION — NOT AVAILABLE",
+   "why": "a newer register copy would state the portion of every deal it holds (lib/recent/lifecycle.js confirms then); none exists since 19.09.2026 and the publisher reports its scraper blocked"
+  }
+ ],
+ "fieldTest": {
+  "overlap": {
+   "dwellingDealsBothCopiesHold": 2934,
+   "partialInRegister": 301,
+   "partialPct": 10.3
+  },
+  "fields": {
+   "series": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "std",
+      "n": 2802,
+      "partial": 296,
+      "partialPct": 10.6
+     },
+     {
+      "value": "1136",
+      "n": 132,
+      "partial": 5,
+      "partialPct": 3.8
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "1136",
+     "n": 132,
+     "partial": 5,
+     "partialPct": 3.8
+    },
+    "pureWhole": []
+   },
+   "floorStated": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "yes",
+      "n": 2690,
+      "partial": 271,
+      "partialPct": 10.1
+     },
+     {
+      "value": "no",
+      "n": 244,
+      "partial": 30,
+      "partialPct": 12.3
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "yes",
+     "n": 2690,
+     "partial": 271,
+     "partialPct": 10.1
+    },
+    "pureWhole": []
+   },
+   "floor": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "ראשונה",
+      "n": 455,
+      "partial": 65,
+      "partialPct": 14.3
+     },
+     {
+      "value": "שניה",
+      "n": 455,
+      "partial": 50,
+      "partialPct": 11
+     },
+     {
+      "value": "שלישית",
+      "n": 416,
+      "partial": 29,
+      "partialPct": 7
+     },
+     {
+      "value": "רביעית",
+      "n": 309,
+      "partial": 33,
+      "partialPct": 10.7
+     },
+     {
+      "value": "null",
+      "n": 244,
+      "partial": 30,
+      "partialPct": 12.3
+     },
+     {
+      "value": "חמישית",
+      "n": 181,
+      "partial": 13,
+      "partialPct": 7.2
+     },
+     {
+      "value": "שישית",
+      "n": 126,
+      "partial": 9,
+      "partialPct": 7.1
+     },
+     {
+      "value": "שביעית",
+      "n": 71,
+      "partial": 6,
+      "partialPct": 8.5
+     },
+     {
+      "value": "קרקע",
+      "n": 62,
+      "partial": 10,
+      "partialPct": 16.1
+     },
+     {
+      "value": "שמינית",
+      "n": 60,
+      "partial": 5,
+      "partialPct": 8.3
+     },
+     {
+      "value": "קומה ‎1‏",
+      "n": 46,
+      "partial": 7,
+      "partialPct": 15.2
+     },
+     {
+      "value": "קומה ‎2‏",
+      "n": 44,
+      "partial": 3,
+      "partialPct": 6.8
+     }
+    ],
+    "distinct": 105,
+    "purestWithSupport30": {
+     "value": "קומה ‎3‏",
+     "n": 31,
+     "partial": 1,
+     "partialPct": 3.2
+    },
+    "pureWhole": []
+   },
+   "roomsHalf": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "whole",
+      "n": 2868,
+      "partial": 295,
+      "partialPct": 10.3
+     },
+     {
+      "value": "half",
+      "n": 66,
+      "partial": 6,
+      "partialPct": 9.1
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "half",
+     "n": 66,
+     "partial": 6,
+     "partialPct": 9.1
+    },
+    "pureWhole": []
+   },
+   "rooms": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "4",
+      "n": 1003,
+      "partial": 79,
+      "partialPct": 7.9
+     },
+     {
+      "value": "5",
+      "n": 823,
+      "partial": 104,
+      "partialPct": 12.6
+     },
+     {
+      "value": "3",
+      "n": 785,
+      "partial": 69,
+      "partialPct": 8.8
+     },
+     {
+      "value": "6",
+      "n": 162,
+      "partial": 20,
+      "partialPct": 12.3
+     },
+     {
+      "value": "2",
+      "n": 69,
+      "partial": 14,
+      "partialPct": 20.3
+     },
+     {
+      "value": "3.5",
+      "n": 24,
+      "partial": 3,
+      "partialPct": 12.5
+     },
+     {
+      "value": "4.5",
+      "n": 20,
+      "partial": 0,
+      "partialPct": 0
+     },
+     {
+      "value": "7",
+      "n": 15,
+      "partial": 1,
+      "partialPct": 6.7
+     },
+     {
+      "value": "2.5",
+      "n": 11,
+      "partial": 3,
+      "partialPct": 27.3
+     },
+     {
+      "value": "5.5",
+      "n": 10,
+      "partial": 0,
+      "partialPct": 0
+     },
+     {
+      "value": "1",
+      "n": 8,
+      "partial": 7,
+      "partialPct": 87.5
+     },
+     {
+      "value": "8",
+      "n": 3,
+      "partial": 1,
+      "partialPct": 33.3
+     }
+    ],
+    "distinct": 13,
+    "purestWithSupport30": {
+     "value": "4",
+     "n": 1003,
+     "partial": 79,
+     "partialPct": 7.9
+    },
+    "pureWhole": []
+   },
+   "propertyType": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "דירה",
+      "n": 2934,
+      "partial": 301,
+      "partialPct": 10.3
+     }
+    ],
+    "distinct": 1,
+    "purestWithSupport30": {
+     "value": "דירה",
+     "n": 2934,
+     "partial": 301,
+     "partialPct": 10.3
+    },
+    "pureWhole": []
+   },
+   "dealNature": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "דירה בבית קומות",
+      "n": 2851,
+      "partial": 281,
+      "partialPct": 9.9
+     },
+     {
+      "value": "קוטג' דו משפחתי",
+      "n": 36,
+      "partial": 10,
+      "partialPct": 27.8
+     },
+     {
+      "value": "דירת גן",
+      "n": 20,
+      "partial": 2,
+      "partialPct": 10
+     },
+     {
+      "value": "קוטג' חד משפחתי",
+      "n": 19,
+      "partial": 4,
+      "partialPct": 21.1
+     },
+     {
+      "value": "בית בודד",
+      "n": 6,
+      "partial": 4,
+      "partialPct": 66.7
+     },
+     {
+      "value": "דירת גג",
+      "n": 2,
+      "partial": 0,
+      "partialPct": 0
+     }
+    ],
+    "distinct": 6,
+    "purestWithSupport30": {
+     "value": "דירה בבית קומות",
+     "n": 2851,
+     "partial": 281,
+     "partialPct": 9.9
+    },
+    "pureWhole": []
+   },
+   "subParcelStated": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "yes",
+      "n": 2934,
+      "partial": 301,
+      "partialPct": 10.3
+     }
+    ],
+    "distinct": 1,
+    "purestWithSupport30": {
+     "value": "yes",
+     "n": 2934,
+     "partial": 301,
+     "partialPct": 10.3
+    },
+    "pureWhole": []
+   },
+   "addressPublished": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "yes",
+      "n": 1638,
+      "partial": 162,
+      "partialPct": 9.9
+     },
+     {
+      "value": "no",
+      "n": 1296,
+      "partial": 139,
+      "partialPct": 10.7
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "yes",
+     "n": 1638,
+     "partial": 162,
+     "partialPct": 9.9
+    },
+    "pureWhole": []
+   },
+   "polygonForm": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "numeric",
+      "n": 1522,
+      "partial": 156,
+      "partialPct": 10.2
+     },
+     {
+      "value": "block-parcel",
+      "n": 1412,
+      "partial": 145,
+      "partialPct": 10.3
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "numeric",
+     "n": 1522,
+     "partial": 156,
+     "partialPct": 10.2
+    },
+    "pureWhole": []
+   },
+   "settlementNamed": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "yes",
+      "n": 2824,
+      "partial": 242,
+      "partialPct": 8.6
+     },
+     {
+      "value": "no",
+      "n": 110,
+      "partial": 59,
+      "partialPct": 53.6
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "yes",
+     "n": 2824,
+     "partial": 242,
+     "partialPct": 8.6
+    },
+    "pureWhole": []
+   },
+   "inSourceTwin": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "no",
+      "n": 1919,
+      "partial": 245,
+      "partialPct": 12.8
+     },
+     {
+      "value": "yes",
+      "n": 1015,
+      "partial": 56,
+      "partialPct": 5.5
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "yes",
+     "n": 1015,
+     "partial": 56,
+     "partialPct": 5.5
+    },
+    "pureWhole": []
+   },
+   "dealIdLength": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "10",
+      "n": 1905,
+      "partial": 178,
+      "partialPct": 9.3
+     },
+     {
+      "value": "11",
+      "n": 1029,
+      "partial": 123,
+      "partialPct": 12
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "10",
+     "n": 1905,
+     "partial": 178,
+     "partialPct": 9.3
+    },
+    "pureWhole": []
+   },
+   "dealIdParity": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "0",
+      "n": 2551,
+      "partial": 267,
+      "partialPct": 10.5
+     },
+     {
+      "value": "1",
+      "n": 383,
+      "partial": 34,
+      "partialPct": 8.9
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "1",
+     "n": 383,
+     "partial": 34,
+     "partialPct": 8.9
+    },
+    "pureWhole": []
+   },
+   "weekday": {
+    "excluded": false,
+    "values": [
+     {
+      "value": "2",
+      "n": 638,
+      "partial": 65,
+      "partialPct": 10.2
+     },
+     {
+      "value": "1",
+      "n": 631,
+      "partial": 59,
+      "partialPct": 9.4
+     },
+     {
+      "value": "0",
+      "n": 574,
+      "partial": 53,
+      "partialPct": 9.2
+     },
+     {
+      "value": "3",
+      "n": 497,
+      "partial": 56,
+      "partialPct": 11.3
+     },
+     {
+      "value": "4",
+      "n": 484,
+      "partial": 54,
+      "partialPct": 11.2
+     },
+     {
+      "value": "5",
+      "n": 101,
+      "partial": 11,
+      "partialPct": 10.9
+     },
+     {
+      "value": "6",
+      "n": 9,
+      "partial": 3,
+      "partialPct": 33.3
+     }
+    ],
+    "distinct": 7,
+    "purestWithSupport30": {
+     "value": "0",
+     "n": 574,
+     "partial": 53,
+     "partialPct": 9.2
+    },
+    "pureWhole": []
+   },
+   "EXCLUDED_amountRoundThousand": {
+    "excluded": true,
+    "values": [
+     {
+      "value": "round",
+      "n": 2890,
+      "partial": 294,
+      "partialPct": 10.2
+     },
+     {
+      "value": "exact",
+      "n": 44,
+      "partial": 7,
+      "partialPct": 15.9
+     }
+    ],
+    "distinct": 2,
+    "purestWithSupport30": {
+     "value": "round",
+     "n": 2890,
+     "partial": 294,
+     "partialPct": 10.2
+    },
+    "pureWhole": []
+   },
+   "EXCLUDED_areaBand": {
+    "excluded": true,
+    "values": [
+     {
+      "value": "120+",
+      "n": 1087,
+      "partial": 132,
+      "partialPct": 12.1
+     },
+     {
+      "value": "90–119",
+      "n": 947,
+      "partial": 69,
+      "partialPct": 7.3
+     },
+     {
+      "value": "60–89",
+      "n": 768,
+      "partial": 75,
+      "partialPct": 9.8
+     },
+     {
+      "value": "<60",
+      "n": 132,
+      "partial": 25,
+      "partialPct": 18.9
+     }
+    ],
+    "distinct": 4,
+    "purestWithSupport30": {
+     "value": "90–119",
+     "n": 947,
+     "partial": 69,
+     "partialPct": 7.3
+    },
+    "pureWhole": []
+   },
+   "EXCLUDED_unitRowsInCopy": {
+    "excluded": true,
+    "values": [
+     {
+      "value": "1",
+      "n": 2189,
+      "partial": 217,
+      "partialPct": 9.9
+     },
+     {
+      "value": "3",
+      "n": 565,
+      "partial": 69,
+      "partialPct": 12.2
+     },
+     {
+      "value": "2",
+      "n": 180,
+      "partial": 15,
+      "partialPct": 8.3
+     }
+    ],
+    "distinct": 3,
+    "purestWithSupport30": {
+     "value": "2",
+     "n": 180,
+     "partial": 15,
+     "partialPct": 8.3
+    },
+    "pureWhole": []
+   },
+   "EXCLUDED_parcelRowsThatDay": {
+    "excluded": true,
+    "values": [
+     {
+      "value": "1",
+      "n": 2116,
+      "partial": 212,
+      "partialPct": 10
+     },
+     {
+      "value": "5",
+      "n": 477,
+      "partial": 57,
+      "partialPct": 11.9
+     },
+     {
+      "value": "2",
+      "n": 190,
+      "partial": 17,
+      "partialPct": 8.9
+     },
+     {
+      "value": "3",
+      "n": 78,
+      "partial": 7,
+      "partialPct": 9
+     },
+     {
+      "value": "4",
+      "n": 73,
+      "partial": 8,
+      "partialPct": 11
+     }
+    ],
+    "distinct": 5,
+    "purestWithSupport30": {
+     "value": "2",
+     "n": 190,
+     "partial": 17,
+     "partialPct": 8.9
+    },
+    "pureWhole": []
+   }
+  },
+  "pairwise": {
+   "combinationsTested": 105,
+   "leavesWithSupport50": 427,
+   "purest": [
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_unitRowsInCopy"
+     ],
+     "value": "10 & 3",
+     "n": 338,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "10 & 5",
+     "n": 286,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "10 & 4",
+     "n": 54,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "inSourceTwin",
+      "dealIdParity"
+     ],
+     "value": "yes & 1",
+     "n": 112,
+     "partial": 2,
+     "partialPct": 1.8,
+     "usesExcluded": false
+    },
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "10 & 3",
+     "n": 52,
+     "partial": 1,
+     "partialPct": 1.9,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "settlementNamed",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "yes & 5",
+     "n": 406,
+     "partial": 8,
+     "partialPct": 2,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "polygonForm",
+      "dealIdParity"
+     ],
+     "value": "block-parcel & 1",
+     "n": 139,
+     "partial": 3,
+     "partialPct": 2.2,
+     "usesExcluded": false
+    },
+    {
+     "fields": [
+      "settlementNamed",
+      "EXCLUDED_unitRowsInCopy"
+     ],
+     "value": "yes & 3",
+     "n": 481,
+     "partial": 11,
+     "partialPct": 2.3,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "inSourceTwin",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "yes & 5",
+     "n": 311,
+     "partial": 7,
+     "partialPct": 2.3,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "addressPublished",
+      "dealIdParity"
+     ],
+     "value": "no & 1",
+     "n": 124,
+     "partial": 3,
+     "partialPct": 2.4,
+     "usesExcluded": false
+    }
+   ],
+   "pureLeaves": [
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_unitRowsInCopy"
+     ],
+     "value": "10 & 3",
+     "n": 338,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "10 & 5",
+     "n": 286,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    },
+    {
+     "fields": [
+      "dealIdLength",
+      "EXCLUDED_parcelRowsThatDay"
+     ],
+     "value": "10 & 4",
+     "n": 54,
+     "partial": 0,
+     "partialPct": 0,
+     "usesExcluded": true
+    }
+   ],
+   "pureLeavesWithoutExcludedFields": []
+  }
+ },
+ "conclusion": {
+  "resolvableToday": false,
+  "singleFieldDiscriminator": "none — no permitted field has a value holding whole-property sales only (support ≥ 30)",
+  "pairDiscriminator": "none among permitted fields; the only pure pair leaf uses the unit's activity in the copy (EXCLUDED by rule: activity is never a basis for the share) and was found by searching 105 combinations — a post-hoc pattern, not a stated fact",
+  "onlyResolution": "a NEWER register copy holding the same transaction (lib/recent/lifecycle.js) — none exists; the publisher reports its scraper blocked since 19.09.2026",
+  "consequence": "every recent-only deal stays at most RECENT_OBSERVED_LIMITED; RECENT_OBSERVED_VERIFIED = 0; no recent price enters a statistic or the Street Value Model"
+ }
+}

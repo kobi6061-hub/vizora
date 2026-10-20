@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="1714a408f6bef3c62545c2ca673267e64ed292971139bac395ce3167b3ea915d">
+<meta name="propx-source-sha256" content="cc9738b721baee6d84a62895ebcdfc33cf40ae78c3ede7c2aa7a053fbe8fd7d7">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -581,6 +581,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .rct b{color:var(--ink);font-weight:700}
 .rct-chip{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:1px 8px;border:1px dashed var(--brass);color:var(--brass);margin-inline-end:6px}
 .rct .txf-note{margin-top:3px}
+.rct-nouse{display:block;font-size:9.5px;font-weight:800;letter-spacing:.03em;color:var(--ink-3);white-space:nowrap;line-height:1.35}
+.rct-nouse span{display:block;font-weight:600}
+.rct-det summary{cursor:pointer;font-size:11px;color:var(--brass)}
+.rct-det dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 10px;margin:6px 0 0;font-size:11px;min-width:280px}
+.rct-det dt{color:var(--ink-3)}.rct-det dd{margin:0;overflow-wrap:anywhere}
+.tc{margin:10px 0 4px}.tc h4{margin:0 0 6px}
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:12px}
 .st-grid .gv-m .v{font-size:15.5px}
 .st-grid .gv-m .s{font-size:11px;color:var(--ink-3);line-height:1.45}
@@ -3000,10 +3006,58 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       formula: bi('הכלל הראשון שמתקיים קובע: סתירה (שם יישוב מול חלקה · כתובת מול חלקה · כפילות אפשרית של עסקת מרשם) → לא מוכרעת (סוג נכס לא צוין · כתובת שלא זוהתה · אין גוש/חלקה) → הקשר בלבד (לא דירה · אין מפתח רחוב) → מוגבלת (רחוב ממפתח אחד · החלק הנמכר לא צוין · מחיר מתחת ל-₪100,000 · תמורה אחת לכמה יחידות) → מאומתת', 'The first rule met decides: CONFLICT (locality name vs parcel · address vs parcel · possible duplicate of a register deal) → UNRESOLVED (no property type · an address that resolves to no street · no block / parcel) → CONTEXT ONLY (not a dwelling · no street key) → LIMITED (street from one key · share sold not stated · below ₪100,000 · one consideration for several units) → VERIFIED'),
       inputs: [bi('שורת העותק כפי שפורסמה', 'the copy\'s row as published'), bi('עותק המרשם (גוש/חלקה, עסקאות באותה חלקה)', 'the register copy (parcels, the deals on the same parcel)'), bi('מרשם הרחובות הרשמי', 'the official street directory')],
       methodology: bi('העותק אינו מציין איזה חלק מהנכס נמכר. בעסקאות ששני העותקים מחזיקים, כ-10% מעסקאות הדירה הן מכירה חלקית במרשם, והעותק מדפיס אותן לעיתים בסכום החלק ולעיתים בשווי הנכס כולו — ולכן אף עסקה חדשה יותר אינה יכולה להראות שהיא מכירת נכס שלם, ואף אחת אינה מאומתת כל עוד העותק לא מציין את החלק.', 'The copy does not state the share of the property sold. Over the deals both copies hold, about 10 % of dwelling deals are partial sales in the register, and the copy prints them sometimes as the share\'s amount and sometimes as the whole property\'s value — so no newer deal can show it is a whole-property sale, and none is VERIFIED while the copy states no share.'),
-      interpretation: bi('מוגבלת = עסקת דירה שנצפתה ברחוב, שאפשר למנות אותה כעסקה אך לא להשתמש במחירה. הקשר בלבד = עסקה תקפה שמתארת את הסביבה.', 'LIMITED = a dwelling deal observed on the street that can be counted as a deal but whose price cannot be used. CONTEXT ONLY = a valid deal that describes the surroundings.'),
+      interpretation: bi('מוגבלת = עסקת דירה שנצפתה ברחוב; כשהיא עוברת את כל שערי האירוע היא נספרת כ"עסקה שנרשמה", ומחירה אינו משמש. הקשר בלבד = עסקה תקפה שמתארת את הסביבה.', 'LIMITED = a dwelling deal observed on the street; when it passes every event gate it is counted as a RECORDED TRANSACTION EVENT, and its price is not used. CONTEXT ONLY = a valid deal that describes the surroundings.'),
       notAs: bi('לא ציון איכות של העסקה ולא החלטה שהיא שגויה — רק מה מותר לעשות בה.', 'Not a quality score of the deal and not a finding that it is wrong — only what it may be used for.'),
       evidence: bi('data/streets/recent/promotion.json (מצב, סיבות וביקורת החלקה לכל עסקה)', 'data/streets/recent/promotion.json (state, reasons and the same-parcel audit of every deal)'),
       freshness: { observation: bi('תאריך העסקה כפי שפורסם', 'the transaction date as published'), publication: bi('loaded_at של עותק השכבה', 'the layer copy\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
+    T({ id: 'recorded_transaction_events', group: 'transactions', title: bi('עסקאות שנרשמו', 'Recorded transaction events'),
+      short: bi('כל עסקאות הדירה שהמרשם סופר ברחוב או ביישוב, ועוד עסקאות חדשות יותר שעברו כל בדיקת זהות — גם כשהחלק הנמכר לא צוין. נספרות כעסקאות; מחירן אינו משמש בסטטיסטיקה.', 'Every dwelling deal the register counts on the street or in the locality, plus newer deals that pass every identity gate — also when the share sold is not stated. Counted as transactions; their price is not used in any statistic.'),
+      why: bi('עסקה שהתרחשה היא עובדה גם כשאי אפשר לדעת אם נמכר הנכס כולו. ספירתה מראה פעילות עדכנית בלי להכניס מחיר שאולי הוא של חלק מהנכס.', 'A deal that took place is a fact even when it cannot be told whether the whole property was sold. Counting it shows recent activity without admitting a price that may be the price of a share.'),
+      unit: bi('עסקאות', 'deals'), geography: bi('רחוב · יישוב', 'Street · locality'), period: bi('חלון המרשם (36 חודשים) עד העסקה האחרונה בשכבה החדשה; וחלון השכבה', 'the register window (36 months) to the latest deal in the newer layer; and the layer\'s window'),
+      source: { ids: ['over:street-evidence', 'over:govmap-recent'] }, cls: 'DERIVED',
+      formula: bi('עסקאות דירה שנצפו במרשם (כולל מכירות חלקיות ועסקאות ללא מחיר) + עסקאות חדשות יותר שעברו את כל שערי האירוע', 'register observed dwelling deals (partial and unpriced sales included) + newer deals that pass every event gate'),
+      inputs: [bi('עותק המרשם', 'the register copy'), bi('השכבה החדשה המותאמת', 'the reconciled newer layer')],
+      methodology: bi('שערי האירוע, כל אחד בנפרד: המצב (מאומתת, או מוגבלת רק בגלל משמעות המחיר — החלק הנמכר לא צוין · מתחת ל-₪100,000 · תמורה אחת לכמה יחידות) · לא כפילות ולא כפילות אפשרית · דירה · היישוב לא נסתר · רחוב משני מפתחות (כתובת + חלקה, או כלל החלקה של המרשם) · תאריך תקף · המקור נשמר. עסקה שהמרשם מחזיק לעולם אינה נספרת שוב מהשכבה.', 'The event gates, each on its own: the state (VERIFIED, or LIMITED only for price semantics — share not stated · below ₪100,000 · one consideration for several units) · not a duplicate or possible duplicate · a dwelling · the locality uncontradicted · the street on two keys (address + parcel, or the register\'s parcel rule) · a valid date · provenance kept. A deal the register holds is never counted again from the layer.'),
+      interpretation: bi('מספר העסקאות שידוע שהתרחשו. ההפרש מעסקאות הדירה המאומתות = עסקאות חדשות יותר שמשמעות המחיר שלהן עדיין לא אומתה.', 'The number of deals known to have taken place. The difference from the verified dwelling transactions = newer deals whose price semantics are not yet verified.'),
+      notAs: bi('לא "דירות שלמות שנמכרו" ולא "מכירות עם מחיר". לא בסיס לחציון.', 'Not "whole dwellings sold" and not "priced sales". Not a basis for a median.'),
+      limitations: [bi('העותק החדש אינו מציין איזה חלק מהנכס נמכר.', 'The newer copy does not state the share of the property sold.'), bi('רחוב: רק עסקאות שהרחוב שלהן נקבע משני מפתחות.', 'Street: only deals whose street rests on two keys.')],
+      evidence: bi('data/streets/recent/promotion.json (event, eventFailed לכל עסקה) · lib/recent/counts.js', 'data/streets/recent/promotion.json (event, eventFailed per deal) · lib/recent/counts.js'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('scraped_at של המרשם · loaded_at של השכבה', 'the register\'s scraped_at · the layer\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
+    T({ id: 'verified_dwelling_transactions', group: 'transactions', title: bi('עסקאות דירה מאומתות', 'Verified dwelling transactions'),
+      short: bi('עסקאות הדירה שהמרשם סופר (כולל מכירות חלקיות, שהמרשם מציין את חלקן), ועוד עסקאות חדשות יותר שאומתו. כרגע אף עסקה חדשה יותר אינה מאומתת.', 'The dwelling deals the register counts (partial sales included — the register states their share), plus newer deals that are VERIFIED. No newer deal is verified today.'),
+      why: bi('כאן כל עסקה ידועה: נכס, יישוב, רחוב, ואם נמכר כולו או חלקו.', 'Here every deal is known: the property, the locality, the street, and whether all or part of it was sold.'),
+      unit: bi('עסקאות', 'deals'), geography: bi('רחוב · יישוב', 'Street · locality'), period: bi('חלון המרשם (36 חודשים) עד העסקה האחרונה בשכבה החדשה; וחלון השכבה', 'the register window (36 months) to the latest deal in the newer layer; and the layer\'s window'),
+      source: { ids: ['over:street-evidence', 'over:govmap-recent'] }, cls: 'DERIVED',
+      formula: bi('עסקאות דירה שנצפו במרשם + עסקאות חדשות יותר במצב "מאומתת"', 'register observed dwelling deals + newer deals in state VERIFIED'),
+      inputs: [bi('עותק המרשם', 'the register copy'), bi('השכבה החדשה המותאמת', 'the reconciled newer layer')],
+      methodology: bi('ברחוב: עסקאות הדירה שהקישור שלהן לרחוב נצפה (כל כתובות החלקה ברחוב). ביישוב: כל עסקאות הדירה של היישוב. עסקה חדשה יותר נספרת רק כשהיא מאומתת — כרגע אף אחת.', 'On a street: the dwelling deals whose street link is OBSERVED (every address of the parcel on the street). In a locality: every dwelling deal of the locality. A newer deal is counted only once VERIFIED — none today.'),
+      interpretation: bi('בסיס הספירה של הרחוב. מכירה חלקית נספרת כאן, אך אינה במחיר.', 'The street\'s counting basis. A partial sale is counted here, never priced.'),
+      notAs: bi('לא מספר המכירות עם מחיר — ראו "עסקאות עם מחיר בסטטיסטיקה".', 'Not the number of priced sales — see "Priced transactions used in statistics".'),
+      evidence: bi('lib/streets/evidence.js (עסקאות שנצפו) · lib/recent/counts.js', 'lib/streets/evidence.js (observed deals) · lib/recent/counts.js'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('scraped_at של המרשם · loaded_at של השכבה', 'the register\'s scraped_at · the layer\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
+    T({ id: 'priced_transactions_in_statistics', group: 'transactions', title: bi('עסקאות עם מחיר בסטטיסטיקה', 'Priced transactions used in market statistics'),
+      short: bi('העסקאות שהחציון ו-₪ למ״ר נקראים מהן: מכירת נכס שלם ב-₪100,000 ומעלה. עסקה חדשה יותר נכנסת לכאן רק כשאומתה כמכירת נכס שלם.', 'The deals the median and ₪ per m² read: a whole-property sale of ₪100,000 or more. A newer deal enters here only once VERIFIED as a whole-property sale.'),
+      why: bi('מחיר של חלק מנכס אינו מחיר של נכס. רק מכירה שלמה ומוצהרת מתארת מחיר שוק.', 'The price of a share is not the price of a property. Only a stated whole-property sale describes a market price.'),
+      unit: bi('עסקאות', 'deals'), geography: bi('רחוב · יישוב', 'Street · locality'), period: bi('חלון המרשם (36 חודשים) עד העסקה האחרונה בשכבה החדשה; וחלון השכבה', 'the register window (36 months) to the latest deal in the newer layer; and the layer\'s window'),
+      source: { ids: ['over:street-evidence', 'over:govmap-recent'] }, cls: 'DERIVED',
+      formula: bi('עסקאות מרשם עם מחיר (חלק נמכר = 1, ₪100,000 ומעלה) + עסקאות חדשות יותר מאומתות של נכס שלם', 'register priced deals (portion sold = 1, ₪100,000 or more) + newer VERIFIED whole-property deals'),
+      inputs: [bi('עותק המרשם', 'the register copy'), bi('השכבה החדשה המותאמת', 'the reconciled newer layer')],
+      methodology: bi('מכירה חלקית, תמורה אחת לכמה יחידות ותמורה מתחת ל-₪100,000 נספרות כעסקה ואינן במחיר. ₪ למ״ר רק כשהשטח 20 מ״ר ומעלה.', 'A partial sale, one consideration for several units and a consideration below ₪100,000 are counted as deals and never priced. ₪ per m² only with an area of 20 m² or more.'),
+      interpretation: bi('גודל המדגם שמאחורי המחיר. מצב המדגם (נתמך · מוגבל · לא מספיק) נקבע מהמספר הזה ברחוב.', 'The sample behind the price. The street\'s sample state (SUPPORTED · LIMITED · INSUFFICIENT) is set by this number.'),
+      notAs: bi('לא כל העסקאות שהתרחשו.', 'Not every deal that took place.'),
+      evidence: bi('lib/streets/evidence.js (priced) · lib/recent/counts.js', 'lib/streets/evidence.js (priced) · lib/recent/counts.js'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('scraped_at של המרשם · loaded_at של השכבה', 'the register\'s scraped_at · the layer\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
+    T({ id: 'recent_promotion_lifecycle', group: 'transactions', title: bi('מחזור חיים של עסקה חדשה יותר', 'Promotion lifecycle of a newer deal'),
+      short: bi('עסקה חדשה יותר נשארת "מוגבלת" עד שעותק מרשם חדש יותר מחזיק את אותה עסקה ומציין את החלק שנמכר. אז היא מאומתת — או מסומנת כסתירה — ונספרת דרך עסקת המרשם. ההיסטוריה נשמרת ואינה נכתבת מחדש.', 'A newer deal stays LIMITED until a newer register copy holds the same transaction and states the share sold. Then it is VERIFIED — or marked CONFLICT — and is counted through the register deal. The history is kept and never rewritten.'),
+      why: bi('רק המרשם מציין את החלק שנמכר. אישור מאוחר הופך תצפית מוקדמת לעובדה, בלי להעמיד פנים שהייתה מאומתת מלכתחילה.', 'Only the register states the share sold. A later confirmation turns an early observation into a fact, without pretending it was verified from the start.'),
+      unit: bi('אירוע', 'an event'), geography: bi('עסקה', 'one deal'), period: bi('מהתצפית הראשונה עד האישור', 'from the first observation to the confirmation'), source: { ids: ['over:govmap-recent', 'over:street-evidence'] }, cls: 'DERIVED',
+      inputs: [bi('יומן מחזור החיים', 'the lifecycle ledger'), bi('עותק המרשם החדש', 'the newer register copy'), bi('שורת השכבה כפי שפורסמה', 'the layer row as published')],
+      formula: bi('נצפתה → (עותק מרשם חדש יותר מחזיק אותה עסקה: אותה יחידה או אותה חלקה, יום אחד, הסכום מתיישב, השטח עד מטר) → חלק 1 = נכס שלם · חלק פחות מ-1 = חלק מנכס · תמורה אחת לכמה יחידות · ללא חלק = נשארת מוגבלת; יישוב אחר / לא דירה / כפילות = סתירה', 'OBSERVED → (a newer register copy holds the same transaction: the same unit or parcel, one day, the amounts agreeing, the area to the metre) → portion 1 = WHOLE PROPERTY · portion below 1 = PARTIAL SHARE · one consideration for several units = MULTI-UNIT · no portion = stays LIMITED; another locality / not a dwelling / a duplicate = CONFLICT'),
+      methodology: bi('יומן אירועים שמתווסף בלבד (promotion-history.jsonl): לכל אירוע — תאריך התצפית הראשונה, המקור והעותק, ולאישור — העותק המאשר, תאריך האישור ושני הייצוגים זה לצד זה. עותק מרשם שאינו חדש יותר לעולם אינו "מאשר". נכון ל-20.10.2026: אף עסקה לא אושרה — עותק המרשם לא התעדכן מאז 19.09.2026, ולדברי המפרסם הסריקה של אתר רשות המסים חסומה.', 'An append-only event ledger (promotion-history.jsonl): every event with the first observation date, the source and copy, and for a confirmation the confirming copy, the confirmation date and both representations side by side. A register copy that is not newer never "confirms". As of 20.10.2026 no deal has been confirmed — the register copy has not changed since 19.09.2026, and its publisher reports its scraping of the Tax Authority site blocked.'),
+      interpretation: bi('עסקה מאומתת דרך מחזור החיים נספרת פעם אחת — דרך עסקת המרשם.', 'A deal VERIFIED through the lifecycle is counted once — through the register deal.'),
+      notAs: bi('לא הערכה מתי יתעדכן המרשם, ולא הסתברות שעסקה תאושר.', 'Not an estimate of when the register will refresh, and not a probability that a deal will be confirmed.'),
+      evidence: bi('data/streets/recent/promotion-history.jsonl · meta.json → lifecycle', 'data/streets/recent/promotion-history.jsonl · meta.json → lifecycle'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('scraped_at של המרשם · loaded_at של השכבה', 'the register\'s scraped_at · the layer\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
     T({ id: 'recent_transaction_type_not_stated', group: 'transactions', title: bi('עסקה ללא סוג נכס', 'Deal with no property type'),
       short: bi('סדרה שנייה של מספרי עסקה בעותק השכבה מפרסמת עסקאות בלי סוג נכס ובלי טבע עסקה — לא ניתן לדעת אם זו דירה. מוצגת בנפרד מעסקאות הדירה.', 'A second deal-id series in the layer copy publishes deals with no property type and no deal nature — it cannot be told whether it is a dwelling. Listed apart from the dwelling deals.'),
       why: bi('רוב שורות הסדרה הזו חוזרות על עסקה מוקלדת (ומסוננות ככפילות); אלה שנשארו אינן ניתנות לסיווג.', 'Most rows of this series repeat a typed deal (and are filtered as duplicates); the ones left cannot be classified.'),
@@ -9456,12 +9510,16 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     src:(c,l,k)=>`מקור: שכבת העסקאות של GovMap — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}; נבדק ${k}. לא ערוץ ממשלתי. הותאם לעותק המרשם (התאמה דטרמיניסטית — עסקה לא נספרת פעמיים).`,
     th:"עסקאות דירה — עדיין לא במרשם",cols:["תאריך","כתובת כפי שפורסמה","חדרים","מ״ר","מחיר","₪ למ״ר","סוג נכס","גוש/חלקה/תת","שיוך לרחוב","מצב PROPX","הערה"],
     st:{RECENT_OBSERVED_VERIFIED:"מאומתת",RECENT_OBSERVED_LIMITED:"מוגבלת",RECENT_CONTEXT_ONLY:"הקשר בלבד",RECENT_CONFLICT:"סתירה",RECENT_UNRESOLVED:"לא מוכרעת"},
-    stNote:"אף עסקה מהשכבה הזו אינה נכנסת עדיין לנתוני הרחוב. העותק אינו מציין איזה חלק מהנכס נמכר, ולכן אף עסקה אינה מאומתת למחיר.",
+    stNote:"אף מחיר מהשכבה הזו אינו נכנס לנתוני הרחוב: העותק אינו מציין איזה חלק מהנכס נמכר, ולכן אף עסקה אינה מאומתת למחיר. עסקה שעוברת את כל בדיקות הזהות נספרת כ\"עסקה שנרשמה\" בלבד. כשעותק מרשם חדש יותר יחזיק את אותה עסקה ויציין את החלק שנמכר, היא תאומת — וההיסטוריה שלה נשמרת.",
     basis:{address:"לפי הכתובת","address+parcel":"כתובת + חלקה",parcel:"לפי החלקה"},
     twin:(d,a)=>`מופיעה גם בסדרה השנייה של העותק: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"בסדרה המוקלדת העותק מדפיס סכומים בקפיצות של ₪1,000 (המרשם מדפיס את הסכום המדויק).",
     untH:n=>n===1?"עסקה אחת ללא סוג נכס":`${fmtInt(n)} עסקאות ללא סוג נכס`,nonH:n=>n===1?"עסקה אחת שאינה דירה":`${fmtInt(n)} עסקאות שאינן דירה`,
     untNote:(o,n)=>`ייתכן שאינן דירה. התאריך כפי שפורסם: ב-${fmtInt(o)} מתוך ${fmtInt(n)} העסקאות ששני העותקים מחזיקים, המרשם תארך את העסקה יום אחד מאוחר יותר.`,
-    shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`},
+    shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
+    noUse:"המחיר אינו משמש בסטטיסטיקות השוק",why:"סיבה",counted:"נספרת כעסקה שנרשמה",det:"שדות המקור",
+    useWhy:{share:"החלק הנמכר בנכס לא צוין",RECENT_CONFLICT:"זהות סותרת או כפילות אפשרית",RECENT_UNRESOLVED:"סוג הנכס או הכתובת לא הוכרעו",RECENT_CONTEXT_ONLY:"לא דירה, או ללא רחוב מזוהה",below:"תמורה מתחת ל-₪100,000",multi:"תמורה אחת לכמה יחידות"},
+    f:{dealId:"מזהה עסקה במקור",oid:"מזהה שורה בעותק",series:"סדרת מזהים",date:"תאריך כפי שפורסם",amount:"סכום כפי שפורסם",area:"שטח",rooms:"חדרים",floor:"קומה",ptype:"סוג נכס",nature:"מהות",settlement:"יישוב",addr:"כתובת",unit:"גוש/חלקה/תת",copy:"עותק השכבה נטען",first:"PROPX קרא לראשונה",state:"מצב PROPX",reasons:"סיבות",sem:"משמעות המחיר",semU:"לא ידועה — החלק הנמכר לא צוין"},
+    rs:{"locality-name-vs-parcel":"שם היישוב סותר את החלקה","address-vs-parcel-street":"הכתובת סותרת את רחוב החלקה","possible-duplicate-of-register-deal":"כפילות אפשרית של עסקת מרשם","property-type-not-stated":"סוג נכס לא צוין","street-unresolved":"הכתובת לא זוהתה","street-ambiguous":"הכתובת עמומה","street-possible":"התאמת רחוב חלשה","no-block-parcel":"אין גוש/חלקה","same-parcel-audit-unresolved":"בדיקת החלקה לא הוכרעה","date-invalid":"תאריך לא תקף","provenance-missing":"המקור לא נשמר","not-a-dwelling":"לא דירה","no-street-key":"אין מפתח רחוב","street-single-key":"רחוב ממפתח אחד","share-not-stated":"החלק הנמכר לא צוין","below-market-amount":"מתחת ל-₪100,000","several-units-one-consideration":"תמורה אחת לכמה יחידות"}},
   en:{h:"Newer deals — not yet in the register copy",chip:"SEPARATE LAYER",
     lead:(n,l)=>`${n===1?"One dwelling deal":fmtInt(n)+" dwelling deals"} on this street in the GovMap deals-layer copy that the register copy does not hold yet${l?` · latest ${l}`:""}`,
     none:(f,t)=>`No newer dwelling deal on this street in the layer copy (deals ${f} to ${t})`,
@@ -9471,12 +9529,41 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     src:(c,l,k)=>`Source: the GovMap deals layer — independent republication (over.org.il), copy ${c}, latest deal in it ${l}; checked ${k}. Not a government channel. Reconciled against the register copy (deterministic — no deal is counted twice).`,
     th:"Dwelling deals — not yet in the register",cols:["Date","Address as published","Rooms","m²","Price","₪/m²","Property type","Block/parcel/sub","Street link","PROPX state","Note"],
     st:{RECENT_OBSERVED_VERIFIED:"VERIFIED",RECENT_OBSERVED_LIMITED:"LIMITED",RECENT_CONTEXT_ONLY:"CONTEXT ONLY",RECENT_CONFLICT:"CONFLICT",RECENT_UNRESOLVED:"UNRESOLVED"},
-    stNote:"No deal from this layer enters the street's figures yet. The copy does not state the share of the property sold, so no deal is verified for its price.",
+    stNote:"No price from this layer enters the street's figures: the copy does not state the share of the property sold, so no deal is verified for its price. A deal that passes every identity gate is counted as a recorded transaction only. When a newer register copy holds the same deal and states the share sold, it will be verified — and its history kept.",
     basis:{address:"by the address","address+parcel":"address + parcel",parcel:"by the parcel"},
     twin:(d,a)=>`also in the copy's second series: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"In its typed series the copy prints amounts in ₪1,000 steps (the register prints the exact amount).",
     untH:n=>`${fmtInt(n)} ${n===1?"deal":"deals"} with no property type`,nonH:n=>`${fmtInt(n)} non-dwelling ${n===1?"deal":"deals"}`,
     untNote:(o,n)=>`They may not be dwellings. The date as published: in ${fmtInt(o)} of the ${fmtInt(n)} deals both copies hold, the register dated the deal one day later.`,
-    shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`}};
+    shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
+    noUse:"PRICE NOT USED IN MARKET STATISTICS",why:"Reason",counted:"counted as a recorded transaction",det:"Source fields",
+    useWhy:{share:"OWNERSHIP SHARE NOT STATED",RECENT_CONFLICT:"CONFLICTING IDENTITY OR POSSIBLE DUPLICATE",RECENT_UNRESOLVED:"PROPERTY TYPE OR ADDRESS NOT RESOLVED",RECENT_CONTEXT_ONLY:"NOT A DWELLING, OR NO STREET",below:"CONSIDERATION BELOW ₪100,000",multi:"ONE CONSIDERATION FOR SEVERAL UNITS"},
+    f:{dealId:"Source deal id",oid:"Copy row id",series:"Id series",date:"Date as published",amount:"Amount as published",area:"Area",rooms:"Rooms",floor:"Floor",ptype:"Property type",nature:"Deal nature",settlement:"Locality",addr:"Address",unit:"Block/parcel/sub",copy:"Layer copy loaded",first:"PROPX first read",state:"PROPX state",reasons:"Reasons",sem:"Price semantics",semU:"unknown — the share sold is not stated"},
+    rs:{"locality-name-vs-parcel":"locality name contradicts the parcel","address-vs-parcel-street":"address contradicts the parcel's street","possible-duplicate-of-register-deal":"possible duplicate of a register deal","property-type-not-stated":"no property type","street-unresolved":"address not resolved","street-ambiguous":"address ambiguous","street-possible":"weak street match","no-block-parcel":"no block / parcel","same-parcel-audit-unresolved":"same-parcel audit unresolved","date-invalid":"date not valid","provenance-missing":"provenance not kept","not-a-dwelling":"not a dwelling","no-street-key":"no street key","street-single-key":"street from one key","share-not-stated":"share sold not stated","below-market-amount":"below ₪100,000","several-units-one-consideration":"one consideration for several units"}}};
+/* THE THREE TRANSACTION COUNTS (lib/recent/counts.js) — never one number */
+const TCT={he:{h:"ספירת העסקאות",ev:"עסקאות שנרשמו",ver:"עסקאות דירה מאומתות",pr:"עסקאות עם מחיר בסטטיסטיקה",
+    parts:(a,b)=>b==null?`מרשם ${fmtInt(a)}`:`מרשם ${fmtInt(a)} + שכבה חדשה ${fmtInt(b)}`,sqm:n=>`מתוכן עם ₪ למ״ר: ${fmtInt(n)}`,
+    win:(f,t)=>`${f} – ${t}`,rec:(f,t)=>`החלון החדש ${f} – ${t}`,loc:"ביישוב",street:"ברחוב",noRec:"השכבה החדשה אינה מותאמת כעת לעותק המרשם — רק נתוני המרשם נספרים.",
+    nc:n=>`${fmtInt(n)} עסקאות נוספות בשכבה החדשה אינן נספרות (לא עברו את שערי הזהות).`},
+  en:{h:"Transaction counts",ev:"Recorded transaction events",ver:"Verified dwelling transactions",pr:"Priced transactions used in market statistics",
+    parts:(a,b)=>b==null?`register ${fmtInt(a)}`:`register ${fmtInt(a)} + newer layer ${fmtInt(b)}`,sqm:n=>`of which with ₪/m²: ${fmtInt(n)}`,
+    win:(f,t)=>`${f} – ${t}`,rec:(f,t)=>`newer window ${f} – ${t}`,loc:"In the locality",street:"On the street",noRec:"The newer layer is not reconciled with the register copy right now — only the register's deals are counted.",
+    nc:n=>`${fmtInt(n)} more deals in the newer layer are not counted (they did not pass the identity gates).`}};
+/** the three counts of a street (and its locality's line): recorded events ≠ verified dwelling transactions ≠ priced transactions */
+function countsHTML(TC){
+  if(!TC||!TC.street||!TC.street.available)return "";
+  const t=TCT[state.lang==="en"?"en":"he"],S=TC.street,L=TC.locality&&TC.locality.available?TC.locality:null;
+  const W=S.periods.find(p=>p.id==="window"),R=S.periods.find(p=>p.id==="recent");
+  const m=(l,x,sub,term)=>`<div class="gv-m"><span class="l">${l} ${xpBtn(term)}</span><span class="v num">${fmtInt(x.total)}</span><span class="s">${t.parts(x.register,x.recent)}${sub?` · ${sub}`:""}</span></div>`;
+  const grid=(P)=>`<div class="st-grid tc-grid">${m(t.ev,P.recordedEvents,"","recorded_transaction_events")}${m(t.ver,P.verifiedDwelling,"","verified_dwelling_transactions")}${m(t.pr,P.pricedInStatistics,t.sqm(P.pricedInStatistics.withSqm),"priced_transactions_in_statistics")}</div>`;
+  const lw=L&&L.periods.find(p=>p.id==="window");
+  const note=state.lang==="en"?S.note:S.noteHe;
+  return `<div class="tc" data-tc="${W.recordedEvents.total}|${W.verifiedDwelling.total}|${W.pricedInStatistics.total}"><h4>${t.h} · ${t.street} <span class="num">${t.win(siDate(W.from),siDate(W.to))}</span></h4>${grid(W)}
+    ${R&&R.recordedEvents.recent?`<p class="gv-note">${t.rec(siDate(R.from),siDate(R.to))}: ${t.ev} ${fmtInt(R.recordedEvents.total)} · ${t.ver} ${fmtInt(R.verifiedDwelling.total)} · ${t.pr} ${fmtInt(R.pricedInStatistics.total)}</p>`:""}
+    ${S.recentLayer&&!S.recentLayer.available?`<p class="gv-note">${t.noRec}</p>`:""}
+    ${W.recentShownNotCounted?`<p class="gv-note">${t.nc(W.recentShownNotCounted)}</p>`:""}
+    ${lw?`<p class="gv-note"><b>${t.loc}</b> ${t.win(siDate(lw.from),siDate(lw.to))}: ${t.ev} ${fmtInt(lw.recordedEvents.total)} (${t.parts(lw.recordedEvents.register,lw.recordedEvents.recent)}) · ${t.ver} ${fmtInt(lw.verifiedDwelling.total)} · ${t.pr} ${fmtInt(lw.pricedInStatistics.total)}</p>`:""}
+    ${W.recordedEvents.recent?`<p class="gv-note">${ldE(note)}</p>`:""}</div>`;
+}
 /** the one-minute line of the recent layer (Street Intelligence) */
 function recentLineHTML(R){
   if(!R||R.reason==="not-built"||R.reason==="not-read-for-this-evidence-store")return "";
@@ -9492,10 +9579,16 @@ function recentLineHTML(R){
 function recentTableHTML(R){
   if(!R||!R.available||!R.total)return "";
   const t=RCT[state.lang==="en"?"en":"he"];
+  /* the price of a recent deal is printed as the copy published it and never used: VERIFIED is the only state whose price a statistic
+     may read (none today) — the reason is named on the row; no ₪/m² is derived from a price that may be a share's */
+  const used=d=>d.state==="RECENT_OBSERVED_VERIFIED";
+  const whyOf=d=>{const r=d.reasons||[];return r.includes("share-not-stated")?t.useWhy.share:d.state!=="RECENT_OBSERVED_LIMITED"?t.useWhy[d.state]||"":r.includes("below-market-amount")?t.useWhy.below:r.includes("several-units-one-consideration")?t.useWhy.multi:""};
+  const det=d=>{const f=t.f,dl=[[f.dealId,d.dealId],[f.oid,d.oid],[f.series,d.series],[f.date,d.date],[f.amount,d.amount!=null?fmtNIS(d.amount):null],[f.area,d.areaSqm!=null?`${d.areaSqm} m²`:null],[f.rooms,d.rooms],[f.floor,d.floor],[f.ptype,d.propertyType],[f.nature,d.dealNature],[f.settlement,d.settlement],[f.addr,[d.street,d.house].filter(Boolean).join(" ")||null],[f.unit,`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`],[f.state,t.st[d.state]||d.state],[f.reasons,(d.reasons||[]).map(x=>t.rs[x]||x).join(" · ")||null],[f.sem,d.semantics==="UNKNOWN"||!d.semantics?f.semU:d.semantics],[f.first,d.firstReadAt?siDate(d.firstReadAt):null]];
+    return `<details class="rct-det"><summary>${t.det}</summary><dl>${dl.map(([k,v])=>`<dt>${k}</dt><dd><bdi>${v==null||v===""?"—":ldE(String(v))}</bdi></dd>`).join("")}</dl></details>`};
   const row=d=>`<tr><td class="num" data-v="${ldE(d.date)}">${siDate(d.date)}</td><td class="w"><bdi>${ldE([d.street,d.house].filter(Boolean).join(" "))||"—"}</bdi></td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
-    <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td><td class="w">${d.state?`<span class="st-tag">${t.st[d.state]||ldE(d.state)}</span>`:"—"}</td>
-    <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}</td></tr>`;
+    <td class="num" data-v="${d.amount!=null?d.amount:""}">${d.amount==null?"—":used(d)?fmtNIS(d.amount):`<span class="sub">${fmtNIS(d.amount)}</span><span class="rct-nouse" data-nouse="${ldE(d.state||"")}">${t.noUse}${whyOf(d)?`<span>${t.why}: ${whyOf(d)}</span>`:""}</span>`}</td><td class="num" data-v="${used(d)&&d.pricePerSqm!=null?d.pricePerSqm:""}">${used(d)&&d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
+    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td><td class="w">${d.state?`<span class="st-tag">${t.st[d.state]||ldE(d.state)}</span>`:"—"}${d.event?` <span class="sub">${t.counted}</span>`:""}</td>
+    <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}${det(d)}</td></tr>`;
   const tbl=(rows,key)=>`<div class="st-wrap"><table class="st-tbl" data-ptdom="${key}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(row).join("")}</tbody></table></div>`;
   const c=R.counts||{};
   let h=`<h4>${t.th} <span class="rct-chip">${t.chip}</span> ${xpBtn("recent_transaction_layer")}</h4>`;
@@ -9503,7 +9596,7 @@ function recentTableHTML(R){
   if(R.typeNotStated.length)h+=`<details class="st-sec"><summary>${t.untH(c.TYPE_NOT_STATED)} ${xpBtn("recent_transaction_type_not_stated")}</summary>${R.dateNote?`<p class="gv-note">${t.untNote(R.dateNote.oneDayLater,R.dateNote.verified)}</p>`:""}${tbl(R.typeNotStated,"strecentu")}</details>`;
   if(R.nonDwelling.length)h+=`<details class="st-sec"><summary>${t.nonH(c.NON_DWELLING)}</summary>${tbl(R.nonDwelling,"strecentn")}</details>`;
   const S=R.source||{};
-  return h+`<p class="gv-note">${t.stNote} ${xpBtn("recent_promotion_state")} ${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
+  return h+`<p class="gv-note">${t.stNote} ${xpBtn("recent_promotion_state")} ${xpBtn("recent_promotion_lifecycle")} ${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
 }
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */
@@ -9807,6 +9900,7 @@ function siHTML(g){
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
     ${txFreshHTML(D.freshness,{locality:true})}
     ${recentLineHTML(D.recent)}
+    ${countsHTML(D.transactionCounts)}
     ${pair}
     <div class="st-grid">${tiles}</div>${kn}
     <details class="st-sec" open><summary>${t.five}</summary>${five}</details>

@@ -61,7 +61,9 @@
 //   view=txFreshness     how fresh the transaction universe is: the copy's dates apart, its state, the daily monitor's answer
 //   view=recentLayer     the RECENT layer (lib/recent/read.js): the newer GovMap-layer copy (over.org.il), the class of every row it
 //                     read, the exact replay of the 2,293 late-reported deals; [city=<code> limit ≤ 500] → that locality's recent-only
-//                     deals (never merged into the register's figures); view=street carries the street's block as `recent`
+//                     deals (never merged into the register's figures) + `transactionCounts` (RECORDED TRANSACTION EVENTS ·
+//                     VERIFIED DWELLING TRANSACTIONS · PRICED TRANSACTIONS USED IN STATISTICS, lib/recent/counts.js); view=street carries
+//                     the street's block as `recent` and the street's + locality's three counts as `transactionCounts`
 //   view=streetCoverage  the coverage audit (lib/streets/coverage.js): official rows · canonical · searchable · synonyms · with transactions ·
 //                     sample states — national / by district / by locality, reconciled
 //   view=street → `model`: the PROPX STREET ESTIMATE (lib/streets/value-read.js, a separate MODEL layer — never the observed market):
@@ -183,7 +185,8 @@ module.exports = async (req, res) => {
       const RR = require('../lib/recent/read');
       if (p.city != null && p.city !== '') {
         if (!/^\d{1,5}$/.test(String(p.city))) return send(res, 400, { error: 'city must be an official locality code' });
-        return send(res, 200, RR.forLocality(p.city, { limit: p.limit || 100 }));
+        /* the locality's three transaction counts beside its recent-only deals (lib/recent/counts.js) — never one number */
+        return send(res, 200, { ...RR.forLocality(p.city, { limit: p.limit || 100 }), transactionCounts: require('../lib/recent/counts').forLocality(p.city) });
       }
       return send(res, 200, RR.summary());
     }

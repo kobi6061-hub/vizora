@@ -71,7 +71,9 @@ jobs:
           node scripts/street-recent-sync.js --reconcile
           code=$?
           if [ $code -eq 0 ] && [ -f test/recent.test.js ]; then node test/recent.test.js; code=$?; fi
-          if [ $code -ne 0 ]; then echo 'Reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent/layer.json data/streets/recent/reconciliation.json data/streets/recent/meta.json 2>/dev/null; fi
+          if [ $code -eq 0 ] && [ -f test/recent-lifecycle.test.js ]; then node test/recent-lifecycle.test.js; code=$?; fi
+          # the layer, the promotion and its append-only ledger move together: on failure all of them are restored
+          if [ $code -ne 0 ]; then echo 'Reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent/layer.json data/streets/recent/reconciliation.json data/streets/recent/meta.json data/streets/recent/promotion.json data/streets/recent/promotion-history.jsonl data/streets/recent/audit-2293.json 2>/dev/null; fi
           echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Commit
         run: |

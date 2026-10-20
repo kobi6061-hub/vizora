@@ -587,6 +587,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .rct b{color:var(--ink);font-weight:700}
 .rct-chip{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:1px 8px;border:1px dashed var(--brass);color:var(--brass);margin-inline-end:6px}
 .rct .txf-note{margin-top:3px}
+.rct-nouse{display:block;font-size:9.5px;font-weight:800;letter-spacing:.03em;color:var(--ink-3);white-space:nowrap;line-height:1.35}
+.rct-nouse span{display:block;font-weight:600}
+.rct-det summary{cursor:pointer;font-size:11px;color:var(--brass)}
+.rct-det dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 10px;margin:6px 0 0;font-size:11px;min-width:280px}
+.rct-det dt{color:var(--ink-3)}.rct-det dd{margin:0;overflow-wrap:anywhere}
+.tc{margin:10px 0 4px}.tc h4{margin:0 0 6px}
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:12px}
 .st-grid .gv-m .v{font-size:15.5px}
 .st-grid .gv-m .s{font-size:11px;color:var(--ink-3);line-height:1.45}
@@ -7096,12 +7102,16 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     src:(c,l,k)=>`מקור: שכבת העסקאות של GovMap — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}; נבדק ${k}. לא ערוץ ממשלתי. הותאם לעותק המרשם (התאמה דטרמיניסטית — עסקה לא נספרת פעמיים).`,
     th:"עסקאות דירה — עדיין לא במרשם",cols:["תאריך","כתובת כפי שפורסמה","חדרים","מ״ר","מחיר","₪ למ״ר","סוג נכס","גוש/חלקה/תת","שיוך לרחוב","מצב PROPX","הערה"],
     st:{RECENT_OBSERVED_VERIFIED:"מאומתת",RECENT_OBSERVED_LIMITED:"מוגבלת",RECENT_CONTEXT_ONLY:"הקשר בלבד",RECENT_CONFLICT:"סתירה",RECENT_UNRESOLVED:"לא מוכרעת"},
-    stNote:"אף עסקה מהשכבה הזו אינה נכנסת עדיין לנתוני הרחוב. העותק אינו מציין איזה חלק מהנכס נמכר, ולכן אף עסקה אינה מאומתת למחיר.",
+    stNote:"אף מחיר מהשכבה הזו אינו נכנס לנתוני הרחוב: העותק אינו מציין איזה חלק מהנכס נמכר, ולכן אף עסקה אינה מאומתת למחיר. עסקה שעוברת את כל בדיקות הזהות נספרת כ\"עסקה שנרשמה\" בלבד. כשעותק מרשם חדש יותר יחזיק את אותה עסקה ויציין את החלק שנמכר, היא תאומת — וההיסטוריה שלה נשמרת.",
     basis:{address:"לפי הכתובת","address+parcel":"כתובת + חלקה",parcel:"לפי החלקה"},
     twin:(d,a)=>`מופיעה גם בסדרה השנייה של העותק: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"בסדרה המוקלדת העותק מדפיס סכומים בקפיצות של ₪1,000 (המרשם מדפיס את הסכום המדויק).",
     untH:n=>n===1?"עסקה אחת ללא סוג נכס":`${fmtInt(n)} עסקאות ללא סוג נכס`,nonH:n=>n===1?"עסקה אחת שאינה דירה":`${fmtInt(n)} עסקאות שאינן דירה`,
     untNote:(o,n)=>`ייתכן שאינן דירה. התאריך כפי שפורסם: ב-${fmtInt(o)} מתוך ${fmtInt(n)} העסקאות ששני העותקים מחזיקים, המרשם תארך את העסקה יום אחד מאוחר יותר.`,
-    shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`},
+    shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`,
+    noUse:"המחיר אינו משמש בסטטיסטיקות השוק",why:"סיבה",counted:"נספרת כעסקה שנרשמה",det:"שדות המקור",
+    useWhy:{share:"החלק הנמכר בנכס לא צוין",RECENT_CONFLICT:"זהות סותרת או כפילות אפשרית",RECENT_UNRESOLVED:"סוג הנכס או הכתובת לא הוכרעו",RECENT_CONTEXT_ONLY:"לא דירה, או ללא רחוב מזוהה",below:"תמורה מתחת ל-₪100,000",multi:"תמורה אחת לכמה יחידות"},
+    f:{dealId:"מזהה עסקה במקור",oid:"מזהה שורה בעותק",series:"סדרת מזהים",date:"תאריך כפי שפורסם",amount:"סכום כפי שפורסם",area:"שטח",rooms:"חדרים",floor:"קומה",ptype:"סוג נכס",nature:"מהות",settlement:"יישוב",addr:"כתובת",unit:"גוש/חלקה/תת",copy:"עותק השכבה נטען",first:"PROPX קרא לראשונה",state:"מצב PROPX",reasons:"סיבות",sem:"משמעות המחיר",semU:"לא ידועה — החלק הנמכר לא צוין"},
+    rs:{"locality-name-vs-parcel":"שם היישוב סותר את החלקה","address-vs-parcel-street":"הכתובת סותרת את רחוב החלקה","possible-duplicate-of-register-deal":"כפילות אפשרית של עסקת מרשם","property-type-not-stated":"סוג נכס לא צוין","street-unresolved":"הכתובת לא זוהתה","street-ambiguous":"הכתובת עמומה","street-possible":"התאמת רחוב חלשה","no-block-parcel":"אין גוש/חלקה","same-parcel-audit-unresolved":"בדיקת החלקה לא הוכרעה","date-invalid":"תאריך לא תקף","provenance-missing":"המקור לא נשמר","not-a-dwelling":"לא דירה","no-street-key":"אין מפתח רחוב","street-single-key":"רחוב ממפתח אחד","share-not-stated":"החלק הנמכר לא צוין","below-market-amount":"מתחת ל-₪100,000","several-units-one-consideration":"תמורה אחת לכמה יחידות"}},
   en:{h:"Newer deals — not yet in the register copy",chip:"SEPARATE LAYER",
     lead:(n,l)=>`${n===1?"One dwelling deal":fmtInt(n)+" dwelling deals"} on this street in the GovMap deals-layer copy that the register copy does not hold yet${l?` · latest ${l}`:""}`,
     none:(f,t)=>`No newer dwelling deal on this street in the layer copy (deals ${f} to ${t})`,
@@ -7111,12 +7121,41 @@ const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעות�
     src:(c,l,k)=>`Source: the GovMap deals layer — independent republication (over.org.il), copy ${c}, latest deal in it ${l}; checked ${k}. Not a government channel. Reconciled against the register copy (deterministic — no deal is counted twice).`,
     th:"Dwelling deals — not yet in the register",cols:["Date","Address as published","Rooms","m²","Price","₪/m²","Property type","Block/parcel/sub","Street link","PROPX state","Note"],
     st:{RECENT_OBSERVED_VERIFIED:"VERIFIED",RECENT_OBSERVED_LIMITED:"LIMITED",RECENT_CONTEXT_ONLY:"CONTEXT ONLY",RECENT_CONFLICT:"CONFLICT",RECENT_UNRESOLVED:"UNRESOLVED"},
-    stNote:"No deal from this layer enters the street's figures yet. The copy does not state the share of the property sold, so no deal is verified for its price.",
+    stNote:"No price from this layer enters the street's figures: the copy does not state the share of the property sold, so no deal is verified for its price. A deal that passes every identity gate is counted as a recorded transaction only. When a newer register copy holds the same deal and states the share sold, it will be verified — and its history kept.",
     basis:{address:"by the address","address+parcel":"address + parcel",parcel:"by the parcel"},
     twin:(d,a)=>`also in the copy's second series: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"In its typed series the copy prints amounts in ₪1,000 steps (the register prints the exact amount).",
     untH:n=>`${fmtInt(n)} ${n===1?"deal":"deals"} with no property type`,nonH:n=>`${fmtInt(n)} non-dwelling ${n===1?"deal":"deals"}`,
     untNote:(o,n)=>`They may not be dwellings. The date as published: in ${fmtInt(o)} of the ${fmtInt(n)} deals both copies hold, the register dated the deal one day later.`,
-    shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`}};
+    shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`,
+    noUse:"PRICE NOT USED IN MARKET STATISTICS",why:"Reason",counted:"counted as a recorded transaction",det:"Source fields",
+    useWhy:{share:"OWNERSHIP SHARE NOT STATED",RECENT_CONFLICT:"CONFLICTING IDENTITY OR POSSIBLE DUPLICATE",RECENT_UNRESOLVED:"PROPERTY TYPE OR ADDRESS NOT RESOLVED",RECENT_CONTEXT_ONLY:"NOT A DWELLING, OR NO STREET",below:"CONSIDERATION BELOW ₪100,000",multi:"ONE CONSIDERATION FOR SEVERAL UNITS"},
+    f:{dealId:"Source deal id",oid:"Copy row id",series:"Id series",date:"Date as published",amount:"Amount as published",area:"Area",rooms:"Rooms",floor:"Floor",ptype:"Property type",nature:"Deal nature",settlement:"Locality",addr:"Address",unit:"Block/parcel/sub",copy:"Layer copy loaded",first:"PROPX first read",state:"PROPX state",reasons:"Reasons",sem:"Price semantics",semU:"unknown — the share sold is not stated"},
+    rs:{"locality-name-vs-parcel":"locality name contradicts the parcel","address-vs-parcel-street":"address contradicts the parcel's street","possible-duplicate-of-register-deal":"possible duplicate of a register deal","property-type-not-stated":"no property type","street-unresolved":"address not resolved","street-ambiguous":"address ambiguous","street-possible":"weak street match","no-block-parcel":"no block / parcel","same-parcel-audit-unresolved":"same-parcel audit unresolved","date-invalid":"date not valid","provenance-missing":"provenance not kept","not-a-dwelling":"not a dwelling","no-street-key":"no street key","street-single-key":"street from one key","share-not-stated":"share sold not stated","below-market-amount":"below ₪100,000","several-units-one-consideration":"one consideration for several units"}}};
+/* THE THREE TRANSACTION COUNTS (lib/recent/counts.js) — never one number */
+const TCT={he:{h:"ספירת העסקאות",ev:"עסקאות שנרשמו",ver:"עסקאות דירה מאומתות",pr:"עסקאות עם מחיר בסטטיסטיקה",
+    parts:(a,b)=>b==null?`מרשם ${fmtInt(a)}`:`מרשם ${fmtInt(a)} + שכבה חדשה ${fmtInt(b)}`,sqm:n=>`מתוכן עם ₪ למ״ר: ${fmtInt(n)}`,
+    win:(f,t)=>`${f} – ${t}`,rec:(f,t)=>`החלון החדש ${f} – ${t}`,loc:"ביישוב",street:"ברחוב",noRec:"השכבה החדשה אינה מותאמת כעת לעותק המרשם — רק נתוני המרשם נספרים.",
+    nc:n=>`${fmtInt(n)} עסקאות נוספות בשכבה החדשה אינן נספרות (לא עברו את שערי הזהות).`},
+  en:{h:"Transaction counts",ev:"Recorded transaction events",ver:"Verified dwelling transactions",pr:"Priced transactions used in market statistics",
+    parts:(a,b)=>b==null?`register ${fmtInt(a)}`:`register ${fmtInt(a)} + newer layer ${fmtInt(b)}`,sqm:n=>`of which with ₪/m²: ${fmtInt(n)}`,
+    win:(f,t)=>`${f} – ${t}`,rec:(f,t)=>`newer window ${f} – ${t}`,loc:"In the locality",street:"On the street",noRec:"The newer layer is not reconciled with the register copy right now — only the register's deals are counted.",
+    nc:n=>`${fmtInt(n)} more deals in the newer layer are not counted (they did not pass the identity gates).`}};
+/** the three counts of a street (and its locality's line): recorded events ≠ verified dwelling transactions ≠ priced transactions */
+function countsHTML(TC){
+  if(!TC||!TC.street||!TC.street.available)return "";
+  const t=TCT[state.lang==="en"?"en":"he"],S=TC.street,L=TC.locality&&TC.locality.available?TC.locality:null;
+  const W=S.periods.find(p=>p.id==="window"),R=S.periods.find(p=>p.id==="recent");
+  const m=(l,x,sub,term)=>`<div class="gv-m"><span class="l">${l} ${xpBtn(term)}</span><span class="v num">${fmtInt(x.total)}</span><span class="s">${t.parts(x.register,x.recent)}${sub?` · ${sub}`:""}</span></div>`;
+  const grid=(P)=>`<div class="st-grid tc-grid">${m(t.ev,P.recordedEvents,"","recorded_transaction_events")}${m(t.ver,P.verifiedDwelling,"","verified_dwelling_transactions")}${m(t.pr,P.pricedInStatistics,t.sqm(P.pricedInStatistics.withSqm),"priced_transactions_in_statistics")}</div>`;
+  const lw=L&&L.periods.find(p=>p.id==="window");
+  const note=state.lang==="en"?S.note:S.noteHe;
+  return `<div class="tc" data-tc="${W.recordedEvents.total}|${W.verifiedDwelling.total}|${W.pricedInStatistics.total}"><h4>${t.h} · ${t.street} <span class="num">${t.win(siDate(W.from),siDate(W.to))}</span></h4>${grid(W)}
+    ${R&&R.recordedEvents.recent?`<p class="gv-note">${t.rec(siDate(R.from),siDate(R.to))}: ${t.ev} ${fmtInt(R.recordedEvents.total)} · ${t.ver} ${fmtInt(R.verifiedDwelling.total)} · ${t.pr} ${fmtInt(R.pricedInStatistics.total)}</p>`:""}
+    ${S.recentLayer&&!S.recentLayer.available?`<p class="gv-note">${t.noRec}</p>`:""}
+    ${W.recentShownNotCounted?`<p class="gv-note">${t.nc(W.recentShownNotCounted)}</p>`:""}
+    ${lw?`<p class="gv-note"><b>${t.loc}</b> ${t.win(siDate(lw.from),siDate(lw.to))}: ${t.ev} ${fmtInt(lw.recordedEvents.total)} (${t.parts(lw.recordedEvents.register,lw.recordedEvents.recent)}) · ${t.ver} ${fmtInt(lw.verifiedDwelling.total)} · ${t.pr} ${fmtInt(lw.pricedInStatistics.total)}</p>`:""}
+    ${W.recordedEvents.recent?`<p class="gv-note">${ldE(note)}</p>`:""}</div>`;
+}
 /** the one-minute line of the recent layer (Street Intelligence) */
 function recentLineHTML(R){
   if(!R||R.reason==="not-built"||R.reason==="not-read-for-this-evidence-store")return "";
@@ -7132,10 +7171,16 @@ function recentLineHTML(R){
 function recentTableHTML(R){
   if(!R||!R.available||!R.total)return "";
   const t=RCT[state.lang==="en"?"en":"he"];
+  /* the price of a recent deal is printed as the copy published it and never used: VERIFIED is the only state whose price a statistic
+     may read (none today) — the reason is named on the row; no ₪/m² is derived from a price that may be a share's */
+  const used=d=>d.state==="RECENT_OBSERVED_VERIFIED";
+  const whyOf=d=>{const r=d.reasons||[];return r.includes("share-not-stated")?t.useWhy.share:d.state!=="RECENT_OBSERVED_LIMITED"?t.useWhy[d.state]||"":r.includes("below-market-amount")?t.useWhy.below:r.includes("several-units-one-consideration")?t.useWhy.multi:""};
+  const det=d=>{const f=t.f,dl=[[f.dealId,d.dealId],[f.oid,d.oid],[f.series,d.series],[f.date,d.date],[f.amount,d.amount!=null?fmtNIS(d.amount):null],[f.area,d.areaSqm!=null?`${d.areaSqm} m²`:null],[f.rooms,d.rooms],[f.floor,d.floor],[f.ptype,d.propertyType],[f.nature,d.dealNature],[f.settlement,d.settlement],[f.addr,[d.street,d.house].filter(Boolean).join(" ")||null],[f.unit,`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`],[f.state,t.st[d.state]||d.state],[f.reasons,(d.reasons||[]).map(x=>t.rs[x]||x).join(" · ")||null],[f.sem,d.semantics==="UNKNOWN"||!d.semantics?f.semU:d.semantics],[f.first,d.firstReadAt?siDate(d.firstReadAt):null]];
+    return `<details class="rct-det"><summary>${t.det}</summary><dl>${dl.map(([k,v])=>`<dt>${k}</dt><dd><bdi>${v==null||v===""?"—":ldE(String(v))}</bdi></dd>`).join("")}</dl></details>`};
   const row=d=>`<tr><td class="num" data-v="${ldE(d.date)}">${siDate(d.date)}</td><td class="w"><bdi>${ldE([d.street,d.house].filter(Boolean).join(" "))||"—"}</bdi></td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
-    <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
-    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td><td class="w">${d.state?`<span class="st-tag">${t.st[d.state]||ldE(d.state)}</span>`:"—"}</td>
-    <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}</td></tr>`;
+    <td class="num" data-v="${d.amount!=null?d.amount:""}">${d.amount==null?"—":used(d)?fmtNIS(d.amount):`<span class="sub">${fmtNIS(d.amount)}</span><span class="rct-nouse" data-nouse="${ldE(d.state||"")}">${t.noUse}${whyOf(d)?`<span>${t.why}: ${whyOf(d)}</span>`:""}</span>`}</td><td class="num" data-v="${used(d)&&d.pricePerSqm!=null?d.pricePerSqm:""}">${used(d)&&d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
+    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td><td class="w">${d.state?`<span class="st-tag">${t.st[d.state]||ldE(d.state)}</span>`:"—"}${d.event?` <span class="sub">${t.counted}</span>`:""}</td>
+    <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}${det(d)}</td></tr>`;
   const tbl=(rows,key)=>`<div class="st-wrap"><table class="st-tbl" data-ptdom="${key}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(row).join("")}</tbody></table></div>`;
   const c=R.counts||{};
   let h=`<h4>${t.th} <span class="rct-chip">${t.chip}</span> ${xpBtn("recent_transaction_layer")}</h4>`;
@@ -7143,7 +7188,7 @@ function recentTableHTML(R){
   if(R.typeNotStated.length)h+=`<details class="st-sec"><summary>${t.untH(c.TYPE_NOT_STATED)} ${xpBtn("recent_transaction_type_not_stated")}</summary>${R.dateNote?`<p class="gv-note">${t.untNote(R.dateNote.oneDayLater,R.dateNote.verified)}</p>`:""}${tbl(R.typeNotStated,"strecentu")}</details>`;
   if(R.nonDwelling.length)h+=`<details class="st-sec"><summary>${t.nonH(c.NON_DWELLING)}</summary>${tbl(R.nonDwelling,"strecentn")}</details>`;
   const S=R.source||{};
-  return h+`<p class="gv-note">${t.stNote} ${xpBtn("recent_promotion_state")} ${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
+  return h+`<p class="gv-note">${t.stNote} ${xpBtn("recent_promotion_state")} ${xpBtn("recent_promotion_lifecycle")} ${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
 }
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */
@@ -7447,6 +7492,7 @@ function siHTML(g){
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
     ${txFreshHTML(D.freshness,{locality:true})}
     ${recentLineHTML(D.recent)}
+    ${countsHTML(D.transactionCounts)}
     ${pair}
     <div class="st-grid">${tiles}</div>${kn}
     <details class="st-sec" open><summary>${t.five}</summary>${five}</details>

@@ -234,10 +234,12 @@ t('THE RULES, on synthetic rows: every criterion met (share stated) → VERIFIED
   };
   assert.equal(run(base, {}, { deal_part: 1 }).state, 'RECENT_OBSERVED_VERIFIED');
   const v = run(base, {}, { deal_part: 1 });
-  assert.deepEqual(v.eligible, { count: true, median: true, pricePerSqm: true, change: false, model: false, countUnderRegisterSemantics: true });
-  const L = run(base, {}); assert.equal(L.state, 'RECENT_OBSERVED_LIMITED'); assert.deepEqual(L.reasons, ['share-not-stated']); assert.equal(L.eligible.median, false); assert.equal(L.eligible.countUnderRegisterSemantics, true);
+  assert.deepEqual(v.eligible, { event: true, eventFailed: [], count: true, median: true, pricePerSqm: true, change: false, model: false });
+  const L = run(base, {}); assert.equal(L.state, 'RECENT_OBSERVED_LIMITED'); assert.deepEqual(L.reasons, ['share-not-stated']); assert.equal(L.eligible.median, false); assert.equal(L.eligible.event, true);
+  assert.equal(L.semantics, 'UNKNOWN', 'a recent-only row never states its semantics');
   assert.deepEqual(run(base, { street: { code: 5, basis: 'address' } }, { deal_part: 1 }).reasons, ['street-single-key']);
-  assert.equal(run(base, { street: { code: 5, basis: 'address' } }).eligible.countUnderRegisterSemantics, false, 'a one-key street is never counted');
+  assert.deepEqual(run(base, { street: { code: 5, basis: 'address' } }).eligible.eventFailed, ['state', 'street'], 'a one-key street is never counted');
+  assert.deepEqual(run(base, { kind: 'NON_DWELLING' }).eligible.eventFailed, ['state', 'dwelling']);
   assert.equal(run(base, { street: { code: null, basis: 'conflict' } }).state, 'RECENT_CONFLICT');
   assert.equal(run({ ...base, typed: false }, { kind: 'TYPE_NOT_STATED' }).state, 'RECENT_UNRESOLVED');
   assert.equal(run(base, { kind: 'NON_DWELLING' }).state, 'RECENT_CONTEXT_ONLY');
@@ -268,7 +270,8 @@ t('SHARE: the copy states no share sold (no such field in any stored row), and o
   for (const r of prows) {
     if (r.state !== 'RECENT_OBSERVED_VERIFIED') { assert.equal(r.count, false); assert.equal(r.median, false); assert.equal(r.pricePerSqmEligible, false); }
     assert.equal(r.change, false); assert.equal(r.model, false);
-    if (r.countUnderRegisterSemantics) { assert.ok(['RECENT_OBSERVED_VERIFIED', 'RECENT_OBSERVED_LIMITED'].includes(r.state)); assert.ok(r.reasons.every((x) => ['share-not-stated', 'below-market-amount', 'several-units-one-consideration'].includes(x)), r.oid); }
+    if (r.event) { assert.ok(['RECENT_OBSERVED_VERIFIED', 'RECENT_OBSERVED_LIMITED'].includes(r.state)); assert.ok(r.reasons.every((x) => ['share-not-stated', 'below-market-amount', 'several-units-one-consideration'].includes(x)), r.oid); assert.deepEqual(r.eventFailed, []); }
+    else assert.ok(r.eventFailed.length > 0, r.oid + ' names the gate it failed');
   }
 });
 
