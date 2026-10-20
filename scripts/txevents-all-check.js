@@ -309,7 +309,9 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   /* 3. LATEST — every official locality the stored union does not cover, through the page's own ALL read; Israel and every district */
   const latest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'txevents', 'latest.json'), 'utf8'));
   out.latest = { localities: [], areas: [] };
-  const codes = [...D.localities.keys()].filter((c) => !(latest.localities[c] && latest.localities[c].latest)).sort((a, b) => a - b);
+  /* every locality the stored union does not cover, and every one whose stored events are all older than the window (its newest may sit in
+     the ALL history page, not in the stored index) */
+  const codes = [...D.localities.keys()].filter((c) => !(latest.localities[c] && latest.localities[c].latest && (!winFrom || latest.localities[c].latest >= winFrom))).sort((a, b) => a - b);
   for (const c of codes) {
     const reg = regByCode.get(c) || null;
     const h = H.localities ? H.localities[c] : null;

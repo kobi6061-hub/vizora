@@ -217,8 +217,14 @@
   by parcel (`register-unmapped.json`, skipped when neither copy changed). The audit: every GovMap-file row in one bucket (SURFACED · SURFACED
   OR FOLDED · SURFACED FLAGGED · DUPLICATE OF SURFACED · UNPLACED · INVALID; history + window + invalid = 2,500,941), reachability per bucket
   → DEFENSIBLE KNOWN SOURCE EVENTS NOT SURFACED = 0; latest-date parity Israel · districts · localities · 21,003 streets; the live check
-  (runner) pages ALL to the end and checks the places whose newest deal predates the window. Trust Center: the full universe + the
-  unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
+  (runner, `txevents-all-check.yml`, `only=` re-runs sections and keeps the others' last result) pages ALL to the end, checks small
+  localities deal by deal against the register's own search, the places whose newest deal predates the window and a sample of
+  older-than-window streets (GovMap side = every history row the API itself places: code · published name · parcel), and waits out the
+  republisher's rate limit / retries a refused page as the user would. A later union page whose live parts did not answer is refused
+  (503 · retry), never served shifted; the live register read takes the code-less names the republisher resolves (`resolved_code`); a
+  parcel-placed register deal with no street stands on its GovMap print's street (POSSIBLE), a print naming another street is a CONFLICT
+  attached to the one event. The street view leads with the newest event of every source (`siLatestHTML`) above the register copy's own
+  freshness line. Trust Center: the full universe + the unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
   `transaction_completeness_universe` · `latest_date_parity`. Prices / statistics / the Street Value Model untouched.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only

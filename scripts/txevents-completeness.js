@@ -249,7 +249,10 @@ for (const [code] of D.localities) {
   const reg = regByCode.get(code) || null;
   const h = (hm.localities || {})[code] || null;
   const source = [shardLatest[code], reg && reg.lastDeal, gmLatestByCode[code], regxLatest[code], h && h.latest].filter(Boolean).sort().pop() || null;
-  let visible = L && L.latest ? L.latest : null, via = visible ? 'stored-union' : null;
+  /* the stored index holds the stored union (window + parcel-placed register deals); a place whose newest source event predates the window
+     is read through the ALL history page — its first event comes from the live check */
+  const winFromL = evm.window ? evm.window.from : null;
+  let visible = L && L.latest && (!source || !winFromL || source >= winFromL) ? L.latest : null, via = visible ? 'stored-union' : null;
   if (!visible) { const lc = liveByCode.get(code); if (lc) { visible = lc.visible; via = 'live-check'; } }
   const row = { code, source, visible, via };
   if (source && !visible && !via) row.reason = 'LIVE_CHECK_PENDING';
@@ -291,9 +294,21 @@ const gmStreet = (c, sc, text, b, p, d) => {
   if (text) { const z = M.resolveStreet(LI(c), String(text)); if (z && z.id) return bump(c, Number(String(z.id).split(':')[2]), d); return; }
   if (b != null) viaParcel(c, b, p, d);
 };
-/* the register's deals under unmapped settlement names placed in a locality by parcel: their own address's street */
-if (regUnm) { const ci = regUnm.columns.indexOf('state'), ki = regUnm.columns.indexOf('code'), di = regUnm.columns.indexOf('date'), si = regUnm.columns.indexOf('streets');
-  for (const r of regUnm.rows) if (/^RESOLVED/.test(r[ci]) && isLoc(r[ki]) && r[si] && Array.isArray(r[si][1])) for (const z of r[si][1]) bump(r[ki], z[0], r[di]); }
+/* the register's deals under unmapped settlement names placed in a locality by parcel — the API's own rule (lib/txevents query): their own
+   address's street; with none, the street their parcel is recovered to and the street their GovMap print names (a possible street) */
+if (regUnm) {
+  const ci = regUnm.columns.indexOf('state'), ki = regUnm.columns.indexOf('code');
+  const codes = new Set(); for (const r of regUnm.rows) if (/^RESOLVED/.test(r[ci]) && isLoc(r[ki])) codes.add(Number(r[ki]));
+  for (const c of codes) {
+    const printOf = new Map(); for (const [rid, x] of TX.layerEventsOf(c, S).evidence) if (!printOf.has(rid)) printOf.set(rid, x);
+    for (const e of TX.unmappedRegisterEvents(c, S)) {
+      if ((e.streets || []).length) { for (const z of e.streets) bump(c, z.code, e.date); continue; }
+      viaParcel(c, e.block, e.parcel, e.date);
+      const g = printOf.get(e.id);
+      if (g) { const sc = g.streetCode != null ? g.streetCode : g.street ? (() => { const z = M.resolveStreet(LI(c), String(g.street)); return z && z.id ? Number(String(z.id).split(':')[2]) : null; })() : null; bump(c, sc, e.date); }
+    }
+  }
+}
 const nsc = natCols.indexOf('streetCode'), nst = natCols.indexOf('street'), nbl = natCols.indexOf('block'), npa = natCols.indexOf('parcel');
 const ndl2 = natCols.indexOf('dealId');
 for (const r of natRows) if (natCounted(r) && !regxPrints.has('gm:' + (r[ndl2] || 'o' + r[0]))) gmStreet(r[nci], r[nsc], r[nst], r[nbl], r[npa], r[ndi]);
