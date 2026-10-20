@@ -54,18 +54,20 @@ const isLoc = (c) => c != null && D.localities.has(Number(c));
 
 /* ═════ 1 · THE REGISTER COPY ═════ */
 const shardCodes = fs.readdirSync(EV.DIR).filter((x) => /^\d+\.json$/.test(x)).map((x) => Number(x.replace('.json', ''))).filter((c) => EV.shardOf(c));
-let windowDeals = 0, windowRegisterEvents = 0;
+let windowDeals = 0, windowRegisterEvents = 0, windowCopies = 0;
 const shardLatest = {};
 for (const c of shardCodes) {
   const sh = EV.shardOf(c);
   const n = EV.dealsOf(sh).length;
   windowDeals += n;
+  windowCopies += sh.duplicatesCollapsed || 0;     // the copy's codeless repeats of coded rows the sweep collapsed (one deal, printed twice)
   windowRegisterEvents += TX.registerEvents(sh, S).length;
   shardLatest[c] = EV.dealsOf(sh).reduce((a, x) => maxD(a, x.deal.date), null);
 }
 const register = {
   copy: { scrapedAt: (evm.source || {}).scrapedAt || null, deals: (evm.source || {}).deals || null, firstDeal: (evm.source || {}).firstDeal || null, lastDeal: (evm.source || {}).lastDeal || null },
-  storedWindow: { from: evm.window && evm.window.from, to: evm.window && evm.window.to, localities: shardCodes.length, deals: windowDeals, events: windowRegisterEvents, equal: windowDeals === windowRegisterEvents },
+  storedWindow: { from: evm.window && evm.window.from, to: evm.window && evm.window.to, localities: shardCodes.length, deals: windowDeals, events: windowRegisterEvents, equal: windowDeals === windowRegisterEvents,
+    codelessCopiesCollapsed: windowCopies, localitiesWithCopies: shardCodes.filter((c) => (EV.shardOf(c).duplicatesCollapsed || 0) > 0).length },
   settlements: null, unmapped: null,
 };
 if (regSet) {
@@ -360,9 +362,9 @@ const out = {
   schema: 1, builtAt: new Date().toISOString(), today, engine: TX.ENGINE,
   universe: { accessibleSourceRows: (register.copy.deals || 0) + (file.rowsTotal || 0), register, govmap },
   buckets: { meaning: MEANING, govmapWindow: gm.window, govmapHistory: gm.history, govmapAll: bucketsAll,
-    register: regSet ? { SURFACED: register.settlements.mapped.deals, PLACED_BY_PARCEL: register.unmapped ? (register.unmapped.placed || {})['official-locality'] || 0 : null,
+    register: regSet ? { SURFACED: windowDeals, DUPLICATE_OF_SURFACED: windowCopies, SURFACED_OR_COLLAPSED_COPY: register.settlements.mapped.deals - windowDeals - windowCopies, PLACED_BY_PARCEL: register.unmapped ? (register.unmapped.placed || {})['official-locality'] || 0 : null,
       UNPLACED: register.unmapped ? register.unmapped.rows - ((register.unmapped.placed || {})['official-locality'] || 0) + (regSet.dealsUnderNoSettlement || 0) : null,
-      note: 'the register\'s deals under official localities are listed in their locality\'s ALL (the stored window, then the live search, date-paged); deals under unmapped names are placed by parcel or stay in Israel\'s list; deals the copy counts under no settlement name are in Israel\'s list through the national search' } : null },
+      note: 'the register\'s rows under official localities: the stored window\'s deals (SURFACED) and the codeless copies of coded rows the sweep collapsed (DUPLICATE OF SURFACED — one deal printed twice); the older rows are listed in their locality\'s ALL through the live search, date-paged, each codeless copy collapsed by the same rule and counted (SURFACED OR COLLAPSED COPY); deals under unmapped names are placed by parcel or stay in Israel\'s list; deals the copy counts under no settlement name are in Israel\'s list through the national search' } : null },
   reachability: reach,
   defensibleKnownSourceEventsNotSurfaced: notSurfaced,
   recovery, streets, parcels, latest,
