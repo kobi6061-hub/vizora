@@ -101,7 +101,11 @@ def main():
               'dates': {'min': dmin, 'max': dmax}, 'years': dict(sorted(years.items())), 'parcelAddressKeys': len(agg),
               'map': {'date': c_date, 'settlement': c_set, 'street': c_st, 'house': c_house, 'gush': c_gush, 'parcel': c_parcel}}
     json.dump(schema, open(os.path.join(out, 'schema.json'), 'w'), ensure_ascii=False, indent=1)
-    print(json.dumps({k: schema[k] for k in ('table', 'total', 'read', 'window', 'dates', 'parcelAddressKeys')}, ensure_ascii=False))
+    print(json.dumps({k: schema[k] for k in ('table', 'total', 'read', 'window', 'dates', 'parcelAddressKeys', 'columns', 'map')}, ensure_ascii=False))
+    with gzip.open(os.path.join(out, 'window.jsonl.gz'), 'rt', encoding='utf-8') as w:
+        for i, line in enumerate(w):
+            if i >= 2: break
+            print('sample row: ' + line.strip()[:900])
 
 if __name__ == '__main__':
     main()

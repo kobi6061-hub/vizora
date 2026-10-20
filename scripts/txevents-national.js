@@ -154,7 +154,7 @@ function build() {
     const sameVersion = !!(version && snap.copy && Number(snap.copy.version) === Number(version.n));
     validation = { checked: true, apiSnapshot: snap.sha256, apiCopyVersion: snap.copy.version, fileVersion: version ? version.n : null, sameVersion, apiRows: api.length, same, differs, missing, fileOnlyInApiWindow: fileOnly, examples: diffs,
       pass: sameVersion ? differs + missing + fileOnly <= Math.max(5, 0.002 * api.length) : true };
-    if (!validation.pass) throw new Error('the file does not reproduce the API window: ' + JSON.stringify({ same, differs, missing, fileOnly }));
+    if (!validation.pass) throw new Error('the file does not reproduce the API window: ' + JSON.stringify({ same, differs, missing, fileOnly, columns: schema.columns, examples: diffs.slice(0, 3) }));
   }
 
   /* 2 · RECONCILE every row from a week before the register's window to the copy's load day — the recent layer's own rules */
