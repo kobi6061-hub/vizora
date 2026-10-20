@@ -112,6 +112,43 @@ function readBody(req) {
   return new Promise((resolve) => { let n = 0; const chunks = []; req.on('data', (c) => { n += c.length; if (n <= MAX_BODY) chunks.push(c); }); req.on('end', () => { if (n > MAX_BODY) return resolve({ tooLarge: true }); try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || 'null')); } catch { resolve(null); } }); req.on('error', () => resolve(null)); });
 }
 
+
+/* ── transaction events (lib/txevents) ── */
+function txEventsOf(q) {
+  const TX = require('../lib/txevents');
+  const r = TX.query(q);
+  return { ...r, events: (r.events || []).map(TX.wire), sources: undefined, states: TX.STATES };
+}
+function txCompleteness() {
+  const TX = require('../lib/txevents');
+  const S = TX.stores();
+  return { completeness: S.completeness, national: S.nationalMeta ? { version: S.nationalMeta.version, builtAt: S.nationalMeta.builtAt, file: S.nationalMeta.file && { sha256: S.nationalMeta.file.sha256, bytes: S.nationalMeta.file.bytes, rowsTotal: S.nationalMeta.file.rowsTotal },
+    validation: S.nationalMeta.validation && { pass: S.nationalMeta.validation.pass, same: S.nationalMeta.validation.same, differs: S.nationalMeta.validation.differs, missing: S.nationalMeta.validation.missing }, totals: S.nationalMeta.totals, classes: S.nationalMeta.classes,
+    shown: S.nationalMeta.shown, parcelRecovery: S.nationalMeta.parcelRecovery, diff: S.nationalMeta.diff } : null,
+    checks: S.nationalRuns.slice(-14), sources: TX.SOURCES };
+}
+function txLatest(p) {
+  const TX = require('../lib/txevents');
+  const L = TX.stores().latest;
+  if (!L) return { available: false, reason: 'not-built' };
+  const d = p.district ? L.districts[p.district] : null;
+  const S = TX.stores();
+  const top = d ? d.top : L.national.top;
+  /* an area is every swept locality: the register copy is read for it (coverageOf of any swept code gives the copies' own dates) */
+  const coverage = TX.coverageOf(5000, S).map((c) => ({ ...c, read: c.id === 'over:deals-register' ? true : c.read }));
+  const recency = TX.recencyOf(top.map((e) => ({ ...e, state: e.state })), coverage);
+  const perDay = d ? d.perDay : L.national.perDay;
+  const period = TX.periodOf({ days: p.days, months: p.months, all: p.all === '1' });
+  const n = Object.entries(perDay || {}).reduce((a, [k, v]) => a + (TX.inPeriod(k, period) ? v : 0), 0);
+  const st = TX.statementOf(n, period, recency, coverage, { resolved: true });
+  const statement = { ...st, text: st.kind === 'EVENTS' ? null : TX.STATEMENT_TEXT[st.kind] };
+  return { available: true, builtAt: L.builtAt, recency, coverage, perDay, period, statement,
+    national: { latest: L.national.latest, events: L.national.events, top: p.district ? undefined : L.national.top.slice(0, Math.min(500, Number(p.limit) || 100)) },
+    districts: Object.fromEntries(Object.entries(L.districts).map(([k, v]) => [k, { latest: v.latest, events: v.events }])),
+    district: d ? { id: p.district, latest: d.latest, events: d.events, top: d.top.slice(0, Math.min(300, Number(p.limit) || 100)) } : null,
+    localities: p.localities ? L.localities : undefined };
+}
+
 module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://x');
   const p = Object.fromEntries(url.searchParams.entries());
@@ -190,13 +227,25 @@ module.exports = async (req, res) => {
       }
       return send(res, 200, RR.summary());
     }
+    /* TRANSACTION EVENTS (lib/txevents): any locality (code) · street (sid) · building (sid + house) · block / parcel, a period
+       (days | months | all), paged; the completeness dashboard; the latest events per district / nationally */
+    if (view === 'txEvents') {
+      const q = { code: p.code, streetId: p.sid, house: p.house, block: p.block, parcel: p.parcel, days: p.days, months: p.months, all: p.all === '1' || p.all === 'true', offset: p.offset, limit: p.limit };
+      if (q.code != null && q.code !== '' && !/^\d{1,5}$/.test(String(q.code))) return send(res, 400, { error: 'code must be an official locality code' });
+      if (q.streetId && !/^st:\d{1,5}:\d{1,5}$/.test(String(q.streetId))) return send(res, 400, { error: 'sid must be st:<locality code>:<street code>' });
+      return send(res, 200, txEventsOf(q));
+    }
+    if (view === 'txCompleteness') return send(res, 200, txCompleteness());
+    if (view === 'txLatest') return send(res, 200, txLatest(p));
     if (view === 'street' || view === 'streetCoverage') {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });
       if (view === 'streetCoverage') { STREET_COVERAGE = STREET_COVERAGE || STREETS.coverage(); return send(res, 200, STREET_COVERAGE); }
       if (!/^st:\d{1,5}:\d{1,5}$/.test(String(p.id || ''))) return send(res, 400, { error: 'id must be st:<locality code>:<street code>' });
       const obs = STREETS.street(p.id, { limit: p.limit });
-      /* the MODEL layer travels beside the observed read under its own key — the observed object is never changed */
-      const out = obs && { ...obs, model: (SVM && SVM.estimate(obs.id)) || { available: false, reason: SVM ? 'street-not-in-model-build' : 'model-not-built' } };
+      /* the MODEL layer travels beside the observed read under its own key — the observed object is never changed; the street's
+         TRANSACTION EVENTS (lib/txevents: every source, one event per deal, newest first) travel under `events` */
+      const out = obs && { ...obs, model: (SVM && SVM.estimate(obs.id)) || { available: false, reason: SVM ? 'street-not-in-model-build' : 'model-not-built' },
+        events: txEventsOf({ streetId: p.id, all: true, limit: Math.min(200, Number(p.elimit) || 60) }) };
       return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
     }
     if (view === 'streetModel' || view === 'streetApartment' || view === 'streetModelValidation') {

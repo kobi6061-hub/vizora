@@ -91,11 +91,22 @@ jobs:
             if [ $code -ne 0 ]; then echo 'Recent reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent 2>/dev/null; fi
           fi
           echo "code=$code" >> "$GITHUB_OUTPUT"
+      # THE TRANSACTION EVENTS (lib/txevents): rebuilt from the stores just written — links, possible duplicates, parcel recovery,
+      # the latest-event index and the completeness dashboard; a failed build or gate keeps the previous files
+      - name: Rebuild the transaction events
+        id: txe
+        run: |
+          set +e
+          node scripts/txevents-build.js; code=$?
+          if [ $code -eq 0 ] && [ -f test/txevents.test.js ]; then node test/txevents.test.js; code=$?; fi
+          if [ $code -eq 0 ]; then node scripts/txevents-audit.js > /dev/null; code=$?; fi
+          if [ $code -ne 0 ]; then echo 'Transaction-events build or gates failed — the previous files are kept.' >&2; git checkout -- data/txevents 2>/dev/null; fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Commit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/streets/evidence data/streets/model data/streets/recent
+          git add data/streets/evidence data/streets/model data/streets/recent data/txevents
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Street evidence: run log' > "$RUNNER_TEMP/summary.txt"
           git commit -q -F "$RUNNER_TEMP/summary.txt"

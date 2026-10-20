@@ -382,7 +382,8 @@ t('API: view=street carries the model beside the observed read; streetModel / st
   const [c1, b1] = await call('view=street&id=' + id); assert.equal(c1, 200);
   assert.equal(b1.model.cls, 'MODEL'); assert.equal(b1.model.value, PUB.find((r) => r.id === id).value);
   const obs = JSON.parse(JSON.stringify(ST.street(id)));
-  const { model, ...rest } = b1; assert.deepEqual(rest, obs, 'the observed read is unchanged'); assert.ok(model);
+  /* the street's transaction events (lib/txevents) travel beside it under their own key — the observed read itself is unchanged */
+  const { model, events, ...rest } = b1; assert.deepEqual(rest, obs, 'the observed read is unchanged'); assert.ok(model); assert.ok(events && events.available);
   assert.ok(!('model' in ST.street(id)), 'the cached observed object is never mutated');
   assert.equal((await call('view=streetModel&id=x'))[0], 400);
   assert.equal((await call('view=streetModel&id=st:1:1'))[0], 404);
@@ -433,7 +434,7 @@ t('workflow: the evidence sync rebuilds the model only when an input changed, ga
   assert.ok(y.indexOf('node scripts/street-evidence-sync.js') < y.indexOf('node scripts/street-model-build.js --if-stale'));
   assert.ok(y.indexOf('street-model-build.js --if-stale') < y.indexOf('node test/street-model.test.js'));
   assert.match(y, /git checkout -- data\/streets\/model/);
-  assert.match(y, /git add data\/streets\/evidence data\/streets\/model( data\/streets\/recent)?\n/);
+  assert.match(y, /git add data\/streets\/evidence data\/streets\/model( data\/streets\/recent)?( data\/txevents)?\n/);
   const b = fs.readFileSync(path.join(ROOT, 'scripts/street-model-build.js'), 'utf8');
   assert.match(b, /sweep\.status !== 'COMPLETE'/);
   assert.match(b, /appendFileSync\(path\.join\(DIR, 'history\.jsonl'\)/);

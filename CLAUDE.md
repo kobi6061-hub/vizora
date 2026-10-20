@@ -183,6 +183,23 @@
   P80 · P90 · max · bands 0–7 / 8–21 / 22–45 / 46–90 / 90+ days, first read → confirming copy) live in `meta.json → lifecycle.lag` — empty
   until a newer register copy confirms a deal; not measurable from one register copy.
   `test/recent-lifecycle.test.js`. The observed figures and the Street Value Model read none of it.
+- `lib/txevents/` + `scripts/txevents-build.js` + `scripts/txevents-national.js` + `scripts/txevents-gpkg.py` + `scripts/txevents-audit.js` +
+  `scripts/tx-sources-discover.js` + `.github/workflows/{txevents-national,tx-sources-discover}.yml` + `data/txevents/` + `test/txevents.test.js` =
+  P0 FRESHEST REAL TRANSACTIONS (20.10.2026): ONE chronological union of every transaction source PROPX reads — the register sweep, the GovMap-layer
+  copy's recent window (lib/recent) and its WHOLE published file (the national missed-deal detector: the version's GeoPackage, one public GET,
+  validated 11,900 / 11,900 against the API window, reconciled with the recent layer's own rules — 349,102 rows of the register window: 24,922 deals
+  the register copy does not hold now shown), the register's live search (the republisher's address link + older history) and the PARCEL RECOVERY
+  (6,061 register parcels without an address placed on a street through the GovMap layer's address of the same parcel, never priced). One event per
+  deal (a GovMap print of a register deal is its evidence; other differences = SOURCE CONFLICT, register precedence; POSSIBLE DUPLICATE shown, never
+  counted); states PRICED_IN_STATISTICS · VERIFIED_DWELLING · RECORDED_EVENT · LIMITED_SHARE_NOT_STATED · CONFLICT · POSSIBLE_DUPLICATE — an event is
+  shown whatever its price semantics, its price used only when PRICED IN STATISTICS (the Street Value Model and the street statistics never read it).
+  Periods filter the union (no fallback); absence = NONE_IN_PERIOD / NOT_IN_AVAILABLE_COVERAGE / COVERAGE_INCOMPLETE, never interchangeable;
+  recency summary (LATEST KNOWN TRANSACTION = the union's). `/api/gov/transactions` reads the union for a swept locality (`unified=0` = the live
+  path), `view=txEvents|txCompleteness|txLatest`, `view=street` → `events`; the page's transactions section and Street Intelligence lead with the
+  one table (source + copy date + state per row; a district / Israel shows its newest 300 / 500 events of every source + the period's exact count
+  and statement from `view=txLatest&district=&days=|months=` — a list, never priced as the area); the Trust Center's TRANSACTION COMPLETENESS block (unexplained rows: 0). Version check every three
+  hours (a new copy starts the syncs), monitor twice a day. Source inventory `lib/trust/discovery/2026-10-20-transaction-sources.json` (official
+  channels refused / CAPTCHA / no dataset — never bypassed). Regression: Petah Tikva / Shaham newest shown 05.07.2026 → 30.08.2026. See `lib/txevents/README.md`.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

@@ -55,7 +55,9 @@ jobs:
           python3 -I scripts/txevents-gpkg.py "$F" "$RUNNER_TEMP/extract" --from "$FROM"
           rm -f "$F"
           node scripts/txevents-national.js --build --extract "$RUNNER_TEMP/extract" --file-sha "$SHA" --file-url "$FILE_URL" --file-bytes "$BYTES"
-          if [ -f test/txevents.test.js ]; then node test/txevents.test.js; fi
+          # the transaction events read the new national rows: rebuilt and gated together (a failure keeps the previous files)
+          if ! node scripts/txevents-build.js || { [ -f test/txevents.test.js ] && ! node test/txevents.test.js; } || ! node scripts/txevents-audit.js > /dev/null; then
+            echo 'Transaction-events build or gates failed — the previous files are kept.' >&2; git checkout -- data/txevents; exit 1; fi
       - name: Start the syncs a new version needs
         if: steps.chk.outputs.govmap_changed == 'true' || steps.chk.outputs.register_changed == 'true'
         env:
@@ -73,7 +75,7 @@ jobs:
           LAST=$(git log -1 --format=%ct -- data/txevents/national/runs.jsonl 2>/dev/null || echo 0)
           STATUS=$(tail -n 1 data/txevents/national/runs.jsonl | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).status)}catch{console.log("?")}})')
           if [ "$STATUS" = "UNCHANGED" ] && [ $(( $(date +%s) - ${LAST:-0} )) -lt 43200 ]; then echo 'Unchanged — recorded in the run history only.'; exit 0; fi
-          git add data/txevents/national
+          git add data/txevents
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           git commit -q -m "National missed-deal detector: $STATUS"
           for i in 1 2 3 4 5; do

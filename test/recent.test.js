@@ -362,11 +362,12 @@ t('API: view=recentLayer (summary · city=) and view=street → `recent`; the Tr
   assert.equal(L.available, true); assert.ok(L.total >= L.onStreets);
 });
 
-t('THE PAGE: a dashed SEPARATE LAYER block under the freshness strip and its own table — never inside the register\'s deal table, the tiles, the observed card or the model card; no "official" label', () => {
+t('THE PAGE: a dashed SEPARATE LAYER line under the freshness strip; its deals in the ONE transaction-events table (lib/txevents — every row with its source and state; P0 20.10.2026) and its own table as a deep-dive source view — never in the tiles, the observed card or the model card; no "official" label', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const fn = html.slice(html.indexOf('function siHTML('), html.indexOf('let _geoNav=false;'));
   assert.match(fn, /\$\{txFreshHTML\(D\.freshness,\{locality:true\}\)\}\s*\$\{recentLineHTML\(D\.recent\)\}/);
-  assert.match(fn, /five\+=recentTableHTML\(D\.recent\);/);
+  assert.match(fn, /five\+=eventsTableHTML\(D\.events\);/);
+  assert.match(fn, /deep\+=recentTableHTML\(D\.recent\);/);
   assert.ok(!/D\.recent/.test(fn.slice(fn.indexOf('const tiles=['), fn.indexOf('const hist='))), 'the tiles never read the recent layer');
   assert.ok(!/D\.recent/.test(fn.slice(fn.indexOf('const obsCard='), fn.indexOf('/* why this estimate'))), 'the observed / model cards never read it');
   const rct = html.slice(html.indexOf('const RCT={'), html.indexOf('function recentTableHTML('));

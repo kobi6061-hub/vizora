@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="cc9738b721baee6d84a62895ebcdfc33cf40ae78c3ede7c2aa7a053fbe8fd7d7">
+<meta name="propx-source-sha256" content="2fb7b18797a0e97073b62e26f85b51bd4bed2b1a2d91bcad5bb9f109b6c1629a">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -550,6 +550,26 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
   border:1px solid var(--hairline);border-radius:99px;padding:2px 8px;color:var(--ink-3);white-space:nowrap}
 .tx-chip.new{color:var(--up);border-color:currentColor}
 .tx-src{font-size:11px;color:var(--ink-3);white-space:nowrap}
+/* the unified transaction events (lib/txevents): recency summary, coverage, statement, per-row state and source */
+.txe-rec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 14px;padding:10px 15px;border-bottom:1px solid var(--hairline);font-size:10.5px;color:var(--ink-3);font-weight:700;letter-spacing:.03em}
+.txe-rec b{display:block;font-size:13.5px;color:var(--ink);font-weight:800;letter-spacing:0}
+.txe-rec .s{display:block;font-size:10.5px;font-weight:600;color:var(--ink-3);letter-spacing:0}
+.txe-rec .n{grid-column:1/-1;font-size:11.5px;font-weight:600;color:var(--ink-2);letter-spacing:0;line-height:1.5}
+@media(max-width:720px){.txe-rec{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.txe-cov{padding:7px 15px;font-size:11.5px;color:var(--ink-3);border-bottom:1px solid var(--hairline);line-height:1.6}
+.txe-cov b{color:var(--ink-2)}
+.txe-stmt{display:block;font-size:12.5px;font-weight:800;letter-spacing:.03em;color:var(--ink-2);margin-bottom:4px}
+.txe-stmt.inc{color:var(--conf-low)}
+.txe-st{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;border:1px solid currentColor;border-radius:99px;padding:0 6px;white-space:nowrap;margin-top:3px}
+.txe-st.PRICED_IN_STATISTICS{color:var(--up)}
+.txe-st.VERIFIED_DWELLING{color:var(--accent)}
+.txe-st.LIMITED_SHARE_NOT_STATED,.txe-st.RECORDED_EVENT{color:var(--brass);border-style:dashed}
+.txe-st.CONFLICT{color:var(--conf-low)}
+.txe-st.POSSIBLE_DUPLICATE{color:var(--ink-3);border-style:dotted}
+.txe-src{display:block;font-size:10.5px;color:var(--ink-3);white-space:normal;line-height:1.35;margin-top:2px}
+.txe-nouse{display:block;font-size:9.5px;font-weight:800;color:var(--brass);letter-spacing:.02em;line-height:1.3;margin-top:2px}
+.txe-geo{display:block;font-size:10.5px;color:var(--brass);line-height:1.35}
+tr.txe-dup td{opacity:.7}
 .tx-src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .tx-src a:hover{color:var(--accent-deep)}
 .tx-empty{padding:16px 18px;font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--hairline)}.sp-tag{font-size:10px;font-weight:800;letter-spacing:.04em;color:var(--brass);border:1px solid var(--hairline);
@@ -2476,6 +2496,8 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     'propx:entities': { aliases: ['lib/entities'], label: bi('PROPX — רישום היזמים והפרויקטים (נגזר)', 'PROPX — the developer & project registry (derived)') },
     'propx:street-model': { aliases: ['lib/streets/value-model', 'lib/streets/value-read'], label: bi('PROPX — מודל השווי ברמת הרחוב (מודל, לא תצפית)', 'PROPX — the street value model (a MODEL, not an observation)') },
     'over:govmap-recent': { aliases: ['lib/recent/read', 'lib/recent/reconcile', 'scripts/street-recent-sync'], label: bi('עסקאות אחרונות — עותק שכבת העסקאות של GovMap (over.org.il), מוצלב לעותק המרשם', 'Recent transactions — the GovMap deals-layer copy (over.org.il) reconciled against the register copy') },
+    'over:govmap-national': { aliases: ['scripts/txevents-national', 'data/txevents/national'], label: bi('גלאי העסקאות החסרות — הקובץ המלא של עותק שכבת העסקאות של GovMap (over.org.il) מול עותק המרשם', 'The missed-deal detector — the GovMap deals-layer copy\'s whole published file (over.org.il) against the register copy') },
+    'propx:transaction-events': { aliases: ['lib/txevents', 'scripts/txevents-build'], label: bi('PROPX — אירועי העסקאות: איחוד מקורות העסקאות, אירוע אחד לכל עסקה', 'PROPX — the transaction events: the union of the transaction sources, one event per deal') },
     'propx:tx-freshness': { aliases: ['lib/gov/freshness', 'scripts/tx-freshness'], label: bi('PROPX — ניטור עדכניות העסקאות (בדיקה יומית, לא מקור עסקאות)', 'PROPX — the transaction freshness monitor (a daily check, not a source of deals)') },
     'propx:dossier': { aliases: ['lib/dossier'], label: bi('PROPX — תיק השוק (קריאה של המודלים הקיימים)', 'PROPX — the Market Dossier (a read of the existing models)') },
     'propx:radar': { aliases: ['lib/radar', 'lib/radar/scan'], label: bi('PROPX — רדאר השוק / רדאר ההזדמנויות והסיכונים', 'PROPX — the Market Radar / Opportunity-Risk radar') },
@@ -3010,6 +3032,42 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       notAs: bi('לא ציון איכות של העסקה ולא החלטה שהיא שגויה — רק מה מותר לעשות בה.', 'Not a quality score of the deal and not a finding that it is wrong — only what it may be used for.'),
       evidence: bi('data/streets/recent/promotion.json (מצב, סיבות וביקורת החלקה לכל עסקה)', 'data/streets/recent/promotion.json (state, reasons and the same-parcel audit of every deal)'),
       freshness: { observation: bi('תאריך העסקה כפי שפורסם', 'the transaction date as published'), publication: bi('loaded_at של עותק השכבה', 'the layer copy\'s loaded_at'), check: bi('הבדיקה היומית של PROPX', 'PROPX\'s daily check') } }),
+    T({ id: 'transaction_event_sources', group: 'transactions', title: bi('אירועי עסקאות ממקורות אחדים', 'Transaction events from several sources'),
+      short: bi('טבלת העסקאות מאחדת את כל המקורות ש-PROPX קורא — עותק מאגר רשות המסים, עותק שכבת העסקאות של GovMap ושחזור הרחוב דרך החלקה — עסקה אחת לכל אירוע, החדשה ביותר ראשונה.', 'The transaction table unites every source PROPX reads — the Tax Authority register copy, the GovMap deals-layer copy and the street recovered through the parcel — one row per event, newest first.'),
+      why: bi('עסקה שדווחה צריכה להופיע גם כשהיא קיימת רק במקור אחד, וגם כשחלק מפרטי המחיר שלה עדיין לא אומת.', 'A reported deal should appear even when only one source holds it, and even when part of its price details is not yet verified.'),
+      unit: bi('אירועי עסקה', 'transaction events'), geography: bi('יישוב · רחוב · בניין · גוש/חלקה', 'Locality · street · building · block / parcel'), period: bi('התקופה שנבחרה (30 / 90 ימים, 6 / 12 / 24 חודשים, הכול)', 'the selected period (30 / 90 days, 6 / 12 / 24 months, all)'),
+      source: { ids: ['propx:transaction-events', 'over:street-evidence', 'over:govmap-recent', 'over:govmap-national'] }, cls: 'DERIVED',
+      formula: bi('איחוד: עסקאות המרשם + שורות שכבת GovMap שהמרשם אינו מחזיק (התאמה דטרמיניסטית) + עסקאות שהרחוב שלהן שוחזר דרך החלקה; עסקה ששני המקורות מחזיקים = אירוע אחד', 'union: the register\'s deals + the GovMap-layer rows the register copy does not hold (deterministic reconciliation) + deals whose street is recovered through the parcel; a deal both sources hold = one event'),
+      inputs: [bi('עותק המרשם (36 חודשים)', 'the register copy (36 months)'), bi('עותק שכבת GovMap (החלון האחרון + הקובץ המלא)', 'the GovMap-layer copy (the recent window + the whole file)'), bi('החיפוש החי במרשם', 'the register\'s live search')],
+      methodology: bi('המקדימות בתצוגה: ערכי המרשם קודמים לערכי השכבה; ערכי המקור השני נשמרים כראיה, וכל הבדל שאינו פורמט השכבה (סכום מעוגל ל-₪1,000, חלק שהודפס כשווי מלא) מסומן "סתירה בין מקורות". "כפילות אפשרית" מוצגת ואינה נספרת.', 'Display precedence: the register\'s values over the layer\'s; the other source\'s values stay as evidence, and every difference that is not the layer\'s format (an amount truncated to ₪1,000, a share printed as the whole value) is marked SOURCE CONFLICT. A POSSIBLE DUPLICATE is shown and never counted.'),
+      interpretation: bi('"העסקה האחרונה הידועה" = התאריך החדש ביותר בכל המקורות יחד, לא רק במרשם.', '"Latest known transaction" = the newest date across all sources together, not the register alone.'),
+      notAs: bi('לא "כל העסקאות בישראל": רק מה שהמקורות הנגישים מחזיקים. אינו מכניס מחיר לסטטיסטיקה.', 'Not "every deal in Israel": only what the accessible sources hold. It puts no price into a statistic.'),
+      limitations: [bi('אף ערוץ ממשלתי אינו נגיש למכונה; שני המקורות הם פרסום מחדש עצמאי.', 'No government channel is machine-readable; both sources are independent republications.'), bi('עסקאות מדווחות באיחור — הימים האחרונים תמיד חלקיים.', 'Deals are reported late — the latest days are always partial.')],
+      evidence: bi('lib/txevents · data/txevents/completeness.json', 'lib/txevents · data/txevents/completeness.json'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('תאריכי העותקים (scraped_at · loaded_at)', 'the copies\' dates (scraped_at · loaded_at)'), check: bi('בדיקת הגרסאות כל שלוש שעות', 'the version check every three hours') } }),
+    T({ id: 'transaction_event_absence', group: 'transactions', title: bi('כשאין עסקאות בתקופה', 'When a period has no transactions'),
+      short: bi('"לא נמצאו עסקאות רשומות בתקופה" נאמר רק כשהמקורות עדכניים ומכסים את רוב התקופה; אחרת "כיסוי העסקאות האחרונות חלקי" או "לא נמצאה עסקה בכיסוי הזמין".', '"No recorded transactions found in this period" is said only when the sources are current and cover most of the period; otherwise "recent transaction coverage incomplete" or "no transaction found in currently available coverage".'),
+      why: bi('היעדר עסקאות הוא טענה חזקה: תקופה שהמקורות עדיין לא מגיעים אליה אינה תקופה שקטה.', 'No transactions is a strong claim: a period the sources do not reach yet is not a quiet period.'),
+      unit: bi('הצהרה', 'a statement'), geography: bi('המקום שנבחר', 'the selected place'), period: bi('התקופה שנבחרה', 'the selected period'),
+      source: { ids: ['propx:transaction-events'] }, cls: 'DERIVED',
+      formula: bi('0 אירועים + העותק העדכני ביותר עדכני / חדש יחסית + הראיות מכסות ≥ חצי מהתקופה → "לא נמצאו עסקאות רשומות" · מכוסה אבל העותקים לא עדכניים → "לא נמצאה עסקה בכיסוי הזמין" · אחרת → "כיסוי חלקי"', '0 events + the freshest copy CURRENT / RECENT + the evidence covers ≥ half the period → "no recorded transactions found" · covered but the copies not current → "no transaction found in currently available coverage" · else → "coverage incomplete"'),
+      inputs: [bi('אירועי העסקאות בתקופה', 'the transaction events in the period'), bi('התאריך שעד אליו נבדקו הראיות', 'the date the evidence is checked through'), bi('מצב העותק העדכני ביותר', 'the freshest copy\'s state')],
+      methodology: bi('תקופה שאינה מכוסה לעולם אינה ממולאת בעסקאות ישנות יותר.', 'A period that is not covered is never filled with older deals.'),
+      interpretation: bi('"0 עסקאות שנרשמו" עם "כיסוי חלקי" = לא ידוע אם היו עסקאות.', '"0 recorded transaction events" with "coverage incomplete" = it is not known whether there were deals.'),
+      notAs: bi('לא "השוק קפא".', 'Not "the market froze".'), limitations: [bi('העותקים מתעדכנים לפי קצב המפרסם.', 'The copies refresh at the publisher\'s pace.')],
+      evidence: bi('lib/txevents (statementOf)', 'lib/txevents (statementOf)'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('בדיקת הגרסאות', 'the version check') } }),
+    T({ id: 'parcel_street_recovery', group: 'transactions', title: bi('שיוך לרחוב דרך החלקה', 'Street recovered through the parcel'),
+      short: bi('עסקת מרשם בחלקה שאין לה כתובת בהצלבת הכתובות משויכת לרחוב לפי הכתובת ששכבת GovMap פרסמה לאותה חלקה — מוצגת ומסומנת, לא בסטטיסטיקה של הרחוב.', 'A register deal on a parcel with no address in the crosswalk is placed on a street by the address the GovMap layer published for the same parcel — shown and labelled, not in the street\'s statistics.'),
+      why: bi('בניינים חדשים רבים אינם מקושרים לכתובת במרשם; בלי השחזור עסקאותיהם נעלמות מהרחוב.', 'Many new buildings have no address link in the register; without the recovery their deals vanish from the street.'),
+      unit: bi('עסקה', 'one deal'), geography: bi('רחוב', 'street'), period: bi('כל תקופה', 'any period'), source: { ids: ['over:govmap-national', 'over:govmap-recent', 'over:street-evidence'] }, cls: 'DERIVED',
+      formula: bi('כתובות שכבת GovMap של אותו גוש/חלקה ביישוב → כלל התאמת הרחובות של המרשם (שם רשמי · מילה נרדפת · כתיב) → רחוב אחד = שיוך דרך החלקה, כמה רחובות = שיוך אפשרי', 'the GovMap layer\'s addresses of the same block / parcel in the locality → the register\'s own street-matching rule (official name · synonym · spelling) → one street = placed through the parcel, several = possible'),
+      inputs: [bi('טבלת החלקות של המרשם', 'the register\'s parcel table'), bi('כתובות שכבת GovMap', 'the GovMap layer\'s addresses')],
+      methodology: bi('לעולם לא לפי גאומטריה או דמיון שמות; עסקה שהשתחזרה אינה נכנסת לחציון הרחוב או למודל.', 'Never by geometry or name similarity; a recovered deal enters neither the street median nor the model.'),
+      interpretation: bi('העסקה אכן בחלקה; השיוך לרחוב נשען על כתובת המקור השני.', 'The deal is on the parcel; its street rests on the second source\'s address.'),
+      notAs: bi('לא תצפית ודאית ברחוב.', 'Not a certain observation on the street.'), limitations: [bi('חלקה עם כתובות בכמה רחובות נשארת "אפשרית".', 'A parcel with addresses on several streets stays POSSIBLE.')],
+      evidence: bi('data/txevents/national/parcel-streets.json · data/txevents/parcel-streets.json', 'data/txevents/national/parcel-streets.json · data/txevents/parcel-streets.json'),
+      freshness: { observation: bi('תאריכי העסקאות', 'the transaction dates'), publication: bi('גרסת שכבת GovMap', 'the GovMap-layer version'), check: bi('בדיקת הגרסאות', 'the version check') } }),
     T({ id: 'recorded_transaction_events', group: 'transactions', title: bi('עסקאות שנרשמו', 'Recorded transaction events'),
       short: bi('כל עסקאות הדירה שהמרשם סופר ברחוב או ביישוב, ועוד עסקאות חדשות יותר שעברו כל בדיקת זהות — גם כשהחלק הנמכר לא צוין. נספרות כעסקאות; מחירן אינו משמש בסטטיסטיקה.', 'Every dwelling deal the register counts on the street or in the locality, plus newer deals that pass every identity gate — also when the share sold is not stated. Counted as transactions; their price is not used in any statistic.'),
       why: bi('עסקה שהתרחשה היא עובדה גם כשאי אפשר לדעת אם נמכר הנכס כולו. ספירתה מראה פעילות עדכנית בלי להכניס מחיר שאולי הוא של חלק מהנכס.', 'A deal that took place is a fact even when it cannot be told whether the whole property was sold. Counting it shows recent activity without admitting a price that may be the price of a share.'),
@@ -7342,7 +7400,7 @@ const PT_DOM={
   gxspv:"text,text,text,text,text,text,text,text",
   gxedges:"text,text,text,text,text,date,text",
   gxmem:"text,text,text,text,text,number,number,text",
-  stdeals:"date,text,number,number,currency,currency,number,text,text,-",
+  stdeals:"date,text,number,number,currency,currency,number,text,text,-",stevents:"date,text,number,number,currency,currency,text,text,text,text",
   strecent:"date,text,number,number,currency,currency,text,text,text,text,-",strecentu:"date,text,number,number,currency,currency,text,text,text,text,-",strecentn:"date,text,number,number,currency,currency,text,text,text,text,-",
   stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
@@ -7637,17 +7695,45 @@ const txPerParams=p=>{if(txState.days){p.set("days",String(txState.days));p.dele
 function txQueryFor(){
   if(state.geo){
     const g=state.geo;
-    return g.kind==="street"?{city:g.city,street:g.he,house:g.house||undefined,label:`${g.he}${g.house?" "+g.house:""} · ${g.city}`}
+    return g.kind==="street"?{city:g.city,street:g.he,house:g.house||undefined,sid:/^st:\d+:\d+$/.test(String(g.id||""))?g.id:undefined,label:`${g.he}${g.house?" "+g.house:""} · ${g.city}`}
                             :{city:g.he,label:g.he};
   }
   const l=LOC[state.locId];if(!l)return null;
   const c=l.type==="city"?l:cityOf(l);
   if(c)return{city:c.he,label:l.type==="city"?c.he:`${l.he} · ${c.he}`};
-  return{city:null,district:l.he,label:l.he};      /* district/country view */
+  return{city:null,district:l.he,did:l.type==="district"?l.id:null,country:l.type==="country",label:l.he,en:l.en};      /* district/country view */
 }
 
+/* a district / the country: the newest transaction events of the area (lib/txevents latest index — every source), the period's exact
+   count from the per-day tally; the full list is per locality */
+async function txFetchArea(q,force){
+  const key=["area",q.did||"il",txPerKey()].join("|");
+  if(!force&&key===txState.key&&txState.status!=="idle")return;
+  txState.key=key;txState.status="loading";txState.rows=[];txState.scope=null;txState.meta=null;txState.unavailable=[];txState.more=false;txState.olderMore=false;
+  renderTx();
+  try{
+    const per=txState.days?"&days="+txState.days:"&months="+txState.months;
+    const r=await fetch("/api/intel?view=txLatest&limit=500"+per+(q.did?"&district="+encodeURIComponent(q.did):""),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(txState.key!==key)return;
+    const P=d.period||{},from=P.from||null,to=P.to||new Date().toISOString().slice(0,10);
+    const top=((q.did?d.district&&d.district.top:d.national&&d.national.top)||[]).filter(e=>(!from||e.date>from)&&e.date<=to);
+    const inPer=d.statement&&d.statement.n!=null?d.statement.n:top.length;
+    txState.rows=top.map(e=>({...e,txId:e.id,sourceFamily:"OFFICIAL_GOVERNMENT",deliveredVia:"over.org.il",source:e.sourceId==="over:deals-register"?"register":"govmap",
+      propertyClass:e.kind==="DWELLING"?"residential":e.kind==="TYPE_NOT_STATED"?"type-not-stated":"commercial",psmShown:false,pricePerSqm:null,inStatistics:false,geo:{match:"LOCALITY"},newness:"unknown"}));   /* the newest rows of an area are a list, never a statistic of the area */
+    const bySrc=txState.rows.reduce((m,e)=>((m[e.sourceId]=(m[e.sourceId]||0)+1),m),{});
+    txState.scope={level:"area",description:q.label};
+    txState.meta={unified:true,area:true,recency:d.recency,coverage:d.coverage,counts:{events:inPer,bySourceEvents:bySrc},
+      statement:d.statement||{kind:"COVERAGE_INCOMPLETE",n:null,text:["RECENT TRANSACTION COVERAGE INCOMPLETE","כיסוי העסקאות האחרונות חלקי"]},
+      sourceCoverage:{kind:"unified",offset:0,limit:txState.rows.length,total:inPer,more:false},areaShown:txState.rows.length,areaTotal:inPer,areaName:{he:q.label,en:q.en||q.label},deliveredVia:"over.org.il"};
+    txState.status=txState.rows.length?"ok":"empty";txState.err=null;
+  }catch(e){if(txState.key!==key)return;txState.status="error";txState.err=e.message;txState.rows=[]}
+  renderTx();
+}
 async function txFetch(force){
   const q=txQueryFor();
+  if(q&&!q.city&&(q.did||q.country))return txFetchArea(q,force);
   if(!q||!q.city){txState.status="scope";txState.rows=[];txState.key="";renderTx();return}
   const key=[q.city,q.street||"",q.house||"",txPerKey()].join("|");
   if(!force&&key===txState.key&&txState.status!=="idle")return;
@@ -7659,20 +7745,24 @@ async function txFetch(force){
   const p=txPerParams(new URLSearchParams({city:q.city,limit:"120"}));
   if(q.street)p.set("street",q.street);
   if(q.house)p.set("house",String(q.house));
+  if(q.sid)p.set("sid",q.sid);
   try{
     p.set("_",String(Date.now()));           /* never a stale cached body */
     const r=await fetch("/api/gov/transactions?"+p,{cache:"no-store"});
     if(!r.ok)throw new Error("HTTP "+r.status);
     const d=await r.json();
     if(txState.key!==key)return;                    /* a newer query won */
+    const uni=!!(d.meta&&d.meta.unified);
+    /* a transaction EVENT is shown whether or not its price is usable (unified read); the older live path keeps priced rows */
     txState.rows=(d.transactions||[])
-      .filter(t=>t.price&&t.sourceFamily==="OFFICIAL_GOVERNMENT")
-      .sort((a,b)=>(b.date||"").localeCompare(a.date||""));   /* newest first, ISO */
+      .filter(t=>t.sourceFamily==="OFFICIAL_GOVERNMENT"&&(uni||t.price))
+      .sort((a,b)=>(b.date||"").localeCompare(a.date||""));   /* newest first, ISO (stable: one day keeps the server's source order) */
     txState.scope=d.scope||null;txState.meta=d.meta||null;
     txState.unavailable=d.unavailable||[];
-    const cv=d.meta&&d.meta.sourceCoverage;          /* the register pages: where the next page starts */
-    txState.more=!!(cv&&cv.kind==="register-search"&&cv.more);
-    txState.nextOffset=cv&&cv.kind==="register-search"?(cv.offset||0)+(cv.limit||0):0;
+    const cv=d.meta&&d.meta.sourceCoverage;          /* the register pages / the unified events page: where the next page starts */
+    txState.more=!!(cv&&(cv.kind==="register-search"||cv.kind==="unified")&&cv.more);
+    txState.nextOffset=cv&&(cv.kind==="register-search"||cv.kind==="unified")?(cv.offset||0)+(cv.limit||0):0;
+    txState.olderMore=!!(cv&&cv.kind==="unified"&&cv.olderMore);txState.olderNext=cv&&cv.olderNext||0;
     txState.status=txState.rows.length?"ok":"empty";txState.err=null;
     const res=txResidential();
     txDebug={officialRawRows:(d.transactions||[]).length,residentialRows:res.length,
@@ -7692,27 +7782,36 @@ async function txFetch(force){
   renderTx();renderMap(true);
 }
 
-const txRowKey=t=>[t.date,t.price,t.block,t.parcel,t.subParcel,t.dealType,txVal(t.areaSqm)].join("|");
+const txRowKey=t=>t.id||[t.date,t.price,t.block,t.parcel,t.subParcel,t.dealType,txVal(t.areaSqm)].join("|");
 async function txMore(){
   const q=txQueryFor();
-  if(!q||!q.city||!txState.scope||txState.moreBusy||!txState.more&&!txState.moreErr)return;
+  if(!q||!q.city||!txState.scope||txState.moreBusy||!txState.more&&!txState.olderMore&&!txState.moreErr)return;
   const key=txState.key;
   txState.moreBusy=true;txState.moreErr=null;renderTx();
-  const p=txPerParams(new URLSearchParams({city:q.city,limit:"120",
+  const uni=!!(txState.meta&&txState.meta.unified);
+  /* the unified read pages its events, then (period ALL) the register's history before PROPX's stored window */
+  const older=uni&&!txState.more&&txState.olderMore;
+  const p=txPerParams(new URLSearchParams(older?{city:q.city,limit:"120",older:String(txState.olderNext),_:String(Date.now())}
+    :uni?{city:q.city,limit:"120",offset:String(txState.nextOffset),_:String(Date.now())}
+    :{city:q.city,limit:"120",
     offset:String(txState.nextOffset),level:txState.scope.level,_:String(Date.now())}));
   if(q.street)p.set("street",q.street);
   if(q.house)p.set("house",String(q.house));
+  if(q.sid)p.set("sid",q.sid);
   try{
     const r=await fetch("/api/gov/transactions?"+p,{cache:"no-store"});
     if(!r.ok)throw new Error("HTTP "+r.status);
     const d=await r.json();
     if(txState.key!==key)return;                    /* the geography or period changed meanwhile */
     const seen=new Set(txState.rows.map(txRowKey));
-    const add=(d.transactions||[]).filter(t=>t.price&&t.sourceFamily==="OFFICIAL_GOVERNMENT"&&!seen.has(txRowKey(t)));
+    const add=(d.transactions||[]).filter(t=>(uni||t.price)&&t.sourceFamily==="OFFICIAL_GOVERNMENT"&&!seen.has(txRowKey(t)));
     txState.rows=txState.rows.concat(add).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     const cv=d.meta&&d.meta.sourceCoverage;
-    txState.more=!!(cv&&cv.kind==="register-search"&&cv.more&&(d.transactions||[]).length);
-    if(cv&&cv.kind==="register-search")txState.nextOffset=(cv.offset||0)+(cv.limit||0);
+    if(cv&&cv.kind==="unified-older"){txState.olderMore=!!(cv.olderMore&&(d.transactions||[]).length);txState.olderNext=cv.olderNext||0}
+    else{
+      txState.more=!!(cv&&(cv.kind==="register-search"||cv.kind==="unified")&&cv.more&&(d.transactions||[]).length);
+      if(cv&&(cv.kind==="register-search"||cv.kind==="unified"))txState.nextOffset=(cv.offset||0)+(cv.limit||0);
+    }
   }catch(e){
     if(txState.key!==key)return;
     txState.moreErr=e.message;
@@ -7721,15 +7820,18 @@ async function txMore(){
   }
 }
 const txVal=v=>(v&&typeof v==="object"&&"value"in v)?v.value:v;
-const txPsm=t=>{if(t.partialSale)return null;const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
+const txPsm=t=>{if(t.partialSale)return null;if(t.psmShown===false)return null;const p=txVal(t.pricePerSqm);return p||(t.price&&txVal(t.areaSqm)?Math.round(t.price/txVal(t.areaSqm)):null)};
 function txMedian(a){if(!a.length)return null;const x=[...a].sort((p,q)=>p-q);const m=x.length>>1;
   return x.length%2?x[m]:Math.round((x[m-1]+x[m])/2)}
 /* PROPX is a residential product: land, commercial and unclassified rows are
    retrieved and counted, but never mixed into apartment rows or their stats.
    The count of what was set aside is always disclosed. */
-function txResidential(){return txState.rows.filter(t=>t.propertyClass==="residential")}
+/* a transaction event whose property type the source does not state (the GovMap layer's untyped series) stays in the main table,
+   labelled — it is a real transaction; land / commercial / non-dwelling events keep their own tab */
+const txIsMain=t=>t.propertyClass==="residential"||t.propertyClass==="type-not-stated";
+function txResidential(){return txState.rows.filter(txIsMain)}
 function txNonResidentialN(){return txState.rows.length-txResidential().length}
-function txNonResidential(){return txState.rows.filter(t=>t.propertyClass!=="residential")}
+function txNonResidential(){return txState.rows.filter(t=>!txIsMain(t))}
 function txFiltered(){
   if(txState.tab==="other")return txNonResidential();   /* land/commercial — shown, never in the stats */
   const rows=txResidential();
@@ -7757,8 +7859,8 @@ function txCols(){const t=T();return[
 const TX_ALL_CAP=3000;
 async function txLoadAll(){
   const key=txState.key;txState.allCapped=false;
-  while(txState.key===key&&txState.more&&!txState.moreErr&&txState.rows.length<TX_ALL_CAP)await txMore();
-  if(txState.key===key&&txState.more&&txState.rows.length>=TX_ALL_CAP){txState.allCapped=true;renderTx()}
+  while(txState.key===key&&(txState.more||txState.olderMore)&&!txState.moreErr&&txState.rows.length<TX_ALL_CAP)await txMore();
+  if(txState.key===key&&(txState.more||txState.olderMore)&&txState.rows.length>=TX_ALL_CAP){txState.allCapped=true;renderTx()}
 }
 /* small-sample rule for observed deals: fewer than 10 → "small sample", medians de-emphasised, no trend read.
    Why 10: a median's distribution-free 95% interval (order statistics, Binomial(n, ½)) does not exist below n = 6,
@@ -7773,6 +7875,67 @@ function txPeriodUncovered(F){
   const days=txState.days||Math.round(txState.months*30.44);
   const from=Date.parse(new Date(Date.now()-days*864e5).toISOString().slice(0,10));
   return (Date.parse(F.latestTransactionDate)-from)/864e5<days/2;
+}
+/* THE UNIFIED TRANSACTION EVENTS (lib/txevents, 20.10.2026): one newest-first table of every transaction event PROPX holds for the
+   place — the register copy, the GovMap-layer copy, the parcel recovery, the register's live search — each row with its source, its
+   copy's date and its PROPX state; the price of a row is used in a statistic only when its state says so */
+const TXE={he:{
+    st:{PRICED_IN_STATISTICS:"בסטטיסטיקת המחיר",VERIFIED_DWELLING:"עסקת דירה במרשם",RECORDED_EVENT:"עסקה שנרשמה",LIMITED_SHARE_NOT_STATED:"מוגבלת — החלק שנמכר לא צוין",CONFLICT:"סתירה בין מקורות",POSSIBLE_DUPLICATE:"כפילות אפשרית"},
+    src:{"over:deals-register":"מאגר רשות המסים · עותק","over:govmap-recent":"שכבת העסקאות של GovMap · עותק","over:govmap-national":"שכבת העסקאות של GovMap · הקובץ המלא","register-live":"מאגר רשות המסים · חיפוש חי"},
+    snap:d=>`עותק מ-${d}`,checked:d=>`PROPX בדק ${d}`,
+    match:{STREET:"",BUILDING:"",PARCEL:"",LOCALITY:"",STREET_POSSIBLE:"חלקה פינתית / כמה רחובות — שיוך אפשרי",STREET_VIA_PARCEL:"שויכה לרחוב דרך החלקה (הכתובת שפרסמה שכבת GovMap לאותה חלקה)",STREET_VIA_PARCEL_POSSIBLE:"שיוך אפשרי דרך החלקה",STREET_PUBLISHED_ADDRESS:"לפי הכתובת שפורסמה בשכבת GovMap",STREET_REPUBLISHER_LINK:"לפי קישור הכתובות של המפרסם (גרסאות לעם)"},
+    notes:{SHARE_NOT_STATED:"החלק שנמכר לא צוין",PARTIAL_SHARE:"נמכר חלק מהנכס",BELOW_MARKET_AMOUNT:"תמורה מתחת ל-₪100,000",SEVERAL_UNITS_ONE_CONSIDERATION:"תמורה אחת לכמה יחידות",NOT_A_DWELLING:"לא דירה",TYPE_NOT_STATED:"סוג הנכס לא צוין",PLACE_NOT_CERTAIN:"השיוך לרחוב אינו ודאי",NO_AMOUNT:"ללא סכום",MAYBE_A_REGISTER_DEAL:"ייתכן שזו עסקת מרשם שכבר מוצגת",MAYBE_A_SECOND_PRINT_IN_THE_LAYER:"ייתכן שזו הדפסה שנייה של עסקה שכבר מוצגת",PLACED_BY_THE_REPUBLISHER_ADDRESS_LINK:"שויכה לפי קישור הכתובות של המפרסם",ADDRESS_VS_PARCEL_STREET:"הכתובת סותרת את רחוב החלקה",LOCALITY_NAME_VS_PARCEL:"שם היישוב סותר את החלקה"},
+    noUse:"המחיר אינו משמש בסטטיסטיקות השוק",conflict:f=>`סתירה בין המקורות: ${f}`,alsoIn:n=>`מופיעה גם בשכבת GovMap${n>1?` (${n} שורות)`:""} — עסקה אחת`,
+    rec:{latest:"העסקה האחרונה הידועה",checked:"מקורות העסקאות נבדקו",freshest:"העותק העדכני ביותר",primary:"עותק המרשם הראשי"},
+    recSub:{latest:s=>s,freshest:(s,st)=>`${s}${st?` · ${st}`:""}`,primary:t=>`עסקאות עד ${t}`},
+    through:d=>`<b>ראיות העסקאות נבדקו עד ${d}</b>`,
+    cov:(l,f,t,ok)=>ok?`${l}: ${f} – ${t}`:`${l}: לא נקרא`,
+    zero:"0 עסקאות שנרשמו",
+    tail:(f,t,n)=>`מ-${f} עד ${t} (${n} ימים) עדיין אין עסקאות באף מקור ש-PROPX קורא — אלה ימים ללא כיסוי, לא ימים ללא עסקאות.`,
+    scope:(d,n,reg,gm,vp,pd,cf)=>`${d}: <b>${fmtInt(n)}</b> עסקאות בתקופה — מרשם ${fmtInt(reg)} · שכבת GovMap ${fmtInt(gm)}${vp?` · ${fmtInt(vp)} שויכו דרך החלקה`:""}${cf?` · ${fmtInt(cf)} עם סתירה בין מקורות`:""}${pd?` · ${fmtInt(pd)} כפילויות אפשריות (מוצגות, לא נספרות)`:""}`,
+    live:a=>a?"":"החיפוש החי במאגר לא ענה — מוצגות העסקאות שבידי PROPX",
+    prov:"עסקאות שנרשמו · מאגר רשות המסים + שכבת העסקאות של GovMap — שניהם פרסום מחדש עצמאי (over.org.il), לא ערוץ ממשלתי",
+    statsNote:"החציון ו-₪ למ״ר נשענים רק על עסקאות \"בסטטיסטיקת המחיר\" (עסקת דירה שלמה במרשם, ≥ ₪100,000, ששיוכה למקום ודאי).",
+    older:(n)=>`היסטוריה ישנה יותר במרשם${n!=null?`: ${fmtInt(n)} עסקאות`:""}`,area:(d,a,b)=>`${d}: <b>${fmtInt(b)}</b> עסקאות בתקופה בכל המקורות — מוצגות ${fmtInt(a)} החדשות ביותר; לרשימה המלאה בחרו יישוב`,covU:(a,b)=>`נטענו ${a} מתוך ${b} שורות בתקופה`},
+  en:{
+    st:{PRICED_IN_STATISTICS:"PRICED IN STATISTICS",VERIFIED_DWELLING:"VERIFIED DWELLING",RECORDED_EVENT:"RECORDED EVENT",LIMITED_SHARE_NOT_STATED:"LIMITED — SHARE NOT STATED",CONFLICT:"SOURCE CONFLICT",POSSIBLE_DUPLICATE:"POSSIBLE DUPLICATE"},
+    src:{"over:deals-register":"Tax Authority register · copy","over:govmap-recent":"GovMap deals layer · copy","over:govmap-national":"GovMap deals layer · full file","register-live":"Tax Authority register · live search"},
+    snap:d=>`copy of ${d}`,checked:d=>`PROPX checked ${d}`,
+    match:{STREET:"",BUILDING:"",PARCEL:"",LOCALITY:"",STREET_POSSIBLE:"corner / multi-street parcel — possible match",STREET_VIA_PARCEL:"placed on the street through its parcel (the GovMap layer's address of the same parcel)",STREET_VIA_PARCEL_POSSIBLE:"possible match through the parcel",STREET_PUBLISHED_ADDRESS:"by the address the GovMap layer published",STREET_REPUBLISHER_LINK:"by the republisher's address link (over.org.il)"},
+    notes:{SHARE_NOT_STATED:"share sold not stated",PARTIAL_SHARE:"a share of the property sold",BELOW_MARKET_AMOUNT:"consideration below ₪100,000",SEVERAL_UNITS_ONE_CONSIDERATION:"one consideration for several units",NOT_A_DWELLING:"not a dwelling",TYPE_NOT_STATED:"property type not stated",PLACE_NOT_CERTAIN:"street placement not certain",NO_AMOUNT:"no amount",MAYBE_A_REGISTER_DEAL:"may be a register deal already listed",MAYBE_A_SECOND_PRINT_IN_THE_LAYER:"may be a second print of a listed deal",PLACED_BY_THE_REPUBLISHER_ADDRESS_LINK:"placed by the republisher's address link",ADDRESS_VS_PARCEL_STREET:"address contradicts the parcel's street",LOCALITY_NAME_VS_PARCEL:"locality name contradicts the parcel"},
+    noUse:"PRICE NOT USED IN MARKET STATISTICS",conflict:f=>`SOURCE CONFLICT: ${f}`,alsoIn:n=>`also in the GovMap layer${n>1?` (${n} rows)`:""} — one deal`,
+    rec:{latest:"LATEST KNOWN TRANSACTION",checked:"RECENT TRANSACTION SOURCES CHECKED",freshest:"FRESHEST SOURCE SNAPSHOT",primary:"PRIMARY REGISTER SNAPSHOT"},
+    recSub:{latest:s=>s,freshest:(s,st)=>`${s}${st?` · ${st}`:""}`,primary:t=>`deals through ${t}`},
+    through:d=>`<b>Transaction evidence checked through ${d}</b>`,
+    cov:(l,f,t,ok)=>ok?`${l}: ${f} – ${t}`:`${l}: not read`,
+    zero:"0 RECORDED TRANSACTION EVENTS",
+    tail:(f,t,n)=>`${f} – ${t} (${n} days): no source PROPX reads holds deals yet — days without coverage, not days without deals.`,
+    scope:(d,n,reg,gm,vp,pd,cf)=>`${d}: <b>${fmtInt(n)}</b> transaction events in the period — register ${fmtInt(reg)} · GovMap layer ${fmtInt(gm)}${vp?` · ${fmtInt(vp)} placed through the parcel`:""}${cf?` · ${fmtInt(cf)} with a source conflict`:""}${pd?` · ${fmtInt(pd)} possible duplicates (shown, not counted)`:""}`,
+    live:a=>a?"":"The register's live search did not answer — showing the events PROPX holds",
+    prov:"Recorded transactions · Tax Authority register + GovMap deals layer — both independent republications (over.org.il), not a government channel",
+    statsNote:"Median and ₪/m² read only rows PRICED IN STATISTICS (a whole-dwelling register deal, ≥ ₪100,000, placed with certainty).",
+    older:(n)=>`older register history${n!=null?`: ${fmtInt(n)} deals`:""}`,area:(d,a,b)=>`${d}: <b>${fmtInt(b)}</b> transaction events in the period across every source — the newest ${fmtInt(a)} shown; choose a locality for the full list`,covU:(a,b)=>`${a} of ${b} rows in the period loaded`}};
+const txeT=()=>TXE[state.lang==="en"?"en":"he"];
+const txeDmy=v=>v?String(v).slice(0,10).split("-").reverse().join("."):"—";
+/** the recency summary + the coverage line + (with rows) the uncovered tail of the period */
+function txRecencyHTML(M){
+  if(!M||!M.unified||!M.recency)return "";
+  const x=txeT(),R=M.recency,fst=TXF[state.lang==="en"?"en":"he"].st;
+  const L=R.latestKnownEvent,F=R.freshestSourceSnapshot,P=R.primaryRegisterSnapshot;
+  const cell=(l,v,sub)=>`<div>${l}<b class="num">${v}</b>${sub?`<span class="s">${sub}</span>`:""}</div>`;
+  const covSrc=(M.coverage||[]).filter(c=>c.id!=="register-live"||c.read).map(c=>x.cov(x.src[c.id]||c.id,txeDmy(c.coveredFrom),txeDmy(c.coveredThrough),c.read)).join(" · ");
+  return `<div class="txe-rec" data-txe-latest="${L?L.date:""}">${cell(x.rec.latest,txeDmy(L&&L.date),L?x.src[L.sourceId]:"")}${cell(x.rec.checked,txeDmy(R.sourcesCheckedAt),"")}${cell(x.rec.freshest,txeDmy(F&&F.date),F?x.recSub.freshest(x.src[F.sourceId]||"",fst[F.state]||F.state):"")}${cell(x.rec.primary,txeDmy(P&&P.date),P?x.recSub.primary(txeDmy(P.coveredThrough)):"")}
+    <span class="n">${ldE(state.lang==="en"?R.note:R.noteHe)} ${xpBtn("transaction_event_sources")}</span></div>
+    <div class="txe-cov">${x.through(txeDmy(R.evidenceCheckedThrough))} · ${covSrc}${M.live&&!M.live.answered?` · ${x.live(false)}`:""}</div>`;
+}
+/** what an empty / partly covered period means — never interchangeable (lib/txevents statementOf) */
+function txStatementHTML(M,hasRows){
+  if(!M||!M.unified||!M.statement)return "";
+  const x=txeT(),S=M.statement,en=state.lang==="en";
+  const tail=S.uncoveredTail?x.tail(txeDmy(S.uncoveredTail.from),txeDmy(S.uncoveredTail.to),S.uncoveredTail.days):"";
+  if(hasRows)return tail?`<div class="txe-cov">${tail}</div>`:"";
+  const txt=S.text?(en?S.text[0]:S.text[1]):"";
+  return `<span class="txe-stmt${S.kind==="NONE_IN_PERIOD"?"":" inc"}" data-txe-stmt="${S.kind}">${x.zero} · ${txt}</span>${tail?`<span>${tail}</span>`:""} ${xpBtn("transaction_event_absence")}`;
 }
 function renderTx(){
   const t=T(),he=state.lang==="he";
@@ -7808,7 +7971,7 @@ function renderTx(){
      republication, and never when no source answered */
   const badge=!M?t.txSrcPending:viaRepub&&!fx?t.txRepubBadge:noAnswer&&!fx?t.txNoAnswer
     :(txState.meta&&txState.meta.mode==="dev-fixture"?t.txModeFixture:t.txOfficialBadge);
-  el("txProv").innerHTML=badge+
+  el("txProv").innerHTML=(M&&M.unified?txeT().prov:badge)+
     (viaRepub&&M.snapshotAt?` · ${t.txSnapshot(dmy(M.snapshotAt))}`:"")+
     (M&&M.latestTransactionDate?` · ${t.txLatestInSrc(dmy(M.latestTransactionDate))}`:"")+
     (M&&M.syncedAt&&!viaRepub?` · ${t.txSynced(when(M.syncedAt))}`:"")+
@@ -7830,7 +7993,8 @@ function renderTx(){
   const covR=txState.meta&&txState.meta.sourceCoverage;
   const reg=!!(covR&&covR.kind==="register-search");               /* rows from the register search (over.org.il) */
   const regTot=reg?fmtInt(covR.totalReported)+(covR.totalCapped?"+":""):"";
-  const scopeTxt=!sc?"":reg?(sc.level==="building"?t.txRegBuilding(calcEsc(sc.description),regTot)
+  const uniM=!!(M&&M.unified),Cn=uniM?M.counts||{}:null;
+  const scopeTxt=!sc?"":uniM&&M.area?txeT().area(calcEsc(M.areaName?(state.lang==="en"?M.areaName.en:M.areaName.he):sc.description),M.areaShown||0,M.areaTotal||0):uniM?((B)=>txeT().scope(calcEsc(sc.description),Cn.events||0,(B["over:deals-register"]||0)+(B["register-live"]||0),(B["over:govmap-recent"]||0)+(B["over:govmap-national"]||0),Cn.recovered||0,Cn.possibleDuplicates||0,Cn.conflicts||0))(Cn.bySourceEvents||{}):reg?(sc.level==="building"?t.txRegBuilding(calcEsc(sc.description),regTot)
       :sc.level==="street"?t.txRegStreet(calcEsc(sc.description),regTot,covR.addressLink&&covR.addressLink.addresses?covR.addressLink:null)
       :t.txRegLoc(calcEsc(sc.description),regTot)+(q&&q.street&&sc.level==="locality"?" · "+t.txRegFellBack(calcEsc(q.label)):""))
     :sc.level==="building"?t.txScopeBuilding(sc.description,sc.sampleSize)
@@ -7843,7 +8007,7 @@ function renderTx(){
   const cov=txState.meta&&txState.meta.sourceCoverage;
   /* coverage is always stated next to the scope — never only when it looks incomplete */
   const covTxt=cov
-    ? " · "+(reg?t.txCovReg(fmtInt(txState.rows.length),fmtInt(cov.totalReported),cov.totalCapped):t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable,cov.rowsRetrieved<cov.dealsCountReported))
+    ? " · "+(cov.kind==="unified"?txeT().covU(fmtInt(txState.rows.length),fmtInt(cov.total)):reg?t.txCovReg(fmtInt(txState.rows.length),fmtInt(cov.totalReported),cov.totalCapped):t.txCoverage(fmtInt(cov.rowsRetrieved),fmtInt(cov.dealsCountReported),cov.polygonsQueried,cov.polygonsAvailable,cov.rowsRetrieved<cov.dealsCountReported))
     : sc?" · "+t.txCoverageNA:"";
   const noteTxt=(scopeTxt||"")+(nonRes?(scopeTxt?" · ":"")+t.txNonResShown(nonRes):"")+covTxt;
   el("txScope").hidden=!noteTxt;el("txScope").innerHTML=noteTxt;
@@ -7851,8 +8015,10 @@ function renderTx(){
   /* summary — computed only from what is actually shown */
   const statRows=txState.tab==="other"?[]:rows;   /* land/commercial never priced as homes */
   const priced=statRows.filter(r=>!r.partialSale); /* a share of a property is never priced as a whole home */
-  const prices=priced.map(r=>r.price).filter(Boolean);
-  const psms=priced.map(txPsm).filter(Boolean);
+  /* in the unified read only rows PRICED IN STATISTICS are (a whole-dwelling register deal, ≥ ₪100,000, placed with certainty) */
+  const pricedU=uniM?priced.filter(r=>r.inStatistics):priced;
+  const prices=pricedU.map(r=>r.price).filter(Boolean);
+  const psms=pricedU.map(txPsm).filter(Boolean);
   const dates=statRows.map(r=>r.date).filter(Boolean).sort(),latest=dates[dates.length-1],first=dates[0];
   const perLbl=(TX_PERIODS(t).find(([v])=>v===txPerKey())||[0,""])[1];
   const small=prices.length<TX_SMALL_N,wk=small?' class="weak"':"";
@@ -7870,7 +8036,9 @@ function renderTx(){
   el("txWarn").hidden=!(prices.length>0&&small);
   const bound=txMaturityBound(),bd=bound.split("-").reverse().join(".");
   const nUpd=statRows.filter(r=>r.date&&r.date>=bound).length;
-  el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`${txFreshHTML(M.freshness)}<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
+  /* the unified read: the union's recency summary + the period's statement first; the live register path keeps its own strip */
+  if(uniM)el("txFresh").innerHTML=`${txRecencyHTML(M)}${txStatementHTML(M,hasAny)}${txFreshHTML(M.freshness)}${pricedU.length?`<span class="note">${txeT().statsNote}</span>`:""}`;
+  else el("txFresh").innerHTML=viaRepub&&M.snapshotAt?`${txFreshHTML(M.freshness)}<span class="note">${t.txRegNote(dmy(M.snapshotAt))}</span>`
     :`<span title="${calcEsc(t.txMatTip)}"><span class="tx-mat upd">${t.txMatUpd}</span>${t.txMatUpdS(bd,TX_MATURITY_DAYS,hasAny?fmtInt(nUpd):0)} · <span class="tx-mat hist">${t.txMatHist}</span>${t.txMatHistS(bd)}</span><span class="note">${t.txFreshNote}</span>`;
   if(thin)el("txWarn").textContent=streetLevel
     ? t.txThinStreet(prices.length)   /* street rows stay — never swapped out */
@@ -7883,7 +8051,8 @@ function renderTx(){
     (st==="scope"&&!hasAny)||(!hasAny&&st==="empty")||(!hasAny&&st==="ok");
   el("txEmpty").hidden=!showState;
   el("txEmpty").className=st==="error"?"tx-err":st==="loading"?"tx-load":"tx-empty";
-  el("txEmpty").textContent=st==="loading"?t.txLoading
+  if(uniM&&!hasAny&&(st==="empty"||st==="ok")&&txState.rows.length===0){el("txEmpty").innerHTML=txStatementHTML(M,false);el("txEmpty").className="tx-empty"}
+  else el("txEmpty").textContent=st==="loading"?t.txLoading
     :st==="error"?t.txErr
     :st==="scope"?t.txNoScope
     :(!hasAny&&st==="empty")?(M&&M.sourceAnswered===false
@@ -7908,33 +8077,46 @@ function renderTx(){
     return calcEsc(a)+more;
   };
   const sub=r=>calcEsc([r.city,r.neighborhood,dist(r),r.block?t.txParcel(r.block,r.parcel,r.subParcel):""].filter(Boolean).join(" · "));
-  const srcOf=r=>r.deliveredVia==="over.org.il"?t.txSrcRepub:t.txSrcGov;
+  const srcOf=r=>{
+    if(!r.state)return r.deliveredVia==="over.org.il"?t.txSrcRepub:t.txSrcGov;
+    const x=txeT(),m=x.match[r.geo&&r.geo.match]||"",ev=(r.evidence||[]).filter(e=>e.sourceId);
+    return `${x.src[r.sourceId]||r.sourceId}<span class="txe-src">${x.snap(txeDmy(r.snapshotDate))}${r.firstReadAt?` · ${x.checked(txeDmy(r.firstReadAt))}`:""}</span>`+
+      (m?`<span class="txe-geo">${m}</span>`:"")+(ev.length?`<span class="txe-src">${x.alsoIn(ev.length)}</span>`:"")+
+      (r.conflict&&(r.conflictFields||[]).length?`<span class="txe-geo">${x.conflict(r.conflictFields.map(f=>x.notes[f]||f).join(", "))}</span>`:"");
+  };
+  const stOf=r=>{
+    if(!r.state)return "";
+    const x=txeT(),n=(r.notes||[]).filter(k=>x.notes[k]&&k!=="SHARE_NOT_STATED").map(k=>x.notes[k]);
+    return `<div><span class="txe-st ${r.state}" data-txe="${r.state}">${x.st[r.state]||r.state}</span>${n.length?`<span class="txe-src">${n.join(" · ")}</span>`:""}</div>`;
+  };
+  /* a price shown as reported; whenever it is not used in a statistic the row says so (and never derives ₪/m² from it) */
+  const noUse=r=>r.state&&!r.inStatistics&&r.price!=null&&(r.source==="govmap"||r.state==="CONFLICT"||r.state==="POSSIBLE_DUPLICATE")?`<span class="txe-nouse">${txeT().noUse}${(r.notes||[]).includes("SHARE_NOT_STATED")?` · ${txeT().notes.SHARE_NOT_STATED}`:""}</span>`:"";
   const part=r=>r.partialSale&&r.portion?`<div class="sub">${t.txPartial(calcEsc(r.portion.text))}</div>`:"";
   const dist=r=>r.distanceM==null?"":r.distanceM===0?t.txSameBld:`${fmtInt(r.distanceM)} ${t.txMetersAway}`;
   const dt=r=>r.date?r.date.split("-").reverse().join("."):dash;
 
-  const liveTr=r=>`<tr data-txid="${r.txId||""}" style="cursor:default">
+  const liveTr=r=>`<tr data-txid="${r.txId||""}"${r.state?` data-txe-row="${r.state}" data-txe-src="${r.sourceId}" data-txe-date="${r.date||""}"`:""}${r.state==="POSSIBLE_DUPLICATE"?' class="txe-dup"':""} style="cursor:default">
     <td class="num">${dt(r)}</td>
     <td><span class="nm">${addr(r)}</span>${sub(r)?`<div class="sub">${sub(r)}</div>`:""}</td>
     <td class="num">${txVal(r.rooms)||dash}</td>
     <td class="num">${txVal(r.areaSqm)||dash}</td>
     <td class="num">${r.floor?calcEsc(r.floor):dash}</td>
-    <td class="num" style="font-weight:700">${fmtNIS(r.price)}${part(r)}</td>
+    <td class="num" style="font-weight:700">${r.price!=null?fmtNIS(r.price):dash}${part(r)}${noUse(r)}</td>
     <td class="num">${txPsm(r)?fmtNIS(txPsm(r)):dash}</td>
-    <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${calcEsc(r.dealType)}</div>`:""}</td>
+    <td>${clsChip(r.newness)}${r.dealType?`<div class="sub">${calcEsc(r.dealType)}</div>`:""}${stOf(r)}</td>
     <td class="tx-src">${srcOf(r)}</td></tr>`;
   const pst=ptLoad("tx"),cfOn=rows.length<tabRows.length;
   const head=ptHead("tx",txCols(),pst);
   el("txTbl").dataset.ptkey="tx";
   el("txTbl").innerHTML=!hasAny&&!cfOn?"":head+"<tbody>"+rows.map(liveTr).join("")+"</tbody>";
   /* sorting / filtering over the loaded deals only — said so whenever the register holds more for the period */
-  const more=reg&&txState.more,note=(cfOn?t.ptKept(fmtInt(rows.length),fmtInt(tabRows.length))+" · ":"")+(more?t.ptLoaded(fmtInt(txState.rows.length))
+  const more=(reg||uniM)&&(txState.more||txState.olderMore),note=(cfOn?t.ptKept(fmtInt(rows.length),fmtInt(tabRows.length))+" · ":"")+(more?t.ptLoaded(fmtInt(txState.rows.length))
     +` <button type="button" class="pt-clr" data-txall${txState.moreBusy?" disabled":""}>${txState.moreBusy?t.ptLoadAllBusy:t.ptLoadAll}</button>`:txState.allCapped?t.ptLoadCap(fmtInt(txState.rows.length)):"");
   el("txTblPt").dataset.ptbar="tx";el("txTblPt").innerHTML=(hasAny||cfOn)?ptBar("tx",txCols(),pst,{cards:true,note}):"";
   ptBind(el("txTbl").closest(".tbl-card")||el("txSection"),{key:"tx",cols:txCols,def:()=>TX_DEF,onChange:()=>{renderTx();ptRefocus()}});
 
   const liveCard=r=>`<div class="tcard" style="cursor:default">
-    <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${fmtNIS(r.price)}</span></div>${part(r)}
+    <div class="r1"><b>${addr(r)}</b><span class="num" style="font-weight:800">${r.price!=null?fmtNIS(r.price):dash}</span></div>${part(r)}${noUse(r)}${stOf(r)}
     ${sub(r)?`<div class="r2" style="color:var(--ink-3)">${sub(r)}</div>`:""}
     <div class="r2"><span class="num">${dt(r)}</span>
       ${txVal(r.rooms)?`<span><span class="num">${txVal(r.rooms)}</span> ${t.txRoomsShort}</span>`:""}
@@ -7947,7 +8129,7 @@ function renderTx(){
   /* the register is paged: every deal of the scope and period is reachable, a page at a time */
   const mb=el("txMoreBox");
   if(mb){
-    mb.hidden=!(reg&&hasAny&&(txState.more||txState.moreErr));
+    mb.hidden=!((reg||uniM)&&hasAny&&(txState.more||txState.olderMore||txState.moreErr));
     mb.innerHTML=mb.hidden?"":`<button class="tx-sel" id="txMoreBtn"${txState.moreBusy?" disabled":""}>${txState.moreBusy?t.txMoreLoading:t.txMore}</button>`+
       (txState.moreErr?`<span class="tx-more-err">${t.txMoreErr}</span>`:"");
   }
@@ -9727,6 +9909,33 @@ async function siApt(id,fd){
 const siMoney=v=>v==null?"—":fmtNIS(v);
 const siNum=v=>v==null?"—":fmtInt(v);
 const siMissMap={"no-observed-deals":"street_no_observed_transactions","street-price-insufficient":"street_insufficient_sample","locality-not-swept":"street_locality_not_swept","evidence-not-loaded":"street_evidence_not_loaded","neighbourhood-unlinked":"street_neighbourhood_unlinked","permits-outside-tlv":"street_permits_not_covered","no-tlv-permits":"street_permits_not_covered"};
+/* THE STREET'S TRANSACTION EVENTS (lib/txevents) — the one chronological table of Street Intelligence: every source, one row per deal,
+   newest first, each row with its source, copy date and PROPX state; the register's observed deals (the street's statistics) and the
+   recent layer's own tables stay one level down as source views */
+const STE={he:{h:"כל העסקאות ברחוב — החדשות ביותר תחילה",cols:["תאריך","כתובת","חדרים","מ״ר","מחיר כפי שדווח","₪ למ״ר","סוג נכס","גוש/חלקה/תת","מקור","מצב PROPX"],
+    more:(a,b)=>`מוצגות ${fmtInt(a)} העסקאות החדשות ביותר מתוך ${fmtInt(b)} — כולן, לפי תקופה, בטבלת העסקאות שבעמוד`,obs:"העסקאות שנספרות בסטטיסטיקה של הרחוב (מאגר רשות המסים, נצפו ברחוב)",recent:"תצוגת המקור: שכבת העסקאות של GovMap"},
+  en:{h:"Every transaction on this street — newest first",cols:["Date","Address","Rooms","m²","Price as reported","₪/m²","Property type","Block/parcel/sub","Source","PROPX state"],
+    more:(a,b)=>`the newest ${fmtInt(a)} of ${fmtInt(b)} events — all of them, by period, in the page's transactions table`,obs:"Deals counted in the street's statistics (Tax Authority register, observed on the street)",recent:"Source view: the GovMap deals layer"}};
+function eventsTableHTML(X){
+  if(!X||!X.available||!X.events)return "";
+  const t=STE[state.lang==="en"?"en":"he"],x=txeT(),dash="—";
+  const rows=X.events.map(r=>{
+    const addr=[r.street,r.houseNumber].filter(Boolean).join(" ");
+    const m=x.match[r.geo&&r.geo.match]||"";
+    const n=(r.notes||[]).filter(k=>x.notes[k]&&k!=="SHARE_NOT_STATED").map(k=>x.notes[k]);
+    const nouse=!r.inStatistics&&r.price!=null&&(r.source==="govmap"||r.state==="CONFLICT"||r.state==="POSSIBLE_DUPLICATE");
+    return `<tr data-txe-row="${r.state}" data-txe-src="${r.sourceId}" data-txe-date="${r.date||""}"${r.state==="POSSIBLE_DUPLICATE"?' class="txe-dup"':""}>
+      <td class="num" data-v="${ldE(r.date||"")}">${siDate(r.date)}</td><td class="w"><bdi>${ldE(addr)||dash}</bdi>${m?`<span class="txe-geo">${m}</span>`:""}</td>
+      <td class="num">${r.rooms!=null?r.rooms:dash}</td><td class="num">${siNum(r.areaSqm)}</td>
+      <td class="num" data-v="${r.price!=null?r.price:""}">${r.price!=null?fmtNIS(r.price):dash}${r.partialSale&&r.portion?`<span class="txe-src">${ldE(String(r.portion.text||r.portion.fraction))}</span>`:""}${nouse?`<span class="txe-nouse">${x.noUse}${(r.notes||[]).includes("SHARE_NOT_STATED")?` · ${x.notes.SHARE_NOT_STATED}`:""}</span>`:""}</td>
+      <td class="num" data-v="${r.psmShown?r.pricePerSqm:""}">${r.psmShown?fmtNIS(r.pricePerSqm):dash}</td>
+      <td class="w">${ldE(r.propertyType||dash)}</td><td class="num"><bdi>${r.block?ldE(`${r.block}/${r.parcel}${r.subParcel!=null&&r.subParcel!==""?"/"+r.subParcel:""}`):dash}</bdi></td>
+      <td>${x.src[r.sourceId]||ldE(r.sourceId)}<span class="txe-src">${x.snap(txeDmy(r.snapshotDate))}</span>${(r.evidence||[]).length?`<span class="txe-src">${x.alsoIn(r.evidence.length)}</span>`:""}${r.conflict&&(r.conflictFields||[]).length?`<span class="txe-geo">${x.conflict(r.conflictFields.map(f=>x.notes[f]||f).join(", "))}</span>`:""}</td>
+      <td><span class="txe-st ${r.state}" data-txe="${r.state}">${x.st[r.state]||r.state}</span>${n.length?`<span class="txe-src">${n.join(" · ")}</span>`:""}</td></tr>`;}).join("");
+  const M={unified:true,recency:X.recency,coverage:X.coverage,statement:X.statement};
+  return `<div class="ste" data-ste="${X.total}"><h4>${t.h} <span class="num">(${fmtInt(X.counts?X.counts.events:X.total)})</span> ${xpBtn("transaction_event_sources")}</h4>${txRecencyHTML(M)}
+    ${X.events.length?`<div class="st-wrap"><table class="st-tbl" data-ptdom="stevents"${X.events.length<X.total?` data-ptnote="${ldE(t.more(X.events.length,X.total))}"`:""}><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:txStatementHTML(M,false)}</div>`;
+}
 function siHTML(g){
   const t=siT(),S=siState;
   if(S.id!==g.id||S.loading)return `<p class="gv-note">${t.loading}</p>`;
@@ -9778,18 +9987,20 @@ function siHTML(g){
       NS?`${t.nbBasis(fmtInt(NS.streets))} · n=${fmtInt(NS.priced)}${NS.streetNames&&NS.streetNames.length?`<br><bdi>${NS.streetNames.map(inE).join(" · ")}</bdi>`:""}`:"",
       NS&&NS.medianPrice!=null?vcTag("der"):xpMiss(L.reason?siMissMap[L.reason]||L.reason:"street_neighbourhood_insufficient")):""}
     </div>${C.neighbourhood&&!C.neighbourhood.resolved?`<p class="gv-note" style="margin:8px 0 0">${t.ctxNbNo} ${miss("neighbourhood-unlinked")}</p>`:""}</div>`;
+  five+=eventsTableHTML(D.events);
   if(E.swept&&E.deals&&E.deals.length){
-    five+=`<h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
+    five+=`<details class="st-sec"><summary>${STE[state.lang==="en"?"en":"he"].obs}</summary><h4>${t.deals}</h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stdeals" data-ptnote="${ldE(t.shown(E.deals.length,E.dealsTotal))}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.deals.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="num">${ldE((d.houses||[]).join(", "))||"—"}</td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
       <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
       <td class="num">${d.yearBuilt||"—"}</td><td class="w">${ldE(d.nature||"—")}</td><td class="num"><bdi>${d.gush?ldE(`${d.gush}/${d.helka}${d.subParcel!=null&&d.subParcel!==""?"/"+d.subParcel:""}`):"—"}</bdi></td><td>${d.probableNew?`<span class="st-tag">${t.pnew}</span>`:""}${d.buildYearAfterDeal?` <span class="st-tag">${t.byad}</span>`:""}${d.partialSale?` <span class="st-tag">${t.partial}</span>`:""}${d.sameConsideration>1?` <span class="st-tag">${t.bulk(d.sameConsideration)}</span>`:""}${d.notMarket?` <span class="st-tag">${t.notMarket}</span>`:""}${d.portionMissing?` <span class="st-tag">${t.portionNA}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
     if(D.freshness){const tf=TXF[state.lang==="en"?"en":"he"],dm=v=>v?String(v).slice(0,10).split("-").reverse().join("."):"—";
       five+=`<p class="gv-note">${tf.source}: ${tf.srcName(dm(D.freshness.snapshotDate),dm(D.freshness.latestTransactionDate))} ${xpBtn("transaction_reporting_lag")}</p>`}
     if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
+    five+=`</details>`;
   }
-  five+=recentTableHTML(D.recent);
-  /* deep dive */
+  /* deep dive — the recent layer's own tables are a source view here (its deals are in the events table above) */
   let deep="";
+  deep+=recentTableHTML(D.recent);
   if(E.swept&&E.possible&&E.possible.length){
     deep+=`<h4>${t.possible} <span class="num">(${fmtInt(E.possibleTotal)})</span></h4><div class="st-wrap"><table class="st-tbl" data-ptdom="stposs"><thead><tr>${t.pcols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${E.possible.map(d=>`<tr>
       <td class="num" data-v="${ldE(d.date||"")}">${siDate(d.date)}</td><td class="w"><bdi>${ldE((d.parcelAddresses||[]).join(" · "))}</bdi>${d.parcelAddressesTotal>(d.parcelAddresses||[]).length?` <span class="num">(${d.parcelAddresses.length}/${d.parcelAddressesTotal})</span>`:""}</td>
@@ -12561,6 +12772,8 @@ const tcSt=s=>`<span class="tc-st ${inE(s)}" title="${inE(tcState.data&&tcState.
 function tcLoad(){
   tcState.started=true;tcState.status="loading";renderTrust();
   inGet("view=sources").then(d=>{tcState.data=d;tcState.status="ok";renderTrust()}).catch(()=>{tcState.status="error";renderTrust()});
+  /* the transaction completeness dashboard (lib/txevents) — read beside the catalogue */
+  inGet("view=txCompleteness").then(d=>{tcState.txc=d;renderTrust()}).catch(()=>{tcState.txc=null});
 }
 const TC_ORDER=["SUCCESS","UNCHANGED","PARTIAL","STALE","REFUSED","FAILED","SCHEMA_CHANGED","NO_RUN"];
 function tcCols(){
@@ -12573,6 +12786,35 @@ function tcCols(){
     {k:"last",label:t.c.last,type:"date",sort:true,filter:true,v:r=>(r.s.sync||{}).lastCheckAt},
     {k:"obs",label:t.c.obs,type:"date",sort:true,filter:true,v:r=>r.s.latestObservation},
     {k:"upd",label:t.c.upd,type:"date",sort:true,filter:true,v:r=>r.s.sourceUpdatedAt}];
+}
+/* TRANSACTION COMPLETENESS — sources, versions, the latest event, new events, unresolved, conflicts, possible duplicates and every
+   source row's reconciliation state; the one number that must stay 0: KNOWN SOURCE EVENTS NOT SURFACED (unexplained) */
+const TXC={he:{h:"שלמות העסקאות",mon:"מקורות במעקב",healthy:"עדכניים",stale:"לא עדכניים",notRead:"לא נקראו",ver:"גרסת המקור האחרונה",latest:"אירוע העסקה האחרון",
+    n24:"אירועים חדשים — 24 שעות",n7:"אירועים חדשים — 7 ימים",unres:"שורות ללא יישוב",unst:"שורות ללא רחוב מזוהה",conf:"סתירות בין מקורות",poss:"כפילויות אפשריות",
+    notSurf:"שורות מקור שאינן אירוע בפני עצמן (כל אחת עם סיבה)",unexp:"עסקאות ידועות במקורות שאינן מוצגות — ללא הסבר",target:"יעד: 0",
+    nat:"גלאי העסקאות החסרות (הקובץ המלא של שכבת GovMap)",natRows:(a,b,c)=>`${a} שורות בחלון המרשם · ${b} עסקאות שעותק המרשם אינו מחזיק — מוצגות · ${c} חלקות שהרחוב שלהן שוחזר`,valid:(a,b)=>`אימות מול חלון ה-API: ${a} מתוך ${b} זהות`,
+    byD:"העסקה האחרונה לפי מחוז",bk:{DUPLICATE:"כפילות של עסקה מוצגת",POSSIBLE_DUPLICATE:"כפילות אפשרית (מוצגת, לא נספרת)",HISTORICAL_CONTEXT:"הקשר היסטורי (לפני החלון)",INVALID:"תאריך לא תקף",UNRESOLVED:"מיקום לא מזוהה"}},
+  en:{h:"Transaction completeness",mon:"Sources monitored",healthy:"current",stale:"stale",notRead:"not read",ver:"Latest source version",latest:"Latest transaction event",
+    n24:"New events — 24 hours",n7:"New events — 7 days",unres:"Rows without a locality",unst:"Rows without a resolved street",conf:"Source conflicts",poss:"Possible duplicates",
+    notSurf:"Source rows that are not an event of their own (each with its reason)",unexp:"KNOWN SOURCE EVENTS NOT SURFACED — UNEXPLAINED",target:"target: 0",
+    nat:"Missed-deal detector (the GovMap layer's whole file)",natRows:(a,b,c)=>`${a} rows in the register's window · ${b} deals the register copy does not hold — shown · ${c} parcels whose street was recovered`,valid:(a,b)=>`validated against the API window: ${a} of ${b} identical`,
+    byD:"Latest transaction by district",bk:{DUPLICATE:"duplicate of a shown deal",POSSIBLE_DUPLICATE:"possible duplicate (shown, not counted)",HISTORICAL_CONTEXT:"historical context (before the window)",INVALID:"invalid date",UNRESOLVED:"location not resolved"}}};
+const DIST_NM={he:{"d-jm":"ירושלים","d-north":"צפון","d-haifa":"חיפה","d-center":"מרכז","d-ta":"תל אביב","d-south":"דרום","js-area":"יהודה ושומרון",unknown:"לא ידוע"},en:{"d-jm":"Jerusalem","d-north":"North","d-haifa":"Haifa","d-center":"Center","d-ta":"Tel Aviv","d-south":"South","js-area":"Judea & Samaria",unknown:"unknown"}};
+function txcHTML(){
+  const X=tcState.txc;if(!X||!X.completeness)return "";
+  const t=TXC[state.lang==="en"?"en":"he"],C=X.completeness,N=X.national,dn=DIST_NM[state.lang==="en"?"en":"he"];
+  const cell=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const nf=v=>v==null?inDash():`<span class="num">${fmtInt(v)}</span>`;
+  const ex=C.notSurfaced&&C.notSurfaced.explained||{};
+  return `<div class="tc-alerts" data-txc-unexplained="${C.notSurfaced?C.notSurfaced.unexplained:""}"><div class="pu-ft">${t.h} ${xpBtn("transaction_event_sources")}</div>
+    <div class="ho-dl">${[[t.mon,`${nf(C.sources.monitored)} · ${t.healthy} ${nf(C.sources.healthy)} · ${t.stale} ${nf(C.sources.stale)} · ${t.notRead} ${nf(C.sources.notRead)}`],
+      [t.ver,N&&N.version?`GovMap v<span class="num">${N.version.n}</span> · ${inDate(N.version.detectedAt)}`:inDash()],[t.latest,`<span class="num">${inE(C.latestEvent||"—")}</span>`],
+      [t.n24,nf(C.newEvents.last24h)],[t.n7,nf(C.newEvents.last7d)],[t.unres,nf(C.unresolved.geography)],[t.unst,nf(C.unresolved.streetInLocality)],
+      [t.conf,nf((C.conflicts.recentConflict||0)+(C.conflicts.linksWithSourceConflict||0))],[t.poss,nf((C.possibleDuplicates.recentWindow||0)+(C.possibleDuplicates.national||0))],
+      [t.unexp+` <span class="sub">(${t.target})</span>`,`<b class="num">${fmtInt(C.notSurfaced.unexplained)}</b>`]].map(([k,v])=>cell(k,v)).join("")}</div>
+    <p class="ho-note"><b>${t.notSurf}:</b> ${Object.entries(ex).map(([k,v])=>`${inE(t.bk[k]||k)} <span class="num">${fmtInt(v)}</span>`).join(" · ")}</p>
+    ${N?`<p class="ho-note"><b>${t.nat}:</b> ${t.natRows(fmtInt(N.totals?Object.values(N.totals).reduce((a,b)=>a+b,0):0),fmtInt(N.shown?N.shown.govmapOnly:0),fmtInt(N.parcelRecovery?N.parcelRecovery.recovered:0))}${N.validation?` · ${t.valid(fmtInt(N.validation.same),fmtInt(N.validation.same+N.validation.differs+N.validation.missing))}`:""}</p>`:""}
+    <p class="ho-note"><b>${t.byD}:</b> ${Object.entries(C.latestByDistrict||{}).filter(([k])=>k!=="unknown").map(([k,v])=>`${inE(dn[k]||k)} <span class="num">${inE(v||"—")}</span>`).join(" · ")}</p></div>`;
 }
 function renderTrust(){
   const box=el("tcBody");if(!box)return;
@@ -12607,7 +12849,7 @@ function renderTrust(){
   const alerts=(d.alerts||[]);const alertRow=a=>{const nm=state.lang==="en"&&a.publisherEn?a.publisherEn:a.publisher;const k=a.kind;
     return `<li class="tc-al ${k==="RECOVERED"?"ok":k==="SOURCE_STALE"||k==="PARTIAL"?"warn":"bad"}">${tcSt(k)} <b>${inE(nm||"")}</b> — ${inE(a.name||"")}${a.at?` · ${inDate(a.at)}`:""}${k==="RECOVERED"&&a.failedAt?` (${t.d.after} ${tcSt(a.failedState)} ${inDate(a.failedAt)})`:""}${a.lastGoodAt&&k!=="RECOVERED"&&k!=="SOURCE_STALE"?` · ${t.d.lastGood}: ${inDate(a.lastGoodAt)}`:""}${a.error?` · <span class="num">${inE(a.error.slice(0,90))}</span>`:""}${a.note?` · ${inE(a.note)}`:""}</li>`};
   const alertBox=`<div class="tc-alerts"><div class="pu-ft">${t.d.alerts} ${xpBtn("source_freshness")}</div>${alerts.length?`<ul class="tc-al-l">${alerts.map(alertRow).join("")}</ul>`:`<p class="ho-note">${t.d.noAlerts}</p>`}</div>`;
-  box.innerHTML=alertBox+`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
+  box.innerHTML=alertBox+txcHTML()+`<div class="tc-counts">${t.count(fmtInt(d.sources.length))} · ${counts}</div>
     ${ptBar("tc",tcCols(),ptLoad("tc"),{all:true,note:shown.length<all.length?T().ptKept(fmtInt(shown.length),fmtInt(all.length)):""})}
     <div class="tc-list">${shown.map(x=>row(x.s,x.i)).join("")}</div>
     <details class="tc-leg"><summary>${t.legend} · ${t.principles}</summary><ul class="ho-note ld-ul">${Object.entries(d.vocabulary||{}).map(([k,v])=>`<li>${tcSt(k)} ${inE(v)}</li>`).join("")}</ul>

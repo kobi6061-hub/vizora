@@ -1,0 +1,301 @@
+{
+ "schema": 1,
+ "builtAt": "2026-10-20T14:48:35.385Z",
+ "engine": "propx-txevents-1",
+ "sources": {
+  "monitored": 3,
+  "healthy": 2,
+  "stale": 1,
+  "notRead": 0,
+  "list": [
+   {
+    "id": "over:deals-register",
+    "label": "Tax Authority register — republished copy (over.org.il)",
+    "labelHe": "מאגר העסקאות של רשות המסים — עותק שפורסם מחדש (over.org.il)",
+    "kind": "THIRD-PARTY REPUBLICATION OF OFFICIAL DATA",
+    "precedence": 1,
+    "read": true,
+    "reason": null,
+    "snapshotDate": "2026-09-19",
+    "coveredFrom": "2023-09-18",
+    "coveredThrough": "2026-09-17",
+    "checkedAt": "2026-10-20T10:49:12.042Z",
+    "state": "STALE",
+    "stateReason": null
+   },
+   {
+    "id": "over:govmap-recent",
+    "label": "GovMap deals layer — republished copy, recent window",
+    "labelHe": "שכבת העסקאות של GovMap — עותק שפורסם מחדש, חלון אחרון",
+    "kind": "THIRD-PARTY REPUBLICATION OF OFFICIAL MAP / GIS LAYER",
+    "precedence": 2,
+    "read": true,
+    "reason": null,
+    "snapshotDate": "2026-10-08",
+    "coveredFrom": "2026-07-04",
+    "coveredThrough": "2026-09-28",
+    "checkedAt": "2026-10-20T14:34:18.454Z",
+    "state": "RECENT",
+    "stateReason": null,
+    "version": 4
+   },
+   {
+    "id": "over:govmap-national",
+    "label": "GovMap deals layer — the published file of the same copy",
+    "labelHe": "שכבת העסקאות של GovMap — הקובץ המלא של אותו עותק",
+    "kind": "THIRD-PARTY REPUBLICATION OF OFFICIAL MAP / GIS LAYER",
+    "precedence": 2,
+    "read": true,
+    "reason": null,
+    "snapshotDate": "2026-10-08",
+    "coveredFrom": "2023-09-18",
+    "coveredThrough": "2026-07-03",
+    "checkedAt": "2026-10-20T14:34:18.454Z",
+    "version": 4,
+    "builtAt": "2026-10-20T14:35:50.691Z",
+    "state": "RECENT"
+   }
+  ]
+ },
+ "latestEvent": "2026-09-28",
+ "latestByDistrict": {
+  "d-south": "2026-09-17",
+  "d-jm": "2026-09-07",
+  "d-north": "2026-09-09",
+  "d-center": "2026-09-10",
+  "d-haifa": "2026-09-07",
+  "d-ta": "2026-09-28",
+  "js-area": "2026-09-02"
+ },
+ "newEvents": {
+  "last24h": 29325,
+  "last7d": 29325,
+  "basis": "deals PROPX read for the first time in the period (the recent layer's first read per deal + the national detector's build)"
+ },
+ "unresolved": {
+  "geography": 2577,
+  "streetInLocality": 1758,
+  "typeNotStated": 866
+ },
+ "conflicts": {
+  "recentConflict": 50,
+  "linksWithSourceConflict": 2072
+ },
+ "possibleDuplicates": {
+  "recentWindow": 103,
+  "national": 3117
+ },
+ "links": 3240,
+ "parcelRecovery": {
+  "recentWindow": {
+   "recovered": 374,
+   "states": {
+    "OBSERVED": 363,
+    "UNRESOLVED": 24,
+    "POSSIBLE": 11
+   }
+  },
+  "national": {
+   "registerParcelsWithoutStreet": 33479,
+   "layerAddressKeys": 348813,
+   "keysOnThoseParcels": 7407,
+   "parcelsWithLayerAddress": 6486,
+   "states": {
+    "OBSERVED": 5810,
+    "POSSIBLE": 251,
+    "UNRESOLVED": 425
+   },
+   "recovered": 6061
+  }
+ },
+ "recentAccounting": {
+  "snapshot": "aa7267d12488c51e8e88f7e51ab5df6ab6e49d025bae8dc04381688a2037706a",
+  "copy": {
+   "datasetId": "4174aac2-c8b2-443e-9425-3773ce47c8da",
+   "loadedAt": "2026-10-08T01:50:12.803824+00:00",
+   "version": 4,
+   "lastDeal": "2026-09-28",
+   "deals": 2500941,
+   "sourceUrl": "https://www.govmap.gov.il/?lay=16",
+   "table": "public.govmap_deals"
+  },
+  "window": {
+   "from": "2026-07-04",
+   "registerLastDeal": "2026-09-17",
+   "lagDays": 75
+  },
+  "rows": 11900,
+  "classes": {
+   "FUTURE_DATED": 36,
+   "RECENT_NEW": 4403,
+   "IN_REGISTER_OTHER_UNIT": 1953,
+   "IN_REGISTER": 1249,
+   "DUPLICATE_IN_SOURCE": 1919,
+   "POSSIBLE_DUPLICATE_IN_SOURCE": 63,
+   "POSSIBLY_IN_REGISTER": 10,
+   "NO_SETTLEMENT": 37,
+   "AMBIGUOUS_DUPLICATE": 30,
+   "UNMAPPED_SETTLEMENT": 1,
+   "CONTEXT_BEFORE_WINDOW": 2199
+  },
+  "buckets": {
+   "INVALID": 36,
+   "NEW_EVENT": 4403,
+   "DUPLICATE": 5121,
+   "POSSIBLE_DUPLICATE": 103,
+   "UNRESOLVED": 38,
+   "HISTORICAL_CONTEXT": 2199
+  },
+  "surface": {
+   "RECENT_NEW": "SURFACED — a transaction event of its own (GovMap layer)",
+   "IN_REGISTER": "DUPLICATE — surfaced as the register deal it repeats (the GovMap row is that event's source evidence)",
+   "IN_REGISTER_OTHER_UNIT": "DUPLICATE — surfaced as the register deal it repeats under another sub-parcel (source evidence)",
+   "DUPLICATE_IN_SOURCE": "DUPLICATE — the same deal printed twice by the layer; surfaced through its twin",
+   "POSSIBLE_DUPLICATE_IN_SOURCE": "SURFACED FLAGGED — a possible second print; shown as POSSIBLE DUPLICATE, never counted",
+   "AMBIGUOUS_DUPLICATE": "SURFACED FLAGGED — several candidate twins; shown as POSSIBLE DUPLICATE, never counted",
+   "POSSIBLY_IN_REGISTER": "SURFACED FLAGGED — maybe a register deal; shown as POSSIBLE DUPLICATE, never counted",
+   "CONTEXT_BEFORE_WINDOW": "HISTORICAL CONTEXT — dated before the window; covered by the register window and the national detector",
+   "FUTURE_DATED": "INVALID — dated after the copy was loaded",
+   "NO_SETTLEMENT": "UNRESOLVED GEOGRAPHY — no settlement and a block · parcel no single locality holds",
+   "UNMAPPED_SETTLEMENT": "UNRESOLVED GEOGRAPHY — a settlement name no official locality carries"
+  },
+  "proofs": {
+   "recentNewInLayer": {
+    "classRows": 4403,
+    "layerRows": 4403,
+    "equal": true
+   },
+   "duplicatesWhoseRegisterDealIsMissing": 0,
+   "possibleDuplicatesShown": 103
+  },
+  "unexplained": 0
+ },
+ "national": {
+  "built": true,
+  "builtAt": "2026-10-20T14:35:50.691Z",
+  "version": {
+   "id": "210cd553-ea77-41ce-8afd-da27c552250d",
+   "n": 4,
+   "detectedAt": "2026-10-08T01:47:52.610708+00:00",
+   "rows": null
+  },
+  "file": {
+   "sha256": "a410a5226a3375a20ffb5ff4c405b1b292454e97bf87ad65afe5b972edb55069",
+   "bytes": 709758976,
+   "rowsTotal": 2500941,
+   "dates": {
+    "min": "1900-01-01",
+    "max": "2048-05-29"
+   }
+  },
+  "validation": {
+   "pass": true,
+   "same": 11900,
+   "differs": 0,
+   "missing": 0,
+   "fileOnly": 0
+  },
+  "totals": {
+   "future": 36,
+   "after-register": 1,
+   "recent-overlap": 9664,
+   "register-window": 337537,
+   "before-window": 1864
+  },
+  "classes": {
+   "future": {
+    "FUTURE_DATED": 36
+   },
+   "after-register": {
+    "RECENT_NEW": 1
+   },
+   "recent-overlap": {
+    "RECENT_NEW": 4402,
+    "IN_REGISTER_OTHER_UNIT": 1953,
+    "IN_REGISTER": 1249,
+    "DUPLICATE_IN_SOURCE": 1919,
+    "POSSIBLE_DUPLICATE_IN_SOURCE": 63,
+    "POSSIBLY_IN_REGISTER": 10,
+    "NO_SETTLEMENT": 37,
+    "AMBIGUOUS_DUPLICATE": 30,
+    "UNMAPPED_SETTLEMENT": 1
+   },
+   "register-window": {
+    "IN_REGISTER_OTHER_UNIT": 140736,
+    "IN_REGISTER": 114616,
+    "RECENT_NEW": 24922,
+    "DUPLICATE_IN_SOURCE": 51645,
+    "POSSIBLE_DUPLICATE_IN_SOURCE": 1492,
+    "NO_SETTLEMENT": 2394,
+    "POSSIBLY_IN_REGISTER": 1143,
+    "AMBIGUOUS_DUPLICATE": 482,
+    "UNMAPPED_SETTLEMENT": 107
+   },
+   "before-window": {
+    "CONTEXT_BEFORE_WINDOW": 1864
+   }
+  },
+  "shown": {
+   "govmapOnly": 24922,
+   "possibleDuplicates": 3117,
+   "kinds": {
+    "DWELLING": 11571,
+    "NON_DWELLING": 2713,
+    "TYPE_NOT_STATED": 10638
+   },
+   "latest": "2026-07-03",
+   "localities": 302,
+   "streets": 3356
+  },
+  "parcelRecovery": {
+   "registerParcelsWithoutStreet": 33479,
+   "layerAddressKeys": 348813,
+   "keysOnThoseParcels": 7407,
+   "parcelsWithLayerAddress": 6486,
+   "states": {
+    "OBSERVED": 5810,
+    "POSSIBLE": 251,
+    "UNRESOLVED": 425
+   },
+   "recovered": 6061
+  },
+  "diff": {
+   "previous": null
+  },
+  "periods": {
+   "before": "< 2023-09-18",
+   "registerWindow": "2023-09-18 … 2026-07-03",
+   "recentOverlap": "2026-07-04 … 2026-09-17",
+   "afterRegister": "> 2026-09-17 … 2026-10-08",
+   "future": "> 2026-10-08"
+  }
+ },
+ "notSurfaced": {
+  "unexplained": 0,
+  "recentWindow": {
+   "INVALID": 36,
+   "NEW_EVENT": 4403,
+   "DUPLICATE": 5121,
+   "POSSIBLE_DUPLICATE": 103,
+   "UNRESOLVED": 38,
+   "HISTORICAL_CONTEXT": 2199
+  },
+  "nationalFile": {
+   "DUPLICATE": 306997,
+   "NEW_EVENT": 24922,
+   "POSSIBLE_DUPLICATE": 3117,
+   "UNRESOLVED": 2501,
+   "HISTORICAL_CONTEXT": 1864
+  },
+  "newEvents": 29325,
+  "explained": {
+   "INVALID": 36,
+   "DUPLICATE": 312118,
+   "POSSIBLE_DUPLICATE": 3220,
+   "UNRESOLVED": 2539,
+   "HISTORICAL_CONTEXT": 4063
+  },
+  "target": 0,
+  "statement": "Every source row PROPX read has one reconciliation state; none is unexplained."
+ }
+}

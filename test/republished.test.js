@@ -223,8 +223,8 @@ const mk = (opts) => { const fetchImpl = overFetch(opts); const p = new OverDeal
     const out = { statusCode: 200, headers: {}, setHeader(k, v) { this.headers[k] = v; }, end(b) { resolve({ status: this.statusCode, body: JSON.parse(b || '{}') }); } };
     handler({ method: 'GET', url: '/api/gov/transactions?' + qs }, out);
   });
-  await t('register rows: deliveredVia, the channel, the copy date and the coverage come with the answer', async () => {
-    const r = await call('city=' + encodeURIComponent('באר שבע') + '&months=240&limit=120');
+  await t('register rows: deliveredVia, the channel, the copy date and the coverage come with the answer (the live path — unified=0)', async () => {
+    const r = await call('city=' + encodeURIComponent('באר שבע') + '&months=240&limit=120&unified=0');
     assert.equal(r.status, 200);
     const m = r.body.meta;
     assert.equal(m.deliveredVia, 'over.org.il'); assert.equal(m.channel, 'independent-republication');
@@ -232,6 +232,14 @@ const mk = (opts) => { const fetchImpl = overFetch(opts); const p = new OverDeal
     assert.equal(m.snapshotAt, '2026-09-19 11:07:39+00');
     assert.equal(m.sourceCoverage.kind, 'register-search');
     assert.ok(r.body.transactions.length > 0 && r.body.transactions.every((x) => x.provenance.every((pv) => pv.raw === undefined)), 'raw rows left the server');
+  });
+  await t('a swept locality reads the UNIFIED transaction events by default (lib/txevents) — the live search is one of its sources', async () => {
+    const r = await call('city=' + encodeURIComponent('באר שבע') + '&months=24&limit=20');
+    assert.equal(r.status, 200);
+    const m = r.body.meta;
+    assert.equal(m.unified, true); assert.equal(m.sourceCoverage.kind, 'unified'); assert.equal(m.deliveredVia, 'over.org.il'); assert.equal(m.channel, 'independent-republication');
+    assert.ok(m.coverage.some((c) => c.id === 'register-live'), 'the live search is listed as a source');
+    assert.ok(r.body.transactions.every((x) => x.state && x.sourceId), 'a state and a source on every row');
   });
   await t('no source answered: no sync is claimed — only an attempt', async () => {
     const r = await call('city=' + encodeURIComponent('עיר שאינה קיימת') + '&months=24');

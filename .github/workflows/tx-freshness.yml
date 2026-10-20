@@ -1,4 +1,4 @@
-# PROPX · daily transaction-freshness monitor (READ-ONLY; separate from the weekly model rebuild).
+# PROPX · transaction-freshness monitor, twice a day (READ-ONLY; separate from the weekly model rebuild).
 #
 # scripts/tx-freshness.js asks each transaction channel what it holds today — the register copy PROPX reads, the GovMap-layer
 # copy it does not read, the official channels (recorded when they refuse or sit behind a CAPTCHA, never bypassed) — compares
@@ -9,7 +9,7 @@ name: Transactions — daily freshness monitor
 
 on:
   schedule:
-    - cron: '23 5 * * *'   # every day 05:23 UTC
+    - cron: '23 5,17 * * *'   # twice a day 05:23 / 17:23 UTC (the copies' versions are also checked every three hours: txevents-national.yml)
   workflow_dispatch:
 
 permissions:

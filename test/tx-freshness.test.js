@@ -192,9 +192,10 @@ t('DAILY MONITOR (read-only): register copy · GovMap-layer copy · official cha
     assert.equal(old.newerCopies.length, 0, 'an older GovMap copy is not a "newer copy"');
   } finally { try { fs.unlinkSync(shim); } catch { /* gone */ } }
 });
-t('the monitor workflow is daily, read-only toward the sources and commits only data/transactions/freshness*; the evidence check is daily too', () => {
+t('the monitor workflow runs twice a day (the copies\' versions every three hours: txevents-national.yml), read-only toward the sources and commits only data/transactions/freshness*; the evidence check is daily too', () => {
   const wf = fs.readFileSync(path.join(ROOT, '.github', 'workflows', 'tx-freshness.yml'), 'utf8');
-  assert.match(wf, /cron: '23 5 \* \* \*'/); assert.match(wf, /git add data\/transactions\/freshness\.json data\/transactions\/freshness-runs\.jsonl/);
+  assert.match(wf, /cron: '23 5,17 \* \* \*'/);
+  assert.match(fs.readFileSync(path.join(ROOT, '.github', 'workflows', 'txevents-national.yml'), 'utf8'), /cron: '23 \*\/3 \* \* \*'/); assert.match(wf, /git add data\/transactions\/freshness\.json data\/transactions\/freshness-runs\.jsonl/);
   const ev = fs.readFileSync(path.join(ROOT, '.github', 'workflows', 'street-evidence-sync.yml'), 'utf8');
   assert.match(ev, /cron: '41 3 \* \* \*'/, 'a new register copy is swept the day it appears');
   const src = fs.readFileSync(path.join(ROOT, 'scripts', 'tx-freshness.js'), 'utf8');

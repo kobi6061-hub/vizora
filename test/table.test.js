@@ -238,7 +238,7 @@ t('the board still ranks only official values; the deals table says when it sort
   assert.match(rt, /const canSort=c=>c\.key==="name"\|\|rankable\(c\.f,rows\)/); assert.match(rt, /filter:sortable/);
   assert.match(rt, /const shownTx=r=>\{const x=sale\?txShown\(r\.loc\):invShown\(r\.loc\);return x\.show\?x\.v:null\}/);
   assert.doesNotMatch(rt, /r\.m\.tx\b/, 'the board sorts on the research base.tx');
-  assert.match(INDEX, /const more=reg&&txState\.more,note=/); assert.match(INDEX, /async function txLoadAll\(\)/);
+  assert.match(INDEX, /const more=\(reg\|\|uniM\)&&\(txState\.more\|\|txState\.olderMore\),note=/); assert.match(INDEX, /async function txLoadAll\(\)/);
 });
 
 t('18.10.2026 — every remaining data table sorts: the dossier freshness + developers tables, the Pulse revisions, the developer drawer land by track and the capital bulk table carry data-ptdom with a PT_DOM spec; mixed period formats sort on a day key the cell carries (data-v), the shown text unchanged', () => {

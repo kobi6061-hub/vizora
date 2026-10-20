@@ -75,11 +75,22 @@ jobs:
           # the layer, the promotion and its append-only ledger move together: on failure all of them are restored
           if [ $code -ne 0 ]; then echo 'Reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent/layer.json data/streets/recent/reconciliation.json data/streets/recent/meta.json data/streets/recent/promotion.json data/streets/recent/promotion-history.jsonl data/streets/recent/audit-2293.json 2>/dev/null; fi
           echo "code=$code" >> "$GITHUB_OUTPUT"
+      # THE TRANSACTION EVENTS (lib/txevents): rebuilt from the stores just written — links, possible duplicates, parcel recovery,
+      # the latest-event index and the completeness dashboard; a failed build or gate keeps the previous files
+      - name: Rebuild the transaction events
+        id: txe
+        if: steps.rec.outcome == 'success' && steps.rec.outputs.code == '0'
+        run: |
+          set +e
+          node scripts/txevents-build.js; code=$?
+          if [ $code -eq 0 ] && [ -f test/txevents.test.js ]; then node test/txevents.test.js; code=$?; fi
+          if [ $code -ne 0 ]; then echo 'Transaction-events build or gates failed — the previous files are kept.' >&2; git checkout -- data/txevents 2>/dev/null; fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Commit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/streets/recent
+          git add data/streets/recent data/txevents
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           if [ "${{ inputs.mode }}" = "history" ]; then git commit -q -m "Recent layer: historical window ${{ inputs.from }} … ${{ inputs.to }} read for the upgrade simulation"; else
           git commit -q -m "Recent transactions layer: $(tail -n 1 data/streets/recent/sync-runs.jsonl 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);console.log(`${r.status} · copy ${r.copy?String(r.copy.loadedAt).slice(0,10)+" v"+r.copy.version:"?"} · ${r.rows!=null?r.rows+" rows · ":""}${r.requests} requests`)}catch{console.log("run log")}})')"; fi
