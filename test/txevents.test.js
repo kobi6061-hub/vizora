@@ -214,7 +214,7 @@ t('14 · NO UNEXPLAINED SOURCE ROWS — every row of both snapshots has one reco
   for (const o of Object.values(nm.classes)) for (const k of Object.keys(o)) assert.ok(known.has(k), k);
   /* the national shown rows: every register-window RECENT_NEW is in govmap-only.json */
   const g = readJson('data/txevents/national/govmap-only.json');
-  assert.equal(g.rows.filter((x) => x[24] === 'RECENT_NEW').length, nm.classes['register-window'].RECENT_NEW);
+  assert.equal(g.rows.filter((x) => x[24] === 'RECENT_NEW' && x[23] !== 'recovery').length, nm.classes['register-window'].RECENT_NEW);
   /* the recent overlap of the national file reproduces the recent layer exactly */
   assert.equal((nm.classes['recent-overlap'].RECENT_NEW || 0) + ((nm.classes['after-register'] || {}).RECENT_NEW || 0), layerRows.length);
 });

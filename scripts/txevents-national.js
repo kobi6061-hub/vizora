@@ -19,6 +19,11 @@
 //                        and every possible duplicate (shown flagged, never counted) — columnar, indexed by locality and street;
 //                        rows inside the recent layer's own window stay the recent layer's (read there)
 //   accounting.json      every row of the file in the window → one class, per period, per locality — the exact reconciliation
+//   unplaced.json        rows of the window that name no usable settlement and stay unresolved after the locality recovery
+//                        (lib/txevents/recover.js): POSSIBLE_LOCATION (candidates listed) / UNPLACED — the national universe's
+//                        UNPLACED TRANSACTION EVENTS, every source field kept; RESOLVED rows are reconciled again under their locality
+//   invalid.json         every row dated after the copy's load day (FUTURE-DATED) and every row with no date / a placeholder date —
+//                        kept verbatim as evidence, never a transaction
 //   parcel-streets.json  register parcels with no street link (NO_ADDRESS / UNRESOLVED) whose GovMap rows carry an address: the
 //                        layer's addresses run through the register's own street-matching rule (lib/streets/match.js matchDeal)
 //   rowhash.json.gz      object id → row hash of the window (the next build's new / changed / removed)
@@ -34,7 +39,7 @@ const { Readable } = require('node:stream');
 const { pipeline } = require('node:stream/promises');
 
 const ROOT = path.join(__dirname, '..');
-const OUT = path.join(ROOT, 'data', 'txevents', 'national');
+const OUT = process.env.TXEVENTS_NATIONAL_OUT || path.join(ROOT, 'data', 'txevents', 'national');
 const OVER = 'https://www.over.org.il';
 const GOVMAP_DS = '4174aac2-c8b2-443e-9425-3773ce47c8da', REGISTER_DS = 'fd06f5ae-8a4f-4120-b275-8a514ad23499';
 const UA = 'PROPX-txevents-national/1.0 (+https://github.com/kobi6061-hub/vizora; read-only)';
@@ -135,6 +140,7 @@ function build() {
   if (!schema) throw new Error('no schema.json in the extract');
   const EV = require('../lib/streets/evidence'), SD = require('../lib/streets/directory'), M = require('../lib/streets/match');
   const REC = require('../lib/recent/reconcile'), W = require('../lib/recent/window');
+  const KIT = require('../lib/txevents/kit'), RCV = require('../lib/txevents/recover');
   const S = EV.store();
   if (!S.available) throw new Error('no stored register copy');
   const regWin = S.meta.window, regLast = S.meta.source.lastDeal;
@@ -193,7 +199,7 @@ function build() {
   const SHOW = new Set(['RECENT_NEW', 'POSSIBLE_DUPLICATE_IN_SOURCE', 'AMBIGUOUS_DUPLICATE', 'POSSIBLY_IN_REGISTER']);
   const keep = rec.rows.filter((r) => SHOW.has(cls(r)) && r.date >= regWin.from && r.date < recentWin.from);
   const COLS = ['oid', 'dealId', 'series', 'date', 'amount', 'areaSqm', 'rooms', 'floor', 'propertyType', 'dealNature', 'kind', 'cityCode', 'settlement', 'street', 'house',
-    'streetCode', 'streetBasis', 'block', 'parcel', 'subParcel', 'priced', 'pricePerSqm', 'twinOid', 'placedBy', 'class', 'register', 'conflicts'];
+    'streetCode', 'streetBasis', 'block', 'parcel', 'subParcel', 'priced', 'pricePerSqm', 'twinOid', 'placedBy', 'class', 'register', 'conflicts', 'recovery'];
   const rowsOut = keep.map((r) => {
     const o = out.get(r.oid);
     const kind = o.kind || rec.kindOf(r);
@@ -201,8 +207,46 @@ function build() {
     const priced = r.amount != null && r.amount >= EV.MIN_MARKET;
     return [r.oid, r.dealId, r.series, r.date, r.amount, r.area, r.rooms, r.floor, r.type, r.nature, kind, r.code, r.settlement, r.street, r.house,
       st.code, st.basis, r.gush, r.parcel, r.sub, priced, priced && r.area != null && r.area >= EV.MIN_AREA ? Math.round(r.amount / r.area) : null, r.twin ? r.twin.oid : null, r.placedBy, o.cls,
-      o.register ? `${o.register.date} ${o.register.unit} ${o.register.amount}` : null, (o.conflicts || []).map((c) => `${c.field}:${c.govmap}→${c.register}`).join(' · ') || null];
+      o.register ? `${o.register.date} ${o.register.unit} ${o.register.amount}` : null, (o.conflicts || []).map((c) => `${c.field}:${c.govmap}→${c.register}`).join(' · ') || null, null];
   });
+  /* 3b · RECOVERY of the rows that name no usable settlement (every period from the register's window to the load day — older rows
+     are the history build's): the row's own settlement code, its parcel polygon and its block · parcel as the whole layer and the
+     register file them (lib/txevents/recover.js). A RESOLVED row is reconciled AGAIN under its locality (a second pass, the same
+     rules) — a deal the register holds stays a duplicate; the rest are the national universe's UNPLACED events (unplaced.json) */
+  const K = KIT.knowledgeFrom(dir, D, EV, REC);
+  const rawByOid = new Map(rows.map((g) => [Number(g.objectid), g]));
+  const unplacedIn = rec.rows.filter((r) => r.date >= regWin.from && r.date <= loadDay && (cls(r) === 'NO_SETTLEMENT' || cls(r) === 'UNMAPPED_SETTLEMENT'));
+  const recovery = new Map();
+  for (const r of unplacedIn) {
+    const g = rawByOid.get(r.oid) || {};
+    const p = r.settlement ? K.place(r.settlement) : null;
+    recovery.set(r.oid, RCV.recover(K, { settlementId: g.settlement_id, polygon: g.polygon_id != null ? g.polygon_id : r.polygon, gush: r.gush, parcel: r.parcel }, p && p.codes ? p.codes : null));
+  }
+  const resolvedRows = unplacedIn.filter((r) => /^RESOLVED/.test(recovery.get(r.oid).state) && D.localities.has(recovery.get(r.oid).code));
+  const second = resolvedRows.length ? REC.reconcile(resolvedRows.map((r) => ({ ...rawByOid.get(r.oid), settlement: D.localities.get(recovery.get(r.oid).code).he })), { window: { from: regWin.from }, loadDay, EV, D, M }) : null;
+  const finalOf = (r) => { const x = recovery.get(r.oid); if (!/^RESOLVED/.test(x.state)) return x.state; const o = second && second.out.get(r.oid); return o && o.cls !== 'NO_SETTLEMENT' && o.cls !== 'UNMAPPED_SETTLEMENT' ? o.cls : 'POSSIBLE_LOCATION'; };
+  for (const r of second ? second.rows : []) {
+    const o = second.out.get(r.oid);
+    if (!o || !SHOW.has(o.cls)) continue;
+    const kind = o.kind || second.kindOf(r), st = o.street || second.streetOf(r), x = recovery.get(r.oid);
+    const priced = r.amount != null && r.amount >= EV.MIN_MARKET;
+    rowsOut.push([r.oid, r.dealId, r.series, r.date, r.amount, r.area, r.rooms, r.floor, r.type, r.nature, kind, r.code, r.settlement, r.street, r.house,
+      st.code, st.basis, r.gush, r.parcel, r.sub, priced, priced && r.area != null && r.area >= EV.MIN_AREA ? Math.round(r.amount / r.area) : null, r.twin ? r.twin.oid : null, 'recovery', o.cls,
+      o.register ? `${o.register.date} ${o.register.unit} ${o.register.amount}` : null, (o.conflicts || []).map((c) => `${c.field}:${c.govmap}→${c.register}`).join(' · ') || null, `${x.state}:${x.basis}`]);
+  }
+  const UCOLS = ['oid', 'dealId', 'date', 'amount', 'areaSqm', 'rooms', 'floor', 'propertyType', 'dealNature', 'kind', 'settlement', 'settlementId', 'street', 'house', 'streetCode', 'neighborhood',
+    'block', 'parcel', 'subParcel', 'polygon', 'state', 'basis', 'candidates'];
+  const unplacedOut = unplacedIn.filter((r) => !/^RESOLVED/.test(finalOf(r)) && !SHOW.has(finalOf(r)) && !['IN_REGISTER', 'IN_REGISTER_OTHER_UNIT', 'DUPLICATE_IN_SOURCE'].includes(finalOf(r))).map((r) => {
+    const g = rawByOid.get(r.oid) || {}, x = recovery.get(r.oid);
+    return [r.oid, r.dealId, r.date, r.amount, r.area, r.rooms, r.floor, r.type, r.nature, rec.kindOf(r), r.settlement, g.settlement_id != null ? g.settlement_id : null, r.street, r.house,
+      g.street_code != null ? g.street_code : null, g.neighborhood || null, r.gush, r.parcel, r.sub, r.polygon, finalOf(r) === 'POSSIBLE_LOCATION' && /^RESOLVED/.test(x.state) ? 'POSSIBLE_LOCATION' : x.state, x.basis,
+      x.candidates ? x.candidates.map((c) => c.code).join(',') : null];
+  });
+  const ICOLS = ['oid', 'dealId', 'date', 'amount', 'settlement', 'street', 'house', 'block', 'parcel', 'subParcel', 'propertyType', 'dealNature', 'reason'];
+  const invalidOut = rec.rows.filter((r) => cls(r) === 'FUTURE_DATED').map((r) => [r.oid, r.dealId, r.date, r.amount, r.settlement, r.street, r.house, r.gush, r.parcel, r.sub, r.type, r.nature, `dated after the copy's load day ${loadDay}`]);
+  const recoveryMeta = { rows: unplacedIn.length, byState: tally(unplacedIn.map((r) => recovery.get(r.oid).state)), byBasis: tally(unplacedIn.map((r) => recovery.get(r.oid).basis)),
+    final: tally(unplacedIn.map(finalOf)), unplaced: unplacedOut.length, settlementIdAgreement: K.settlementIdAgreement };
+
   const idxCode = {}, idxStreet = {};
   rowsOut.forEach((x, i) => { (idxCode[x[11]] = idxCode[x[11]] || []).push(i); if (x[15] != null) (idxStreet[`st:${x[11]}:${x[15]}`] = idxStreet[`st:${x[11]}:${x[15]}`] || []).push(i); });
 
@@ -273,9 +317,11 @@ function build() {
       latest: rowsOut.filter((x) => x[24] === 'RECENT_NEW').map((x) => x[3]).sort().pop() || null, localities: Object.keys(idxCode).length, streets: Object.keys(idxStreet).length },
     parcelRecovery: { registerParcelsWithoutStreet: want.size, layerAddressKeys: parcelKeys, keysOnThoseParcels: placedKeys, parcelsWithLayerAddress: addrs.size, states: recTally,
       recovered: Object.values(parcelStreets).reduce((a, o) => a + Object.keys(o).length, 0) },
-    diff,
+    diff, recovery: recoveryMeta, unplaced: unplacedOut.length, invalid: invalidOut.length,
   };
   fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(path.join(OUT, 'unplaced.json'), JSON.stringify({ schema: 1, builtAt, version: version && version.id, columns: UCOLS, rows: unplacedOut, recovery: recoveryMeta }) + '\n');
+  fs.writeFileSync(path.join(OUT, 'invalid.json'), JSON.stringify({ schema: 1, builtAt, version: version && version.id, columns: ICOLS, rows: invalidOut }) + '\n');
   fs.writeFileSync(path.join(OUT, 'govmap-only.json'), JSON.stringify({ schema: 1, builtAt, version: version && version.id, columns: COLS, rows: rowsOut, byCode: idxCode, byStreet: idxStreet }) + '\n');
   fs.writeFileSync(path.join(OUT, 'accounting.json'), JSON.stringify({ schema: 1, builtAt, version: version && version.id, periods: { before: `< ${regWin.from}`, registerWindow: `${regWin.from} … ${W.minusDays(recentWin.from, 1)}`, recentOverlap: `${recentWin.from} … ${regLast}`, afterRegister: `> ${regLast} … ${loadDay}`, future: `> ${loadDay}` }, classes: acc, totals, byCode }, null, 0) + '\n');
   fs.writeFileSync(path.join(OUT, 'parcel-streets.json'), JSON.stringify({ schema: 1, builtAt, version: version && version.id, columns: ['state', 'streets', 'reasons', 'layerRows', 'layerLastDate'], byCode: parcelStreets }) + '\n');

@@ -30,7 +30,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,12 +52,17 @@ jobs:
           SHA=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).sha256)' "$RUNNER_TEMP/dl.json")
           BYTES=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).bytes)' "$RUNNER_TEMP/dl.json")
           FROM=$(node -e 'const m=JSON.parse(require("fs").readFileSync("data/streets/evidence/meta.json","utf8"));console.log(new Date(Date.parse(m.window.from+"T00:00:00Z")-7*864e5).toISOString().slice(0,10))')
-          python3 -I scripts/txevents-gpkg.py "$F" "$RUNNER_TEMP/extract" --from "$FROM"
+          HTO=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/streets/evidence/meta.json","utf8")).window.from)')
+          python3 -I scripts/txevents-gpkg.py "$F" "$RUNNER_TEMP/extract" --from "$FROM" --history-to "$HTO"
           rm -f "$F"
-          node scripts/txevents-national.js --build --extract "$RUNNER_TEMP/extract" --file-sha "$SHA" --file-url "$FILE_URL" --file-bytes "$BYTES"
+          restore() { echo "$1 — the previous files are kept." >&2; git checkout -- data/txevents; git clean -fdq data/txevents; exit 1; }
+          node --max-old-space-size=12000 scripts/txevents-national.js --build --extract "$RUNNER_TEMP/extract" --file-sha "$SHA" --file-url "$FILE_URL" --file-bytes "$BYTES" || exit 1
+          # every row before the register's stored window (the layer reaches back to 1998): the history the ALL period reads
+          node --max-old-space-size=12000 scripts/txevents-history.js --build --extract "$RUNNER_TEMP/extract" || restore 'History build failed'
+          rm -rf "$RUNNER_TEMP/extract"
           # the transaction events read the new national rows: rebuilt and gated together (a failure keeps the previous files)
           if ! node scripts/txevents-build.js || { [ -f test/txevents.test.js ] && ! node test/txevents.test.js; } || ! node scripts/txevents-audit.js > /dev/null; then
-            echo 'Transaction-events build or gates failed — the previous files are kept.' >&2; git checkout -- data/txevents; exit 1; fi
+            restore 'Transaction-events build or gates failed'; fi
       - name: Start the syncs a new version needs
         if: steps.chk.outputs.govmap_changed == 'true' || steps.chk.outputs.register_changed == 'true'
         env:

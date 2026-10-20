@@ -5,8 +5,12 @@
 #                      layer's own lon / lat columns stay)
 #   parcels.jsonl.gz   over EVERY row of the file: (settlement, gush, parcel, street, house) → rows, first and last date — the layer's
 #                      own address of each parcel, the basis of the parcel → street recovery
+#   history.jsonl.gz   (with --history-to) every row dated BEFORE --history-to, verbatim — the full history the closure P0 surfaces
+#   polygons.jsonl.gz  over EVERY row: (polygonId, settlement, settlementId) → rows — which locality the layer files a parcel polygon under
+#                      (the recovery of rows that name no settlement)
+#   invalid.jsonl.gz   every row with no date or a date before 1990 (a placeholder such as 1900-01-01), verbatim
 #   schema.json        the table, its columns, row counts, the date range, rows per year
-# Usage: python3 -I scripts/txevents-gpkg.py <file.gpkg|file.parquet> <out-dir> --from YYYY-MM-DD
+# Usage: python3 -I scripts/txevents-gpkg.py <file.gpkg|file.parquet> <out-dir> --from YYYY-MM-DD [--history-to YYYY-MM-DD]
 # Read-only on the input; standard library only for a GeoPackage (SQLite). A GeoParquet file needs pyarrow.
 
 import gzip, json, os, sqlite3, sys
@@ -55,6 +59,7 @@ def main():
         raise SystemExit('usage: txevents-gpkg.py <file> <out-dir> --from YYYY-MM-DD')
     src, out = sys.argv[1], sys.argv[2]
     frm = sys.argv[sys.argv.index('--from') + 1] if '--from' in sys.argv else '0000-00-00'
+    hto = sys.argv[sys.argv.index('--history-to') + 1] if '--history-to' in sys.argv else None
     os.makedirs(out, exist_ok=True)
     head = open(src, 'rb').read(16)
     T = rows_gpkg(src) if head.startswith(b'SQLite format 3') else rows_parquet(src)
@@ -68,10 +73,19 @@ def main():
     c_set, c_st, c_house = col('settlement', 'settlementnameheb', 'settlementname', 'city'), col('street', 'streetnameheb', 'streetname'), col('house_num', 'housenum', 'house')
     c_gush, c_parcel = col('gush', 'gushnum', 'block'), col('parcel', 'parcelnum', 'helka')
     c_setid, c_stcode = col('settlementid', 'settlement_code'), col('streetcode', 'street_code')
+    c_poly = col('polygonid', 'polygon_id')
     years = defaultdict(int)
     agg = {}
-    n = nwin = 0
+    polys = {}
+    n = nwin = nhist = ninv = 0
     dmin = dmax = None
+    hist = gzip.open(os.path.join(out, 'history.jsonl.gz'), 'wt', encoding='utf-8') if hto else None
+    inv = gzip.open(os.path.join(out, 'invalid.jsonl.gz'), 'wt', encoding='utf-8')
+    def verbatim(r, d):
+        o = {k2: (v if not isinstance(v, bytes) else None) for k2, v in r.items()}
+        if c_date:
+            o[c_date] = d if not isinstance(r.get(c_date), str) else r.get(c_date)
+        return json.dumps(o, ensure_ascii=False, separators=(',', ':')) + '\n'
     with gzip.open(os.path.join(out, 'window.jsonl.gz'), 'wt', encoding='utf-8') as w:
         for r in T['rows']:
             n += 1
@@ -89,20 +103,34 @@ def main():
                     a[0] += 1
                     if d and (a[1] is None or d < a[1]): a[1] = d
                     if d and (a[2] is None or d > a[2]): a[2] = d
-            if d and d >= frm:
+            if c_poly and r.get(c_poly) not in (None, ''):
+                pk = (r.get(c_poly), r.get(c_set), r.get(c_setid) if c_setid else None)
+                polys[pk] = polys.get(pk, 0) + 1
+            if not d or d < '1990-01-01':
+                ninv += 1
+                inv.write(verbatim(r, d))
+                continue
+            if d >= frm:
                 nwin += 1
-                o = {k2: (v if not isinstance(v, bytes) else None) for k2, v in r.items()}
-                if c_date:
-                    o[c_date] = d if not isinstance(r.get(c_date), str) else r.get(c_date)
-                w.write(json.dumps(o, ensure_ascii=False, separators=(',', ':')) + '\n')
+                w.write(verbatim(r, d))
+            if hto and d < hto:
+                nhist += 1
+                hist.write(verbatim(r, d))
+    if hist:
+        hist.close()
+    inv.close()
+    with gzip.open(os.path.join(out, 'polygons.jsonl.gz'), 'wt', encoding='utf-8') as p:
+        for k, c in polys.items():
+            p.write(json.dumps([k[0], k[1], k[2], c], ensure_ascii=False, separators=(',', ':')) + '\n')
     with gzip.open(os.path.join(out, 'parcels.jsonl.gz'), 'wt', encoding='utf-8') as p:
         for k, a in agg.items():
             p.write(json.dumps([k[0], k[1], k[2], k[3], k[4], a[0], a[1], a[2], k[5], k[6]], ensure_ascii=False, separators=(',', ':')) + '\n')
     schema = {'table': T['table'], 'columns': T['columns'], 'geometry': T['geometry'], 'total': T['total'], 'read': n, 'window': {'from': frm, 'rows': nwin},
+              'history': {'to': hto, 'rows': nhist}, 'invalid': ninv, 'polygonKeys': len(polys),
               'dates': {'min': dmin, 'max': dmax}, 'years': dict(sorted(years.items())), 'parcelAddressKeys': len(agg),
-              'map': {'date': c_date, 'settlement': c_set, 'street': c_st, 'house': c_house, 'gush': c_gush, 'parcel': c_parcel, 'settlementId': c_setid, 'streetCode': c_stcode}}
+              'map': {'date': c_date, 'settlement': c_set, 'street': c_st, 'house': c_house, 'gush': c_gush, 'parcel': c_parcel, 'settlementId': c_setid, 'streetCode': c_stcode, 'polygon': c_poly}}
     json.dump(schema, open(os.path.join(out, 'schema.json'), 'w'), ensure_ascii=False, indent=1)
-    print(json.dumps({k: schema[k] for k in ('table', 'total', 'read', 'window', 'dates', 'parcelAddressKeys', 'columns', 'map')}, ensure_ascii=False))
+    print(json.dumps({k: schema[k] for k in ('table', 'total', 'read', 'window', 'history', 'invalid', 'polygonKeys', 'dates', 'parcelAddressKeys', 'columns', 'map')}, ensure_ascii=False))
     with gzip.open(os.path.join(out, 'window.jsonl.gz'), 'rt', encoding='utf-8') as w:
         for i, line in enumerate(w):
             if i >= 2: break
