@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "checkedAt": "2026-10-19T22:15:21.359Z",
- "today": "2026-10-19",
+ "checkedAt": "2026-10-20T10:12:36.574Z",
+ "today": "2026-10-20",
  "contract": [
   "transaction_date",
   "source_snapshot_date",
@@ -30,7 +30,7 @@
   "datasetId": "4174aac2-c8b2-443e-9425-3773ce47c8da",
   "version": 4,
   "upstream": "https://www.govmap.gov.il/?lay=16",
-  "readByPropx": false
+  "readByPropx": true
  },
  "officialChannels": [
   {
@@ -90,23 +90,23 @@
     "coverage": "NOT_COVERED"
    },
    "60": {
-    "n": 249,
-    "coveredDays": 28,
+    "n": 242,
+    "coveredDays": 27,
     "coverage": "PARTLY_COVERED"
    },
    "90": {
-    "n": 1821,
-    "coveredDays": 58,
+    "n": 1771,
+    "coveredDays": 57,
     "coverage": "PARTLY_COVERED"
    },
    "180": {
-    "n": 19239,
-    "coveredDays": 148,
+    "n": 18890,
+    "coveredDays": 147,
     "coverage": "PARTLY_COVERED"
    },
    "365": {
-    "n": 64211,
-    "coveredDays": 333,
+    "n": 63906,
+    "coveredDays": 332,
     "coverage": "PARTLY_COVERED"
    }
   },
@@ -147,7 +147,7 @@
  },
  "freshness": {
   "state": "STALE",
-  "ageDays": 30,
+  "ageDays": 31,
   "stateReason": null,
   "thresholds": {
    "CURRENT": 7,
@@ -175,8 +175,8 @@
   }
  },
  "lagDays": {
-  "snapshotAge": 30,
-  "latestTransaction": 32
+  "snapshotAge": 31,
+  "latestTransaction": 33
  },
  "newerCopies": [
   {
@@ -186,33 +186,19 @@
    "latestTransactionDate": "2026-09-28",
    "daysNewerLatestDeal": 11,
    "daysNewerSnapshot": 19,
-   "readByPropx": false,
-   "why": "not read: the copy has known republication defects (a second deal-id series with dates one day earlier and no property type, future dates as published, amounts truncated to ₪1,000, its own sub-parcel numbering, ≈84,000 deals without a settlement, 500 deals per point) — integrating it is an owner decision"
+   "readByPropx": true,
+   "readAs": "recent-layer",
+   "why": "read as a separate recent layer: its deals the register copy does not hold yet are listed apart (lib/recent)"
   }
  ],
  "alerts": [
   {
    "kind": "MATERIAL_LAG",
    "reason": "copy-age",
-   "message": "the transaction copy PROPX reads is STALE (30 days old)",
+   "message": "the transaction copy PROPX reads is STALE (31 days old)",
    "values": {
     "state": "STALE",
-    "ageDays": 30
-   }
-  },
-  {
-   "kind": "MATERIAL_LAG",
-   "reason": "newer-copy",
-   "message": "GovMap deals layer (lay=16) — republished copy (over.org.il): latest deal 2026-09-28, 11 days after PROPX's (2026-09-17)",
-   "values": {
-    "id": "over:govmap-layer",
-    "name": "GovMap deals layer (lay=16) — republished copy (over.org.il)",
-    "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
-    "latestTransactionDate": "2026-09-28",
-    "daysNewerLatestDeal": 11,
-    "daysNewerSnapshot": 19,
-    "readByPropx": false,
-    "why": "not read: the copy has known republication defects (a second deal-id series with dates one day earlier and no property type, future dates as published, amounts truncated to ₪1,000, its own sub-parcel numbering, ≈84,000 deals without a settlement, 500 deals per point) — integrating it is an owner decision"
+    "ageDays": 31
    }
   },
   {
