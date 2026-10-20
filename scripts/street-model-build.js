@@ -4,8 +4,9 @@
 //   node scripts/street-model-build.js            validate (3 forward folds) + fit + estimate every searchable street; writes
 //                                                 model.json · estimates.json · validation.json · audit.json · history.jsonl
 //   node scripts/street-model-build.js --check    the stored artifacts against the current inputs: exit 0 when current
-//   node scripts/street-model-build.js --if-stale rebuild only when an input (evidence · directory · land parcels · model
-//                                                 version) changed since the stored build (the workflows call this)
+//   node scripts/street-model-build.js --if-stale rebuild only when a dependency the model READS moved since the stored build
+//                                                 (lib/streets/model-deps.js: versions · code · evidence · directory rows ·
+//                                                 neighbourhood links · subsidized-track parcels — never a whole data file)
 //
 // The build never touches the observed evidence (data/streets/evidence) and never rewrites a prior build's record: history.jsonl
 // is append-only, and every street whose estimate moved materially is listed with the reason (DATA or MODEL change).
@@ -29,19 +30,26 @@ const writeJson = (f, v, compact) => { fs.mkdirSync(DIR, { recursive: true }); f
 const pct = (x) => (x == null ? null : Math.round(x * 1000) / 10);
 const MATERIAL = 0.05;                 // an estimate that moved by ≥ 5 % (or changed tier / availability) is listed in history
 
-/** the inputs a build depends on — a change in any of them is a reason to rebuild */
+/* @deps:begin — how the build records its inputs and when it is stale (lib/streets/model-deps.js). Excluded from the model's own
+   code hash: changing how staleness is tracked is not a model change. */
+const DEPS = require('../lib/streets/model-deps');
+/** the inputs a build records: every dependency the model reads, as the projection it reads (deps), + the fields value-read.js
+    compares at request time (evidence · directory content hash) */
 function inputsNow() {
-  const S = EV.store();
+  const d = DEPS.current();
   const D = SD.load();
-  const landTenders = (() => { try { return sha(fs.readFileSync(path.join(__dirname, '..', 'data', 'land', 'tenders.json'))); } catch { return null; } })();
   return { modelVersion: VM.MODEL_VERSION, featureVersion: VM.FEATURE_VERSION, validationVersion: VM.VALIDATION_VERSION,
-    evidence: S.available ? { scrapedAt: S.meta.source.scrapedAt, window: S.meta.window, summary: sha(fs.readFileSync(path.join(S.dir, 'summary.json'))) } : null,
-    directory: D.meta ? D.meta.contentHash : null, land: landTenders,
-    /* the model code AND the rules it rests on: the cleaning (evidence.js), the address match (match.js), the PROBABLE NEW rule
-       (classify.js) and the verified neighbourhood links */
-    code: sha([['lib', 'streets', 'value-model.js'], ['lib', 'streets', 'value-validate.js'], ['scripts', 'street-model-build.js'], ['lib', 'streets', 'evidence.js'],
-      ['lib', 'streets', 'match.js'], ['lib', 'gov', 'classify.js'], ['data', 'geo', 'neighborhoods.json']].map((f) => fs.readFileSync(path.join(__dirname, '..', ...f), 'utf8')).join('\n')) };
+    evidence: d.evidence, directory: D.meta ? D.meta.contentHash : null, land: d.land.sha256, code: d.code.sha256, deps: d };
 }
+/* DATA = evidence / directory / neighbourhood links / subsidized parcels moved; MODEL = versions or code moved */
+function reasonOf(prevModel, inputs) {
+  if (!prevModel) return 'FIRST_BUILD';
+  const prevDeps = DEPS.recorded(prevModel, readJson('dependencies.json'));
+  const moved = DEPS.diff(prevDeps && prevDeps.deps, inputs.deps);
+  const dataMoved = moved.some((k) => ['evidence', 'directory', 'neighbourhoods', 'land'].includes(k)), modelMoved = moved.some((k) => ['versions', 'code'].includes(k));
+  return dataMoved && modelMoved ? 'DATA+MODEL' : modelMoved ? 'MODEL' : dataMoved ? 'DATA' : 'REBUILD';
+}
+/* @deps:end */
 
 /** the field audit over every swept deal: availability, coverage, interpretation and the modelling decision (README § value model) */
 function audit(L) {
@@ -230,6 +238,7 @@ function build() {
   const prev = readJson('estimates.json');
   const prevModel = readJson('model.json');
   writeJson('model.json', model);
+  /* @deps:begin */ writeJson('dependencies.json', { schema: 1, forBuild: model.builtAt, recordedBy: 'build', deps: inputs.deps, graph: DEPS.GRAPH }); /* @deps:end */
   writeJson('estimates.json', { modelVersion: VM.MODEL_VERSION, builtAt: model.builtAt, asOf: window.to,
     columns: ['id', 'value', 'tier', 'lo', 'hi', 'reason', 'street', 'block', 'neighbourhood', 'locality', 'weights', 'level', 'why', 'rangeBasis'],
     whyColumns: ['medianAgeMonths', 'largestParcelContributionPct', 'timeAdjustmentPct', 'streetSpecificSharePct', 'streetMedianArea', 'streetNewSharePct', 'streetSubsidySharePct', 'streetDwellingAdjustmentPct'],
@@ -238,11 +247,7 @@ function build() {
   writeJson('audit.json', audit(L));
   /* history: one record per build + every material change against the previous build, with its reason */
   const changes = [];
-  /* DATA = the evidence / directory / land parcels changed; MODEL = the model, feature or validation version or the model code changed */
-  const pi = (prevModel && prevModel.inputs) || {};
-  const dataMoved = ['evidence', 'directory', 'land'].some((k) => JSON.stringify(pi[k]) !== JSON.stringify(inputs[k]));
-  const modelMoved = ['modelVersion', 'featureVersion', 'validationVersion', 'code'].some((k) => pi[k] !== inputs[k]);
-  const reason = !prevModel ? 'FIRST_BUILD' : dataMoved && modelMoved ? 'DATA+MODEL' : modelMoved ? 'MODEL' : dataMoved ? 'DATA' : 'REBUILD';
+  /* @deps:begin */ const reason = reasonOf(prevModel, inputs); /* @deps:end */
   if (prev && prev.rows) {
     const old = new Map(prev.rows.map((r) => [r[0], r]));
     for (const e of estimates) {
@@ -257,13 +262,15 @@ function build() {
 }
 function dayAfter(iso) { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); return d.toISOString().slice(0, 10); }
 
+/* @deps:begin — the stored build against what the model reads now (lib/streets/model-deps.js): --check prints CURRENT / STALE (and
+   which dependency moved); --if-stale rebuilds only then, and only on a COMPLETE sweep */
 if (has('check') || has('if-stale')) {
-  const m = readJson('model.json');
-  const now = inputsNow();
-  const stale = !m || JSON.stringify(m.inputs) !== JSON.stringify(now);
-  if (has('check')) { console.log(stale ? 'STALE' : 'CURRENT'); process.exit(stale ? 1 : 0); }
-  if (!stale) { console.log('street model current — inputs unchanged'); process.exit(0); }
+  const c = DEPS.check({ modelDir: DIR });
+  if (has('check')) { console.log(c.stale ? `STALE (${c.moved.join(', ')})` : 'CURRENT'); process.exit(c.stale ? 1 : 0); }
+  if (!c.stale) { console.log('street model current — no dependency it reads moved'); process.exit(0); }
+  console.log(`street model stale — moved: ${c.moved.join(', ')}`);
   const S = EV.store();
   if (!S.available || !S.meta.sweep || S.meta.sweep.status !== 'COMPLETE') { console.log('street evidence sweep not complete — the stored model is kept'); process.exit(0); }
 }
+/* @deps:end */
 build();

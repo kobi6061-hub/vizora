@@ -1,0 +1,95 @@
+{
+ "schema": 1,
+ "forBuild": "2026-10-20T08:53:29.411Z",
+ "recordedBy": "baseline (dependency-tracking change, 20.10.2026) — the build predates inputs.deps; every dependency below is proven equal to what that build read",
+ "deps": {
+  "versions": {
+   "model": "psvm-1.1.0",
+   "feature": "psvm-features-2",
+   "validation": "psvm-validation-2"
+  },
+  "code": {
+   "sha256": "bc09d1787a9b3d86ff24f79d4ecf2086428999e829bf88483308e38f95849a3e",
+   "files": [
+    "lib/geo/aliases.js",
+    "lib/gov/classify.js",
+    "lib/gov/schema.js",
+    "lib/streets/directory.js",
+    "lib/streets/evidence.js",
+    "lib/streets/match.js",
+    "lib/streets/value-model.js",
+    "lib/streets/value-validate.js",
+    "scripts/street-model-build.js"
+   ]
+  },
+  "evidence": {
+   "scrapedAt": "2026-09-19 11:07:39.013275+00",
+   "window": {
+    "from": "2023-09-18",
+    "to": "2026-09-17",
+    "months": 36
+   },
+   "summary": "be6e1064e98c728bf67e6619678f608268bf06c9e3aa9261f7888181e00863f9"
+  },
+  "directory": {
+   "sha256": "8449395d1eee155854e3e81956eefeb341b050731bb732009f23522efd354a85",
+   "rows": 62265,
+   "localities": 1316
+  },
+  "neighbourhoods": {
+   "sha256": "88988edc55df6baea922b70c57e10aa29aa82049fb36a2dbaa2590f04c8a362d",
+   "links": 72
+  },
+  "land": {
+   "sha256": "7cd0b68952c8ea74f79125b73927a131be915a475b2ac6afeca6c5522848dcda",
+   "parcels": 7476
+  }
+ },
+ "proof": {
+  "atCommit": "b23c4ed133099881a70a9897461b50b0e3f813b5",
+  "code": {
+   "legacyRecorded": "c6d6a86cbb52a444027c5d5622113bd421783274557554b8a6691f8237f20b00",
+   "legacyRecomputedAtCommit": "c6d6a86cbb52a444027c5d5622113bd421783274557554b8a6691f8237f20b00",
+   "equal": true,
+   "note": "the closure files outside the legacy list (lib/streets/directory.js, lib/gov/schema.js, lib/geo/aliases.js) are byte-identical between the build commit b1bb0dd and b23c4ed; the build script changed afterwards only inside its @deps blocks and its usage comment"
+  },
+  "evidence": {
+   "equal": true
+  },
+  "directory": {
+   "recordedContentHash": "93ea88e50c2f0c92d3411ebf3e78f2d8269297e4ab11c2d9b82f8ff4ca784d1d",
+   "currentContentHash": "93ea88e50c2f0c92d3411ebf3e78f2d8269297e4ab11c2d9b82f8ff4ca784d1d",
+   "equal": true
+  },
+  "land": {
+   "recordedSubsidyParcels": 7476,
+   "equal": true
+  },
+  "versions": {
+   "equal": true
+  }
+ },
+ "graph": {
+  "versions": [
+   "lib/streets/value-model.js MODEL_VERSION · FEATURE_VERSION · VALIDATION_VERSION"
+  ],
+  "code": [
+   "the require closure of lib/streets/value-model.js · lib/streets/value-validate.js · scripts/street-model-build.js (the build script without its @deps block)"
+  ],
+  "evidence": [
+   "data/streets/evidence/meta.json → source.scrapedAt · window",
+   "data/streets/evidence/summary.json (sha256)"
+  ],
+  "directory": [
+   "data/geo/streets (via lib/streets/directory.js) → enumerated rows (id · kind · status) · localities (code · district · Hebrew name)"
+  ],
+  "neighbourhoods": [
+   "data/geo/neighborhoods.json × the directory's names / synonyms × lib/streets/match.js → (locality:street → neighbourhood) pairs"
+  ],
+  "land": [
+   "data/land/tenders.json → track ∈ {subsidized, residential-lottery} and parcels",
+   "data/land/lots-*.json → those tenders' lot parcels",
+   "= the set of block/parcel keys (lib/streets/value-model.js subsidizedParcels)"
+  ]
+ }
+}

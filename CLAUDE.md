@@ -64,7 +64,14 @@
   rounding; each effect per m²). Artifacts `model.json` · `estimates.json` · `validation.json` (+ `coverage` by district / locality /
   observed state / row kind / tier) · `audit.json` · append-only `history.jsonl` (reason FIRST_BUILD / DATA / MODEL / DATA+MODEL,
   material changes ≥ 5 % or tier). Rebuilt by the weekly evidence workflow (`--if-stale` on evidence · directory · land · code +
-  rules; COMPLETE sweep only; gates; previous model restored on failure); request time never fits — WHY THIS ESTIMATE is recomputed
+  rules; COMPLETE sweep only; gates; previous model restored on failure — STALENESS since 20.10.2026 = `lib/streets/model-deps.js`, only what the
+  model READS: versions · code (the build's require closure — value-model · value-validate · evidence · match · directory · classify · schema ·
+  geo/aliases + the build script minus its `@deps` tracking blocks) · evidence (copy date · window · summary sha) · directory (enumerated rows
+  id · kind · status + localities code · district · name) · neighbourhood links (neighborhoods.json × directory × match) · land = the SET of
+  subsidized / residential-lottery parcels (tenders.json track + parcels AND lots-*.json, which the old whole-file hash missed); a land
+  sync that changes anything else never makes it stale (the 20.10.2026 08:53 rebuild was caused by tenders.json alone — 0 changed outputs);
+  record `model.json inputs.deps` + `dependencies.json` (a one-time baseline with its proof for the build that predates it);
+  `test/model-deps.test.js`); request time never fits — WHY THIS ESTIMATE is recomputed
   from one shard and shown only when it reproduces the stored level on the build's copy. `GET /api/intel?view=street` (+ `model`) ·
   `streetModel` · `streetApartment` · `streetModelValidation`; the page shows OBSERVED (solid) and MODEL (dashed, MODEL chip) cards
   side by side + why · latest market evidence · main limitation (from the levels used) · "why the two differ" (≥ 10 %), the apartment
@@ -135,15 +142,25 @@
   exact amount) · AMBIGUOUS / POSSIBLE duplicate (amount ±₪1,000 within 3 days, whatever the area) · IN_REGISTER (same unit, ±1 day, amounts agreeing) · IN_REGISTER_OTHER_UNIT · POSSIBLY_IN_REGISTER
   · RECENT_NEW (the only class shown: DWELLING · TYPE NOT STATED · NON-DWELLING apart); neighbouring localities' registers holding the parcel
   are searched; two passes; a register deal absorbs one row; register fields never overwritten (conflicts keep both values). 20.10.2026:
-  11,900 rows → 4,419 shown (3,404 dwelling · 878 type not stated · 137 non-dwelling) in 133 localities, 2,649 on 1,741 streets. THE 2,293 reconcile EXACTLY (the 19.10 comparison
-  replayed per city from its stored input; 1,554 new dwelling · 251 type not stated · 35 non-dwelling · 428 in-source duplicates · 17
+  11,900 rows → 4,403 shown (3,400 dwelling · 866 type not stated · 137 non-dwelling) in 133 localities, 2,645 on 1,738 streets (a partial
+  sale the copy prints twice — share + whole value — is a `register-share` duplicate). THE 2,293 reconcile EXACTLY (the 19.10 comparison
+  replayed per city from its stored input; 1,554 new dwelling · 250 type not stated · 35 non-dwelling · 429 in-source duplicates · 17
   ambiguous / possible duplicates · 8 in the register — 4 under a neighbouring locality, 3 lost to the comparison's greedy order, 1
   rounded) — `audit-2293.json`. SAFETY GATE (`lib/recent/read.js`): shown only while reconciled against the register copy PROPX holds
   (the evidence workflow reconciles right after a sweep). `view=street` → `recent`; `view=recentLayer[&city=]`; the page's dashed
   SEPARATE LAYER line + table (never in a median, sample state, change, tile, card or the model); Trust `over:govmap-recent`; registry
   `recent_transaction_layer` · `recent_transaction_type_not_stated` · missing `recent_layer_unavailable`; the monitor marks the copy
   read. The Street Value Model is untouched (its code, rule files and register-evidence input byte-identical to the stored build). See
-  `lib/recent/README.md`.
+  `lib/recent/README.md`. PROMOTION (`lib/recent/promote.js` → `promotion.json`, `scripts/recent-audit-report.js`, `lib/recent/AUDIT-same-parcel.md`):
+  every shown row one state — RECENT_CONFLICT (name vs parcel · address vs parcel · POSSIBLE DUPLICATE of a register deal) · RECENT_UNRESOLVED
+  (no property type · unresolved address) · RECENT_CONTEXT_ONLY (not a dwelling · no street key) · RECENT_OBSERVED_LIMITED (one-key street ·
+  share sold not stated · < ₪100,000 · one consideration for several units) · RECENT_OBSERVED_VERIFIED (every criterion incl. a STATED
+  whole-property sale) — 20.10.2026: 0 · 2,348 LIMITED · 1,098 · 50 · 907. NOTHING IS VERIFIED: the copy has no share field and prints the
+  10.3 % partial sales (both copies' 2,934 dwelling deals) as the share or the whole value indistinguishably; eligible for count / median /
+  ₪/m² / 12-month change / model: 0 each (967 LIMITED rows meet every identity criterion — count-safe under the register's count semantics,
+  not wired). Same-parcel audit (232 rows; tolerances 2 % amount / area — no same-deal pair exceeds them): the 49 reported cases (fixture
+  `test/fixtures/recent-same-parcel-49.json`) → CONFIRMED SEPARATE 19 · LIKELY SEPARATE 26 · POSSIBLE DUPLICATE 4; POSSIBLE DUPLICATE /
+  UNRESOLVED never in a statistic. Page: "PROPX state" per recent deal (`recent_promotion_state`). No statistic reads the promotion yet.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

@@ -303,12 +303,34 @@ By district, locality (≥ 100 rows), observed state, row kind and tier: `valida
 parcels, type sample counts, counts, inputs) · `estimates.json` (one row per searchable street + the street's own mix for the
 reconciliation) · `validation.json` · `audit.json` · `history.jsonl` (append-only: one record per build with its reason
 FIRST_BUILD / DATA / MODEL / DATA+MODEL, and every street whose estimate moved ≥ 5 % or changed tier, before → after; the 1.0.0 →
-1.1.0 review rebuild is recorded as MODEL). The build's inputs: the evidence copy (scraped_at, window, summary sha), the directory
-hash, the land tenders, and the code + rules (value-model, value-validate, the build, evidence.js cleaning, match.js, classify.js,
-neighbourhood links). The weekly evidence workflow runs `street-model-build.js --if-stale` after a COMPLETE sweep, runs
+1.1.0 review rebuild is recorded as MODEL). The evidence workflow runs `street-model-build.js --if-stale` after a COMPLETE sweep, runs
 `test/street-model.test.js`, and restores the previous model if either fails. At request time nothing is fitted: the estimate is the
 stored row; WHY THIS ESTIMATE and the comparables are recomputed from one locality shard with the stored parameters and shown only
 when they reproduce the stored level (`consistent`) and the evidence copy / summary / directory are the build's.
+
+### Dependencies — what makes the model stale (`lib/streets/model-deps.js`, 20.10.2026)
+
+The model is stale only when something it READS moved — each dependency is the projection the build reads, never a whole file:
+
+```
+versions        value-model.js MODEL_VERSION · FEATURE_VERSION · VALIDATION_VERSION
+code            require closure of value-model · value-validate · street-model-build (minus its @deps blocks):
+                  lib/streets/{value-model,value-validate,evidence,match,directory}.js · lib/gov/{classify,schema}.js · lib/geo/aliases.js
+evidence        data/streets/evidence/meta.json source.scrapedAt + window · summary.json sha256
+directory       data/geo/streets (directory.js) → enumerated rows [id · kind · status] + localities [code · district · Hebrew name]
+neighbourhoods  data/geo/neighborhoods.json × directory names / synonyms × match.js → (locality:street → neighbourhood) pairs
+land            data/land/tenders.json (track ∈ subsidized | residential-lottery → parcels) + data/land/lots-*.json (their lot
+                parcels) → the SET of block/parcel keys (value-model.js subsidizedParcels)
+```
+
+Not dependencies: every other field of `data/land` (statuses, dates, prices, winners, other tracks), `data/transactions`,
+`data/streets/recent`, `data/market`, `data/housing`, … Before 20.10.2026 the build hashed `tenders.json` whole: the daily land sync
+made the model stale and it was rebuilt at 08:53 that day with byte-identical outputs (7,476 subsidized parcels, unchanged) — and the
+lot shards, which DO feed the subsidized set, were not tracked at all. The old code list also missed `directory.js`, `schema.js`,
+`aliases.js`. A build records its dependencies in `model.json` `inputs.deps` and `dependencies.json`; the build that predates the record
+is covered by a one-time baseline in `dependencies.json` with its proof (the old code hash recomputed at b23c4ed equals the build's;
+directory content hash, evidence and the subsidized-parcel set equal to what it read). `--check` prints `STALE (<moved dependencies>)`.
+Gates: `test/model-deps.test.js`.
 
 ### API
 
