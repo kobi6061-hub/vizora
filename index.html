@@ -10397,7 +10397,7 @@ function txcUniverseHTML(t){
     ${RS?`<p class="ho-note"><b>${u.reg}:</b> ${u.regB(nf(RS.mapped.deals),nf(RS.unmapped.deals),nf(RU&&RU.placed?RU.placed["official-locality"]||0:null),nf(RS.dealsUnderNoSettlement))}</p>`:""}
     ${rw||rh?`<p class="ho-note"><b>${u.rec}:</b> ${[recLine(u.recW,rw),recLine(u.recH,rh)].filter(Boolean).join(" · ")} ${xpBtn("locality_recovery_state")}</p>`:""}
     <p class="ho-note" data-txc-latest><b>${u.lat}:</b> ${L.israel?u.latIl(`<span class="num">${inE(L.israel.source||"—")}</span>`,`<span class="num">${inE(L.israel.visible||"—")}</span>`):""} · ${u.latD(nf(Ds.filter(d=>!d.match).length),nf(Ds.length))} · ${u.latL(nf(LL.mismatch),nf(LL.withTransactions),LL.pendingLive?fmtInt(LL.pendingLive):0)} · ${u.latS(nf(LS.mismatch),nf(LS.withTransactions))} ${xpBtn("latest_date_parity")}</p>
-    <details class="txc-unp" id="txcUnp"><summary><b>${u.unp}</b> <span class="num">${fmtInt(B.UNPLACED||0)}</span> ${xpBtn("unplaced_transaction_event")}</summary><p class="ho-note">${u.unpSub}</p><div id="txcUnpBody"></div></details></div>`;
+    <details class="txc-unp" id="txcUnp"><summary><b>${u.unp}</b> <span class="num">${fmtInt((B.UNPLACED||0)+(RU&&RU.byState?(RU.byState.POSSIBLE_LOCATION||0)+(RU.byState.UNPLACED||0):0))}</span> ${xpBtn("unplaced_transaction_event")}</summary><p class="ho-note">${u.unpSub}</p><div id="txcUnpBody"></div></details></div>`;
 }
 const txcUnp={rows:[],offset:0,more:false,loading:false,total:null};
 function txcUnpLoad(){

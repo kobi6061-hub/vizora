@@ -147,12 +147,13 @@ function completenessAudit() {
 function txUnplaced(p) {
   const TX = require('../lib/txevents');
   const U = require('../lib/txevents/unplaced');
-  const { rows, built } = U.load();
-  const sel = p.state ? rows.filter((r) => r.state === p.state) : rows;
+  const { built } = U.load();
+  const every = U.all();
+  const sel = every.filter((e) => (!p.state || e.unplaced.state === p.state) && (!p.source || e.source === p.source));
   const offset = Math.max(0, Number(p.offset) || 0), limit = Math.min(200, Math.max(1, Number(p.limit) || 100));
   const sm = U.summary({ limit: 0 });
   return { built, total: sel.length, offset, limit, more: offset + limit < sel.length, byState: sm.byState, byBasis: sm.byBasis, byKind: sm.byKind, byYear: sm.byYear, latest: sm.latest,
-    events: sel.slice(offset, offset + limit).map(U.event).map(TX.wire) };
+    register: sm.register, events: sel.slice(offset, offset + limit).map(TX.wire) };
 }
 function txLatest(p) {
   const TX = require('../lib/txevents');

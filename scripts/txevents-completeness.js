@@ -148,7 +148,11 @@ const uRows = U.load().rows.length;
 const uExpected = (nm.unplaced || 0) + (hm.unplaced || 0);
 notSurfaced += check('unplaced', uExpected, Math.max(0, uExpected - uRows), 'Israel\'s list and the unplaced view read data/txevents/{national/unplaced.json, history/unplaced.json.gz}');
 /* the register's deals under unmapped names: resolved → their locality (an official one); the rest → Israel's list through the register's national search */
-if (register.unmapped) notSurfaced += check('register-unmapped-placed', (register.unmapped.placed || {})['official-locality'] || 0, (register.unmapped.placed || {})['NOT-A-LOCALITY'] || 0, 'placed deals are listed with their locality\'s events');
+if (register.unmapped) {
+  notSurfaced += check('register-unmapped-placed', (register.unmapped.placed || {})['official-locality'] || 0, (register.unmapped.placed || {})['NOT-A-LOCALITY'] || 0, 'placed deals are listed with their locality\'s events');
+  const notPlaced = register.unmapped.rows - ((register.unmapped.placed || {})['official-locality'] || 0) - ((register.unmapped.placed || {})['NOT-A-LOCALITY'] || 0);
+  notSurfaced += check('register-unmapped-unplaced', notPlaced, Math.max(0, notPlaced - U.load().registerRows.length), 'Israel\'s list (the register\'s national search) and the unplaced view list every deal the parcel could not place');
+}
 /* localities without a district: reachable through Israel only (not a failure — stated) */
 const noDistrict = [...D.localities.values()].filter((l) => !l.district).length;
 reach.localitiesWithoutDistrict = noDistrict;
