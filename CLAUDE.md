@@ -223,8 +223,9 @@
   republisher's rate limit / retries a refused page as the user would. A later union page whose live parts did not answer is refused
   (503 · retry), never served shifted; the live register read takes the code-less names the republisher resolves (`resolved_code`); a
   parcel-placed register deal with no street stands on its GovMap print's street (POSSIBLE), a print naming another street is a CONFLICT
-  attached to the one event. The street view leads with the newest event of every source (`siLatestHTML`) above the register copy's own
-  freshness line. Trust Center: the full universe + the unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
+  attached to the one event; such a deal older than the window is listed on the history page of its date. The copy's codeless repeats of
+  coded rows (one deal printed twice, 984 localities) are collapsed by the live read with the sweep's own fingerprint and counted. The
+  street view leads with the newest event of every source (`siLatestHTML`) above the register copy's own freshness line. Trust Center: the full universe + the unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
   `transaction_completeness_universe` · `latest_date_parity`. Prices / statistics / the Street Value Model untouched.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only

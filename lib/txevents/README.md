@@ -80,7 +80,13 @@ pages a place's history newest first, **by date** (`lib/txevents/history.js`, `a
   of a code-less name (`resolved_code`: קרית חיים → Haifa, as the stored sweep reads it), the locality's names;
 - a register deal filed under an unmapped settlement name (placed by parcel) with no street of its own stands on the street its
   GovMap print names (POSSIBLE, `address-of-the-govmap-print-of-this-deal`); a print naming another street than the deal's own address
-  is a CONFLICT attached to the one event (`street:differs`, register precedence, both values kept).
+  is a CONFLICT attached to the one event (`street:differs`, register precedence, both values kept); such a deal older than the stored
+  window is listed on the history page of its date (`unmappedInScope`; the paged union reads `regxFrom` = the window's first day), never
+  out of date order;
+- the copy prints some coded rows a second time WITHOUT their settlement code (one deal, printed twice — 984 localities, observed
+  19.10.2026): the stored sweep collapses the window's (`duplicatesCollapsed`, 72,226), the live read collapses the rest by the same
+  fingerprint (date · amount · nature · area · rooms · build year · portion · block · parcel · sub-parcel) and counts them
+  (`registerCopiesCollapsed` / `olderRegisterCopiesCollapsed`) — never shown twice, never dropped uncounted.
 
 ## Every source row accounted for (`scripts/txevents-completeness.js` → `data/txevents/completeness-audit.json`)
 

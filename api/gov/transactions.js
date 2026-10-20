@@ -98,21 +98,34 @@ async function historyPage(o) {
   const live = await ask({ ...base, dateTo: top });
   if (unanswered(live)) return { error: unanswered(live), events: [], more: true, next: C, live };
   let rows = okRows(live);
+  let copyDates = (live && live.diagnostics && live.diagnostics.copyDates) || [];
   const dg = live && live.diagnostics ? live.diagnostics : {};
   const more = !!dg.more;
   let sp = HIST.span(C, rows, more, dg.floors || []);
   if (more && sp.L != null && sp.L >= C) {
     /* a day holding more deals than a page: read the page's day (and the reference days) whole */
-    const day = async (d) => { const out = []; for (let off = 0; off < 5000; off += 200) { const r = await ask({ ...base, dateFrom: d, dateTo: d, offset: off }); if (unanswered(r)) throw new Error(unanswered(r)); const x = okRows(r); out.push(...x); if (!(r.diagnostics && r.diagnostics.more) || !x.length) break; } return out; };
-    try { rows = [...await day(C), ...(first ? [] : [...await day(HIST.addDays(C, 1)), ...await day(HIST.addDays(C, 2))])]; }
+    const dayCopies = [];
+    const day = async (d) => { const out = []; for (let off = 0; off < 5000; off += 200) { const r = await ask({ ...base, dateFrom: d, dateTo: d, offset: off }); if (unanswered(r)) throw new Error(unanswered(r)); const x = okRows(r); out.push(...x); dayCopies.push(...((r.diagnostics && r.diagnostics.copyDates) || [])); if (!(r.diagnostics && r.diagnostics.more) || !x.length) break; } return out; };
+    try { rows = [...await day(C), ...(first ? [] : [...await day(HIST.addDays(C, 1)), ...await day(HIST.addDays(C, 2))])]; copyDates = dayCopies; }
     catch (e) { return { error: e.message, events: [], more: true, next: C, live }; }
     sp = { L: minusDays(C, 1), last: false };
   }
   const show = (t) => t.date && t.date <= C && (sp.last || sp.L == null || t.date > sp.L);
   const reg = TX.liveEvents(rows.filter(show), scope, lvl).map((e) => ({ ...e, history: true }));
+  /* the register's codeless repeats of a coded row of this page's days (collapsed by the provider: one deal, printed twice) */
+  const copies = copyDates.filter((d) => show({ date: d })).length;
   const ref = TX.liveEvents(rows.filter((t) => t.date && t.date > C), scope, lvl);
-  /* the register's deals under unmapped settlement names placed in this locality (listed with the stored events): fold references too */
-  if (scope.code != null) for (const e of TX.unmappedRegisterEvents(scope.code, S)) if (e.date <= HIST.addDays(C, 2) && (sp.last || sp.L == null || e.date >= sp.L)) ref.push(e);
+  /* the register's deals under unmapped settlement names placed in this locality by parcel: the ones of this page's dates placed in the
+     scope (the stored union's own placement — address, parcel, the GovMap print's street) are SHOWN here, in date order (the paged ALL
+     union leaves out those older than the window); every one of the page's dates is a fold reference (a print on another street folds
+     into its deal — a conflict attached to that event, never a second event) */
+  const regx = [];
+  if (scope.code != null && scope.kind !== 'area') {
+    const inSpan = (d) => d && d <= C && (sp.last || sp.L == null || d > sp.L);
+    for (const e of TX.unmappedInScope(scope, S)) if (inSpan(e.date)) regx.push({ ...e, history: true });
+    const shownIds = new Set(regx.map((e) => e.id));
+    for (const e of TX.unmappedRegisterEvents(scope.code, S)) if (!shownIds.has(e.id) && e.date <= HIST.addDays(C, 2) && (sp.last || sp.L == null || e.date >= sp.L)) ref.push(e);
+  }
   /* the GovMap layer's history rows of the place in (L + 1, C + 1]; on the register's last page, its rows below too — a page of whole days */
   const gmTo = HIST.addDays(C, 1), gmFrom = sp.last || sp.L == null ? (o.dateFrom || null) : HIST.addDays(sp.L, 2);
   let G = layerRows(gmFrom, gmTo), gNext = null;
@@ -121,8 +134,8 @@ async function historyPage(o) {
      Israel, the unplaced events), in the register's own range (L, C] */
   const lo = sp.last || sp.L == null ? (gNext ? CURSOR.exec(gNext)[1] : o.dateFrom ? minusDays(o.dateFrom, 1) : null) : sp.L;
   const extraLayer = extraOf(lo, C);
-  const F = HIST.fold(G, [...reg, ...ref]);
-  const byKey = new Map(reg.map((e) => [e, e]));
+  const F = HIST.fold(G, [...reg, ...regx, ...ref]);
+  const byKey = new Map([...reg, ...regx].map((e) => [e, e]));
   for (const f of F.folded) {
     if (!byKey.has(f.r)) continue;                                  // a reference row (shown on the page above)
     const kinds = f.differences.map((d) => (d.includes(':') ? d : d + ':differs'));
@@ -131,7 +144,7 @@ async function historyPage(o) {
     if (conflictFields.length) { f.r.conflict = true; f.r.conflictFields = [...new Set((f.r.conflictFields || []).concat(conflictFields))]; }
   }
   const next = sp.last ? gNext : sp.L;
-  return { events: [...reg, ...F.shown, ...extraLayer], more: !!next, next, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: reg.length, live };
+  return { events: [...reg, ...regx, ...F.shown, ...extraLayer], more: !!next, next, folded: F.folded.length, gmShown: F.shown.length + extraLayer.length, regShown: reg.length + regx.length, copies, live };
 }
 
 /**
@@ -208,7 +221,7 @@ async function unifiedRead(svc, location, filters, scope, g) {
     const rows = P.events.sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id))).map(TX.wire);
     return { transactions: rows, scope: scopeOut(scope, location), unavailable: P.live && P.live.unavailable ? P.live.unavailable : [],
       meta: { unified: true, engine: TX.ENGINE, sourceCoverage: { kind: 'unified-older', olderMore: !!(P.more || P.error), olderNext: P.error ? cursor + (gOnly ? 'g' : '') : P.next, olderError: P.error || null,
-        folded: P.folded || 0, govmapHistoryShown: P.gmShown || 0, registerShown: P.regShown || 0 }, attemptedAt: now } };
+        folded: P.folded || 0, govmapHistoryShown: P.gmShown || 0, registerShown: P.regShown || 0, registerCopiesCollapsed: P.copies || 0 }, attemptedAt: now } };
   }
   /* period ALL: the first page of the history (directly under the stored window) comes with the stored events */
   const [live, older] = await Promise.all([liveCall(periodF), all && winFrom ? historyPage({ svc, location, scope, C: minusDays(winFrom, 1), first: true }) : Promise.resolve(null)]);
@@ -220,7 +233,7 @@ async function unifiedRead(svc, location, filters, scope, g) {
   const extra = [...TX.liveEvents(okRows(live), scope, lvl(live)), ...(older ? older.events : [])];
   const olderMore = !!(older && older.more && !older.error);
   const olderCov = older && older.live && older.live.diagnostics ? older.live.diagnostics : null;
-  const U = TX.query({ code: scope.code, streetId: scope.streetId, house: scope.house, block: scope.block, parcel: scope.parcel,
+  const U = TX.query({ code: scope.code, streetId: scope.streetId, house: scope.house, block: scope.block, parcel: scope.parcel, regxFrom: all && winFrom ? winFrom : undefined,
     days: filters.days, months: filters.days ? null : filters.months, all, offset: filters.offset, limit: filters.limit, extraEvents: extra });
   const liveAnswered = !!(live && !live.error && live.answered !== false);
   const regSrc = (EV.store().meta || {}).source || {};
@@ -243,7 +256,7 @@ async function unifiedRead(svc, location, filters, scope, g) {
       sourceCoverage: { kind: 'unified', offset: U.offset, limit: U.limit, total: U.total, more: U.more, olderMore: all && (olderMore || !!(older && older.error)),
         olderNext: all && older ? (older.error ? minusDays(winFrom, 1) : older.next) : null, olderError: older && older.error ? older.error : null,
         olderTotal: olderCov ? olderCov.totalReported : null, olderTotalCapped: olderCov ? !!olderCov.totalCapped : null,
-        olderFolded: older ? older.folded || 0 : null, olderGovmapShown: older ? older.gmShown || 0 : null, olderRegisterShown: older ? older.regShown || 0 : null,
+        olderFolded: older ? older.folded || 0 : null, olderGovmapShown: older ? older.gmShown || 0 : null, olderRegisterShown: older ? older.regShown || 0 : null, olderRegisterCopiesCollapsed: older ? older.copies || 0 : null,
         history: all ? historyCounts(scope) : null },
       recency: rec, coverage, counts: U.counts, statement: U.statement, period: U.period, note: U.note, noteHe: U.noteHe,
       live: { answered: liveAnswered, level: lvl(live), added: extra.length, error: live && live.error ? live.error : null },

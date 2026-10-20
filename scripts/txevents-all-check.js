@@ -79,7 +79,7 @@ const counted = (t) => t.state !== 'POSSIBLE_DUPLICATE';
 /** ALL for one place, page by page as the page reads it; `maxPages` stops early (the first pages), `older` starts at a cursor */
 async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   const seen = new Map(), dups = [], risingAt = [];
-  let rising = 0, prev = null, prevId = null, pages = 0, folded = 0, end = false, error = null, first = null, last = null;
+  let rising = 0, prev = null, prevId = null, pages = 0, folded = 0, copies = 0, end = false, error = null, first = null, last = null;
   const take = (rows) => {
     for (const t of rows) {
       if (seen.has(t.id)) dups.push(t.id); else seen.set(t.id, t);
@@ -97,7 +97,7 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
       if (b.error) { error = b.error; break; }
       take(b.transactions || []);
       const sc = (b.meta && b.meta.sourceCoverage) || {};
-      if (offset === 0) folded += sc.olderFolded || 0;
+      if (offset === 0) { folded += sc.olderFolded || 0; copies += sc.olderRegisterCopiesCollapsed || 0; }
       if (!sc.more) { cursor = sc.olderMore ? sc.olderNext : null; end = !sc.olderMore; if (sc.olderError) error = sc.olderError; break; }
     }
   }
@@ -108,7 +108,7 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     if (b.error) { error = b.error; break; }
     take(b.transactions || []);
     const sc = (b.meta && b.meta.sourceCoverage) || {};
-    folded += sc.folded || 0;
+    folded += sc.folded || 0; copies += sc.registerCopiesCollapsed || 0;
     if (sc.olderError) { error = sc.olderError; break; }
     if (!sc.olderMore) { end = true; cursor = null; break; }
     if (sc.olderNext === cursor) { error = 'cursor did not move: ' + cursor; break; }
@@ -118,7 +118,7 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
   const reg = ev.filter((t) => t.source === 'register' && !/^regx:/.test(String(t.id)));
   return { pages, end, error, events: ev.length, counted: ev.filter(counted).length, duplicateIds: dups.length, risingDates: rising, firstCounted: first, oldest: last,
     register: reg.length, registerUnmapped: ev.filter((t) => /^regx:/.test(String(t.id))).length, govmapWindow: ev.filter((t) => /^gm:/.test(String(t.id))).length,
-    govmapHistory: ev.filter((t) => /^gmh:/.test(String(t.id))).length, govmapFolded: folded, unplaced: ev.filter((t) => /^gmu:/.test(String(t.id))).length,
+    govmapHistory: ev.filter((t) => /^gmh:/.test(String(t.id))).length, govmapFolded: folded, registerCopiesCollapsed: copies, unplaced: ev.filter((t) => /^gmu:/.test(String(t.id))).length,
     possibleDuplicates: ev.length - ev.filter(counted).length, cursorAtStop: cursor, risingAt, duplicateExamples: dups.slice(0, 10), ids: ev.map((t) => t.id) };
 }
 
@@ -156,29 +156,40 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     const r = await pageAll(f.params);
     const reg = regByCode.get(f.code);
     const hist = f.streetCode != null ? null : histRows(f.code).length;
+    /* the register's own count holds its codeless copies of coded rows (one deal printed twice): the ones of the stored window were
+       collapsed by the sweep (the shard's duplicatesCollapsed), the older ones by the live read (registerCopiesCollapsed) */
+    const sh = EV.shardOf(f.code);
+    const windowCopies = sh ? sh.duplicatesCollapsed || 0 : 0;
     const row = { id: f.id, code: f.code, streetCode: f.streetCode || null, ...r,
-      registerExpected: f.streetCode != null ? null : reg ? reg.deals : 0, registerNames: reg ? reg.names : [],
+      registerExpected: f.streetCode != null ? null : reg ? reg.deals : 0, registerNames: reg ? reg.names : [], registerWindowCopiesCollapsed: windowCopies,
+      registerAccounted: f.streetCode != null ? null : r.register + r.registerCopiesCollapsed + windowCopies,
       govmapHistoryRows: hist, govmapHistoryAccounted: hist == null ? null : r.govmapHistory + r.govmapFolded };
-    row.pass = !r.error && r.end && !r.duplicateIds && !r.risingDates && (row.registerExpected == null || row.register === row.registerExpected)
+    row.pass = !r.error && r.end && !r.duplicateIds && !r.risingDates && (row.registerExpected == null || row.registerAccounted === row.registerExpected)
       && (hist == null || row.govmapHistoryAccounted === hist);
     out.full.push(row);
-    console.log(JSON.stringify({ full: f.id, pass: row.pass, register: row.register, expected: row.registerExpected, hist, acc: row.govmapHistoryAccounted, pages: r.pages, oldest: r.oldest, error: r.error }));
+    console.log(JSON.stringify({ full: f.id, pass: row.pass, register: row.register, copies: r.registerCopiesCollapsed, windowCopies, expected: row.registerExpected, hist, acc: row.govmapHistoryAccounted, pages: r.pages, oldest: r.oldest, error: r.error }));
   }
   /* small places: every deal the register's own search returns for the locality's names (all years) is one of the events shown, by
      its deal key — and the deals the register dates nowhere are counted apart */
   for (const st of out.full.filter((x) => x.streetCode == null && x.registerExpected != null && x.registerExpected <= 10000)) {
     const names = (regByCode.get(st.code) || { names: [] }).names;
-    const want = new Map(); let total = 0, undated = 0; const undatedRows = [];
+    const want = new Map(); let total = 0, undated = 0, copiesInSearch = 0; const undatedRows = [];
+    const fp = (d) => [d.date, d.amount, d.nature, d.area_sqm, d.rooms, d.year_built, d.portion_fraction, d.gush, d.helka, d.sub_parcel].join('|');
     for (const n of names) {
+      const all = [];
       for (let offset = 0; ; offset += 200) {
         const b = await (await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, sort: 'date_desc', limit: '200', offset: String(offset) }), { headers: { Accept: 'application/json' } })).json();
         const data = Array.isArray(b.data) ? b.data : [];
-        for (const d of data) {
-          total++;
-          if (!d.date) { undated++; if (undatedRows.length < 10) undatedRows.push({ gush: d.gush, helka: d.helka, amount: d.amount, nature: d.nature }); continue; }
-          const k = TX.unitKey(st.code, String(d.date).slice(0, 10), d.gush, d.helka, d.sub_parcel, num(d.amount)); want.set(k, (want.get(k) || 0) + 1);
-        }
+        all.push(...data);
         if (!data.length || offset + data.length >= Number(b.total)) break;
+      }
+      /* the sweep's and the live read's rule: a codeless copy of a coded row is the same deal */
+      const coded = new Set(all.filter((d) => d.settlement_code != null && d.settlement_code !== '').map(fp));
+      for (const d of all) {
+        total++;
+        if ((d.settlement_code == null || d.settlement_code === '') && coded.has(fp(d))) { copiesInSearch++; continue; }
+        if (!d.date) { undated++; if (undatedRows.length < 10) undatedRows.push({ gush: d.gush, helka: d.helka, amount: d.amount, nature: d.nature }); continue; }
+        const k = TX.unitKey(st.code, String(d.date).slice(0, 10), d.gush, d.helka, d.sub_parcel, num(d.amount)); want.set(k, (want.get(k) || 0) + 1);
       }
     }
     const shown = new Map();
@@ -186,7 +197,7 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     let missing = 0; const examples = [];
     for (const [k, n] of want) { const d = n - (shown.get(k) || 0); if (d > 0) { missing += d; if (examples.length < 10) examples.push({ key: k, inRegisterSearch: n, shown: shown.get(k) || 0, shownSameDay: (st.ids || []).filter((id) => String(id).includes('|' + k.split('|')[1] + '|')) }); } }
     let extra = 0; for (const [k, n] of shown) if (n > (want.get(k) || 0)) extra += n - (want.get(k) || 0);
-    Object.assign(st, { registerSearchTotal: total, registerSearchKeys: want.size, registerUndated: undated, registerUndatedRows: undatedRows, registerMissing: missing, registerMissingExamples: examples, registerShownNotInSearch: extra });
+    Object.assign(st, { registerSearchTotal: total, registerSearchCopies: copiesInSearch, registerSearchKeys: want.size, registerUndated: undated, registerUndatedRows: undatedRows, registerMissing: missing, registerMissingExamples: examples, registerShownNotInSearch: extra });
     st.pass = st.pass && missing === 0;
   }
   /* the street: every deal the register's own street search returns (all years) is one of the events shown — by its deal key */
@@ -195,21 +206,28 @@ async function pageAll(params, { maxPages = Infinity, older = null } = {}) {
     if (st) {
       const names = (regByCode.get(7900) || { names: [] }).names;
       const want = new Map();
-      let total = 0, capped = false;
+      let total = 0, capped = false, copiesInSearch = 0;
+      const fp = (d) => [d.date, d.amount, d.nature, d.area_sqm, d.rooms, d.year_built, d.portion_fraction, d.gush, d.helka, d.sub_parcel].join('|');
       for (const n of names) {
+        const all = [];
         for (let offset = 0; ; offset += 200) {
           const b = await (await globalThis.fetch(`${BASE}/api/deals/search?` + new URLSearchParams({ settlement: n, street: 'שחם', sort: 'date_desc', limit: '200', offset: String(offset) }), { headers: { Accept: 'application/json' } })).json();
           const data = Array.isArray(b.data) ? b.data : [];
           if (b.total_capped) capped = true;
-          for (const d of data) { const k = TX.unitKey(7900, String(d.date).slice(0, 10), d.gush, d.helka, d.sub_parcel, num(d.amount)); want.set(k, (want.get(k) || 0) + 1); total++; }
+          all.push(...data);
           if (!data.length || offset + data.length >= Number(b.total)) break;
+        }
+        const coded = new Set(all.filter((d) => d.settlement_code != null && d.settlement_code !== '').map(fp));
+        for (const d of all) {
+          if ((d.settlement_code == null || d.settlement_code === '') && coded.has(fp(d))) { copiesInSearch++; continue; }
+          const k = TX.unitKey(7900, String(d.date).slice(0, 10), d.gush, d.helka, d.sub_parcel, num(d.amount)); want.set(k, (want.get(k) || 0) + 1); total++;
         }
       }
       const shown = new Map();
       for (const id of st.ids || []) { const m = /^(?:reg|live):(.*?)(?:#\d+)?$/.exec(String(id)); if (m) shown.set(m[1], (shown.get(m[1]) || 0) + 1); }
       let missing = 0; const examples = [];
       for (const [k, n] of want) { const d = n - (shown.get(k) || 0); if (d > 0) { missing += d; if (examples.length < 10) examples.push(k); } }
-      Object.assign(st, { registerExpected: total, registerSearchCapped: capped, registerMissing: missing, registerMissingExamples: examples, registerShownBeyondSearch: st.register - (total - missing) });
+      Object.assign(st, { registerExpected: total, registerSearchCopies: copiesInSearch, registerSearchCapped: capped, registerMissing: missing, registerMissingExamples: examples, registerShownBeyondSearch: st.register - (total - missing) });
       st.pass = !st.error && st.end && !st.duplicateIds && !st.risingDates && !capped && missing === 0;
     }
   }

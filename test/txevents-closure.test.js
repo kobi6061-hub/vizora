@@ -29,6 +29,11 @@ const FAKE = { code: 26, rows: [], fail: false, names: [] };
       addresses: d.parcelAddresses || [], addresses_total: d.parcelAddressesTotal || 0 });
   }
   FAKE.rows.sort((a, b) => b.date.localeCompare(a.date));
+  /* as the copy prints it: every third deal older than the stored window a second time, without its settlement code (one deal, printed
+     twice — observed 19.10.2026 in 984 localities; the stored sweep collapses the window's) */
+  const wf = EV.store().meta.window.from;
+  FAKE.printed = []; FAKE.copies = 0;
+  FAKE.rows.forEach((d, i) => { FAKE.printed.push(d); if (d.date < wf && i % 3 === 0) { FAKE.printed.push({ ...d, settlement_code: null }); FAKE.copies++; } });
 }
 globalThis.fetch = async (url) => {
   const u = new URL(String(url));
@@ -39,7 +44,7 @@ globalThis.fetch = async (url) => {
   if (u.pathname === '/api/deals/search') {
     if (FAKE.fail) return json({ error: 'unavailable' }, 503);
     const p = u.searchParams, st = p.get('settlement'), f = p.get('date_from'), t = p.get('date_to'), off = Number(p.get('offset')) || 0, lim = Number(p.get('limit')) || 50;
-    const m = FAKE.rows.filter((d) => (!st || d.settlement === st) && (!f || d.date >= f) && (!t || d.date <= t) && (!p.get('gush') || String(d.gush) === p.get('gush')) && (!p.get('helka') || String(d.helka) === p.get('helka')));
+    const m = FAKE.printed.filter((d) => (!st || d.settlement === st) && (!f || d.date >= f) && (!t || d.date <= t) && (!p.get('gush') || String(d.gush) === p.get('gush')) && (!p.get('helka') || String(d.helka) === p.get('helka')));
     return json({ data: m.slice(off, off + lim), total: Math.min(m.length, 10000), total_capped: m.length > 10000 });
   }
   return json({}, 404);
@@ -62,23 +67,23 @@ async function call(params) {
 }
 /* ALL, page by page, exactly as the page reads it: offset pages inside the stored union, then the date cursor */
 async function pageAll(params, max = 400) {
-  const seen = new Map(); let dups = 0, rising = 0, prev = null, folded = 0, cursor = null, pages = 0, error = null, end = false;
+  const seen = new Map(); let dups = 0, rising = 0, prev = null, folded = 0, copies = 0, cursor = null, pages = 0, error = null, end = false;
   const take = (rows) => { for (const t of rows) { if (seen.has(t.id)) dups++; else seen.set(t.id, t); if (prev && t.date > prev) rising++; prev = t.date; } };
   for (let offset = 0; pages < max; offset += 200) {
     const b = await call({ ...params, all: '1', months: '240', limit: '200', offset: String(offset) }); pages++;
     take(b.transactions); const sc = b.meta.sourceCoverage;
-    if (offset === 0) folded += sc.olderFolded || 0;
+    if (offset === 0) { folded += sc.olderFolded || 0; copies += sc.olderRegisterCopiesCollapsed || 0; }
     if (!sc.more) { if (sc.olderError) error = sc.olderError; cursor = sc.olderMore ? sc.olderNext : null; end = !sc.olderMore; break; }
   }
   prev = null;
   while (cursor && pages < max) {
     const b = await call({ ...params, all: '1', months: '240', limit: '200', older: cursor }); pages++;
-    take(b.transactions); const sc = b.meta.sourceCoverage; folded += sc.folded || 0;
+    take(b.transactions); const sc = b.meta.sourceCoverage; folded += sc.folded || 0; copies += sc.registerCopiesCollapsed || 0;
     if (sc.olderError) { error = sc.olderError; break; }
     if (!sc.olderMore) { end = true; break; }
     assert.notEqual(sc.olderNext, cursor, 'the cursor always moves'); cursor = sc.olderNext;
   }
-  return { ev: [...seen.values()], dups, rising, folded, pages, error, end };
+  return { ev: [...seen.values()], dups, rising, folded, copies, pages, error, end };
 }
 
 const results = [];
@@ -148,7 +153,8 @@ t('ALL = THE WHOLE HISTORY: every register deal of the locality is listed exactl
   assert.equal(r.error, null); assert.ok(r.end, 'paged to the end');
   assert.equal(r.dups, 0); assert.equal(r.rising, 0);
   const reg = r.ev.filter((e) => e.source === 'register' && !/^regx:/.test(e.id));
-  assert.equal(reg.length, FAKE.rows.length, 'the register copy\'s every deal (its stored window + 3 and 6 years earlier)');
+  assert.equal(reg.length, FAKE.rows.length, 'the register copy\'s every deal (its stored window + 3 and 6 years earlier), each once');
+  assert.ok(FAKE.copies > 0); assert.equal(r.copies, FAKE.copies, 'a codeless copy of a coded row is the same deal: collapsed, and counted');
   assert.ok(reg.some((e) => e.date < '2021-01-01'), 'deals far older than the stored window');
   const hist = HIST.rows({ code: FAKE.code }, null, HIST.addDays(winFrom, -1)).length;
   const gmh = r.ev.filter((e) => /^gmh:/.test(e.id)).length;
@@ -156,6 +162,22 @@ t('ALL = THE WHOLE HISTORY: every register deal of the locality is listed exactl
   const oldest = r.ev.map((e) => e.date).sort()[0];
   assert.ok(oldest <= (H.localities[FAKE.code] || {}).earliest, 'reaches the oldest history row');
   assert.ok(r.ev.every((e) => e.geo && e.geo.match !== 'UNPLACED'), 'a locality never lists an unplaced event');
+});
+
+t('REGISTER DEALS UNDER UNMAPPED NAMES (placed by parcel) OLDER THAN THE WINDOW: listed once, on the history page of their date — the stored pages never carry them, dates never rise', async () => {
+  const S = TX.stores();
+  for (const code of [1343, 1375, 1316]) {
+    const want = TX.unmappedInScope(TX.resolveScope({ code }), S);
+    const pre = want.filter((e) => e.date < winFrom);
+    assert.ok(pre.length > 0, `${code}: a locality with such deals`);
+    const r = await pageAll({ city: D.localities.get(code).he });
+    assert.equal(r.error, null); assert.ok(r.end); assert.equal(r.dups, 0, 'no event twice'); assert.equal(r.rising, 0, 'dates never rise');
+    const got = r.ev.filter((e) => /^regx:/.test(e.id));
+    assert.deepEqual(got.map((e) => e.id).sort(), want.map((e) => e.id).sort(), `${code}: every one of them, once`);
+    /* the stored union the paged ALL reads holds only the window's; the older ones come from the history pages (above: each once, in order) */
+    const U = TX.query({ code, all: true, unlimited: true, regxFrom: winFrom });
+    assert.ok(U.events.filter((e) => /^regx:/.test(e.id)).every((e) => e.date >= winFrom));
+  }
 });
 
 t('A REGISTER THAT DOES NOT ANSWER IS NEVER "NO OLDER DEALS": the history stops with an error and a retry cursor; the register\'s own "no settlement" is a real zero', async () => {
