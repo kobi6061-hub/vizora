@@ -1,8 +1,8 @@
 {
  "schema": 1,
  "engine": "propx-txevents-national-1",
- "builtAt": "2026-10-20T17:42:22.982Z",
- "code": "8f0a75744a83f33e",
+ "builtAt": "2026-10-20T18:55:44.262Z",
+ "code": "de33d5fa48fd5208",
  "source": {
   "id": "over:govmap-national",
   "name": "GovMap deals layer (lay=16) — the published file of the republished copy (over.org.il)",
@@ -194,34 +194,34 @@
   "rows": 2539,
   "byState": {
    "UNPLACED": 50,
-   "POSSIBLE_LOCATION": 674,
-   "RESOLVED_EXACTLY": 1814,
+   "POSSIBLE_LOCATION": 660,
+   "RESOLVED_EXACTLY": 1828,
    "RESOLVED_STRONGLY": 1
   },
   "byBasis": {
    "block-unknown-to-both-copies": 50,
    "block-in-several-localities": 325,
    "block-only": 172,
-   "parcel-in-several-localities": 177,
-   "register-twin": 1718,
+   "parcel-in-several-localities": 163,
+   "register-twin": 1732,
    "settlement-code": 96,
    "block-parcel": 1
   },
   "final": {
    "UNPLACED": 50,
-   "POSSIBLE_LOCATION": 675,
-   "IN_REGISTER_OTHER_UNIT": 1734,
+   "POSSIBLE_LOCATION": 660,
+   "IN_REGISTER_OTHER_UNIT": 1748,
    "RECENT_NEW": 70,
-   "IN_REGISTER": 4,
+   "IN_REGISTER": 5,
    "DUPLICATE_IN_SOURCE": 4,
    "POSSIBLE_DUPLICATE_IN_SOURCE": 2
   },
-  "unplaced": 725,
+  "unplaced": 710,
   "settlementIdAgreement": {
    "agree": 2400502,
    "disagree": 41
   }
  },
- "unplaced": 725,
+ "unplaced": 710,
  "invalid": 36
 }

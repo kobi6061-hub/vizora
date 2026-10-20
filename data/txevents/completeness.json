@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-20T17:54:20.219Z",
+ "builtAt": "2026-10-20T19:10:26.973Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-20T16:45:20.247Z",
+    "checkedAt": "2026-10-20T17:58:41.846Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
@@ -50,9 +50,9 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-07-03",
-    "checkedAt": "2026-10-20T16:45:20.247Z",
+    "checkedAt": "2026-10-20T17:58:41.846Z",
     "version": 4,
-    "builtAt": "2026-10-20T17:42:22.982Z",
+    "builtAt": "2026-10-20T18:55:44.262Z",
     "state": "RECENT"
    }
   ]
@@ -172,7 +172,7 @@
  },
  "national": {
   "built": true,
-  "builtAt": "2026-10-20T17:42:22.982Z",
+  "builtAt": "2026-10-20T18:55:44.262Z",
   "version": {
    "id": "210cd553-ea77-41ce-8afd-da27c552250d",
    "n": 4,
