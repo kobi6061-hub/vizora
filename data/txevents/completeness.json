@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-20T16:16:13.726Z",
+ "builtAt": "2026-10-20T17:54:20.219Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-20T16:08:33.452Z",
+    "checkedAt": "2026-10-20T16:45:20.247Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
@@ -50,9 +50,9 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-07-03",
-    "checkedAt": "2026-10-20T16:08:33.452Z",
+    "checkedAt": "2026-10-20T16:45:20.247Z",
     "version": 4,
-    "builtAt": "2026-10-20T16:11:27.258Z",
+    "builtAt": "2026-10-20T17:42:22.982Z",
     "state": "RECENT"
    }
   ]
@@ -68,8 +68,8 @@
   "js-area": "2026-09-02"
  },
  "newEvents": {
-  "last24h": 29394,
-  "last7d": 29394,
+  "last24h": 29395,
+  "last7d": 29395,
   "basis": "deals PROPX read for the first time in the period (the recent layer's first read per deal + the national detector's build)"
  },
  "unresolved": {
@@ -83,7 +83,7 @@
  },
  "possibleDuplicates": {
   "recentWindow": 103,
-  "national": 3117
+  "national": 3119
  },
  "links": 3240,
  "parcelRecovery": {
@@ -172,7 +172,7 @@
  },
  "national": {
   "built": true,
-  "builtAt": "2026-10-20T16:11:27.258Z",
+  "builtAt": "2026-10-20T17:42:22.982Z",
   "version": {
    "id": "210cd553-ea77-41ce-8afd-da27c552250d",
    "n": 4,
@@ -236,15 +236,15 @@
    }
   },
   "shown": {
-   "govmapOnly": 24991,
-   "possibleDuplicates": 3117,
+   "govmapOnly": 24992,
+   "possibleDuplicates": 3119,
    "kinds": {
     "DWELLING": 11584,
-    "NON_DWELLING": 2758,
+    "NON_DWELLING": 2759,
     "TYPE_NOT_STATED": 10649
    },
    "latest": "2026-07-13",
-   "localities": 307,
+   "localities": 309,
    "streets": 3367
   },
   "parcelRecovery": {
