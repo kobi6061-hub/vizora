@@ -2,7 +2,7 @@
  "modelVersion": "psvm-1.1.0",
  "featureVersion": "psvm-features-2",
  "validationVersion": "psvm-validation-2",
- "builtAt": "2026-10-19T16:27:20.569Z",
+ "builtAt": "2026-10-20T08:53:29.411Z",
  "trainingCutoff": "2026-09-18",
  "asOf": "2026-09-17",
  "window": {
@@ -24,7 +24,7 @@
    "summary": "be6e1064e98c728bf67e6619678f608268bf06c9e3aa9261f7888181e00863f9"
   },
   "directory": "93ea88e50c2f0c92d3411ebf3e78f2d8269297e4ab11c2d9b82f8ff4ca784d1d",
-  "land": "e998c89d267341f2ed5aba0f6238a4bc5001e936c1d66516100b12f8f6134665",
+  "land": "cf0527efb7a94a766aa83a1b2c9426b5fdeb5d229d9ce21bbb5c047c170ed100",
   "code": "c6d6a86cbb52a444027c5d5622113bd421783274557554b8a6691f8237f20b00"
  },
  "target": "log ₪ per m² of one transaction; the street estimate = the value per m² of the REFERENCE DWELLING on the street",

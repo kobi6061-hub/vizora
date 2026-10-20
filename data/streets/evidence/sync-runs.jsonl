@@ -2,3 +2,4 @@
 {"id":"street-evidence-20261019T124240Z","source":"over:deals-register","startedAt":"2026-10-19T12:42:40.937Z","status":"rebuilt","rematched":1036,"finishedAt":"2026-10-19T12:42:52.868Z","requests":0}
 {"id":"street-evidence-20261019T124505Z","source":"over:deals-register","startedAt":"2026-10-19T12:45:05.420Z","status":"unchanged","scrapedAt":"2026-09-19 11:07:39.013275+00","rematched":0,"finishedAt":"2026-10-19T12:45:09.554Z","requests":3}
 {"id":"street-evidence-20261019T150457Z","source":"over:deals-register","startedAt":"2026-10-19T15:04:57.183Z","status":"rebuilt","rematched":1036,"finishedAt":"2026-10-19T15:05:10.648Z","requests":0}
+{"id":"street-evidence-20261020T085235Z","source":"over:deals-register","startedAt":"2026-10-20T08:52:35.049Z","status":"unchanged","scrapedAt":"2026-09-19 11:07:39.013275+00","rematched":0,"finishedAt":"2026-10-20T08:52:39.913Z","requests":3}
