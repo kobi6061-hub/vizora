@@ -173,10 +173,15 @@ t('THE REGISTER IS NEVER OVERWRITTEN: the engine writes only data/streets/recent
   assert.ok(meta.conflictFields['sub-parcel'] > 0 && meta.conflictFields['amount:truncated'] > 0);
 });
 
-t('THE STREET VALUE MODEL IS UNTOUCHED: its input check is CURRENT and its inputs carry no recent-layer file', () => {
-  const out = require('node:child_process').execFileSync(process.execPath, [path.join(ROOT, 'scripts', 'street-model-build.js'), '--check'], { encoding: 'utf8' });
-  assert.match(out, /CURRENT/);
+t('THE STREET VALUE MODEL IS UNTOUCHED: the model\'s code and rule files and its register-evidence input are exactly the ones its stored build recorded (the land-tender and directory inputs move with their own daily syncs and are not this layer\'s); no recent-layer file is a model input', () => {
   const model = readJson(path.join(ROOT, 'data', 'streets', 'model', 'model.json'));
+  const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
+  /* the same hashes scripts/street-model-build.js inputsNow() records */
+  const code = sha([['lib', 'streets', 'value-model.js'], ['lib', 'streets', 'value-validate.js'], ['scripts', 'street-model-build.js'], ['lib', 'streets', 'evidence.js'],
+    ['lib', 'streets', 'match.js'], ['lib', 'gov', 'classify.js'], ['data', 'geo', 'neighborhoods.json']].map((f) => fs.readFileSync(path.join(ROOT, ...f), 'utf8')).join('\n'));
+  assert.equal(code, model.inputs.code, 'the model code / rules are byte-identical to the stored build');
+  assert.equal(S.meta.source.scrapedAt, model.inputs.evidence.scrapedAt); assert.deepEqual(S.meta.window, model.inputs.evidence.window);
+  assert.equal(sha(fs.readFileSync(path.join(S.dir, 'summary.json'))), model.inputs.evidence.summary, 'the register evidence the model was built on is unchanged');
   assert.ok(!/recent/.test(JSON.stringify(model.inputs || {})), 'no recent-layer file among the model inputs');
 });
 

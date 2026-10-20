@@ -142,7 +142,8 @@
   (the evidence workflow reconciles right after a sweep). `view=street` → `recent`; `view=recentLayer[&city=]`; the page's dashed
   SEPARATE LAYER line + table (never in a median, sample state, change, tile, card or the model); Trust `over:govmap-recent`; registry
   `recent_transaction_layer` · `recent_transaction_type_not_stated` · missing `recent_layer_unavailable`; the monitor marks the copy
-  read. The Street Value Model is untouched (`--check` CURRENT). See `lib/recent/README.md`.
+  read. The Street Value Model is untouched (its code, rule files and register-evidence input byte-identical to the stored build). See
+  `lib/recent/README.md`.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled
