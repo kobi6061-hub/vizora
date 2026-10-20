@@ -14,10 +14,18 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'fetch (read when changed + reconcile) · fetch-only · audit-replay · reconcile'
+        description: 'fetch (read when changed + reconcile) · fetch-only · audit-replay · reconcile · history (a historical window for the upgrade simulation)'
         type: choice
-        options: [fetch, fetch-only, audit-replay, reconcile]
+        options: [fetch, fetch-only, audit-replay, reconcile, history]
         default: fetch
+      from:
+        description: 'history: first deal date (YYYY-MM-DD)'
+        type: string
+        default: ''
+      to:
+        description: 'history: last deal date (YYYY-MM-DD)'
+        type: string
+        default: ''
       force:
         description: 'Read the window although the copy has not changed'
         type: boolean
@@ -33,7 +41,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,12 +52,15 @@ jobs:
         env:
           MODE: ${{ inputs.mode || 'fetch' }}
           FORCE: ${{ inputs.force == true }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
         run: |
           set +e
           code=0
           case "$MODE" in
             fetch|fetch-only) node scripts/street-recent-sync.js --fetch $([ "$FORCE" = "true" ] && echo --force); code=$? ;;
             audit-replay) node scripts/street-recent-sync.js --audit-replay; code=$? ;;
+            history) node scripts/street-recent-sync.js --history --from "$FROM" --to "$TO"; code=$? ;;
           esac
           echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Reconcile against the register copy (offline) + gates
@@ -68,7 +79,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/streets/recent
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
-          git commit -q -m "Recent transactions layer: $(tail -n 1 data/streets/recent/sync-runs.jsonl 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);console.log(`${r.status} · copy ${r.copy?String(r.copy.loadedAt).slice(0,10)+" v"+r.copy.version:"?"} · ${r.rows!=null?r.rows+" rows · ":""}${r.requests} requests`)}catch{console.log("run log")}})')"
+          if [ "${{ inputs.mode }}" = "history" ]; then git commit -q -m "Recent layer: historical window ${{ inputs.from }} … ${{ inputs.to }} read for the upgrade simulation"; else
+          git commit -q -m "Recent transactions layer: $(tail -n 1 data/streets/recent/sync-runs.jsonl 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);console.log(`${r.status} · copy ${r.copy?String(r.copy.loadedAt).slice(0,10)+" v"+r.copy.version:"?"} · ${r.rows!=null?r.rows+" rows · ":""}${r.requests} requests`)}catch{console.log("run log")}})')"; fi
           for i in 1 2 3 4 5; do
             git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
             sleep $((i * 15))

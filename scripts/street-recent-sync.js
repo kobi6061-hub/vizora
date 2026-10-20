@@ -16,6 +16,12 @@
 //   node scripts/street-recent-sync.js --audit-replay         GitHub runner, once: the 8 audited cities' rows exactly as the
 //                                                              19.10.2026 comparison read them (per settlement spelling, newest
 //                                                              first) down to 28.06.2026 — the input of the 2,293 reconciliation
+//   node scripts/street-recent-sync.js --history --from YYYY-MM-DD --to YYYY-MM-DD
+//                                                            GitHub runner, once per window: a HISTORICAL window of the copy for
+//                                                            the upgrade-potential simulation (lib/recent/simulate.js) — every
+//                                                            settlement the copy lists, newest first with the same overlap proof,
+//                                                            down to `from`; only rows dated from … to are kept, verbatim
+//                                                            (data/streets/recent/history/<from>_<to>-v<version>.jsonl.gz + .meta.json)
 //   node scripts/street-recent-sync.js --reconcile [--force]  offline: raw rows × the stored register copy → data/streets/recent/
 //                                                              layer.json · reconciliation.json · meta.json (+ sync-runs.jsonl)
 //
@@ -59,7 +65,7 @@ const minusDays = (d, k) => isoDay(Date.parse(d + 'T00:00:00Z') - k * 864e5);
 const dayOf = (g) => String(g.deal_date || '').slice(0, 10);
 
 /** newest first with a 50-row overlap; returns the rows (verbatim, API order, unique by objectid) and the completeness proof */
-async function pageNewestFirst(query, stopBefore) {
+async function pageNewestFirst(query, stopBefore, { repeatSinglePage = true } = {}) {
   const seen = new Map(), order = [];
   let offset = 0, pages = 0, overlapChecks = 0, prev = null, first = null;
   for (;;) {
@@ -77,9 +83,12 @@ async function pageNewestFirst(query, stopBefore) {
     if (offset + STEP > 100000 - PAGE) throw new Error('the window does not fit the source\'s offset limit — nothing replaced');
     prev = rows; offset += STEP;
   }
-  const again = rowsOf(await get(`/api/deals/govmap/search?${query}sort=date_desc&limit=${PAGE}&offset=0`)).map((g) => g.objectid).join(',');
-  if (again !== first) throw new Error('the first page changed while reading — nothing replaced');
-  return { rows: order, proof: { pages, overlapChecks, overlapDisagreements: 0, firstPageRepeatIdentical: true, pageSize: PAGE, step: STEP } };
+  /* one page read once cannot be torn between pages — the repeat proves stability ACROSS pages (always for the window read) */
+  if (pages > 1 || repeatSinglePage) {
+    const again = rowsOf(await get(`/api/deals/govmap/search?${query}sort=date_desc&limit=${PAGE}&offset=0`)).map((g) => g.objectid).join(',');
+    if (again !== first) throw new Error('the first page changed while reading — nothing replaced');
+  }
+  return { rows: order, proof: { pages, overlapChecks, overlapDisagreements: 0, firstPageRepeatIdentical: pages > 1 || repeatSinglePage ? true : null, pageSize: PAGE, step: STEP } };
 }
 
 function storeRaw(rows, meta) {
@@ -171,6 +180,48 @@ async function auditReplay() {
   return 0;
 }
 
+/* a HISTORICAL window of the GovMap-layer copy (the simulation's input): per settlement — no date filter exists — newest first with
+   the overlap proof, down to `from`; a settlement whose stated latest deal is before `from` is not paged; a settlement that fails
+   is listed, never guessed. Rows without a settlement cannot be read per settlement and are absent (stated in the meta). */
+async function historyMode() {
+  const from = argVal('from'), to = argVal('to');
+  const iso = /^\d{4}-\d{2}-\d{2}$/;
+  if (!iso.test(from || '') || !iso.test(to || '') || from > to) { console.error('usage: --history --from YYYY-MM-DD --to YYYY-MM-DD'); return 2; }
+  const startedAt = new Date().toISOString();
+  const copy = await copyIdentity();
+  const list = rowsOf(await get('/api/deals/govmap/settlements'));
+  const keep = [], proofs = [], failed = [], skipped = [];
+  const seen = new Set();
+  for (const s of list) {
+    const name = s.settlement;
+    if (!name) continue;
+    const last = s.last_deal ? String(s.last_deal).slice(0, 10) : null;
+    if (last && last < from) { skipped.push(name); continue; }
+    try {
+      const { rows, proof } = await pageNewestFirst(`settlement=${encodeURIComponent(name)}&`, from, { repeatSinglePage: false });
+      const k = rows.filter((g) => dayOf(g) >= from && dayOf(g) <= to && !seen.has(g.objectid));
+      k.forEach((g) => seen.add(g.objectid));
+      keep.push(...k);
+      proofs.push({ settlement: name, read: rows.length, kept: k.length, pages: proof.pages, overlapChecks: proof.overlapChecks });
+    } catch (e) { failed.push({ settlement: name, error: String(e.message).slice(0, 200) }); }
+  }
+  keep.sort((a, b) => dayOf(b).localeCompare(dayOf(a)) || Number(a.objectid) - Number(b.objectid));
+  const body = keep.map((g) => JSON.stringify(g)).join('\n') + '\n';
+  const sha = crypto.createHash('sha256').update(body).digest('hex');
+  const dir = path.join(DIR, 'history');
+  fs.mkdirSync(dir, { recursive: true });
+  const base = `${from}_${to}-v${copy.version}`;
+  fs.writeFileSync(path.join(dir, base + '.jsonl.gz'), zlib.gzipSync(body, { level: 9 }));
+  const meta = { schema: 1, purpose: 'the upgrade-potential simulation (lib/recent/simulate.js): a historical window of the GovMap-layer copy, read per settlement',
+    copy, window: { from, to }, startedAt, fetchedAt: new Date().toISOString(), sha256: sha, rows: keep.length, settlements: { listed: list.length, read: proofs.length, skippedBeforeWindow: skipped.length, failed },
+    noSettlementRows: 'not readable per settlement — absent', proofs, requests };
+  writeJson(path.join(dir, base + '.meta.json'), meta);
+  fs.appendFileSync(path.join(dir, 'runs.jsonl'), JSON.stringify({ id: 'recent-history-' + startedAt.replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z'), source: 'over:govmap-recent', status: failed.length ? 'partial' : 'ok',
+    window: { from, to }, rows: keep.length, failed: failed.length, sha256: sha, startedAt, finishedAt: meta.fetchedAt, requests }) + '\n');
+  console.log(`history ${from} … ${to}: ${keep.length} rows from ${proofs.length} settlements (${skipped.length} skipped — latest deal before the window, ${failed.length} failed) — ${requests} requests`);
+  return failed.length ? 1 : 0;
+}
+
 function reconcileMode() {
   const R = require('../lib/recent/reconcile');
   const res = R.build({ root: ROOT, force: has('force') });
@@ -179,8 +230,8 @@ function reconcileMode() {
 }
 
 if (require.main === module) {
-  const go = has('fetch') ? fetchMode : has('audit-replay') ? auditReplay : has('reconcile') ? async () => reconcileMode() : null;
-  if (!go) { console.error('usage: --fetch [--force] | --audit-replay | --reconcile'); process.exit(2); }
+  const go = has('fetch') ? fetchMode : has('history') ? historyMode : has('audit-replay') ? auditReplay : has('reconcile') ? async () => reconcileMode() : null;
+  if (!go) { console.error('usage: --fetch [--force] | --history --from D --to D | --audit-replay | --reconcile'); process.exit(2); }
   go().then((c) => process.exit(c), (e) => { console.error(e.message); process.exit(1); });
 }
 module.exports = { pageNewestFirst, storeRaw };

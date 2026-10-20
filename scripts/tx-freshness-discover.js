@@ -16,6 +16,11 @@
 //                                                            stores (data/streets/evidence on the runner's checkout) — MATCH /
 //                                                            MISSING IN PROPX / EXTRA IN PROPX / FIELD DIFFERENCE, latest dates,
 //                                                            90 / 365-day counts, the busiest streets
+//   node scripts/tx-freshness-discover.js --share           the ownership-share audit (20.10.2026): every path and schema of the
+//                                                            republisher's OpenAPI, both copies' stats, the full field list of a
+//                                                            register row and a GovMap-layer row, every per-deal / version /
+//                                                            history endpoint the spec lists — can any field or endpoint state the
+//                                                            share sold for a GovMap-layer deal?
 
 'use strict';
 
@@ -354,10 +359,62 @@ async function recentProbe(from) {
   out({ kind: 'recentProbe', step: 'settlement-paging', overlapAgrees: s1.rows.slice(150).map(key).join(',') === s2.rows.slice(0, 50).map(key).join(',') });
 }
 
+
+/* ── --share: can any field or endpoint of either republished copy state the SHARE SOLD for a GovMap-layer deal? (P0 ownership-share
+   audit, 20.10.2026). Prints the whole OpenAPI surface (paths, parameters, response schemas), both copies' stats bodies, the full
+   field list of a register row and of a GovMap-layer row, and calls every per-deal / version / history path the spec lists once
+   with a sample key. GET only, one request a second. ── */
+async function share() {
+  const spec = await overGet('/openapi.json');
+  const S = spec.json || {};
+  out({ kind: 'share', label: 'spec', status: spec.status, title: S.info && S.info.title, version: S.info && S.info.version, paths: Object.keys(S.paths || {}).length });
+  const refName = (x) => (x && x.$ref ? x.$ref.split('/').pop() : x && x.items && x.items.$ref ? x.items.$ref.split('/').pop() + '[]' : x && x.type) || null;
+  const calls = [];
+  for (const [p, ops] of Object.entries(S.paths || {})) {
+    for (const [method, op] of Object.entries(ops)) {
+      if (typeof op !== 'object' || !op) continue;
+      const params = (op.parameters || []).map((x) => ({ name: x.name, in: x.in, required: !!x.required, type: x.schema && (x.schema.type || (x.schema.anyOf || []).map((a) => a.type).join('|')),
+        enum: x.schema && x.schema.enum || null, default: x.schema && x.schema.default != null ? x.schema.default : null, desc: trim(x.description || '', 200) }));
+      const resp = Object.fromEntries(Object.entries(op.responses || {}).map(([code, r]) => [code, refName(((r.content || {})['application/json'] || {}).schema)]));
+      out({ kind: 'share', label: 'path', method: method.toUpperCase(), path: p, summary: trim(op.summary || '', 200), desc: trim(op.description || '', 1500), params, resp });
+      if (method === 'get' && /^\/api\/deals/.test(p) && (/\{[^}]+\}/.test(p) || params.some((x) => /version|snapshot|history|as_of|dataset|portion|part|share/i.test(x.name)) || /version|history|snapshot|change|detail/i.test(p))) calls.push({ p, params });
+    }
+  }
+  for (const [name, sc] of Object.entries((S.components && S.components.schemas) || {})) {
+    const props = Object.entries(sc.properties || {}).map(([k, v]) => `${k}:${v.type || (v.anyOf || []).map((a) => a.type || refName(a)).join('|') || refName(v) || '?'}${v.description ? ' — ' + trim(v.description, 160) : ''}`);
+    out({ kind: 'share', label: 'schema', name, desc: trim(sc.description || '', 600), fields: props });
+  }
+  const rs = await overGet('/api/deals/stats');
+  out({ kind: 'share', label: 'register:stats', status: rs.status, body: rs.json });
+  const gs = await overGet('/api/deals/govmap/stats');
+  out({ kind: 'share', label: 'govmap:stats', status: gs.status, body: gs.json });
+  const rr = await overGet('/api/deals/search?sort=date_desc&limit=3');
+  const rrows = rowsOf(rr.json) || [];
+  out({ kind: 'share', label: 'register:row', status: rr.status, keys: rrows[0] ? Object.keys(rrows[0]) : null, envelope: rr.json && !Array.isArray(rr.json) ? Object.keys(rr.json) : null, rows: trim(rrows, 3000) });
+  const gr = await overGet('/api/deals/govmap/search?sort=date_desc&limit=3');
+  const grows = rowsOf(gr.json) || [];
+  out({ kind: 'share', label: 'govmap:row', status: gr.status, keys: grows[0] ? Object.keys(grows[0]) : null, envelope: gr.json && !Array.isArray(gr.json) ? Object.keys(gr.json) : null, rows: trim(grows, 3000) });
+  /* a partial-sale register row: does the register print the portion as text and as a fraction? */
+  const pr = await overGet('/api/deals/search?settlement=' + encodeURIComponent('חיפה') + '&sort=date_desc&limit=200');
+  const part = (rowsOf(pr.json) || []).filter((d) => d.portion_fraction != null && Number(d.portion_fraction) < 1).slice(0, 4);
+  out({ kind: 'share', label: 'register:partial-rows', status: pr.status, n: part.length, rows: trim(part, 2500) });
+  /* every per-deal / version / history path the spec lists, once, with a sample key */
+  const g0 = grows[0] || {};
+  const sample = { objectid: g0.objectid, deal_id: g0.deal_id, id: g0.objectid, gush: g0.gush, parcel: g0.parcel, helka: g0.parcel, version: 3 };
+  for (const c of calls.slice(0, 12)) {
+    let p = c.p.replace(/\{([^}]+)\}/g, (_, k) => encodeURIComponent(sample[k] != null ? sample[k] : sample.id));
+    const q = c.params.filter((x) => x.in === 'query' && /version|snapshot|history|as_of|dataset/i.test(x.name)).map((x) => `${x.name}=${encodeURIComponent(x.name === 'version' ? 3 : '')}`);
+    if (q.length) p += (p.includes('?') ? '&' : '?') + q.join('&');
+    const r = await overGet(p);
+    out({ kind: 'share', label: 'call', path: c.p, asked: p, status: r.status, keys: r.json && !Array.isArray(r.json) ? Object.keys(r.json) : null, body: trim(r.json || r.text, 2500) });
+  }
+}
+
 (async () => {
   try {
     if (args.includes('--official')) await official();
     else if (args.includes('--over')) await over();
+    else if (args.includes('--share')) await share();
     else if (args.includes('--recent-probe')) await recentProbe(opt('--from') || '2026-07-03');
     else if (args.includes('--compare')) await compare(String(opt('--compare') || '').split('|').filter(Boolean), opt('--from'));
     else { console.error('usage: --official | --over | --compare "<city>|<city>"'); process.exit(2); }

@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'official | over | compare'
+        description: 'official | over | compare | recent-probe | share'
         type: choice
-        options: [official, over, compare, recent-probe]
+        options: [official, over, compare, recent-probe, share]
         default: official
       cities:
         description: 'compare: city names separated by |'
@@ -52,5 +52,6 @@ jobs:
             over)    node scripts/tx-freshness-discover.js --over ;;
             compare) node scripts/tx-freshness-discover.js --compare "$CITIES" ${FROM:+--from "$FROM"} ;;
             recent-probe) node scripts/tx-freshness-discover.js --recent-probe ${FROM:+--from "$FROM"} ;;
+            share)   node scripts/tx-freshness-discover.js --share ;;
             *)       node scripts/tx-freshness-discover.js --official ;;
           esac
