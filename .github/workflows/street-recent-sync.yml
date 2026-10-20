@@ -1,0 +1,82 @@
+# PROPX · RECENT TRANSACTIONS LAYER — the GovMap deals layer (lay=16) as republished by over.org.il, read for the recent window
+# only and reconciled against the register copy (scripts/street-recent-sync.js; lib/recent/). A separate recent-evidence source
+# beside the register — never a replacement: a deal the register copy holds stays the register's.
+#
+# Daily: one request when the copy is unchanged; when it changed (or the register's window moved), the window is read newest
+# first with overlapping pages (each overlap must agree, the first page is re-read and must be identical — else nothing is
+# replaced), stored verbatim, and reconciled offline. data/streets/recent/ is bot-written.
+
+name: Street recent sync
+
+on:
+  schedule:
+    - cron: '7 4 * * *'   # every day 04:07 UTC, after the register check (03:41)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'fetch (read when changed + reconcile) · fetch-only · audit-replay · reconcile'
+        type: choice
+        options: [fetch, fetch-only, audit-replay, reconcile]
+        default: fetch
+      force:
+        description: 'Read the window although the copy has not changed'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: street-recent-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read the GovMap-layer copy (read-only)
+        id: fetch
+        env:
+          MODE: ${{ inputs.mode || 'fetch' }}
+          FORCE: ${{ inputs.force == true }}
+        run: |
+          set +e
+          code=0
+          case "$MODE" in
+            fetch|fetch-only) node scripts/street-recent-sync.js --fetch $([ "$FORCE" = "true" ] && echo --force); code=$? ;;
+            audit-replay) node scripts/street-recent-sync.js --audit-replay; code=$? ;;
+          esac
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+      - name: Reconcile against the register copy (offline) + gates
+        id: rec
+        if: steps.fetch.outputs.code == '0' && (inputs.mode == '' || inputs.mode == 'fetch' || inputs.mode == 'reconcile' || github.event_name == 'schedule')
+        run: |
+          set +e
+          node scripts/street-recent-sync.js --reconcile
+          code=$?
+          if [ $code -eq 0 ] && [ -f test/recent.test.js ]; then node test/recent.test.js; code=$?; fi
+          if [ $code -ne 0 ]; then echo 'Reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent/layer.json data/streets/recent/reconciliation.json data/streets/recent/meta.json 2>/dev/null; fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/streets/recent
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "Recent transactions layer: $(tail -n 1 data/streets/recent/sync-runs.jsonl 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const r=JSON.parse(s);console.log(`${r.status} · copy ${r.copy?String(r.copy.loadedAt).slice(0,10)+" v"+r.copy.version:"?"} · ${r.rows!=null?r.rows+" rows · ":""}${r.requests} requests`)}catch{console.log("run log")}})')"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
+      - name: Fail the run if a step failed
+        if: steps.fetch.outputs.code != '0' || (steps.rec.outcome != 'skipped' && steps.rec.outputs.code != '0')
+        run: |
+          echo "fetch ${{ steps.fetch.outputs.code }} · reconcile ${{ steps.rec.outputs.code }}" >&2
+          exit 1
