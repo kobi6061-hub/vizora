@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "ranAt": "2026-10-20T20:14:48.978Z",
+ "ranAt": "2026-10-20T21:34:09.155Z",
  "today": "2026-10-20",
  "engine": "propx-txevents-1",
  "quick": false,
@@ -28,6 +28,7 @@
    "govmapWindow": 148,
    "govmapHistory": 280,
    "govmapFolded": 36,
+   "registerCopiesCollapsed": 0,
    "unplaced": 0,
    "possibleDuplicates": 8,
    "cursorAtStop": null,
@@ -37,9 +38,12 @@
    "registerNames": [
     "פתח תקווה"
    ],
+   "registerWindowCopiesCollapsed": 0,
+   "registerAccounted": null,
    "govmapHistoryRows": null,
    "govmapHistoryAccounted": null,
    "pass": true,
+   "registerSearchCopies": 0,
    "registerSearchCapped": false,
    "registerMissing": 0,
    "registerMissingExamples": [],
@@ -52,17 +56,18 @@
    "pages": 4,
    "end": true,
    "error": null,
-   "events": 578,
-   "counted": 578,
+   "events": 462,
+   "counted": 462,
    "duplicateIds": 0,
    "risingDates": 0,
    "firstCounted": "2023-08-22",
    "oldest": "1999-09-22",
-   "register": 232,
+   "register": 116,
    "registerUnmapped": 0,
    "govmapWindow": 0,
    "govmapHistory": 346,
    "govmapFolded": 4,
+   "registerCopiesCollapsed": 116,
    "unplaced": 0,
    "possibleDuplicates": 0,
    "cursorAtStop": null,
@@ -72,10 +77,13 @@
    "registerNames": [
     "זנוח"
    ],
+   "registerWindowCopiesCollapsed": 0,
+   "registerAccounted": 232,
    "govmapHistoryRows": 350,
    "govmapHistoryAccounted": 350,
    "pass": true,
    "registerSearchTotal": 232,
+   "registerSearchCopies": 116,
    "registerSearchKeys": 116,
    "registerUndated": 0,
    "registerUndatedRows": [],
@@ -87,20 +95,21 @@
    "id": "locality:small:7",
    "code": 7,
    "streetCode": null,
-   "pages": 3,
+   "pages": 2,
    "end": true,
    "error": null,
-   "events": 372,
-   "counted": 372,
+   "events": 190,
+   "counted": 190,
    "duplicateIds": 0,
    "risingDates": 0,
    "firstCounted": "2025-05-10",
    "oldest": "1998-02-01",
-   "register": 367,
+   "register": 185,
    "registerUnmapped": 0,
    "govmapWindow": 0,
    "govmapHistory": 5,
    "govmapFolded": 80,
+   "registerCopiesCollapsed": 182,
    "unplaced": 0,
    "possibleDuplicates": 0,
    "cursorAtStop": null,
@@ -110,40 +119,18 @@
    "registerNames": [
     "שחר"
    ],
+   "registerWindowCopiesCollapsed": 3,
+   "registerAccounted": 370,
    "govmapHistoryRows": 85,
    "govmapHistoryAccounted": 85,
-   "pass": false,
+   "pass": true,
    "registerSearchTotal": 370,
+   "registerSearchCopies": 185,
    "registerSearchKeys": 185,
    "registerUndated": 0,
    "registerUndatedRows": [],
-   "registerMissing": 3,
-   "registerMissingExamples": [
-    {
-     "key": "7|2025-05-10|3060/20/0|1725000",
-     "inRegisterSearch": 2,
-     "shown": 1,
-     "shownSameDay": [
-      "reg:7|2025-05-10|3060/20/0|1725000"
-     ]
-    },
-    {
-     "key": "7|2025-03-04|3090/19/0|1226081",
-     "inRegisterSearch": 2,
-     "shown": 1,
-     "shownSameDay": [
-      "reg:7|2025-03-04|3090/19/0|1226081"
-     ]
-    },
-    {
-     "key": "7|2025-01-01|3090/42/0|1232994",
-     "inRegisterSearch": 2,
-     "shown": 1,
-     "shownSameDay": [
-      "reg:7|2025-01-01|3090/42/0|1232994"
-     ]
-    }
-   ],
+   "registerMissing": 0,
+   "registerMissingExamples": [],
    "registerShownNotInSearch": 0
   },
   {
@@ -156,7 +143,7 @@
    "events": 135383,
    "counted": 132091,
    "duplicateIds": 0,
-   "risingDates": 1,
+   "risingDates": 0,
    "firstCounted": "2026-09-02",
    "oldest": "1998-01-01",
    "register": 124367,
@@ -164,31 +151,21 @@
    "govmapWindow": 775,
    "govmapHistory": 10238,
    "govmapFolded": 73535,
+   "registerCopiesCollapsed": 0,
    "unplaced": 0,
    "possibleDuplicates": 3292,
    "cursorAtStop": null,
-   "risingAt": [
-    {
-     "page": 60,
-     "before": {
-      "id": "regx:7900|2020-10-20|6401/20/0|1555000",
-      "date": "2020-10-20"
-     },
-     "after": {
-      "id": "gmh:1901825",
-      "date": "2023-08-23",
-      "source": "govmap"
-     }
-    }
-   ],
+   "risingAt": [],
    "duplicateExamples": [],
    "registerExpected": 124367,
    "registerNames": [
     "פתח תקווה"
    ],
+   "registerWindowCopiesCollapsed": 0,
+   "registerAccounted": 124367,
    "govmapHistoryRows": 83773,
    "govmapHistoryAccounted": 83773,
-   "pass": false
+   "pass": true
   },
   {
    "id": "locality:haifa",
@@ -208,6 +185,7 @@
    "govmapWindow": 2367,
    "govmapHistory": 25721,
    "govmapFolded": 83753,
+   "registerCopiesCollapsed": 0,
    "unplaced": 0,
    "possibleDuplicates": 4618,
    "cursorAtStop": null,
@@ -218,8 +196,427 @@
     "חיפה",
     "קרית חיים"
    ],
+   "registerWindowCopiesCollapsed": 0,
+   "registerAccounted": 133401,
    "govmapHistoryRows": 109474,
    "govmapHistoryAccounted": 109474,
+   "pass": true
+  }
+ ],
+ "partial": [
+  {
+   "id": "locality:tel-aviv",
+   "head": {
+    "pages": 3,
+    "firstCounted": "2026-08-30",
+    "oldest": "2026-06-14",
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "unplaced": 0,
+    "error": null
+   },
+   "tail": {
+    "pages": 13,
+    "end": true,
+    "oldest": "1998-01-01",
+    "events": 1938,
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "error": null
+   },
+   "pass": true
+  },
+  {
+   "id": "locality:jerusalem",
+   "head": {
+    "pages": 3,
+    "firstCounted": "2026-09-01",
+    "oldest": "2026-06-16",
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "unplaced": 0,
+    "error": null
+   },
+   "tail": {
+    "pages": 7,
+    "end": true,
+    "oldest": "1998-01-01",
+    "events": 1264,
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "error": null
+   },
+   "pass": true
+  },
+  {
+   "id": "area:il",
+   "head": {
+    "pages": 3,
+    "firstCounted": "2026-09-28",
+    "oldest": "2026-08-17",
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "unplaced": 2,
+    "error": null
+   },
+   "tail": {
+    "pages": 93,
+    "end": true,
+    "oldest": "1996-09-30",
+    "events": 22648,
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "error": null
+   },
+   "pass": true
+  },
+  {
+   "id": "area:d-haifa",
+   "head": {
+    "pages": 3,
+    "firstCounted": "2026-09-07",
+    "oldest": "2026-08-17",
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "unplaced": 0,
+    "error": null
+   },
+   "tail": {
+    "pages": 93,
+    "end": true,
+    "oldest": "1998-01-01",
+    "events": 3386,
+    "duplicateIds": 0,
+    "risingDates": 0,
+    "error": null
+   },
+   "pass": true
+  }
+ ],
+ "periods": [
+  {
+   "place": "tel-aviv",
+   "period": "d30",
+   "from": "2026-09-20",
+   "to": "2026-10-20",
+   "apiTotal": 0,
+   "storedUnion": 0,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": null,
+   "statement": "COVERAGE_INCOMPLETE",
+   "pass": true
+  },
+  {
+   "place": "tel-aviv",
+   "period": "d90",
+   "from": "2026-07-22",
+   "to": "2026-10-20",
+   "apiTotal": 160,
+   "storedUnion": 160,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "tel-aviv",
+   "period": "m6",
+   "from": "2026-04-20",
+   "to": "2026-10-20",
+   "apiTotal": 2062,
+   "storedUnion": 2062,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "tel-aviv",
+   "period": "m12",
+   "from": "2025-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 6190,
+   "storedUnion": 6190,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "tel-aviv",
+   "period": "m24",
+   "from": "2024-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 15885,
+   "storedUnion": 15885,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "jerusalem",
+   "period": "d30",
+   "from": "2026-09-20",
+   "to": "2026-10-20",
+   "apiTotal": 0,
+   "storedUnion": 0,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": null,
+   "statement": "COVERAGE_INCOMPLETE",
+   "pass": true
+  },
+  {
+   "place": "jerusalem",
+   "period": "d90",
+   "from": "2026-07-22",
+   "to": "2026-10-20",
+   "apiTotal": 177,
+   "storedUnion": 177,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-01",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "jerusalem",
+   "period": "m6",
+   "from": "2026-04-20",
+   "to": "2026-10-20",
+   "apiTotal": 1620,
+   "storedUnion": 1620,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-01",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "jerusalem",
+   "period": "m12",
+   "from": "2025-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 5228,
+   "storedUnion": 5228,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-01",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "jerusalem",
+   "period": "m24",
+   "from": "2024-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 13572,
+   "storedUnion": 13572,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-01",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "haifa",
+   "period": "d30",
+   "from": "2026-09-20",
+   "to": "2026-10-20",
+   "apiTotal": 0,
+   "storedUnion": 0,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": null,
+   "statement": "COVERAGE_INCOMPLETE",
+   "pass": true
+  },
+  {
+   "place": "haifa",
+   "period": "d90",
+   "from": "2026-07-22",
+   "to": "2026-10-20",
+   "apiTotal": 307,
+   "storedUnion": 307,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "haifa",
+   "period": "m6",
+   "from": "2026-04-20",
+   "to": "2026-10-20",
+   "apiTotal": 1442,
+   "storedUnion": 1442,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "haifa",
+   "period": "m12",
+   "from": "2025-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 4192,
+   "storedUnion": 4192,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "haifa",
+   "period": "m24",
+   "from": "2024-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 10512,
+   "storedUnion": 10512,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "petah-tikva",
+   "period": "d30",
+   "from": "2026-09-20",
+   "to": "2026-10-20",
+   "apiTotal": 0,
+   "storedUnion": 0,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": null,
+   "statement": "COVERAGE_INCOMPLETE",
+   "pass": true
+  },
+  {
+   "place": "petah-tikva",
+   "period": "d90",
+   "from": "2026-07-22",
+   "to": "2026-10-20",
+   "apiTotal": 170,
+   "storedUnion": 170,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "petah-tikva",
+   "period": "m6",
+   "from": "2026-04-20",
+   "to": "2026-10-20",
+   "apiTotal": 804,
+   "storedUnion": 804,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "petah-tikva",
+   "period": "m12",
+   "from": "2025-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 2559,
+   "storedUnion": 2559,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "petah-tikva",
+   "period": "m24",
+   "from": "2024-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 6808,
+   "storedUnion": 6808,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-09-02",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "shaham",
+   "period": "d30",
+   "from": "2026-09-20",
+   "to": "2026-10-20",
+   "apiTotal": 0,
+   "storedUnion": 0,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": null,
+   "statement": "COVERAGE_INCOMPLETE",
+   "pass": true
+  },
+  {
+   "place": "shaham",
+   "period": "d90",
+   "from": "2026-07-22",
+   "to": "2026-10-20",
+   "apiTotal": 4,
+   "storedUnion": 4,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "shaham",
+   "period": "m6",
+   "from": "2026-04-20",
+   "to": "2026-10-20",
+   "apiTotal": 14,
+   "storedUnion": 14,
+   "outside": 0,
+   "liveAdded": 0,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "shaham",
+   "period": "m12",
+   "from": "2025-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 78,
+   "storedUnion": 74,
+   "outside": 0,
+   "liveAdded": 4,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
+   "pass": true
+  },
+  {
+   "place": "shaham",
+   "period": "m24",
+   "from": "2024-10-19",
+   "to": "2026-10-20",
+   "apiTotal": 263,
+   "storedUnion": 254,
+   "outside": 0,
+   "liveAdded": 9,
+   "newest": "2026-08-30",
+   "statement": "EVENTS",
    "pass": true
   }
  ],
@@ -585,430 +982,6 @@
    "pass": true
   }
  ],
- "sectionsRanAt": {
-  "full": "2026-10-20T20:14:48.978Z",
-  "partial": "2026-10-20T19:48:29.482Z",
-  "periods": "2026-10-20T19:48:29.482Z",
-  "historyStreets": "2026-10-20T20:14:48.978Z",
-  "latest": "2026-10-20T19:48:29.482Z"
- },
- "partial": [
-  {
-   "id": "locality:tel-aviv",
-   "head": {
-    "pages": 3,
-    "firstCounted": "2026-08-30",
-    "oldest": "2026-06-14",
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "unplaced": 0,
-    "error": null
-   },
-   "tail": {
-    "pages": 13,
-    "end": true,
-    "oldest": "1998-01-01",
-    "events": 1938,
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "error": null
-   },
-   "pass": true
-  },
-  {
-   "id": "locality:jerusalem",
-   "head": {
-    "pages": 3,
-    "firstCounted": "2026-09-01",
-    "oldest": "2026-06-16",
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "unplaced": 0,
-    "error": null
-   },
-   "tail": {
-    "pages": 7,
-    "end": true,
-    "oldest": "1998-01-01",
-    "events": 1262,
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "error": null
-   },
-   "pass": true
-  },
-  {
-   "id": "area:il",
-   "head": {
-    "pages": 3,
-    "firstCounted": "2026-09-28",
-    "oldest": "2026-08-17",
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "unplaced": 2,
-    "error": null
-   },
-   "tail": {
-    "pages": 93,
-    "end": true,
-    "oldest": "1996-09-30",
-    "events": 24508,
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "error": null
-   },
-   "pass": true
-  },
-  {
-   "id": "area:d-haifa",
-   "head": {
-    "pages": 3,
-    "firstCounted": "2026-09-07",
-    "oldest": "2026-08-17",
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "unplaced": 0,
-    "error": null
-   },
-   "tail": {
-    "pages": 93,
-    "end": true,
-    "oldest": "1998-01-01",
-    "events": 3706,
-    "duplicateIds": 0,
-    "risingDates": 0,
-    "error": null
-   },
-   "pass": true
-  }
- ],
- "periods": [
-  {
-   "place": "tel-aviv",
-   "period": "d30",
-   "from": "2026-09-20",
-   "to": "2026-10-20",
-   "apiTotal": 0,
-   "storedUnion": 0,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": null,
-   "statement": "COVERAGE_INCOMPLETE",
-   "pass": true
-  },
-  {
-   "place": "tel-aviv",
-   "period": "d90",
-   "from": "2026-07-22",
-   "to": "2026-10-20",
-   "apiTotal": 160,
-   "storedUnion": 160,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "tel-aviv",
-   "period": "m6",
-   "from": "2026-04-20",
-   "to": "2026-10-20",
-   "apiTotal": 2062,
-   "storedUnion": 2062,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "tel-aviv",
-   "period": "m12",
-   "from": "2025-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 6190,
-   "storedUnion": 6190,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "tel-aviv",
-   "period": "m24",
-   "from": "2024-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 15885,
-   "storedUnion": 15885,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "jerusalem",
-   "period": "d30",
-   "from": "2026-09-20",
-   "to": "2026-10-20",
-   "apiTotal": 0,
-   "storedUnion": 0,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": null,
-   "statement": "COVERAGE_INCOMPLETE",
-   "pass": true
-  },
-  {
-   "place": "jerusalem",
-   "period": "d90",
-   "from": "2026-07-22",
-   "to": "2026-10-20",
-   "apiTotal": 177,
-   "storedUnion": 177,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-01",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "jerusalem",
-   "period": "m6",
-   "from": "2026-04-20",
-   "to": "2026-10-20",
-   "apiTotal": 1620,
-   "storedUnion": 1620,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-01",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "jerusalem",
-   "period": "m12",
-   "from": "2025-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 5228,
-   "storedUnion": 5228,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-01",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "jerusalem",
-   "period": "m24",
-   "from": "2024-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 13572,
-   "storedUnion": 13572,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-01",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "haifa",
-   "period": "d30",
-   "from": "2026-09-20",
-   "to": "2026-10-20",
-   "apiTotal": 0,
-   "storedUnion": 0,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": null,
-   "statement": "COVERAGE_INCOMPLETE",
-   "pass": true
-  },
-  {
-   "place": "haifa",
-   "period": "d90",
-   "from": "2026-07-22",
-   "to": "2026-10-20",
-   "apiTotal": 307,
-   "storedUnion": 307,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "haifa",
-   "period": "m6",
-   "from": "2026-04-20",
-   "to": "2026-10-20",
-   "apiTotal": 1442,
-   "storedUnion": 1442,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "haifa",
-   "period": "m12",
-   "from": "2025-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 4192,
-   "storedUnion": 4192,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "haifa",
-   "period": "m24",
-   "from": "2024-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 10512,
-   "storedUnion": 10512,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "petah-tikva",
-   "period": "d30",
-   "from": "2026-09-20",
-   "to": "2026-10-20",
-   "apiTotal": 0,
-   "storedUnion": 0,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": null,
-   "statement": "COVERAGE_INCOMPLETE",
-   "pass": true
-  },
-  {
-   "place": "petah-tikva",
-   "period": "d90",
-   "from": "2026-07-22",
-   "to": "2026-10-20",
-   "apiTotal": 170,
-   "storedUnion": 170,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "petah-tikva",
-   "period": "m6",
-   "from": "2026-04-20",
-   "to": "2026-10-20",
-   "apiTotal": 804,
-   "storedUnion": 804,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "petah-tikva",
-   "period": "m12",
-   "from": "2025-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 2559,
-   "storedUnion": 2559,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "petah-tikva",
-   "period": "m24",
-   "from": "2024-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 6808,
-   "storedUnion": 6808,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-09-02",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "shaham",
-   "period": "d30",
-   "from": "2026-09-20",
-   "to": "2026-10-20",
-   "apiTotal": 0,
-   "storedUnion": 0,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": null,
-   "statement": "COVERAGE_INCOMPLETE",
-   "pass": true
-  },
-  {
-   "place": "shaham",
-   "period": "d90",
-   "from": "2026-07-22",
-   "to": "2026-10-20",
-   "apiTotal": 4,
-   "storedUnion": 4,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "shaham",
-   "period": "m6",
-   "from": "2026-04-20",
-   "to": "2026-10-20",
-   "apiTotal": 14,
-   "storedUnion": 14,
-   "outside": 0,
-   "liveAdded": 0,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "shaham",
-   "period": "m12",
-   "from": "2025-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 78,
-   "storedUnion": 74,
-   "outside": 0,
-   "liveAdded": 4,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  },
-  {
-   "place": "shaham",
-   "period": "m24",
-   "from": "2024-10-19",
-   "to": "2026-10-20",
-   "apiTotal": 263,
-   "storedUnion": 254,
-   "outside": 0,
-   "liveAdded": 9,
-   "newest": "2026-08-30",
-   "statement": "EVENTS",
-   "pass": true
-  }
- ],
  "latest": {
   "localities": [
    {
@@ -1034,6 +1007,18 @@
     "error": null,
     "match": true,
     "reason": "NO_TRANSACTION_IN_ANY_SOURCE"
+   },
+   {
+    "code": 79,
+    "name": "דגניה ב'",
+    "registerLastDeal": "2022-06-29",
+    "registerDeals": 394,
+    "govmapHistoryLatest": "2022-06-29",
+    "source": "2022-06-29",
+    "visible": "2022-06-29",
+    "error": null,
+    "match": true,
+    "reason": null
    },
    {
     "code": 89,
@@ -2128,6 +2113,18 @@
     "reason": null
    },
    {
+    "code": 1297,
+    "name": "כפר חנניה",
+    "registerLastDeal": "2023-07-30",
+    "registerDeals": 214,
+    "govmapHistoryLatest": "2023-03-12",
+    "source": "2023-07-30",
+    "visible": "2023-07-30",
+    "error": null,
+    "match": true,
+    "reason": null
+   },
+   {
     "code": 1298,
     "name": "אתגר",
     "registerLastDeal": null,
@@ -2138,6 +2135,18 @@
     "error": null,
     "match": true,
     "reason": "NO_TRANSACTION_IN_ANY_SOURCE"
+   },
+   {
+    "code": 1316,
+    "name": "אל-עריאן",
+    "registerLastDeal": null,
+    "registerDeals": 0,
+    "govmapHistoryLatest": "2013-07-28",
+    "source": "2013-07-28",
+    "visible": "2013-07-28",
+    "error": null,
+    "match": true,
+    "reason": null
    },
    {
     "code": 1318,
@@ -2186,6 +2195,18 @@
     "error": null,
     "match": true,
     "reason": "NO_TRANSACTION_IN_ANY_SOURCE"
+   },
+   {
+    "code": 1335,
+    "name": "ערב אל נעים",
+    "registerLastDeal": null,
+    "registerDeals": 0,
+    "govmapHistoryLatest": "2017-10-17",
+    "source": "2017-10-17",
+    "visible": "2017-10-17",
+    "error": null,
+    "match": true,
+    "reason": null
    },
    {
     "code": 1338,
@@ -4003,20 +4024,24 @@
    }
   ],
   "summary": {
-   "checked": 245,
-   "withTransactions": 78,
-   "match": 78,
+   "checked": 249,
+   "withTransactions": 82,
+   "match": 82,
    "mismatch": 0,
    "noTransaction": 167,
    "errors": 0
   }
  },
- "requests": 2262,
- "backoffs": 17,
- "retries": 34,
- "only": [
-  "full",
-  "historyStreets"
- ],
- "pass": false
+ "sectionsRanAt": {
+  "full": "2026-10-20T21:34:09.155Z",
+  "partial": "2026-10-20T21:34:09.155Z",
+  "periods": "2026-10-20T21:34:09.155Z",
+  "historyStreets": "2026-10-20T21:34:09.155Z",
+  "latest": "2026-10-20T21:34:09.155Z"
+ },
+ "requests": 2746,
+ "backoffs": 24,
+ "retries": 48,
+ "only": null,
+ "pass": true
 }
