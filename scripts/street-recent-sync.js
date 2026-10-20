@@ -142,6 +142,9 @@ async function fetchMode() {
 
 /* the 19.10.2026 comparison's input, replayed: per city, per settlement spelling, newest first (the order its matching consumed) */
 const AUDIT_CITIES = ['פתח תקווה', 'תל אביב-יפו', 'ירושלים', 'חיפה', 'באר שבע', 'ראשון לציון', 'נתניה', 'אשדוד'];
+/* the comparison read from 18.09.2025; a row it read matches only register deals within ONE day of its own date, so rows dated
+   before 28.06.2026 (six days before the late cut 04.07.2026) can never take a deal a late row needs — they cannot change a
+   late row's class, and the replay stops there */
 const AUDIT_DOWN_TO = '2026-06-28';
 async function auditReplay() {
   const copy = await copyIdentity();
