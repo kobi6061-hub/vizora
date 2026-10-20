@@ -123,6 +123,8 @@ t('CONFIRMATION: only a NEWER register copy confirms; the semantics are the regi
     else if (reg.portion < 1) { assert.equal(e.semantics, 'PARTIAL_SHARE', 'a share — "0.000" too (rounded at source)'); assert.equal(c.priced, false); assert.equal(c.pricePerSqm, null); }
     else assert.ok(['WHOLE_PROPERTY', 'MULTI_UNIT'].includes(e.semantics));
     if (c.priced) { assert.equal(e.semantics, 'WHOLE_PROPERTY'); assert.ok(reg.amount >= EV.MIN_MARKET); }
+    /* the same transaction: the recent amount is one of the register deal's printed forms */
+    assert.ok(e.semantics === 'PARTIAL_SHARE' ? ['share-amount', 'whole-value'].includes(c.printedAs) : c.printedAs === 'register-amount', e.key + ' ' + c.printedAs);
     if (e.semantics === 'UNKNOWN') assert.notEqual(e.to, 'RECENT_OBSERVED_VERIFIED', 'no portion → never VERIFIED');
   }
   assert.ok(obs.every((e) => e.to !== 'RECENT_OBSERVED_VERIFIED'), 'nothing is VERIFIED at first observation');
@@ -164,6 +166,10 @@ t('CONFLICT: a newer copy that files the deal under another locality, or calls i
   assert.ok(cf.length > 0);
   for (const e of cf) { assert.equal(e.to, 'RECENT_CONFLICT'); assert.ok(e.reasons.length); assert.ok(e.conflictWith); }
   assert.ok(cf.some((e) => e.reasons.includes('register-files-it-under-another-locality')));
+  /* the reconciliation's strong match beside a partial-sale register deal accepts any amount; a confirmation does not */
+  const nofit = cf.filter((e) => e.reasons.includes('register-amount-does-not-fit'));
+  assert.ok(nofit.length > 0);
+  for (const e of nofit) { const reg = e.conflictWith.representations.register; assert.equal(e.conflictWith.printedAs, null); assert.ok(reg.amount != null); }
 });
 
 t('CARRIED: a deal awaiting confirmation that a newer GovMap-layer copy no longer holds is carried from the copy that first showed it — LEFT_COPY, evaluated, never shown', () => {
@@ -221,6 +227,24 @@ t('THE PAGE: the three counts with their ⓘ, the user-facing sentence; a recent
     assert.match(h, /used\(d\)&&d\.pricePerSqm!=null\?fmtNIS\(d\.pricePerSqm\):"—"/, f + ': ₪/m² only for a price that is used');
   }
   assert.match(C.NOTE, /^Recent recorded transactions include transactions whose ownership share is not stated by the recent source\. These transactions are excluded from price statistics until their pricing semantics can be verified\.$/);
+});
+
+t('SIMULATION (simulation.json): the blinded late-confirmation replay accounts for every deal; VERIFIED only through a confirmation; the lag is not measurable from one register copy', () => {
+  const S2 = readJson(path.join(DIR, 'simulation.json'));
+  const H = S2.populations.find((p) => /^HISTORICAL/.test(p.label)), Cn = S2.populations.find((p) => /^CURRENT/.test(p.label));
+  assert.ok(H && Cn);
+  for (const p of [H, Cn]) for (const x of [p.all, p.events, ...Object.values(p.byFirstState)]) {
+    assert.equal(x.matched, x.wholeProperty + x.partialShare + x.multiUnit + x.portionUnknown + x.conflictWithRegister);
+    assert.equal(x.matched + x.amountDoesNotFit + x.possibleDuplicate + x.duplicatePrint + x.notInRegister + x.other, x.n);
+    assert.equal(x.finalVerified, x.verifiedWholeProperty + x.verifiedPartialShare + x.verifiedMultiUnit);
+    assert.ok(x.finalVerified <= x.matched);
+  }
+  for (const [k] of Object.entries(H.transitions)) if (/→ RECENT_OBSERVED_VERIFIED$/.test(k)) assert.ok(!/^RECENT_OBSERVED_VERIFIED/.test(k), 'nothing starts VERIFIED');
+  assert.equal(H.byFirstState.RECENT_OBSERVED_VERIFIED.n, 0); assert.equal(Cn.byFirstState.RECENT_OBSERVED_VERIFIED.n, 0);
+  assert.equal(Cn.events.notInRegister, meta.promotion.eligible.event, 'today\'s recorded events are exactly the ones no register copy holds');
+  assert.equal(S2.lag.measurable, false); assert.equal(S2.lag.median, null);
+  const hm = readJson(path.join(DIR, 'history', '2025-06-28_2025-10-08-v4.meta.json'));
+  assert.equal(H.rows, hm.rows); assert.equal(hm.settlements.failed.length, 0);
 });
 
 t('MODEL / STATISTICS untouched: the street read\'s observed figures and the Street Value Model read no recent row', () => {

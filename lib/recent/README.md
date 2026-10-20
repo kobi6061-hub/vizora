@@ -195,3 +195,36 @@ transactions are excluded from price statistics until their pricing semantics ca
 SHARE NOT STATED" (or its state's reason), no ₪/m² on a price that is not used, and its source fields. The observed card, the median,
 the sample state, the change and the Street Value Model are unchanged.
 
+## The late-confirmation simulation (`lib/recent/simulate.js`, `node scripts/recent-simulate.js` → `simulation.json`)
+
+The production engine replayed on deals both copies hold: the register BLINDED from the window's first day (every GovMap-layer row of
+the window is "first seen as recent-only" and gets its promotion state), then the full register copy ARRIVES and the lifecycle decides.
+A confirmation needs the reconciliation's strong match AND the recent amount fitting one of the register deal's printed forms (equal /
+truncated to ₪1,000, or for a partial sale the share's amount or the whole value within the portion's three-decimal rounding) — the
+match alone accepts any amount beside a partial-sale register deal of the same area (1,467 such historical rows: AMOUNT DOES NOT FIT,
+never confirmed).
+
+| HISTORICAL window 04.07–08.10.2025 (32,108 rows read per settlement, 1,209 settlements, none failed) | deals | % of 24,845 |
+|---|---|---|
+| first seen as recent-only | 24,845 | 100 |
+| later matched as the same register transaction | 20,941 | 84.3 |
+| · confirmed WHOLE PROPERTY | 16,001 | 64.4 |
+| · confirmed PARTIAL SHARE | 4,509 | 18.1 |
+| · confirmed MULTI-UNIT (one consideration, several sub-parcels) | 225 | 0.9 |
+| · contradicted by the register (another locality / not a dwelling) | 206 | 0.8 |
+| unresolved (never in the register 2,270 · amount does not fit 1,467 · possible duplicate 79 · other 2) | 3,818 | 15.4 |
+| a second print of a register deal | 86 | 0.3 |
+| eventually VERIFIED (identity + stated semantics) | 8,072 | 32.5 |
+| · of which WHOLE PROPERTY (price-eligible) | 6,373 | 25.7 |
+
+The deals that would have been RECORDED TRANSACTION EVENTS (8,729): 92.2 % matched, 72.7 % whole property, 19.1 % partial share, 0.3 %
+multi-unit, 7.8 % unresolved; every matched one VERIFIED (8,037). The CURRENT window replays the register copy of 19.09.2026 — it holds
+only the deals reported by then (41.0 % matched); its 4,403 "never in the register" ARE today's recent-only deals, and its recorded-event
+rows still unmatched are exactly the 967.
+
+**What it is not.** A historical rate is never applied to a deal: a recent-only deal's semantics stay UNKNOWN until a register copy states
+its portion — 64–73 % whole property in history does not make any single deal whole. **Lag.** Not measurable: the register exists as one
+copy (built 18–19.09.2026, no later version; its scraper blocked since), so no deal has been confirmed by a LATER copy — the lifecycle
+records it (`meta.json → lifecycle.lag`: n · median · P80 · P90 · max · bands 0–7 / 8–21 / 22–45 / 46–90 / 90+ days) from the first
+confirmation.
+

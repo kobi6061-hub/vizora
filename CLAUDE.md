@@ -176,7 +176,10 @@
   VERIFIED whole — 0), never one number; registry `recorded_transaction_events` · `verified_dwelling_transactions` · `priced_transactions_in_statistics`
   · `recent_promotion_lifecycle`; the page's counts block + "PRICE NOT USED IN MARKET STATISTICS · OWNERSHIP SHARE NOT STATED" on each recent
   price (no ₪/m² on an unused price) + its source fields. SIMULATION (`lib/recent/simulate.js`, `scripts/recent-simulate.js` →
-  `simulation.json`): the register blinded from the window's first day, then arriving (a historical window a year back + today's window). Lag statistics (median ·
+  `simulation.json`): the register blinded from the window's first day, then arriving — HISTORICAL 04.07–08.10.2025 (32,108 rows, 1,209
+  settlements): 24,845 first seen as recent-only → 20,941 matched (84.3 %: WHOLE 16,001 · PARTIAL 4,509 · MULTI-UNIT 225 · contradicted 206) ·
+  3,818 unresolved (15.4 %; incl. 1,467 whose amount fits no printed form of the matched register deal — never a confirmation) · 8,072
+  VERIFIED (32.5 %; whole 6,373). A historical rate is never applied to a deal. Lag statistics (median ·
   P80 · P90 · max · bands 0–7 / 8–21 / 22–45 / 46–90 / 90+ days, first read → confirming copy) live in `meta.json → lifecycle.lag` — empty
   until a newer register copy confirms a deal; not measurable from one register copy.
   `test/recent-lifecycle.test.js`. The observed figures and the Street Value Model read none of it.
