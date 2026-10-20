@@ -306,10 +306,59 @@ async function compare(names, fromArg) {
   out({ kind: 'fixtureCandidates', n: fixture.length, rows: fixture });
 }
 
+/* ── --recent-probe: before PROPX stores the GovMap-layer copy's recent rows — is the copy still the audited version, is
+   newest-first paging stable (overlapping pages agree; a repeated page is identical), what do the recent rows look like
+   (future dates, no settlement, no property type, the two deal-id series, in-source duplicates)? ── */
+async function recentProbe(from) {
+  const gs = await overGet('/api/deals/govmap/stats');
+  out({ kind: 'recentProbe', step: 'stats', body: gs.json });
+  const page = async (q, offset) => { const r = await overGet(`/api/deals/govmap/search?${q}sort=date_desc&limit=200&offset=${offset}`); return { status: r.status, rows: rowsOf(r.json) || [] }; };
+  const key = (g) => String(g.objectid);
+  /* global paging with a 50-row overlap: rows 150–199 of page k must equal rows 0–49 of page k + 1 */
+  const all = new Map(); let disagreements = 0, pages = 0, stop = false, offset = 0, firstAgain = null;
+  let prev = null;
+  while (!stop && pages < 400) {
+    const p = await page('', offset); pages++;
+    if (p.status !== 200) { out({ kind: 'recentProbe', step: 'page', offset, status: p.status }); break; }
+    if (prev) { const a = prev.rows.slice(150).map(key).join(','), b = p.rows.slice(0, 50).map(key).join(','); if (a !== b) disagreements++; }
+    for (const g of p.rows) all.set(key(g), g);
+    const last = p.rows[p.rows.length - 1];
+    if (p.rows.length < 200 || !last || String(last.deal_date).slice(0, 10) < from) stop = true;
+    prev = p; offset += 150;
+    if (pages === 1) firstAgain = p.rows.map(key).join(',');
+  }
+  const again = await page('', 0);
+  out({ kind: 'recentProbe', step: 'global-paging', pages, rows: all.size, overlapDisagreements: disagreements, repeatIdentical: again.rows.map(key).join(',') === firstAgain });
+  const today = iso(Date.now());
+  const rows = [...all.values()].map((g) => ({ ...g, date: String(g.deal_date).slice(0, 10) }));
+  const recent = rows.filter((g) => g.date >= from && g.date <= today);
+  const fut = rows.filter((g) => g.date > today);
+  const by = (xs, f) => xs.reduce((m, x) => { const k = f(x); m[k] = (m[k] || 0) + 1; return m; }, {});
+  const series = (g) => (String(g.deal_id).startsWith('1136') && String(g.deal_id).length === 11 ? '1136…' : String(g.deal_id).length + '-digit');
+  out({ kind: 'recentProbe', step: 'recent-shape', from, today, recent: recent.length, future: fut.length, futureDates: fut.map((g) => g.date).sort().slice(-8),
+    noSettlement: recent.filter((g) => !g.settlement).length, noStreet: recent.filter((g) => !g.street).length, noBlock: recent.filter((g) => g.gush == null).length,
+    propertyType: by(recent, (g) => g.property_type || '(none)'), dealNature: by(recent, (g) => g.deal_nature || '(none)'), series: by(recent, series),
+    seriesByType: by(recent, (g) => series(g) + ' / ' + (g.property_type || '(none)')), byMonth: by(recent, (g) => g.date.slice(0, 7)),
+    keys: rows[0] ? Object.keys(rows[0]) : null });
+  /* in-source duplicates: same block · parcel · amount · area, dates ≤ 1 day apart */
+  const grp = new Map();
+  for (const g of recent) { const k = [g.gush, g.parcel, g.deal_amount, g.asset_area].join('|'); if (!grp.has(k)) grp.set(k, []); grp.get(k).push(g); }
+  const dups = [...grp.values()].filter((xs) => xs.length > 1 && xs.some((a, i) => xs.some((b, j) => j !== i && Math.abs(Date.parse(a.date) - Date.parse(b.date)) <= 864e5)));
+  out({ kind: 'recentProbe', step: 'in-source-duplicates', groups: dups.length, rows: dups.reduce((a, xs) => a + xs.length, 0),
+    shapes: by(dups, (xs) => xs.map((g) => series(g) + ':' + (g.property_type ? 'T' : '-') + ':' + (g.sub_parcel == null ? 'nosub' : 'sub')).sort().join(' + ')),
+    sameSub: dups.filter((xs) => new Set(xs.map((g) => g.sub_parcel)).size === 1).length,
+    dayGap: by(dups, (xs) => { const d = xs.map((g) => Date.parse(g.date)); return String((Math.max(...d) - Math.min(...d)) / 864e5); }),
+    sample: dups.slice(0, 6).map((xs) => xs.map((g) => [g.deal_id, g.date, g.settlement, g.street, g.house_num, `${g.gush}/${g.parcel}/${g.sub_parcel}`, g.deal_amount, g.asset_area, g.rooms, g.property_type, g.deal_nature, g.floor])) });
+  /* per-settlement paging stability (Petah Tikva) */
+  const s1 = await page('settlement=' + encodeURIComponent('פתח תקווה') + '&', 0), s2 = await page('settlement=' + encodeURIComponent('פתח תקווה') + '&', 150);
+  out({ kind: 'recentProbe', step: 'settlement-paging', overlapAgrees: s1.rows.slice(150).map(key).join(',') === s2.rows.slice(0, 50).map(key).join(',') });
+}
+
 (async () => {
   try {
     if (args.includes('--official')) await official();
     else if (args.includes('--over')) await over();
+    else if (args.includes('--recent-probe')) await recentProbe(opt('--from') || '2026-07-03');
     else if (args.includes('--compare')) await compare(String(opt('--compare') || '').split('|').filter(Boolean), opt('--from'));
     else { console.error('usage: --official | --over | --compare "<city>|<city>"'); process.exit(2); }
   } catch (e) { out({ kind: 'error', error: e.message }); process.exit(1); }
