@@ -122,9 +122,27 @@
   AUDIT (19.10.2026): official channels NOT machine-readable — nadlan.taxes.gov.il refuses the runner, nadlan.gov.il behind reCAPTCHA Enterprise,
   GovMap CloudFront 403, no data.gov.il dataset — none bypassed; a NEWER republished copy exists (over.org.il GovMap layer 16, loaded 08.10.2026,
   latest deal 28.09.2026) with defects (a second deal-id series one day earlier, future dates, ₪1,000 truncation, own sub-parcel numbering,
-  ≈84k rows without a settlement) — NOT read (owner decision); 8-city comparison: 19,531 same deals (7,787 exact · 508 truncated · 11,236 field
+  ≈84k rows without a settlement) — read since 20.10.2026 ONLY as the separate RECENT layer below; 8-city comparison: 19,531 same deals (7,787 exact · 508 truncated · 11,236 field
   differences, mostly sub-parcel numbering) · 2,293 late-reported deals missing in PROPX · 4,387 register dwelling deals not in the GovMap copy.
   The Street Value Model's inputs are untouched (`evidence.js` byte-identical).
+- `lib/recent/` + `scripts/street-recent-sync.js` + `.github/workflows/street-recent-sync.yml` + `data/streets/recent/` + `test/recent.test.js` =
+  P0 RECENT TRANSACTIONS LAYER (20.10.2026): the newer GovMap-layer copy (over.org.il, dataset 4174aac2…, loaded 08.10.2026, latest deal
+  28.09.2026) read as a SEPARATE recent-evidence source — never a replacement for the register copy. Window = 75 days before the register
+  copy's latest deal → the copy's load day, read newest first (no date filter exists; 50-row page overlaps + first-page repeat proven),
+  stored VERBATIM (`raw/<sha16>.jsonl.gz`, hash + proof); daily check, re-read only when the copy changes. Deterministic reconciliation
+  (`lib/recent/reconcile.js`), every row ONE class: CONTEXT · FUTURE_DATED · NO_SETTLEMENT · UNMAPPED · DUPLICATE_IN_SOURCE (the untyped
+  `1136…` series twinned to one typed row — amount ±₪1,000, area ±5 %, rooms ±½, same day or one day earlier — or through the register's
+  exact amount) · AMBIGUOUS / POSSIBLE duplicate (amount ±₪1,000 within 3 days, whatever the area) · IN_REGISTER (same unit, ±1 day, amounts agreeing) · IN_REGISTER_OTHER_UNIT · POSSIBLY_IN_REGISTER
+  · RECENT_NEW (the only class shown: DWELLING · TYPE NOT STATED · NON-DWELLING apart); neighbouring localities' registers holding the parcel
+  are searched; two passes; a register deal absorbs one row; register fields never overwritten (conflicts keep both values). 20.10.2026:
+  11,900 rows → 4,419 shown (3,404 dwelling · 878 type not stated · 137 non-dwelling) in 133 localities, 2,649 on 1,741 streets. THE 2,293 reconcile EXACTLY (the 19.10 comparison
+  replayed per city from its stored input; 1,554 new dwelling · 251 type not stated · 35 non-dwelling · 428 in-source duplicates · 17
+  ambiguous / possible duplicates · 8 in the register — 4 under a neighbouring locality, 3 lost to the comparison's greedy order, 1
+  rounded) — `audit-2293.json`. SAFETY GATE (`lib/recent/read.js`): shown only while reconciled against the register copy PROPX holds
+  (the evidence workflow reconciles right after a sweep). `view=street` → `recent`; `view=recentLayer[&city=]`; the page's dashed
+  SEPARATE LAYER line + table (never in a median, sample state, change, tile, card or the model); Trust `over:govmap-recent`; registry
+  `recent_transaction_layer` · `recent_transaction_type_not_stated` · missing `recent_layer_unavailable`; the monitor marks the copy
+  read. The Street Value Model is untouched (`--check` CURRENT). See `lib/recent/README.md`.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

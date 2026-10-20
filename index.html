@@ -582,6 +582,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
 .txf-st{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:1px 8px;border:1px solid var(--hairline)}
 .txf-st.CURRENT{color:var(--conf-high)} .txf-st.RECENT{color:var(--brass)} .txf-st.STALE,.txf-st.VERY_STALE{color:var(--conf-low)} .txf-st.SOURCE_LAG_UNKNOWN{color:var(--ink-3);border-style:dashed}
 .txf-note{display:block;margin-top:4px;color:var(--ink-3)}
+/* the RECENT layer (lib/recent): deals a newer copy publishes that the register copy does not hold yet — a separate, dashed block */
+.rct{margin:10px 0 4px;padding:9px 11px;border:1px dashed var(--brass);border-radius:9px;font-size:12px;line-height:1.55;color:var(--ink-2)}
+.rct b{color:var(--ink);font-weight:700}
+.rct-chip{display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:99px;padding:1px 8px;border:1px dashed var(--brass);color:var(--brass);margin-inline-end:6px}
+.rct .txf-note{margin-top:3px}
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:12px}
 .st-grid .gv-m .v{font-size:15.5px}
 .st-grid .gv-m .s{font-size:11px;color:var(--ink-3);line-height:1.45}
@@ -4924,6 +4929,7 @@ const PT_DOM={
   gxedges:"text,text,text,text,text,date,text",
   gxmem:"text,text,text,text,text,number,number,text",
   stdeals:"date,text,number,number,currency,currency,number,text,text,-",
+  strecent:"date,text,number,number,currency,currency,text,text,text,-",strecentu:"date,text,number,number,currency,currency,text,text,text,-",strecentn:"date,text,number,number,currency,currency,text,text,text,-",
   stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
   stperm:"date,text,text,number,text",
@@ -7057,11 +7063,13 @@ const TXF={he:{st:{CURRENT:"עדכני",RECENT:"חדש יחסית",STALE:"לא �
     banner:d=>`נתוני העסקאות עשויים להיות לא עדכניים · עותק המקור האחרון: ${d}`,latest:"העסקה האחרונה שנצפתה",latestLoc:"העסקה האחרונה ביישוב",checked:"המקור נבדק",
     source:"מקור",srcName:(c,l)=>`מאגר רשות המסים — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}`,state:"מצב",
     newer:(c,l)=>`קיים עותק חדש יותר של שכבת העסקאות של GovMap (${c}, עסקה אחרונה ${l}) — PROPX עדיין לא קוראת אותו.`,
+    newerRead:(c,l)=>`עותק חדש יותר של שכבת העסקאות של GovMap (${c}, עסקה אחרונה ${l}) נקרא כשכבה נפרדת: העסקאות שעותק המרשם עדיין לא מחזיק מוצגות בנפרד.`,
     notRefreshed:"כיסוי העסקאות האחרון לא רוענן.",noRecent:(c)=>`אין עסקאות ב-90 הימים האחרונים — המקור נבדק ${c}.`,age:n=>`בן ${n} ימים`},
   en:{st:{CURRENT:"CURRENT",RECENT:"RECENT",STALE:"STALE",VERY_STALE:"VERY STALE",SOURCE_LAG_UNKNOWN:"SOURCE LAG UNKNOWN"},
     banner:d=>`TRANSACTION DATA MAY BE STALE · Latest source snapshot: ${d}`,latest:"Latest observed transaction",latestLoc:"Latest in the locality",checked:"Source checked",
     source:"Source",srcName:(c,l)=>`Tax Authority register — independent republication (over.org.il), copy ${c}, latest deal in it ${l}`,state:"State",
     newer:(c,l)=>`A newer copy of the GovMap deals layer exists (${c}, latest deal ${l}) — PROPX does not read it yet.`,
+    newerRead:(c,l)=>`A newer copy of the GovMap deals layer (${c}, latest deal ${l}) is read as a separate layer: the deals the register copy does not hold yet are listed apart.`,
     notRefreshed:"Recent transaction coverage has not been refreshed.",noRecent:(c)=>`No transactions in the last 90 days — the source was checked ${c}.`,age:n=>`${n} days old`}};
 function txFreshHTML(F,opt={}){
   if(!F)return "";
@@ -7075,7 +7083,63 @@ function txFreshHTML(F,opt={}){
       <span><b>${t.state}:</b> <span class="txf-st ${F.state}">${t.st[F.state]||F.state}</span>${F.ageDays!=null?` <span class="num">(${t.age(F.ageDays)})</span>`:""} ${xpBtn("transaction_freshness")}</span></div>
     <span class="txf-note"><b>${t.source}:</b> ${t.srcName(dmy(snap),dmy(F.latestTransactionDate))} ${xpBtn("transaction_reporting_lag")}</span>
     ${r90==="COVERAGE_NOT_REFRESHED"?`<span class="txf-note">${t.notRefreshed} ${xpMiss("tx_coverage_not_refreshed")}</span>`:r90==="NO_RECENT_TRANSACTIONS"?`<span class="txf-note">${t.noRecent(dmy(F.checkedAt))}</span>`:""}
-    ${nw?`<span class="txf-note">${t.newer(dmy(String(nw.snapshotAt).slice(0,10)),dmy(nw.latestTransactionDate))}</span>`:""}</div>`;
+    ${nw?`<span class="txf-note">${(nw.readByPropx?t.newerRead:t.newer)(dmy(String(nw.snapshotAt).slice(0,10)),dmy(nw.latestTransactionDate))}${nw.readByPropx?" "+xpBtn("recent_transaction_layer"):""}</span>`:""}</div>`;
+}
+/* ── the RECENT layer (lib/recent/read.js): the deals the newer GovMap-layer copy publishes and the register copy does not hold yet —
+   one dashed block apart from the register's figures (never in a median, a sample state, a change or the PROPX estimate) ── */
+const RCT={he:{h:"עסקאות חדשות יותר — עדיין לא בעותק המרשם",chip:"שכבה נפרדת",
+    lead:(n,l)=>`${n===1?"עסקת דירה אחת":fmtInt(n)+" עסקאות דירה"} ברחוב בעותק שכבת העסקאות של GovMap שעותק המרשם עדיין לא מחזיק${l?` · האחרונה ${l}`:""}`,
+    none:(f,t)=>`אין ברחוב עסקאות דירה חדשות יותר בעותק השכבה (עסקאות מ-${f} עד ${t})`,
+    other:(a,b)=>[a?(a===1?"עסקה אחת ללא סוג נכס":`${fmtInt(a)} ללא סוג נכס`):null,b?(b===1?"עסקה אחת שאינה דירה":`${fmtInt(b)} שאינן דירה`):null].filter(Boolean).join(" · "),
+    note:"מוצגות בנפרד: לא בחציון, לא במצב המדגם, לא בשינוי ולא בהערכת PROPX. כשעותק המרשם יתעדכן, רבות מהן יעברו לנתוני המרשם וייעלמו מכאן.",
+    unav:"רשימת העסקאות החדשות יותר אינה מוצגת כרגע: השכבה הותאמה לעותק מרשם אחר מזה שמוצג — עד ההתאמה הבאה, כדי שעסקה לא תוצג פעמיים.",
+    src:(c,l,k)=>`מקור: שכבת העסקאות של GovMap — פרסום מחדש עצמאי (over.org.il), עותק ${c}, העסקה האחרונה בו ${l}; נבדק ${k}. לא ערוץ ממשלתי. הותאם לעותק המרשם (התאמה דטרמיניסטית — עסקה לא נספרת פעמיים).`,
+    th:"עסקאות דירה — עדיין לא במרשם",cols:["תאריך","כתובת כפי שפורסמה","חדרים","מ״ר","מחיר","₪ למ״ר","סוג נכס","גוש/חלקה/תת","שיוך לרחוב","הערה"],
+    basis:{address:"לפי הכתובת","address+parcel":"כתובת + חלקה",parcel:"לפי החלקה"},
+    twin:(d,a)=>`מופיעה גם בסדרה השנייה של העותק: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"בסדרה המוקלדת העותק מדפיס סכומים בקפיצות של ₪1,000 (המרשם מדפיס את הסכום המדויק).",
+    untH:n=>n===1?"עסקה אחת ללא סוג נכס":`${fmtInt(n)} עסקאות ללא סוג נכס`,nonH:n=>n===1?"עסקה אחת שאינה דירה":`${fmtInt(n)} עסקאות שאינן דירה`,
+    untNote:(o,n)=>`ייתכן שאינן דירה. התאריך כפי שפורסם: ב-${fmtInt(o)} מתוך ${fmtInt(n)} העסקאות ששני העותקים מחזיקים, המרשם תארך את העסקה יום אחד מאוחר יותר.`,
+    shown:(a,b)=>`מוצגות ${fmtInt(a)} מתוך ${fmtInt(b)}`},
+  en:{h:"Newer deals — not yet in the register copy",chip:"SEPARATE LAYER",
+    lead:(n,l)=>`${n===1?"One dwelling deal":fmtInt(n)+" dwelling deals"} on this street in the GovMap deals-layer copy that the register copy does not hold yet${l?` · latest ${l}`:""}`,
+    none:(f,t)=>`No newer dwelling deal on this street in the layer copy (deals ${f} to ${t})`,
+    other:(a,b)=>[a?`${fmtInt(a)} with no property type`:null,b?`${fmtInt(b)} non-dwelling`:null].filter(Boolean).join(" · "),
+    note:"Listed apart: never in the median, the sample state, the change or the PROPX estimate. When the register copy refreshes, many will move into the register figures and leave this list.",
+    unav:"The newer deals are not listed right now: the layer was reconciled against another register copy than the one shown — until the next reconciliation, so that no deal is shown twice.",
+    src:(c,l,k)=>`Source: the GovMap deals layer — independent republication (over.org.il), copy ${c}, latest deal in it ${l}; checked ${k}. Not a government channel. Reconciled against the register copy (deterministic — no deal is counted twice).`,
+    th:"Dwelling deals — not yet in the register",cols:["Date","Address as published","Rooms","m²","Price","₪/m²","Property type","Block/parcel/sub","Street link","Note"],
+    basis:{address:"by the address","address+parcel":"address + parcel",parcel:"by the parcel"},
+    twin:(d,a)=>`also in the copy's second series: ${d}${a!=null?` · ${fmtNIS(a)}`:""}`,trunc:"In its typed series the copy prints amounts in ₪1,000 steps (the register prints the exact amount).",
+    untH:n=>`${fmtInt(n)} ${n===1?"deal":"deals"} with no property type`,nonH:n=>`${fmtInt(n)} non-dwelling ${n===1?"deal":"deals"}`,
+    untNote:(o,n)=>`They may not be dwellings. The date as published: in ${fmtInt(o)} of the ${fmtInt(n)} deals both copies hold, the register dated the deal one day later.`,
+    shown:(a,b)=>`${fmtInt(a)} of ${fmtInt(b)} shown`}};
+/** the one-minute line of the recent layer (Street Intelligence) */
+function recentLineHTML(R){
+  if(!R||R.reason==="not-built"||R.reason==="not-read-for-this-evidence-store")return "";
+  const t=RCT[state.lang==="en"?"en":"he"],S=R.source||{},c=R.counts||{};
+  if(!R.available)return `<div class="rct"><span class="rct-chip">${t.chip}</span><b>${t.h}</b> ${xpBtn("recent_transaction_layer")}<span class="txf-note">${t.unav} ${xpMiss("recent_layer_unavailable")}</span></div>`;
+  const oth=t.other(c.TYPE_NOT_STATED||0,c.NON_DWELLING||0);
+  return `<div class="rct" data-rct="${c.DWELLING||0}"><span class="rct-chip">${t.chip}</span><b>${t.h}</b> ${xpBtn("recent_transaction_layer")}
+    <span class="txf-note">${c.DWELLING?t.lead(c.DWELLING,siDate(R.latestDwelling)):t.none(siDate(R.window&&R.window.from),siDate(R.window&&R.window.to))}${oth?` · ${oth}`:""}.</span>
+    ${R.total?`<span class="txf-note">${t.note}</span>`:""}
+    <span class="txf-note">${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</span></div>`;
+}
+/** the five-minute table of the recent layer: dwelling deals first, the rest in their own folds */
+function recentTableHTML(R){
+  if(!R||!R.available||!R.total)return "";
+  const t=RCT[state.lang==="en"?"en":"he"];
+  const row=d=>`<tr><td class="num" data-v="${ldE(d.date)}">${siDate(d.date)}</td><td class="w"><bdi>${ldE([d.street,d.house].filter(Boolean).join(" "))||"—"}</bdi></td><td class="num">${d.rooms!=null?d.rooms:"—"}</td><td class="num">${siNum(d.areaSqm)}</td>
+    <td class="num" data-v="${d.priced?d.amount:""}">${d.priced?fmtNIS(d.amount):d.amount!=null?`<span class="sub">${fmtNIS(d.amount)}</span>`:"—"}</td><td class="num" data-v="${d.pricePerSqm!=null?d.pricePerSqm:""}">${d.pricePerSqm!=null?fmtNIS(d.pricePerSqm):"—"}</td>
+    <td class="w">${ldE(d.dealNature||d.propertyType||"—")}</td><td class="num"><bdi>${ldE(`${d.block}/${d.parcel}${d.subParcel!=null?"/"+d.subParcel:""}`)}</bdi></td><td class="w">${t.basis[d.streetBasis]||ldE(d.streetBasis||"—")}</td>
+    <td class="w">${d.twinOid!=null?`<span class="sub">${ldE(t.twin(siDate(d.twinDate),d.twinAmount))}</span>`:""}</td></tr>`;
+  const tbl=(rows,key)=>`<div class="st-wrap"><table class="st-tbl" data-ptdom="${key}"><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(row).join("")}</tbody></table></div>`;
+  const c=R.counts||{};
+  let h=`<h4>${t.th} <span class="rct-chip">${t.chip}</span> ${xpBtn("recent_transaction_layer")}</h4>`;
+  h+=R.dwelling.length?tbl(R.dwelling,"strecent")+(R.dwelling.length<(c.DWELLING||0)?`<p class="gv-note">${t.shown(R.dwelling.length,c.DWELLING)}</p>`:""):`<p class="gv-note">${t.none(siDate(R.window&&R.window.from),siDate(R.window&&R.window.to))}.</p>`;
+  if(R.typeNotStated.length)h+=`<details class="st-sec"><summary>${t.untH(c.TYPE_NOT_STATED)} ${xpBtn("recent_transaction_type_not_stated")}</summary>${R.dateNote?`<p class="gv-note">${t.untNote(R.dateNote.oneDayLater,R.dateNote.verified)}</p>`:""}${tbl(R.typeNotStated,"strecentu")}</details>`;
+  if(R.nonDwelling.length)h+=`<details class="st-sec"><summary>${t.nonH(c.NON_DWELLING)}</summary>${tbl(R.nonDwelling,"strecentn")}</details>`;
+  const S=R.source||{};
+  return h+`<p class="gv-note">${t.note} ${t.trunc} ${t.src(siDate(S.snapshotDate),siDate(S.latestTransactionDate),siDate(S.checkedAt))}</p>`;
 }
 const SIT={he:{lyr:"מודיעין רחוב",
     /* the PROPX street estimate — MODEL (lib/streets/value-read.js); never the observed market */
@@ -7266,6 +7330,7 @@ function siHTML(g){
       five+=`<p class="gv-note">${tf.source}: ${tf.srcName(dm(D.freshness.snapshotDate),dm(D.freshness.latestTransactionDate))} ${xpBtn("transaction_reporting_lag")}</p>`}
     if(st&&(st.notMarket||st.bulk||st.partial||st.portionMissing))five+=`<p class="gv-note">${t.excl(st)}</p>`;
   }
+  five+=recentTableHTML(D.recent);
   /* deep dive */
   let deep="";
   if(E.swept&&E.possible&&E.possible.length){
@@ -7377,6 +7442,7 @@ function siHTML(g){
       <span class="geo-chip num"><bdi>${ldE(I.id)}</bdi></span>${I.district&&LOC[I.district]?`<span class="geo-chip">${heName(LOC[I.district])}</span>`:""}${xpBtn("street_directory")}</div>
     <h4 class="st-one">${t.one}</h4><p class="gv-note st-lead">${lead}</p>
     ${txFreshHTML(D.freshness,{locality:true})}
+    ${recentLineHTML(D.recent)}
     ${pair}
     <div class="st-grid">${tiles}</div>${kn}
     <details class="st-sec" open><summary>${t.five}</summary>${five}</details>

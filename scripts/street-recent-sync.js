@@ -16,7 +16,7 @@
 //   node scripts/street-recent-sync.js --audit-replay         GitHub runner, once: the 8 audited cities' rows exactly as the
 //                                                              19.10.2026 comparison read them (per settlement spelling, newest
 //                                                              first) down to 28.06.2026 — the input of the 2,293 reconciliation
-//   node scripts/street-recent-sync.js --reconcile            offline: raw rows × the stored register copy → data/streets/recent/
+//   node scripts/street-recent-sync.js --reconcile [--force]  offline: raw rows × the stored register copy → data/streets/recent/
 //                                                              layer.json · reconciliation.json · meta.json (+ sync-runs.jsonl)
 //
 // GET only, one request a second, an honest User-Agent; any date filter makes the source answer HTTP 500, so the window is read by
@@ -173,7 +173,7 @@ async function auditReplay() {
 
 function reconcileMode() {
   const R = require('../lib/recent/reconcile');
-  const res = R.build({ root: ROOT });
+  const res = R.build({ root: ROOT, force: has('force') });
   console.log(R.summaryLine(res));
   return res.ok ? 0 : 1;
 }

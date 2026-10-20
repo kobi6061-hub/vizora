@@ -103,13 +103,13 @@ async function main() {
         deals: Number(j.deals) || null, datasetId: j.dataset_id || null, upstream: j.source_url || null }
         : { answered: false, status: r.status, error: `HTTP ${r.status}` };
     } catch (e) { register = { answered: false, error: String(e.message).slice(0, 160) }; }
-    /* 2 · the GovMap-layer copy (not read by PROPX) */
+    /* 2 · the GovMap-layer copy (read by PROPX only as its separate recent layer, lib/recent) */
     let govmapLayer = { answered: false };
     try {
       const r = await get(OVER + '/api/deals/govmap/stats'); await pause();
       const j = r.json || {};
       govmapLayer = r.status === 200 && j.loaded_at ? { answered: true, status: r.status, snapshotAt: String(j.loaded_at), latestTransactionDate: j.last_deal ? String(j.last_deal).slice(0, 10) : null,
-        deals: Number(j.deals) || null, datasetId: j.dataset_id || null, version: j.version ?? null, upstream: j.source_url || null, readByPropx: false }
+        deals: Number(j.deals) || null, datasetId: j.dataset_id || null, version: j.version ?? null, upstream: j.source_url || null, readByPropx: require('../lib/recent/read').readsCopy(String(j.loaded_at)) }
         : { answered: false, status: r.status, error: `HTTP ${r.status}`, readByPropx: false };
     } catch (e) { govmapLayer = { answered: false, error: String(e.message).slice(0, 160), readByPropx: false }; }
     /* 3 · the official channels */
@@ -125,13 +125,17 @@ async function main() {
     if (govmapLayer.answered && govmapLayer.latestTransactionDate && propx.copyLatestDeal) {
       const d = F.daysBetween(propx.copyLatestDeal, govmapLayer.latestTransactionDate);
       const s = F.daysBetween(propx.snapshotAt, govmapLayer.snapshotAt);
+      /* PROPX reads this copy as its separate RECENT layer (lib/recent) when the stored layer is the same copy, reconciled against
+         the register copy PROPX holds — then its newer deals are listed apart and the newer copy is no lag alert */
+      const read = require('../lib/recent/read').readsCopy(govmapLayer.snapshotAt);
       if (d > 0 || s > 0) newerCopies.push({ id: 'over:govmap-layer', name: 'GovMap deals layer (lay=16) — republished copy (over.org.il)', snapshotAt: govmapLayer.snapshotAt,
-        latestTransactionDate: govmapLayer.latestTransactionDate, daysNewerLatestDeal: d, daysNewerSnapshot: s, readByPropx: false,
-        why: 'not read: the copy has known republication defects (a second deal-id series with dates one day earlier and no property type, future dates as published, amounts truncated to ₪1,000, its own sub-parcel numbering, ≈84,000 deals without a settlement, 500 deals per point) — integrating it is an owner decision' });
+        latestTransactionDate: govmapLayer.latestTransactionDate, daysNewerLatestDeal: d, daysNewerSnapshot: s, readByPropx: read, ...(read ? { readAs: 'recent-layer' } : {}),
+        why: read ? 'read as a separate recent layer: its deals the register copy does not hold yet are listed apart (lib/recent)'
+          : 'not read yet: the recent layer (lib/recent) holds an older copy of this layer or was reconciled against another register copy — the daily recent sync reads it' });
     }
     const alerts = [];
     if (F.isStale(st.state)) alerts.push({ kind: 'MATERIAL_LAG', reason: 'copy-age', message: `the transaction copy PROPX reads is ${st.state} (${st.ageDays} days old)`, values: { state: st.state, ageDays: st.ageDays } });
-    for (const n of newerCopies) if (n.daysNewerLatestDeal >= LAG_ALERT_DAYS) alerts.push({ kind: 'MATERIAL_LAG', reason: 'newer-copy', message: `${n.name}: latest deal ${n.latestTransactionDate}, ${n.daysNewerLatestDeal} days after PROPX's (${propx.copyLatestDeal})`, values: n });
+    for (const n of newerCopies) if (!n.readByPropx && n.daysNewerLatestDeal >= LAG_ALERT_DAYS) alerts.push({ kind: 'MATERIAL_LAG', reason: 'newer-copy', message: `${n.name}: latest deal ${n.latestTransactionDate}, ${n.daysNewerLatestDeal} days after PROPX's (${propx.copyLatestDeal})`, values: n });
     if (register.answered && propx.snapshotAt && register.snapshotAt !== propx.snapshotAt) {
       const newer = (F.ts(register.snapshotAt) || 0) > (F.ts(propx.snapshotAt) || 0);
       alerts.push({ kind: newer ? 'NEW_COPY_NOT_SWEPT' : 'OLDER_COPY_SERVED', message: newer ? `the register copy changed (${register.snapshotAt}) — PROPX holds ${propx.snapshotAt} until the sweep reads it` : `the publisher serves an OLDER copy (${register.snapshotAt}) than PROPX holds (${propx.snapshotAt}) — PROPX keeps its newer copy` });

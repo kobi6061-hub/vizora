@@ -172,14 +172,19 @@ t('DAILY MONITOR (read-only): register copy · GovMap-layer copy · official cha
   try {
     const S = EV.store();
     const o = exec({ deals: 3844200, last_deal: S.meta.source.lastDeal, scraped_at: S.meta.source.scrapedAt }, { deals: 2500941, last_deal: '2026-09-28', loaded_at: '2026-10-08T01:50:12.803824+00:00', version: 4 });
-    assert.equal(o.register.answered, true); assert.equal(o.govmapLayer.readByPropx, false);
+    /* the GovMap-layer copy the stored RECENT layer read (lib/recent) is read — listed apart, no lag alert for it */
+    assert.equal(o.register.answered, true); assert.equal(o.govmapLayer.readByPropx, true); assert.equal(o.newerCopies[0].readByPropx, true);
     assert.deepEqual(o.officialChannels.map((c) => c.answered), [false, false, false], 'every official channel recorded as not readable — none bypassed');
     assert.equal(o.officialChannels[1].antiBot, 'recaptcha'); assert.equal(o.officialChannels[2].refused, true);
     assert.equal(o.propx.copyLatestDeal, S.meta.source.lastDeal); assert.equal(o.propx.periodsToToday[30].n, null, 'a period after the copy has no count');
     assert.ok(o.propx.countsToCopyEnd[90] > 0); assert.equal(o.lagDays.snapshotAge, 30); assert.equal(o.lagDays.latestTransaction, 32);
     const kinds = o.alerts.filter((a) => !a.informational).map((a) => a.reason || a.kind);
-    assert.ok(kinds.includes('copy-age') && kinds.includes('newer-copy'), 'MATERIAL_LAG for the copy\'s age and for the newer GovMap-layer copy (11 days)');
+    assert.ok(kinds.includes('copy-age') && !kinds.includes('newer-copy'), 'MATERIAL_LAG for the copy\'s age; the newer copy PROPX reads as its recent layer is no lag alert');
     assert.equal(o.newerCopies[0].daysNewerLatestDeal, 11);
+    /* a NEWER GovMap-layer copy than the one the recent layer read: not read yet → MATERIAL_LAG newer-copy */
+    const g2 = exec({ deals: 3844200, last_deal: S.meta.source.lastDeal, scraped_at: S.meta.source.scrapedAt }, { deals: 2600000, last_deal: '2026-10-12', loaded_at: '2026-10-18T01:00:00+00:00', version: 5 });
+    assert.equal(g2.govmapLayer.readByPropx, false); assert.equal(g2.newerCopies[0].readByPropx, false);
+    assert.ok(g2.alerts.some((a) => a.reason === 'newer-copy'), 'a GovMap-layer copy the recent layer has not read is a lag alert');
     const n = exec({ deals: 3900000, last_deal: '2026-10-15', scraped_at: '2026-10-18 09:00:00+00' }, { deals: 1, last_deal: '2026-09-28', loaded_at: '2026-10-08T00:00:00Z' });
     assert.ok(n.alerts.some((a) => a.kind === 'NEW_COPY_NOT_SWEPT'), 'a changed register copy not yet swept is an alert');
     const old = exec({ deals: 3800000, last_deal: '2026-08-30', scraped_at: '2026-09-01 09:00:00+00' }, { deals: 1, last_deal: '2026-08-01', loaded_at: '2026-08-02T00:00:00Z' });

@@ -472,7 +472,7 @@ t('review (real sweep): a parcel holding half the priced deals is stated beside 
 t('workflows: the evidence sweep tests before it writes, commits only data/streets/evidence, reads GET-only one request a second; the directory sync rebuilds the index', () => {
   const y = fs.readFileSync(path.join(ROOT, '.github/workflows/street-evidence-sync.yml'), 'utf8');
   assert.ok(y.indexOf('node test/streets.test.js') < y.indexOf('node scripts/street-evidence-sync.js'));
-  assert.match(y, /git add data\/streets\/evidence( data\/streets\/model)?\n/);
+  assert.match(y, /git add data\/streets\/evidence( data\/streets\/model)?( data\/streets\/recent)?\n/);
   const sc = fs.readFileSync(path.join(ROOT, 'scripts/street-evidence-sync.js'), 'utf8');
   assert.ok(!/method:\s*'(POST|PUT|DELETE)'/.test(sc)); assert.match(sc, /STREET_EVIDENCE_GAP_MS \|\| 1000/);
   assert.match(fs.readFileSync(path.join(ROOT, 'scripts/street-sync.js'), 'utf8'), /run\.searchIndex = rebuildIndex\(\);/);

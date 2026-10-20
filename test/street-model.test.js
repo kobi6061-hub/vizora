@@ -433,7 +433,7 @@ t('workflow: the evidence sync rebuilds the model only when an input changed, ga
   assert.ok(y.indexOf('node scripts/street-evidence-sync.js') < y.indexOf('node scripts/street-model-build.js --if-stale'));
   assert.ok(y.indexOf('street-model-build.js --if-stale') < y.indexOf('node test/street-model.test.js'));
   assert.match(y, /git checkout -- data\/streets\/model/);
-  assert.match(y, /git add data\/streets\/evidence data\/streets\/model\n/);
+  assert.match(y, /git add data\/streets\/evidence data\/streets\/model( data\/streets\/recent)?\n/);
   const b = fs.readFileSync(path.join(ROOT, 'scripts/street-model-build.js'), 'utf8');
   assert.match(b, /sweep\.status !== 'COMPLETE'/);
   assert.match(b, /appendFileSync\(path\.join\(DIR, 'history\.jsonl'\)/);

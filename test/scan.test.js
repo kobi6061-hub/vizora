@@ -127,8 +127,9 @@ t('runSummary states latest success and latest failure apart, flags RECOVERED on
 t('the catalogue lists alerts only for sources PROPX reads whose state is not good, recovered sources, and sources whose own content is stale — ordered by severity; no fake green', () => {
   const c = T.catalog({ now: NOW });
   assert.ok(Array.isArray(c.alerts) && c.recoveryWindowDays === 7);
-  for (const a of c.alerts) { assert.ok(['REFUSED', 'FAILED', 'SCHEMA_CHANGED', 'STALE', 'PARTIAL', 'RECOVERED', 'SOURCE_STALE'].includes(a.kind), a.id); const s = c.sources.find((x) => x.id === a.id); assert.ok(s && s.inProduct !== false, a.id); if (a.kind !== 'RECOVERED' && a.kind !== 'SOURCE_STALE') assert.equal(s.sync.state, a.kind); }
-  const ranks = c.alerts.map((a) => ({ REFUSED: 0, SCHEMA_CHANGED: 1, FAILED: 2, STALE: 3, PARTIAL: 4, SOURCE_STALE: 5, RECOVERED: 6 })[a.kind]); assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b));
+  /* SOURCE_LAG (the daily transaction-freshness monitor's lag alerts, P0 19.10.2026) is a content alert like SOURCE_STALE */
+  for (const a of c.alerts) { assert.ok(['REFUSED', 'FAILED', 'SCHEMA_CHANGED', 'STALE', 'PARTIAL', 'RECOVERED', 'SOURCE_STALE', 'SOURCE_LAG'].includes(a.kind), a.id); const s = c.sources.find((x) => x.id === a.id); assert.ok(s && s.inProduct !== false, a.id); if (!['RECOVERED', 'SOURCE_STALE', 'SOURCE_LAG'].includes(a.kind)) assert.equal(s.sync.state, a.kind); }
+  const ranks = c.alerts.map((a) => ({ REFUSED: 0, SCHEMA_CHANGED: 1, FAILED: 2, STALE: 3, PARTIAL: 4, SOURCE_LAG: 5, SOURCE_STALE: 6, RECOVERED: 7 })[a.kind]); assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b));
   for (const s of c.sources) if (s.sync && s.sync.tally) assert.equal(s.sync.tally.total, s.sync.tally.good + s.sync.tally.bad);
 });
 t('the API routes scan, scanGeo, revisions and supply; the radar build writes scan.json', () => {

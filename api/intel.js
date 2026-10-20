@@ -59,6 +59,9 @@
 //                     POSSIBLE deals apart), the locality / verified-neighbourhood CONTEXT apart, exact Tel Aviv permit / site links,
 //                     what PROPX knows and does not know; 404 for an id the official directory does not hold
 //   view=txFreshness     how fresh the transaction universe is: the copy's dates apart, its state, the daily monitor's answer
+//   view=recentLayer     the RECENT layer (lib/recent/read.js): the newer GovMap-layer copy (over.org.il), the class of every row it
+//                     read, the exact replay of the 2,293 late-reported deals; [city=<code> limit ≤ 500] → that locality's recent-only
+//                     deals (never merged into the register's figures); view=street carries the street's block as `recent`
 //   view=streetCoverage  the coverage audit (lib/streets/coverage.js): official rows · canonical · searchable · synonyms · with transactions ·
 //                     sample states — national / by district / by locality, reconciled
 //   view=street → `model`: the PROPX STREET ESTIMATE (lib/streets/value-read.js, a separate MODEL layer — never the observed market):
@@ -172,6 +175,17 @@ module.exports = async (req, res) => {
       const FRESH = require('../lib/gov/freshness');
       let monitor = null; try { monitor = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'data', 'transactions', 'freshness.json'), 'utf8')); } catch { /* not run yet */ }
       return send(res, 200, { freshness: FRESH.fromDisk(), monitor, states: FRESH.STATES, thresholds: FRESH.THRESHOLDS, basis: FRESH.BASIS });
+    }
+    /* the RECENT layer (lib/recent/read.js): the newer GovMap-layer copy reconciled against the register copy — the copy, the class
+       of every fetched row, the exact 2,293 audit; city= → that locality's recent-only deals (DWELLING · TYPE NOT STATED ·
+       NON-DWELLING apart) */
+    if (view === 'recentLayer') {
+      const RR = require('../lib/recent/read');
+      if (p.city != null && p.city !== '') {
+        if (!/^\d{1,5}$/.test(String(p.city))) return send(res, 400, { error: 'city must be an official locality code' });
+        return send(res, 200, RR.forLocality(p.city, { limit: p.limit || 100 }));
+      }
+      return send(res, 200, RR.summary());
     }
     if (view === 'street' || view === 'streetCoverage') {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });

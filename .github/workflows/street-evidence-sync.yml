@@ -75,11 +75,25 @@ jobs:
             git checkout -- data/streets/model 2>/dev/null; git clean -fdq data/streets/model 2>/dev/null
           fi
           echo "code=$code" >> "$GITHUB_OUTPUT"
+      # The RECENT layer (lib/recent) is reconciled against the register copy it shows beside: a new copy swept above would make the
+      # stored layer stale (the page then lists nothing), so it is reconciled again here — offline, no request; a failed
+      # reconciliation or gate keeps the previous layer (which then stays hidden until street-recent-sync.yml succeeds).
+      - name: Reconcile the recent layer against the register copy
+        id: recent
+        run: |
+          set +e
+          code=0
+          if [ -f data/streets/recent/raw/index.json ]; then
+            node scripts/street-recent-sync.js --reconcile; code=$?
+            if [ $code -eq 0 ] && [ -f test/recent.test.js ]; then node test/recent.test.js; code=$?; fi
+            if [ $code -ne 0 ]; then echo 'Recent reconciliation or gates failed — the previous layer is kept.' >&2; git checkout -- data/streets/recent 2>/dev/null; fi
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
       - name: Commit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/streets/evidence data/streets/model
+          git add data/streets/evidence data/streets/model data/streets/recent
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           [ -s "$RUNNER_TEMP/summary.txt" ] || echo 'Street evidence: run log' > "$RUNNER_TEMP/summary.txt"
           git commit -q -F "$RUNNER_TEMP/summary.txt"
