@@ -1,0 +1,44 @@
+# PROPX · transaction source inventory + screenshot regression capture (read-only).
+#
+# Runs scripts/tx-sources-discover.js on a GitHub runner (the Israeli hosts answer here, not from the Claude sandbox): every candidate
+# transaction channel with what it answers today, and the transactions section's own answer for one geography (the BEFORE / AFTER
+# evidence of a regression case). GET only, one request at a time; a channel behind an identification / CAPTCHA / bot-manager screen
+# is recorded, never bypassed; paid services are listed, never called. Nothing is written or committed.
+
+name: Transactions — source inventory (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'inventory | case'
+        type: choice
+        options: [inventory, case]
+        default: inventory
+      case:
+        description: 'case: <city>|<street>[|<house>]'
+        type: string
+        default: 'פתח תקווה|שחם'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tx-sources-discover
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ inputs.mode }}
+          CASE: ${{ inputs.case }}
+        run: |
+          if [ "$MODE" = "case" ]; then node scripts/tx-sources-discover.js --case "$CASE"; else node scripts/tx-sources-discover.js --inventory; fi

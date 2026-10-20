@@ -1,0 +1,84 @@
+# PROPX · NATIONAL MISSED-DEAL DETECTOR — every row of the GovMap-layer copy against the register copy PROPX holds
+# (scripts/txevents-national.js + scripts/txevents-gpkg.py; the recent layer's own reconciliation rules, unchanged).
+#
+# Every three hours: the two republished copies' latest dataset versions (two GETs). When the GovMap-layer copy publishes a new version
+# (or on a manual force): one GET of the version's public GeoPackage, validated against the window the recent sync read through the API,
+# reconciled nationally, written to data/txevents/national/ (bot-written) — and the recent sync is started for the new copy. When the
+# register copy publishes a new version, the evidence sweep is started. A check that finds nothing new is recorded in PROPX at most
+# every 12 hours (the run history keeps every check).
+
+name: Transactions — national missed-deal detector
+
+on:
+  schedule:
+    - cron: '23 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Download and rebuild although the GovMap-layer version has not changed'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: txevents-national
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check the copies' versions (read-only)
+        id: chk
+        run: node scripts/txevents-national.js --check
+      - name: Download, validate and reconcile the GovMap-layer file
+        id: build
+        if: steps.chk.outputs.govmap_changed == 'true' || inputs.force == true
+        env:
+          FILE_URL: ${{ steps.chk.outputs.file_url }}
+        run: |
+          set -euo pipefail
+          F="$RUNNER_TEMP/govmap-layer.file"
+          node scripts/txevents-national.js --download --url "$FILE_URL" --out "$F" > "$RUNNER_TEMP/dl.json"
+          cat "$RUNNER_TEMP/dl.json"
+          SHA=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).sha256)' "$RUNNER_TEMP/dl.json")
+          BYTES=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).bytes)' "$RUNNER_TEMP/dl.json")
+          FROM=$(node -e 'const m=JSON.parse(require("fs").readFileSync("data/streets/evidence/meta.json","utf8"));console.log(new Date(Date.parse(m.window.from+"T00:00:00Z")-7*864e5).toISOString().slice(0,10))')
+          python3 -I scripts/txevents-gpkg.py "$F" "$RUNNER_TEMP/extract" --from "$FROM"
+          rm -f "$F"
+          node scripts/txevents-national.js --build --extract "$RUNNER_TEMP/extract" --file-sha "$SHA" --file-url "$FILE_URL" --file-bytes "$BYTES"
+          if [ -f test/txevents.test.js ]; then node test/txevents.test.js; fi
+      - name: Start the syncs a new version needs
+        if: steps.chk.outputs.govmap_changed == 'true' || steps.chk.outputs.register_changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ steps.chk.outputs.register_changed }}" = "true" ]; then gh workflow run street-evidence-sync.yml --ref "$GITHUB_REF_NAME" || echo 'could not start the evidence sweep' >&2; fi
+          if [ "${{ steps.chk.outputs.govmap_changed }}" = "true" ]; then gh workflow run street-recent-sync.yml --ref "$GITHUB_REF_NAME" || echo 'could not start the recent sync' >&2; fi
+      - name: Commit
+        if: always()
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # an unchanged check is recorded at most every 12 hours; a build, a new version or a failure always
+          LAST=$(git log -1 --format=%ct -- data/txevents/national/runs.jsonl 2>/dev/null || echo 0)
+          STATUS=$(tail -n 1 data/txevents/national/runs.jsonl | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).status)}catch{console.log("?")}})')
+          if [ "$STATUS" = "UNCHANGED" ] && [ $(( $(date +%s) - ${LAST:-0} )) -lt 43200 ]; then echo 'Unchanged — recorded in the run history only.'; exit 0; fi
+          git add data/txevents/national
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "National missed-deal detector: $STATUS"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
