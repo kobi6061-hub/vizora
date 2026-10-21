@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "engine": "propx-vatmal-1",
+ "source": {
+  "id": "iplan:vatmal",
+  "publisher": "מינהל התכנון",
+  "publisherEn": "Planning Administration",
+  "layer": "https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/vatmal_mitchamim_muchrazim/MapServer/0",
+  "classification": "OFFICIAL",
+  "page": "https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/vatmal_mitchamim_muchrazim/MapServer",
+  "licence": "Planning Administration open data (CC BY, as the Xplan services on data.gov.il)",
+  "title": "ותמ\"ל — מתחמים מוכרזים",
+  "titleEn": "VATMAL — declared preferred-housing complexes"
+ },
+ "fetchedAt": "2026-10-21T14:39:02.773Z",
+ "readAt": "2026-10-21T14:39:02.773Z",
+ "layerCount": 203,
+ "stored": 203,
+ "skipped": {
+  "noGeometryOrNumber": 0
+ },
+ "complete": true,
+ "contentHash": "f86bd76410767bea94d4ef159c25dd76a51faf75fb1c83452854d553424e6374",
+ "declaredUnitsSum": 632617,
+ "declared": [
+  "2014-09-22",
+  "2025-05-28"
+ ],
+ "latestUpdate": "2025-05-28",
+ "history": [
+  "2026-10-21-f86bd764.json.gz"
+ ],
+ "note": "declared complexes — a planning-track designation, never an approved plan, a permit or construction; the declared units are the declaration's"
+}
