@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-21T08:53:44.752Z",
+ "builtAt": "2026-10-21T09:20:04.189Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-20T17:58:41.846Z",
+    "checkedAt": "2026-10-21T09:19:33.165Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
