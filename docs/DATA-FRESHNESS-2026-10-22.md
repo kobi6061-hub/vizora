@@ -30,11 +30,12 @@ Each source then gets one state, applied in this order: REFUSED, FAILING, CHECK_
   - Dwelling-price indices: the July–August 2026 window.
   - Bank of Israel housing finance: 2026-09.
   - The Bank of Israel rate is **EXPECTED_LAG**. A decision was scheduled for 21.10.2026, and the snapshot was read at 08:30 UTC that day, before the announcement. The next daily sync reads it.
-- **Four defects were found in the repository and fixed, with tests** (section 5):
+- **Five defects were found in the repository and fixed, with tests** (section 5):
   1. The national missed-deal detector's checks were never recorded, so the Trust Center showed a false **STALE**.
   2. The Trust Center showed the finance lane with no check date.
   3. The coverage audit reported 304 false **"missed"** deals.
   4. The street-geography build could lose its push to a rebase conflict, which left an older build in place.
+  5. The Trust Center gave a future-dated row (2048-05-29) as the national file's latest observation.
 - **Source-side staleness that PROPX cannot fix** (section 6):
   - The register republisher has not produced a newer scrape since 19.09.
   - Every official deals channel refuses the runner.
@@ -173,7 +174,7 @@ Since each was added, all other scheduled production workflows have run on every
 renewal, tx-refresh, dossier-snapshot, cbs-sales, construction, rental, dd, street-evidence, street-recent, tx-freshness and
 txevents-national.
 
-## 5. Fixes made, with tests in `test/freshness-audit.test.js` (17 gates)
+## 5. Fixes made, with tests in `test/freshness-audit.test.js` (18 gates)
 
 1. **The national detector's checks were never recorded.**
    - **Cause:** the commit step measured the last record with `git log -1 -- data/txevents/national/runs.jsonl` in a depth-1 checkout, which returns the branch head for any path. On a branch the syncs write several times a day, that head was always less than 12 hours old, so every unchanged check was skipped. The last record is the build of 20.10 18:55. The Trust Center's 12-hour allowance then read the detector as STALE although it checked on schedule.
@@ -190,6 +191,9 @@ txevents-national.
    - **Cause:** the commit step rebased the binary build onto another build's commit.
    - **Fix:** it now places the run's whole build on the newest branch head. Runs are serialized, so the latest build wins.
    - **Data still to align:** the stored street geography was built by the previous script (c41968b). 22,571 source-neighbourhood street keys in 79 locality files keep the layer's raw `locality × 10,000 + code` form. No reader uses that field today.
+5. **A future-dated row was shown as the latest observation.**
+   - **Cause:** the Trust catalogue gave the GovMap file's own maximum date, **2048-05-29**, as `over:govmap-national`'s latest observation. That row is future-dated and INVALID.
+   - **Fix:** the catalogue now gives the copy's latest deal for the same dataset version, **2026-09-28**, and names the invalid maximum beside it.
 
 New read model: `lib/trust/freshness-audit.js`, which is pure and deterministic, and is exported for the Trust Center and the explain
 popovers. New script: `scripts/freshness-audit.js`.

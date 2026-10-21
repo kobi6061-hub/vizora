@@ -3,11 +3,11 @@
  "kind": "freshness-audit",
  "producedBy": "scripts/freshness-audit.js",
  "engine": "propx-freshness-audit-1",
- "asOf": "2026-10-21T22:41:08.201Z",
+ "asOf": "2026-10-21T22:47:07.070Z",
  "israelDate": "2026-10-22",
  "note": "per-source freshness from the committed data and run logs (lib/trust/freshness-audit.js) + GitHub Actions run evidence (status · dates · run ids only) + root causes read from the failed runs' job logs — not a list of discovery candidates",
  "github": {
-  "readAt": "2026-10-21T22:41:08.785Z",
+  "readAt": "2026-10-21T22:47:07.775Z",
   "repo": "kobi6061-hub/vizora",
   "productionBranch": "claude/vizora-project-isolation-6lbq3g",
   "previewBranch": "claude/street-report-preview",
@@ -1134,7 +1134,7 @@
   }
  ],
  "integrity": {
-  "ranAt": "2026-10-21T22:42:45.411Z",
+  "ranAt": "2026-10-21T22:48:35.595Z",
   "rules": [
    "priced = whole property (portion 1), ≥ ₪100,000, one consideration for one unit, register only",
    "no GovMap-layer row priced or VERIFIED",
@@ -1183,7 +1183,7 @@
  "audit": {
   "schema": 1,
   "engine": "propx-freshness-audit-1",
-  "asOf": "2026-10-21T22:41:08.201Z",
+  "asOf": "2026-10-21T22:47:07.070Z",
   "today": "2026-10-21",
   "states": [
    "REFUSED",

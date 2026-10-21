@@ -81,6 +81,14 @@ t('TRUST: the national detector is STALE only beyond 24 hours (12 h recording ga
   assert.equal(c(last + 25 * 3600e3).sync.state, 'STALE');
 });
 
+t('TRUST: the national file\'s latest observation is never a FUTURE-DATED row (the file\'s own maximum 2048-05-29 is INVALID)', () => {
+  const c = CAT.catalog({ now: NOW }).sources.find((s) => s.id === 'over:govmap-national');
+  const nm = JSON.parse(read('data/txevents/national/meta.json'));
+  const loadDay = String(nm.version.detectedAt).slice(0, 10);
+  assert.ok(c.latestObservation == null || c.latestObservation <= loadDay, `latest observation ${c.latestObservation} after the load day ${loadDay}`);
+  if (nm.file.dates.max > loadDay) assert.match(c.latestObservationKind, /INVALID/);
+});
+
 /* ── the coverage audit's accounting ── */
 t('COVERAGE AUDIT: a GovMap row FOLDED into a register event of the same read is never "missed"; a row neither shown nor folded is', () => {
   const folds = new Map([['gm:2', 'regx:a'], ['gm:3', 'regx:gone']]);
