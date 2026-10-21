@@ -9,8 +9,8 @@
 // skipped for a stated reason equal the layer's own count — otherwise nothing is written and the previous files stand. Each plan is the
 // renewal lane's own normalization (lib/renewal/planning.js normalizePlan: stage from the source's status strings only, the XPlan unit
 // pair through lib/planning/xplan-units.js) + its boundary (WGS84, ~10 m generalization) + a TOPIC read from the plan's own name and
-// type only (RAIL_TRANSIT · ROAD · NATIONAL_INFRASTRUCTURE · PREFERRED_HOUSING · RENEWAL · OTHER) — a label of the plan's text, never
-// a join. A boundary is used ONLY to state a spatial relation to a street (inside / its distance) — never to join a record.
+// type only (lib/planning/topic.js: RAIL_TRANSIT · ROAD · RENEWAL · NATIONAL_INFRASTRUCTURE · PREFERRED_HOUSING · OTHER) — a label of the
+// plan's text, never a join (the street report re-reads it from the stored name, so a rule change needs no re-read). A boundary is used ONLY to state a spatial relation to a street (inside / its distance) — never to join a record.
 
 'use strict';
 
@@ -45,19 +45,7 @@ async function post(params) {
   }
 }
 
-const TOPICS = [
-  ['RAIL_TRANSIT', /רכבת|רק"ל|רק״ל|רקל|מטרו|מסילה|מטרונית|BRT|הסעת המונים|נת"צ|נתיב תחבורה ציבורית/],
-  ['ROAD', /כביש|מחלף|דרך מס|דרך מהירה|רמזור|צומת/],
-  ['RENEWAL', /התחדשות עירונית|פינוי[ -]בינוי|פינוי ובינוי|תמ"א 38|תמא 38|הריסה ובניה/],
-];
-function topicOf(p) {
-  const name = String(p.name || '');
-  for (const [t, re] of TOPICS) if (re.test(name)) return t;
-  if (p.kind === 'תכנית דרך') return 'ROAD';
-  if (p.kind === 'תכנית לתשתית לאומית') return 'NATIONAL_INFRASTRUCTURE';
-  if (p.kind === 'תכנית מועדפת לדיור' || p.kind === 'תכנית לדיור לאומי' || /^תמל/.test(p.planKey || '')) return 'PREFERRED_HOUSING';
-  return 'OTHER';
-}
+const { topicOf } = require('../lib/planning/topic');
 const tileOf = (x, y) => `${Math.floor(x / TILE)}_${Math.floor(y / TILE)}`;
 
 (async () => {
@@ -118,7 +106,7 @@ const tileOf = (x, y) => `${Math.floor(x / TILE)}_${Math.floor(y / TILE)}`;
   const meta = { schema: 1, engine: 'propx-plan-boundaries-1', source: { id: 'iplan:xplan', layer: LAYER, classification: 'OFFICIAL' }, fetchedAt,
     layerCount: count, stored: plans.length, skipped, complete, pages, tileSize: TILE, largeThresholdTiles: LARGE_TILES, tiles: index, large: large.length,
     topics, stages, bytes, generalization: 'maxAllowableOffset 0.0001° (~10 m), 5 decimals, WGS84',
-    topicRule: 'from the plan\'s own name and type only (lib: scripts/street-planning-sync.js TOPICS) — a label of the plan\'s text, never a join',
+    topicRule: 'from the plan\'s own name and type only (lib/planning/topic.js) — a label of the plan\'s text, never a join',
     use: 'a boundary states a spatial relation to a street (inside / distance) — never a join of records, never a value',
     hash: crypto.createHash('sha256').update(JSON.stringify(plans.map((x) => [x.oid, x.p.mpId, x.p.stage, x.p.lastUpdate]))).digest('hex') };
   fs.writeFileSync(path.join(OUT, 'meta.json'), JSON.stringify(meta, null, 1));
