@@ -4,3 +4,4 @@
 {"id":"street-evidence-20261019T150457Z","source":"over:deals-register","startedAt":"2026-10-19T15:04:57.183Z","status":"rebuilt","rematched":1036,"finishedAt":"2026-10-19T15:05:10.648Z","requests":0}
 {"id":"street-evidence-20261020T085235Z","source":"over:deals-register","startedAt":"2026-10-20T08:52:35.049Z","status":"unchanged","scrapedAt":"2026-09-19 11:07:39.013275+00","rematched":0,"finishedAt":"2026-10-20T08:52:39.913Z","requests":3}
 {"id":"street-evidence-20261020T104907Z","source":"over:deals-register","startedAt":"2026-10-20T10:49:07.527Z","status":"unchanged","scrapedAt":"2026-09-19 11:07:39.013275+00","rematched":0,"finishedAt":"2026-10-20T10:49:12.042Z","requests":3}
+{"id":"street-evidence-20261021T085242Z","source":"over:deals-register","startedAt":"2026-10-21T08:52:42.154Z","status":"unchanged","scrapedAt":"2026-09-19 11:07:39.013275+00","rematched":0,"finishedAt":"2026-10-21T08:52:46.515Z","requests":3}
