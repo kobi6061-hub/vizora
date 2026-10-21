@@ -21,7 +21,10 @@ function walk(dir, out = []) {
 }
 const FILES = walk(ROOT);
 const IDENTITY_FILES = new Set(['lib/identity/config.js', 'lib/identity/token.js', 'lib/identity/password.js', 'lib/identity/cookie.js', 'lib/identity/rest.js', 'lib/identity/service.js',
-  'api/identity.js', 'api/logout.js', 'scripts/identity-psql-adapter.js', 'scripts/identity-verify.js', 'scripts/kobix-dev-server.mjs', 'test/identity.test.js', 'test/private-identity.test.js', 'test/private-boundary.test.js']);
+  'api/identity.js', 'api/logout.js', 'scripts/identity-psql-adapter.js', 'scripts/identity-verify.js', 'scripts/kobix-dev-server.mjs', 'test/identity.test.js', 'test/private-identity.test.js', 'test/private-boundary.test.js',
+  /* Enterprise pilot (21.10.2026): the site gate itself (lib/identity/gate.mjs) and the one sign-in endpoint are identity code; the tests
+     that load the middleware, and the ALTARIS gate that reads the gate's public-path list as text */
+  'middleware.js', 'api/login.js', 'test/helpers/middleware.js', 'test/pilot-access.test.js', 'test/security-gate.test.js', 'test/altaris.test.js']);
 
 console.log('private boundary');
 at('only the identity files import lib/identity (no read model, sync, API or page module reaches it)', () => {

@@ -164,7 +164,8 @@
   adds `private.auth_rate`, `private.password_resets` and `ws.auth_rate_hit` · `auth_reset_peek` · `auth_reset_complete` ·
   `change_password` · `set_display_name` · `admin_reset_link` (`revoked_reason 'password'`); the workspace drawer adds the profile
   name, password change (ends every other session) and the platform admin's one-time reset link; sign-out leaves through
-  `/api/logout`. Gates: private-identity 41 · identity 18 · pilot-access 19 (all three in `private-identity.yml`).
+  `/api/logout`. Gates: private-identity 41 · identity 18 · pilot-access 19 (all three in `private-identity.yml`). Release: `docs/PILOT-RELEASE.md`
+  (staged rollout + rollback) and `.github/workflows/release-readiness.yml` (read-only DNS / TLS / headers / mode / gate probe of both domains + the preview).
 - `lib/gov/freshness.js` + `scripts/tx-freshness.js` + `.github/workflows/tx-freshness.yml` + `data/transactions/freshness*.json*` +
   `scripts/tx-freshness-discover.js` + `.github/workflows/tx-freshness-discover.yml` + `lib/trust/discovery/2026-10-19-transactions.json` +
   `test/tx-freshness.test.js` (+ `test/fixtures/tx-acceptance-2026-10-19.json`, 96 real deals) = P0 TRANSACTION FRESHNESS (19.10.2026). FIVE
