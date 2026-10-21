@@ -1,0 +1,79 @@
+# PROPX · release readiness (read-only, no credentials) — Enterprise pilot, 21.10.2026.
+#
+# From a GitHub runner (the development sandbox cannot reach the deployed sites): for each production domain and the preview
+# lane's deployment — DNS (A / AAAA / CNAME), the TLS certificate (subject, issuer, names, expiry), HTTP → HTTPS, www, which
+# platform answers, the security headers vercel.json sets, the sign-in mode the deployment reports, and that every page / API
+# path is gated (302 to /login.html) while the exact public paths answer. GET / HEAD / DNS only; nothing is written, no
+# credential is sent. Runs on a push of this file to the preview lane (a workflow that exists only on a non-default branch
+# cannot be dispatched) and by hand.
+
+name: Release readiness (read-only)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['.github/workflows/release-readiness.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Domains, certificates, headers, gate
+        env:
+          DOMAINS: 'propx.live kobix.online'
+          PREVIEW: 'https://kobixrealestate-git-claude-street-report-preview-iboks-projects.vercel.app'
+        run: |
+          set +e
+          hdr() { printf '%s' "$1" | tr -d '\r' | awk -v k="$(echo "$2" | tr A-Z a-z)" 'tolower($1)==k":"{ $1=""; sub(/^ /,""); print; exit }'; }
+          probe() {   # origin · path · wanted code(s) · wanted redirect target (optional)
+            local o="$1" p="$2" want="$3" redir="$4" out code loc
+            out=$(curl -sS -m 20 -o /dev/null -D - "$o$p" 2>&1)
+            code=$(printf '%s' "$out" | awk 'NR==1{print $2}'); loc=$(hdr "$out" location)
+            if printf '%s' "$want" | grep -qw "$code" && { [ -z "$redir" ] || printf '%s' "$loc" | grep -q "$redir"; }; then r="ok "; else r="BAD"; fi
+            echo "    [$r] $p → ${code:-no answer}${loc:+ → $loc} (wanted $want${redir:+ → $redir})"
+          }
+          site() {   # origin
+            local o="$1" out
+            out=$(curl -sS -m 20 -o /dev/null -D - "$o/login.html" 2>&1)
+            echo "  platform: server=$(hdr "$out" server) · x-vercel-id=$(hdr "$out" x-vercel-id | cut -c1-12)…"
+            for h in strict-transport-security x-frame-options x-content-type-options referrer-policy x-robots-tag content-security-policy; do
+              v=$(hdr "$out" $h); echo "  header $h: ${v:-(none)}"
+            done
+            echo "  sign-in mode: $(curl -sS -m 20 "$o/api/login?op=mode" | head -c 120)"
+            echo "  gate:"
+            probe "$o" /login.html 200
+            probe "$o" /robots.txt 200
+            probe "$o" /favicon.ico "200 204 404"
+            probe "$o" / "302 307" login.html
+            probe "$o" /index.html "302 307" login.html
+            probe "$o" /altaris "302 307" login.html
+            probe "$o" /standalone/israel-new-homes-v2.html "302 307" login.html
+            probe "$o" "/api/intel?view=status" "302 307" login.html
+            probe "$o" "/api/intel?view=streetReport&part=core&id=st:7900:213" "302 307" login.html
+            probe "$o" "/api/gov/transactions?settlement=5000" "302 307" login.html
+            probe "$o" "/api/geo/search?q=x" "302 307" login.html
+            probe "$o" "/api/identity?op=status" "302 307" login.html
+            probe "$o" /data/market/latest.json "302 307" login.html
+            probe "$o" /login.html.bak "302 307 404" login.html
+            probe "$o" "/api/login-x" "302 307" login.html
+          }
+          for d in $DOMAINS; do
+            echo "═══ $d"
+            echo "  DNS A:     $(dig +short A $d | tr '\n' ' ')"
+            echo "  DNS AAAA:  $(dig +short AAAA $d | tr '\n' ' ')"
+            echo "  DNS CNAME: $(dig +short CNAME $d | tr '\n' ' ')"
+            echo "  www CNAME: $(dig +short CNAME www.$d | tr '\n' ' ') · www A: $(dig +short A www.$d | tr '\n' ' ')"
+            echo "  NS:        $(dig +short NS $d | tr '\n' ' ')"
+            cert=$(echo | timeout 15 openssl s_client -servername $d -connect $d:443 2>/dev/null | openssl x509 -noout -subject -issuer -enddate -ext subjectAltName 2>/dev/null | tr '\n' ' ')
+            echo "  TLS: ${cert:-(no certificate read)}"
+            echo "  http://$d/  → $(curl -sS -m 15 -o /dev/null -w '%{http_code} → %{redirect_url}' http://$d/)"
+            echo "  https://www.$d/ → $(curl -sS -m 15 -o /dev/null -w '%{http_code} → %{redirect_url}' https://www.$d/)"
+            site "https://$d"
+          done
+          echo "═══ preview lane deployment"
+          site "$PREVIEW"

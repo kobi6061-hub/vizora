@@ -28,6 +28,11 @@
 --    that workspace's link, and only once the platform administrator approved it (identities the platform administrator
 --    invites are approved at creation) — a member can never claim an address for someone else.
 --
+-- Enterprise pilot (21.10.2026, before any real project applied this file — extended in place): the account plane a pilot
+-- needs once the individual sign-in IS the site's gate — a per-client rate limit on the sign-in plane (keys are HMACs the
+-- server computes; no address is stored), a password change that ends every other session, a display-name change, and a
+-- platform-administrator password-reset link (one-time, 72 h, single use, ends every session when used).
+--
 -- Bootstrap: the project owner runs, once, in the SQL editor:  select private.bootstrap('<email>', '<name>', '<team>');
 -- It returns a one-time activation token (72 h) for the first platform administrator, who becomes the first OWNER.
 -- See supabase/private/README.md.
@@ -127,7 +132,7 @@ create table ws.sessions (
   issued_at       timestamptz not null default now(),
   expires_at      timestamptz not null,
   revoked_at      timestamptz,
-  revoked_reason  text check (revoked_reason in ('signout', 'signout_all', 'admin', 'disabled')),
+  revoked_reason  text check (revoked_reason in ('signout', 'signout_all', 'admin', 'disabled', 'password')),
   check (expires_at > issued_at and expires_at <= issued_at + interval '8 hours'),
   check ((revoked_at is null) = (revoked_reason is null))
 );
@@ -142,6 +147,27 @@ create table private.identity_events (
   org_id          uuid,
   subject_user_id uuid,
   detail          jsonb not null default '{}'::jsonb
+);
+
+-- the sign-in plane's rate limit: one row per client key (an HMAC the PROPX server computes from the client address and
+-- the operation class — never the address itself), counted in a sliding window that restarts when it has passed
+create table private.auth_rate (
+  key_hash     text primary key check (key_hash ~ '^[0-9a-f]{64}$'),
+  window_start timestamptz not null,
+  hits         integer not null check (hits >= 0)
+);
+
+-- a password-reset link the platform administrator issues for an ACTIVE user (the link is shown once, to the
+-- administrator, who delivers it): only its sha-256 is stored; single use, 72 hours, superseded by a newer one
+create table private.password_resets (
+  token_hash   text primary key check (token_hash ~ '^[0-9a-f]{64}$'),
+  user_id      uuid not null references ws.users (id),
+  created_by   uuid not null references ws.users (id),
+  created_at   timestamptz not null default now(),
+  expires_at   timestamptz not null,
+  used_at      timestamptz,
+  superseded_at timestamptz,
+  check (expires_at > created_at and expires_at <= created_at + interval '72 hours')
 );
 
 -- ───────────────────────────── guards ─────────────────────────────
@@ -198,6 +224,18 @@ begin
   return new;
 end $$;
 
+-- a reset link is only ever used or superseded, once
+create function private.guard_resets() returns trigger language plpgsql set search_path = '' as $$
+begin
+  if new.token_hash <> old.token_hash or new.user_id <> old.user_id or new.created_by <> old.created_by
+     or new.created_at <> old.created_at or new.expires_at <> old.expires_at
+     or (old.used_at is not null and new.used_at is distinct from old.used_at)
+     or (old.superseded_at is not null and new.superseded_at is distinct from old.superseded_at) then
+    raise exception 'a reset link is only ever used or superseded' using errcode = 'P0001';
+  end if;
+  return new;
+end $$;
+
 -- every organization with an active member keeps at least one active owner (checked at commit, after every change); a
 -- disabled user is neither: an owner who cannot sign in does not keep a workspace governed
 create function private.check_owner() returns trigger language plpgsql security definer set search_path = '' as $$
@@ -231,6 +269,11 @@ create trigger sessions_guard before update on ws.sessions for each row execute 
 create trigger events_no_delete before delete on private.identity_events for each row execute function private.forbid_delete();
 create trigger events_no_truncate before truncate on private.identity_events for each statement execute function private.forbid_delete();
 create trigger events_no_update before update on private.identity_events for each row execute function private.forbid_update();
+create trigger rate_no_delete before delete on private.auth_rate for each row execute function private.forbid_delete();
+create trigger rate_no_truncate before truncate on private.auth_rate for each statement execute function private.forbid_delete();
+create trigger resets_no_delete before delete on private.password_resets for each row execute function private.forbid_delete();
+create trigger resets_no_truncate before truncate on private.password_resets for each statement execute function private.forbid_delete();
+create trigger resets_guard before update on private.password_resets for each row execute function private.guard_resets();
 
 -- ───────────────────────────── helpers (schema private — never exposed through the API) ─────────────────────────────
 
@@ -506,6 +549,58 @@ begin
   return jsonb_build_object('user_id', m.user_id, 'org_id', m.org_id, 'role', m.role);
 end $$;
 
+-- the sign-in plane's rate limit (pilot, 21.10.2026): count one attempt for a client key and say whether it is still
+-- within p_limit attempts per p_window_seconds. The key is an HMAC the server computes (client address + operation class):
+-- the database never sees an address. A window that has passed restarts at 1.
+create function ws.auth_rate_hit(p_key_hash text, p_limit integer, p_window_seconds integer) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare
+  v_limit integer := greatest(1, least(coalesce(p_limit, 30), 1000));
+  v_win interval := make_interval(secs => greatest(10, least(coalesce(p_window_seconds, 900), 86400)));
+  r private.auth_rate;
+begin
+  insert into private.auth_rate as a (key_hash, window_start, hits) values (private.check_hash(p_key_hash), now(), 1)
+  on conflict (key_hash) do update
+     set window_start = case when a.window_start <= now() - v_win then now() else a.window_start end,
+         hits = case when a.window_start <= now() - v_win then 1 else least(a.hits + 1, 1000000) end
+  returning * into r;
+  return jsonb_build_object('allowed', r.hits <= v_limit,
+                            'retry_after', case when r.hits <= v_limit then 0
+                                                else greatest(1, ceil(extract(epoch from (r.window_start + v_win - now())))::integer) end);
+end $$;
+
+-- what a password-reset link opens (shown only to its holder): the account's address and the link's expiry; null for a
+-- used, superseded, expired or unknown link, or a user who is no longer active
+create function ws.auth_reset_peek(p_token_hash text) returns jsonb language sql stable security definer set search_path = '' as $$
+  select jsonb_build_object('email', u.email, 'expires_at', r.expires_at)
+    from private.password_resets r join ws.users u on u.id = r.user_id
+   where r.token_hash = p_token_hash and r.used_at is null and r.superseded_at is null and r.expires_at > now()
+     and u.status = 'active'
+$$;
+
+-- a password-reset link used: the new password (hashed by the PROPX server), the account unlocked, EVERY session of the
+-- user ended (session_version + 1), the link spent. The server then opens one new session for this browser.
+create function ws.auth_reset_complete(p_token_hash text, p_password_hash text) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare r private.password_resets; v_n integer;
+begin
+  select * into r from private.password_resets
+   where token_hash = p_token_hash and used_at is null and superseded_at is null and expires_at > now() for update;
+  if r.user_id is null or not exists (select 1 from ws.users u where u.id = r.user_id and u.status = 'active') then
+    perform private.denied();
+  end if;
+  if coalesce(p_password_hash, '') !~ '^scrypt\$' then raise exception 'invalid_credential' using errcode = 'P0001'; end if;
+  update private.user_credentials
+     set password_hash = p_password_hash, password_set_at = now(), failed_count = 0, locked_until = null
+   where user_id = r.user_id;
+  update ws.users set session_version = session_version + 1 where id = r.user_id;
+  update ws.sessions set revoked_at = now(), revoked_reason = 'password' where user_id = r.user_id and revoked_at is null;
+  get diagnostics v_n = row_count;
+  update private.password_resets set used_at = now() where token_hash = r.token_hash;
+  perform private.log(r.user_id, 'password_reset', null, r.user_id, jsonb_build_object('sessions', v_n, 'issued_by', r.created_by));
+  return jsonb_build_object('user_id', r.user_id, 'sessions_revoked', v_n);
+end $$;
+
 -- ───────────────────────────── member plane (role authenticated) ─────────────────────────────
 
 -- WHO am I · WHICH organizations · WHAT role in each
@@ -713,6 +808,33 @@ begin
   return jsonb_build_object('sessions_revoked', v_n);
 end $$;
 
+-- change my password (pilot, 21.10.2026). The PROPX server has already verified the CURRENT password against the stored hash
+-- (the same scrypt check as a sign-in, failures counted); here the new hash replaces it and EVERY session of the user ends
+-- (session_version + 1) — the server then opens one new session for this browser.
+create function ws.change_password(p_password_hash text) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_uid uuid := private.require_user(); v_n integer;
+begin
+  if coalesce(p_password_hash, '') !~ '^scrypt\$' then raise exception 'invalid_credential' using errcode = 'P0001'; end if;
+  update private.user_credentials
+     set password_hash = p_password_hash, password_set_at = now(), failed_count = 0, locked_until = null
+   where user_id = v_uid;
+  update ws.users set session_version = session_version + 1 where id = v_uid;
+  update ws.sessions set revoked_at = now(), revoked_reason = 'password' where user_id = v_uid and revoked_at is null;
+  get diagnostics v_n = row_count;
+  perform private.log(v_uid, 'password_change', null, v_uid, jsonb_build_object('sessions', v_n));
+  return jsonb_build_object('user_id', v_uid, 'sessions_revoked', v_n);
+end $$;
+
+-- my display name (the address is the identity and never changes)
+create function ws.set_display_name(p_display_name text) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_uid uuid := private.require_user(); v_name text := nullif(btrim(coalesce(p_display_name, '')), '');
+begin
+  if v_name is null or length(v_name) > 120 then raise exception 'invalid_name' using errcode = 'P0001'; end if;
+  update ws.users set display_name = v_name where id = v_uid;
+  perform private.log(v_uid, 'set_display_name', null, v_uid);
+  return jsonb_build_object('display_name', v_name);
+end $$;
+
 -- ───────────────────────────── platform administration (is_platform_admin only) ─────────────────────────────
 
 create function private.require_platform_admin() returns uuid language plpgsql stable security definer set search_path = '' as $$
@@ -797,6 +919,23 @@ begin
   return jsonb_build_object('approved', true, 'changed', true);
 end $$;
 
+-- a password-reset link for an ACTIVE user (pilot, 21.10.2026): one-time, 72 hours; it supersedes any earlier unused link of
+-- that user. The administrator never sets or sees a password — the link holder chooses it. An invited (never activated) or
+-- disabled user is refused: the invitation link, or re-enabling first, is the path there.
+create function ws.admin_reset_link(p_user uuid, p_token_hash text) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_uid uuid := private.require_platform_admin(); u ws.users; v_exp timestamptz := now() + interval '72 hours';
+begin
+  select * into u from ws.users where id = p_user for update;
+  if u.id is null then raise exception 'not_found' using errcode = 'P0001'; end if;
+  if u.status <> 'active' or not exists (select 1 from private.user_credentials c where c.user_id = p_user) then
+    raise exception 'invalid_status' using errcode = 'P0001';
+  end if;
+  update private.password_resets set superseded_at = now() where user_id = p_user and used_at is null and superseded_at is null;
+  insert into private.password_resets (token_hash, user_id, created_by, expires_at) values (private.check_hash(p_token_hash), p_user, v_uid, v_exp);
+  perform private.log(v_uid, 'reset_link', null, p_user);
+  return jsonb_build_object('email', u.email, 'expires_at', v_exp);
+end $$;
+
 -- ───────────────────────────── row-level security (direct reads) ─────────────────────────────
 
 alter table ws.users enable row level security;
@@ -805,11 +944,14 @@ alter table ws.organization_members enable row level security;
 alter table ws.sessions enable row level security;
 alter table private.user_credentials enable row level security;
 alter table private.identity_events enable row level security;
+alter table private.auth_rate enable row level security;
+alter table private.password_resets enable row level security;
 
 create policy users_self on ws.users for select to authenticated using (id = (select private.current_user_id()));
 create policy orgs_member on ws.organizations for select to authenticated using (id in (select private.my_org_ids()));
 create policy members_member on ws.organization_members for select to authenticated using (org_id in (select private.my_org_ids()));
--- ws.sessions, private.user_credentials, private.identity_events: no policy → no row for any API role
+-- ws.sessions, private.user_credentials, private.identity_events, private.auth_rate, private.password_resets: no policy → no row
+-- for any API role
 
 -- ───────────────────────────── privileges (explicit, last — whatever the platform's defaults granted) ─────────────────────────────
 
@@ -842,14 +984,16 @@ grant select (org_id, user_id, role, status, invited_by, invited_at, accepted_at
 grant execute on function
   ws.auth_signin_lookup(text), ws.auth_signin_failed(text), ws.auth_session_open(uuid, text, text, integer),
   ws.auth_session_check(uuid, text), ws.auth_session_revoke(uuid, text), ws.auth_invite_peek(text),
-  ws.auth_activate(text, text, text)
+  ws.auth_activate(text, text, text), ws.auth_rate_hit(text, integer, integer), ws.auth_reset_peek(text),
+  ws.auth_reset_complete(text, text)
   to propx_auth;
 
 grant execute on function
   ws.me(), ws.org_members(uuid), ws.invite_member(uuid, text, text, text), ws.revoke_invitation(uuid, uuid),
   ws.accept_invitation(text), ws.set_member_role(uuid, uuid, text), ws.revoke_member(uuid, uuid), ws.create_team(text),
   ws.set_org_archived(uuid, boolean), ws.signout_all(), ws.admin_users(), ws.admin_set_user_status(uuid, text),
-  ws.admin_revoke_sessions(uuid), ws.admin_approve_user(uuid)
+  ws.admin_revoke_sessions(uuid), ws.admin_approve_user(uuid), ws.change_password(text), ws.set_display_name(text),
+  ws.admin_reset_link(uuid, text)
   to authenticated;
 
 commit;

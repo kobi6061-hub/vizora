@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "id": "metro",
+ "trustId": "datagov:mot:metro-stations",
+ "title": "תחנות מטרו",
+ "titleEn": "Metro stations — planned (names; no coordinates)",
+ "publisher": "משרד התחבורה והבטיחות בדרכים",
+ "publisherEn": "Ministry of Transport and Road Safety",
+ "resourceId": "aaea25c0-1478-4ae6-9c61-1cce3cff5ae7",
+ "page": "https://data.gov.il/dataset/metro_stat",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=aaea25c0-1478-4ae6-9c61-1cce3cff5ae7",
+ "licence": "Creative Commons Attribution",
+ "cadence": "as the Ministry updates (YEARMONTH per row)",
+ "period": "layer snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2024-06-24T20:50:46.729907Z",
+ "checkedAt": "2026-10-21T14:03:41.696Z",
+ "readAt": "2026-10-21T13:56:46.949Z",
+ "contentHash": "3fb83572fde2fe71cbdca89bbd61d24a8c4a7ccac8173f1b102801ca2eb5235e",
+ "sourceRows": 109,
+ "records": 108,
+ "rejected": 1,
+ "byLevel": {
+  "station": 108
+ },
+ "fields": [
+  "_id",
+  "OID",
+  "OBJECTID",
+  "ID",
+  "NAMEENG",
+  "LINE",
+  "MASAD",
+  "NAME",
+  "YEARMONTH"
+ ],
+ "history": [
+  "2026-10-21-3fb83572.json.gz"
+ ]
+}

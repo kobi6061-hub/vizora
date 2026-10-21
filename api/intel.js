@@ -90,6 +90,7 @@ let DD = null; try { DD = require('../lib/dd'); } catch { /* the due-diligence l
 let GROUP = null; try { GROUP = require('../lib/group'); } catch { /* Sponsor X-Ray ships separately */ }
 let STREETS = null; try { STREETS = { street: require('../lib/streets/street').street, coverage: require('../lib/streets/coverage').coverage }; } catch { /* street intelligence ships separately */ }
 let SVM = null; try { SVM = require('../lib/streets/value-read'); } catch { /* the street value model ships separately */ }
+let SREPORT = null; try { SREPORT = require('../lib/streets/report'); } catch { /* the street report ships separately */ }
 let STREET_COVERAGE = null;
 
 const send = (res, code, body) => { res.statusCode = code; res.end(JSON.stringify(body)); };
@@ -197,6 +198,8 @@ module.exports = async (req, res) => {
     if (view === 'dossierIndex') return send(res, 200, DOSSIER.index());
     if (view === 'dossierHistory') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = HIST.diff({ level, code: p.city || p.district || 'il', since: p.since, until: p.until }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'dossierSnapshots') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); return send(res, 200, HIST.snapshots()); }
+    if (view === 'finance') { const FIN = require('../lib/finance'); const L = FIN.read(); return L ? send(res, 200, { summary: FIN.summary(), latest: L }) : send(res, 404, { error: 'finance-not-synced' }); }
+    if (view === 'localityContext') { const REF = require('../lib/reference'); if (!/^\d{1,5}$/.test(String(p.city || ''))) return send(res, 400, { error: 'city must be a CBS locality code' }); return send(res, 200, { city: Number(p.city), ...REF.locality(Number(p.city)), sources: REF.status() }); }
     if (view === 'scan') return send(res, 200, SCAN.scan(p));
     if (view === 'scanGeo') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'revisions') return send(res, 200, REV.revisions(p));
@@ -275,6 +278,23 @@ module.exports = async (req, res) => {
          TRANSACTION EVENTS (lib/txevents: every source, one event per deal, newest first) travel under `events` */
       const out = obs && { ...obs, model: (SVM && SVM.estimate(obs.id)) || { available: false, reason: SVM ? 'street-not-in-model-build' : 'model-not-built' },
         events: txEventsOf({ streetId: p.id, all: true, limit: Math.min(200, Number(p.elimit) || 60) }) };
+      return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
+    }
+    /* STREET INVESTMENT INTELLIGENCE (lib/streets/report.js — a composition layer over the read models above; additive views):
+       streetReport (part=core for the first paint) · streetTx (the street's full transaction table: filters, sort, paging, format=csv) ·
+       streetProperty (the user's property and assumptions — nothing is stored) */
+    if (view === 'streetReport' || view === 'streetTx' || view === 'streetProperty') {
+      if (!SREPORT) return send(res, 404, { error: 'street report not available' });
+      if (!/^st:\d{1,5}:\d{1,5}$/.test(String(p.id || ''))) return send(res, 400, { error: 'id must be st:<locality code>:<street code>' });
+      if (view === 'streetTx' && p.format === 'csv') {
+        const csv = SREPORT.transactionsCsv(p.id, p);
+        if (!csv) return send(res, 404, { error: 'not an official street' });
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="propx-street-${String(p.id).replace(/[^0-9]+/g, '-').replace(/^-|-$/g, '')}-transactions.csv"`);
+        res.statusCode = 200; return res.end(csv);
+      }
+      const out = view === 'streetReport' ? SREPORT.report(p.id, { part: p.part === 'core' ? 'core' : 'full', limit: p.limit })
+        : view === 'streetTx' ? SREPORT.transactions(p.id, p) : SREPORT.property(p.id, p);
       return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
     }
     if (view === 'streetModel' || view === 'streetApartment' || view === 'streetModelValidation') {

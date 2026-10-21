@@ -1,0 +1,2368 @@
+{
+ "schema": 1,
+ "engine": "propx-street-geo-1",
+ "table": "layer",
+ "geometryType": "MULTIPOINT",
+ "srs": {
+  "id": 4326,
+  "epsg": 4326,
+  "name": "WGS 84"
+ },
+ "stats": {
+  "rows": 2500941,
+  "noSettlementId": 81093,
+  "noStreetCode": 547651,
+  "streetInDirectory": 1871558,
+  "placed": 1871808,
+  "streetNotInDirectory": 250,
+  "streetCodeOtherLocality": 389
+ },
+ "validation": {
+  "matched": 11900,
+  "apiRows": 11900,
+  "medianM": 0,
+  "p95M": 0,
+  "maxM": 0,
+  "within50mPct": 100,
+  "pass": true
+ },
+ "directoryNames": {
+  "same": 1361105,
+  "different": 510453
+ },
+ "localities": {
+  "21": {
+   "streets": 21,
+   "points": 175,
+   "neighbourhoodNames": 0
+  },
+  "26": {
+   "streets": 54,
+   "points": 238,
+   "neighbourhoodNames": 0
+  },
+  "28": {
+   "streets": 127,
+   "points": 667,
+   "neighbourhoodNames": 3
+  },
+  "31": {
+   "streets": 271,
+   "points": 2187,
+   "neighbourhoodNames": 9
+  },
+  "37": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "41": {
+   "streets": 23,
+   "points": 80,
+   "neighbourhoodNames": 0
+  },
+  "43": {
+   "streets": 16,
+   "points": 66,
+   "neighbourhoodNames": 0
+  },
+  "46": {
+   "streets": 6,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "47": {
+   "streets": 76,
+   "points": 408,
+   "neighbourhoodNames": 0
+  },
+  "48": {
+   "streets": 19,
+   "points": 70,
+   "neighbourhoodNames": 5
+  },
+  "53": {
+   "streets": 93,
+   "points": 854,
+   "neighbourhoodNames": 0
+  },
+  "65": {
+   "streets": 4,
+   "points": 12,
+   "neighbourhoodNames": 0
+  },
+  "66": {
+   "streets": 4,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "70": {
+   "streets": 473,
+   "points": 3322,
+   "neighbourhoodNames": 26
+  },
+  "94": {
+   "streets": 8,
+   "points": 52,
+   "neighbourhoodNames": 0
+  },
+  "95": {
+   "streets": 5,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "96": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "97": {
+   "streets": 9,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "98": {
+   "streets": 1,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "99": {
+   "streets": 47,
+   "points": 271,
+   "neighbourhoodNames": 0
+  },
+  "103": {
+   "streets": 13,
+   "points": 37,
+   "neighbourhoodNames": 0
+  },
+  "106": {
+   "streets": 6,
+   "points": 14,
+   "neighbourhoodNames": 0
+  },
+  "115": {
+   "streets": 9,
+   "points": 97,
+   "neighbourhoodNames": 0
+  },
+  "122": {
+   "streets": 75,
+   "points": 509,
+   "neighbourhoodNames": 0
+  },
+  "128": {
+   "streets": 1,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "132": {
+   "streets": 6,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "140": {
+   "streets": 18,
+   "points": 65,
+   "neighbourhoodNames": 0
+  },
+  "142": {
+   "streets": 7,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "154": {
+   "streets": 99,
+   "points": 1028,
+   "neighbourhoodNames": 0
+  },
+  "157": {
+   "streets": 20,
+   "points": 136,
+   "neighbourhoodNames": 0
+  },
+  "159": {
+   "streets": 4,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "162": {
+   "streets": 10,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "166": {
+   "streets": 180,
+   "points": 1482,
+   "neighbourhoodNames": 0
+  },
+  "168": {
+   "streets": 144,
+   "points": 1547,
+   "neighbourhoodNames": 8
+  },
+  "171": {
+   "streets": 49,
+   "points": 415,
+   "neighbourhoodNames": 0
+  },
+  "175": {
+   "streets": 15,
+   "points": 53,
+   "neighbourhoodNames": 0
+  },
+  "177": {
+   "streets": 10,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "182": {
+   "streets": 174,
+   "points": 1235,
+   "neighbourhoodNames": 0
+  },
+  "183": {
+   "streets": 6,
+   "points": 32,
+   "neighbourhoodNames": 0
+  },
+  "190": {
+   "streets": 19,
+   "points": 61,
+   "neighbourhoodNames": 0
+  },
+  "191": {
+   "streets": 14,
+   "points": 46,
+   "neighbourhoodNames": 0
+  },
+  "192": {
+   "streets": 5,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "195": {
+   "streets": 174,
+   "points": 1170,
+   "neighbourhoodNames": 3
+  },
+  "200": {
+   "streets": 9,
+   "points": 25,
+   "neighbourhoodNames": 0
+  },
+  "205": {
+   "streets": 11,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "206": {
+   "streets": 25,
+   "points": 96,
+   "neighbourhoodNames": 0
+  },
+  "207": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "208": {
+   "streets": 13,
+   "points": 45,
+   "neighbourhoodNames": 0
+  },
+  "218": {
+   "streets": 3,
+   "points": 12,
+   "neighbourhoodNames": 0
+  },
+  "219": {
+   "streets": 7,
+   "points": 52,
+   "neighbourhoodNames": 0
+  },
+  "220": {
+   "streets": 3,
+   "points": 13,
+   "neighbourhoodNames": 0
+  },
+  "223": {
+   "streets": 6,
+   "points": 23,
+   "neighbourhoodNames": 0
+  },
+  "229": {
+   "streets": 54,
+   "points": 388,
+   "neighbourhoodNames": 10
+  },
+  "233": {
+   "streets": 12,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "235": {
+   "streets": 3,
+   "points": 13,
+   "neighbourhoodNames": 0
+  },
+  "240": {
+   "streets": 97,
+   "points": 1111,
+   "neighbourhoodNames": 10
+  },
+  "246": {
+   "streets": 136,
+   "points": 1265,
+   "neighbourhoodNames": 9
+  },
+  "248": {
+   "streets": 9,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "249": {
+   "streets": 9,
+   "points": 37,
+   "neighbourhoodNames": 0
+  },
+  "252": {
+   "streets": 5,
+   "points": 12,
+   "neighbourhoodNames": 0
+  },
+  "257": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "267": {
+   "streets": 28,
+   "points": 247,
+   "neighbourhoodNames": 0
+  },
+  "269": {
+   "streets": 12,
+   "points": 108,
+   "neighbourhoodNames": 0
+  },
+  "276": {
+   "streets": 14,
+   "points": 100,
+   "neighbourhoodNames": 0
+  },
+  "278": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "281": {
+   "streets": 4,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "282": {
+   "streets": 7,
+   "points": 71,
+   "neighbourhoodNames": 0
+  },
+  "284": {
+   "streets": 15,
+   "points": 103,
+   "neighbourhoodNames": 0
+  },
+  "288": {
+   "streets": 3,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "309": {
+   "streets": 7,
+   "points": 70,
+   "neighbourhoodNames": 0
+  },
+  "315": {
+   "streets": 10,
+   "points": 31,
+   "neighbourhoodNames": 0
+  },
+  "316": {
+   "streets": 8,
+   "points": 78,
+   "neighbourhoodNames": 0
+  },
+  "324": {
+   "streets": 2,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "326": {
+   "streets": 29,
+   "points": 105,
+   "neighbourhoodNames": 0
+  },
+  "331": {
+   "streets": 5,
+   "points": 16,
+   "neighbourhoodNames": 0
+  },
+  "351": {
+   "streets": 17,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "364": {
+   "streets": 5,
+   "points": 10,
+   "neighbourhoodNames": 0
+  },
+  "372": {
+   "streets": 15,
+   "points": 23,
+   "neighbourhoodNames": 0
+  },
+  "375": {
+   "streets": 6,
+   "points": 34,
+   "neighbourhoodNames": 0
+  },
+  "382": {
+   "streets": 12,
+   "points": 62,
+   "neighbourhoodNames": 0
+  },
+  "386": {
+   "streets": 11,
+   "points": 101,
+   "neighbourhoodNames": 0
+  },
+  "388": {
+   "streets": 12,
+   "points": 36,
+   "neighbourhoodNames": 0
+  },
+  "390": {
+   "streets": 24,
+   "points": 60,
+   "neighbourhoodNames": 0
+  },
+  "405": {
+   "streets": 13,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "418": {
+   "streets": 21,
+   "points": 103,
+   "neighbourhoodNames": 0
+  },
+  "429": {
+   "streets": 16,
+   "points": 54,
+   "neighbourhoodNames": 0
+  },
+  "430": {
+   "streets": 7,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "432": {
+   "streets": 6,
+   "points": 8,
+   "neighbourhoodNames": 0
+  },
+  "437": {
+   "streets": 8,
+   "points": 36,
+   "neighbourhoodNames": 0
+  },
+  "440": {
+   "streets": 10,
+   "points": 94,
+   "neighbourhoodNames": 0
+  },
+  "445": {
+   "streets": 2,
+   "points": 95,
+   "neighbourhoodNames": 0
+  },
+  "446": {
+   "streets": 9,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "447": {
+   "streets": 15,
+   "points": 62,
+   "neighbourhoodNames": 0
+  },
+  "448": {
+   "streets": 7,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "449": {
+   "streets": 6,
+   "points": 30,
+   "neighbourhoodNames": 0
+  },
+  "466": {
+   "streets": 43,
+   "points": 337,
+   "neighbourhoodNames": 0
+  },
+  "469": {
+   "streets": 70,
+   "points": 418,
+   "neighbourhoodNames": 0
+  },
+  "472": {
+   "streets": 19,
+   "points": 34,
+   "neighbourhoodNames": 0
+  },
+  "473": {
+   "streets": 68,
+   "points": 144,
+   "neighbourhoodNames": 0
+  },
+  "478": {
+   "streets": 63,
+   "points": 83,
+   "neighbourhoodNames": 0
+  },
+  "480": {
+   "streets": 124,
+   "points": 198,
+   "neighbourhoodNames": 0
+  },
+  "485": {
+   "streets": 53,
+   "points": 93,
+   "neighbourhoodNames": 0
+  },
+  "489": {
+   "streets": 60,
+   "points": 80,
+   "neighbourhoodNames": 0
+  },
+  "494": {
+   "streets": 186,
+   "points": 314,
+   "neighbourhoodNames": 0
+  },
+  "496": {
+   "streets": 43,
+   "points": 68,
+   "neighbourhoodNames": 0
+  },
+  "498": {
+   "streets": 56,
+   "points": 206,
+   "neighbourhoodNames": 0
+  },
+  "499": {
+   "streets": 87,
+   "points": 166,
+   "neighbourhoodNames": 0
+  },
+  "502": {
+   "streets": 110,
+   "points": 199,
+   "neighbourhoodNames": 0
+  },
+  "507": {
+   "streets": 67,
+   "points": 137,
+   "neighbourhoodNames": 6
+  },
+  "508": {
+   "streets": 20,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "509": {
+   "streets": 73,
+   "points": 168,
+   "neighbourhoodNames": 0
+  },
+  "511": {
+   "streets": 31,
+   "points": 48,
+   "neighbourhoodNames": 0
+  },
+  "514": {
+   "streets": 4,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "516": {
+   "streets": 60,
+   "points": 264,
+   "neighbourhoodNames": 0
+  },
+  "517": {
+   "streets": 16,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "520": {
+   "streets": 18,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "522": {
+   "streets": 72,
+   "points": 206,
+   "neighbourhoodNames": 0
+  },
+  "525": {
+   "streets": 26,
+   "points": 85,
+   "neighbourhoodNames": 0
+  },
+  "530": {
+   "streets": 41,
+   "points": 60,
+   "neighbourhoodNames": 0
+  },
+  "531": {
+   "streets": 125,
+   "points": 243,
+   "neighbourhoodNames": 0
+  },
+  "532": {
+   "streets": 68,
+   "points": 102,
+   "neighbourhoodNames": 0
+  },
+  "534": {
+   "streets": 105,
+   "points": 201,
+   "neighbourhoodNames": 0
+  },
+  "535": {
+   "streets": 31,
+   "points": 80,
+   "neighbourhoodNames": 0
+  },
+  "536": {
+   "streets": 43,
+   "points": 74,
+   "neighbourhoodNames": 0
+  },
+  "540": {
+   "streets": 8,
+   "points": 10,
+   "neighbourhoodNames": 0
+  },
+  "541": {
+   "streets": 38,
+   "points": 87,
+   "neighbourhoodNames": 0
+  },
+  "542": {
+   "streets": 125,
+   "points": 212,
+   "neighbourhoodNames": 0
+  },
+  "543": {
+   "streets": 58,
+   "points": 106,
+   "neighbourhoodNames": 0
+  },
+  "546": {
+   "streets": 11,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "549": {
+   "streets": 17,
+   "points": 100,
+   "neighbourhoodNames": 0
+  },
+  "555": {
+   "streets": 6,
+   "points": 27,
+   "neighbourhoodNames": 0
+  },
+  "559": {
+   "streets": 5,
+   "points": 33,
+   "neighbourhoodNames": 0
+  },
+  "562": {
+   "streets": 5,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "565": {
+   "streets": 48,
+   "points": 357,
+   "neighbourhoodNames": 0
+  },
+  "570": {
+   "streets": 7,
+   "points": 14,
+   "neighbourhoodNames": 0
+  },
+  "574": {
+   "streets": 29,
+   "points": 76,
+   "neighbourhoodNames": 0
+  },
+  "577": {
+   "streets": 24,
+   "points": 178,
+   "neighbourhoodNames": 0
+  },
+  "579": {
+   "streets": 2,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "580": {
+   "streets": 7,
+   "points": 32,
+   "neighbourhoodNames": 0
+  },
+  "587": {
+   "streets": 80,
+   "points": 625,
+   "neighbourhoodNames": 0
+  },
+  "589": {
+   "streets": 9,
+   "points": 30,
+   "neighbourhoodNames": 0
+  },
+  "591": {
+   "streets": 12,
+   "points": 66,
+   "neighbourhoodNames": 0
+  },
+  "593": {
+   "streets": 8,
+   "points": 40,
+   "neighbourhoodNames": 0
+  },
+  "594": {
+   "streets": 1,
+   "points": 15,
+   "neighbourhoodNames": 0
+  },
+  "603": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "605": {
+   "streets": 5,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "606": {
+   "streets": 14,
+   "points": 45,
+   "neighbourhoodNames": 0
+  },
+  "613": {
+   "streets": 9,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "614": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "615": {
+   "streets": 13,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "616": {
+   "streets": 8,
+   "points": 15,
+   "neighbourhoodNames": 0
+  },
+  "618": {
+   "streets": 4,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "627": {
+   "streets": 32,
+   "points": 46,
+   "neighbourhoodNames": 0
+  },
+  "633": {
+   "streets": 27,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "634": {
+   "streets": 4,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "637": {
+   "streets": 78,
+   "points": 126,
+   "neighbourhoodNames": 0
+  },
+  "638": {
+   "streets": 46,
+   "points": 81,
+   "neighbourhoodNames": 0
+  },
+  "652": {
+   "streets": 9,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "654": {
+   "streets": 125,
+   "points": 168,
+   "neighbourhoodNames": 0
+  },
+  "658": {
+   "streets": 7,
+   "points": 21,
+   "neighbourhoodNames": 0
+  },
+  "661": {
+   "streets": 23,
+   "points": 251,
+   "neighbourhoodNames": 0
+  },
+  "662": {
+   "streets": 15,
+   "points": 102,
+   "neighbourhoodNames": 0
+  },
+  "666": {
+   "streets": 78,
+   "points": 767,
+   "neighbourhoodNames": 0
+  },
+  "670": {
+   "streets": 6,
+   "points": 15,
+   "neighbourhoodNames": 0
+  },
+  "673": {
+   "streets": 10,
+   "points": 39,
+   "neighbourhoodNames": 0
+  },
+  "679": {
+   "streets": 9,
+   "points": 63,
+   "neighbourhoodNames": 0
+  },
+  "681": {
+   "streets": 73,
+   "points": 518,
+   "neighbourhoodNames": 6
+  },
+  "684": {
+   "streets": 10,
+   "points": 46,
+   "neighbourhoodNames": 0
+  },
+  "686": {
+   "streets": 10,
+   "points": 56,
+   "neighbourhoodNames": 0
+  },
+  "687": {
+   "streets": 1,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "692": {
+   "streets": 8,
+   "points": 47,
+   "neighbourhoodNames": 0
+  },
+  "693": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "696": {
+   "streets": 26,
+   "points": 57,
+   "neighbourhoodNames": 0
+  },
+  "697": {
+   "streets": 4,
+   "points": 45,
+   "neighbourhoodNames": 0
+  },
+  "698": {
+   "streets": 4,
+   "points": 9,
+   "neighbourhoodNames": 0
+  },
+  "701": {
+   "streets": 7,
+   "points": 44,
+   "neighbourhoodNames": 0
+  },
+  "710": {
+   "streets": 12,
+   "points": 52,
+   "neighbourhoodNames": 0
+  },
+  "712": {
+   "streets": 6,
+   "points": 16,
+   "neighbourhoodNames": 0
+  },
+  "717": {
+   "streets": 9,
+   "points": 39,
+   "neighbourhoodNames": 0
+  },
+  "718": {
+   "streets": 9,
+   "points": 31,
+   "neighbourhoodNames": 0
+  },
+  "720": {
+   "streets": 20,
+   "points": 81,
+   "neighbourhoodNames": 0
+  },
+  "722": {
+   "streets": 9,
+   "points": 38,
+   "neighbourhoodNames": 0
+  },
+  "727": {
+   "streets": 5,
+   "points": 41,
+   "neighbourhoodNames": 0
+  },
+  "729": {
+   "streets": 14,
+   "points": 59,
+   "neighbourhoodNames": 0
+  },
+  "732": {
+   "streets": 5,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "735": {
+   "streets": 7,
+   "points": 29,
+   "neighbourhoodNames": 0
+  },
+  "738": {
+   "streets": 3,
+   "points": 21,
+   "neighbourhoodNames": 0
+  },
+  "741": {
+   "streets": 5,
+   "points": 14,
+   "neighbourhoodNames": 0
+  },
+  "742": {
+   "streets": 3,
+   "points": 31,
+   "neighbourhoodNames": 0
+  },
+  "743": {
+   "streets": 3,
+   "points": 18,
+   "neighbourhoodNames": 0
+  },
+  "745": {
+   "streets": 4,
+   "points": 21,
+   "neighbourhoodNames": 0
+  },
+  "753": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "755": {
+   "streets": 2,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "757": {
+   "streets": 10,
+   "points": 35,
+   "neighbourhoodNames": 0
+  },
+  "758": {
+   "streets": 7,
+   "points": 8,
+   "neighbourhoodNames": 0
+  },
+  "763": {
+   "streets": 10,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "764": {
+   "streets": 8,
+   "points": 14,
+   "neighbourhoodNames": 0
+  },
+  "769": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "771": {
+   "streets": 13,
+   "points": 54,
+   "neighbourhoodNames": 0
+  },
+  "772": {
+   "streets": 4,
+   "points": 17,
+   "neighbourhoodNames": 0
+  },
+  "774": {
+   "streets": 2,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "775": {
+   "streets": 5,
+   "points": 30,
+   "neighbourhoodNames": 0
+  },
+  "780": {
+   "streets": 6,
+   "points": 21,
+   "neighbourhoodNames": 0
+  },
+  "783": {
+   "streets": 2,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "784": {
+   "streets": 4,
+   "points": 25,
+   "neighbourhoodNames": 0
+  },
+  "787": {
+   "streets": 6,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "789": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "792": {
+   "streets": 6,
+   "points": 25,
+   "neighbourhoodNames": 0
+  },
+  "793": {
+   "streets": 6,
+   "points": 18,
+   "neighbourhoodNames": 0
+  },
+  "795": {
+   "streets": 4,
+   "points": 40,
+   "neighbourhoodNames": 0
+  },
+  "796": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "799": {
+   "streets": 4,
+   "points": 21,
+   "neighbourhoodNames": 0
+  },
+  "801": {
+   "streets": 11,
+   "points": 57,
+   "neighbourhoodNames": 0
+  },
+  "802": {
+   "streets": 10,
+   "points": 30,
+   "neighbourhoodNames": 0
+  },
+  "804": {
+   "streets": 3,
+   "points": 9,
+   "neighbourhoodNames": 0
+  },
+  "807": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "812": {
+   "streets": 28,
+   "points": 342,
+   "neighbourhoodNames": 7
+  },
+  "813": {
+   "streets": 8,
+   "points": 55,
+   "neighbourhoodNames": 0
+  },
+  "815": {
+   "streets": 5,
+   "points": 85,
+   "neighbourhoodNames": 0
+  },
+  "823": {
+   "streets": 3,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "825": {
+   "streets": 2,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "827": {
+   "streets": 6,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "831": {
+   "streets": 119,
+   "points": 578,
+   "neighbourhoodNames": 0
+  },
+  "841": {
+   "streets": 4,
+   "points": 18,
+   "neighbourhoodNames": 0
+  },
+  "850": {
+   "streets": 7,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "857": {
+   "streets": 4,
+   "points": 25,
+   "neighbourhoodNames": 0
+  },
+  "858": {
+   "streets": 6,
+   "points": 36,
+   "neighbourhoodNames": 0
+  },
+  "862": {
+   "streets": 8,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "863": {
+   "streets": 9,
+   "points": 17,
+   "neighbourhoodNames": 0
+  },
+  "874": {
+   "streets": 129,
+   "points": 1038,
+   "neighbourhoodNames": 15
+  },
+  "877": {
+   "streets": 2,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "880": {
+   "streets": 20,
+   "points": 83,
+   "neighbourhoodNames": 0
+  },
+  "888": {
+   "streets": 6,
+   "points": 33,
+   "neighbourhoodNames": 0
+  },
+  "892": {
+   "streets": 5,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "913": {
+   "streets": 27,
+   "points": 56,
+   "neighbourhoodNames": 0
+  },
+  "917": {
+   "streets": 9,
+   "points": 55,
+   "neighbourhoodNames": 0
+  },
+  "922": {
+   "streets": 32,
+   "points": 301,
+   "neighbourhoodNames": 0
+  },
+  "944": {
+   "streets": 23,
+   "points": 58,
+   "neighbourhoodNames": 0
+  },
+  "962": {
+   "streets": 22,
+   "points": 69,
+   "neighbourhoodNames": 0
+  },
+  "975": {
+   "streets": 55,
+   "points": 65,
+   "neighbourhoodNames": 0
+  },
+  "978": {
+   "streets": 25,
+   "points": 27,
+   "neighbourhoodNames": 0
+  },
+  "998": {
+   "streets": 40,
+   "points": 129,
+   "neighbourhoodNames": 0
+  },
+  "1015": {
+   "streets": 105,
+   "points": 964,
+   "neighbourhoodNames": 0
+  },
+  "1020": {
+   "streets": 102,
+   "points": 789,
+   "neighbourhoodNames": 12
+  },
+  "1031": {
+   "streets": 247,
+   "points": 1264,
+   "neighbourhoodNames": 9
+  },
+  "1034": {
+   "streets": 105,
+   "points": 760,
+   "neighbourhoodNames": 11
+  },
+  "1045": {
+   "streets": 4,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "1050": {
+   "streets": 9,
+   "points": 58,
+   "neighbourhoodNames": 0
+  },
+  "1060": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "1061": {
+   "streets": 123,
+   "points": 1459,
+   "neighbourhoodNames": 16
+  },
+  "1063": {
+   "streets": 137,
+   "points": 960,
+   "neighbourhoodNames": 0
+  },
+  "1066": {
+   "streets": 32,
+   "points": 197,
+   "neighbourhoodNames": 0
+  },
+  "1080": {
+   "streets": 3,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "1081": {
+   "streets": 5,
+   "points": 8,
+   "neighbourhoodNames": 0
+  },
+  "1098": {
+   "streets": 15,
+   "points": 209,
+   "neighbourhoodNames": 0
+  },
+  "1102": {
+   "streets": 5,
+   "points": 23,
+   "neighbourhoodNames": 0
+  },
+  "1105": {
+   "streets": 10,
+   "points": 140,
+   "neighbourhoodNames": 0
+  },
+  "1112": {
+   "streets": 10,
+   "points": 53,
+   "neighbourhoodNames": 0
+  },
+  "1113": {
+   "streets": 62,
+   "points": 533,
+   "neighbourhoodNames": 4
+  },
+  "1114": {
+   "streets": 13,
+   "points": 143,
+   "neighbourhoodNames": 0
+  },
+  "1128": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "1130": {
+   "streets": 2,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "1132": {
+   "streets": 6,
+   "points": 8,
+   "neighbourhoodNames": 0
+  },
+  "1137": {
+   "streets": 14,
+   "points": 66,
+   "neighbourhoodNames": 0
+  },
+  "1138": {
+   "streets": 6,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "1139": {
+   "streets": 170,
+   "points": 1844,
+   "neighbourhoodNames": 20
+  },
+  "1147": {
+   "streets": 3,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "1157": {
+   "streets": 6,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "1161": {
+   "streets": 60,
+   "points": 94,
+   "neighbourhoodNames": 19
+  },
+  "1165": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "1167": {
+   "streets": 93,
+   "points": 952,
+   "neighbourhoodNames": 15
+  },
+  "1171": {
+   "streets": 8,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "1172": {
+   "streets": 13,
+   "points": 78,
+   "neighbourhoodNames": 0
+  },
+  "1174": {
+   "streets": 12,
+   "points": 37,
+   "neighbourhoodNames": 0
+  },
+  "1176": {
+   "streets": 9,
+   "points": 44,
+   "neighbourhoodNames": 0
+  },
+  "1178": {
+   "streets": 14,
+   "points": 152,
+   "neighbourhoodNames": 0
+  },
+  "1179": {
+   "streets": 11,
+   "points": 33,
+   "neighbourhoodNames": 0
+  },
+  "1181": {
+   "streets": 13,
+   "points": 48,
+   "neighbourhoodNames": 0
+  },
+  "1184": {
+   "streets": 5,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "1186": {
+   "streets": 10,
+   "points": 49,
+   "neighbourhoodNames": 0
+  },
+  "1199": {
+   "streets": 21,
+   "points": 97,
+   "neighbourhoodNames": 0
+  },
+  "1200": {
+   "streets": 370,
+   "points": 3295,
+   "neighbourhoodNames": 17
+  },
+  "1201": {
+   "streets": 8,
+   "points": 43,
+   "neighbourhoodNames": 0
+  },
+  "1202": {
+   "streets": 6,
+   "points": 45,
+   "neighbourhoodNames": 0
+  },
+  "1203": {
+   "streets": 5,
+   "points": 46,
+   "neighbourhoodNames": 0
+  },
+  "1204": {
+   "streets": 15,
+   "points": 76,
+   "neighbourhoodNames": 0
+  },
+  "1205": {
+   "streets": 5,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "1207": {
+   "streets": 11,
+   "points": 177,
+   "neighbourhoodNames": 0
+  },
+  "1208": {
+   "streets": 5,
+   "points": 22,
+   "neighbourhoodNames": 0
+  },
+  "1209": {
+   "streets": 5,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "1219": {
+   "streets": 4,
+   "points": 19,
+   "neighbourhoodNames": 0
+  },
+  "1220": {
+   "streets": 5,
+   "points": 12,
+   "neighbourhoodNames": 0
+  },
+  "1221": {
+   "streets": 15,
+   "points": 66,
+   "neighbourhoodNames": 0
+  },
+  "1224": {
+   "streets": 100,
+   "points": 878,
+   "neighbourhoodNames": 3
+  },
+  "1226": {
+   "streets": 11,
+   "points": 123,
+   "neighbourhoodNames": 0
+  },
+  "1228": {
+   "streets": 13,
+   "points": 55,
+   "neighbourhoodNames": 0
+  },
+  "1231": {
+   "streets": 1,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "1236": {
+   "streets": 8,
+   "points": 53,
+   "neighbourhoodNames": 0
+  },
+  "1240": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "1241": {
+   "streets": 3,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "1243": {
+   "streets": 23,
+   "points": 328,
+   "neighbourhoodNames": 0
+  },
+  "1244": {
+   "streets": 19,
+   "points": 208,
+   "neighbourhoodNames": 0
+  },
+  "1245": {
+   "streets": 20,
+   "points": 45,
+   "neighbourhoodNames": 0
+  },
+  "1247": {
+   "streets": 42,
+   "points": 487,
+   "neighbourhoodNames": 0
+  },
+  "1253": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "1256": {
+   "streets": 16,
+   "points": 96,
+   "neighbourhoodNames": 0
+  },
+  "1257": {
+   "streets": 9,
+   "points": 35,
+   "neighbourhoodNames": 0
+  },
+  "1263": {
+   "streets": 63,
+   "points": 642,
+   "neighbourhoodNames": 10
+  },
+  "1264": {
+   "streets": 14,
+   "points": 81,
+   "neighbourhoodNames": 0
+  },
+  "1268": {
+   "streets": 130,
+   "points": 1228,
+   "neighbourhoodNames": 0
+  },
+  "1271": {
+   "streets": 75,
+   "points": 430,
+   "neighbourhoodNames": 0
+  },
+  "1272": {
+   "streets": 15,
+   "points": 80,
+   "neighbourhoodNames": 0
+  },
+  "1274": {
+   "streets": 15,
+   "points": 162,
+   "neighbourhoodNames": 0
+  },
+  "1275": {
+   "streets": 5,
+   "points": 33,
+   "neighbourhoodNames": 0
+  },
+  "1284": {
+   "streets": 17,
+   "points": 141,
+   "neighbourhoodNames": 0
+  },
+  "1285": {
+   "streets": 6,
+   "points": 17,
+   "neighbourhoodNames": 0
+  },
+  "1286": {
+   "streets": 22,
+   "points": 35,
+   "neighbourhoodNames": 0
+  },
+  "1288": {
+   "streets": 19,
+   "points": 112,
+   "neighbourhoodNames": 0
+  },
+  "1292": {
+   "streets": 88,
+   "points": 231,
+   "neighbourhoodNames": 0
+  },
+  "1293": {
+   "streets": 8,
+   "points": 158,
+   "neighbourhoodNames": 0
+  },
+  "1295": {
+   "streets": 45,
+   "points": 91,
+   "neighbourhoodNames": 0
+  },
+  "1296": {
+   "streets": 56,
+   "points": 84,
+   "neighbourhoodNames": 0
+  },
+  "1303": {
+   "streets": 9,
+   "points": 10,
+   "neighbourhoodNames": 0
+  },
+  "1304": {
+   "streets": 68,
+   "points": 739,
+   "neighbourhoodNames": 12
+  },
+  "1309": {
+   "streets": 39,
+   "points": 460,
+   "neighbourhoodNames": 0
+  },
+  "1310": {
+   "streets": 13,
+   "points": 187,
+   "neighbourhoodNames": 0
+  },
+  "1314": {
+   "streets": 12,
+   "points": 43,
+   "neighbourhoodNames": 0
+  },
+  "1315": {
+   "streets": 21,
+   "points": 180,
+   "neighbourhoodNames": 0
+  },
+  "1316": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "1317": {
+   "streets": 7,
+   "points": 11,
+   "neighbourhoodNames": 0
+  },
+  "1319": {
+   "streets": 34,
+   "points": 356,
+   "neighbourhoodNames": 0
+  },
+  "1326": {
+   "streets": 39,
+   "points": 72,
+   "neighbourhoodNames": 0
+  },
+  "1330": {
+   "streets": 24,
+   "points": 367,
+   "neighbourhoodNames": 0
+  },
+  "1333": {
+   "streets": 8,
+   "points": 41,
+   "neighbourhoodNames": 0
+  },
+  "1335": {
+   "streets": 6,
+   "points": 15,
+   "neighbourhoodNames": 0
+  },
+  "1336": {
+   "streets": 27,
+   "points": 143,
+   "neighbourhoodNames": 0
+  },
+  "1337": {
+   "streets": 20,
+   "points": 108,
+   "neighbourhoodNames": 0
+  },
+  "1344": {
+   "streets": 7,
+   "points": 20,
+   "neighbourhoodNames": 0
+  },
+  "1345": {
+   "streets": 9,
+   "points": 83,
+   "neighbourhoodNames": 0
+  },
+  "1361": {
+   "streets": 7,
+   "points": 39,
+   "neighbourhoodNames": 0
+  },
+  "1365": {
+   "streets": 4,
+   "points": 28,
+   "neighbourhoodNames": 0
+  },
+  "1368": {
+   "streets": 7,
+   "points": 69,
+   "neighbourhoodNames": 0
+  },
+  "1369": {
+   "streets": 2,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "1370": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "1374": {
+   "streets": 3,
+   "points": 12,
+   "neighbourhoodNames": 0
+  },
+  "1724": {
+   "streets": 4,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "2002": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "2003": {
+   "streets": 13,
+   "points": 61,
+   "neighbourhoodNames": 0
+  },
+  "2010": {
+   "streets": 5,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "2013": {
+   "streets": 6,
+   "points": 26,
+   "neighbourhoodNames": 0
+  },
+  "2015": {
+   "streets": 11,
+   "points": 41,
+   "neighbourhoodNames": 0
+  },
+  "2030": {
+   "streets": 2,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "2034": {
+   "streets": 52,
+   "points": 363,
+   "neighbourhoodNames": 0
+  },
+  "2043": {
+   "streets": 3,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "2046": {
+   "streets": 9,
+   "points": 11,
+   "neighbourhoodNames": 0
+  },
+  "2061": {
+   "streets": 6,
+   "points": 38,
+   "neighbourhoodNames": 0
+  },
+  "2100": {
+   "streets": 71,
+   "points": 601,
+   "neighbourhoodNames": 14
+  },
+  "2200": {
+   "streets": 202,
+   "points": 1424,
+   "neighbourhoodNames": 20
+  },
+  "2300": {
+   "streets": 95,
+   "points": 1384,
+   "neighbourhoodNames": 0
+  },
+  "2400": {
+   "streets": 141,
+   "points": 737,
+   "neighbourhoodNames": 10
+  },
+  "2500": {
+   "streets": 87,
+   "points": 723,
+   "neighbourhoodNames": 7
+  },
+  "2530": {
+   "streets": 93,
+   "points": 679,
+   "neighbourhoodNames": 13
+  },
+  "2550": {
+   "streets": 234,
+   "points": 1519,
+   "neighbourhoodNames": 18
+  },
+  "2560": {
+   "streets": 124,
+   "points": 1332,
+   "neighbourhoodNames": 23
+  },
+  "2600": {
+   "streets": 415,
+   "points": 2292,
+   "neighbourhoodNames": 15
+  },
+  "2610": {
+   "streets": 294,
+   "points": 2505,
+   "neighbourhoodNames": 17
+  },
+  "2620": {
+   "streets": 144,
+   "points": 1090,
+   "neighbourhoodNames": 11
+  },
+  "2630": {
+   "streets": 264,
+   "points": 2000,
+   "neighbourhoodNames": 19
+  },
+  "2640": {
+   "streets": 285,
+   "points": 1788,
+   "neighbourhoodNames": 14
+  },
+  "2650": {
+   "streets": 290,
+   "points": 2375,
+   "neighbourhoodNames": 10
+  },
+  "2660": {
+   "streets": 181,
+   "points": 1302,
+   "neighbourhoodNames": 8
+  },
+  "2710": {
+   "streets": 225,
+   "points": 547,
+   "neighbourhoodNames": 0
+  },
+  "2720": {
+   "streets": 94,
+   "points": 133,
+   "neighbourhoodNames": 0
+  },
+  "2730": {
+   "streets": 0,
+   "points": 0,
+   "neighbourhoodNames": 24
+  },
+  "2800": {
+   "streets": 102,
+   "points": 763,
+   "neighbourhoodNames": 0
+  },
+  "3000": {
+   "streets": 1344,
+   "points": 10656,
+   "neighbourhoodNames": 106
+  },
+  "3557": {
+   "streets": 11,
+   "points": 16,
+   "neighbourhoodNames": 0
+  },
+  "3560": {
+   "streets": 21,
+   "points": 108,
+   "neighbourhoodNames": 0
+  },
+  "3564": {
+   "streets": 3,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "3565": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "3568": {
+   "streets": 2,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "3570": {
+   "streets": 62,
+   "points": 637,
+   "neighbourhoodNames": 0
+  },
+  "3574": {
+   "streets": 15,
+   "points": 30,
+   "neighbourhoodNames": 0
+  },
+  "3575": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "3576": {
+   "streets": 6,
+   "points": 14,
+   "neighbourhoodNames": 0
+  },
+  "3603": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "3604": {
+   "streets": 8,
+   "points": 40,
+   "neighbourhoodNames": 0
+  },
+  "3608": {
+   "streets": 1,
+   "points": 13,
+   "neighbourhoodNames": 0
+  },
+  "3611": {
+   "streets": 10,
+   "points": 59,
+   "neighbourhoodNames": 0
+  },
+  "3616": {
+   "streets": 101,
+   "points": 1128,
+   "neighbourhoodNames": 9
+  },
+  "3617": {
+   "streets": 12,
+   "points": 48,
+   "neighbourhoodNames": 0
+  },
+  "3618": {
+   "streets": 2,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "3638": {
+   "streets": 4,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "3640": {
+   "streets": 27,
+   "points": 181,
+   "neighbourhoodNames": 0
+  },
+  "3644": {
+   "streets": 7,
+   "points": 11,
+   "neighbourhoodNames": 0
+  },
+  "3647": {
+   "streets": 6,
+   "points": 10,
+   "neighbourhoodNames": 0
+  },
+  "3648": {
+   "streets": 2,
+   "points": 4,
+   "neighbourhoodNames": 0
+  },
+  "3650": {
+   "streets": 39,
+   "points": 291,
+   "neighbourhoodNames": 0
+  },
+  "3652": {
+   "streets": 33,
+   "points": 176,
+   "neighbourhoodNames": 0
+  },
+  "3654": {
+   "streets": 13,
+   "points": 28,
+   "neighbourhoodNames": 0
+  },
+  "3655": {
+   "streets": 2,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "3660": {
+   "streets": 7,
+   "points": 43,
+   "neighbourhoodNames": 0
+  },
+  "3709": {
+   "streets": 5,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "3725": {
+   "streets": 6,
+   "points": 16,
+   "neighbourhoodNames": 0
+  },
+  "3727": {
+   "streets": 6,
+   "points": 7,
+   "neighbourhoodNames": 0
+  },
+  "3730": {
+   "streets": 55,
+   "points": 492,
+   "neighbourhoodNames": 6
+  },
+  "3743": {
+   "streets": 1,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "3750": {
+   "streets": 47,
+   "points": 346,
+   "neighbourhoodNames": 0
+  },
+  "3752": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "3759": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "3760": {
+   "streets": 56,
+   "points": 303,
+   "neighbourhoodNames": 0
+  },
+  "3765": {
+   "streets": 15,
+   "points": 38,
+   "neighbourhoodNames": 0
+  },
+  "3766": {
+   "streets": 1,
+   "points": 6,
+   "neighbourhoodNames": 0
+  },
+  "3767": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "3769": {
+   "streets": 13,
+   "points": 166,
+   "neighbourhoodNames": 0
+  },
+  "3770": {
+   "streets": 12,
+   "points": 48,
+   "neighbourhoodNames": 0
+  },
+  "3780": {
+   "streets": 58,
+   "points": 750,
+   "neighbourhoodNames": 5
+  },
+  "3787": {
+   "streets": 7,
+   "points": 24,
+   "neighbourhoodNames": 0
+  },
+  "3791": {
+   "streets": 2,
+   "points": 2,
+   "neighbourhoodNames": 0
+  },
+  "3795": {
+   "streets": 1,
+   "points": 1,
+   "neighbourhoodNames": 0
+  },
+  "3796": {
+   "streets": 11,
+   "points": 134,
+   "neighbourhoodNames": 0
+  },
+  "3797": {
+   "streets": 33,
+   "points": 507,
+   "neighbourhoodNames": 4
+  },
+  "4000": {
+   "streets": 868,
+   "points": 10795,
+   "neighbourhoodNames": 55
+  },
+  "4005": {
+   "streets": 12,
+   "points": 23,
+   "neighbourhoodNames": 0
+  },
+  "4007": {
+   "streets": 7,
+   "points": 11,
+   "neighbourhoodNames": 0
+  },
+  "4008": {
+   "streets": 3,
+   "points": 5,
+   "neighbourhoodNames": 0
+  },
+  "4100": {
+   "streets": 103,
+   "points": 621,
+   "neighbourhoodNames": 0
+  },
+  "4101": {
+   "streets": 2,
+   "points": 3,
+   "neighbourhoodNames": 0
+  },
+  "5000": {
+   "streets": 1750,
+   "points": 16069,
+   "neighbourhoodNames": 71
+  },
+  "6100": {
+   "streets": 339,
+   "points": 3746,
+   "neighbourhoodNames": 20
+  },
+  "6200": {
+   "streets": 211,
+   "points": 2671,
+   "neighbourhoodNames": 10
+  },
+  "6300": {
+   "streets": 134,
+   "points": 2010,
+   "neighbourhoodNames": 12
+  },
+  "6400": {
+   "streets": 560,
+   "points": 5067,
+   "neighbourhoodNames": 18
+  },
+  "6500": {
+   "streets": 409,
+   "points": 3897,
+   "neighbourhoodNames": 31
+  },
+  "6600": {
+   "streets": 519,
+   "points": 5406,
+   "neighbourhoodNames": 26
+  },
+  "6700": {
+   "streets": 192,
+   "points": 1928,
+   "neighbourhoodNames": 18
+  },
+  "6800": {
+   "streets": 229,
+   "points": 2776,
+   "neighbourhoodNames": 13
+  },
+  "6900": {
+   "streets": 423,
+   "points": 3118,
+   "neighbourhoodNames": 42
+  },
+  "7000": {
+   "streets": 246,
+   "points": 1466,
+   "neighbourhoodNames": 40
+  },
+  "7100": {
+   "streets": 658,
+   "points": 4483,
+   "neighbourhoodNames": 35
+  },
+  "7200": {
+   "streets": 221,
+   "points": 1775,
+   "neighbourhoodNames": 27
+  },
+  "7300": {
+   "streets": 312,
+   "points": 699,
+   "neighbourhoodNames": 0
+  },
+  "7400": {
+   "streets": 565,
+   "points": 5753,
+   "neighbourhoodNames": 38
+  },
+  "7500": {
+   "streets": 49,
+   "points": 186,
+   "neighbourhoodNames": 0
+  },
+  "7600": {
+   "streets": 193,
+   "points": 1256,
+   "neighbourhoodNames": 16
+  },
+  "7700": {
+   "streets": 279,
+   "points": 2485,
+   "neighbourhoodNames": 11
+  },
+  "7800": {
+   "streets": 265,
+   "points": 2231,
+   "neighbourhoodNames": 28
+  },
+  "7900": {
+   "streets": 722,
+   "points": 6394,
+   "neighbourhoodNames": 39
+  },
+  "8000": {
+   "streets": 109,
+   "points": 854,
+   "neighbourhoodNames": 13
+  },
+  "8200": {
+   "streets": 104,
+   "points": 1330,
+   "neighbourhoodNames": 4
+  },
+  "8300": {
+   "streets": 931,
+   "points": 7626,
+   "neighbourhoodNames": 35
+  },
+  "8400": {
+   "streets": 487,
+   "points": 4044,
+   "neighbourhoodNames": 33
+  },
+  "8500": {
+   "streets": 249,
+   "points": 1712,
+   "neighbourhoodNames": 25
+  },
+  "8600": {
+   "streets": 531,
+   "points": 6460,
+   "neighbourhoodNames": 30
+  },
+  "8700": {
+   "streets": 325,
+   "points": 3256,
+   "neighbourhoodNames": 21
+  },
+  "8900": {
+   "streets": 131,
+   "points": 218,
+   "neighbourhoodNames": 0
+  },
+  "9000": {
+   "streets": 884,
+   "points": 8068,
+   "neighbourhoodNames": 21
+  },
+  "9100": {
+   "streets": 178,
+   "points": 2219,
+   "neighbourhoodNames": 12
+  },
+  "9200": {
+   "streets": 153,
+   "points": 831,
+   "neighbourhoodNames": 10
+  },
+  "9300": {
+   "streets": 155,
+   "points": 1549,
+   "neighbourhoodNames": 12
+  },
+  "9400": {
+   "streets": 117,
+   "points": 792,
+   "neighbourhoodNames": 6
+  },
+  "9500": {
+   "streets": 142,
+   "points": 1659,
+   "neighbourhoodNames": 7
+  },
+  "9600": {
+   "streets": 141,
+   "points": 1213,
+   "neighbourhoodNames": 8
+  },
+  "9700": {
+   "streets": 366,
+   "points": 2712,
+   "neighbourhoodNames": 11
+  },
+  "9800": {
+   "streets": 136,
+   "points": 922,
+   "neighbourhoodNames": 18
+  }
+ },
+ "method": "one representative point per polygon (parcel / building) the source files a deal under; the point is the mean of its rows' points",
+ "notJoin": "coordinates never join a record to another — they place a street's buildings and give a distance its basis",
+ "file": {
+  "url": "https://pub-63c02556dabd4956af9500eb8fe7198c.r2.dev/datasets/4174aac2-c8b2-443e-9425-3773ce47c8da/v1/3aa83ccb_file.gpkg",
+  "sha256": "a410a5226a3375a20ffb5ff4c405b1b292454e97bf87ad65afe5b972edb55069",
+  "bytes": 709758976
+ },
+ "builtAt": "2026-10-21T07:10:15.762Z"
+}

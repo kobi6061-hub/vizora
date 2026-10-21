@@ -79,6 +79,48 @@ name is not split; a query that is itself an official street name keeps that str
 it. Historical rows rank after current ones of the same tier and are labelled. `meta.moreStreets` drives the page's "add a
 locality" hint.
 
+ALL WORDS (21.10.2026, the founder's "הרב משה"): the honorific-stripped key "משה" made every street named "משה" outrank the 25
+official names holding BOTH typed words ("הרב אויערבך משה", "הרב משה צבי נריה" …). Now, inside tiers 1–2 and 4–5, a name or
+synonym that holds every typed word (≥ 2 words, any order, ה optional, final letters folded, read through a word index) ranks
+after the exact names and the variant keys that keep every typed word, and before a variant key — exact or prefix — that DROPS
+a typed word; a last word still being typed ("הרב מש") is discovery (tier 6). Read from the official directory only: it never
+creates an identity. Measured on 8,166 sampled official streets × 3 query forms (name · name + selected locality · "name
+locality"): top-1 unchanged for all 24,498 queries, no street lost its own top-1 / top-3 place; positions 2–3 changed where a
+name holding every word replaced a dropped-word variant ("יעקב הכהן" → "כהן יעקב", "דוד לוי" → "חיים דוד הלוי"). The word
+index costs ≈ 0.3 s once per warm instance; queries stay 1–15 ms.
+
+Partial readings after exact synonyms (21.10.2026, the master data directive's registry-wide audit): an exact official synonym
+in the selected locality ("נוה אפרים" in יהוד-מונוסון, the address area נווה מונוסון) was pushed out of the visible list by twelve
+official names that merely CONTAIN its words. A partial reading — ALL WORDS, a typed title the name omits ("הרב ד"ר משה אויערבך" →
+"הרב אויערבך משה", only when ≥ 2 other words match), a variant key that drops a typed word — now ranks after the exact official
+names AND the exact synonyms of its scope (tier 2 / 5 + its step; the same reading of a synonym right after that of an official
+name). Measured against the ORIGINAL ranking on the same 8,166 streets × 3 forms: top-1 unchanged for all 24,498 queries, no
+street lost its own top-1 / top-3 place. PLACE NAMES: a synonym the directory files under the locality placeholder (9000 — a
+place in the locality with no street record: "כנרת הקבוצה", "ש עולים", "חפציבה") offers the LOCALITY, labelled "official name of
+a place in this locality (no street record)" (`via: 'place-synonym'`, `matchedName`) — never a street; first when that locality
+is selected or typed (before the partial readings), else after the exact street names. A place name holding a digit is never
+re-read as a house number; a type word alone ("שכ", "הנשיא") scopes a locality that files it as a place.
+
+REGISTRY-WIDE AUDIT (21.10.2026, `scripts/search-discoverability-audit.js`, 4 shards ≈ 4.5 min each + merge →
+`data/geo/streets/search-audit.json`, pinned to the directory, synonyms, index and ranking-code hashes — `test/search.test.js` fails
+when the ranking code changes until the audit is re-run): every one of the 62,265 searchable rows (57,164 streets · 5,007 address
+areas · 94 sites) through the page's search — with its locality selected: on the list 62,265 / 62,265 (top-1 57,827, top-3 62,265);
+"<name> <locality>" typed: 62,265 / 62,265 (top-1 62,243); the name alone: 51,771 on the list, the other 10,494 LEGITIMATELY AMBIGUOUS
+(10,473 names held by more than 10 localities + 21 lists full of equally exact answers). Official synonyms (86,108): selected locality
+86,107 on the list + 1 one-letter name (never searched); typed with the locality 86,106 + 2 (1 one-letter, 1 SOURCE DEFECT — a name the
+directory cut mid-word ending in "-"). Place names (2,448 synonyms of the 9000 placeholder; 3 of localities PROPX does not list): the
+locality on the list for "<place> <locality>" 2,443 (+ 1 source defect, 1 one-letter); the place alone 2,081 + 361 crowded by exact
+street names. UNEXPLAINED FAILURES: 0. Before this pass: 2,447 place names found nothing (they were filed under the placeholder and
+never offered), "נוה אפרים" (יהוד-מונוסון) was pushed out by 12 partial matches, "הרב ד"ר משה אויערבך" needed the title dropped.
+Ranking regression against the ORIGINAL ranking (before 21.10.2026), 8,166 streets × 3 forms: top-1 unchanged for all 24,498 queries;
+no street lost its own top-1 / top-3 place.
+
+Failure is not "no results": `GET /api/geo/search` answers 200 with a `matches` array (zero included, cached privately for an
+hour), 503 `geo-index-unavailable` when the directory / index cannot be loaded, 500 `geo-search-failed` otherwise — errors are
+`no-store`. The page (`srchFetch`) classifies every request — network · auth (the session gate answers with the sign-in page)
+· server · timeout · index · invalid — and the dropdown prints what failed, "this is not an empty result", a retry and (auth)
+a sign-in link; "No results" only after both searches (registry + entities) answered. `test/search.test.js`.
+
 Measured (19.10.2026, after the four reviews, every one of the 62,265 searchable rows): name + selected locality — top-7
 62,265 (100 %), top-1 62,257; "street locality" typed together — top-7 62,265 (100 %); the name alone — top-7 49,014 (a name
 shared by many localities needs its locality: the "add a locality" hint). Synonyms (every second one, 43,054): + selected
@@ -340,3 +382,44 @@ Gates: `test/model-deps.test.js`.
   and dwelling adjustments, ₪/m² as the reference flat, `consistent`
 - `GET /api/intel?view=streetApartment&id=&sqm=[&rooms=&newness=existing|new&built=&type=flat|garden|roof]` — the apartment estimate
 - `GET /api/intel?view=streetModelValidation` — the validation + coverage report
+
+## 7 · Street report — investment intelligence (21.10.2026, `propx-street-report-1`)
+
+`lib/streets/report.js` is a **composition layer**: it reads Street Intelligence (`street.js`), the transaction events (`lib/txevents` + the
+stored GovMap-layer history), the Street Value Model (`value-read.js`), the comparison benchmarks (`benchmarks.js`), the street points
+(`data/geo/street-geo/`) and the national plan boundaries (`data/planning/national/`). It creates no fact, ingests nothing at request time,
+and never re-labels, re-thresholds or re-counts what it reads (`test/street-report.test.js` COMPOSITION gate). None of the read models, the
+model or the knowledge graph read the report layer.
+
+| Section | What it shows | Basis |
+|---|---|---|
+| Hierarchy | district → city → neighbourhood → street → buildings | neighbourhood VERIFIED only through a verified street link; else the SOURCE LABEL the GovMap file prints on the street's deals (with its share; ≥ 80 % and ≥ 5 rows = SOURCE_LABEL, else SOURCE_LABEL_MIXED); else UNRESOLVED with the reason — never inferred |
+| Latest transaction | the newest counted event of every source, with the copy's freshness strip | `lib/txevents` recency |
+| Transactions | every event: RELIABLE (txevents STREET / BUILDING placement) · POSSIBLE (every other placement) · SURROUNDING AREA (other official streets with a located parcel ≤ 150 m — opt-in, never this street) | the stored union + the GovMap layer's stored history before the window (`history.rows` street-code prefilter); filters (period · rooms · area · price · type · in-statistics), sort (missing last), paging, row detail, CSV (BOM, formula-guarded) |
+| Prices & comparison | street · verified / source-label neighbourhood · city · district on the SAME population (priced dwelling deals, same window, same states), by rooms band; the model card | `benchmarks.js` (`data/streets/benchmarks.json`, stamped with the evidence copy — another copy → not shown); a difference only where both sides are SUPPORTED with ≥ 10 deals with ₪/m²; a district pools its localities' deals |
+| Planning & infrastructure | plans whose boundary contains a located parcel of the street (INTERSECTS), within 300 m (NEARBY; rail transit 1,000 m), area-wide plans (≥ 2,000 dunam) apart; Tel Aviv permits / sites ON THE STREET (exact address) | distances from the street's own points to the generalized boundary; topic from the plan's own name / type (`lib/planning/topic.js`); a statutory stage is never an operating line, a permit or construction; a plan's units are never the street's |
+| Map | the street's located parcels / buildings and the plan boundaries — inline SVG, no basemap | PROPX's own data only; no licensed imagery integrated |
+| Investment | Level 1: supports · against · could change · due diligence (rules SA-* / DD-*, FACT and INTERPRETATION apart, no score / probability / recommendation); Level 2: the user's asking price vs the model's apartment read, the street's ₪/m² distribution, similar deals; scenarios ONLY from the user's own annual-change assumptions (none → none) | inputs kept in this browser only (`propx:street-property:v1`) |
+| Sources & missing | every source with its class and as-of; every missing part with its reason and what would unlock it | — |
+
+**Data lanes (preview lane, runner-built, bot-written):**
+- `scripts/street-geo-build.py` + `.github/workflows/street-geo-build.yml` → `data/geo/street-geo/` — the GovMap-layer GeoPackage PROPX already
+  downloads (one public GET): one point per parcel / building polygon per official street (`streetCode` = locality × 10,000 + official code,
+  decoded and its locality part checked), the neighbourhood names the source prints. VALIDATED against the layer API's own points for the same
+  deals before anything is written (20.10.2026 file: 11,900 / 11,900 matched, median 0 m). Coordinates never join a record.
+- `scripts/street-planning-sync.js` + `.github/workflows/street-planning-sync.yml` → `data/planning/national/` — every plan of the Xplan
+  online-plans layer (the layer PROPX already reads) with its boundary (~10 m), tiled 0.05°; area-wide plans in `large.json.gz`; complete or
+  nothing (stored + skipped = the layer's own count; 21.10.2026: 37,701 / 37,701).
+- `scripts/street-benchmarks-build.js` → `data/streets/benchmarks.json` (offline, from the stored sweep).
+- `scripts/street-report-discover.js` + `.github/workflows/street-report-discover.yml` — read-only probe (Xplan sizing, national infrastructure /
+  train layers, data.gov.il transport datasets with their licence fields).
+
+**Capability matrix (21.10.2026):** ALREADY AVAILABLE — identity, evidence, freshness, counts, events, model, TLV permits/sites, renewal ×
+XPlan (exact). AVAILABLE BUT NOT EXPOSED (now exposed) — the full event table (was capped at 60 rows), floor, the GovMap history per street,
+the source's neighbourhood name, the GovMap file's coordinates. PARTIALLY AVAILABLE — XPlan (renewal / land subsets → now the whole layer).
+REQUIRES NEW SOURCE — station points (MOT data.gov.il lrt_stat / metro_stat, CC-BY / other-open, shapefiles — not integrated; the statutory
+transit plans are shown instead), asking prices and rents (no licensed source), parcel boundaries (cadastre). NOT DEFENSIBLE — a price
+forecast, a street "score", an operating date for a planned line, a neighbourhood inferred from proximity.
+
+API: `GET /api/intel?view=streetReport&id=[&part=core]` · `view=streetTx&id=…[&format=csv]` · `view=streetProperty&id=…&askingPrice=&sqm=…`.
+Registry group `streetReport` (6 terms). Gates: `test/street-report.test.js` (18, eight live acceptance streets).

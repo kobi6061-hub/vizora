@@ -24,7 +24,12 @@
   offered as a street), 6000–6999 ADDRESS AREA, 7000–8999 SITE; nothing deleted — a retired code stays `historical`; legacy `stp:` ids map
   through `legacy-ids.json`) + a prebuilt search index (`search-index.json`, checked by the directory files' sha256; `lib/geo/registry.js`
   ranks 1 exact in the selected locality · 2 synonym there · 3 prefix there · 4 exact elsewhere · 5 synonym elsewhere · 6 discovery;
-  `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
+  `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street; since 21.10.2026 ALL WORDS — a name
+  or synonym holding every typed word ranks after the exact names and before a variant that DROPS a typed word ("הרב משה" → "הרב אויערבך משה",
+  not the street "משה"; since the 21.10.2026 audit a partial reading — all words · a typed title the name omits · a dropped word — ranks after the exact
+  synonyms of its scope, and a synonym of the 9000 placeholder is a PLACE NAME offering its LOCALITY (`via: 'place-synonym'`, never a street);
+  `data/geo/streets/search-audit.json` = every searchable row / synonym / place name through the search, pinned to the code — 0 unexplained failures); a failed request is never "No results": `GET /api/geo/search` 503 `geo-index-unavailable` / 500, `no-store`, and the
+  page's `srchFetch` names network · auth · server · timeout · index · invalid with a retry — `test/search.test.js`) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
   register (over.org.il; 36 months ending on the copy's latest deal; one request a second; only when the copy changes) joined to the
   directory through the parcel crosswalk — OBSERVED only when every address of the parcel is on the one street (POSSIBLE = corner /
   truncated / unresolved / a dropped street-type word, listed apart, never aggregated); dwelling universe (mostly-land natures
@@ -77,9 +82,49 @@
   side by side + why · latest market evidence · main limitation (from the levels used) · "why the two differ" (≥ 10 %), the apartment
   form, the comparables (`stcomp`) and method / validation. Registry group `streetModel` (7 terms, 4 missing reasons), Trust
   `propx:street-model`. Never APPRAISAL / SHAMAI / OFFICIAL / FAIR VALUE. See `lib/streets/README.md` § 6.
+- `lib/streets/report.js` + `lib/streets/benchmarks.js` + `lib/planning/topic.js` + `scripts/street-{geo-build.py,planning-sync,benchmarks-build,report-discover}.js` +
+  `.github/workflows/street-{geo-build,planning-sync,report-discover}.yml` + `data/geo/street-geo/` + `data/planning/national/` + `data/streets/benchmarks.json` +
+  `test/street-report.test.js` = STREET INVESTMENT INTELLIGENCE (21.10.2026, PREVIEW LANE `claude/street-report-preview` — not on the production
+  branch until the founder approves): a COMPOSITION over Street Intelligence, the transaction events (+ the GovMap layer's stored history per
+  street), the Street Value Model, same-population benchmarks, the street's own points (GovMap-layer file, validated 11,900 / 11,900, median 0 m)
+  and every Xplan plan boundary (37,701, complete) — it creates no fact and none of them read it. Neighbourhood VERIFIED only through a verified
+  link, else the SOURCE LABEL the file prints (share stated) or UNRESOLVED; transactions RELIABLE (STREET / BUILDING) · POSSIBLE · SURROUNDING AREA
+  (opt-in, other streets ≤ 150 m) apart; comparison only on the same population (a difference only SUPPORTED vs SUPPORTED); plans INTERSECTS /
+  NEARBY (300 m; rail transit 1,000 m) / AREA-WIDE (≥ 2,000 dunam) with distances — a spatial relation is context, never a join or a value; a
+  statutory transit plan is never an operating line; assessment rules SA-* / DD-* (no score / probability / recommendation); property
+  scenarios only from the user's own assumptions. `view=streetReport|streetTx|streetProperty`; the street view leads with the report and keeps
+  the full Street Intelligence view below it. Search: a street part adding ≤ 2 words to an official name in the named locality ("הרב אונטרמן משה")
+  is a discovery (tier 6) match. Registry group `streetReport`. See `lib/streets/README.md` § 7.
+- MASTER DATA DIRECTIVE (21.10.2026, PREVIEW LANE `claude/street-report-preview`): `scripts/source-universe-discover.js` (+ `source-universe-discover.yml`,
+  modes in `lib/trust/discovery/2026-10-21-universe/MODES`; GET only, 1 request / second, nothing bypassed) → runner evidence in
+  `lib/trust/discovery/2026-10-21-universe/*.json.gz` (the WHOLE data.gov.il catalogue 1,203 packages + `ckan-triage.json.gz`, gov.il / GovMap /
+  Tax Authority, CBS, BOI SDMX, Planning Administration ArcGIS 48 services / 400 layers, MoT, municipal portals, other hosts, `verify`) →
+  `scripts/source-universe-build.js` (+ `scripts/source-field-matrix.js`) → `lib/trust/discovery/2026-10-21-source-universe.json` +
+  `findings-2026-10-21.md`: every source with the directive's 20 fields and ONE of 11 states (CONNECTED_VERIFIED only from a stored successful
+  read + a named reader; a lane written but not synced stays ACCESSIBLE), the source-to-field matrix (8 classes) and measured improvements;
+  `test/source-universe.test.js`. Findings: the data.gov.il FILE hosts refuse the runner (403, 41 / 41 — ZIP parcels, renewal boundaries, MoT
+  lines); Jerusalem / Haifa portals are ODbL (licence review); no transaction dataset exists on data.gov.il. New lanes (each: whole read,
+  schema guard, store + history + runs, Trust entry, registry term, tests, workflow with a preview push trigger):
+  `lib/reference` (census 2022 + weekly residents → dossier / street-report locality context; the shared CKAN reader — paced 1 request / second,
+  a throttle waited out twice, `keyOccurrence` for registers without a unique key) · `lib/finance` (BOI SDMX BIR_MRTG_99 + BMB_99: mortgage rates
+  by track, new loans, LTV / PTI bands, balances, arrears — each dimension code verified against its codelist name; dossier "Housing finance") ·
+  `lib/transport` (MoT stop registry + light-rail entrances with the layer's own month + rail / metro lists; stop-registry light-rail stops as
+  separate evidence beside a planned status, never promoting it; street report) · `lib/surroundings` (MoEP contaminated-land register EXACT on
+  the street's parcels / ≤ 300 m, words verbatim; MoE institution points 2022 + each institution's latest year in the characteristics file, which
+  holds school years 2011–2015 ONLY — stated on the page / Trust / catalogue, never current; a read keeping 0 rows of a non-empty source is refused) ·
+  `lib/planning/vatmal.js` (203 declared VATMAL complexes; INTERSECTS / NEARBY / AREA_WIDE in the street report's planning section — a
+  declaration, never an approved plan) · `lib/cbs-sales` whole market (44,10,6 all sold · 44,10,7 second-hand · 44,10,2,2 subsidized by district;
+  the 7047–7053 code set resolved by the NAME the API returns; dossier "All dwellings sold" + second-hand share over a dated 12-month window).
+  Search: `scripts/search-discoverability-audit.js` → `data/geo/streets/search-audit.json` (every searchable row in its locality / by name /
+  plainly, pinned to the index hashes; `test/search.test.js` gate).
+  DEPLOY CONSTRAINT: Vercel rejects the WHOLE deployment when a `functions[*].includeFiles` string exceeds 256 characters (schema) — 4d6dcc5
+  pushed `api/intel.js` to 338 and every Preview build failed until c1a46c1 (brace groups, 234; `vercel build` 207.8 MB of the 250 MB function
+  limit). Gates match files through `test/helpers/vercel-include.js` (never the pattern's spelling); `test/entities.test.js` holds the 256 cap.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
-  /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
+  /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; since 21.10.2026 the lists and the whole decision live ONLY in
+  `lib/identity/gate.mjs` (Web APIs only), which the middleware and the dev server both import (tests load the middleware through
+  `test/helpers/middleware.js`).
   The evidence POST (`/api/intel` view=dd) is limited to 256 KB at the Edge (declared length), in the function (declared length before
   the platform-parsed body is touched; measured after parsing when chunked) and on the normalized evidence (`userdocs` total); the
   platform's own ceiling is 4.5 MB.
@@ -109,6 +154,18 @@
   creation); ASCII-only addresses; an invited row shows no account state; disabled owners do not count as owners; sign-in failures
   make the same store call for every address; role-wide default privileges start future objects closed; the page signs out with an
   intent POST before the logout link; the test adapter binds every value. NOT ACTIVATED (see `supabase/private/README.md`).
+  ENTERPRISE PILOT ACCESS (21.10.2026, PREVIEW LANE; `lib/identity/gate.mjs` + `api/login.js` + `login.html` + `test/pilot-access.test.js`):
+  `PROPX_IDENTITY=on` now REPLACES the shared password as the way in — modes PERIMETER (switch off: the shared password's cookie, as
+  before) · IDENTITY (every gated page / `api/**` / data file needs the perimeter cookie minted at that user's sign-in + the identity
+  cookie bound to it + a live `ws.auth_session_check`, cached 60 s per Edge isolate, 10-minute stale grace when the store is down, else
+  503) · CLOSED (switch on but a setting missing / wrong → 503, never the shared password). One bilingual sign-in page asks
+  `/api/login?op=mode`; `/api/login` ops signin · invite-info · activate · reset-info · reset (intent header + JSON + same origin; the
+  shared password → `individual_login_required`; 20 / 15 min per client HMAC → 429). The migration (extended in place, still ONE file)
+  adds `private.auth_rate`, `private.password_resets` and `ws.auth_rate_hit` · `auth_reset_peek` · `auth_reset_complete` ·
+  `change_password` · `set_display_name` · `admin_reset_link` (`revoked_reason 'password'`); the workspace drawer adds the profile
+  name, password change (ends every other session) and the platform admin's one-time reset link; sign-out leaves through
+  `/api/logout`. Gates: private-identity 41 · identity 18 · pilot-access 19 (all three in `private-identity.yml`). Release: `docs/PILOT-RELEASE.md`
+  (staged rollout + rollback) and `.github/workflows/release-readiness.yml` (read-only DNS / TLS / headers / mode / gate probe of both domains + the preview).
 - `lib/gov/freshness.js` + `scripts/tx-freshness.js` + `.github/workflows/tx-freshness.yml` + `data/transactions/freshness*.json*` +
   `scripts/tx-freshness-discover.js` + `.github/workflows/tx-freshness-discover.yml` + `lib/trust/discovery/2026-10-19-transactions.json` +
   `test/tx-freshness.test.js` (+ `test/fixtures/tx-acceptance-2026-10-19.json`, 96 real deals) = P0 TRANSACTION FRESHNESS (19.10.2026). FIVE
@@ -231,6 +288,13 @@
   coded rows (one deal printed twice, 984 localities) are collapsed by the live read with the sweep's own fingerprint and counted. The
   street view leads with the newest event of every source (`siLatestHTML`) above the register copy's own freshness line. Trust Center: the full universe + the unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
   `transaction_completeness_universe` · `latest_date_parity`. Prices / statistics / the Street Value Model untouched.
+- `test/hierarchy.test.js` = INFORMATION HIERARCHY (Enterprise pilot, 21.10.2026, presentation only): the page follows investor priority —
+  search → the launchpad under it (`#launchpad`: investment intelligence · latest transactions · valuation · planning & opportunities ·
+  risks · evidence & sources, each to an existing section through its rail link) → four group headings (`.secgrp` #grp1–4: intelligence =
+  dossier · pulse; transactions & valuation = txSection · prices · map · table · rankings · compare · insights · capital · calc; planning,
+  land & supply = intel · housing · land; evidence = guide · sources); the rail in the same order (16 scroll-spy items, ALTARIS between
+  Land and Guide); the street report ov (crumb · latest · tiles · supports / against) · tx · px (+ the user's price test) · pl (+ transport) ·
+  risk (could change · due diligence · surroundings registers) · map · src. No dataset, figure or disclosure moved out.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

@@ -254,6 +254,9 @@ section.blk{scroll-margin-top:72px}
 .sp-item .num{color:var(--ink-2);font-size:12.5px;font-weight:600}
 .sp-item:hover,.sp-item.active{background:var(--accent-wash)}
 .sp-empty{padding:14px 10px;color:var(--ink-3);font-size:13px}
+.sp-err{margin:6px 8px;padding:9px 10px;border:1px solid var(--down);background:var(--down-wash);border-radius:8px;font-size:12.5px;line-height:1.5;color:var(--ink)}
+.sp-err b{display:block;font-size:12.5px}.sp-err small{display:block;color:var(--ink-2);margin-top:2px}
+.sp-err .sp-retry,.sp-err a{margin-top:6px;margin-inline-end:8px;display:inline-block;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--hairline);background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none}
 
 /* sale / rent toggle */
 .mode{display:flex;background:var(--panel-2);border:1px solid var(--hairline);
@@ -647,6 +650,59 @@ tr.txe-dup td{opacity:.7}
 .sv-apt label{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:700;color:var(--ink-3)}
 .sv-apt input,.sv-apt select{width:110px;font:inherit;font-size:13px;padding:5px 7px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
 .sv-aptres{margin-top:8px;max-width:520px} .sv-rng{font-size:14px;font-weight:600;color:var(--ink-2);margin:2px 0 6px} .nw{white-space:nowrap} .sv-refs{color:var(--ink-2);font-size:12.5px} .sv-tn{font-size:11px;color:var(--ink-3)} .sv-na{color:var(--ink-3)!important} .sv-apt select{width:auto} @media (max-width:640px){.sv-apt input,.sv-apt select,.sv-apt button{min-height:40px}} .sv-eff{margin:4px 0 0;padding-inline-start:18px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
+/* STREET REPORT (lib/streets/report.js — view=streetReport / streetTx / streetProperty): the composition above Street Intelligence */
+.sr-nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:3;background:var(--panel);padding:6px 0 8px;border-bottom:1px solid var(--hairline)}
+.sr-outs{margin-top:8px;align-items:center}
+.sr-sec>summary{font-size:14px}
+.sr-xp{display:flex;justify-content:flex-end;margin:-4px 0 2px}
+.sr-crumb{display:flex;flex-wrap:wrap;margin-top:6px;border:1px solid var(--hairline);border-radius:11px;overflow:hidden}
+.sr-crumb>span{flex:1 1 140px;padding:8px 12px;border-inline-end:1px solid var(--hairline);font-size:13px;font-weight:700;color:var(--ink)}
+.sr-crumb>span:last-child{border-inline-end:0}
+.sr-crumb small{display:block;font-size:10px;font-weight:700;color:var(--ink-3);letter-spacing:.04em}
+.sr-nb{display:inline-block;font-size:9.5px;font-weight:800;border:1px solid currentColor;border-radius:99px;padding:0 6px;margin-inline-start:4px}
+.sr-nb.VERIFIED{color:var(--conf-high)} .sr-nb.SOURCE_LABEL,.sr-nb.SOURCE_LABEL_MIXED{color:var(--brass);border-style:dashed} .sr-nb.UNRESOLVED{color:var(--ink-3);border-style:dotted}
+.sr-latest{margin-top:12px;border:1.5px solid var(--accent);border-radius:12px;padding:10px 14px;background:var(--accent-wash)}
+.sr-latest .l{font-size:11px;font-weight:800;color:var(--accent-deep);letter-spacing:.03em}
+.sr-latest .v{font-size:22px;font-weight:800;color:var(--ink)}
+.sr-latest .s{font-size:12.5px;color:var(--ink-2)}
+.sr-narr{display:flex;flex-direction:column;gap:6px}
+.sr-n{margin:0;font-size:13px;line-height:1.6;color:var(--ink)}
+.sr-n.INTERPRETATION{color:var(--ink-2);font-style:italic}
+.sr-k{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:0 5px;margin-inline-end:4px;background:var(--panel-2);color:var(--ink-2);font-style:normal}
+.sr-k.MODEL{color:var(--brass)} .sr-k.INTERPRETATION{color:var(--c2)} .sr-k.FACT{color:var(--conf-high)}
+.sr-filters{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0}
+.sr-ff input[type=number],.sr-ff select{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
+.sr-ff input[type=number]{width:84px}
+.sr-ff>span{font-size:11px;font-weight:700;color:var(--ink-3)}
+.sr-chk{font-size:12px;font-weight:600;color:var(--ink-2);display:inline-flex;gap:5px;align-items:center}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sr-sort{font:inherit;font-weight:700;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.sr-sort.on{color:var(--accent)}
+.sr-row{cursor:pointer} .sr-row:hover{background:var(--panel-2)} .sr-row.open{background:var(--accent-wash)}
+.sr-det td{background:var(--panel-2);white-space:normal}
+.sr-det dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:4px 0;font-size:12px}
+.sr-det dt{font-weight:700;color:var(--ink-3)} .sr-det dd{margin:0;color:var(--ink)}
+.sr-cat{font-size:10px;font-weight:800;white-space:nowrap} .sr-cat.STREET{color:var(--conf-high)} .sr-cat.POSSIBLE{color:var(--brass)} .sr-cat.AREA{color:var(--ink-3)}
+.sr-rel{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:99px;padding:0 6px;white-space:nowrap}
+.sr-rel.INTERSECTS{color:var(--accent)} .sr-rel.NEARBY{color:var(--ink-2);border-style:dashed} .sr-rel.AREA_WIDE{color:var(--ink-3);border-style:dotted} .sr-rel.ON_THE_STREET{color:var(--conf-high)}
+.sr-pop{white-space:normal!important;min-width:200px;max-width:320px;font-size:11px;color:var(--ink-3)}
+.sr-sum{font-weight:500;color:var(--ink-3);font-size:.86em;margin-inline-start:6px}
+.sr-inv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.sr-inv ul,.sr-miss{margin:4px 0;padding-inline-start:18px;font-size:12.5px;line-height:1.6;color:var(--ink)}
+.sr-prop input{width:120px}
+.sr-map{width:100%;height:auto;max-height:420px;border:1px solid var(--hairline);border-radius:12px;margin-top:8px}
+.sr-map-bg{fill:var(--panel-2)}
+.sr-pl{stroke-width:1.2;fill-opacity:.12} .sr-pl.int{fill:var(--accent);stroke:var(--accent)} .sr-pl.near{fill:none;stroke:var(--ink-3);stroke-dasharray:4 3} .sr-pl.tr{fill:none;stroke:var(--brass);stroke-width:2.2;stroke-dasharray:6 3}
+.sr-pt{fill:var(--down);stroke:var(--panel);stroke-width:1.5}
+.sr-pt-l{font-size:9px;font-weight:700;fill:var(--ink-2)}
+.sr-map-scale line{stroke:var(--ink);stroke-width:2} .sr-map-scale text{font-size:10px;fill:var(--ink-2);text-anchor:middle}
+.sr-map-n path{fill:var(--ink)} .sr-map-n text{font-size:9px;font-weight:800;fill:var(--ink);text-anchor:middle}
+.sr-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--ink-2);margin-top:6px}
+.sr-leg i{display:inline-block;width:14px;height:10px;margin-inline-end:5px;vertical-align:-1px;border-radius:2px}
+.sr-leg i.pt{background:var(--down);border-radius:99px;width:10px} .sr-leg i.int{background:var(--accent);opacity:.5} .sr-leg i.near{border:1.5px dashed var(--ink-3)} .sr-leg i.tr{border:2px dashed var(--brass)}
+@media (max-width:640px){.sr-crumb>span{flex-basis:45%}.sr-ff input[type=number]{width:70px;min-height:38px}.sr-nav{position:static}}
+@media print{body.sr-printing *{visibility:hidden} body.sr-printing #geoView,body.sr-printing #geoView *{visibility:visible} body.sr-printing #geoView{position:absolute;inset:0 auto auto 0;width:100%} body.sr-printing .sr-nav,body.sr-printing .sr-outs,body.sr-printing form,body.sr-printing .sr-filters,body.sr-printing #geoCloseBtn{display:none!important}}
+
 .gv-m.lim{border-style:dashed}
 .gv-m.lim .v{color:var(--brass)}
 .st-ctx.muted .gv-m .v{color:var(--ink-3)}
@@ -701,7 +757,7 @@ tr.txe-dup td{opacity:.7}
 /* value classes — RAW / DERIVED / MODELLED / UNAVAILABLE, read from row metadata */
 .vc{display:inline-flex;align-items:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;
   padding:0 6px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;flex:none;vertical-align:middle}
-.vc.raw{color:var(--conf-high)} .vc.static{color:var(--ink-2);border-style:dashed} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
+.vc.raw{color:var(--conf-high)} .vc.obs{color:var(--accent)} .vc.static{color:var(--ink-2);border-style:dashed} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
 .kpi.na .val{color:var(--ink-3);font-size:16px;font-weight:700}
 .na-card .na-why{font-size:14px;font-weight:600;color:var(--ink-2);line-height:1.6}
 .na-card .na-next{font-size:12.5px;color:var(--ink-3);line-height:1.6}
@@ -1238,6 +1294,24 @@ details.ci-more>.in{padding:2px 13px 12px}
 .cmd-search-row .search input{height:48px;border-radius:13px;font-size:15px}
 .cmd-search-row .search>svg{top:16px}
 .cmd-mode-row{display:flex;justify-content:center}
+/* investor launchpad (21.10.2026): the six priorities under the search, in the order an investor / analyst works — links to the
+   existing sections only (nothing computed here) */
+.cmd-hint{text-align:center;font-size:12px;color:var(--ink-3);margin-top:-4px}
+.lp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;max-width:1040px;margin:0 auto;width:100%}
+.lp-t{display:flex;flex-direction:column;gap:2px;padding:9px 11px;border:1px solid var(--hairline);border-radius:11px;background:var(--panel);
+  color:var(--ink);text-decoration:none;min-height:58px;transition:border-color .15s,background .15s}
+.lp-t:hover,.lp-t:focus-visible{border-color:var(--ink-3);background:var(--tint)}
+.lp-t b{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.lp-t b i{font-style:normal;font-size:10.5px;font-weight:700;color:var(--ink-3);border:1px solid var(--hairline);border-radius:6px;padding:0 5px}
+.lp-t span{font-size:11.5px;color:var(--ink-3);line-height:1.35}
+@media (max-width:980px){.lp{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.lp{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-t{min-height:52px;padding:8px 9px}}
+/* section groups on the page, in the same order as the launchpad and the rail */
+.secgrp{display:flex;align-items:baseline;gap:10px;margin:30px 0 -6px;padding-top:12px;border-top:2px solid var(--hairline)}
+.secgrp b{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--ink-3)}
+.secgrp h2{font-size:15px;font-weight:800;margin:0}
+.secgrp span{font-size:12px;color:var(--ink-3)}
+@media (max-width:560px){.secgrp{flex-wrap:wrap;gap:4px 10px}}
 .cmd-mode-row .mode button{padding:8px 30px}
 .cmd-ops{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
 .command .crumbs{justify-content:center}
@@ -1368,7 +1442,7 @@ details.ci-more>.in{padding:2px 13px 12px}
 .in-pl-c{border:1px solid var(--hairline);border-radius:9px;padding:6px 8px;display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--ink-2)}
 .in-pl-s b{color:var(--ink)}
 .in-pl-c{min-width:0}
-#intel .ho-chip,#inPanel .ho-chip{white-space:normal;max-width:100%}
+#intel .ho-chip,#inPanel .ho-chip,.ds-fin .ho-chip,.ds-ctx .ho-chip{white-space:normal;max-width:100%}
 .in-search{display:flex;gap:8px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--hairline)}
 .in-search input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:500;padding:9px 12px;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);color:var(--ink)}
 .in-res{padding:8px 15px 10px;border-bottom:1px solid var(--hairline);display:grid;gap:5px}
@@ -1709,19 +1783,20 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 
 <nav class="rail" aria-label="ניווט ראשי" data-ia="aNav" id="rail">
   <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
-  <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
   <a href="#dossier" class="ri" data-sec="dossier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span data-i="navDs">תיק</span></a>
-  <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
+  <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
+  <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">עסקאות</span></a>
   <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
+  <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
-  <span class="rail-div" aria-hidden="true"></span>
   <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
-  <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
-  <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
   <a href="#intel" class="ri" data-sec="intel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.4 2.8-5.4 5.5-5.4s4.9 2 5.5 5.4"/><path d="M16 4.5h5M16 8.5h5M17.5 12.5h3.5"/></svg><span data-i="navIntel">יזמים</span></a>
+  <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
   <a href="#land" class="ri" data-sec="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 12l9-7 9 7"/></svg><span data-i="navLand">קרקעות</span></a>
   <a href="/altaris" class="ri" id="railAltaris" title="ALTARIS — מנוע חיתום והקצאת הון" aria-label="ALTARIS — מנוע חיתום והקצאת הון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h6"/><path d="M9 12c3.2 0 4-6 8-6h4"/><path d="M9 12h12"/><path d="M9 12c3.2 0 4 6 8 6h4"/></svg><span>ALTARIS</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
@@ -1750,6 +1825,15 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
         <div class="search-pop" id="searchPop" role="listbox"></div>
       </div>
     </div>
+    <p class="cmd-hint" data-i="lpHint">חיפוש רחוב פותח את דוח ההשקעה של הרחוב — עסקאות, שווי, תכנון וסיכונים</p>
+    <nav class="lp" aria-label="יעדים" data-ia="lpAria" id="launchpad">
+      <a class="lp-t" href="#dossier" data-lp="dossier"><b><i>1</i><span data-i="lp1">מודיעין השקעות</span></b><span data-i="lp1s">תיק שוק ודופק: מה השתנה ולמה</span></a>
+      <a class="lp-t" href="#txSection" data-lp="txSection"><b><i>2</i><span data-i="lp2">עסקאות אחרונות</span></b><span data-i="lp2s">כל המקורות, החדשה ביותר ראשונה</span></a>
+      <a class="lp-t" href="#prices" data-lp="prices"><b><i>3</i><span data-i="lp3">שווי ומחירים</span></b><span data-i="lp3s">מחיר רשמי לצד הערכת המודל</span></a>
+      <a class="lp-t" href="#land" data-lp="land"><b><i>4</i><span data-i="lp4">תכנון והזדמנויות</span></b><span data-i="lp4s">מכרזי קרקע, התחדשות עירונית, דיור</span></a>
+      <a class="lp-t" href="#pulse" data-lp="pulse"><b><i>5</i><span data-i="lp5">סיכונים</span></b><span data-i="lp5s">אותות סיכון ושינויים — כלל, ערך וסף</span></a>
+      <a class="lp-t" href="#sources" data-lp="sources"><b><i>6</i><span data-i="lp6">ראיות ומקורות</span></b><span data-i="lp6s">כל מקור, תאריך ומצב בדיקה</span></a>
+    </nav>
     <div class="cmd-mode-row">
       <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggle">
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
@@ -1792,6 +1876,31 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="kpi-scroll"><div class="kpis" id="kpis"></div></div>
   </section>
 
+  <!-- national geography view — registry areas outside the curated market set -->
+  <section class="blk" id="geoView" hidden>
+    <div class="blk-head">
+      <div><span class="lyr" data-i="geoLyr">מרשם ארצי</span>
+      <h2 id="geoTitle"></h2></div>
+      <button class="chip" id="geoCloseBtn" data-i="geoClose">סגור</button>
+    </div>
+    <div class="card" style="padding:16px 18px" id="geoBody"></div>
+  </section>
+
+  <div class="secgrp" id="grp1"><b>1</b><h2 data-i="grp1">מודיעין השקעות</h2><span data-i="grp1s">תיק שוק לכל גאוגרפיה · דופק השוק: מה השתנה, הזדמנויות לבדיקה ואותות סיכון</span></div>
+  <!-- Market Dossier — one geography (lib/dossier over the existing read models) -->
+  <section class="blk" id="dossier">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrDs">L1 · שוק · תיק גאוגרפי</span>
+      <h2 data-i="dsTitle">תיק שוק — ישראל · מחוז · יישוב</h2>
+      <p class="ho-sub" data-i="dsSub">כל הנתונים שיש ל-PROPX על גאוגרפיה אחת, כל נתון עם מקורו, סיווגו ותאריכיו — ויקומים של יחידות שאינם מחוברים</p></div>
+      <span class="tx-note" id="dsProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="ho-bar" id="dsBar"></div>
+      <div class="ds-body" id="dsBody"></div>
+    </div>
+  </section>
+
   <!-- Market Pulse — what changed (lib/radar: deterministic events over the committed histories) -->
   <section class="blk" id="pulse">
     <div class="blk-head">
@@ -1809,18 +1918,52 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     </div>
   </section>
 
-  <!-- Market Dossier — one geography (lib/dossier over the existing read models) -->
-  <section class="blk" id="dossier">
+  <div class="secgrp" id="grp2"><b>2</b><h2 data-i="grp2">עסקאות ושווי</h2><span data-i="grp2s">עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה</span></div>
+  <!-- Recent transactions -->
+  <section class="blk" id="txSection">
     <div class="blk-head">
-      <div><span class="lyr" data-i="lyrDs">L1 · שוק · תיק גאוגרפי</span>
-      <h2 data-i="dsTitle">תיק שוק — ישראל · מחוז · יישוב</h2>
-      <p class="ho-sub" data-i="dsSub">כל הנתונים שיש ל-PROPX על גאוגרפיה אחת, כל נתון עם מקורו, סיווגו ותאריכיו — ויקומים של יחידות שאינם מחוברים</p></div>
-      <span class="tx-note" id="dsProv"></span>
+      <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
+      <h2 data-i="txTitle">עסקאות אחרונות שדווחו באזור</h2></div>
+      <span class="tx-note" id="txProv"></span>
     </div>
-    <div class="card ho-card">
-      <div class="ho-bar" id="dsBar"></div>
-      <div class="ds-body" id="dsBody"></div>
+    <div class="card tbl-card">
+      <div class="tx-bar" id="txBar"></div>
+      <div class="tx-sum" id="txSum" hidden></div>
+      <div class="tx-scope" id="txScope" hidden></div>
+      <div class="tx-warn" id="txWarn" hidden></div>
+      <div class="tx-fresh" id="txFresh"></div>
+      <div class="pt-host" id="txTblPt"></div>
+      <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
+      <div class="tbl-cards" id="txCards"></div>
+      <div class="tx-more" id="txMoreBox" hidden></div>
+      <p class="tx-empty" id="txEmpty" hidden></p>
     </div>
+  </section>
+
+  <!-- Profile + price history (history is UNAVAILABLE until official series are stored) -->
+  <section class="blk" id="prices">
+    <div class="grid-main">
+      <div class="card chart-card na-card" id="trendNA">
+        <div class="chart-tools">
+          <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
+          <span class="vc na" data-i="vcNA">חסר</span>
+        </div>
+        <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
+        <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
+      </div>
+      <div class="card profile" id="profileCard"></div>
+    </div>
+  </section>
+
+  <!-- Sale vs Rent -->
+  <section class="blk">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyr3">L3 · נכס</span>
+      <h2 data-i="svrTitle">מכירה מול שכירות</h2></div>
+      <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
+    </div>
+    <div class="svr" id="svrGrid"></div>
+    <div class="svr-formula" id="svrFormula"></div>
   </section>
 
   <!-- Map + rankings -->
@@ -1853,42 +1996,6 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- national geography view — registry areas outside the curated market set -->
-  <section class="blk" id="geoView" hidden>
-    <div class="blk-head">
-      <div><span class="lyr" data-i="geoLyr">מרשם ארצי</span>
-      <h2 id="geoTitle"></h2></div>
-      <button class="chip" id="geoCloseBtn" data-i="geoClose">סגור</button>
-    </div>
-    <div class="card" style="padding:16px 18px" id="geoBody"></div>
-  </section>
-
-  <!-- Profile + price history (history is UNAVAILABLE until official series are stored) -->
-  <section class="blk" id="prices">
-    <div class="grid-main">
-      <div class="card chart-card na-card" id="trendNA">
-        <div class="chart-tools">
-          <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
-          <span class="vc na" data-i="vcNA">חסר</span>
-        </div>
-        <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
-        <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
-      </div>
-      <div class="card profile" id="profileCard"></div>
-    </div>
-  </section>
-
-  <!-- Sale vs Rent -->
-  <section class="blk">
-    <div class="blk-head">
-      <div><span class="lyr" data-i="lyr3">L3 · נכס</span>
-      <h2 data-i="svrTitle">מכירה מול שכירות</h2></div>
-      <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
-    </div>
-    <div class="svr" id="svrGrid"></div>
-    <div class="svr-formula" id="svrFormula"></div>
   </section>
 
   <!-- Neighborhood / area table -->
@@ -2003,24 +2110,33 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="card nh-card" id="nhTools"></div>
   </section>
 
-  <!-- Recent transactions -->
-  <section class="blk" id="txSection">
+  <div class="secgrp" id="grp3"><b>3</b><h2 data-i="grp3">תכנון, קרקע והיצע</h2><span data-i="grp3s">יזמים ופרויקטים · התחדשות עירונית · דיור ממשלתי · קרקעות ומכרזים</span></div>
+  <!-- Developers & Projects — OBSERVED PROPX ACTIVITY (api/intel.js): a deterministic registry over the ILA tender
+       records and the MoCH lottery records. Names are never merged by similarity; projects are never joined across sources. -->
+  <section class="blk" id="intel">
     <div class="blk-head">
-      <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
-      <h2 data-i="txTitle">עסקאות אחרונות שדווחו באזור</h2></div>
-      <span class="tx-note" id="txProv"></span>
+      <div><span class="lyr" data-i="lyrIn">L2 · ישויות · יזמים ופרויקטים</span>
+      <h2 data-i="inTitle">יזמים ופרויקטים</h2>
+      <p class="ho-sub" data-i="inSub">פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות</p></div>
+      <span class="tx-note ho-prov" id="inProv"></span>
     </div>
-    <div class="card tbl-card">
-      <div class="tx-bar" id="txBar"></div>
-      <div class="tx-sum" id="txSum" hidden></div>
-      <div class="tx-scope" id="txScope" hidden></div>
-      <div class="tx-warn" id="txWarn" hidden></div>
-      <div class="tx-fresh" id="txFresh"></div>
-      <div class="pt-host" id="txTblPt"></div>
-      <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
-      <div class="tbl-cards" id="txCards"></div>
-      <div class="tx-more" id="txMoreBox" hidden></div>
-      <p class="tx-empty" id="txEmpty" hidden></p>
+    <div class="card ho-card">
+      <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
+      <div class="in-res" id="inRes" hidden aria-live="polite"></div>
+      <div class="dd-watchlist" id="inWatch" hidden></div>
+      <div class="ho-bar" id="inBar"></div>
+      <div class="ho-cov" id="inCov" hidden></div>
+      <div class="ho-kpis" id="inKpis"></div>
+      <div class="ho-tblhead" id="inTblHead"></div>
+      <div class="pt-host" id="inTblPt"></div>
+      <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
+      <div class="tbl-cards" id="inCards"></div>
+      <div class="ho-pager" id="inPager"></div>
+      <p class="tbl-foot" id="inFoot"></p>
+    </div>
+    <div class="ho-drawer" id="inDrawer" hidden>
+      <div class="ho-drawer-bg" data-inclose></div>
+      <aside class="ho-panel" id="inPanel" role="dialog" aria-modal="true" aria-labelledby="inDTitle" tabindex="-1"></aside>
     </div>
   </section>
 
@@ -2052,35 +2168,6 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="ho-drawer" id="hoDrawer" hidden>
       <div class="ho-drawer-bg" data-hoclose></div>
       <aside class="ho-panel" id="hoPanel" role="dialog" aria-modal="true" aria-labelledby="hoDTitle" tabindex="-1"></aside>
-    </div>
-  </section>
-
-  <!-- Developers & Projects — OBSERVED PROPX ACTIVITY (api/intel.js): a deterministic registry over the ILA tender
-       records and the MoCH lottery records. Names are never merged by similarity; projects are never joined across sources. -->
-  <section class="blk" id="intel">
-    <div class="blk-head">
-      <div><span class="lyr" data-i="lyrIn">L2 · ישויות · יזמים ופרויקטים</span>
-      <h2 data-i="inTitle">יזמים ופרויקטים</h2>
-      <p class="ho-sub" data-i="inSub">פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות</p></div>
-      <span class="tx-note ho-prov" id="inProv"></span>
-    </div>
-    <div class="card ho-card">
-      <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
-      <div class="in-res" id="inRes" hidden aria-live="polite"></div>
-      <div class="dd-watchlist" id="inWatch" hidden></div>
-      <div class="ho-bar" id="inBar"></div>
-      <div class="ho-cov" id="inCov" hidden></div>
-      <div class="ho-kpis" id="inKpis"></div>
-      <div class="ho-tblhead" id="inTblHead"></div>
-      <div class="pt-host" id="inTblPt"></div>
-      <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
-      <div class="tbl-cards" id="inCards"></div>
-      <div class="ho-pager" id="inPager"></div>
-      <p class="tbl-foot" id="inFoot"></p>
-    </div>
-    <div class="ho-drawer" id="inDrawer" hidden>
-      <div class="ho-drawer-bg" data-inclose></div>
-      <aside class="ho-panel" id="inPanel" role="dialog" aria-modal="true" aria-labelledby="inDTitle" tabindex="-1"></aside>
     </div>
   </section>
 
@@ -2122,6 +2209,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 
 
 
+  <div class="secgrp" id="grp4"><b>4</b><h2 data-i="grp4">ראיות ומקורות</h2><span data-i="grp4s">מדריך · כל מקור, תאריך ומצב בדיקה</span></div>
   <!-- Sources -->
   <!-- buyer's guide — general educational content, not advice -->
   <section class="blk" id="guide">
@@ -2736,7 +2824,11 @@ he:{
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
   geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
-  geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר", geoNamed:"ביישוב שבחיפוש", geoHouse:n=>`מספר בית ${n} אינו חלק מזהות הרחוב — הרחוב מוצג; המספר לא שימש לבחירה`,
+  srchErr:{geo:"החיפוש במרשם הארצי (יישובים ורחובות) נכשל",intel:"החיפוש ביזמים, פרויקטים ומכרזים נכשל",
+    network:"אין חיבור לשרת.",auth:"פג תוקף ההתחברות — יש להתחבר מחדש.",server:s=>`שגיאת שרת (${s}).`,timeout:"השרת לא ענה בזמן.",
+    index:"מרשם הרחובות אינו זמין כרגע בשרת.",invalid:"התקבלה תשובה לא תקינה מהשרת.",offline:"המרשם הארצי אינו זמין בעותק הלא מקוון — רק באתר.",
+    notEmpty:"זו אינה תוצאה ריקה: החיפוש לא בוצע.",retry:"נסה שוב",signIn:"התחברות מחדש"},
+  geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoPlaceOf:n=>`שם רשמי של מקום ביישוב (ללא רשומת רחוב): ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר", geoNamed:"ביישוב שבחיפוש", geoHouse:n=>`מספר בית ${n} אינו חלק מזהות הרחוב — הרחוב מוצג; המספר לא שימש לבחירה`,
   geoMore:n=>`עוד ${fmtInt(n)} התאמות — הוסיפו שם יישוב (למשל „הרצל פתח תקווה")`,
   geoLyr:"מרשם ארצי", geoClose:"סגור",
   geoSrc:id=>`מקור: מרשם היישובים והרחובות הרשמי (data.gov.il) · מזהה קנוני: ${id}`,
@@ -2808,7 +2900,9 @@ he:{
   footLeft:"© 2026 PROPX · מידע הוא הנכס הראשון · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
-  navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
+  navPrices:"מחירים", navIns:"תובנות", navSales:"עסקאות", navSrc:"מקורות",
+  lpHint:"חיפוש רחוב פותח את דוח ההשקעה של הרחוב — עסקאות, שווי, תכנון וסיכונים", lpAria:"יעדים", lp1:"מודיעין השקעות", lp1s:"תיק שוק ודופק: מה השתנה ולמה", lp2:"עסקאות אחרונות", lp2s:"כל המקורות, החדשה ביותר ראשונה", lp3:"שווי ומחירים", lp3s:"מחיר רשמי לצד הערכת המודל", lp4:"תכנון והזדמנויות", lp4s:"מכרזי קרקע, התחדשות עירונית, דיור", lp5:"סיכונים", lp5s:"אותות סיכון ושינויים — כלל, ערך וסף", lp6:"ראיות ומקורות", lp6s:"כל מקור, תאריך ומצב בדיקה",
+  grp1:"מודיעין השקעות", grp1s:"תיק שוק לכל גאוגרפיה · דופק השוק: מה השתנה, הזדמנויות לבדיקה ואותות סיכון", grp2:"עסקאות ושווי", grp2s:"עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה", grp3:"תכנון, קרקע והיצע", grp3s:"יזמים ופרויקטים · התחדשות עירונית · דיור ממשלתי · קרקעות ומכרזים", grp4:"ראיות ומקורות", grp4s:"מדריך · כל מקור, תאריך ומצב בדיקה",
   navLand:"קרקעות", navIntel:"יזמים", lyrIn:"L2 · ישויות · יזמים ופרויקטים", inTitle:"יזמים ופרויקטים", inSub:"פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות", tcTitle:"מרכז נתונים ואמון", tcSub:"כל מקור ש-PROPX קורא או בדק: מפרסם, סיווג, בדיקה אחרונה ותוצאתה, תצפית אחרונה, כיסוי ומגבלות — מתוך יומני הסנכרון עצמם", lyrLd:"L1 · שוק · קרקעות ומכרזים", ldTitle:"קרקעות ומכרזים", ldSub:"מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות",
   ldSrcName:"רשות מקרקעי ישראל · אתר המכרזים", ldProv:src=>`מקור: ${src} · רשומות מכרז רשמיות; ספירות וסכומים נגזרים`,
   ldPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים","5y":"5 שנים",all:"כל המכרזים במקור",custom:"טווח מותאם"}, ldPerL:"תקופה",
@@ -2890,8 +2984,10 @@ he:{
   ldMapLeg:"מכרזים: ריבוע = מרכז פוליגון רמ״י · עיגול = ברמת יישוב (ללא פוליגון)",
   navDs:"תיק", lyrDs:"L1 · שוק · תיק גאוגרפי", dsTitle:"תיק שוק — ישראל · מחוז · יישוב", dsSub:"כל הנתונים שיש ל-PROPX על גאוגרפיה אחת, כל נתון עם מקורו, סיווגו ותאריכיו — ויקומים של יחידות שאינם מחוברים",
   dsPick:"גאוגרפיה", dsRadarState:"מצב ברדאר (גאוגרפיה קפדנית)", dsTracked:"רשומות במעקב", dsNat:"ישראל (ארצי)", dsDistricts:"מחוזות", dsLocs:"יישובים (עם מכרזי רמ״י)", dsQuality:"איכות ראיות", dsFacts:"עובדות מפתח", dsWatch:"למה לעקוב", dsRisk:"מה עלול להשתבש", dsChanges:"שינויים אחרונים", dsDevs:"יזמים מובילים כאן (נצפה)", dsFresh:"רעננות המקורות", dsMissing:"מה אין בתיק — ולמה", dsLoading:"טוען תיק…", dsErr:"לא ניתן לטעון את התיק כעת", dsNoSig:"אין טריגר שנדלק", dsGen:(d)=>`הופק ${d}`, dsDistrictOf:"מחוז", dsToPulse:"לכל האירועים",
-  dsT:{cst:"בנייה (למ״ס) — התחלות",cstStarts:"התחלות",cstDone:"גמר 12 ח׳",cstPermits:"היתרים 12 ח׳",cstActive:"בבנייה (רבעון)",sales:"מכירות דירות חדשות (למ״ס)",inv:"מלאי שטרם נמכר (ארצי)",mos:"חודשי היצע",land:"מכרזי רמ״י · היקף נוכחי",open:"יח״ד במכרזים פתוחים",aw:"יח״ד במגרשים שנזכו",pend:"יח״ד ממתינות להחלטה",lot:"הגרלות דיור מסובסד",lotU:"דירות בהגרלות ראשונות",apu:"מבקשים ליחידה",rn:"מתחמי התחדשות",rnU:"יח״ד מוצעות (כפי שפורסם)",rt:"מכרזי דיור להשכרה (נוכחי)",rtU:"יח״ד להשכרה (לפי דירה להשכיר)",dev:"יזמים שנצפו כאן",ent:"כניסות יזמים · 24 ח׳",boi:"ריבית בנק ישראל",nhi:"מדד דירות חדשות · שנתי",cii:"תשומות בנייה · שנתי"},
+  dsT:{mkTotal:"כלל הדירות שנמכרו — חדשות + יד שנייה (למ״ס)",mkSecond:"דירות יד שנייה שנמכרו (למ״ס)",mkShare:"יד שנייה",cst:"בנייה (למ״ס) — התחלות",cstStarts:"התחלות",cstDone:"גמר 12 ח׳",cstPermits:"היתרים 12 ח׳",cstActive:"בבנייה (רבעון)",sales:"מכירות דירות חדשות (למ״ס)",inv:"מלאי שטרם נמכר (ארצי)",mos:"חודשי היצע",land:"מכרזי רמ״י · היקף נוכחי",open:"יח״ד במכרזים פתוחים",aw:"יח״ד במגרשים שנזכו",pend:"יח״ד ממתינות להחלטה",lot:"הגרלות דיור מסובסד",lotU:"דירות בהגרלות ראשונות",apu:"מבקשים ליחידה",rn:"מתחמי התחדשות",rnU:"יח״ד מוצעות (כפי שפורסם)",rt:"מכרזי דיור להשכרה (נוכחי)",rtU:"יח״ד להשכרה (לפי דירה להשכיר)",dev:"יזמים שנצפו כאן",ent:"כניסות יזמים · 24 ח׳",boi:"ריבית בנק ישראל",nhi:"מדד דירות חדשות · שנתי",cii:"תשומות בנייה · שנתי"},
   dsS:{t12:"12 חודשים",mom:"מומנטום 3 ח׳",nat:"ארצי",dist:"רמת מחוז — לא נתון היישוב",byLoc:"סכום על יישובי המחוז",of:"מתוך",total:"סה״כ המכרז — לא יח״ד להשכרה",declared:"מוכרזים",small:"מדגם קטן — ללא מגמה",context:"הקשר ארצי"},
+  dsFin:{title:"מימון דיור — בנק ישראל",rate:"ריבית משכנתא",scope:"ארצי · כלל המערכת הבנקאית — הקשר, לא נתון מקומי",loans:"הלוואות לדיור חדשות",count:"מספר הלוואות",avg:"הלוואה ממוצעת",fixedNi:"קבועה לא צמודה",fixedCpi:"קבועה צמודה",varCpi:"משתנה צמודה",anchor:"עוגן",margin:"מרווח",pti:"החזר מהכנסה (ממוצע)",ltv:"שיעור מימון",ltvTop:"מעל 60% מימון",invest:"דירה להשקעה",reduced:"מחיר מופחת",stock:"יתרת האשראי לדיור",arrears:"בפיגור 90+",notPub:"לא מתפרסם בתזרים זה",yoy:"מול שנה קודמת",pp:"נק׳ אחוז",fresh:{CURRENT:"עדכני",EXPECTED_REPORTING_LAG:"פיגור דיווח צפוי",STALE:"לא עדכני",MISSING:"חסר"},bn:"מיליארד ₪"},
+  dsCtx:{title:"הקשר ליישוב — מפקד 2022 ומרשם התושבים",scope:"נתוני היישוב — לעולם לא נתון של רחוב",pop:"אוכלוסייה (מפקד 2022)",hh:"משקי בית",hhs:"נפשות למשק בית",own:"גרים בבעלות",rent:"גרים בשכירות",wage:"שכר חציוני שכירים (שנתי)",age:"גיל חציוני",acad:"בעלי תואר",res:"תושבים רשומים",resAge:"גיל 65+",sa:"אזורים סטטיסטיים",nat:"ישראל",census:"מפקד 2022 — תצפית אחת, לא נתון עדכני",register:"מרשם האוכלוסין — לא אומדן הלמ״ס",two:"שני עולמות שונים — אינם מושווים זה לזה"},
   dsLe:{title:"כלכלת קרקע — קרקע מדינה (רמ״י)",bid:"₪/יח״ד · הצעה תחרותית · שוק חופשי",median:"חציון",p25:"p25",p75:"p75",weighted:"משוקלל-יחידות",lots:"מגרשים",tenders:"מכרזים",units:"יח״ד",prior:"מול 36 הקודמים",mix:"תמהיל המגרשים השתנה",small:"מדגם קטן — ללא רבעונים",psm:"הצעות ₪/מ״ר · מסלולים מסובסדים",outcomes:"תוצאות מכרזים שפורסמו בחלון",awarded:"נזכו",noWinner:"ללא זוכה",cancelled:"בוטלו",pending:"ממתינים",open:"פתוחים",failed:"יחס כישלון",re:"שיווקים חוזרים (תיק מגרש)",conc:"הזוכה הגדול (שם מדויק)",share:"מהמגרשים",district:"המחוז — אותו יקום",window:"36 חודשים",none:"אין נתון"},
   dsWhy:{title:"למה השוק הזה?",sub:"קריאה דטרמיניסטית של נתוני התיק — תיאור, לא המלצה",more:"הקריאה המלאה",scope:{district:"רמת מחוז",national:"הקשר ארצי"},kinds:{fact:"עובדה",derived:"נגזר",watch:"למעקב",risk:"סיכון",context:"הקשר",gap:"חסר"},q:{HIGH:"גבוהה",MEDIUM:"בינונית",LOW:"נמוכה"}},
   dsSup:{title:"צנרת היצע — יקומים מקבילים, לעולם לא מסוכמים",t12:"12 חודשים",change12:"שינוי מול 12 הקודמים",changeYoY:"מול הרבעון המקביל אשתקד",stock:"מלאי בסוף הרבעון",completions:"גמר",districtCtx:"הקשר מחוזי —",none:"צנרת ההיצע אינה זמינה כרגע",u:{permits:"היתרי בנייה · דירות בהיתרים (למ״ס)",starts:"התחלות בנייה · דירות שהחלה בנייתן (למ״ס)",activeConstruction:"בנייה פעילה · דירות בבנייה (למ״ס, מלאי רבעוני)",planning:"תכנון · יח״ד בתוכניות (XPlan)",land:"קרקע · יח״ד במכרזי רמ״י",renewal:"התחדשות · יח״ד מוצעות במתחמים",rental:"דיור להשכרה · מסלול רמ״י",lotteries:"דיור מסובסד · הגרלות משב״ש",construction:"בנייה · דיווחי התקדמות (משב״ש)"},
@@ -3308,7 +3404,11 @@ en:{
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
   geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
-  geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality", geoNamed:"in the locality you typed", geoHouse:n=>`House number ${n} is not part of a street's identity — the street is shown; the number picked nothing`,
+  srchErr:{geo:"The national registry search (localities and streets) failed",intel:"The developer, project and tender search failed",
+    network:"No connection to the server.",auth:"Your session has ended — please sign in again.",server:s=>`Server error (${s}).`,timeout:"The server did not answer in time.",
+    index:"The street registry is not available on the server right now.",invalid:"The server sent an invalid answer.",offline:"The national registry is not available in the offline copy — only on the site.",
+    notEmpty:"This is not an empty result: the search did not run.",retry:"Retry",signIn:"Sign in again"},
+  geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoPlaceOf:n=>`official name of a place in this locality (no street record): ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality", geoNamed:"in the locality you typed", geoHouse:n=>`House number ${n} is not part of a street's identity — the street is shown; the number picked nothing`,
   geoMore:n=>`${fmtInt(n)} more matches — add a locality name in Hebrew (e.g. “הרצל פתח תקווה”)`,
   geoLyr:"National registry", geoClose:"Close",
   geoSrc:id=>`Source: the official locality & street registry (data.gov.il) · canonical id: ${id}`,
@@ -3380,7 +3480,9 @@ en:{
   footLeft:"© 2026 PROPX · Information is the first asset · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
-  navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
+  navPrices:"Prices", navIns:"Insights", navSales:"Deals", navSrc:"Sources",
+  lpHint:"Searching a street opens its investment report — transactions, valuation, planning and risks", lpAria:"Destinations", lp1:"Investment intelligence", lp1s:"Market dossier and pulse: what changed and why", lp2:"Latest transactions", lp2s:"Every source, newest first", lp3:"Valuation & prices", lp3s:"Official price beside the model estimate", lp4:"Planning & opportunities", lp4s:"Land tenders, urban renewal, housing", lp5:"Risks", lp5s:"Risk signals and changes — rule, value and threshold", lp6:"Evidence & sources", lp6s:"Every source, date and check state",
+  grp1:"Investment intelligence", grp1s:"Market dossier for every geography · Market pulse: what changed, items worth investigating and risk signals", grp2:"Transactions & valuation", grp2s:"Latest transactions · prices and model · map and areas · comparison · deal calculator", grp3:"Planning, land & supply", grp3s:"Developers and projects · urban renewal · government housing · land tenders", grp4:"Evidence & sources", grp4s:"Guide · every source, date and check state",
   navLand:"Land", navIntel:"Developers", lyrIn:"L2 · Entities · Developers & projects", inTitle:"Developers & Projects", inSub:"Activity observed in the official sources — ILA tender wins, MoCH lottery projects, construction evidence · one search for every entity", tcTitle:"Data & Trust Center", tcSub:"Every source PROPX reads or audited: publisher, class, the latest check and its outcome, latest observation, coverage and limits — from the sync logs themselves", lyrLd:"L1 · Market · Land & tenders", ldTitle:"Land & Tender Intelligence", ldSub:"Israel Land Authority residential land tenders · planning · winners · costs — not subsidized-housing lotteries, not apartment sales",
   ldSrcName:"Israel Land Authority · tender site", ldProv:src=>`Source: ${src} · official tender records; counts and sums derived`,
   ldPer:{"6m":"6 months","12m":"12 months","24m":"24 months","5y":"5 years",all:"All tenders in source",custom:"Custom range"}, ldPerL:"Period",
@@ -3462,8 +3564,10 @@ en:{
   ldMapLeg:"Tenders: square = ILA polygon centroid · circle = locality level (no polygon)",
   navDs:"Dossier", lyrDs:"L1 · Market · Geography dossier", dsTitle:"Market Dossier — Israel · district · locality", dsSub:"Everything PROPX holds on one geography, each figure with its source, class and dates — and unit universes that are never added together",
   dsPick:"Geography", dsRadarState:"Radar state (strict geography)", dsTracked:"tracked records", dsNat:"Israel (national)", dsDistricts:"Districts", dsLocs:"Localities (with ILA tenders)", dsQuality:"Evidence quality", dsFacts:"Key facts", dsWatch:"What to watch", dsRisk:"What could go wrong", dsChanges:"Recent changes", dsDevs:"Leading developers here (observed)", dsFresh:"Source freshness", dsMissing:"What is not in the dossier — and why", dsLoading:"Loading dossier…", dsErr:"The dossier could not be loaded", dsNoSig:"No trigger fired", dsGen:(d)=>`generated ${d}`, dsDistrictOf:"district", dsToPulse:"all events",
-  dsT:{cst:"Construction (CBS) — starts",cstStarts:"starts",cstDone:"completions 12m",cstPermits:"permits 12m",cstActive:"under construction (quarter)",sales:"New-home sales (CBS)",inv:"Unsold inventory (national)",mos:"months of supply",land:"ILA tenders · current scope",open:"units in open tenders",aw:"units in awarded lots",pend:"units awaiting decision",lot:"Subsidized-housing lotteries",lotU:"units in first lotteries",apu:"applicants per unit",rn:"Renewal complexes",rnU:"proposed units (as published)",rt:"Rental-track tenders (current)",rtU:"rental units (per Dira Lehaskir)",dev:"Developers observed here",ent:"developer entries · 24 mo",boi:"Bank of Israel rate",nhi:"new-homes index · y/y",cii:"construction inputs · y/y"},
+  dsT:{mkTotal:"All dwellings sold — new + second-hand (CBS)",mkSecond:"Second-hand dwellings sold (CBS)",mkShare:"second-hand",cst:"Construction (CBS) — starts",cstStarts:"starts",cstDone:"completions 12m",cstPermits:"permits 12m",cstActive:"under construction (quarter)",sales:"New-home sales (CBS)",inv:"Unsold inventory (national)",mos:"months of supply",land:"ILA tenders · current scope",open:"units in open tenders",aw:"units in awarded lots",pend:"units awaiting decision",lot:"Subsidized-housing lotteries",lotU:"units in first lotteries",apu:"applicants per unit",rn:"Renewal complexes",rnU:"proposed units (as published)",rt:"Rental-track tenders (current)",rtU:"rental units (per Dira Lehaskir)",dev:"Developers observed here",ent:"developer entries · 24 mo",boi:"Bank of Israel rate",nhi:"new-homes index · y/y",cii:"construction inputs · y/y"},
   dsS:{t12:"12 months",mom:"3-month momentum",nat:"national",dist:"district level — not the locality's figure",byLoc:"summed over the district's localities",of:"of",total:"tender total — not rental units",declared:"declared",small:"small sample — no trend",context:"national context"},
+  dsFin:{title:"Housing finance — Bank of Israel",rate:"Mortgage rate",scope:"national · the whole banking system — context, not a local figure",loans:"New housing loans",count:"number of loans",avg:"average loan",fixedNi:"fixed unindexed",fixedCpi:"fixed CPI-indexed",varCpi:"variable CPI-indexed",anchor:"anchor",margin:"margin",pti:"Payment-to-income (average)",ltv:"Loan-to-value",ltvTop:"over 60% LTV",invest:"investment dwelling",reduced:"reduced price",stock:"Outstanding housing credit",arrears:"in arrears 90+",notPub:"not published in this flow",yoy:"vs a year earlier",pp:"pp",fresh:{CURRENT:"current",EXPECTED_REPORTING_LAG:"expected reporting lag",STALE:"stale",MISSING:"missing"},bn:"bn"},
+  dsCtx:{title:"Locality context — census 2022 and the population register",scope:"the locality's figures — never a street's",pop:"Population (census 2022)",hh:"households",hhs:"persons per household",own:"owner-occupied",rent:"renting",wage:"employees' median wage (annual)",age:"median age",acad:"with an academic degree",res:"Registered residents",resAge:"aged 65+",sa:"statistical areas",nat:"Israel",census:"census 2022 — one observation, not a current figure",register:"the population register — not the CBS estimate",two:"two different universes — never compared with each other"},
   dsLe:{title:"Land economics — state land (ILA)",bid:"₪/unit · competitive bid · open market",median:"median",p25:"p25",p75:"p75",weighted:"unit-weighted",lots:"lots",tenders:"tenders",units:"units",prior:"vs the prior 36",mix:"the lot mix changed",small:"small sample — no quartiles",psm:"₪/m² bids · subsidized tracks",outcomes:"outcomes of tenders published in the window",awarded:"awarded",noWinner:"no winner",cancelled:"cancelled",pending:"pending",open:"open",failed:"failed ratio",re:"re-tenders (lot file)",conc:"largest winner (exact name)",share:"of the lots",district:"the district — the same universe",window:"36 months",none:"no figure"},
   dsWhy:{title:"Why this market?",sub:"a deterministic read of the dossier's figures — a description, not a recommendation",more:"the full read",scope:{district:"district level",national:"national context"},kinds:{fact:"fact",derived:"derived",watch:"watch",risk:"risk",context:"context",gap:"missing"},q:{HIGH:"HIGH",MEDIUM:"MEDIUM",LOW:"LOW"}},
   dsSup:{title:"Supply pipeline — parallel universes, never summed",t12:"12 months",change12:"change vs prior 12",changeYoY:"vs the same quarter a year earlier",stock:"stock at quarter end",completions:"completions",districtCtx:"district context —",none:"The supply pipeline is not available right now",u:{permits:"Building permits · dwellings permitted (CBS)",starts:"Construction starts · dwellings begun (CBS)",activeConstruction:"Active construction · dwellings under construction (CBS, quarterly stock)",planning:"Planning · plan units (XPlan)",land:"Land · ILA tender units",renewal:"Renewal · proposed units in complexes",rental:"Long-term rental · ILA track",lotteries:"Subsidized housing · MoCH lotteries",construction:"Construction · progress reports (MoCH)"},
@@ -7172,7 +7276,7 @@ function geoPinSVG(sf){
   return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
 }
-let geoLast={q:"",near:"",list:[],more:0,house:""},geoTimer=null,geoBusy="",geoSeq=0,geoShown=[];
+let geoLast={q:"",near:"",list:[],more:0,house:"",err:null},geoTimer=null,geoBusy="",geoSeq=0,geoShown=[];
 /* the selected locality for street ranking: the registry locality / street in view, else the board's city (or the city of
    the board's neighbourhood); never a district or the country */
 function geoNear(){
@@ -7182,6 +7286,23 @@ function geoNear(){
   const city=l.type==="city"?l:chainOf(l).find(x=>x.type==="city");
   return city?city.he:"";
 }
+/* one search request → {data} (a real answer, zero matches included) or {err:{kind,status,code}}: network · auth (the session
+   ended — the gate answers with the sign-in page) · server · timeout · index (the registry is not loaded on the server) · invalid
+   (not the JSON this API returns). A failed request is NEVER an empty result: the dropdown says what failed and offers a retry. */
+async function srchFetch(url,isAnswer){
+  let r;
+  try{r=await fetch(url,{credentials:"same-origin",headers:{Accept:"application/json"}})}catch(e){return{err:{kind:"network"}}}
+  const ct=(r.headers.get("content-type")||"").toLowerCase();
+  let path="";try{path=new URL(r.url||url,location.href).pathname}catch(e){}
+  if(path==="/login.html"||r.status===401||r.status===403||(r.redirected&&ct.includes("text/html")))return{err:{kind:"auth",status:r.status}};
+  if(!r.ok){let code="";try{const j=await r.json();code=(j&&j.error)||""}catch(e){}
+    return{err:{kind:code==="geo-index-unavailable"?"index":r.status===504?"timeout":"server",status:r.status,code}}}
+  let d=null;
+  if(ct.includes("json"))try{d=await r.json()}catch(e){d=null}
+  if(!d||!isAnswer(d))return{err:{kind:"invalid",status:r.status}};
+  return{data:d};
+}
+const srchOffline=()=>location.protocol==="file:"||!location.host;
 function geoSug(q){
   const qq=q.trim(),near=geoNear();
   if(qq.length<2)return[];
@@ -7189,20 +7310,22 @@ function geoSug(q){
     clearTimeout(geoTimer);geoBusy=qq;
     const seq=++geoSeq;
     geoTimer=setTimeout(async()=>{
-      let list=[],more=0,house="";
-      try{
-        const r=await fetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""));
-        if(r.ok){const d=await r.json();
+      let list=[],more=0,house="",err=null;
+      if(srchOffline())err={kind:"offline"};   /* the offline copy carries no national registry */
+      else{
+        const R=await srchFetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""),d=>Array.isArray(d.matches));
+        if(R.err)err=R.err;
+        else{const d=R.data;
           /* official registry streets are never filtered or replaced; a registry
              locality the board already lists as a city appears once, as that city */
-          const all=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he));
+          const all=d.matches.filter(g=>g.kind==="street"||!coveredIdByName(g.he));
           list=all.slice(0,10);
           /* "more" counts every street not shown: the server's remainder + the streets this list cut */
           more=((d.meta&&d.meta.moreStreets)||0)+all.slice(10).filter(g=>g.kind==="street").length;
           house=(d.meta&&d.meta.houseNumber)||"";}
-      }catch(e){/* offline/standalone: the national layer is unavailable */}
+      }
       if(seq!==geoSeq)return;   /* a newer query was sent: this answer is stale */
-      geoLast={q:qq,near,list,more,house};if(geoBusy===qq)geoBusy="";
+      geoLast={q:qq,near,list,more,house,err};if(geoBusy===qq)geoBusy="";
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },170);
@@ -7692,13 +7815,372 @@ function siHTML(g){
     <div class="st-acts"><button type="button" class="chip" data-stdos="${I.cityCode}">${t.acts.dossier}</button><button type="button" class="chip" data-stlive="1">${t.acts.live}</button></div>
     <p class="gv-src">${t.src(src.scrapedAt?siDate(src.scrapedAt):"—")}</p>`;
 }
+/* ═══════════ STREET INVESTMENT INTELLIGENCE — the street report (lib/streets/report.js; view=streetReport / streetTx / streetProperty) ═══════════
+   A composition over the read models above: hierarchy · the latest transaction · the full transaction table · fair comparison · plans and
+   transit around the street · the street's own map · the assessment. The existing Street Intelligence panels follow in full below it. */
+const SRT={he:{
+    lyr:"דוח רחוב — מודיעין השקעות",loading:"טוען את דוח הרחוב…",loadingFull:"טוען תכנון, מפה וטבלת עסקאות מלאה…",err:"דוח הרחוב אינו זמין כרגע.",
+    nav:{ov:"סיכום השקעה",tx:"עסקאות אחרונות",px:"שווי והשוואה",pl:"תכנון והזדמנויות",risk:"סיכונים ובדיקות",map:"מפה",src:"מקורות",ev:"ראיות הרחוב"},riskH:"סיכונים, סביבה ומה לבדוק",assessH:"הערכת הרחוב — מה תומך ומה נגד",
+    hier:{district:"מחוז",city:"עיר",nb:"שכונה",street:"רחוב",bld:"בניינים"},
+    nbState:{VERIFIED:"מאומתת",SOURCE_LABEL:"תווית מקור",SOURCE_LABEL_MIXED:"תוויות מקור מעורבות",UNRESOLVED:"לא מזוהה"},
+    nbWhy:{VERIFIED:"קישור רחוב → שכונה מאומת",SOURCE_LABEL:"השם שהמקור מדפיס על עסקאות הרחוב — לא גבול מאומת",SOURCE_LABEL_MIXED:"המקור מסמן את עסקאות הרחוב ביותר משכונה אחת",UNRESOLVED:"אין קישור מאומת ואין תווית מקור — PROPX אינו מסיק שכונה"},
+    latestH:"העסקה האחרונה ברחוב",latestNone:"אין עסקה ש-PROPX מחזיק לרחוב זה",noStat:"מחיר לא בסטטיסטיקה",inStat:"בסטטיסטיקה",
+    k:{sample:"מדגם נצפה (36 ח׳)",sqm:"חציון ₪/מ״ר ברחוב",vsCity:"מול העיר (₪/מ״ר)",model:"מודל PROPX ₪/מ״ר",plans:"תכניות על הרחוב",transit:"תכנית מסילתית קרובה",located:"חלקות / בניינים ממוקמים"},
+    understand:"להבין את הרחוב",kinds:{FACT:"עובדה",MODEL:"מודל",INTERPRETATION:"פרשנות"},
+    txH:"כל העסקאות ברחוב",cat:{STREET:"התאמה ודאית לרחוב",POSSIBLE:"התאמה אפשרית",AREA:"סביבה קרובה (רחובות אחרים)"},
+    per:{all:"הכל",d30:"30 יום",d90:"90 יום",m6:"6 חודשים",m12:"12 חודשים",m24:"24 חודשים"},
+    f:{rooms:"חדרים",area:"מ״ר",price:"מחיר ₪",min:"מ־",max:"עד",kind:"סוג",kinds:{"":"הכל",DWELLING:"מגורים",NON_DWELLING:"לא מגורים",TYPE_NOT_STATED:"סוג לא צוין"},stats:"רק מחירים שבסטטיסטיקה",apply:"החל",reset:"נקה"},
+    cols:["תאריך","כתובת","מחיר","₪ למ״ר","חדרים","קומה","מ״ר","סוג נכס","גוש/חלקה/תת","התאמה","מקור","מצב PROPX"],
+    more:"טען עוד",csv:"ייצוא CSV",shown:(a,b)=>`מוצגות ${a} מתוך ${b}`,cover:"כיסוי שדות",hist:"לפני חלון 36 החודשים",histN:n=>`${n} רשומות היסטוריות משכבת GovMap לפני החלון (בתקופה "הכל")`,
+    liveAll:"היסטוריה מלאה חיה (הרשם) — בטבלת העסקאות של העמוד",areaBasis:"רחובות במרחק עד",areaNone:"אין רחובות ממוקמים בסביבה",
+    det:{id:"מזהה אירוע",match:"התאמה",reasons:"סיבות",copy:"עותק המקור",first:"נקרא לראשונה",notes:"הערות",also:"גם במקור",conflict:"סתירה",built:"שנת בנייה",newness:"חדש/יד שנייה",portion:"חלק נמכר",basis:"בסיס הכתובת"},
+    pxH:"מחירים והשוואה הוגנת",lvl:{STREET:"הרחוב",NEIGHBOURHOOD_VERIFIED:"שכונה מאומתת",NEIGHBOURHOOD_SOURCE_LABEL:"שכונה (תווית מקור)",CITY:"העיר",DISTRICT:"המחוז"},
+    pxCols:["רמה","אוכלוסייה","עסקאות מתומחרות","מצב","חציון מחיר","חציון ₪/מ״ר","שטח חציוני","% חדשות","הרחוב מול הרמה"],
+    seg:"לפי מספר חדרים (₪/מ״ר, אותה אוכלוסייה)",modelH:"מודל PROPX (MODEL)",modelNone:"אין הערכת מודל לרחוב",range:"טווח אימות",tier:"רמת ראיות",asOf:"נכון ל",
+    plH:"תכנון ותשתיות סביב הרחוב",rel:{ON_THE_STREET:"על הרחוב",INTERSECTS:"חוצה את הרחוב",NEARBY:"בסמוך",AREA_WIDE:"תכנית אזורית",CITY_CONTEXT:"הקשר עירוני"},
+    topic:{RAIL_TRANSIT:"תחבורה מסילתית",ROAD:"דרכים",RENEWAL:"התחדשות עירונית",NATIONAL_INFRASTRUCTURE:"תשתית לאומית",PREFERRED_HOUSING:"דיור מועדף",OTHER:"תכנית"},
+    plCols:["יחס","מרחק","תכנית","שם","נושא","שלב","שינוי יח״ד","שטח (דונם)","עדכון"],vtH:"מתחמי ותמ״ל מוכרזים (מינהל התכנון)",vtCols:["יחס","מרחק","מספר תמ״ל","מתחם · יישוב (כלשון השכבה)","יח״ד בהכרזה","תאריך הכרזה","שטח (דונם)"],vtNone:"אין מתחם מוכרז על הרחוב או ב-300 מ׳",vtNot:"הכרזה היא מסלול תכנוני — לא תכנית מאושרת, לא היתר ולא בנייה; היחידות הן של ההכרזה, לא של הרחוב.",suH:"סביבת הרחוב — מרשמים רשמיים",suOnParcel:"על חלקה של הרחוב",suCtExact:"קרקעות מזוהמות / חשודות — על חלקות הרחוב",suCtExactS:n=>`מאגר המשרד להגנת הסביבה · ${n} חלקות של הרחוב נבדקו`,suCtNear:"קרקעות מזוהמות / חשודות ב-300 מ׳",suEdu:"מוסדות חינוך ב-500 מ׳",suEduYear:(y,n)=>`${n} מופיעים בשנה האחרונה במקור (${y||"—"})`,suCtCols:["אתר","יחס","מקרא המאגר","מצב (כלשון המאגר)","גוש/חלקה","עדכון"],suEduCols:["מוסד","סוג","מגזר · פיקוח","תלמידים","מרחק","שנה אחרונה"],suNot:"המילים של המאגר כלשונן: \"היתכנות\" אינה זיהום, אתר במאגר אינו ממצא בריאותי, ואתר סמוך אינו אומר דבר על קרקע הרחוב; מוסד סמוך אינו אזור רישום ואינו ציון איכות. לעולם לא שווי ולא השפעה על מחיר.",suEduNote:(d,y,r)=>`נקודות הכניסה של מוסדות החינוך פורסמו ב-${d} — מוסד שנפתח אחר כך אינו מופיע. קובץ המאפיינים של משרד החינוך מכיל את שנות הלימודים ${r?r.join("–"):"—"} בלבד: הסוג, המגזר, הפיקוח ומספר התלמידים הם מהשנה האחרונה של כל מוסד בקובץ (לכל המאוחר ${y||"—"}), לפי סמל המוסד בלבד — אינם נתונים עדכניים.`,trH:"נגישות לתחבורה ציבורית — משרד התחבורה",trBus:"תחנות אוטובוס ותחבורה ציבורית ב-300 מ׳",trNear:"הקרובה",trLrt:"רכבת קלה — תחנות ב-1,000 מ׳",trRail:"רכבת ישראל — תחנות ב-1,500 מ׳",trSt:{EXISTING:"קיימת",PLANNED:"מתוכננת",OTHER:"אחר"},trCols:["תחנה","קו","סטטוס (שכבת התחנות של משרד התחבורה)","סוג","מרחק","מאגר התחנות הארצי"],trAsOf:m=>`נכון ל-${m.slice(5,7)}.${m.slice(0,4)}`,trReg:"רכבת קלה — עצירות במאגר התחנות הארצי ב-1,000 מ׳",trRegAt:m=>`עצירת רכבת קלה ${m}`,trRegNo:"אין עצירה ב-150 מ׳",trRegNote:(c,d)=>`מאגר התחנות הארצי של משרד התחבורה (עדכון ${d}) הוא ראיה נפרדת: הוא מציין עצירות רכבת קלה ללא קו, ללא שם תחנה וללא סטטוס שירות. תחנה בשכבה "נמצאת במאגר" כשעצירה רשומה במרחק עד 150 מ׳ מאחת מכניסותיה — הרדיוס שבו נמצאת עצירה לכל ${c.existingWithRegistryStop} מתוך ${c.existingStations} התחנות הקיימות בשכבה. כשהשכבה מסמנת תחנה כמתוכננת והמאגר מציין עצירה לידה — שני הערכים מוצגים והסטטוס אינו משתנה.`,trNone:"אין בטווח",trBasis:"מרחק בקו אוויר מהנקודה המאותרת הקרובה של הרחוב — נגזר; לא מרחק הליכה.",trNot:"קרבה היא הקשר בלבד: אינה שווי ואינה השפעה על מחיר; תחנה מתוכננת אינה תחנה פעילה.",trNotLoc:n=>`רשימות תחנות הרכבת (${n.rail}) והמטרו המתוכנן (${n.metro}) של משרד התחבורה ללא קואורדינטות נגישות — לא מוקמו.`,transitH:"תחבורה מסילתית — תכניות סטטוטוריות (לא קווים פעילים)",areaWideH:"תכניות אזוריות (כוללות את הרחוב, לא ספציפיות לו)",
+    plSum:S=>`${S.intersects} חוצות · ${S.nearby} בסמוך · ${S.pending} עדיין בהליך · ${S.transit} מסילתיות`,units:u=>`שינוי יח״ד בתכניות שבטווח: ${u}`,
+    plNone:"תכניות סביב הרחוב לא חושבו",muni:(p,s)=>`היתרי בנייה ואתרי בנייה בכתובות הרחוב (עיריית תל אביב-יפו): ${p} היתרים · ${s} אתרים`,renewal:"מתחם התחדשות מוכרז (מספר תכנית זהה)",
+    sup:"מה תומך",ag:"מה נגד",chg:"מה יכול להשתנות",dd:"בדיקת נאותות",noScore:"כללים דטרמיניסטיים בלבד — ללא ציון, ללא הסתברות, ללא המלצה.",
+    propH:"הערכת נכס — הנתונים וההנחות שלך",prop:{askingPrice:"מחיר מבוקש ₪",sqm:"שטח מ״ר",rooms:"חדרים",built:"שנת בנייה",newness:"מצב",type:"סוג",rentMonthly:"שכירות חודשית ₪ (שלך)",holdYears:"שנות החזקה",bull:"אופטימי %/שנה",base:"בסיס %/שנה",bear:"פסימי %/שנה",costsPct:"עלויות רכישה %"},
+    newOpt:{existing:"קיימת",new:"חדשה"},typeOpt:{flat:"דירה בבניין",garden:"דירת גן",roof:"דירת גג"},propGo:"חשב",propSaved:"נשמר בדפדפן זה בלבד",
+    propNeed:"יש להזין מחיר מבוקש ושטח — PROPX אינו ממלא אותם.",askSqm:"מחיר מבוקש למ״ר",vsModel:"מול הערכת המודל",pos:{BELOW_RANGE:"מתחת לטווח האימות",WITHIN_RANGE:"בתוך טווח האימות",ABOVE_RANGE:"מעל טווח האימות"},
+    vsStreet:"מול חציון הרחוב",pctl:p=>`אחוזון ${p} בעסקאות הרחוב (₪/מ״ר)`,similar:"עסקאות דומות ברחוב",scen:"תרחישים (מההנחות שלך בלבד)",scenNone:"לא הוזנו הנחות שינוי שנתי ותקופת החזקה — לא חושבו תרחישים.",
+    scenCols:["תרחיש","שינוי שנתי","שווי בסוף","רווח מחיר","שכירות מצטברת","עלויות","תשואה כוללת"],scenName:{bull:"אופטימי",base:"בסיס",bear:"פסימי"},yield:"תשואה ברוטו",
+    mapH:"מפת הרחוב",mapNone:"אין חלקות ממוקמות לרחוב זה בשכבת GovMap — המפה אינה זמינה.",mapLeg:{pt:"חלקה / בניין ברחוב",int:"תכנית חוצה",near:"תכנית בסמוך",tr:"תכנית מסילתית"},
+    mapNote:"PROPX מצייר רק את הנתונים שלו (נקודות החלקות של שכבת GovMap וגבולות התכניות) — ללא רקע מפה או תצלומי אוויר מורשים.",
+    srcH:"מקורות, תאריכים ומה חסר",srcCols:["מקור","סיווג","נכון ל"],missH:"מה חסר ולמה",
+    out:{print:"הדפסה / PDF",json:"ייצוא הדוח (JSON)",copy:"העתק סיכום",copied:"הסיכום הועתק"},
+    evH:"ראיות הרחוב — מודיעין רחוב (התצוגה המלאה הקיימת)",ms:ms=>`נבנה ב-${ms} מ״ש`,srcLabel:"תווית מקור",obs:"נצפה",obsTip:"עסקאות שנצפו בעותק שפורסם מחדש של מאגר רשות המסים — לא ערוץ ממשלתי",dash:"—",
+    sampleSub:s=>`מתומחרות / נצפו · ${s}`,inside:"בתוך",
+    pop:{STREET:"עסקאות מגורים מתומחרות שנצפו ברחוב",NEIGHBOURHOOD_VERIFIED:r=>`עסקאות מגורים מתומחרות ב-${r.streets} הרחובות המקושרים לשכונה (רחובות שלמים)`,NEIGHBOURHOOD_SOURCE_LABEL:r=>`עסקאות מגורים מתומחרות ב-${r.streets} הרחובות שהמקור מסמן בשם השכונה (≥ 80% מהרשומות) — תווית מקור, לא גבול מאומת`,
+      CITY:"עסקאות מגורים מתומחרות ביישוב (כל מצבי הכתובת)",DISTRICT:r=>`עסקאות מגורים מתומחרות ב-${r.localities||""} יישובי המחוז שנסרקו, מאוחדות (לא ממוצע של חציונים)`},
+    cmpRule:"אותה אוכלוסייה בכל רמה: עסקאות מגורים מתומחרות של עותק המרשם (נכס שלם, ≥ ₪100,000) באותו חלון של 36 חודשים; חציון רק במצב מספק (≥ 10) או מוגבל (5–9); הפרש רחוב ↔ רמה רק כששני הצדדים מספקים עם ≥ 10 עסקאות עם ₪/מ״ר.",
+    cmpNot:"הפרש בין חציונים מתאר את המדגמים שנצפו (תמהיל הגדלים, הגילים והבניינים) — לא את שוויה של דירה מסוימת.",
+    plBasis:"מרחק: מנקודת החלקה / הבניין הקרובה ברחוב (נקודות שכבת GovMap) עד גבול התכנית (מוכלל ~10 מ׳).",plNotJoin:"יחס מרחבי הוא הקשר — הוא לעולם אינו מחבר רשומות, אינו מייחס לרחוב יחידות דיור של תכנית ואינו מעריך דירה.",
+    plNotMean:"תכנית מאושרת או מופקדת היא שלב סטטוטורי — לא היתר, לא בנייה, לא קו פעיל, ולעולם לא שינוי מחיר מובטח.",unitsNote:"סכום שינויי היחידות של התכניות עצמן בטווח — יחידות התכנית שייכות לתכנית, לעולם לא לרחוב; תכניות חופפות בזמן ועשויות לעדכן זו את זו.",
+    mapBasis:"נקודה אחת לכל חלקה / בניין ששכבת GovMap ממקמת בהם את עסקאות הרחוב (הקואורדינטות שלה)",valid:(m,n)=>`אימות: חציון ${m} מ׳ מול ${n} עסקאות`,
+    cov:{floor:"קומה",rooms:"חדרים",areaSqm:"שטח",pricePerSqm:"₪/מ״ר",houseNumber:"מספר בית",yearBuilt:"שנת בנייה"},
+    simRule:(a,b)=>`עסקאות מתומחרות שנצפו ברחוב בטווח ±20% מ-${a} מ״ר${b?` ובאותה קבוצת חדרים (${b})`:""}`,scenRule:"תרחישי אופטימי / בסיס / פסימי הם השינויים השנתיים שהזנת, מורכבים על פני תקופת ההחזקה שלך — PROPX אינו חוזה מחירים; בלי הנחות — אין תרחיש.",
+    propNot:"לא שומה, לא תחזית, לא המלצה: הערכת המודל ועסקאות הרחוב הן נקודות ייחוס לשיקול הדעת שלך."},
+  en:{
+    lyr:"Street report — investment intelligence",loading:"Loading the street report…",loadingFull:"Loading planning, the map and the full transaction table…",err:"The street report is not available right now.",
+    nav:{ov:"Investment summary",tx:"Latest transactions",px:"Valuation",pl:"Planning & opportunities",risk:"Risks & checks",map:"Map",src:"Sources",ev:"Street evidence"},riskH:"Risks, surroundings and what to verify",assessH:"Street assessment — what supports and what argues against",
+    hier:{district:"District",city:"City",nb:"Neighbourhood",street:"Street",bld:"Buildings"},
+    nbState:{VERIFIED:"verified",SOURCE_LABEL:"source label",SOURCE_LABEL_MIXED:"mixed source labels",UNRESOLVED:"unresolved"},
+    nbWhy:{VERIFIED:"a verified street → neighbourhood link",SOURCE_LABEL:"the name the source prints on the street's deals — not a verified boundary",SOURCE_LABEL_MIXED:"the source labels the street's deals with more than one neighbourhood",UNRESOLVED:"no verified link and no source label — PROPX never infers a neighbourhood"},
+    latestH:"Latest transaction on the street",latestNone:"PROPX holds no transaction for this street",noStat:"price not in statistics",inStat:"in statistics",
+    k:{sample:"Observed sample (36 mo)",sqm:"Street median ₪/m²",vsCity:"vs the city (₪/m²)",model:"PROPX model ₪/m²",plans:"Plans on the street",transit:"Nearest rail-transit plan",located:"Located parcels / buildings"},
+    understand:"Understanding this street",kinds:{FACT:"fact",MODEL:"model",INTERPRETATION:"interpretation"},
+    txH:"Every transaction on the street",cat:{STREET:"Reliable street match",POSSIBLE:"Possible match",AREA:"Surrounding area (other streets)"},
+    per:{all:"All",d30:"30 days",d90:"90 days",m6:"6 months",m12:"12 months",m24:"24 months"},
+    f:{rooms:"Rooms",area:"m²",price:"Price ₪",min:"from",max:"to",kind:"Type",kinds:{"":"All",DWELLING:"Dwelling",NON_DWELLING:"Non-dwelling",TYPE_NOT_STATED:"Type not stated"},stats:"Only prices used in statistics",apply:"Apply",reset:"Clear"},
+    cols:["Date","Address","Price","₪/m²","Rooms","Floor","m²","Property type","Block/parcel/sub","Match","Source","PROPX state"],
+    more:"Load more",csv:"Export CSV",shown:(a,b)=>`showing ${a} of ${b}`,cover:"Field coverage",hist:"before the 36-month window",histN:n=>`${n} historical rows from the GovMap layer before the window (in "All")`,
+    liveAll:"Full live history (the register) — in the page's transactions table",areaBasis:"streets within",areaNone:"no located streets nearby",
+    det:{id:"Event id",match:"Match",reasons:"Reasons",copy:"Source copy",first:"First read",notes:"Notes",also:"Also in",conflict:"Conflict",built:"Year built",newness:"New / second-hand",portion:"Share sold",basis:"Address basis"},
+    pxH:"Prices and fair comparison",lvl:{STREET:"The street",NEIGHBOURHOOD_VERIFIED:"Verified neighbourhood",NEIGHBOURHOOD_SOURCE_LABEL:"Neighbourhood (source label)",CITY:"The city",DISTRICT:"The district"},
+    pxCols:["Level","Population","Priced deals","State","Median price","Median ₪/m²","Median area","% new","Street vs level"],
+    seg:"By rooms (₪/m², the same population)",modelH:"PROPX model (MODEL)",modelNone:"No model estimate for this street",range:"Validation range",tier:"Evidence tier",asOf:"As of",
+    plH:"Planning and infrastructure around the street",rel:{ON_THE_STREET:"On the street",INTERSECTS:"Intersects",NEARBY:"Nearby",AREA_WIDE:"Area-wide",CITY_CONTEXT:"City context"},
+    topic:{RAIL_TRANSIT:"Rail transit",ROAD:"Roads",RENEWAL:"Urban renewal",NATIONAL_INFRASTRUCTURE:"National infrastructure",PREFERRED_HOUSING:"Preferred housing",OTHER:"Plan"},
+    plCols:["Relation","Distance","Plan","Name","Topic","Stage","Unit change","Area (dunam)","Updated"],vtH:"Declared VATMAL complexes (Planning Administration)",vtCols:["Relation","Distance","Tamal no.","Complex · locality (as printed)","Declared units","Declared on","Area (dunam)"],vtNone:"No declared complex on the street or within 300 m",vtNot:"A declaration is a planning track — not an approved plan, not a permit and not construction; the units are the declaration's, not the street's.",suH:"Street surroundings — official registers",suOnParcel:"on a parcel of the street",suCtExact:"Contaminated / suspected land — on the street's parcels",suCtExactS:n=>`Ministry of Environmental Protection register · ${n} parcels of the street checked`,suCtNear:"Contaminated / suspected land within 300 m",suEdu:"Education institutions within 500 m",suEduYear:(y,n)=>`${n} listed in the source's latest year (${y||"—"})`,suCtCols:["Site","Relation","Register legend","Status (register's words)","Block/parcel","Updated"],suEduCols:["Institution","Type","Sector · supervision","Students","Distance","Latest year"],suNot:"The register's own words, verbatim: \"potential\" is not contamination, a listed site is not a health finding, and a nearby site says nothing about this street's soil; a nearby institution is not a registration zone and not a quality grade. Never a value, never a price effect.",suEduNote:(d,y,r)=>`The institutions' entrance points were published on ${d} — an institution opened later is not shown. The Ministry of Education's characteristics file holds school years ${r?r.join("–"):"—"} only: type, sector, supervision and students come from each institution's latest year in that file (${y||"—"} at the latest), by the institution code only — they are not current figures.`,trH:"Public-transport access — Ministry of Transport",trBus:"Bus / public-transport stops within 300 m",trNear:"nearest",trLrt:"Light rail — stations within 1,000 m",trRail:"Israel Railways — stations within 1,500 m",trSt:{EXISTING:"existing",PLANNED:"planned",OTHER:"other"},trCols:["Station","Line","Status (Ministry of Transport station layer)","Type","Distance","National stop registry"],trAsOf:m=>`as of ${m.slice(5,7)}.${m.slice(0,4)}`,trReg:"Light rail — stops in the national stop registry within 1,000 m",trRegAt:m=>`light-rail stop ${m}`,trRegNo:"no stop within 150 m",trRegNote:(c,d)=>`The Ministry of Transport's national stop registry (updated ${d}) is separate evidence: it lists light-rail stops with no line, no station name and no service status. A layer station is "in the registry" when a listed stop lies within 150 m of one of its entrances — the radius every one of the layer's ${c.existingStations} existing stations meets (${c.existingWithRegistryStop} / ${c.existingStations}). Where the layer marks a station planned and the registry lists a stop beside it, both values are shown and the status is not changed.`,trNone:"none in range",trBasis:"Straight-line distance from the street's nearest located point — DERIVED; not a walking distance.",trNot:"Proximity is context only: never a value and never a price effect; a planned station is not an operating one.",trNotLoc:n=>`The Ministry of Transport's rail (${n.rail}) and planned metro (${n.metro}) station lists carry no accessible coordinates — not placed.`,transitH:"Rail transit — statutory plans (not operating lines)",areaWideH:"Area-wide plans (include the street, not specific to it)",
+    plSum:S=>`${S.intersects} intersect · ${S.nearby} nearby · ${S.pending} still in process · ${S.transit} rail transit`,units:u=>`Unit change in the plans within the radius: ${u}`,
+    plNone:"Plans around the street were not computed",muni:(p,s)=>`Building permits and construction sites at the street's addresses (Tel Aviv-Yafo): ${p} permits · ${s} sites`,renewal:"Declared renewal complex (same plan number)",
+    sup:"What supports",ag:"What argues against",chg:"What could change",dd:"Due diligence",noScore:"Deterministic rules only — no score, no probability, no recommendation.",
+    propH:"Property assessment — your figures and assumptions",prop:{askingPrice:"Asking price ₪",sqm:"Area m²",rooms:"Rooms",built:"Year built",newness:"Condition",type:"Type",rentMonthly:"Monthly rent ₪ (yours)",holdYears:"Holding years",bull:"Bull %/yr",base:"Base %/yr",bear:"Bear %/yr",costsPct:"Purchase costs %"},
+    newOpt:{existing:"existing",new:"new"},typeOpt:{flat:"flat in a building",garden:"garden flat",roof:"roof flat"},propGo:"Calculate",propSaved:"saved in this browser only",
+    propNeed:"Enter an asking price and an area — PROPX never fills them.",askSqm:"Asking price per m²",vsModel:"vs the model estimate",pos:{BELOW_RANGE:"below the validation range",WITHIN_RANGE:"within the validation range",ABOVE_RANGE:"above the validation range"},
+    vsStreet:"vs the street median",pctl:p=>`percentile ${p} of the street's deals (₪/m²)`,similar:"Similar deals on the street",scen:"Scenarios (from your assumptions only)",scenNone:"No annual-change assumptions and holding period entered — no scenario computed.",
+    scenCols:["Scenario","Annual change","End value","Price gain","Rent total","Costs","Total return"],scenName:{bull:"Bull",base:"Base",bear:"Bear"},yield:"Gross yield",
+    mapH:"Street map",mapNone:"No located parcel of this street in the GovMap layer — the map is not available.",mapLeg:{pt:"parcel / building on the street",int:"intersecting plan",near:"nearby plan",tr:"rail-transit plan"},
+    mapNote:"PROPX draws only its own data (the GovMap layer's parcel points and the plan boundaries) — no licensed basemap or aerial imagery.",
+    srcH:"Sources, dates and what is missing",srcCols:["Source","Class","As of"],missH:"What is missing and why",
+    out:{print:"Print / PDF",json:"Export report (JSON)",copy:"Copy summary",copied:"Summary copied"},
+    evH:"Street evidence — Street Intelligence (the full existing view)",ms:ms=>`built in ${ms} ms`,srcLabel:"Source label",obs:"Observed",obsTip:"deals observed in the republished copy of the Tax Authority register — not a government channel",dash:"—",
+    sampleSub:s=>`priced / observed · ${s}`,inside:"inside",
+    pop:{STREET:"OBSERVED priced dwelling deals on this street",NEIGHBOURHOOD_VERIFIED:r=>`OBSERVED priced dwelling deals on the ${r.streets} verified-linked streets (whole streets)`,NEIGHBOURHOOD_SOURCE_LABEL:r=>`OBSERVED priced dwelling deals on the ${r.streets} streets the source labels with the name (≥ 80 % of their rows) — a source label, not a verified boundary`,
+      CITY:"priced dwelling deals in the locality (every address state)",DISTRICT:r=>`priced dwelling deals of the district's ${r.localities||""} swept localities, pooled (never an average of medians)`},
+    cmpRule:"The same population at every level: priced dwelling deals of the register copy (whole property, ≥ ₪100,000) in the same 36-month window; a median only at SUPPORTED (≥ 10) or LIMITED (5–9); a street ↔ level difference only where both are SUPPORTED with ≥ 10 deals with ₪/m².",
+    cmpNot:"A difference between medians describes the observed samples (their mix of sizes, ages and buildings), not the value of a specific dwelling.",
+    plBasis:"Distance: from the nearest located parcel / building point of the street (GovMap-layer points) to the plan boundary (generalized ~10 m).",plNotJoin:"A spatial relation is context — it never joins records, never attributes a plan's housing units to the street, never values a dwelling.",
+    plNotMean:"An approved or deposited plan is a statutory stage — not a permit, not construction, not an operating line, and never a guaranteed price change.",unitsNote:"The sum of the plans' own unit changes within the radius — each plan's units are the plan's, never the street's; plans overlap in time and may revise each other.",
+    mapBasis:"one point per parcel / building polygon the GovMap layer places this street's deals in (its own coordinates)",valid:(m,n)=>`validation: median ${m} m on ${n} deals`,
+    cov:{floor:"floor",rooms:"rooms",areaSqm:"area",pricePerSqm:"₪/m²",houseNumber:"house no.",yearBuilt:"year built"},
+    simRule:(a,b)=>`observed priced deals on this street within ±20 % of ${a} m²${b?` and ${b} rooms`:""}`,scenRule:"Bull / base / bear are the annual price changes YOU entered, compounded over YOUR holding period — PROPX does not forecast prices; none entered → none computed.",
+    propNot:"Not an appraisal, not a forecast, not a recommendation: the model estimate and the street's observed deals are reference points for your own judgment."}};
+const srT=()=>SRT[state.lang==="en"?"en":"he"];
+const SR_TXQ0={cat:"STREET,POSSIBLE",sort:"date",dir:"desc",per:"all",kind:"",roomsMin:"",roomsMax:"",areaMin:"",areaMax:"",priceMin:"",priceMax:"",statsOnly:false};
+const srState={id:null,core:null,full:null,err:null,tx:null,txRows:[],txQ:{...SR_TXQ0},txLoading:false,txErr:null,openRow:null,prop:null,propLoading:false};
+const srCls={OFFICIAL:"raw",VERIFIED:"raw",DERIVED:"der",MODEL:"mod",MISSING:"na","USER ASSUMPTION":"usr"};
+/* the evidence class of a figure: the page's own chips; a SOURCE LABEL is the source's name for a place (never verified); an interpretation
+   carries its kind label, no class chip */
+const srTag=c=>!c||c==="INTERPRETATION"?"":c==="SOURCE LABEL"?`<span class="vc static">${srT().srcLabel}</span>`:c==="OBSERVED"?`<span class="vc obs" title="${ldE(srT().obsTip)}">${srT().obs}</span>`:srCls[c]?vcTag(srCls[c]):`<span class="vc static">${ldE(c)}</span>`;
+const srSt=s=>s?(siT().states[s]||s):"—";
+/* the Street Value Model's own reason for no estimate, in the page's words (Street Intelligence's table) */
+const srModWhy=M=>{const k=M&&M.reason;return k?(siT().unav&&siT().unav[k])||k:""};
+async function srLoad(id){
+  if(srState.id===id&&(srState.core||srState.full))return;
+  Object.assign(srState,{id,core:null,full:null,err:null,tx:null,txRows:[],txQ:{...SR_TXQ0},txErr:null,openRow:null,prop:null});
+  const get=async q=>{const r=await fetch("/api/intel?"+q);if(!r.ok)throw new Error(String(r.status));return r.json()};
+  try{const c=await get("view=streetReport&part=core&id="+encodeURIComponent(id));if(srState.id!==id)return;srState.core=c;renderGeoView()}
+  catch(e){if(srState.id===id){srState.err=e.message;renderGeoView()}}
+  try{const f=await get("view=streetReport&limit=50&id="+encodeURIComponent(id));if(srState.id!==id)return;
+    srState.full=f;srState.tx=f.transactions;srState.txRows=(f.transactions.rows||[]).slice();renderGeoView()}
+  catch(e){if(srState.id===id&&!srState.core){srState.err=e.message;renderGeoView()}}
+}
+function srTxParams(extra={}){
+  const Q=srState.txQ,q=new URLSearchParams({view:"streetTx",id:srState.id,cat:Q.cat,sort:Q.sort,dir:Q.dir});
+  const per={d30:["days",30],d90:["days",90],m6:["months",6],m12:["months",12],m24:["months",24]}[Q.per];if(per)q.set(per[0],per[1]);
+  for(const k of ["kind","roomsMin","roomsMax","areaMin","areaMax","priceMin","priceMax"])if(Q[k]!==""&&Q[k]!=null)q.set(k,Q[k]);
+  if(Q.statsOnly)q.set("statsOnly","1");
+  for(const [k,v] of Object.entries(extra))q.set(k,v);
+  return q;
+}
+async function srTxLoad(reset){
+  const id=srState.id;if(!id||srState.txLoading)return;
+  srState.txLoading=true;srState.txErr=null;if(reset){srState.txRows=[];srState.openRow=null}renderGeoView();
+  try{const r=await fetch("/api/intel?"+srTxParams({offset:reset?0:srState.txRows.length,limit:50}).toString());if(srState.id!==id)return;
+    if(!r.ok)throw new Error(String(r.status));const d=await r.json();srState.tx=d;srState.txRows=(reset?[]:srState.txRows).concat(d.rows||[])}
+  catch(e){if(srState.id===id)srState.txErr=e.message}
+  if(srState.id===id){srState.txLoading=false;renderGeoView()}
+}
+const SR_PROP_KEY="propx:street-property:v1";
+const srPropSaved=id=>{try{const o=JSON.parse(localStorage.getItem(SR_PROP_KEY)||"{}");return o[id]||null}catch(e){return null}};
+async function srProp(id,fd){
+  const q=new URLSearchParams({view:"streetProperty",id});const save={};
+  for(const k of ["askingPrice","sqm","rooms","built","newness","type","rentMonthly","holdYears","bull","base","bear","costsPct"]){const v=fd.get(k);if(v!=null&&v!==""){q.set(k,v);save[k]=v}}
+  try{const o=JSON.parse(localStorage.getItem(SR_PROP_KEY)||"{}");o[id]=save;localStorage.setItem(SR_PROP_KEY,JSON.stringify(o))}catch(e){/* per-viewer convenience only */}
+  srState.propLoading=true;renderGeoView();
+  try{const r=await fetch("/api/intel?"+q.toString());if(srState.id!==id)return;srState.prop=r.ok?await r.json():{available:false,reason:String(r.status)}}
+  catch(e){if(srState.id===id)srState.prop={available:false,reason:"offline"}}
+  if(srState.id===id){srState.propLoading=false;renderGeoView()}
+}
+const srPct=v=>v==null?"—":`<bdi dir="ltr">${v>0?"+":""}${v}%</bdi>`;
+const srMoney=v=>v==null?"—":`<bdi dir="ltr">${v<0?"−":""}${fmtNIS(Math.abs(v))}</bdi>`;
+const srDist=m=>m==null?"—":m===0?srT().inside:`${fmtInt(m)} ${state.lang==="en"?"m":"מ׳"}`;
+/* the street's own map: its located parcels / buildings and the plan boundaries around it — vector only, from PROPX's own data */
+function srMapSVG(R){
+  const t=srT(),M=R.map;
+  if(!M||!M.available)return `<p class="gv-note">${t.mapNone}</p>`;
+  const W=640,H=380,pad=24,[cx,cy]=M.centroid,kx=Math.cos(cy*Math.PI/180);
+  const P=R.planning&&R.planning.available?R.planning:null;
+  const pts=M.points;
+  let [x0,y0,x1,y1]=M.bbox;const buf=0.0022;x0-=buf/kx;x1+=buf/kx;y0-=buf;y1+=buf;
+  const sx=(W-2*pad)/((x1-x0)*kx),sy=(H-2*pad)/(y1-y0),s=Math.min(sx,sy);
+  const ox=pad+((W-2*pad)-(x1-x0)*kx*s)/2,oy=pad+((H-2*pad)-(y1-y0)*s)/2;
+  const X=lng=>ox+(lng-x0)*kx*s,Y=lat=>H-(oy+(lat-y0)*s);
+  const path=rings=>rings.map(r=>"M"+r.map(([a,b])=>`${X(a).toFixed(1)},${Y(b).toFixed(1)}`).join("L")+"Z").join("");
+  const plans=P?[...P.plans.filter(p=>p.rings&&p.relation!=="AREA_WIDE").map(p=>({...p,k:p.relation==="INTERSECTS"?"int":"near"})),...P.transit.filter(p=>p.rings).map(p=>({...p,k:"tr"}))]:[];
+  const polys=plans.map(p=>`<path class="sr-pl ${p.k}" d="${path(p.rings)}"><title>${ldE(`${p.planNumber} · ${p.name||""} · ${t.rel[p.relation]} · ${srDist(p.distanceM).replace(/<[^>]+>/g,"")}`)}</title></path>`).join("");
+  const label=pts.length<=45;
+  const dots=pts.map(([a,b,h,n])=>`<g><circle class="sr-pt" cx="${X(a).toFixed(1)}" cy="${Y(b).toFixed(1)}" r="${Math.min(7,3+Math.sqrt(n||1)/2).toFixed(1)}"><title>${ldE(`${R.identity.name} ${h||""} · ${n||0}`)}</title></circle>${label&&h?`<text class="sr-pt-l" x="${(X(a)+6).toFixed(1)}" y="${(Y(b)-5).toFixed(1)}">${ldE(h)}</text>`:""}</g>`).join("");
+  const metersPerPx=1/(s/(111320));const nice=[50,100,200,500,1000,2000].find(m=>m/metersPerPx>60)||2000;const bar=nice/metersPerPx;
+  return `<svg class="sr-map" viewBox="0 0 ${W} ${H}" role="img" aria-label="${ldE(t.mapH)}">
+    <rect x="0" y="0" width="${W}" height="${H}" class="sr-map-bg"/>${polys}${dots}
+    <g class="sr-map-scale" transform="translate(${pad},${H-14})"><line x1="0" y1="0" x2="${bar.toFixed(1)}" y2="0"/><text x="${(bar/2).toFixed(1)}" y="-5">${nice>=1000?nice/1000+" km":nice+" m"}</text></g>
+    <g class="sr-map-n" transform="translate(${W-pad},${pad+6})"><path d="M0,-12 L5,4 L0,0 L-5,4 Z"/><text y="16">N</text></g></svg>
+    <div class="sr-leg"><span><i class="pt"></i>${t.mapLeg.pt}</span><span><i class="int"></i>${t.mapLeg.int}</span><span><i class="near"></i>${t.mapLeg.near}</span><span><i class="tr"></i>${t.mapLeg.tr}</span></div>
+    <p class="gv-note">${t.mapBasis} · ${fmtInt(M.located)}${M.validation?` · ${t.valid(M.validation.medianM,fmtInt(M.validation.matched))}`:""}</p><p class="gv-note">${t.mapNote}</p>`;
+}
+function srTxTableHTML(R){
+  const t=srT(),x=txeT(),T=srState.tx,Q=srState.txQ,dash="—";
+  if(!T)return `<p class="gv-note">${t.loadingFull}</p>`;
+  const sortTh=(i,key)=>{const on=Q.sort===key;return `<th><button type="button" class="sr-sort${on?" on":""}" data-srsort="${key}">${t.cols[i]}${on?(Q.dir==="asc"?" ▲":" ▼"):""}</button></th>`};
+  const head=`<tr>${sortTh(0,"date")}<th>${t.cols[1]}</th>${sortTh(2,"price")}${sortTh(3,"ppsqm")}${sortTh(4,"rooms")}${sortTh(5,"floor")}${sortTh(6,"area")}<th>${t.cols[7]}</th><th>${t.cols[8]}</th><th>${t.cols[9]}</th><th>${t.cols[10]}</th><th>${t.cols[11]}</th></tr>`;
+  const rows=srState.txRows.map((r,i)=>{
+    const addr=[r.street,r.houseNumber].filter(Boolean).join(" ");
+    const nouse=!r.inStatistics&&r.price!=null;
+    const open=srState.openRow===r.txId;
+    const det=open?`<tr class="sr-det"><td colspan="12"><dl>
+      <dt>${t.det.id}</dt><dd><bdi>${ldE(r.txId)}</bdi></dd><dt>${t.det.match}</dt><dd>${ldE(x.match[r.geo&&r.geo.match]||(r.geo&&r.geo.match)||dash)} · ${t.cat[r.category]||r.category}</dd>
+      ${r.geo&&r.geo.reasons&&r.geo.reasons.length?`<dt>${t.det.reasons}</dt><dd>${r.geo.reasons.map(ldE).join(" · ")}</dd>`:""}
+      <dt>${t.det.copy}</dt><dd>${x.src[r.sourceId]||ldE(r.sourceId)} · ${txeDmy(r.snapshotDate)}${r.history?` · ${t.hist}`:""}</dd>${r.firstReadAt?`<dt>${t.det.first}</dt><dd>${txeDmy(r.firstReadAt)}</dd>`:""}
+      ${(r.notes||[]).length?`<dt>${t.det.notes}</dt><dd>${r.notes.map(k=>x.notes[k]||ldE(k)).join(" · ")}</dd>`:""}
+      ${(r.evidence||[]).length?`<dt>${t.det.also}</dt><dd>${r.evidence.map(v=>`${x.src[v.sourceId]||ldE(v.sourceId)} ${txeDmy(v.date)}${v.amount!=null?" · "+fmtNIS(v.amount):""}`).join(" · ")}</dd>`:""}
+      ${r.conflict?`<dt>${t.det.conflict}</dt><dd>${(r.conflictFields||[]).map(f=>x.notes[f]||ldE(f)).join(", ")}</dd>`:""}
+      <dt>${t.det.built}</dt><dd>${r.yearBuilt||dash}</dd><dt>${t.det.newness}</dt><dd>${ldE(r.newness||dash)}</dd>${r.partialSale&&r.portion?`<dt>${t.det.portion}</dt><dd>${ldE(String(r.portion.text||r.portion.fraction))}</dd>`:""}
+      ${r.addressBasis?`<dt>${t.det.basis}</dt><dd>${ldE(r.addressBasis)}${(r.addressCandidates||[]).length?` · <bdi>${r.addressCandidates.slice(0,6).map(ldE).join(" · ")}</bdi>`:""}</dd>`:""}</dl></td></tr>`:"";
+    return `<tr class="sr-row${open?" open":""}${r.state==="POSSIBLE_DUPLICATE"?" txe-dup":""}" data-srrow="${ldE(r.txId)}" data-cat="${r.category}" tabindex="0">
+      <td class="num">${siDate(r.date)}${r.history?`<span class="txe-src">${t.hist}</span>`:""}</td>
+      <td class="w"><bdi>${ldE(addr)||dash}</bdi>${r.areaStreet?`<span class="txe-src">${ldE(r.areaStreet.name)} · ${srDist(r.areaStreet.distanceM)}</span>`:""}</td>
+      <td class="num">${r.price!=null?fmtNIS(r.price):dash}${nouse?`<span class="txe-nouse">${t.noStat}</span>`:""}</td><td class="num">${r.psmShown?fmtNIS(r.pricePerSqm):dash}</td>
+      <td class="num">${r.rooms!=null?r.rooms:dash}</td><td class="w">${r.floorText?ldE(r.floorText):dash}</td><td class="num">${siNum(r.areaSqm)}</td>
+      <td class="w">${ldE(r.propertyType||dash)}</td><td class="num"><bdi>${r.block?ldE(`${r.block}/${r.parcel}${r.subParcel!=null&&r.subParcel!==""?"/"+r.subParcel:""}`):dash}</bdi></td>
+      <td><span class="sr-cat ${r.category}">${t.cat[r.category]||r.category}</span></td><td>${x.src[r.sourceId]||ldE(r.sourceId)}<span class="txe-src">${txeDmy(r.snapshotDate)}</span></td>
+      <td><span class="txe-st ${r.state}">${x.st[r.state]||r.state}</span></td></tr>${det}`;}).join("");
+  const F=T.facets||{},cc=F.category||{};
+  const cats=["STREET","POSSIBLE","AREA"].map(c=>`<label class="sr-chk"><input type="checkbox" data-srcat="${c}"${Q.cat.split(",").includes(c)?" checked":""}> ${t.cat[c]}${cc[c]!=null?` <span class="num">(${fmtInt(cc[c])})</span>`:""}</label>`).join("");
+  const pers=Object.keys(t.per).map(k=>`<button type="button" class="chip${Q.per===k?" on":""}" data-srper="${k}">${t.per[k]}</button>`).join("");
+  const inp=(k,ph)=>`<input type="number" inputmode="decimal" data-srf="${k}" value="${ldE(Q[k])}" placeholder="${ph}" aria-label="${ph}">`;
+  const cov=T.fieldCoverage||{};
+  const csvHref="/api/intel?"+srTxParams({format:"csv"}).toString();
+  const area=T.area;
+  return `<div class="sr-filters">${cats}</div><div class="sr-filters">${pers}</div>
+    <form class="sr-filters sr-ff" data-srform="1"><span>${t.f.rooms}</span>${inp("roomsMin",t.f.min)}${inp("roomsMax",t.f.max)}<span>${t.f.area}</span>${inp("areaMin",t.f.min)}${inp("areaMax",t.f.max)}
+      <span>${t.f.price}</span>${inp("priceMin",t.f.min)}${inp("priceMax",t.f.max)}<select data-srf="kind" aria-label="${t.f.kind}">${Object.entries(t.f.kinds).map(([k,v])=>`<option value="${k}"${Q.kind===k?" selected":""}>${v}</option>`).join("")}</select>
+      <label class="sr-chk"><input type="checkbox" data-srf="statsOnly"${Q.statsOnly?" checked":""}> ${t.f.stats}</label><button type="submit" class="chip">${t.f.apply}</button><button type="button" class="chip" data-srreset="1">${t.f.reset}</button></form>
+    <p class="gv-note"><b class="num">${t.shown(fmtInt(srState.txRows.length),fmtInt(T.total||0))}</b> · ${t.cover}: ${["floor","rooms","areaSqm","pricePerSqm","houseNumber","yearBuilt"].map(k=>`${t.cov[k]} ${cov[k]!=null?cov[k]+"%":"—"}`).join(" · ")}${T.historyRows?` · ${t.histN(fmtInt(T.historyRows))}`:""}
+      ${area?` · ${area.available?`${t.areaBasis} ${area.radiusM} ${state.lang==="en"?"m":"מ׳"}: ${area.streets.map(s=>ldE(s.name)).join(" · ")||t.areaNone}`:ldE(area.reason||"")}`:""}</p>
+    ${srState.txErr?`<p class="gv-note">${ldE(srState.txErr)}</p>`:""}
+    <div class="st-wrap"><table class="st-tbl sr-tx"><thead>${head}</thead><tbody>${rows||`<tr><td colspan="12" class="gv-note">${dash}</td></tr>`}</tbody></table></div>
+    <div class="st-acts">${T.more?`<button type="button" class="chip" data-srmore="1">${srState.txLoading?t.loadingFull:t.more}</button>`:""}<a class="chip" href="${ldE(csvHref)}" download data-srcsv="1">${t.csv}</a>
+      <button type="button" class="chip" data-stlive="1">${t.liveAll}</button></div>
+    <p class="gv-note">${ldE(state.lang==="en"?T.note||"":T.noteHe||"")}</p>`;
+}
+function srHTML(g){
+  const t=srT(),S=srState;
+  if(S.id!==g.id)return "";
+  const R=S.full||S.core;
+  if(!R)return S.err?`<p class="gv-note">${t.err}</p>`:`<p class="gv-note">${t.loading}</p>`;
+  const he=state.lang!=="en",I=R.identity,H=R.hierarchy,O=R.overview,x=txeT(),dash="—";
+  const nbS=H.neighbourhood.state;
+  const nbName=H.neighbourhood.verified?H.neighbourhood.verified.name:H.neighbourhood.sourceLabel?H.neighbourhood.sourceLabel.name:t.nbState.UNRESOLVED;
+  const crumb=`<nav class="sr-crumb" aria-label="hierarchy"><span><small>${t.hier.district}</small>${ldE(he?H.district.he:H.district.en)||dash}</span><span><small>${t.hier.city}</small>${ldE(he?H.city.he:enTitle(H.city.en)||H.city.he)}</span>
+    <span><small>${t.hier.nb}</small>${ldE(nbName)} <span class="sr-nb ${nbS}" title="${ldE(t.nbWhy[nbS])}">${t.nbState[nbS]}${H.neighbourhood.sourceLabel&&nbS!=="VERIFIED"?` · ${H.neighbourhood.sourceLabel.sharePct}%`:""}</span>${nbS!=="VERIFIED"&&H.neighbourhood.sourceLabel?xpBtn("street_report_source_label"):""}</span>
+    <span><small>${t.hier.street}</small><b>${ldE(I.name)}</b></span><span><small>${t.hier.bld}</small>${R.buildings?fmtInt(R.buildings.length):dash}</span></nav>
+    <p class="gv-note">${ldE(t.nbWhy[nbS])}${H.neighbourhood.sourceLabel&&H.neighbourhood.sourceLabel.others&&H.neighbourhood.sourceLabel.others.length?` · ${H.neighbourhood.sourceLabel.others.map(o=>`${ldE(o.name)} ${o.sharePct}%`).join(" · ")}`:""}</p>`;
+  const L=O.latest;
+  const latest=`<div class="sr-latest"><div class="l">${t.latestH}</div>${L?`<div class="v num">${siDate(L.date)}</div><div class="s">${L.price!=null?fmtNIS(L.price):dash}${L.inStatistics?` · ${t.inStat}`:L.price!=null?` · ${t.noStat}`:""} · ${[L.street,L.houseNumber].filter(Boolean).map(ldE).join(" ")} · ${x.src[L.sourceId]||ldE(L.sourceId)} (${txeDmy(L.snapshotDate)})</div>`:`<div class="s">${t.latestNone}</div>`}
+    ${O.freshness?txFreshHTML(O.freshness,{locality:true}):""}</div>`;
+  const st=O.stats,city=R.comparison.rows.find(r=>r.level==="CITY"),M=O.model,P=R.planning&&R.planning.available?R.planning.summary:null;
+  const tile=(l,v,s,cls)=>`<div class="gv-m"><span class="l">${l} ${cls?srTag(cls):""}</span><span class="v num">${v}</span>${s?`<span class="s">${s}</span>`:""}</div>`;
+  const kpis=`<div class="st-grid">${tile(t.k.sample,st?`${fmtInt(st.priced)} / ${fmtInt(st.observed)}`:dash,st?t.sampleSub(srSt(st.state)):"","OBSERVED")}
+    ${tile(t.k.sqm,st&&st.medianPricePerSqm!=null?fmtNIS(st.medianPricePerSqm):dash,"","OBSERVED")}
+    ${tile(t.k.vsCity,city&&city.streetVsLevelPct!=null?srPct(city.streetVsLevelPct):dash,city&&city.medianPricePerSqm!=null?fmtNIS(city.medianPricePerSqm):"","DERIVED")}
+    ${tile(t.k.model,M&&M.value!=null?fmtNIS(M.value):dash,M&&M.value!=null?`${M.tier}${M.range?` · ${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}`:""}`:ldE(srModWhy(M)),M&&M.value!=null?"MODEL":"MISSING")}
+    ${tile(t.k.plans,P?fmtInt(P.intersects):R.planning&&R.planning.deferred?"…":dash,P?`${P.nearby} · ${P.pending}`:"","OFFICIAL")}
+    ${tile(t.k.transit,P&&P.transitNearestM!=null?srDist(P.transitNearestM):R.planning&&R.planning.deferred?"…":dash,P?`${P.transit}`:"","OFFICIAL")}
+    ${tile(t.k.located,R.map&&R.map.available?fmtInt(R.map.located):dash,R.map&&R.map.available?srDist(R.map.extentM):"","OBSERVED")}</div>`;
+  const narr=`<div class="sr-narr">${O.narrative.map(n=>`<p class="sr-n ${n.kind}"><span class="sr-k">${t.kinds[n.kind]||n.kind}</span> ${ldE(he?n.he:n.en)} ${srTag(n.cls==="SOURCE LABEL"?"SOURCE LABEL":n.cls)}</p>`).join("")}</div>`;
+  /* prices */
+  const C=R.comparison;
+  const pxRows=C.rows.map(r=>r.state===null&&r.reason?`<tr><td class="w">${t.lvl[r.level]||r.level} · ${ldE(r.label||"")}</td><td class="w" colspan="8">${ldE(r.reason)}</td></tr>`
+    :`<tr><td class="w">${t.lvl[r.level]||r.level} · <bdi>${ldE(r.label||"")}</bdi> ${srTag(r.cls)}</td><td class="w sr-pop">${ldE(typeof t.pop[r.level]==="function"?t.pop[r.level](r):t.pop[r.level]||r.population||"")}</td><td class="num">${fmtInt(r.priced||0)}</td><td>${ldE(srSt(r.state))}</td>
+      <td class="num">${r.medianPrice!=null?fmtNIS(r.medianPrice):dash}</td><td class="num">${r.medianPricePerSqm!=null?fmtNIS(r.medianPricePerSqm):dash}${r.sqmLimited?" *":""}</td><td class="num">${r.medianAreaSqm!=null?fmtInt(r.medianAreaSqm):dash}</td>
+      <td class="num">${r.probableNewPct!=null?r.probableNewPct+"%":dash}</td><td class="num">${r.level==="STREET"?dash:srPct(r.streetVsLevelPct)}</td></tr>`).join("");
+  const lvls=C.rows.filter(r=>r.bands).map(r=>r.level);
+  const segRows=C.segments.rows.map(s=>`<tr><td class="num">${ldE(s.band)}</td>${lvls.map(l=>{const v=s[l];return `<td class="num">${v&&v.medianPricePerSqm!=null?fmtNIS(v.medianPricePerSqm):dash}<span class="txe-src">n=${v?fmtInt(v.priced):0}</span></td>`}).join("")}</tr>`).join("");
+  const modelCard=M&&M.value!=null?`<div class="sv-card sv-mod"><div class="sv-h">${t.modelH} ${vcTag("mod")}</div><div class="sv-v num">${fmtNIS(M.value)} / ${he?"מ״ר":"m²"}</div>
+      <div class="sv-s">${t.tier}: ${ldE(M.tier)}${M.range?` · ${t.range}: <bdi dir="ltr">${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}</bdi>`:""} · ${t.asOf} ${siDate(M.asOf)}${M.priceLevelQuarter?` · ${ldE(M.priceLevelQuarter)}`:""}</div></div>`:`<p class="gv-note">${t.modelNone} — ${ldE(srModWhy(M))}</p>`;
+  const prices=`<div class="st-wrap"><table class="st-tbl sr-px"><thead><tr>${t.pxCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${pxRows}</tbody></table></div>
+    <p class="gv-note">${t.cmpRule} ${t.cmpNot}</p><h4>${t.seg}</h4>
+    <div class="st-wrap"><table class="st-tbl"><thead><tr><th></th>${lvls.map(l=>`<th>${t.lvl[l]||l}</th>`).join("")}</tr></thead><tbody>${segRows}</tbody></table></div>${modelCard}`;
+  /* planning */
+  const PL=R.planning;
+  let plan="";
+  if(!PL||PL.deferred)plan=`<p class="gv-note">${t.loadingFull}</p>`;
+  else if(!PL.available)plan=`<p class="gv-note">${t.plNone}: ${ldE(PL.reason||"")}</p>`;
+  else{
+    const prow=p=>`<tr><td><span class="sr-rel ${p.relation}">${t.rel[p.relation]}</span></td><td class="num">${srDist(p.distanceM)}</td>
+      <td class="num">${p.url?`<a href="${ldE(p.url)}" target="_blank" rel="noopener noreferrer"><bdi>${ldE(p.planNumber)}</bdi></a>`:`<bdi>${ldE(p.planNumber)}</bdi>`}</td>
+      <td class="w">${ldE(p.name||dash)}${p.renewal?`<span class="txe-src">${t.renewal}: ${p.renewal.map(c=>ldE(c.name)).join(" · ")}</span>`:""}</td><td>${t.topic[p.topic]||ldE(p.topic)}</td>
+      <td>${ldE(he?p.stageHe||p.stage:p.stage)}<span class="txe-src">${ldE(p.station||"")}${p.event?" · "+ldE(p.event):""}</span></td><td class="num">${p.planUnitDelta!=null?fmtInt(p.planUnitDelta):dash}</td>
+      <td class="num">${p.areaDunam!=null?fmtInt(p.areaDunam):dash}</td><td class="num">${siDate(p.lastUpdate)}</td></tr>`;
+    const thead=`<thead><tr>${t.plCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>`;
+    const main=PL.plans.filter(p=>p.relation!=="AREA_WIDE"),wide=PL.plans.filter(p=>p.relation==="AREA_WIDE").concat(PL.transit.filter(p=>p.relation==="AREA_WIDE"));
+    const tr=PL.transit.filter(p=>p.relation!=="AREA_WIDE");
+    plan=`<p class="gv-note"><b>${t.plSum(PL.summary)}</b> · ${t.units(fmtInt(PL.summary.housingUnitDelta))} ${srTag("OFFICIAL")} · ${t.unitsNote}</p>
+      ${PL.municipal&&PL.municipal.coverage==="TLV_MUNICIPAL"?`<p class="gv-note">${t.muni(fmtInt(PL.municipal.permits),fmtInt(PL.municipal.sites))} · <span class="sr-rel ON_THE_STREET">${t.rel.ON_THE_STREET}</span></p>`:""}
+      <h4>${t.transitH}</h4>${tr.length?`<div class="st-wrap"><table class="st-tbl">${thead}<tbody>${tr.map(prow).join("")}</tbody></table></div>`:`<p class="gv-note">${dash}</p>`}
+      <h4>${t.plH}</h4>${main.length?`<div class="st-wrap"><table class="st-tbl">${thead}<tbody>${main.map(prow).join("")}</tbody></table></div>`:`<p class="gv-note">${dash}</p>`}
+      ${wide.length?`<details class="st-sec"><summary>${t.areaWideH} (${wide.length})</summary><div class="st-wrap"><table class="st-tbl">${thead}<tbody>${wide.map(prow).join("")}</tbody></table></div></details>`:""}
+      ${PL.vatmal&&PL.vatmal.available?`<h4>${t.vtH} ${xpBtn("vatmal_declared_complex")}</h4>${PL.vatmal.complexes.length?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.vtCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${PL.vatmal.complexes.map(v=>`<tr><td><span class="sr-rel ${v.relation}">${t.rel[v.relation]||v.relation}</span></td><td class="num">${srDist(v.distanceM)}</td><td><bdi>${ldE(v.tamal)}</bdi></td><td class="w"><bdi>${ldE(v.name||dash)}</bdi><br><span class="gv-note">${ldE(v.localityText||"")}</span></td><td class="num">${v.units!=null?fmtInt(v.units):dash} ${srTag("OFFICIAL")}</td><td class="num">${ldE(v.declared||dash)}</td><td class="num">${v.areaDunam!=null?fmtInt(v.areaDunam):dash}</td></tr>`).join("")}</tbody></table></div>`:`<p class="gv-note">${t.vtNone}</p>`}<p class="gv-note">${t.vtNot}</p>`:PL.vatmal&&R.part==="full"?`<p class="gv-note">${t.vtH}: ${ldE(PL.vatmal.reason||"")} ${xpMiss(PL.vatmal.reason||"vatmal-not-synced")}</p>`:""}
+      <p class="gv-note">${t.plBasis} ${t.plNotJoin} ${t.plNotMean}</p>`;
+  }
+  /* public-transport access (lib/transport): stops / light-rail stations / rail station stops in fixed radii — the Ministry's status verbatim */
+  const TRA=R.transport;let trn="";
+  if(TRA&&TRA.available){const B=TRA.busStops,Lr=TRA.lrt,Rl=TRA.rail;
+    const lrow=x=>`<tr><td class="w"><bdi>${ldE(x.station||dash)}</bdi></td><td>${ldE(x.line||dash)}</td><td><span class="sr-rel ${x.statusClass==="EXISTING"?"INTERSECTS":"NEARBY"}">${ldE(x.status||t.trSt[x.statusClass]||dash)}</span>${x.statusAsOf?` <span class="gv-note">${t.trAsOf(x.statusAsOf)}</span>`:""}</td><td>${ldE(x.type||dash)}</td><td class="num">${srDist(x.distanceM)}</td><td>${x.registryStopM!=null?`<span class="sr-rel ${x.statusClass==="EXISTING"?"INTERSECTS":"NEARBY"}">${t.trRegAt(srDist(x.registryStopM))}</span>`:`<span class="gv-note">${t.trRegNo}</span>`}</td></tr>`;
+    const LG=Lr.registry||null;
+    trn=`<h4>${t.trH} ${xpBtn("transport_access")}</h4><div class="st-grid">${tile(t.trBus,fmtInt(B.count),B.nearestM!=null?`${t.trNear} ${srDist(B.nearestM)}`:t.trNone,"DERIVED")}${tile(t.trLrt,fmtInt(Lr.stations.length),Lr.existingNearestM!=null?`${t.trSt.EXISTING}: ${srDist(Lr.existingNearestM)}`:Lr.plannedNearestM!=null?`${t.trSt.PLANNED}: ${srDist(Lr.plannedNearestM)}`:t.trNone,"DERIVED")}${LG?tile(t.trReg,fmtInt(LG.count),LG.nearestM!=null?`${t.trNear} ${srDist(LG.nearestM)}`:t.trNone,"DERIVED"):""}${tile(t.trRail,fmtInt(Rl.stops.length),Rl.nearestM!=null?`${t.trNear} ${srDist(Rl.nearestM)}`:t.trNone,"DERIVED")}</div>
+      ${Lr.stations.length?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.trCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${Lr.stations.slice(0,12).map(lrow).join("")}</tbody></table></div>`:""}
+      <p class="gv-note">${t.trBasis} ${t.trNot} ${LG&&LG.calibration?t.trRegNote(LG.calibration,String((LG.source||{}).sourceUpdatedAt||"").slice(0,10)||dash):""} ${t.trNotLoc(TRA.notLocated)}</p>`;}
+  else if(TRA&&R.part==="full")trn=`<h4>${t.trH}</h4><p class="gv-note">${ldE(TRA.reason||"")} ${xpMiss(TRA.reason||"transport-not-synced")}</p>`;
+  /* surroundings (lib/surroundings): the contaminated-land register — EXACT on the street's parcels / within 300 m — and education institutions within 500 m; the registers' words verbatim */
+  const SU=R.surroundings;let sur="";
+  if(SU&&SU.available){const CT=SU.contaminated,ED=SU.education;
+    const crow=x=>`<tr><td class="w"><bdi>${ldE(x.name||dash)}</bdi><br><span class="gv-note">${ldE(x.address||"")}</span></td><td><span class="sr-rel ${x.relation==="ON_A_PARCEL_OF_THE_STREET"?"INTERSECTS":"NEARBY"}">${x.relation==="ON_A_PARCEL_OF_THE_STREET"?t.suOnParcel:srDist(x.distanceM)}</span></td><td>${ldE(x.legend||dash)}</td><td>${ldE([x.state,x.contaminationStatus,x.gasStatus].filter(Boolean).join(" · ")||dash)}</td><td class="num">${x.block&&x.parcel?`${x.block}/${x.parcel}`:dash}</td><td class="num">${ldE(x.updated||dash)}</td></tr>`;
+    const erow=x=>`<tr><td class="w"><bdi>${ldE(x.name||dash)}</bdi></td><td>${ldE(x.type||x.frame||dash)}</td><td>${ldE([x.sector,x.supervision].filter(Boolean).join(" · ")||dash)}</td><td class="num">${x.students!=null?fmtInt(x.students):dash}</td><td class="num">${srDist(x.distanceM)}</td><td class="num">${x.latestYear||dash}</td></tr>`;
+    const cAll=CT?CT.exact.concat(CT.nearby):[];
+    sur=`<h4>${t.suH} ${xpBtn("street_surroundings")}</h4><div class="st-grid">${CT?tile(t.suCtExact,fmtInt(CT.exact.length),t.suCtExactS(CT.parcelsChecked),"OFFICIAL"):""}${CT?tile(t.suCtNear,fmtInt(CT.nearby.length),CT.nearby.length?`${t.trNear} ${srDist(CT.nearby[0].distanceM)}`:t.trNone,"DERIVED"):""}${ED?tile(t.suEdu,fmtInt(ED.institutions.length),ED.institutions.length?`${t.trNear} ${srDist(ED.institutions[0].distanceM)} · ${t.suEduYear(ED.latestYear,ED.inLatestYear)}`:t.trNone,"DERIVED"):""}</div>
+      ${cAll.length?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.suCtCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${cAll.slice(0,15).map(crow).join("")}</tbody></table></div>`:""}
+      ${ED&&ED.institutions.length?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.suEduCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${ED.institutions.slice(0,15).map(erow).join("")}</tbody></table></div>`:""}
+      <p class="gv-note">${t.suNot} ${ED?t.suEduNote(String(ED.pointsPublished||"").slice(0,10)||dash,ED.latestYear,ED.sourceYears):""}</p>`;}
+  else if(SU&&R.part==="full")sur=`<h4>${t.suH}</h4><p class="gv-note">${ldE(SU.reason||"")} ${xpMiss(SU.reason||"surroundings-not-synced")}</p>`;
+  /* investment */
+  const A=R.assessment;
+  const li=it=>`<li><span class="sr-k ${it.kind}">${t.kinds[it.kind]||it.kind}</span> ${ldE(he?it.he:it.en)} ${it.cls?srTag(it.cls):""}</li>`;
+  const inv=`<h4>${t.assessH} ${xpBtn("street_report_assessment")}</h4><div class="sr-inv"><div><h4>${t.sup}</h4><ul>${A.supports.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.ag}</h4><ul>${A.against.map(li).join("")||`<li>${dash}</li>`}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
+  const risk=`<div class="sr-inv"><div><h4>${t.chg}</h4><ul>${A.couldChange.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.dd}</h4><ul>${A.dueDiligence.map(d=>`<li>${ldE(he?d.he:d.en)}</li>`).join("")}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
+  const sv=srPropSaved(I.id)||{};
+  const pf=(k,attrs)=>`<label>${t.prop[k]}<input name="${k}" type="number" ${attrs} value="${ldE(sv[k]||"")}"></label>`;
+  const PR=S.prop;
+  let propRes="";
+  if(S.propLoading)propRes=`<p class="gv-note">${t.loading}</p>`;
+  else if(PR&&!PR.available)propRes=`<p class="gv-note">${PR.reason==="inputs-required"?t.propNeed:ldE(PR.reason||"")}</p>`;
+  else if(PR){
+    const Mo=PR.model,Sx=PR.street;
+    propRes=`<div class="st-grid">${tile(t.askSqm,fmtNIS(PR.askPricePerSqm),"","USER ASSUMPTION")}
+      ${Mo&&Mo.value!=null?tile(t.vsModel,srPct(Mo.askVsModelPct),`${fmtNIS(Mo.value)} · ${t.pos[Mo.position]||""}`,"MODEL"):tile(t.vsModel,dash,ldE(Mo&&Mo.reason||""),"MISSING")}
+      ${tile(t.vsStreet,Sx.askVsStreetMedianPct!=null?srPct(Sx.askVsStreetMedianPct):dash,Sx.askPercentile!=null?t.pctl(Sx.askPercentile):ldE(srSt(Sx.state)),"OBSERVED")}
+      ${tile(t.yield,PR.income&&PR.income.grossYieldPct!=null?PR.income.grossYieldPct+"%":dash,PR.income&&PR.income.grossYieldPct!=null?"":ldE(PR.income&&PR.income.reason||""),"DERIVED")}</div>
+      ${Sx.similar&&Sx.similar.length?`<h4>${t.similar}</h4><p class="gv-note">${t.simRule(fmtInt(PR.inputs.sqm),PR.inputs.rooms!=null?(PR.inputs.rooms<3?"≤2.5":PR.inputs.rooms<4?"3–3.5":PR.inputs.rooms<5?"4–4.5":"5+"):null)}</p><div class="st-wrap"><table class="st-tbl"><thead><tr><th>${t.cols[0]}</th><th>${t.cols[2]}</th><th>${t.cols[3]}</th><th>${t.cols[6]}</th><th>${t.cols[4]}</th><th>${t.det.built}</th><th>${t.cols[1]}</th></tr></thead><tbody>
+        ${Sx.similar.map(d=>`<tr><td class="num">${siDate(d.date)}</td><td class="num">${fmtNIS(d.amount)}</td><td class="num">${fmtNIS(d.pricePerSqm)}</td><td class="num">${fmtInt(d.areaSqm)}</td><td class="num">${d.rooms!=null?d.rooms:dash}</td><td class="num">${d.yearBuilt||dash}</td><td class="w"><bdi>${ldE((d.houses||[]).join(", "))}</bdi> · ${ldE(d.parcel)}</td></tr>`).join("")}</tbody></table></div>`:""}
+      <h4>${t.scen} ${vcTag("usr")}</h4>${["bull","base","bear"].some(k=>PR.scenarios[k])?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.scenCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
+        ${["bull","base","bear"].filter(k=>PR.scenarios[k]).map(k=>{const s=PR.scenarios[k];return `<tr><td>${t.scenName[k]}</td><td class="num">${srPct(s.annualChangePct)}</td><td class="num">${fmtNIS(s.endValue)}</td><td class="num">${srMoney(s.priceGain)}</td><td class="num">${s.rentTotal!=null?fmtNIS(s.rentTotal):dash}</td><td class="num">${s.costs!=null?fmtNIS(s.costs):dash}</td><td class="num">${srPct(s.totalReturnPct)}</td></tr>`}).join("")}</tbody></table></div>`:`<p class="gv-note">${t.scenNone}</p>`}
+      <p class="gv-note">${t.scenRule} ${t.propNot}</p>`;
+  }
+  const propForm=`<h4>${t.propH} ${vcTag("usr")} ${xpBtn("street_report_property_assessment")}</h4><form class="sv-apt sr-prop" data-srprop="1">${pf("askingPrice",'min="100000" step="1000" required')}${pf("sqm",'min="20" max="400" step="1" required')}${pf("rooms",'min="1" max="12" step="0.5"')}${pf("built",'min="1900" max="2030" step="1"')}
+    <label>${t.prop.newness}<select name="newness">${Object.entries(t.newOpt).map(([k,v])=>`<option value="${k}"${sv.newness===k?" selected":""}>${v}</option>`).join("")}</select></label>
+    <label>${t.prop.type}<select name="type">${Object.entries(t.typeOpt).map(([k,v])=>`<option value="${k}"${sv.type===k?" selected":""}>${v}</option>`).join("")}</select></label>
+    ${pf("rentMonthly",'min="0" step="50"')}${pf("holdYears",'min="1" max="30" step="1"')}${pf("bull",'min="-20" max="20" step="0.1"')}${pf("base",'min="-20" max="20" step="0.1"')}${pf("bear",'min="-20" max="20" step="0.1"')}${pf("costsPct",'min="0" max="20" step="0.1"')}
+    <button type="submit" class="chip">${t.propGo}</button></form><p class="gv-note">${t.propSaved}</p>${propRes}`;
+  /* sources */
+  const src=`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.srcCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${R.sources.map(s=>`<tr><td class="w">${ldE(s.name)} <span class="txe-src"><bdi>${ldE(s.id)}</bdi></span></td><td>${srTag(s.cls)}</td><td class="num">${s.asOf?siDate(s.asOf):"—"}</td></tr>`).join("")}</tbody></table></div>
+    <h4>${t.missH}</h4><ul class="sr-miss">${R.missing.map(m=>`<li><b>${ldE(m.section)}</b> — ${ldE(m.reason)}${m.unlock?` · <span class="txe-src">${ldE(m.unlock)}</span>`:""}</li>`).join("")}</ul>`;
+  const sec=(id,h,body,open=true,xp)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${t.nav[id]&&t.nav[id]!==h?`${t.nav[id]} <small class="sr-sum">${h}</small>`:h}</summary>${xp?`<div class="sr-xp">${xpBtn(xp)}</div>`:""}${body}</details>`;
+  const nav=`<div class="sr-nav">${Object.entries(t.nav).map(([k,v])=>`<button type="button" class="chip" data-srgo="${k}">${v}</button>`).join("")}</div>`;
+  const outs=`<div class="st-acts sr-outs"><button type="button" class="chip" data-srprint="1">${t.out.print}</button><button type="button" class="chip" data-srjson="1">${t.out.json}</button><button type="button" class="chip" data-srcopy="1">${t.out.copy}</button>
+    ${R.timings?`<span class="txe-src">${t.ms(R.timings.totalMs)}${R.part==="core"?" · "+t.loadingFull:""}</span>`:""}</div>`;
+  return `<div class="sr" data-sr="${ldE(R.id)}" data-sr-part="${R.part}">${nav}${outs}
+    ${sec("ov",t.nav.ov,crumb+latest+kpis+inv+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
+    ${sec("tx",t.txH,srTxTableHTML(R),true,"transaction_event_sources")}
+    ${sec("px",t.pxH,prices+propForm,true,"street_report_fair_comparison")}
+    ${sec("pl",t.plH,plan+trn,true,"street_report_relation")}
+    ${sec("risk",t.riskH,risk+sur,true,"street_report_assessment")}
+    ${sec("map",t.mapH,R.part==="full"?srMapSVG(R):`<p class="gv-note">${t.loadingFull}</p>`)}
+    ${sec("src",t.srcH,src,false)}</div>`;
+}
+function srSummaryText(R){
+  const he=state.lang!=="en",I=R.identity;
+  return [`${I.name} · ${he?I.city:enTitle(I.cityEn)||I.city}`,...R.overview.narrative.map(n=>`[${n.kind}] ${he?n.he:n.en}`),`${R.id} · PROPX ${R.engine} · ${R.generatedAt}`].join("\n");
+}
+function srBind(body,g){
+  const go=k=>{const s=el(k==="ev"?"sr-ev":"sr-"+k);if(s){if(s.tagName==="DETAILS")s.open=true;s.scrollIntoView({behavior:"smooth",block:"start"})}};
+  body.querySelectorAll("[data-srgo]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.srgo)));
+  body.querySelectorAll("[data-srsort]").forEach(b=>b.addEventListener("click",()=>{const Q=srState.txQ,k=b.dataset.srsort;Q.dir=Q.sort===k?(Q.dir==="desc"?"asc":"desc"):"desc";Q.sort=k;srTxLoad(true)}));
+  body.querySelectorAll("[data-srcat]").forEach(c=>c.addEventListener("change",()=>{const on=[...body.querySelectorAll("[data-srcat]")].filter(x=>x.checked).map(x=>x.dataset.srcat);srState.txQ.cat=(on.length?on:["STREET"]).join(",");srTxLoad(true)}));
+  body.querySelectorAll("[data-srper]").forEach(b=>b.addEventListener("click",()=>{srState.txQ.per=b.dataset.srper;srTxLoad(true)}));
+  body.querySelectorAll("[data-srform]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();const Q=srState.txQ;
+    f.querySelectorAll("[data-srf]").forEach(i=>{const k=i.dataset.srf;Q[k]=i.type==="checkbox"?i.checked:i.value});srTxLoad(true)}));
+  body.querySelectorAll("[data-srreset]").forEach(b=>b.addEventListener("click",()=>{srState.txQ={...SR_TXQ0};srTxLoad(true)}));
+  body.querySelectorAll("[data-srmore]").forEach(b=>b.addEventListener("click",()=>srTxLoad(false)));
+  body.querySelectorAll("[data-srrow]").forEach(r=>{const tog=()=>{srState.openRow=srState.openRow===r.dataset.srrow?null:r.dataset.srrow;renderGeoView()};r.addEventListener("click",e=>{if(e.target.closest("a,button"))return;tog()});r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}})});
+  body.querySelectorAll("[data-srprop]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();srProp(g.id,new FormData(f))}));
+  body.querySelectorAll("[data-srprint]").forEach(b=>b.addEventListener("click",()=>{body.querySelectorAll("details.sr-sec,details.sr-ev").forEach(d=>d.open=true);document.body.classList.add("sr-printing");setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove("sr-printing"),400)},60)}));
+  body.querySelectorAll("[data-srjson]").forEach(b=>b.addEventListener("click",()=>{const R=srState.full||srState.core;if(!R)return;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(R,null,1)],{type:"application/json"}));a.download=`propx-street-report-${R.id.replace(/[^0-9]+/g,"-").replace(/^-|-$/g,"")}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}));
+  body.querySelectorAll("[data-srcopy]").forEach(b=>b.addEventListener("click",async()=>{const R=srState.full||srState.core;if(!R)return;try{await navigator.clipboard.writeText(srSummaryText(R));b.textContent=srT().out.copied}catch(e){/* clipboard denied */}}));
+}
+
 let _geoNav=false;
 function openGeoView(g){
   if(!g)return;
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
   state.geo=g;
-  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||"")))siLoad(g.id);
+  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){siLoad(g.id);srLoad(g.id)}
   if(g.kind==="locality"){const code=g.code!=null?String(g.code):String(g.id||"").replace(/^loc:/,"");if(/^\d+$/.test(code))dsOpen("locality",code)}
   const d=g.district&&LOC[g.district]?g.district:null;
   state.geoAnchor=covered||d||"il";
@@ -7722,9 +8204,10 @@ function renderGeoView(){
   const m=metricsOf(anchor);
   const tx=txShown(a),inv=invShown(a),ms=msShown(a);
   el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${state.lang==="en"&&g.cityEn?enTitle(g.cityEn):g.city}`:g.he;
-  {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?siT().lyr:t.geoLyr}
+  {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?srT().lyr:t.geoLyr}
   if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){
-    const body=el("geoBody");body.innerHTML=siHTML(g);ptDomAll(body);
+    /* the street report first (lib/streets/report.js), then the full Street Intelligence view, unchanged */
+    const body=el("geoBody");body.innerHTML=srHTML(g)+`<details class="st-sec sr-ev" id="sr-ev" open><summary>${srT().evH}</summary>${siHTML(g)}</details>`;ptDomAll(body);srBind(body,g);
     body.querySelectorAll("[data-stdos]").forEach(b=>b.addEventListener("click",()=>{dsOpen("locality",b.dataset.stdos);const d=el("dossier");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}));
     body.querySelectorAll("[data-stlive]").forEach(b=>b.addEventListener("click",()=>inGoSection("txSection")));
     body.querySelectorAll("[data-sicomp]").forEach(b=>b.addEventListener("click",()=>siComps(g.id)));
@@ -7770,7 +8253,12 @@ function initSearch(){
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
     const geos=geoSug(q),ints=intelSug(q);geoShown=geos;
     results=[...cities,...nbhds,...dists];
-    if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
+    /* a request that failed is never "no results": its own line says what failed, with a retry (and sign-in when the session ended) */
+    const qt=q.trim(),E=t.srchErr,gErr=geoLast.err&&geoLast.q===qt?geoLast.err:null,iErr=intelLast.err&&intelLast.q===qt?intelLast.err:null;
+    const errBox=(x,src)=>`<div class="sp-err" role="alert" data-srcherr="${src}" data-kind="${x.kind}">${x.kind==="offline"?"":`<b>${src==="geo"?E.geo:E.intel}</b>`}${x.kind==="server"?E.server(x.status):E[x.kind]||E.invalid}${x.kind==="offline"?"":`<small>${E.notEmpty}</small><button type="button" class="sp-retry" data-retry="${src}">${E.retry}</button>${x.kind==="auth"?`<a href="/login.html">${E.signIn}</a>`:""}`}</div>`;
+    const busy=(geoBusy&&geoBusy===qt)||(intelBusy&&intelBusy===qt);
+    if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=gErr||iErr?(gErr?errBox(gErr,"geo"):"")+(iErr?errBox(iErr,"intel"):"")+(busy?`<div class="sp-empty">${t.geoSearching}</div>`:"")
+      :`<div class="sp-empty">${busy?t.geoSearching:t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
@@ -7778,13 +8266,15 @@ function initSearch(){
       if(dists.length)html+=`<div class="sp-group">${t.districts}</div>`+dists.map(c=>item(c)).join("");
       if(geos.length)html+=`<div class="sp-group">${t.geoGroup}</div>`+geos.map((g,i)=>
         `<button class="sp-item" data-geoi="${i}" role="option">
-          <span><bdi>${inE(g.he)}</bdi>${g.kind==="street"?` <small>· <bdi>${inE(g.city)}</bdi>${g.matchedName?` · ${inE(t.geoSynOf(g.matchedName))}`:""}${g.status==="historical"?` · ${t.geoHist}`:""}${g.inSelectedLocality?` · ${g.inSelectedLocality==="named"?t.geoNamed:t.geoHere}`:""}</small>`:g.moatza?` <small>· ${inE(g.moatza)}</small>`:""}</span>
+          <span><bdi>${inE(g.he)}</bdi>${g.kind==="street"?` <small>· <bdi>${inE(g.city)}</bdi>${g.matchedName?` · ${inE(t.geoSynOf(g.matchedName))}`:""}${g.status==="historical"?` · ${t.geoHist}`:""}${g.inSelectedLocality?` · ${g.inSelectedLocality==="named"?t.geoNamed:t.geoHere}`:""}</small>`:(g.matchedName?` <small>· ${inE(t.geoPlaceOf(g.matchedName))}</small>`:"")+(g.moatza?` <small>· ${inE(g.moatza)}</small>`:"")}</span>
           <span class="sp-tag">${geoKindTag(g,t)}</span></button>`).join("")
           +(geoLast.house&&geoLast.q===q.trim()?`<div class="sp-empty sp-more">${inE(t.geoHouse(geoLast.house))}</div>`:"")
           +(geoLast.more>0&&geoLast.q===q.trim()?`<div class="sp-empty sp-more">${t.geoMore(geoLast.more)}</div>`:"");
       if(ints.length)html+=`<div class="sp-group">${IT().tab.developers} · ${IT().tab.projects} · ${IT().ty.tender}</div>`+ints.map((h,i)=>
         `<button class="sp-item" data-inti="${i}" role="option"><span><bdi>${inE(h.label)}</bdi>${inHitSub(h)?` <small>· ${inE(inHitSub(h))}</small>`:""}</span>
           <span class="sp-tag">${inE(IT().ty[h.type]||h.type)}</span></button>`).join("");
+      if(gErr)html+=errBox(gErr,"geo");
+      if(iErr)html+=errBox(iErr,"intel");
       pop.innerHTML=html;
     }
     pop.classList.add("open");input.setAttribute("aria-expanded","true");
@@ -7796,6 +8286,10 @@ function initSearch(){
     }));
     pop.querySelectorAll("[data-inti]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();intelPick(intelLast.list[+b.dataset.inti],input);input.value="";close();
+    }));
+    /* retry: forget the failed answer and send the same query again */
+    pop.querySelectorAll("[data-retry]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();if(b.dataset.retry==="geo")geoLast={...geoLast,q:"",err:null};else intelLast={...intelLast,q:"",err:null};render(input.value);
     }));
   };
   const item=l=>{
@@ -10292,18 +10786,21 @@ function renewalDrawerHTML(d,close){
     ${sec(R.d.prov,"",`<div class="ho-dl">${kv(R.d.upd,inDate(P.sourceUpdatedAt))}${kv(R.d.src,inDate(P.fetchedAt))}</div><p class="ho-note">${inE(d.source?d.source.authority+" — "+d.source.dataset+" / "+d.source.resource:"")} · <a href="${inE(d.source?d.source.page:"")}" target="_blank" rel="noopener noreferrer">data.gov.il ↗</a></p>`)}`;
 }
 /* the command bar: entities beside the places — a hit routes, never merges */
-let intelLast={q:"",list:[]},intelTimer=null;
+let intelLast={q:"",list:[],err:null},intelTimer=null,intelBusy="";
 function intelSug(q){
   const qq=q.trim();
   if(qq.length<2)return[];
   if(intelLast.q!==qq){
     clearTimeout(intelTimer);
+    if(inOffline()){intelLast={q:qq,list:[],err:null};return[]}   /* offline/standalone: no entity layer (the registry line says why) */
+    intelBusy=qq;
     intelTimer=setTimeout(async()=>{
-      let list=[];
-      try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","company","contractor","permit","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
-      catch(e){/* offline/standalone: no entity layer */}
-      intelLast={q:qq,list};
+      let list=[],err=null;
+      const R=await srchFetch("/api/intel?view=search&q="+encodeURIComponent(qq),d=>Array.isArray(d.results));
+      if(R.err)err=R.err;
+      else{const all=R.data.results.filter(h=>["tender","plan","parcel","developer","project","company","contractor","permit","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}
+      if(intelBusy===qq)intelBusy="";
+      intelLast={q:qq,list,err};
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },190);
@@ -10709,6 +11206,9 @@ function renderDossierBody(){
   const S=D.sections,n=v=>v==null?"—":fmtInt(v),pc=v=>v==null?"—":`<span class="num">${(v>0?"+":"")+Number(v).toFixed(1)}%</span>`,cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":"na"}">${ldE(t.puCls&&t.puCls[c]||c)}</span>`;
   const tile=(k,v,sub,c,xp)=>`<div class="ds-k"><div class="k">${ldE(k)}${xp?" "+xpBtn(xp):""}</div><div class="v num">${v}</div><div class="s">${sub||""}${c?" "+cls(c):""}</div></div>`;
   const tiles=[];
+  if(S.market){const MK=S.market,sc=ldE(MK.scope?MK.scope[L]:""),sh=MK.secondHandShare&&MK.secondHandShare.ok?MK.secondHandShare:null;
+    if(MK.total)tiles.push(tile(t.dsT.mkTotal,n(MK.total.latestValue),`${ldE(MK.total.latest)} · ${t.dsS.t12} ${n(MK.total.t12&&MK.total.t12.value)}${sh?` · ${t.dsT.mkShare} ${sh.pct}% (${ldE(sh.from)}–${ldE(sh.to)}) ${xpBtn("second_hand_share")}`:""}<br>${sc}`,"OFFICIAL","total_dwellings_sold"));
+    if(MK.secondHand)tiles.push(tile(t.dsT.mkSecond,n(MK.secondHand.latestValue),`${ldE(MK.secondHand.latest)} · ${t.dsS.t12} ${n(MK.secondHand.t12&&MK.secondHand.t12.value)}<br>${sc}`,"OFFICIAL","second_hand_dwellings_sold"));}
   if(S.sales&&S.sales.latest)tiles.push(tile(t.dsT.sales,n(S.sales.latestValue),`${ldE(S.sales.latest)} · ${t.dsS.t12} ${n(S.sales.t12&&S.sales.t12.value)}${S.sales.momentum&&S.sales.momentum.ok&&!S.sales.small?` · ${t.dsS.mom} ${pc(S.sales.momentum.pct)}`:S.sales.small?` · ${t.dsS.small}`:""}<br>${ldE(S.sales.scope?S.sales.scope[L]:"")}`,"OFFICIAL",D.geo.level==="locality"?"district_series_for_locality":"official_new_home_sales"));
   if(S.construction&&S.construction.measures){const C=S.construction,M=C.measures,lb=v=>v==null?"":typeof v==="object"?(v[L]!=null?v[L]:v.en):String(v),mv=id=>M[id]&&M[id].latest?n(M[id].latest.value):"—",t12=id=>M[id]&&M[id].metrics&&M[id].metrics.t12&&M[id].metrics.t12.ok?n(M[id].metrics.t12.value):"—",ch=id=>{const c=M[id]&&M[id].metrics&&M[id].metrics.change&&M[id].metrics.change.t12;return c&&c.pct!=null?pc(c.pct):""},per=id=>M[id]&&M[id].latest?ldE(lb(M[id].latest.label)||M[id].latest.period):"—";
     tiles.push(tile(t.dsT.cst,mv("starts"),`${t.dsT.cstStarts} ${per("starts")} · ${t.dsS.t12} ${t12("starts")}${ch("starts")?` (${ch("starts")})`:""} · ${t.dsT.cstDone} ${t12("completions")} · ${t.dsT.cstPermits} ${t12("permits")} · ${t.dsT.cstActive} ${mv("active")}${M.active&&M.active.latest?` (${per("active")})`:""}<br>${ldE(lb(C.scope))}${C.freshness?` · ${ldE(C.freshness)}`:""}`,"OFFICIAL","construction_starts"))}
@@ -10733,10 +11233,49 @@ function renderDossierBody(){
     <div class="ds-two"><div><div class="ds-ft">${t.dsWatch}</div>${sigList("watch")}</div><div><div class="ds-ft">${t.dsRisk}</div>${sigList("risk")}</div></div>${dsState.scan&&dsState.scan.signalState?`<p class="ho-note ds-rs">${t.dsRadarState}: <span class="ho-chip ${dsState.scan.signalState==="SIGNALS"?"on":dsState.scan.signalState==="NO_SIGNAL"?"cont":"bad"}">${ldE(bl(dsState.scan.signalStateLabel)||dsState.scan.signalState)}</span>${dsState.scan.stateReason?` — ${ldE(bl(dsState.scan.stateReason))}`:""}${dsState.scan.tracked!=null?` · ${t.dsTracked}: <span class="num">${n(dsState.scan.tracked)}</span>`:""} ${xpBtn("no_signal")}</p>`:""}
     ${dsSupplyHTML()}
     ${dsLandEconHTML(D)}
+    ${dsFinanceHTML(D)}
+    ${dsContextHTML(D)}
     <div class="ds-two"><div><div class="ds-ft">${t.dsChanges}</div>${ch}</div><div><div class="ds-ft">${t.dsDevs}</div>${devs}</div></div>
     <div class="ds-ft">${t.dsFresh} ${xpBtn("source_freshness")}</div>${fresh}${q}
     <div class="ds-ft">${t.dsMissing}</div>${miss}`;
   ptDomAll(body);
+}
+/* HOUSING FINANCE (lib/finance, Bank of Israel SDMX): national banking-system context on every geography — rates by track (a variable
+   track as anchor and margin, never summed), new-loan volume, payment-to-income, LTV shares (DERIVED inside one month), the credit
+   stock and its arrears share; every figure with its month; never a locality's figure */
+function dsFinanceHTML(D){
+  const t=T(),w=t.dsFin,F=D&&D.sections&&D.sections.finance,he=state.lang==="he",L=he?"he":"en";if(!w||!F)return"";
+  const H={};(F.headline||[]).forEach(h=>H[h.id]=h);
+  const cls=c=>`<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":"na"}">${ldE(t.puCls&&t.puCls[c]||c)}</span>`;
+  const tile=(k,v,sub,c,xp)=>`<div class="ds-k"><div class="k">${k}${xp?" "+xpBtn(xp):""}</div><div class="v num">${v}</div><div class="s">${sub||""}${c?" "+cls(c):""}</div></div>`;
+  const per=p=>p?`<span class="num">${ldE(String(p).split("-").reverse().join("."))}</span>`:"—";
+  const rate=h=>h&&h.value!=null?Number(h.value).toFixed(2)+"%":"—";
+  const pp=h=>h&&h.changeYear!=null?` · ${w.yoy} <span class="num">${(h.changeYear>0?"+":"")+Number(h.changeYear).toFixed(2)}</span> ${w.pp}`:"";
+  const bn=v=>{if(v==null)return"—";const x=(v/1e9).toFixed(v>=1e11?0:2);return he?x+" "+w.bn:"₪"+x+" "+w.bn};
+  const pc=v=>v==null?"—":`<span class="num">${(v>0?"+":"")+Number(v).toFixed(1)}%</span>`;
+  const DV=F.derived||{},tiles=[];
+  tiles.push(tile(`${w.rate} — ${w.fixedNi}`,rate(H.rateFixedUnindexed),`${per(H.rateFixedUnindexed&&H.rateFixedUnindexed.period)}${pp(H.rateFixedUnindexed)}<br>${w.fixedCpi} <span class="num">${rate(H.rateFixedCpi)}</span> · ${w.varCpi}: ${w.anchor} <span class="num">${rate(H.variableCpiAnchor)}</span> + ${w.margin} <span class="num">${rate(H.variableCpiMargin)}</span>`,"OFFICIAL","mortgage_rate_by_track"));
+  tiles.push(tile(w.loans,bn(H.newLoans&&H.newLoans.value),`${per(H.newLoans&&H.newLoans.period)}${H.newLoans&&H.newLoans.changeYear!=null?` · ${w.yoy} ${pc(H.newLoans.changeYear)}`:""}<br>${w.count} <span class="num">${H.newLoansCount&&H.newLoansCount.value!=null?fmtInt(H.newLoansCount.value):"—"}</span> (${per(H.newLoansCount&&H.newLoansCount.period)})${DV.averageNewLoan?` · ${w.avg} <span class="num">₪${fmtInt(DV.averageNewLoan.value)}</span> ${cls("DERIVED")}`:""}`,"OFFICIAL","new_housing_loans"));
+  const ltvTop=DV.ltvShares&&DV.ltvShares.bands?DV.ltvShares.bands.filter(b=>/L[4-6]$/.test(b.measure)).reduce((a,b)=>a+b.sharePct,0):null;
+  tiles.push(tile(w.pti,H.pti&&H.pti.value!=null?Number(H.pti.value).toFixed(1)+"%":"—",`${per(H.pti&&H.pti.period)}${pp(H.pti)}<br>${w.ltvTop} <span class="num">${ltvTop!=null?ltvTop.toFixed(1)+"%":"—"}</span> ${cls("DERIVED")} · ${w.invest} <span class="num">${DV.investmentShare?DV.investmentShare.valuePct+"%":"—"}</span> · ${w.reduced} <span class="num">${DV.reducedPriceShare?DV.reducedPriceShare.valuePct+"%":"—"}</span> (${per(DV.investmentShare&&DV.investmentShare.period)})`,"OFFICIAL","loan_to_value_band"));
+  tiles.push(tile(w.stock,bn(H.balance&&H.balance.value),`${per(H.balance&&H.balance.period)}${H.balance&&H.balance.changeYear!=null?` · ${w.yoy} ${pc(H.balance.changeYear)}`:""}<br>${w.arrears} <span class="num">${DV.arrearsShare?DV.arrearsShare.valuePct+"%":"—"}</span> ${cls("DERIVED")}`,"OFFICIAL","housing_credit_stock"));
+  const fr=F.freshness||{},np=(F.notPublished||[]).map(x=>ldE(x[L])).join(" · ");
+  return `<div class="ds-fin"><div class="ds-ft">${w.title} ${xpBtn("new_housing_loans")}</div><p class="ho-note" style="margin-top:0"><span class="ho-chip cont">${w.scope}</span> · ${ldE(w.fresh[fr.state]||fr.state||"—")}${fr.latestPeriod?` · ${per(fr.latestPeriod)}`:""}</p><div class="ds-grid">${tiles.join("")}</div>${np?`<p class="ho-note">${w.notPub}: ${np} ${xpMiss("series-not-published")}</p>`:""}</div>`;
+}
+/* LOCALITY CONTEXT (lib/reference): census 2022 + registered residents — the locality's own rows, two universes shown apart, never a
+   street's figure; Israel shows the census national row */
+function dsContextHTML(D){
+  const t=T(),w=t.dsCtx,C=D&&D.sections&&D.sections.context,he=state.lang==="he",L=he?"he":"en";if(!w||!C)return"";
+  const c=C.census,r=C.residents,nat=C.national,n=v=>v==null?"—":fmtInt(v),p=v=>v==null?"—":Number(v).toFixed(1)+"%";
+  const cls=`<span class="vc raw">${ldE(t.puCls&&t.puCls.OFFICIAL||"OFFICIAL")}</span>`;
+  const tile=(k,v,sub,xp)=>`<div class="ds-k"><div class="k">${k}${xp?" "+xpBtn(xp):""}</div><div class="v num">${v}</div><div class="s">${sub||""} ${cls}</div></div>`;
+  const tiles=[];
+  if(c)tiles.push(tile(w.pop,n(c.population),`${w.hh} <span class="num">${n(c.households)}</span> · ${w.hhs} <span class="num">${c.householdSize!=null?c.householdSize:"—"}</span>${c.statAreas?` · ${w.sa} <span class="num">${n(c.statAreas)}</span>`:""}<br>${w.census}`,"census_2022_locality"));
+  if(c)tiles.push(tile(w.own,p(c.ownPct),`${w.rent} <span class="num">${p(c.rentPct)}</span>${nat&&c.level!=="national"?` · ${w.nat} <span class="num">${p(nat.ownPct)} / ${p(nat.rentPct)}</span>`:""}`,"census_2022_locality"));
+  if(c&&c.employeeMedianWage!=null)tiles.push(tile(w.wage,"₪"+n(c.employeeMedianWage),`${c.ageMedian!=null?`${w.age} <span class="num">${c.ageMedian}</span> · `:""}${c.academicPct!=null?`${w.acad} <span class="num">${p(c.academicPct)}</span>`:""}${nat&&c.level!=="national"?` · ${w.nat} <span class="num">₪${n(nat.employeeMedianWage)}</span>`:""}`,"census_2022_locality"));
+  if(r)tiles.push(tile(w.res,n(r.residents),`${w.resAge} <span class="num">${n(r.age&&r.age["65+"])}</span>${r.source&&r.source.sourceUpdatedAt?` · <span class="num">${ldE(puDay(r.source.sourceUpdatedAt))}</span>`:""}<br>${w.register}`,"registered_residents"));
+  if(!tiles.length)return"";
+  return `<div class="ds-ctx"><div class="ds-ft">${w.title} ${xpBtn("census_2022_locality")}</div><p class="ho-note" style="margin-top:0"><span class="ho-chip cont">${C.scope&&C.scope[L]?ldE(C.scope[L]):w.scope}</span>${c&&r?` · ${w.two}`:""}</p><div class="ds-grid">${tiles.join("")}</div></div>`;
 }
 /* "WHY THIS MARKET?" (lib/dossier/narrative.js): ordered deterministic sentences over the dossier, the geography's radar items and its
    supply indicators — each with its class, source, period, scope and ⓘ term; the lead (3 sentences) opens, the full read is a <details> */
@@ -10820,8 +11359,12 @@ he:{chipOut:"סביבת עבודה",chipTitle:"סביבת עבודה פרטית 
   confirm:{signoutAll:"לצאת מכל המכשירים? כל כניסה פעילה בחשבון הזה תסתיים מיד.",remove:"להסיר את החבר מסביבת העבודה? הגישה תיחסם מיד.",leave:"לעזוב את סביבת העבודה?",
     archive:"להעביר את סביבת העבודה לארכיון? אפשר לשחזר.",disable:"להשבית את המשתמש? כל הכניסות שלו יסתיימו מיד.",revokeSessions:"לנתק את כל הכניסות של המשתמש?",cancelInvite:"לבטל את ההזמנה? הקישור יפסיק לעבוד."},
   done:{activated:"החשבון הופעל — אתם מחוברים.",accepted:"ההזמנה התקבלה.",signedin:"נכנסתם.",signedout:"יצאתם מסביבת העבודה.",signoutAll:"כל הכניסות הסתיימו.",
-    created:"הצוות נוצר — אתם הבעלים.",saved:"נשמר.",removed:"הוסר.",invited:"קישור ההזמנה נוצר."},
+    created:"הצוות נוצר — אתם הבעלים.",saved:"נשמר.",removed:"הוסר.",invited:"קישור ההזמנה נוצר.",pwChanged:"הסיסמה הוחלפה — כל הכניסות האחרות הסתיימו.",resetCreated:"קישור האיפוס נוצר."},
   loading:"טוען…",back:"חזרה",
+  profile:"פרופיל",saveName:"שמירת השם",pwT:"החלפת סיסמה",pwCurrent:"הסיסמה הנוכחית",pwNew:"סיסמה חדשה",pwChange:"החלפת הסיסמה",
+  pwNote:"אחרי ההחלפה כל כניסה אחרת בחשבון הזה מסתיימת מיד; הדפדפן הזה נשאר מחובר.",
+  resetLink:"קישור לאיפוס סיסמה",resetOnce:e=>`קישור איפוס הסיסמה עבור ${e} מוצג פעם אחת בלבד. העבירו אותו בעצמכם (PROPX לא שולחת דוא״ל). הוא חד־פעמי, מבטל קישורים קודמים, ובתוקף עד`,
+  confirmReset:"ליצור קישור איפוס סיסמה למשתמש? הסיסמה הנוכחית שלו ממשיכה לעבוד עד שהקישור ינוצל; אז כל הכניסות שלו יסתיימו.",
   pendingT:"החשבון ממתין לאישור מנהל המערכת — אחרי האישור, אותו קישור יפעיל אותו.",invitedBy:"הוזמן על ידי",
   approve:"אישור החשבון",pendingApproval:"ממתין לאישור",createdIn:"נוצר בסביבה",
   err:{denied:"אין הרשאה לפעולה הזו.",pending_approval:"החשבון ממתין לאישור מנהל המערכת.",signin_failed:"הכניסה נכשלה: דוא״ל או סיסמה שגויים, או שהחשבון נעול זמנית אחרי ניסיונות כושלים.",
@@ -10830,6 +11373,8 @@ he:{chipOut:"סביבת עבודה",chipTitle:"סביבת עבודה פרטית 
     invalid_email:"כתובת הדוא״ל אינה תקינה.",invalid_role:"תפקיד לא מוכר.",last_owner:"לכל סביבת עבודה נשאר לפחות בעלים פעיל אחד — מנו בעלים נוסף קודם.",
     sole_owner:"המשתמש הוא הבעלים היחיד של צוות עם חברים נוספים — העבירו בעלות קודם.",personal_org:"לא בסביבת עבודה אישית.",
     archived:"סביבת העבודה בארכיון.",already_member:"כבר חבר בסביבת העבודה.",not_found:"החבר לא נמצא בסביבת העבודה.",too_many_teams:"הגעתם למספר הצוותים המרבי.",
+    current_password_wrong:"הסיסמה הנוכחית שגויה (או שהחשבון נעול זמנית אחרי ניסיונות כושלים).",password_unchanged:"הסיסמה החדשה זהה לנוכחית.",
+    invalid_status:"אפשר ליצור קישור איפוס רק למשתמש פעיל שכבר הפעיל את החשבון.",rate_limited:"יותר מדי ניסיונות — נסו שוב בעוד כמה דקות.",
     self:"לא על החשבון שלכם.",store:"שירות סביבת העבודה אינו זמין כרגע. נתוני PROPX אינם מושפעים.",signed_out:"הכניסה הסתיימה — היכנסו שוב.",
     refused:"הבקשה נדחתה.",network:"אין חיבור לשרת.",generic:"הפעולה לא הושלמה."}},
 en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"Workspace",title:"Private workspace",close:"Close",
@@ -10853,8 +11398,12 @@ en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"
   confirm:{signoutAll:"Sign out everywhere? Every live sign-in of this account ends now.",remove:"Remove this member from the workspace? Access ends now.",leave:"Leave this workspace?",
     archive:"Archive this workspace? It can be restored.",disable:"Disable this user? All their sign-ins end now.",revokeSessions:"End all of this user's sign-ins?",cancelInvite:"Cancel the invitation? The link stops working."},
   done:{activated:"Account activated — you are signed in.",accepted:"Invitation accepted.",signedin:"Signed in.",signedout:"Signed out of the workspace.",signoutAll:"Every sign-in ended.",
-    created:"Team created — you are its owner.",saved:"Saved.",removed:"Removed.",invited:"Invitation link created."},
+    created:"Team created — you are its owner.",saved:"Saved.",removed:"Removed.",invited:"Invitation link created.",pwChanged:"Password changed — every other sign-in ended.",resetCreated:"Reset link created."},
   loading:"Loading…",back:"Back",
+  profile:"Profile",saveName:"Save name",pwT:"Change password",pwCurrent:"Current password",pwNew:"New password",pwChange:"Change the password",
+  pwNote:"After the change every other sign-in of this account ends at once; this browser stays signed in.",
+  resetLink:"Password-reset link",resetOnce:e=>`The password-reset link for ${e} is shown once. Deliver it yourself (PROPX sends no email). It works once, cancels earlier links, and is valid until`,
+  confirmReset:"Create a password-reset link for this user? Their current password keeps working until the link is used; then all their sign-ins end.",
   pendingT:"This account waits for the platform administrator's approval — once approved, the same link activates it.",invitedBy:"invited by",
   approve:"Approve account",pendingApproval:"awaiting approval",createdIn:"created in",
   err:{denied:"You do not have permission for this.",pending_approval:"This account waits for the platform administrator's approval.",signin_failed:"Sign-in failed: wrong email or password, or the account is temporarily locked after failed attempts.",
@@ -10863,11 +11412,13 @@ en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"
     invalid_email:"The email address is not valid.",invalid_role:"Unknown role.",last_owner:"Every workspace keeps at least one active owner — appoint another owner first.",
     sole_owner:"This user is the only owner of a team with other members — hand over ownership first.",personal_org:"Not in a personal workspace.",
     archived:"The workspace is archived.",already_member:"Already a member of this workspace.",not_found:"That member is not in this workspace.",too_many_teams:"You have reached the maximum number of teams.",
+    current_password_wrong:"The current password is wrong (or the account is temporarily locked after failed attempts).",password_unchanged:"The new password is the same as the current one.",
+    invalid_status:"A reset link can be created only for an active user who has activated the account.",rate_limited:"Too many attempts — try again in a few minutes.",
     self:"Not on your own account.",store:"The workspace service is not available right now. PROPX data is not affected.",signed_out:"Your sign-in ended — sign in again.",
     refused:"The request was refused.",network:"No connection to the server.",generic:"The action did not complete."}}};
 const wsT=()=>WS_I18N[state.lang==="en"?"en":"he"];
 const wsE=s=>calcEsc(s==null?"":s);
-const wsState={enabled:false,st:null,open:false,mode:"main",invite:null,inviteInfo:null,inviteErr:null,org:null,members:null,admin:null,msg:null,link:null,busy:false,returnFocus:null};
+const wsState={enabled:false,st:null,open:false,mode:"main",invite:null,inviteInfo:null,inviteErr:null,org:null,members:null,admin:null,msg:null,link:null,resetLink:null,busy:false,returnFocus:null};
 /* an invitation link (/#invite=<token>): the token is taken from the fragment and the fragment removed at once (never left in history) */
 (function(){const h=location.hash||"";if(!/^#invite=/.test(h))return;const m=/^#invite=([A-Za-z0-9_-]{43})$/.exec(h);if(m)wsState.invite=m[1];
   try{history.replaceState(history.state,"",location.pathname+location.search)}catch(e){}})();
@@ -10970,8 +11521,9 @@ function wsOrgHTML(){
 function wsAdminHTML(){
   const t=wsT(),A=wsState.admin,S=wsState.st;if(!A)return"";
   const rows=A.map(u=>`<tr><td><bdi dir="ltr">${wsE(u.email)}</bdi>${u.display_name?`<div class="ho-na">${wsE(u.display_name)}</div>`:""}</td><td>${wsE(t.userStatus[u.status]||u.status)}${u.status==="invited"&&!u.approved?`<div class="ho-na">${t.pendingApproval} · ${t.createdIn} ${wsE(u.origin_org_name||"—")} · ${t.invitedBy} <bdi dir="ltr">${wsE(u.origin_invited_by_email||"—")}</bdi></div>`:""}</td><td class="num">${fmtInt(u.live_sessions)}</td><td class="num">${fmtInt(u.organizations)}</td>
-    <td>${u.id===S.user.id?"":`${u.status==="invited"&&!u.approved?`<button type="button" class="ws-btn pri" data-wsact="approve" data-wsuser="${wsE(u.id)}">${t.approve}</button> `:""}${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>`}</td></tr>`).join("");
-  return `<div class="ho-dsec"><h4>${t.admin}</h4><div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.status}</th><th>${t.liveSessions}</th><th>${t.orgCount}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <td>${u.id===S.user.id?"":`${u.status==="invited"&&!u.approved?`<button type="button" class="ws-btn pri" data-wsact="approve" data-wsuser="${wsE(u.id)}">${t.approve}</button> `:""}${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>${u.status==="active"?` <button type="button" class="ws-btn" data-wsact="reset-link" data-wsuser="${wsE(u.id)}">${t.resetLink}</button>`:""}`}</td></tr>`).join("");
+  const R=wsState.resetLink,rl=R?`<div class="ws-msg ok" role="status">${t.resetOnce(`<bdi dir="ltr">${wsE(R.email)}</bdi>`)} ${wsWhen(R.expiresAt,true)}<div class="ws-link"><input readonly value="${wsE(R.link)}" aria-label="${t.resetLink}"><button type="button" class="ws-btn" data-wsact="copy">${t.copy}</button></div></div>`:"";
+  return `<div class="ho-dsec"><h4>${t.admin}</h4>${rl}<div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.status}</th><th>${t.liveSessions}</th><th>${t.orgCount}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function wsMainHTML(){
   const t=wsT(),S=wsState.st,U=S.user;
@@ -10980,10 +11532,16 @@ function wsMainHTML(){
     <div><div class="k">${t.email}</div><div class="v"><bdi dir="ltr">${wsE(U.email)}</bdi></div></div>
     <div><div class="k">${t.sessionUntil}</div><div class="v">${wsWhen(S.session&&S.session.expiresAt,true)}</div></div></div>
     <div class="ws-row"><button type="button" class="ws-btn" data-wsact="signout">${t.signout}</button><button type="button" class="ws-btn warn" data-wsact="signout-all">${t.signoutAll}</button></div></div>`;
+  const prof=`<div class="ho-dsec"><h4>${t.profile}</h4><form class="ws-row" data-wsform="set-name"><input name="displayName" value="${wsE(U.displayName||"")}" aria-label="${t.name}" placeholder="${t.name}" autocomplete="name" maxlength="120" required><button class="ws-btn" type="submit">${t.saveName}</button></form>
+    <h4 style="margin-top:12px">${t.pwT}</h4><form class="ws-form" data-wsform="change-password"><input type="text" name="username" value="${wsE(U.email)}" autocomplete="username" hidden>
+    <label>${t.pwCurrent}<input type="password" name="current" autocomplete="current-password" required dir="ltr"></label>
+    <label>${t.pwNew} <span class="ho-na">(${t.pwHint})</span><input type="password" name="password" autocomplete="new-password" required minlength="12" dir="ltr"></label>
+    <label>${t.password2}<input type="password" name="password2" autocomplete="new-password" required minlength="12" dir="ltr"></label>
+    <div class="ws-row"><button class="ws-btn" type="submit">${t.pwChange}</button></div></form><p class="ho-note">${t.pwNote}</p></div>`;
   const orgs=`<div class="ho-dsec"><h4>${t.orgs}</h4><div class="ws-orgs">${(S.organizations||[]).map(o=>`<button type="button" class="ws-org${o.id===wsState.org?" on":""}" data-wsorg="${wsE(o.id)}" aria-pressed="${o.id===wsState.org}"><span><b>${wsE(o.name)}</b> <span class="ho-na">· ${o.kind==="personal"?t.personal:t.team}${o.archived?" · "+t.archived:""}</span></span><span class="ws-role ${o.role}">${wsE(wsRole(o.role))}</span></button>`).join("")}</div>
     <p class="ho-note">${t.roleHelp}</p>
     <form class="ws-row" data-wsform="create-team"><input name="name" placeholder="${t.teamName}" aria-label="${t.teamName}" maxlength="120" required><button class="ws-btn" type="submit">${t.createTeam}</button></form></div>`;
-  return acct+orgs+wsOrgHTML()+(U.platformAdmin?wsAdminHTML():"");
+  return acct+prof+orgs+wsOrgHTML()+(U.platformAdmin?wsAdminHTML():"");
 }
 function wsRender(){
   const P=el("wsPanel");if(!P||!wsState.open)return;
@@ -11021,6 +11579,9 @@ function initWorkspace(){
       if(r){wsState.invite=null;wsState.inviteInfo=null;wsState.mode="main";await wsRefreshAll()}}
     else if(kind==="create-team"){const r=await wsDo("create-team",{name:v.name},t.done.created);if(r){wsState.org=r.j.result&&r.j.result.org_id;await wsRefreshAll()}}
     else if(kind==="invite"){const r=await wsDo("invite",{org:wsState.org,email:v.email,role:v.role},t.done.invited);if(r){await wsLoadMembers();wsState.link=r.j.invite;wsRender()}}
+    else if(kind==="set-name"){const r=await wsDo("set-name",{displayName:v.displayName},t.done.saved);if(r)await wsRefreshAll()}
+    else if(kind==="change-password"){if(v.password!==v.password2)return wsSay(t.err.mismatch);
+      const r=await wsDo("change-password",{current:v.current,password:v.password},t.done.pwChanged);if(r)await wsRefreshAll()}
   });
   P.addEventListener("change",async e=>{const s=e.target.closest("[data-wsrole]");if(!s)return;const t=wsT();
     const r=await wsDo("set-role",{org:wsState.org,user:s.dataset.wsrole,role:s.value},t.done.saved);await wsRefreshAll();if(!r)wsRender()});
@@ -11029,8 +11590,9 @@ function initWorkspace(){
     const b=e.target.closest("[data-wsact]");if(!b)return;const t=wsT(),a=b.dataset.wsact,u=b.dataset.wsuser;
     if(a==="main"){wsState.mode="main";wsState.invite=null;wsRender();return wsAfterSignin()}
     if(a==="copy"){const i=P.querySelector(".ws-link input");if(i){i.select();try{await navigator.clipboard.writeText(i.value);b.textContent=t.copied}catch(err){document.execCommand&&document.execCommand("copy");b.textContent=t.copied}}return}
-    if(a==="signout"){const r=await wsDo("signout",{},t.done.signedout);if(r){wsState.admin=null;wsState.members=null;await wsLoad();wsRender()}return}
-    if(a==="signout-all"){if(!confirm(t.confirm.signoutAll))return;const r=await wsDo("signout-all",{},t.done.signoutAll);if(r){wsState.admin=null;await wsLoad();wsRender()}return}
+    if(a==="signout"){const r=await wsDo("signout",{},t.done.signedout);if(r)location.href="/api/logout";return}
+    if(a==="signout-all"){if(!confirm(t.confirm.signoutAll))return;const r=await wsDo("signout-all",{},t.done.signoutAll);if(r)location.href="/api/logout";return}
+    if(a==="reset-link"){if(!confirm(t.confirmReset))return;const r=await wsDo("admin-reset-link",{user:u},t.done.resetCreated);if(r){wsState.resetLink=r.j.reset;wsRender()}return}
     if(a==="accept"){const r=await wsDo("accept",{token:wsState.invite},t.done.accepted);if(r){wsState.org=r.j.result&&r.j.result.orgId;wsState.invite=null;wsState.inviteInfo=null;wsState.mode="main";await wsRefreshAll()}return}
     const conf={"revoke-member":t.confirm.remove,leave:t.confirm.leave,"revoke-invite":t.confirm.cancelInvite,disable:t.confirm.disable,"revoke-sessions":t.confirm.revokeSessions}[a];
     if(a==="archive"&&b.dataset.wsarch==="1"&&!confirm(t.confirm.archive))return;
@@ -11058,6 +11620,7 @@ initTrust();
 initPulse();
 initDossier();
 renderOrient();
+document.querySelectorAll("#launchpad [data-lp]").forEach(a=>a.addEventListener("click",e=>{const r=document.querySelector(`.rail .ri[data-sec="${a.dataset.lp}"]`);if(!r)return;e.preventDefault();r.click();if(location.hash!=="#"+a.dataset.lp)history.replaceState(history.state,"","#"+a.dataset.lp)}));
 initNewHome();
 refresh(true);
 </script>

@@ -1,0 +1,66 @@
+# PROPX · weekly sync of the street surroundings (lib/surroundings): the Ministry of Environmental Protection's contaminated-land register
+# and the Ministry of Education's institution coordinates + characteristics from data.gov.il (keyless CKAN). scripts/surroundings-sync.js
+# reads every row (complete or the source fails), guards the schema and writes data/surroundings/<id>/ only when the content changed
+# (+ a dated history copy and a run log). Nothing outside data/surroundings/ is touched.
+# The preview lane runs it on a push that changes the lane's code (scheduled runs fire on the default branch only).
+
+name: Weekly street-surroundings sync
+
+on:
+  schedule:
+    - cron: '17 5 * * 2'   # Tuesdays 05:17 UTC
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['lib/surroundings/**', 'scripts/surroundings-sync.js', '.github/workflows/surroundings-sync.yml']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and report only — write and commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: surroundings-sync-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline test suite (must pass before any data is written)
+        run: node test/surroundings.test.js
+      - name: Read the surroundings registers
+        id: sync
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then node scripts/surroundings-sync.js --dry-run; else node scripts/surroundings-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/surroundings
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
+      - name: Fail the run if a source failed
+        if: steps.sync.outputs.code != '0'
+        run: |
+          echo "surroundings-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1

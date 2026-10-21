@@ -29,9 +29,9 @@ at('the private migration lives apart from the public `market` migrations and is
   for (const f of fs.readdirSync(path.join(ROOT, 'supabase/migrations'))) assert.ok(!/\bws\./.test(fs.readFileSync(path.join(ROOT, 'supabase/migrations', f), 'utf8')), f);
   assert.ok(!/\bmarket\./.test(SQL.replace(/--.*$/gm, '')), 'the private schema never names the public market schema');
 });
-at('identity tables only: users, organizations, members, sessions (+ the credential half of users and the event log, unexposed)', () => {
+at('identity tables only: users, organizations, members, sessions (+ the credential half of users, the event log, the sign-in rate limit and reset links, unexposed)', () => {
   const tables = [...SQL.matchAll(/create table (\w+\.\w+)/g)].map((m) => m[1]).sort();
-  assert.deepEqual(tables, ['private.identity_events', 'private.user_credentials', 'ws.organization_members', 'ws.organizations', 'ws.sessions', 'ws.users']);
+  assert.deepEqual(tables, ['private.auth_rate', 'private.identity_events', 'private.password_resets', 'private.user_credentials', 'ws.organization_members', 'ws.organizations', 'ws.sessions', 'ws.users']);
   assert.ok(!/evidence|deal|thesis|bucket|storage\./i.test(SQL.replace(/--.*$/gm, '')), 'no evidence / deal / thesis / storage object (D3 · D5 · D6)');
 });
 at('RLS is enabled on every table; no table privilege beyond column SELECT; no DELETE / INSERT / UPDATE grant anywhere', () => {
@@ -495,6 +495,90 @@ at('platform administration is the platform admin\'s only; every identity action
   for (const a of ['bootstrap', 'activate', 'signin', 'invite', 'create_team', 'set_role', 'revoke_member', 'revoke_invitation', 'accept', 'leave',
     'signout', 'signout_all', 'revoke_sessions', 'user_disabled', 'user_active', 'archive', 'restore', 'signin_locked', 'approve_user']) assert.ok(actions.includes(a), a);
   denied(as(cA1, call('admin_approve_user', { p_user: A2 })), 'approval is the platform admin\'s only');
+  assert.ok(!ownerVal(`(select bool_or(detail::text ~ 'scrypt|token') from private.identity_events)`), 'no credential or token in the log');
+});
+
+/* ───────────── enterprise pilot (21.10.2026): rate limit · password change · display name · admin reset link ───────────── */
+at('PILOT · the sign-in rate limit: counted per client key (an HMAC, never an address), refused past the limit with a retry time, restarted after the window; sign-in plane only', () => {
+  const key = sha('client-1|signin');
+  for (let i = 1; i <= 3; i++) assert.deepEqual(ok(as(AUTH, call('auth_rate_hit', { p_key_hash: key, p_limit: 3, p_window_seconds: 900 }))), { allowed: true, retry_after: 0 }, 'hit ' + i);
+  const over = ok(as(AUTH, call('auth_rate_hit', { p_key_hash: key, p_limit: 3, p_window_seconds: 900 })));
+  assert.equal(over.allowed, false); assert.ok(over.retry_after > 0 && over.retry_after <= 900, JSON.stringify(over));
+  assert.equal(ok(as(AUTH, call('auth_rate_hit', { p_key_hash: sha('client-2|signin'), p_limit: 3, p_window_seconds: 900 }))).allowed, true, 'another client is not affected');
+  assert.ok(psql(SUPER, `update private.auth_rate set window_start = now() - interval '16 minutes' where key_hash = '${key}';`).ok);
+  assert.deepEqual(ok(as(AUTH, call('auth_rate_hit', { p_key_hash: key, p_limit: 3, p_window_seconds: 900 }))), { allowed: true, retry_after: 0 }, 'a new window restarts');
+  failsWith(as(AUTH, call('auth_rate_hit', { p_key_hash: '203.0.113.7', p_limit: 3, p_window_seconds: 900 })), 'invalid_token', 'a raw address is refused: keys are hashes');
+  for (const c of [cA1, P]) assert.ok(as(c, call('auth_rate_hit', { p_key_hash: key, p_limit: 3, p_window_seconds: 900 })).error, 'member plane cannot count');
+  assert.ok(!ownerVal(`(select bool_or(key_hash !~ '^[0-9a-f]{64}$') from private.auth_rate)`), 'only hashes are stored');
+  denied(as(cA1, `(select count(*) from private.auth_rate)`), 'unreadable');
+});
+
+at('PILOT · change my password: a live session only; the new hash replaces the old, the lock clears, EVERY session of that user ends, nobody else is touched', () => {
+  const D1 = activate(invite(P, PROPX_ORG, 'd1@d.test', 'viewer'), 'D One');
+  const d1a = session(D1), d1b = session(D1), other = session(A2);
+  failsWith(as(d1a, call('change_password', { p_password_hash: 'plaintext' })), 'invalid_credential');
+  denied(as(AUTH, call('change_password', { p_password_hash: 'scrypt$x' })), 'sign-in plane has no member functions');
+  denied(as({ role: 'authenticated', claims: { role: 'authenticated', sub: D1 } }, call('change_password', { p_password_hash: 'scrypt$forged' })), 'no live session, no change');
+  assert.ok(psql(SUPER, `update private.user_credentials set failed_count = 3 where user_id = '${D1}';`).ok);
+  const r = ok(as(d1a, call('change_password', { p_password_hash: 'scrypt$test$D One v2' })));
+  assert.equal(r.user_id, D1); assert.equal(r.sessions_revoked, 2);
+  assert.equal(ownerVal(`(select password_hash from private.user_credentials where user_id = '${D1}')`), 'scrypt$test$D One v2');
+  assert.equal(ownerVal(`(select failed_count from private.user_credentials where user_id = '${D1}')`), 0);
+  denied(as(d1a, call('me')), 'the session that changed it ends too (the server opens a new one)');
+  denied(as(d1b, call('me')), 'the other browser ends');
+  ok(as(other, call('me')), 'another user is untouched');
+  ok(as(session(D1), call('me')), 'a new session works');
+  assert.equal(ownerVal(`(select count(*) from ws.sessions where user_id = '${D1}' and revoked_reason = 'password')`), 2);
+});
+
+at('PILOT · my display name: mine only, validated; the address never changes', () => {
+  const c = session(A2);
+  assert.deepEqual(ok(as(c, call('set_display_name', { p_display_name: '  A Two (Analyst)  ' }))), { display_name: 'A Two (Analyst)' });
+  assert.equal(ok(as(c, call('me'))).user.display_name, 'A Two (Analyst)');
+  failsWith(as(c, call('set_display_name', { p_display_name: '   ' })), 'invalid_name');
+  failsWith(as(c, call('set_display_name', { p_display_name: 'x'.repeat(121) })), 'invalid_name');
+  assert.ok(as(c, `ws.set_display_name(p_display_name := 'x', p_user := '${B1}')`).error, 'no target-user parameter exists');
+  assert.equal(ok(as(cB1, call('me'))).user.display_name, 'B One', 'nobody else changes');
+  assert.equal(ok(as(c, call('me'))).user.email, 'a2@a.test');
+});
+
+at('PILOT · password reset: the platform admin issues a one-time 72 h link for an ACTIVE user; the holder sets the password; every session ends; single use; superseded by a newer link', () => {
+  const E1 = activate(invite(P, PROPX_ORG, 'e1@e.test', 'viewer'), 'E One'); const e1 = session(E1);
+  denied(as(cA1, call('admin_reset_link', { p_user: E1, p_token_hash: sha(tok()) })), 'members never issue resets');
+  denied(as(AUTH, call('admin_reset_link', { p_user: E1, p_token_hash: sha(tok()) })), 'sign-in plane never issues resets');
+  failsWith(as(P, call('admin_reset_link', { p_user: crypto.randomUUID(), p_token_hash: sha(tok()) })), 'not_found');
+  invite(P, PROPX_ORG, 'never@n.test', 'viewer');
+  failsWith(as(P, call('admin_reset_link', { p_user: userId('never@n.test'), p_token_hash: sha(tok()) })), 'invalid_status', 'an invited identity uses its invitation');
+  const t1 = tok(), t2 = tok();
+  const issued = ok(as(P, call('admin_reset_link', { p_user: E1, p_token_hash: sha(t1) })));
+  assert.equal(issued.email, 'e1@e.test');
+  ok(as(P, call('admin_reset_link', { p_user: E1, p_token_hash: sha(t2) })), 'a newer link');
+  assert.equal(ok(as(AUTH, call('auth_reset_peek', { p_token_hash: sha(t1) }))), null, 'the older link is superseded');
+  denied(as(AUTH, call('auth_reset_complete', { p_token_hash: sha(t1), p_password_hash: 'scrypt$old-link' })), 'superseded link refused');
+  const peek = ok(as(AUTH, call('auth_reset_peek', { p_token_hash: sha(t2) })));
+  assert.equal(peek.email, 'e1@e.test'); assert.ok(peek.expires_at);
+  denied(as(e1, call('me')) && as(AUTH, call('auth_reset_complete', { p_token_hash: sha(tok()), p_password_hash: 'scrypt$x' })), 'an unknown link opens nothing');
+  failsWith(as(AUTH, call('auth_reset_complete', { p_token_hash: sha(t2), p_password_hash: 'plain' })), 'invalid_credential');
+  assert.ok(psql(SUPER, `update private.user_credentials set locked_until = now() + interval '10 minutes' where user_id = '${E1}';`).ok);
+  const done = ok(as(AUTH, call('auth_reset_complete', { p_token_hash: sha(t2), p_password_hash: 'scrypt$test$E One reset' })));
+  assert.equal(done.user_id, E1); assert.ok(done.sessions_revoked >= 1);
+  denied(as(e1, call('me')), 'every session of the user ended');
+  assert.equal(ownerVal(`(select password_hash from private.user_credentials where user_id = '${E1}')`), 'scrypt$test$E One reset');
+  assert.equal(ok(as(AUTH, call('auth_signin_lookup', { p_email: 'e1@e.test' }))).locked, false, 'the lock clears');
+  denied(as(AUTH, call('auth_reset_complete', { p_token_hash: sha(t2), p_password_hash: 'scrypt$again' })), 'single use');
+  assert.equal(ok(as(AUTH, call('auth_reset_peek', { p_token_hash: sha(t2) }))), null);
+  const t3 = tok(); ok(as(P, call('admin_reset_link', { p_user: E1, p_token_hash: sha(t3) })));
+  ok(as(P, call('admin_set_user_status', { p_user: E1, p_status: 'disabled' })));
+  assert.equal(ok(as(AUTH, call('auth_reset_peek', { p_token_hash: sha(t3) }))), null, 'a disabled user\'s link opens nothing');
+  denied(as(AUTH, call('auth_reset_complete', { p_token_hash: sha(t3), p_password_hash: 'scrypt$x' })), 'nor completes');
+  ok(as(P, call('admin_set_user_status', { p_user: E1, p_status: 'active' })));
+  assert.ok(psql(SUPER, `set session_replication_role = replica; update private.password_resets set created_at = now() - interval '72 hours', expires_at = now() - interval '1 second' where token_hash = '${sha(t3)}';`).ok, 'simulate an expired link (the guard refuses this for every role but a trigger-less superuser)');
+  assert.equal(ok(as(AUTH, call('auth_reset_peek', { p_token_hash: sha(t3) }))), null, 'an expired link opens nothing');
+  denied(as(cA1, `(select count(*) from private.password_resets)`), 'unreadable');
+  assert.ok(!psql(OWNER, `delete from private.password_resets;`).ok, 'never deleted');
+  assert.ok(!psql(OWNER, `update private.password_resets set used_at = null where used_at is not null;`).ok, 'a used link stays used');
+  const actions = ownerVal(`(select jsonb_agg(distinct action) from private.identity_events)`);
+  for (const a of ['reset_link', 'password_reset', 'password_change', 'set_display_name']) assert.ok(actions.includes(a), a);
   assert.ok(!ownerVal(`(select bool_or(detail::text ~ 'scrypt|token') from private.identity_events)`), 'no credential or token in the log');
 });
 

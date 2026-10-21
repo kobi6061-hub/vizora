@@ -108,5 +108,17 @@ t('review fixes: a district is not deducted for "district-only sales"; a distric
   assert.equal(D.dossier({ level: 'nowhere' }), null);
   const ci = IL.signals.find((s) => s.id === 'construction-inputs'); if (ci) assert.match(String(ci.period), /^\d{4}-\d{2}$/);
 });
+t('the WHOLE market (21.10.2026): all dwellings / second-hand / subsidized new — national and district series only, a locality carries its district\'s labelled, never summed with new-home sales', () => {
+  const cbs = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/cbs-sales/latest.json'), 'utf8'));
+  if (!cbs.market) { assert.ok(IL.missing.some((m) => m.id === 'market'), 'not synced → named missing'); return; }
+  const M = IL.sections.market, MT = TLV.sections.market, MD = DTA.sections.market;
+  assert.equal(M.cls, 'OFFICIAL'); assert.equal(M.key, 'il'); assert.equal(M.total.latestValue, cbs.market.il.total_sold.metrics.latestValue);
+  assert.match(MT.scope.en, /district level, not the locality's figure/); assert.equal(MT.key, 'd-ta'); assert.equal(MT.total.latestValue, MD.total.latestValue);
+  assert.equal(MD.secondHand.cbs, cbs.market['d-ta'].second_hand_sold.cbs);
+  for (const x of [M, MD]) { const sh = x.secondHandShare; if (sh && sh.ok) { assert.equal(sh.pct, +(sh.secondHand / sh.total * 100).toFixed(1)); assert.ok(sh.from && sh.to); } }
+  assert.ok(!M.subsidized, 'no national subsidized-by-district series'); assert.ok(MD.subsidized && MD.subsidized.latestValue >= 0);
+  assert.notEqual(IL.sections.sales.latestValue, M.total.latestValue, 'new-home sales are their own series — not the all-dwellings figure');
+  assert.match(M.doesNotMean.en, /never added/);
+});
 console.log(`dossier: ${passed} passed${failed ? `, ${failed} FAILED` : ''}`);
 process.exit(failed ? 1 : 0);

@@ -14,18 +14,21 @@ const SRC = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 let n = 0; const at = async (name, fn) => { await fn(); n++; console.log('  ✓ ' + name); };
 const SECRET = 'unit-test-session-secret';
 const mwSrc = SRC('middleware.js');
-const body = mwSrc.replace(/export const config/, 'const config').replace(/export default async function middleware/, 'async function middleware');
-const mw = new Function('process', 'crypto', 'Response', 'URL', 'TextEncoder', body + '\nreturn { middleware, config };')({ env: { SESSION_SECRET: SECRET } }, globalThis.crypto, Response, URL, TextEncoder);
+const gateSrc = SRC('lib/identity/gate.mjs');
+let mw;
 const cookie = () => { const exp = String(Date.now() + 3600e3); return `kobix_session=${exp}.${createHmac('sha256', SECRET).update('kobix|' + exp).digest('hex')}`; };
 const run = (p, { method = 'GET', headers = {} } = {}) => mw.middleware(new Request('https://propx.example' + p, { method, headers }));
 const setOf = (src, name) => { const m = new RegExp(name + ' = new Set\\(\\[([^\\]]*)\\]\\)').exec(src); assert.ok(m, name + ' not found'); return JSON.parse('[' + m[1].replace(/'/g, '"') + ']').sort(); };
 
 (async () => {
+  mw = await require('./helpers/middleware').loadMiddleware({ SESSION_SECRET: SECRET });
   console.log('security gate: exact exclusions');
   await at('the matcher sends every path to the middleware; the exclusions are exact paths decided in code', async () => {
     assert.deepEqual(mw.config.matcher, ['/(.*)']);
-    assert.deepEqual(setOf(mwSrc, 'PUBLIC_PATHS'), ['/api/login', '/favicon.ico', '/login.html', '/robots.txt']);
-    assert.deepEqual(setOf(mwSrc, 'MACHINE_PATHS'), ['/api/jobs/tx-refresh']);
+    assert.deepEqual(setOf(gateSrc, 'PUBLIC_PATHS'), ['/api/login', '/favicon.ico', '/login.html', '/robots.txt']);
+    assert.deepEqual(setOf(gateSrc, 'MACHINE_PATHS'), ['/api/jobs/tx-refresh']);
+    assert.match(mwSrc, /^import \{ [^}]+ \} from '\.\/lib\/identity\/gate\.mjs';$/m, 'the middleware decides through the one gate module');
+    assert.ok(!/new Set\(\[/.test(mwSrc), 'no second, hand-written list in the middleware');
   });
   await at('the exact public paths pass without a cookie; every prefix / suffix look-alike is gated (302 → /login.html)', async () => {
     for (const p of ['/api/login', '/login.html', '/robots.txt', '/favicon.ico', '/api/jobs/tx-refresh']) assert.equal(await run(p), undefined, p);
@@ -38,12 +41,15 @@ const setOf = (src, name) => { const m = new RegExp(name + ' = new Set\\(\\[([^\
     const exp = String(Date.now() - 1000), old = `kobix_session=${exp}.${createHmac('sha256', SECRET).update('kobix|' + exp).digest('hex')}`;
     for (const c of ['kobix_session=1.2', 'kobix_session=99999999999999.' + 'a'.repeat(64), old]) assert.equal((await run('/index.html', { headers: { cookie: c } })).status, 302, c);
   });
-  await at('the local dev server uses the same two exact lists and refuses GET /api/login (never serves the source)', async () => {
+  await at('the local dev server decides through the same gate module and serves /api/login through the deployed module (GET is never the source)', async () => {
     const dev = SRC('scripts/kobix-dev-server.mjs');
-    assert.deepEqual(setOf(dev, 'PUBLIC_PATHS'), setOf(mwSrc, 'PUBLIC_PATHS')); assert.deepEqual(setOf(dev, 'MACHINE_PATHS'), setOf(mwSrc, 'MACHINE_PATHS'));
-    assert.match(dev, /const open = PUBLIC_PATHS\.has\(p\) \|\| MACHINE_PATHS\.has\(p\);/);
-    assert.match(dev, /if \(p === '\/api\/login'\) \{ res\.statusCode = 405;/);
-    assert.ok(!/p === '\/login\.html' \|\| p === '\/robots\.txt'/.test(dev), 'no second, hand-written list');
+    assert.match(dev, /from '\.\.\/lib\/identity\/gate\.mjs';/);
+    assert.match(dev, /return decide\(/);
+    assert.match(dev, /if \(p === '\/api\/login'\) return \(await identity\(\)\)\.login\(req, res\);/);
+    assert.ok(!/new Set\(\[/.test(dev), 'no second, hand-written list');
+    const L = require('../api/login').createLogin({ env: { SESSION_SECRET: SECRET, SITE_PASSWORD: 'x' } });
+    const r = await new Promise((resolve) => { const h = {}; L({ method: 'GET', url: '/api/login', headers: {} }, { setHeader: (k, v) => { h[k] = v; }, set statusCode(v) { this.s = v; }, get statusCode() { return this.s; }, end(b) { resolve({ status: this.s, body: b, h }); } }); });
+    assert.equal(r.status, 405); assert.ok(!/SITE_PASSWORD|require\(/.test(r.body), 'GET /api/login never serves the source');
   });
 
   console.log('security gate: the evidence body limit');

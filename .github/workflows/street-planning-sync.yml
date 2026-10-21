@@ -1,0 +1,48 @@
+# PROPX · NATIONAL PLAN BOUNDARIES — every plan of the Xplan online-plans layer (the layer PROPX already reads for renewal and land)
+# with its generalized boundary, tiled for the street report (scripts/street-planning-sync.js). Complete or nothing: a read whose
+# accounting does not equal the layer's own count writes nothing. Writes data/planning/national/ (bot-written). Runs on a push of
+# the sync to the preview lane (a workflow that exists only on a non-default branch cannot be dispatched) or by hand.
+
+name: Street report — national plan boundaries
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['scripts/street-planning-sync.js', '.github/workflows/street-planning-sync.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: street-planning-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read every plan + boundary (read-only on the source)
+        run: |
+          set -euo pipefail
+          node --max-old-space-size=6000 scripts/street-planning-sync.js
+          du -sh data/planning/national
+      - name: Commit
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/planning/national
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "Plan boundaries: every Xplan plan with its boundary, tiled (complete read)"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1

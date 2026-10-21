@@ -437,9 +437,7 @@ const deal = (id, date, extra = {}, url = 'https://www.govmap.gov.il/api/real-es
       const m = /matcher:\s*\['([^']+)'\]/.exec(src); assert.ok(m, 'matcher not found');
       const matched = new RegExp('^' + m[1].replace(/\\\\/g, '\\') + '$');
       /* run the real middleware (ES module → a function) on the paths the matcher sends it */
-      const body = src.replace(/export const config/, 'const config').replace(/export default async function middleware/, 'async function middleware');
-      const mw = new Function('process', 'crypto', 'Response', 'URL', 'TextEncoder', body + '\nreturn middleware;')(
-        { env: { SESSION_SECRET: 'unit-test-session-secret' } }, globalThis.crypto, Response, URL, TextEncoder);
+      const mw = (await require('./helpers/middleware').loadMiddleware({ SESSION_SECRET: 'unit-test-session-secret' })).middleware;
       const gated = async (p) => { if (!matched.test(p)) return false; const r = await mw(new Request('https://propx.example' + p)); return !!r && r.status === 302; };
       for (const open of ['/api/login', '/login.html', '/robots.txt', '/favicon.ico', '/api/jobs/tx-refresh']) assert.equal(await gated(open), false, open + ' is gated');
       for (const p of ['/', '/index.html', '/api/housing', '/api/gov/transactions', '/api/geo/search', '/api/logout', '/data/market/x.json', '/standalone/x.html',

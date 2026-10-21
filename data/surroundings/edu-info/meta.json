@@ -1,0 +1,69 @@
+{
+ "schema": 1,
+ "id": "edu-info",
+ "trustId": "datagov:moe:institutions",
+ "title": "מאפייני מוסדות חינוך בפיקוח משרד החינוך",
+ "titleEn": "Education institutions supervised by the Ministry — characteristics by school year",
+ "publisher": "משרד החינוך",
+ "publisherEn": "Ministry of Education",
+ "resourceId": "5548fd63-5868-4053-ad81-98caddc5e232",
+ "page": "https://data.gov.il/dataset/mosdot",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=5548fd63-5868-4053-ad81-98caddc5e232",
+ "licence": "Other (Open)",
+ "cadence": "yearly (resource updated 2026-05)",
+ "period": "each institution's latest school year in the source",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-05-11T12:24:47.128302Z",
+ "checkedAt": "2026-10-21T15:04:56.546Z",
+ "readAt": "2026-10-21T14:49:58.357Z",
+ "contentHash": "260de32bedd8d3bf1e519fa5e7e29f822c01a86c90f05ffc596ba692f580f5f4",
+ "sourceRows": 119761,
+ "records": 28486,
+ "rejected": 0,
+ "superseded": 91275,
+ "profile": {
+  "rowsByYear": {
+   "2011": 21474,
+   "2012": 23419,
+   "2013": 23583,
+   "2014": 25046,
+   "2015": 26239
+  }
+ },
+ "byLevel": {
+  "year": 28486
+ },
+ "fields": [
+  "_id",
+  "שנה",
+  "סמל מוסד",
+  "שם מוסד",
+  "סהכ תלמידים במוסד",
+  "שם רשות",
+  "שם ישוב",
+  "מגזר",
+  "פיקוח",
+  "מעמד משפטי",
+  "גורם מדווח",
+  "מחוז גאוגרפי",
+  "סוג חינוך מוסד",
+  "סוג מסגרת אירגונית",
+  "סוג מוסד",
+  "משכבה",
+  "עד שכבה",
+  "שנת יסוד",
+  "זכאי תשלום בגין מקיף",
+  "זכאי שיקום שכונות",
+  "זכאי רווחה",
+  "זכאי לשכר לימוד",
+  "מגיש לבגרות",
+  "תאור יוחא",
+  "גמול הכנה לבגרות",
+  "הכרה בציון שנתי",
+  "חינוך לבגרות"
+ ],
+ "history": [
+  "2026-10-21-260de32b.json.gz",
+  "2026-10-21-4f53cda1.json.gz"
+ ]
+}

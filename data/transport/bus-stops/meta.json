@@ -1,0 +1,43 @@
+{
+ "schema": 1,
+ "id": "bus-stops",
+ "trustId": "datagov:mot:bus-stops",
+ "title": "תחנות תחבורה ציבורית",
+ "titleEn": "Public-transport stops (the national stop registry)",
+ "publisher": "משרד התחבורה והבטיחות בדרכים",
+ "publisherEn": "Ministry of Transport and Road Safety",
+ "resourceId": "e873e6a2-66c1-494f-a677-f5e77348edb0",
+ "page": "https://data.gov.il/dataset/bus_stops",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=e873e6a2-66c1-494f-a677-f5e77348edb0",
+ "licence": "Other (Open)",
+ "cadence": "monthly (resource replaced in place)",
+ "period": "registry snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-10-01T03:09:46.826309Z",
+ "checkedAt": "2026-10-21T14:03:23.432Z",
+ "readAt": "2026-10-21T13:56:23.898Z",
+ "contentHash": "c12bdd50b69357183fbf1a6ebcfa6358513fe523d3acc5a59a5454d47796fc69",
+ "sourceRows": 34235,
+ "records": 34235,
+ "rejected": 0,
+ "byLevel": {
+  "stop": 34235
+ },
+ "fields": [
+  "_id",
+  "StationId",
+  "CityCode",
+  "CityName",
+  "MetropolinCode",
+  "MetropolinName",
+  "StationTypeCode",
+  "StationTypeName",
+  "StationOperatorTypeCode",
+  "StationOperatorTypeName",
+  "Lat",
+  "Long"
+ ],
+ "history": [
+  "2026-10-21-c12bdd50.json.gz"
+ ]
+}

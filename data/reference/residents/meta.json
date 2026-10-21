@@ -1,0 +1,47 @@
+{
+ "schema": 1,
+ "id": "residents",
+ "trustId": "datagov:piba:residents-by-locality",
+ "title": "תושבים בישראל לפי ישובים וקבוצות גיל — מתעדכן",
+ "titleEn": "Registered residents by locality and age group (updated)",
+ "publisher": "רשות האוכלוסין וההגירה",
+ "publisherEn": "Population and Immigration Authority",
+ "resourceId": "64edd0ee-3d5d-43ce-8562-c336c24dbc1f",
+ "page": "https://data.gov.il/dataset/residents_in_israel_by_communities_and_age_groups",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=64edd0ee-3d5d-43ce-8562-c336c24dbc1f",
+ "licence": "not stated by the publisher — data.gov.il terms of use",
+ "cadence": "weekly (the resource is replaced in place)",
+ "period": "register snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-10-12T00:30:04.954122Z",
+ "checkedAt": "2026-10-21T14:49:15.711Z",
+ "readAt": "2026-10-21T13:24:46.908Z",
+ "contentHash": "3368a6e0762bb5d9a675f5fab70308347793cfefdff7e526a930e77f7fcd1581",
+ "sourceRows": 1297,
+ "records": 1296,
+ "rejected": 1,
+ "byLevel": {
+  "locality": 1296
+ },
+ "fields": [
+  "_id",
+  "סמל_ישוב",
+  "שם_ישוב",
+  "סמל_נפה",
+  "נפה",
+  "קוד_לשכת_מנא",
+  "לשכת_מנא",
+  "קוד_מועצה_אזורית",
+  "מועצה_אזורית",
+  "סהכ",
+  "גיל_0_5",
+  "גיל_6_18",
+  "גיל_19_45",
+  "גיל_46_55",
+  "גיל_56_64",
+  "גיל_65_פלוס"
+ ],
+ "history": [
+  "2026-10-21-3368a6e0.json.gz"
+ ]
+}

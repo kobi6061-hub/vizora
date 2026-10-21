@@ -1,0 +1,45 @@
+# PROPX · Street Investment Intelligence — planning + transport source discovery (read-only).
+#
+# Runs scripts/street-report-discover.js on a GitHub runner (ags.iplan.gov.il and data.gov.il answer here, not from the Claude sandbox):
+# the Xplan online-plans layer (size of a national extract), the national infrastructure plans, the train compilation, and the
+# data.gov.il rail / light-rail / metro datasets with their licence fields. Read-only: nothing is written or committed.
+
+name: Street report — planning + transport discovery (read-only)
+
+on:
+  # the preview lane: a workflow that exists only on a non-default branch cannot be dispatched, so a push of this probe runs every mode
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['scripts/street-report-discover.js', '.github/workflows/street-report-discover.yml']
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'xplan | ttl | transport'
+        type: choice
+        options: [xplan, ttl, transport]
+        default: xplan
+
+permissions:
+  contents: read
+
+concurrency:
+  group: street-report-discover-${{ github.event_name }}-${{ inputs.mode }}
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: ${{ fromJSON(github.event_name == 'workflow_dispatch' && format('["{0}"]', inputs.mode) || '["xplan","ttl","transport"]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover (read-only)
+        env:
+          MODE: ${{ matrix.mode }}
+        run: node scripts/street-report-discover.js "--$MODE"

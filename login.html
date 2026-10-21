@@ -42,13 +42,26 @@ h1{font-family:Heebo,sans-serif;font-size:15.5px;font-weight:700;margin-top:14px
   font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gold)}
 .caveat small{display:block;font-weight:600;letter-spacing:.14em;font-size:9px;color:var(--ink-3);margin-top:2px;text-transform:uppercase}
 form{display:flex;flex-direction:column;gap:10px;margin-top:18px}
-input[type=password]{
+input{
   height:46px;background:var(--bg);border:1px solid var(--line-2);border-radius:10px;
-  padding-inline:14px;font-size:15px;text-align:center;letter-spacing:.12em;color:var(--ink);
+  padding-inline:14px;font-size:15px;color:var(--ink);width:100%;
   transition:border-color .15s, box-shadow .15s;
 }
-input[type=password]::placeholder{color:var(--ink-3);letter-spacing:.3em}
-input[type=password]:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.22)}
+#pw{text-align:center;letter-spacing:.12em}
+#pw::placeholder{color:var(--ink-3);letter-spacing:.3em}
+input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.22)}
+input::placeholder{color:var(--ink-3)}
+input[type=email],input[dir=ltr]{direction:ltr;text-align:start}
+label{display:flex;flex-direction:column;gap:5px;text-align:start;font-size:12px;font-weight:700;color:var(--ink-2)}
+.lang{position:absolute;inset-inline-end:14px;top:12px;display:flex;gap:4px}
+.lang button{height:26px;padding:0 9px;border-radius:7px;background:transparent;border:1px solid var(--line-2);color:var(--ink-2);font-size:11.5px;font-weight:700}
+.lang button[aria-pressed=true]{background:var(--line);color:var(--ink)}
+.card{position:relative}
+.note{font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.5}
+.ok{min-height:18px;font-size:12.5px;font-weight:700;color:#6fcf97}
+.who{font-size:12.5px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;text-align:start;line-height:1.55}
+.who b{color:var(--ink)}
+[hidden]{display:none!important}
 button{
   height:46px;border-radius:10px;background:linear-gradient(180deg,var(--blue),var(--blue-deep));
   color:#fff;font-family:Heebo,sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;
@@ -69,48 +82,178 @@ button[disabled]{opacity:.6;cursor:wait}
 <body>
   <main class="card" id="card">
     <div class="rib"></div>
+    <div class="lang" role="group" aria-label="Language"><button type="button" id="lHe" aria-pressed="true">עב</button><button type="button" id="lEn" aria-pressed="false">EN</button></div>
     <div class="in">
       <div class="mark">
-        <span class="wordmark"><b>PROPX</b><span>מידע הוא הנכס הראשון</span></span>
+        <span class="wordmark"><b>PROPX</b><span data-t="tag">מידע הוא הנכס הראשון</span></span>
       </div>
-      <h1>מודיעין שוק הדירות החדשות בישראל</h1>
-      <p class="sub">הזינו סיסמה כדי להיכנס למערכת</p>
-      <p class="caveat">לשימוש פנימי בלבד<small>Internal use only</small></p>
-      <form id="f" autocomplete="off">
-        <input id="pw" type="password" inputmode="text" autocomplete="current-password"
-               aria-label="סיסמה" placeholder="••••••••" autofocus>
-        <button id="go" type="submit">כניסה למערכת</button>
-        <p class="err" id="err" role="alert">סיסמה שגויה — נסו שוב</p>
+      <h1 data-t="h1">מודיעין שוק הדירות החדשות בישראל</h1>
+      <p class="sub" id="sub" data-t="subPw">הזינו סיסמה כדי להיכנס למערכת</p>
+      <p class="caveat"><span data-t="private">לשימוש פנימי בלבד</span><small>Internal use only</small></p>
+
+      <!-- PERIMETER mode: the shared site password (the gate PROPX had) -->
+      <form id="f" autocomplete="off" hidden>
+        <input id="pw" type="password" inputmode="text" autocomplete="current-password" aria-label="סיסמה" placeholder="••••••••">
+        <button id="go" type="submit" data-t="enter">כניסה למערכת</button>
       </form>
-      <p class="foot">PROPX · מידע הוא הנכס הראשון · v3</p>
+
+      <!-- IDENTITY mode: an individual sign-in (invite-only accounts) -->
+      <form id="fs" autocomplete="on" hidden>
+        <label><span data-t="email">דוא״ל</span><input id="em" type="email" autocomplete="username" required maxlength="254" dir="ltr"></label>
+        <label><span data-t="password">סיסמה</span><input id="sp" type="password" autocomplete="current-password" required dir="ltr"></label>
+        <button id="sgo" type="submit" data-t="signin">כניסה</button>
+        <p class="note" data-t="noSignup">אין הרשמה עצמית: חשבון נפתח רק בקישור הזמנה. שכחתם סיסמה? פנו למנהל המערכת לקישור איפוס.</p>
+      </form>
+
+      <!-- IDENTITY mode: the one-time invitation link (#invite=…) -->
+      <form id="fa" autocomplete="off" hidden>
+        <p class="who" id="aw"></p>
+        <label><span data-t="name">שם מלא</span><input id="an" type="text" autocomplete="name" required maxlength="120"></label>
+        <label><span data-t="newPw">סיסמה חדשה (12 תווים לפחות)</span><input id="ap" type="password" autocomplete="new-password" required dir="ltr"></label>
+        <label><span data-t="newPw2">אימות הסיסמה</span><input id="ap2" type="password" autocomplete="new-password" required dir="ltr"></label>
+        <button id="ago" type="submit" data-t="activate">הפעלת החשבון</button>
+      </form>
+
+      <!-- IDENTITY mode: the one-time password-reset link (#reset=…) -->
+      <form id="fr" autocomplete="off" hidden>
+        <p class="who" id="rw"></p>
+        <label><span data-t="newPw">סיסמה חדשה (12 תווים לפחות)</span><input id="rp" type="password" autocomplete="new-password" required dir="ltr"></label>
+        <label><span data-t="newPw2">אימות הסיסמה</span><input id="rp2" type="password" autocomplete="new-password" required dir="ltr"></label>
+        <button id="rgo" type="submit" data-t="setPw">קביעת הסיסמה</button>
+      </form>
+
+      <p class="err" id="err" role="alert"></p>
+      <p class="foot">PROPX · <span data-t="tag">מידע הוא הנכס הראשון</span> · v4</p>
     </div>
   </main>
 <script>
 (function(){
-  var f=document.getElementById('f'),pw=document.getElementById('pw'),
-      err=document.getElementById('err'),go=document.getElementById('go'),
-      card=document.getElementById('card');
-  f.addEventListener('submit',function(e){
-    e.preventDefault();
-    err.classList.remove('on'); go.disabled=true; go.textContent='מאמת…';
-    fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({password:pw.value})})
+  var T={
+    he:{tag:'מידע הוא הנכס הראשון',h1:'מודיעין שוק הדירות החדשות בישראל',subPw:'הזינו סיסמה כדי להיכנס למערכת',subId:'כניסה אישית',subInv:'הפעלת חשבון',subReset:'קביעת סיסמה חדשה',
+      private:'לשימוש פנימי בלבד',enter:'כניסה למערכת',email:'דוא״ל',password:'סיסמה',signin:'כניסה',name:'שם מלא',newPw:'סיסמה חדשה (12 תווים לפחות)',newPw2:'אימות הסיסמה',
+      activate:'הפעלת החשבון',setPw:'קביעת הסיסמה',checking:'מאמת…',
+      noSignup:'אין הרשמה עצמית: חשבון נפתח רק בקישור הזמנה. שכחתם סיסמה? פנו למנהל המערכת לקישור איפוס.',
+      invFor:function(i){return 'הזמנה ל־<b>'+esc(i.email)+'</b> · סביבת העבודה <b>'+esc(i.orgName)+'</b> · תפקיד <b>'+esc(roleHe[i.role]||i.role)+'</b>'},
+      resetFor:function(r){return 'סיסמה חדשה לחשבון <b>'+esc(r.email)+'</b>. כל הכניסות הפעילות של החשבון יסתיימו.'},
+      e:{wrong:'סיסמה שגויה — נסו שוב',config:'המערכת עדיין לא הוגדרה בשרת — יש להגדיר את משתני הסביבה SITE_PASSWORD ו־SESSION_SECRET ב־Vercel (לכל הסביבות) ולבצע Redeploy',
+        signin_failed:'הכניסה נכשלה: דוא״ל או סיסמה שגויים, או שהחשבון נעול זמנית אחרי ניסיונות כושלים.',rate_limited:function(s){return 'יותר מדי ניסיונות מהמכשיר הזה. נסו שוב בעוד '+Math.ceil(s/60)+' דקות.'},
+        individual_login_required:'הכניסה בסיסמה משותפת הוחלפה בכניסה אישית — הזינו את הדוא״ל והסיסמה שלכם.',invite_invalid:'קישור ההזמנה אינו בתוקף (כבר נוצל, פג, בוטל, או שהחשבון כבר קיים — היכנסו בדוא״ל ובסיסמה).',
+        reset_invalid:'קישור האיפוס אינו בתוקף (כבר נוצל, פג או הוחלף בקישור חדש).',pending_approval:'החשבון ממתין לאישור מנהל המערכת — אחרי האישור, אותו קישור יפעיל אותו.',
+        password_too_short:'הסיסמה קצרה מדי — 12 תווים לפחות.',password_too_long:'הסיסמה ארוכה מדי.',password_too_weak:'הסיסמה חלשה מדי.',mismatch:'שתי הסיסמאות אינן זהות.',
+        invalid_name:'יש להזין שם מלא.',closed:'הכניסה האישית מוגדרת בשרת באופן חלקי, ולכן הגישה סגורה. הצוות מטפל בכך.',store:'שירות הזהות אינו זמין כרגע. נסו שוב בעוד דקה.',
+        network:'אין חיבור לשרת. בדקו את החיבור ונסו שוב.',other:'הפעולה נכשלה. נסו שוב.'}},
+    en:{tag:'Information is the first asset',h1:'Israel new-homes market intelligence',subPw:'Enter the password to continue',subId:'Individual sign-in',subInv:'Activate your account',subReset:'Choose a new password',
+      private:'Private — internal use only',enter:'Enter',email:'Email',password:'Password',signin:'Sign in',name:'Full name',newPw:'New password (at least 12 characters)',newPw2:'Confirm the password',
+      activate:'Activate account',setPw:'Set password',checking:'Checking…',
+      noSignup:'No self sign-up: accounts are opened by invitation only. Forgot your password? Ask the platform administrator for a reset link.',
+      invFor:function(i){return 'Invitation for <b>'+esc(i.email)+'</b> · workspace <b>'+esc(i.orgName)+'</b> · role <b>'+esc(i.role)+'</b>'},
+      resetFor:function(r){return 'A new password for <b>'+esc(r.email)+'</b>. Every active session of the account will end.'},
+      e:{wrong:'Wrong password — try again',config:'Not configured on the server yet: set SITE_PASSWORD and SESSION_SECRET in Vercel (all environments) and redeploy',
+        signin_failed:'Sign-in failed: wrong email or password, or the account is temporarily locked after failed attempts.',rate_limited:function(s){return 'Too many attempts from this device. Try again in '+Math.ceil(s/60)+' minutes.'},
+        individual_login_required:'The shared password has been replaced by individual sign-in — enter your email and password.',invite_invalid:'This invitation link is not valid (used, expired, revoked, or the account already exists — sign in with email and password).',
+        reset_invalid:'This reset link is not valid (used, expired, or replaced by a newer link).',pending_approval:'The account waits for the platform administrator\'s approval — the same link will activate it afterwards.',
+        password_too_short:'The password is too short — at least 12 characters.',password_too_long:'The password is too long.',password_too_weak:'The password is too weak.',mismatch:'The two passwords differ.',
+        invalid_name:'Enter your full name.',closed:'Individual sign-in is only partly configured on the server, so access is closed. The team is on it.',store:'The identity service is unavailable right now. Try again in a minute.',
+        network:'Cannot reach the server. Check the connection and try again.',other:'That did not work. Try again.'}}
+  };
+  var roleHe={owner:'בעלים',admin:'מנהל',analyst:'אנליסט',viewer:'צופה'};
+  var $=function(id){return document.getElementById(id)};
+  var err=$('err'),card=$('card'),mode='perimeter',lang='he';
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  try{lang=localStorage.getItem('propx:login-lang')==='en'?'en':'he'}catch(e){}
+  var hash=location.hash||'',inv=/^#invite=([A-Za-z0-9_-]{43})$/.exec(hash),rst=/^#reset=([A-Za-z0-9_-]{43})$/.exec(hash);
+  /* a one-time link's token is taken from the fragment and the fragment removed from the address bar at once (never left in history) */
+  if(inv||rst){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+  var panel=null,invInfo=null,rstInfo=null;
+  function t(){return T[lang]}
+  function paint(){
+    document.documentElement.lang=lang;document.documentElement.dir=lang==='he'?'rtl':'ltr';
+    document.querySelectorAll('[data-t]').forEach(function(n){var v=t()[n.getAttribute('data-t')];if(typeof v==='string')n.textContent=v});
+    $('sub').textContent=mode==='identity'?(panel==='fa'?t().subInv:panel==='fr'?t().subReset:t().subId):t().subPw;
+    $('lHe').setAttribute('aria-pressed',String(lang==='he'));$('lEn').setAttribute('aria-pressed',String(lang==='en'));
+    if(invInfo)$('aw').innerHTML=t().invFor(invInfo);
+    if(rstInfo)$('rw').innerHTML=t().resetFor(rstInfo);
+  }
+  function setLang(l){lang=l;try{localStorage.setItem('propx:login-lang',l)}catch(e){}paint()}
+  $('lHe').addEventListener('click',function(){setLang('he')});$('lEn').addEventListener('click',function(){setLang('en')});
+  function show(id){['f','fs','fa','fr'].forEach(function(x){$(x).hidden=x!==id});panel=id;paint();
+    var first=$(id).querySelector('input:not([type=hidden])');if(first)first.focus()}
+  function say(code,extra){
+    var m=t().e[code];err.textContent=typeof m==='function'?m(extra):(m||t().e.other);err.classList.add('on');
+    card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+  }
+  function clearErr(){err.classList.remove('on')}
+  document.querySelectorAll('input').forEach(function(i){i.addEventListener('input',clearErr)});
+  function post(body){
+    return fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json','x-propx-intent':'1'},body:JSON.stringify(body)})
+      .then(function(r){return r.json().catch(function(){return {}}).then(function(j){j.status=r.status;return j})});
+  }
+  function busy(btn,on,key){btn.disabled=on;btn.textContent=on?t().checking:t()[key]}
+  function enter(){location.replace('/')}
+  function fail(j){
+    if(j.status===429)return say('rate_limited',j.retryAfter||900);
+    if(j.status===503)return say(j.error==='identity-misconfigured'?'closed':'store');
+    say(j.error||'other');
+  }
+
+  /* PERIMETER: the shared site password */
+  $('f').addEventListener('submit',function(e){
+    e.preventDefault();clearErr();var go=$('go');busy(go,true,'enter');
+    fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:$('pw').value})})
       .then(function(r){
-        if(r.ok){location.replace('/'+(/^#invite=[A-Za-z0-9_-]{43}$/.test(location.hash)?location.hash:''));return;}
+        if(r.ok){location.replace('/'+(inv?hash:''));return}
         throw r.status;
       })
-      .catch(function(st){
-        go.disabled=false; go.textContent='כניסה למערכת';
-        if(st===503){
-          err.textContent='המערכת עדיין לא הוגדרה בשרת — יש להגדיר את משתני הסביבה SITE_PASSWORD ו־SESSION_SECRET ב־Vercel (לכל הסביבות) ולבצע Redeploy';
-        }else{
-          err.textContent='סיסמה שגויה — נסו שוב'; pw.value='';
-        }
-        err.classList.add('on'); pw.focus();
-        card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-      });
+      .catch(function(st){busy(go,false,'enter');if(st===503)say('config');else{say('wrong');$('pw').value=''}$('pw').focus()});
   });
-  pw.addEventListener('input',function(){err.classList.remove('on')});
+
+  /* IDENTITY: individual sign-in */
+  $('fs').addEventListener('submit',function(e){
+    e.preventDefault();clearErr();var b=$('sgo');busy(b,true,'signin');
+    post({op:'signin',email:$('em').value,password:$('sp').value}).then(function(j){
+      if(j.ok)return enter();busy(b,false,'signin');fail(j);$('sp').value='';$('sp').focus();
+    }).catch(function(){busy(b,false,'signin');say('network')});
+  });
+  /* IDENTITY: the invitation link */
+  $('fa').addEventListener('submit',function(e){
+    e.preventDefault();clearErr();
+    if($('ap').value!==$('ap2').value)return say('mismatch');
+    var b=$('ago');busy(b,true,'activate');
+    post({op:'activate',token:inv[1],password:$('ap').value,displayName:$('an').value}).then(function(j){
+      if(j.ok){history.replaceState(null,'',location.pathname);return enter()}busy(b,false,'activate');fail(j);
+    }).catch(function(){busy(b,false,'activate');say('network')});
+  });
+  /* IDENTITY: the password-reset link */
+  $('fr').addEventListener('submit',function(e){
+    e.preventDefault();clearErr();
+    if($('rp').value!==$('rp2').value)return say('mismatch');
+    var b=$('rgo');busy(b,true,'setPw');
+    post({op:'reset',token:rst[1],password:$('rp').value}).then(function(j){
+      if(j.ok){history.replaceState(null,'',location.pathname);return enter()}busy(b,false,'setPw');fail(j);
+    }).catch(function(){busy(b,false,'setPw');say('network')});
+  });
+
+  paint();
+  fetch('/api/login?op=mode',{credentials:'same-origin'}).then(function(r){return r.json()}).catch(function(){return {mode:'perimeter'}}).then(function(m){
+    mode=m.mode==='identity'||m.mode==='closed'?m.mode:'perimeter';
+    if(mode==='perimeter'){show('f');return}
+    if(mode==='closed'){show('fs');say('closed');return}
+    if(inv){
+      // the token is single-use and travels only in this request's body; drop it from the address bar now
+      post({op:'invite-info',token:inv[1]}).then(function(j){
+        if(j.ok&&j.invite&&j.invite.needsActivation){invInfo=j.invite;show('fa');if(j.invite.pendingApproval)say('pending_approval')}
+        else{show('fs');say(j.status===429?'rate_limited':'invite_invalid',j.retryAfter)}
+      }).catch(function(){show('fs');say('network')});
+      return;
+    }
+    if(rst){
+      post({op:'reset-info',token:rst[1]}).then(function(j){
+        if(j.ok&&j.reset){rstInfo=j.reset;show('fr')}else{show('fs');say(j.status===429?'rate_limited':'reset_invalid',j.retryAfter)}
+      }).catch(function(){show('fs');say('network')});
+      return;
+    }
+    show('fs');
+  });
 })();
 </script>
 </body>

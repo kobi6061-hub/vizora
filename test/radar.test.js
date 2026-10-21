@@ -121,7 +121,7 @@ t('feed: windows, group / kind / city / district / text filters intersect; count
 t('the file written by scripts/radar-build.js is served when present, and the live repository builds without error', () => {
   const out = fs.mkdtempSync(path.join(os.tmpdir(), 'radar-out-'));
   const { execFileSync } = require('node:child_process');
-  execFileSync(process.execPath, [path.join(ROOT, 'scripts/radar-build.js'), '--data', DIR, '--out', out, '--days', '60', '--quiet']);
+  execFileSync(process.execPath, [path.join(ROOT, 'scripts/radar-build.js'), '--data', DIR, '--out', out, '--days', '60', '--now', new Date(NOW).toISOString(), '--quiet']);
   const meta = JSON.parse(fs.readFileSync(path.join(out, 'meta.json'), 'utf8')); assert.equal(meta.events, P.events.length);
   const live = R.build({ dataDir: path.join(ROOT, 'data'), days: 120 }); assert.ok(live.events.length > 0 && live.events.length < 5000, 'a sane number of events over the live histories: ' + live.events.length);
   assert.ok(fs.existsSync(path.join(ROOT, 'data/radar/events.json')), 'the committed radar file');
@@ -141,7 +141,7 @@ t('pulse: official sales / inventory / land / developers / planning / rental / h
 t('the intel API routes radar and pulse; the Vercel bundle carries data/radar; every sync workflow builds the radar before it commits', () => {
   const api = fs.readFileSync(path.join(ROOT, 'api/intel.js'), 'utf8');
   assert.match(api, /if \(view === 'radar'\) return send\(res, 200, RADAR\.feed\(p\)\);/); assert.match(api, /if \(view === 'pulse'\) return send\(res, 200, RADAR\.pulse\(\)\);/);
-  const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(v.functions['api/intel.js'].includeFiles.includes('data/radar/*.json')); assert.ok(v.functions['api/intel.js'].includeFiles.length <= 256);
+  const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(['events.json', 'meta.json', 'scan.json'].every((f) => require('./helpers/vercel-include').matches(v.functions['api/intel.js'].includeFiles, 'data/radar/' + f))); assert.ok(v.functions['api/intel.js'].includeFiles.length <= 256);
   for (const wf of ['land-sync', 'renewal-sync', 'rental-sync', 'cbs-sales-sync', 'market-sync', 'data-sync']) assert.match(fs.readFileSync(path.join(ROOT, '.github/workflows', wf + '.yml'), 'utf8'), /node scripts\/radar-build\.js && git add data\/radar/, wf);
 });
 

@@ -1,0 +1,1932 @@
+{
+ "schema": 1,
+ "source": {
+  "id": "boi:housing-finance",
+  "publisher": "בנק ישראל",
+  "publisherEn": "Bank of Israel",
+  "dataset": "נתוני הלוואות לדיור — מערכת הבנקאות (SDMX)",
+  "datasetEn": "Housing loans — the banking system (SDMX)",
+  "base": "https://edge.boi.gov.il/FusionEdgeServer/sdmx/v2/",
+  "agency": "BOI.STATISTICS",
+  "page": "https://www.boi.org.il/roles/statistics/",
+  "licence": "Bank of Israel terms of use for statistical data (public, attribution)",
+  "cadence": "monthly — new loans about 4–6 weeks after the month; balances with the monthly banking statistics",
+  "classification": "OFFICIAL",
+  "geography": "Israel — the whole banking system (REP_ENTITY 99034); no locality or district series",
+  "lag": {
+   "currentDays": 75,
+   "lagDays": 120,
+   "basis": "the 21.10.2026 discovery read held August 2026 for every new-loan series and September 2026 for the total amount (run 39605350990) — about 3–7 weeks after the month"
+  },
+  "flows": {
+   "BIR_MRTG_99": {
+    "id": "BIR_MRTG_99",
+    "he": "ריביות והיקפי פעילות — הלוואות לדיור (ביצועים חדשים)",
+    "en": "Interest rates and business volume — housing loans (new loans)"
+   },
+   "BMB_99": {
+    "id": "BMB_99",
+    "he": "יתרות אשראי לדיור",
+    "en": "Balances — housing credit"
+   }
+  }
+ },
+ "checkedAt": "2026-10-21T13:34:59.019Z",
+ "readAt": "2026-10-21T13:34:59.019Z",
+ "freshness": {
+  "latestPeriod": "2026-09",
+  "daysSincePeriodEnd": 20,
+  "state": "CURRENT",
+  "basis": "CURRENT ≤ 75 days after the month · EXPECTED_REPORTING_LAG ≤ 120 · STALE beyond — the 21.10.2026 discovery read held August 2026 for every new-loan series and September 2026 for the total amount (run 39605350990) — about 3–7 weeks after the month"
+ },
+ "measures": {
+  "newLoans": {
+   "id": "newLoans",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדיור חדשות — סכום",
+   "en": "New housing loans — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_897",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-09",
+    "value": 8668214640,
+    "previous": {
+     "period": "2026-08",
+     "value": 10899046610
+    },
+    "yearEarlier": {
+     "period": "2025-09",
+     "value": 8856228190
+    },
+    "changeMonth": -20.5,
+    "changeYear": -2.1,
+    "changeUnit": "%",
+    "periods": 129,
+    "first": "2016-01"
+   }
+  },
+  "newLoansSA": {
+   "id": "newLoansSA",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדיור חדשות — סכום, מנוכה עונתיות",
+   "en": "New housing loans — amount, seasonally adjusted",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B_SA"
+   },
+   "series": "BNK_99034_LM_BIR_MRTG_897_SA",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-09",
+    "value": 10344529967.02,
+    "previous": {
+     "period": "2026-08",
+     "value": 10239005998.53
+    },
+    "yearEarlier": {
+     "period": "2025-09",
+     "value": 8882119431.27
+    },
+    "changeMonth": 1,
+    "changeYear": 16.5,
+    "changeUnit": "%",
+    "periods": 129,
+    "first": "2016-01"
+   }
+  },
+  "newLoansCount": {
+   "id": "newLoansCount",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדיור חדשות — מספר",
+   "en": "New housing loans — number",
+   "kind": "count",
+   "unit": "loans",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "N"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_63",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 10272,
+    "previous": {
+     "period": "2026-07",
+     "value": 10352
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 8421
+    },
+    "changeMonth": -0.8,
+    "changeYear": 22,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "pti": {
+   "id": "pti",
+   "flow": "BIR_MRTG_99",
+   "he": "שיעור החזר מהכנסה — ממוצע בהלוואות החדשות",
+   "en": "Payment-to-income — average of new loans",
+   "kind": "ratio",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "PTI"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_155",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 29.23,
+    "previous": {
+     "period": "2026-07",
+     "value": 29.19
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 29.61
+    },
+    "changeMonth": 0.04,
+    "changeYear": -0.38,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "rateFixedUnindexed": {
+   "id": "rateFixedUnindexed",
+   "flow": "BIR_MRTG_99",
+   "he": "ריבית — קבועה לא צמודה",
+   "en": "Interest — fixed, unindexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "NI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "R"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_467",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 4.62,
+    "previous": {
+     "period": "2026-07",
+     "value": 4.63
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 4.9
+    },
+    "changeMonth": -0.01,
+    "changeYear": -0.28,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "rateFixedCpi": {
+   "id": "rateFixedCpi",
+   "flow": "BIR_MRTG_99",
+   "he": "ריבית — קבועה צמודה למדד",
+   "en": "Interest — fixed, CPI-indexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "R"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_1492",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3.29,
+    "previous": {
+     "period": "2026-07",
+     "value": 3.22
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 3.4
+    },
+    "changeMonth": 0.07,
+    "changeYear": -0.11,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "rateCpi": {
+   "id": "rateCpi",
+   "flow": "BIR_MRTG_99",
+   "he": "ריבית — צמודה למדד (כל הריביות)",
+   "en": "Interest — CPI-indexed (all rate types)",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "R"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_1485",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3.26,
+    "previous": {
+     "period": "2026-07",
+     "value": 3.2
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 3.48
+    },
+    "changeMonth": 0.06,
+    "changeYear": -0.22,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "variableUnindexedAnchor": {
+   "id": "variableUnindexedAnchor",
+   "flow": "BIR_MRTG_99",
+   "he": "ריבית עוגן — משתנה לא צמודה",
+   "en": "Anchor rate — variable, unindexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "NI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "RB"
+   },
+   "series": null,
+   "state": "MISSING",
+   "readState": "NOT_PUBLISHED",
+   "problem": "no series matches the codes",
+   "latest": null,
+   "missing": "series-not-published"
+  },
+  "variableUnindexedMargin": {
+   "id": "variableUnindexedMargin",
+   "flow": "BIR_MRTG_99",
+   "he": "מרווח מעל העוגן — משתנה לא צמודה",
+   "en": "Margin over the anchor — variable, unindexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "NI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "RM"
+   },
+   "series": null,
+   "state": "MISSING",
+   "readState": "NOT_PUBLISHED",
+   "problem": "no series matches the codes",
+   "latest": null,
+   "missing": "series-not-published"
+  },
+  "variableCpiAnchor": {
+   "id": "variableCpiAnchor",
+   "flow": "BIR_MRTG_99",
+   "he": "ריבית עוגן — משתנה צמודה למדד",
+   "en": "Anchor rate — variable, CPI-indexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "RB"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_1489",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 1.64,
+    "previous": {
+     "period": "2026-07",
+     "value": 1.68
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 2.16
+    },
+    "changeMonth": -0.04,
+    "changeYear": -0.52,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "variableCpiMargin": {
+   "id": "variableCpiMargin",
+   "flow": "BIR_MRTG_99",
+   "he": "מרווח מעל העוגן — משתנה צמודה למדד",
+   "en": "Margin over the anchor — variable, CPI-indexed",
+   "kind": "rate",
+   "unit": "% a year",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "RM"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_1488",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 1.55,
+    "previous": {
+     "period": "2026-07",
+     "value": 1.49
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 1.45
+    },
+    "changeMonth": 0.06,
+    "changeYear": 0.1,
+    "changeUnit": "percentage points",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "newLoansFixedUnindexed": {
+   "id": "newLoansFixedUnindexed",
+   "flow": "BIR_MRTG_99",
+   "he": "סכום — קבועה לא צמודה (למעט קבוצות רכישה)",
+   "en": "Amount — fixed, unindexed (excl. purchase groups)",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2CX2",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "NI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_71",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3879319030,
+    "previous": {
+     "period": "2026-07",
+     "value": 4083110000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 3153895000
+    },
+    "changeMonth": -5,
+    "changeYear": 23,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "newLoansVariableUnindexed": {
+   "id": "newLoansVariableUnindexed",
+   "flow": "BIR_MRTG_99",
+   "he": "סכום — משתנה לא צמודה (למעט קבוצות רכישה)",
+   "en": "Amount — variable, unindexed (excl. purchase groups)",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2CX2",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "NI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_70",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 5888888660,
+    "previous": {
+     "period": "2026-07",
+     "value": 6267635000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 4537805000
+    },
+    "changeMonth": -6,
+    "changeYear": 29.8,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "newLoansFixedCpi": {
+   "id": "newLoansFixedCpi",
+   "flow": "BIR_MRTG_99",
+   "he": "סכום — קבועה צמודה (למעט קבוצות רכישה)",
+   "en": "Amount — fixed, CPI-indexed (excl. purchase groups)",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2CX2",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_69",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 715454360,
+    "previous": {
+     "period": "2026-07",
+     "value": 797173000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 908484000
+    },
+    "changeMonth": -10.3,
+    "changeYear": -21.2,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "newLoansVariableCpi": {
+   "id": "newLoansVariableCpi",
+   "flow": "BIR_MRTG_99",
+   "he": "סכום — משתנה צמודה (למעט קבוצות רכישה)",
+   "en": "Amount — variable, CPI-indexed (excl. purchase groups)",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2CX2",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "CPI",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_68",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 345581930,
+    "previous": {
+     "period": "2026-07",
+     "value": 359499000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 484341000
+    },
+    "changeMonth": -3.9,
+    "changeYear": -28.6,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "investmentLoans": {
+   "id": "investmentLoans",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדירה להשקעה — סכום",
+   "en": "Loans for an investment dwelling — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C5",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_776",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 888769150,
+    "previous": {
+     "period": "2026-07",
+     "value": 959184160
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 855287840
+    },
+    "changeMonth": -7.3,
+    "changeYear": 3.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "investmentLoansCount": {
+   "id": "investmentLoansCount",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדירה להשקעה — מספר",
+   "en": "Loans for an investment dwelling — number",
+   "kind": "count",
+   "unit": "loans",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C5",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "N"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_62",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 694,
+    "previous": {
+     "period": "2026-07",
+     "value": 694
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 709
+    },
+    "changeMonth": 0,
+    "changeYear": -2.1,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "reducedPriceLoans": {
+   "id": "reducedPriceLoans",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדיור במחיר מופחת — סכום",
+   "en": "Loans for reduced-price housing — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C1",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_14",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 471666000,
+    "previous": {
+     "period": "2026-07",
+     "value": 413613000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 321224270
+    },
+    "changeMonth": 14,
+    "changeYear": 46.8,
+    "changeUnit": "%",
+    "periods": 90,
+    "first": "2019-03"
+   }
+  },
+  "reducedPriceLoansCount": {
+   "id": "reducedPriceLoansCount",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות לדיור במחיר מופחת — מספר",
+   "en": "Loans for reduced-price housing — number",
+   "kind": "count",
+   "unit": "loans",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C1",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "N"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_13",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 757,
+    "previous": {
+     "period": "2026-07",
+     "value": 693
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 344
+    },
+    "changeMonth": 9.2,
+    "changeYear": 120.1,
+    "changeUnit": "%",
+    "periods": 90,
+    "first": "2019-03"
+   }
+  },
+  "refinancedLoans": {
+   "id": "refinancedLoans",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות שמוחזרו (מחזור) — סכום",
+   "en": "Refinanced loans — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "RC",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_32",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 4159394000,
+    "previous": {
+     "period": "2026-07",
+     "value": 4507190000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 3043524000
+    },
+    "changeMonth": -7.7,
+    "changeYear": 36.7,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "refinancedLoansCount": {
+   "id": "refinancedLoansCount",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות שמוחזרו (מחזור) — מספר",
+   "en": "Refinanced loans — number",
+   "kind": "count",
+   "unit": "loans",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "RC",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "N"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_31",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 6457,
+    "previous": {
+     "period": "2026-07",
+     "value": 6535
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 5085
+    },
+    "changeMonth": -1.2,
+    "changeYear": 27,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL1": {
+   "id": "ltvL1",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון עד 30% — סכום",
+   "en": "New loans at a loan-to-value of up to 30% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L1",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_887",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 914003150,
+    "previous": {
+     "period": "2026-07",
+     "value": 843150190
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 789089090
+    },
+    "changeMonth": 8.4,
+    "changeYear": 15.8,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL2": {
+   "id": "ltvL2",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון 30%–45% — סכום",
+   "en": "New loans at a loan-to-value of 30%–45% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L2",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_878",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 1604308530,
+    "previous": {
+     "period": "2026-07",
+     "value": 1708543360
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 1444858600
+    },
+    "changeMonth": -6.1,
+    "changeYear": 11,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL3": {
+   "id": "ltvL3",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון 45%–60% — סכום",
+   "en": "New loans at a loan-to-value of 45%–60% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L3",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_869",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3026516570,
+    "previous": {
+     "period": "2026-07",
+     "value": 3215856930
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 2540056120
+    },
+    "changeMonth": -5.9,
+    "changeYear": 19.2,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL4": {
+   "id": "ltvL4",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון 60%–75% — סכום",
+   "en": "New loans at a loan-to-value of 60%–75% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L4",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_860",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 5281293120,
+    "previous": {
+     "period": "2026-07",
+     "value": 5696055960
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 4268339360
+    },
+    "changeMonth": -7.3,
+    "changeYear": 23.7,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL5": {
+   "id": "ltvL5",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון 75%–90% — סכום",
+   "en": "New loans at a loan-to-value of 75%–90% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L5",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_851",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3273660,
+    "previous": {
+     "period": "2026-07",
+     "value": 4876490
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 5314940
+    },
+    "changeMonth": -32.9,
+    "changeYear": -38.4,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL6": {
+   "id": "ltvL6",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון מעל 90% — סכום",
+   "en": "New loans at a loan-to-value of over 90% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L6",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_842",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 624580,
+    "previous": {
+     "period": "2026-07",
+     "value": 2757000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 127000
+    },
+    "changeMonth": -77.3,
+    "changeYear": 391.8,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ltvL7": {
+   "id": "ltvL7",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור מימון ללא בטוחה — סכום",
+   "en": "New loans at a loan-to-value of computed without collateral — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L7",
+    "PTI": "P01",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_833",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 69027000,
+    "previous": {
+     "period": "2026-07",
+     "value": 91736650
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 70211300
+    },
+    "changeMonth": -24.8,
+    "changeYear": -1.7,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP10": {
+   "id": "ptiP10",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה עד 10% — סכום",
+   "en": "New loans at a payment-to-income of up to 10% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P10",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_161",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 248549000,
+    "previous": {
+     "period": "2026-07",
+     "value": 266823000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 212562000
+    },
+    "changeMonth": -6.8,
+    "changeYear": 16.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP11": {
+   "id": "ptiP11",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 10%–20% — סכום",
+   "en": "New loans at a payment-to-income of 10%–20% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P11",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_160",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 1187388000,
+    "previous": {
+     "period": "2026-07",
+     "value": 1296069000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 916538000
+    },
+    "changeMonth": -8.4,
+    "changeYear": 29.6,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP03": {
+   "id": "ptiP03",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 20%–30% — סכום",
+   "en": "New loans at a payment-to-income of 20%–30% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P03",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_815",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 3018904650,
+    "previous": {
+     "period": "2026-07",
+     "value": 3069727980
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 2342854260
+    },
+    "changeMonth": -1.7,
+    "changeYear": 28.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP04": {
+   "id": "ptiP04",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 30%–40% — סכום",
+   "en": "New loans at a payment-to-income of 30%–40% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P04",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_806",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 4993155370,
+    "previous": {
+     "period": "2026-07",
+     "value": 5297812940
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 4327910820
+    },
+    "changeMonth": -5.8,
+    "changeYear": 15.4,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP12": {
+   "id": "ptiP12",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 40%–50% — סכום",
+   "en": "New loans at a payment-to-income of 40%–50% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P12",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_159",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 37310000,
+    "previous": {
+     "period": "2026-07",
+     "value": 22686000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 38018000
+    },
+    "changeMonth": 64.5,
+    "changeYear": -1.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP13": {
+   "id": "ptiP13",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 50%–60% — סכום",
+   "en": "New loans at a payment-to-income of 50%–60% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P13",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_158",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 455000,
+    "previous": {
+     "period": "2026-07",
+     "value": 0
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 48000
+    },
+    "changeMonth": null,
+    "changeYear": 847.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP14": {
+   "id": "ptiP14",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה 60%–80% — סכום",
+   "en": "New loans at a payment-to-income of 60%–80% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P14",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_157",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 250000,
+    "previous": {
+     "period": "2026-07",
+     "value": 0
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 0
+    },
+    "changeMonth": null,
+    "changeYear": null,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "ptiP15": {
+   "id": "ptiP15",
+   "flow": "BIR_MRTG_99",
+   "he": "הלוואות חדשות בשיעור החזר מהכנסה מעל 80% — סכום",
+   "en": "New loans at a payment-to-income of over 80% — amount",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BIR_COVERAGE": "N",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "LTV": "L0",
+    "PTI": "P15",
+    "PROPERTY_VALUE": "A",
+    "INT_CHN_PER": "A",
+    "DATA_TYPE": "B"
+   },
+   "series": "BNK_99034_LR_BIR_MRTG_156",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 0,
+    "previous": {
+     "period": "2026-07",
+     "value": 0
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 0
+    },
+    "changeMonth": null,
+    "changeYear": null,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "balance": {
+   "id": "balance",
+   "flow": "BMB_99",
+   "he": "יתרת האשראי לדיור — משקי בית",
+   "en": "Outstanding housing credit — households",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_7",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 673286856000,
+    "previous": {
+     "period": "2026-07",
+     "value": 667720984000
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 623800481000
+    },
+    "changeMonth": 0.8,
+    "changeYear": 7.9,
+    "changeUnit": "%",
+    "periods": 128,
+    "first": "2016-01"
+   }
+  },
+  "balanceCount": {
+   "id": "balanceCount",
+   "flow": "BMB_99",
+   "he": "מספר ההלוואות לדיור ביתרה",
+   "en": "Housing loans outstanding — number",
+   "kind": "count",
+   "unit": "loans",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "N"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_8",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 1156467,
+    "previous": {
+     "period": "2026-07",
+     "value": 1150781
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 1100638
+    },
+    "changeMonth": 0.5,
+    "changeYear": 5.1,
+    "changeUnit": "%",
+    "periods": 124,
+    "first": "2016-01"
+   }
+  },
+  "balanceArrears90": {
+   "id": "balanceArrears90",
+   "flow": "BMB_99",
+   "he": "יתרה בפיגור של 90 יום ומעלה",
+   "en": "Outstanding in arrears of 90 days or more",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "A",
+    "INDEXATION_TYPE": "_T",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "P6",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_74",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 4102402300,
+    "previous": {
+     "period": "2026-07",
+     "value": 4239448600
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 4034772300
+    },
+    "changeMonth": -3.2,
+    "changeYear": 1.7,
+    "changeUnit": "%",
+    "periods": 126,
+    "first": "2016-01"
+   }
+  },
+  "balanceFixedUnindexed": {
+   "id": "balanceFixedUnindexed",
+   "flow": "BMB_99",
+   "he": "יתרה — קבועה לא צמודה",
+   "en": "Outstanding — fixed, unindexed",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "NI",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_1",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 202719748310,
+    "previous": {
+     "period": "2026-07",
+     "value": 200660805300
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 180641437000
+    },
+    "changeMonth": 1,
+    "changeYear": 12.2,
+    "changeUnit": "%",
+    "periods": 124,
+    "first": "2016-01"
+   }
+  },
+  "balanceVariableUnindexed": {
+   "id": "balanceVariableUnindexed",
+   "flow": "BMB_99",
+   "he": "יתרה — משתנה לא צמודה",
+   "en": "Outstanding — variable, unindexed",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "NI",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_2",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 302371131070,
+    "previous": {
+     "period": "2026-07",
+     "value": 297510386330
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 258392934000
+    },
+    "changeMonth": 1.6,
+    "changeYear": 17,
+    "changeUnit": "%",
+    "periods": 124,
+    "first": "2016-01"
+   }
+  },
+  "balanceFixedCpi": {
+   "id": "balanceFixedCpi",
+   "flow": "BMB_99",
+   "he": "יתרה — קבועה צמודה",
+   "en": "Outstanding — fixed, CPI-indexed",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "F",
+    "INDEXATION_TYPE": "CPI",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_3",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 69982027630,
+    "previous": {
+     "period": "2026-07",
+     "value": 70302346670
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 73171175000
+    },
+    "changeMonth": -0.5,
+    "changeYear": -4.4,
+    "changeUnit": "%",
+    "periods": 124,
+    "first": "2016-01"
+   }
+  },
+  "balanceVariableCpi": {
+   "id": "balanceVariableCpi",
+   "flow": "BMB_99",
+   "he": "יתרה — משתנה צמודה",
+   "en": "Outstanding — variable, CPI-indexed",
+   "kind": "amount",
+   "unit": "ILS",
+   "codes": {
+    "REP_ENTITY": "99034",
+    "BS_ITEM": "A2C",
+    "IR_FV_TYPE": "V",
+    "INDEXATION_TYPE": "CPI",
+    "COUNTERPART_SECTOR": "S14",
+    "COUNTERPART_AREA": "W0",
+    "CURR_BAL_SETT": "L0",
+    "EXP_TYPE": "_T",
+    "PTI": "P01",
+    "DATA_TYPE": "O"
+   },
+   "series": "BNK_99034_LR_MRTG_OL_4",
+   "state": "OK",
+   "readState": "OK",
+   "problem": null,
+   "latest": {
+    "period": "2026-08",
+    "value": 95751250750,
+    "previous": {
+     "period": "2026-07",
+     "value": 96712922660
+    },
+    "yearEarlier": {
+     "period": "2025-08",
+     "value": 108400790000
+    },
+    "changeMonth": -1,
+    "changeYear": -11.7,
+    "changeUnit": "%",
+    "periods": 124,
+    "first": "2016-01"
+   }
+  }
+ },
+ "derived": {
+  "ltvShares": {
+   "period": "2026-08",
+   "class": "DERIVED",
+   "denominator": "the sum of the published bands in that month",
+   "total": 10899046610,
+   "bands": [
+    {
+     "measure": "ltvL1",
+     "he": "הלוואות חדשות בשיעור מימון עד 30% — סכום",
+     "en": "New loans at a loan-to-value of up to 30% — amount",
+     "amount": 914003150,
+     "sharePct": 8.4
+    },
+    {
+     "measure": "ltvL2",
+     "he": "הלוואות חדשות בשיעור מימון 30%–45% — סכום",
+     "en": "New loans at a loan-to-value of 30%–45% — amount",
+     "amount": 1604308530,
+     "sharePct": 14.7
+    },
+    {
+     "measure": "ltvL3",
+     "he": "הלוואות חדשות בשיעור מימון 45%–60% — סכום",
+     "en": "New loans at a loan-to-value of 45%–60% — amount",
+     "amount": 3026516570,
+     "sharePct": 27.8
+    },
+    {
+     "measure": "ltvL4",
+     "he": "הלוואות חדשות בשיעור מימון 60%–75% — סכום",
+     "en": "New loans at a loan-to-value of 60%–75% — amount",
+     "amount": 5281293120,
+     "sharePct": 48.5
+    },
+    {
+     "measure": "ltvL5",
+     "he": "הלוואות חדשות בשיעור מימון 75%–90% — סכום",
+     "en": "New loans at a loan-to-value of 75%–90% — amount",
+     "amount": 3273660,
+     "sharePct": 0
+    },
+    {
+     "measure": "ltvL6",
+     "he": "הלוואות חדשות בשיעור מימון מעל 90% — סכום",
+     "en": "New loans at a loan-to-value of over 90% — amount",
+     "amount": 624580,
+     "sharePct": 0
+    },
+    {
+     "measure": "ltvL7",
+     "he": "הלוואות חדשות בשיעור מימון ללא בטוחה — סכום",
+     "en": "New loans at a loan-to-value of computed without collateral — amount",
+     "amount": 69027000,
+     "sharePct": 0.6
+    }
+   ]
+  },
+  "ptiShares": {
+   "period": "2026-08",
+   "class": "DERIVED",
+   "denominator": "the sum of the published bands in that month",
+   "total": 9486012020,
+   "bands": [
+    {
+     "measure": "ptiP10",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה עד 10% — סכום",
+     "en": "New loans at a payment-to-income of up to 10% — amount",
+     "amount": 248549000,
+     "sharePct": 2.6
+    },
+    {
+     "measure": "ptiP11",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 10%–20% — סכום",
+     "en": "New loans at a payment-to-income of 10%–20% — amount",
+     "amount": 1187388000,
+     "sharePct": 12.5
+    },
+    {
+     "measure": "ptiP03",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 20%–30% — סכום",
+     "en": "New loans at a payment-to-income of 20%–30% — amount",
+     "amount": 3018904650,
+     "sharePct": 31.8
+    },
+    {
+     "measure": "ptiP04",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 30%–40% — סכום",
+     "en": "New loans at a payment-to-income of 30%–40% — amount",
+     "amount": 4993155370,
+     "sharePct": 52.6
+    },
+    {
+     "measure": "ptiP12",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 40%–50% — סכום",
+     "en": "New loans at a payment-to-income of 40%–50% — amount",
+     "amount": 37310000,
+     "sharePct": 0.4
+    },
+    {
+     "measure": "ptiP13",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 50%–60% — סכום",
+     "en": "New loans at a payment-to-income of 50%–60% — amount",
+     "amount": 455000,
+     "sharePct": 0
+    },
+    {
+     "measure": "ptiP14",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה 60%–80% — סכום",
+     "en": "New loans at a payment-to-income of 60%–80% — amount",
+     "amount": 250000,
+     "sharePct": 0
+    },
+    {
+     "measure": "ptiP15",
+     "he": "הלוואות חדשות בשיעור החזר מהכנסה מעל 80% — סכום",
+     "en": "New loans at a payment-to-income of over 80% — amount",
+     "amount": 0,
+     "sharePct": 0
+    }
+   ]
+  },
+  "investmentShare": {
+   "period": "2026-08",
+   "valuePct": 8.15,
+   "class": "DERIVED",
+   "formula": "investment-dwelling loans ÷ all new housing loans (amount, same month)",
+   "he": "הלוואות לדירה להשקעה ÷ כלל ההלוואות החדשות (סכום, אותו חודש)"
+  },
+  "reducedPriceShare": {
+   "period": "2026-08",
+   "valuePct": 4.33,
+   "class": "DERIVED",
+   "formula": "reduced-price housing loans ÷ all new housing loans (amount, same month)",
+   "he": "הלוואות לדיור במחיר מופחת ÷ כלל ההלוואות החדשות"
+  },
+  "arrearsShare": {
+   "period": "2026-08",
+   "valuePct": 0.61,
+   "class": "DERIVED",
+   "formula": "outstanding in arrears ≥ 90 days ÷ outstanding housing credit (same month)",
+   "he": "יתרה בפיגור 90+ ÷ יתרת האשראי לדיור"
+  },
+  "averageNewLoan": {
+   "period": "2026-08",
+   "value": 1061044,
+   "class": "DERIVED",
+   "formula": "new housing-loan amount ÷ number of new housing loans (same month)"
+  }
+ },
+ "records": {
+  "observations": 5152,
+  "revisions": 0
+ },
+ "note": "National banking-system figures (Bank of Israel). A rate is the average on loans issued in the month, by track — never an offer to a borrower; a variable track is published as its anchor and its margin, never summed by PROPX; shares are DERIVED inside one month. Never a locality or district figure."
+}

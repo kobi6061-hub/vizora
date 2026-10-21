@@ -1,0 +1,57 @@
+# PROPX · STREET GEOGRAPHY — the parcel / building points of every official street, from the GovMap-layer file PROPX already reads
+# (scripts/street-geo-build.py; the file's URL from data/txevents/national/meta.json — one public GET, the same file the national
+# missed-deal detector downloads). Validated against the layer API's own points for the same deals before anything is written.
+# Writes data/geo/street-geo/ (bot-written). Runs on a push of the build to the preview lane (a workflow that exists only on a
+# non-default branch cannot be dispatched) or by hand once the file is on the default branch.
+
+name: Street geography — build (GovMap-layer points)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['scripts/street-geo-build.py', '.github/workflows/street-geo-build.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: street-geo-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download the GovMap-layer file and build the street points
+        run: |
+          set -euo pipefail
+          URL=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("data/txevents/national/meta.json","utf8")).file.url)')
+          F="$RUNNER_TEMP/govmap-layer.gpkg"
+          node scripts/txevents-national.js --download --url "$URL" --out "$F" > "$RUNNER_TEMP/dl.json"
+          cat "$RUNNER_TEMP/dl.json"
+          rm -rf data/geo/street-geo
+          python3 -I scripts/street-geo-build.py "$F" data/geo/street-geo data/streets/recent/raw data/geo/streets/directory.json
+          node -e 'const m=require("./data/geo/street-geo/meta.json");const d=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));m.file={url:process.argv[2],sha256:d.sha256,bytes:d.bytes};m.builtAt=new Date().toISOString();require("fs").writeFileSync("data/geo/street-geo/meta.json",JSON.stringify(m,null,1))' "$RUNNER_TEMP/dl.json" "$URL"
+          rm -f "$F"
+          du -sh data/geo/street-geo
+          ls data/geo/street-geo/loc | wc -l
+      - name: Commit
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/geo/street-geo
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -m "Street geography: parcel / building points per official street (GovMap-layer file, validated)"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 15))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1

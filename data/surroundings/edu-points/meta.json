@@ -1,0 +1,39 @@
+{
+ "schema": 1,
+ "id": "edu-points",
+ "trustId": "datagov:moe:institution-coordinates",
+ "title": "קואורדינטות מוסדות החינוך",
+ "titleEn": "Education institutions — entrance coordinates",
+ "publisher": "משרד החינוך",
+ "publisherEn": "Ministry of Education",
+ "resourceId": "5c5d6bb0-755d-470d-84b6-d7dd3135ba9c",
+ "page": "https://data.gov.il/dataset/coordinates",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=5c5d6bb0-755d-470d-84b6-d7dd3135ba9c",
+ "licence": "Other (Open)",
+ "cadence": "not updated since 04.2022 (the resource date)",
+ "period": "published 2022-04",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2022-04-06T07:22:14.021133Z",
+ "checkedAt": "2026-10-21T15:04:10.515Z",
+ "readAt": "2026-10-21T14:34:44.905Z",
+ "contentHash": "0af4cdb9b6c8514febdd8914409701210107de619e34e560c5f691f32c98e5ca",
+ "sourceRows": 28312,
+ "records": 28312,
+ "rejected": 0,
+ "byLevel": {
+  "point": 28312
+ },
+ "fields": [
+  "_id",
+  "SEMEL_MOSAD",
+  "SHEM_MOSAD",
+  "ITM_X",
+  "ITM_Y",
+  "UTM_X",
+  "UTM_Y",
+  "RAMAT_DIYUK_MIKUM"
+ ],
+ "history": [
+  "2026-10-21-0af4cdb9.json.gz"
+ ]
+}
