@@ -374,7 +374,7 @@
     "auditedAt": "2026-10-17"
    },
    "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "re-confirmed 21.10.2026: layer 0 answers with 203 declared complexes (iplan.json.gz) — not read yet"
+   "stateWhy": "re-confirmed 21.10.2026: layer 0 answers with 203 declared complexes (iplan.json.gz) — the lane is written, awaiting its first runner sync"
   },
   {
    "id": "ledger:cbs:average-rent-shekel",

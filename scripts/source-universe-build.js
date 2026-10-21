@@ -78,6 +78,13 @@ const READERS = Object.freeze({
   'lib/surroundings/index.js': 'lib/streets/report.js (surroundings) · index.html street report "Street surroundings"',
 });
 
+/* a lane of this mission that is not a CKAN table: its stored, complete, successful read (else null) */
+function storedProof(dir, metaFile, runsFile, okFn) {
+  try { const m = JSON.parse(fs.readFileSync(path.join(ROOT, dir, metaFile), 'utf8')); const runs = fs.readFileSync(path.join(ROOT, dir, runsFile), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+    const ok = runs.filter((r) => /success|unchanged/i.test(String(r.status || r.state || ''))); return okFn(m) && ok.length ? { store: dir + '/', meta: metaFile, runs: runs.length, okRuns: ok.length, m } : null; } catch { return null; }
+}
+const VATMAL_PROOF = storedProof('data/planning/vatmal', 'meta.json', 'runs.jsonl', (m) => m.complete && m.stored > 0);
+
 /* ── evidence files ── */
 const EV = Object.fromEntries(['ckan', 'gov', 'other', 'mot', 'mot2', 'cbs', 'cbs2', 'boi', 'boi2', 'iplan', 'muni', 'verify'].map((k) => [k, gz(k + '.json.gz')]));
 const VERIFY = new Map(EV.verify.datagov.map((p) => [p.pkg, p]));
@@ -185,7 +192,8 @@ const OVERRIDE = Object.freeze({
     const ok = L && L.market && L.market.il && L.market.il.second_hand_sold && runs.some((r) => r.state === 'SUCCESS' && r.requests >= 68);
     return ok ? ['CONNECTED_VERIFIED', `integrated 21.10.2026 into lib/cbs-sales (44,10,6 total · 44,10,7 second-hand · 44,10,2,2 subsidized by district; every 7047–7053 code resolved by the NAME the API returns): a ${runs.filter((r) => r.requests >= 68).length}-run record, ${Object.keys(L.market).length} geographies stored in data/cbs-sales/latest.json → market, read by lib/dossier/query.js (sections.market) and the page's dossier tiles`]
       : ['ACCESSIBLE_NOT_YET_INTEGRATED', 'the same CBS time-series API PROPX reads for new-home sales; not synced yet']; })(),
-  'iplan:vatmal-mitchamim-muchrazim': ['ACCESSIBLE_NOT_YET_INTEGRATED', 're-confirmed 21.10.2026: layer 0 answers with 203 declared complexes (iplan.json.gz) — not read yet'],
+  'iplan:vatmal-mitchamim-muchrazim': VATMAL_PROOF ? ['CONNECTED_VERIFIED', `integrated 21.10.2026 as lib/planning/vatmal (vatmal-sync.yml): ${VATMAL_PROOF.m.stored} / ${VATMAL_PROOF.m.layerCount} complexes stored complete at data/planning/vatmal/, read by lib/streets/report.js (planning.vatmal)`]
+    : ['ACCESSIBLE_NOT_YET_INTEGRATED', 're-confirmed 21.10.2026: layer 0 answers with 203 declared complexes (iplan.json.gz) — the lane is written, awaiting its first runner sync'],
   'tlv:gis:iview2-permits-sites-plans': ['EXISTING_VERIFIED', 'integrated as tlv:iview2:permits-772 + tlv:iview2:sites-499 (lib/dd/sync.js)'],
   'datagov:labor:closed-construction-sites': ['EXISTING_VERIFIED', 'read by lib/dd/sync.js (sitesClosed, resource b9257d8f…)'],
   'tlv:iview2:sites-499': ['EXISTING_VERIFIED', 'read by lib/dd/sync.js (tlvSites, layer 499)'],
@@ -399,6 +407,8 @@ for (const c of CUR) {
   if (c.id === 'muni:jerusalem:cadastre-buildings') Object.assign(c, { state: 'LICENSE_REVIEW_REQUIRED', stateWhy: 'verified 21.10.2026: plots (block / parcel / registered area / shape, ≥ 1,000 rows) and 655 blocks answer, modified 2022 — ODbL share-alike; one city, older than the national cadastre', licence: 'Open Data Commons ODbL', rows: vmRows(VM('jerusalem', 'plots')) });
   if (c.id === 'muni:haifa:planning-preservation') Object.assign(c, { state: 'LICENSE_REVIEW_REQUIRED', stateWhy: 'verified 21.10.2026: land use, conservation buildings / areas / surveys, planning boundary, 76 neighbourhoods (with the CBS locality code), 442 building sites answer (files on storage.googleapis.com + tables) — ODbL share-alike: licence decision needed; one city', licence: 'Open Data Commons ODbL', rows: vmRows(VM('haifa', 'buildingsites')), evidence: { files: c.evidence.files.concat([evPath('verify') + ' → haifa[…]']), note: c.evidence.note } });
   if (c.id === 'iplan:plan-entities') Object.assign(c, { state: 'ACCESSIBLE_NOT_YET_INTEGRATED', stateWhy: 'verified 21.10.2026: the entities are a plan\'s drawn features — each keyed by plan number (pl_number), plan id (mp_id) and a Mavat entity code / name; counts answer (points 1,086,353 · polygons 202,809) — not read', fields: (VA('iplan entities layer 3 (polygons)').p.fields || []).map((f) => f.split(':')[0]), http: [...c.http, httpOf(VA('iplan entities layer 3 (polygons)').p)] });
+  if (c.id === 'iplan:vatmal' && VATMAL_PROOF) Object.assign(c, { state: 'CONNECTED_VERIFIED', stateWhy: `integrated 21.10.2026: read whole by scripts/vatmal-sync.js (${VATMAL_PROOF.okRuns} successful run(s)), ${VATMAL_PROOF.m.stored} / ${VATMAL_PROOF.m.layerCount} complexes stored at data/planning/vatmal/ (content ${String(VATMAL_PROOF.m.contentHash).slice(0, 12)}…), read by lib/streets/report.js (planning.vatmal) and the page's planning section`,
+    integration: { integrated: true, by: 'lib/planning/vatmal.js', thisMission: true, proof: { store: VATMAL_PROOF.store, records: VATMAL_PROOF.m.stored, okRuns: VATMAL_PROOF.okRuns }, readBy: 'lib/streets/report.js (planning.vatmal) · index.html street report planning section' } });
   if (c.id === 'iplan:vatmal') Object.assign(c, { fields: (VA('iplan vatmal layer 0').p.fields || []).map((f) => f.split(':')[0]), http: [...c.http, httpOf(VA('iplan vatmal sample').p)], schema: 'polygons: tamal number · complex name · locality NAME (text, sometimes several) · district · submitter · declared area · units (יח"ד) · declaration date · update dates' });
   if (c.id === 'iplan:land-use') Object.assign(c, { fields: (VA('iplan land use layer 1').p.fields || []).map((f) => f.split(':')[0]), http: [...c.http, httpOf(VA('iplan land use layer 1').p)], schema: 'polygons: Mavat designation code / name · lot id · plan number / id · registered area · update date' });
   if (c.id === 'muni:ashdod:gis') Object.assign(c, { state: 'ACCESSIBLE_NOT_YET_INTEGRATED', stateWhy: 'verified 21.10.2026: the parcels service lists two layers (block boundaries · parcels of registration plans) — one city\'s cadastre; the national parcel files are refused (403)', http: [...c.http, httpOf(VA('Ashdod parcels service').p)] });
