@@ -21,7 +21,8 @@
  *   R2 table head    `<th …>${EXPR}` — and `[…keys].map(k=>`<th>${OBJ[k]}`)`, `ARR.map(c=>`<th>${c}`)` (every array element)
  *   R3 columns       column configs `{k:"…",label:EXPR}` / `{key:"…",…,label:EXPR}` (ptHead tables)
  *   R4 KPI cards     `{k:"…",l:EXPR,…}` objects in renderKPIs (an `xp:` / `xm:` member = INLINE)
- *   R5 helpers       a local helper whose template prints a parameter inside a label container (class "k" / "l" / "lbl", <th>,
+ *   R5 helpers       a local helper whose template prints a parameter inside a label container (class "k" / "l" / "lbl" /
+ *                    "ho-fact" / "dd-k" / "pu-rd-h", the first span of "gx-rat", a recency cell `<div>${l}<b class="num">`, <th>,
  *                    <dt>, <summary>, <h2–h5>) — every call of it in the same function prints that argument as a label
  *   R6 headings      `<h2–h5 …>${EXPR}` · R7 `<summary …>${EXPR}` · R8 `<dt …>${EXPR}` written inline
  * Not in the universe (stated, not hidden): form-input labels (they name the user's own inputs), button texts, notes and
@@ -200,7 +201,7 @@ function extract(page) {
   { const st = S.indexOf('function renderKPIs('), en = S.indexOf('\nfunction ', st + 10);
     for (const m of S.slice(st, en).matchAll(/\{k:"(\w+)",l:([^,]+(?:\([^)]*\))?),/g)) { const objEnd = balanced(S, st + m.index); const body = S.slice(st + m.index, objEnd); add('kpi', m[2], st + m.index, /\b(?:xp|xm):/.test(body), 'kpi:' + m[1]); } }
   /* R5 label helpers */
-  const LABEL_SLOT = (p) => new RegExp('(?:class="(?:k|l|lbl)"[^>]*>|<th[^>]*>|<dt[^>]*>|<summary[^>]*>|<h[2-5][^>]*>)(?:<b>)?\\$\\{' + p + '\\}');
+  const LABEL_SLOT = (p) => new RegExp('(?:class="(?:k|l|lbl|ho-fact|dd-k)"[^>]*>|class="gx-rat"><span>|class="pu-rd-h[^>]*>|^`<div>(?=\\$\\{' + p + '\\}<b class="num">)|<th[^>]*>|<dt[^>]*>|<summary[^>]*>|<h[2-5][^>]*>)(?:<b>)?\\$\\{' + p + '\\}');
   for (const m of S.matchAll(/(?:const |,)(\w+)=\(([\w,=" ]*)\)=>`/g)) {
     const name = m[1], params = m[2].split(',').map((x) => x.split('=')[0].trim()), tplStart = m.index + m[0].length - 1;
     let tplEnd = tplStart + 1; { let q = '`', esc = false; for (let k = tplStart + 1; k < S.length; k++) { const c = S[k]; if (esc) { esc = false; continue; } if (c === '\\') { esc = true; continue; } if (c === '$' && S[k + 1] === '{') { k = balanced(S, k + 1) - 1; continue; } if (c === q) { tplEnd = k + 1; break; } } }
@@ -208,10 +209,11 @@ function extract(page) {
     const slot = params.findIndex((p) => p && LABEL_SLOT(p).test(tpl));
     const navSummary = /<summary>\$\{t\.nav\[id\]/.test(tpl);
     if (slot < 0 && !navSummary) continue;
-    const always = /xpBtn\("\w+"\)|xpBtn\(xp\)/.test(tpl) && /xp="\w+"/.test(m[2]);
+    const always = /xpBtn\("\w+"\)|xpBtn\(xp\)/.test(tpl) && /xp="\w+"/.test(m[2]) || /xpBtn\(\w+==="\w+"\?"\w+":"\w+"\)/.test(tpl);
     const xpParam = params.findIndex((p) => p && new RegExp('xpBtn\\(' + p + '\\)|\\$\\{' + p + '(?:\\|\\|"")?\\}').test(tpl) && /^(?:x|xp|term|xm|tag)$/.test(p));
     const ldxp = /LDXP\[l\]/.test(tpl);
-    const bs = R.blockStart(m.index), be = R.blockEnd(m.index);
+    /* a helper declared inside a function prints labels for that function's calls; a top-level helper for every call on the page */
+    const bs = R.blockStart(m.index), be = bs === m.index ? S.length : R.blockEnd(m.index);
     const callRe = new RegExp('(?<![\\w.])' + name + '\\(', 'g'); callRe.lastIndex = tplEnd;
     const region = S.slice(0, be); let c;
     while ((c = callRe.exec(region))) {
@@ -273,6 +275,7 @@ const CHROME_REASONS = {
   prose: 'a sentence or note that explains itself in place',
   workspace: 'the private workspace (identity / sign-in) — not market data',
   legend: 'an evidence-class chip — clicking it opens its own legend entry',
+  field: 'a field name repeated inside every card of a list (why · what would confirm · what would disprove …) — the list\'s own heading carries the ⓘ',
 };
 const CHROME = [
   /* markup */
@@ -288,22 +291,21 @@ const CHROME = [
    ['i:vcNA', 'legend'],
    ['OT_I18N.distName', 'descriptor'],
   /* transactions — the union table, the recent layer, the counts, the unplaced list */
-   ['I18N.thDate', 'descriptor'], ['I18N.thFloor', 'descriptor'], ['I18N.thRooms', 'descriptor'], ['I18N.thStreet', 'descriptor'],
-   ['RCT.cols.0', 'descriptor'], ['RCT.cols.1', 'descriptor'], ['RCT.cols.2', 'descriptor'], ['RCT.cols.10', 'descriptor'],
-   ['STE.cols.0', 'descriptor'], ['STE.cols.1', 'descriptor'], ['STE.cols.2', 'descriptor'], ['TXC.u.cols.0', 'descriptor'],
+   ['I18N.thFloor', 'descriptor'], ['I18N.thRooms', 'descriptor'], ['I18N.thStreet', 'descriptor'], ['RCT.cols.1', 'descriptor'],
+   ['RCT.cols.2', 'descriptor'], ['RCT.cols.10', 'descriptor'], ['STE.cols.1', 'descriptor'], ['STE.cols.2', 'descriptor'],
    ['TXC.u.cols.2', 'descriptor'], ['TXC.u.cols.3', 'descriptor'],
   /* street — Street Intelligence */
-   ['SIT.cols.0', 'descriptor'], ['SIT.cols.1', 'descriptor'], ['SIT.cols.2', 'descriptor'], ['SIT.cols.9', 'descriptor'],
-   ['SIT.compsCols.1', 'descriptor'], ['SIT.compsCols.7', 'descriptor'], ['SIT.compsCols.8', 'descriptor'], ['SIT.compsCols.11', 'descriptor'],
-   ['SIT.pcols.0', 'descriptor'], ['SIT.permCols.0', 'descriptor'], ['SIT.permCols.1', 'descriptor'], ['SIT.permCols.2', 'descriptor'],
-   ['SIT.permCols.3', 'descriptor'], ['SIT.siteCols.1', 'descriptor'], ['SIT.siteCols.3', 'descriptor'],
+   ['SIT.cols.1', 'descriptor'], ['SIT.cols.2', 'descriptor'], ['SIT.cols.9', 'descriptor'], ['SIT.compsCols.1', 'descriptor'],
+   ['SIT.compsCols.7', 'descriptor'], ['SIT.compsCols.8', 'descriptor'], ['SIT.compsCols.11', 'descriptor'], ['SIT.pcols.0', 'descriptor'],
+   ['SIT.permCols.0', 'descriptor'], ['SIT.permCols.1', 'descriptor'], ['SIT.permCols.2', 'descriptor'], ['SIT.permCols.3', 'descriptor'],
+   ['SIT.siteCols.1', 'descriptor'], ['SIT.siteCols.3', 'descriptor'],
    ['SIT.deep', 'heading'], ['SIT.five', 'heading'], ['SIT.one', 'heading'], ['SIT.knows', 'heading'], ['SIT.notKnows', 'heading'],
    ['SIT.method', 'heading'], ['SIT.plan', 'heading'], ['SRT.evH', 'heading'],
   /* street report */
-   ['SRT.cols.0', 'descriptor'], ['SRT.cols.1', 'descriptor'], ['SRT.cols.4', 'descriptor'], ['SRT.det.id', 'descriptor'],
-   ['SRT.det.notes', 'descriptor'], ['SRT.det.reasons', 'descriptor'], ['SRT.plCols.2', 'descriptor'], ['SRT.plCols.3', 'descriptor'],
-   ['SRT.srcCols.0', 'descriptor'], ['SRT.suCtCols.0', 'descriptor'], ['SRT.suEduCols.0', 'descriptor'], ['SRT.suEduCols.1', 'descriptor'],
-   ['SRT.trCols.0', 'descriptor'], ['SRT.trCols.1', 'descriptor'], ['SRT.vtCols.2', 'descriptor'], ['SRT.vtCols.3', 'descriptor'],
+   ['SRT.cols.1', 'descriptor'], ['SRT.cols.4', 'descriptor'], ['SRT.det.id', 'descriptor'], ['SRT.det.notes', 'descriptor'],
+   ['SRT.det.reasons', 'descriptor'], ['SRT.plCols.2', 'descriptor'], ['SRT.plCols.3', 'descriptor'], ['SRT.srcCols.0', 'descriptor'],
+   ['SRT.suCtCols.0', 'descriptor'], ['SRT.suEduCols.0', 'descriptor'], ['SRT.suEduCols.1', 'descriptor'], ['SRT.trCols.0', 'descriptor'],
+   ['SRT.trCols.1', 'descriptor'], ['SRT.vtCols.2', 'descriptor'], ['SRT.vtCols.3', 'descriptor'],
    ['SRT.nav.map', 'heading'], ['SRT.nav.src', 'heading'],
   /* land — tenders, cities, developers, the drawer, rental */
    ['I18N.ldC.committee', 'descriptor'], ['I18N.ldC.place', 'descriptor'], ['I18N.ldC.tender', 'descriptor'], ['I18N.ldCCity', 'descriptor'],
@@ -327,6 +329,7 @@ const CHROME = [
    ['IN_I18N.di.limits', 'heading'], ['IN_I18N.di.signals', 'heading'], ['IN_I18N.di.title', 'heading'], ['IN_I18N.dIds', 'heading'],
    ['IN_I18N.dMeth', 'heading'], ['IN_I18N.pi.title', 'heading'], ['IN_I18N.rn.tblT', 'heading'],
   /* intel — due diligence */
+   ['DD_I18N.confirms', 'field'], ['DD_I18N.disproves', 'field'], ['DD_I18N.verify', 'field'], ['DD_I18N.why', 'field'],
    ['DD_I18N.dates', 'descriptor'], ['DD_I18N.src', 'descriptor'], ['lit:Charge id|מזהה שעבוד', 'descriptor'],
    ['lit:Contractor no.|מס׳ קבלן', 'descriptor'], ['lit:Date|תאריך', 'descriptor'], ['lit:Event|אירוע', 'descriptor'], ['lit:Kind|סוג', 'descriptor'],
    ['lit:Link|קישור', 'descriptor'], ['lit:Site|אתר', 'descriptor'], ['lit:Use|שימוש', 'descriptor'],
@@ -336,6 +339,9 @@ const CHROME = [
    ['DD_I18N.number', 'descriptor'], ['GX_I18N.c.city', 'descriptor'], ['GX_I18N.c.date', 'descriptor'], ['GX_I18N.c.district', 'descriptor'],
    ['GX_I18N.c.kind', 'descriptor'], ['GX_I18N.c.project', 'descriptor'], ['GX_I18N.c.source', 'descriptor'], ['GX_I18N.c.type', 'descriptor'],
    ['GX_I18N.c.measure', 'descriptor'],
+   ['GX_I18N.brief.confirms', 'field'], ['GX_I18N.brief.disproves', 'field'], ['GX_I18N.brief.verify', 'field'], ['GX_I18N.brief.why', 'field'],
+   ['GX_I18N.brief.not', 'field'], ['GX_I18N.nbe.change', 'field'], ['GX_I18N.nbe.propx', 'field'], ['GX_I18N.nbe.user', 'field'],
+   ['GX_I18N.nbe.why', 'field'],
    ['GX_I18N.dp.rules', 'heading'], ['GX_I18N.dp.truths', 'heading'], ['GX_I18N.fiveMin', 'heading'], ['GX_I18N.oneMin', 'heading'],
    ['GX_I18N.sec.formulas', 'heading'], ['GX_I18N.sec.graph', 'heading'], ['GX_I18N.sec.lineage', 'heading'], ['GX_I18N.sec.meth', 'heading'],
    ['GX_I18N.sec.raw', 'heading'],
@@ -355,6 +361,9 @@ const CHROME = [
    ['I18N.puWhy', 'prose'],
   /* guide */
    ['i:gdTitle', 'heading'],
+  /* top-level helpers — DD key / value rows, DD sections, group KPIs and ratios (every call on the page) */
+   ['DD_I18N.addr', 'descriptor'], ['DD_I18N.incorporated', 'descriptor'],
+   ['DD_I18N.links', 'heading'], ['lit:All signals|כל האותות', 'heading'], ['GX_I18N.sec.signals', 'heading'],
   /* @chrome:end */
 ];
 /* EXCLUDED: meaningful labels intentionally left without an explanation, each with its reason (shown in the report). */
