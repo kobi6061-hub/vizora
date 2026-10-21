@@ -50,9 +50,10 @@ t('acceptance: every live street resolves to its official id and reports every s
   }
 });
 
-t('search: the directive\'s spellings reach the official streets — a synonym (tier 2) and a name plus a given name (discovery, tier 6); exact ranks unchanged', () => {
+t('search: the directive\'s spellings reach the official streets — a title-tolerant reading (tier 2) and a name plus a given name (discovery, tier 6); exact ranks unchanged', () => {
   const m = (q) => GR.searchGeo(q, 12).matches.filter((x) => x.kind === 'street');
-  const a = m('הרב ד"ר משה אויערבך פתח תקווה'); assert.equal(a[0].id, ACCEPT.auerbach); assert.equal(a[0].via, 'synonym');
+  /* the official name and its synonym "הרב משה אויערבך" both hold every typed word but the title "ד"ר" — the official reading leads (21.10.2026) */
+  const a = m('הרב ד"ר משה אויערבך פתח תקווה'); assert.equal(a[0].id, ACCEPT.auerbach); assert.equal(a[0].tier, 2); assert.ok(['official', 'synonym'].includes(a[0].via));
   const u = m('הרב אונטרמן משה פתח תקווה'); assert.equal(u[0].id, ACCEPT.untermann); assert.equal(u[0].tier, 6, 'the added-words rung is discovery, never above another rung');
   const h = m('הרצל פתח תקווה'); assert.equal(h[0].tier, 1);
   const n = m('הרצל 5 פתח תקווה'); assert.equal(n[0].id, h[0].id, 'a house number never picks a street');

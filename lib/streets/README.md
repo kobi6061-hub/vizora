@@ -89,6 +89,18 @@ locality"): top-1 unchanged for all 24,498 queries, no street lost its own top-1
 name holding every word replaced a dropped-word variant ("יעקב הכהן" → "כהן יעקב", "דוד לוי" → "חיים דוד הלוי"). The word
 index costs ≈ 0.3 s once per warm instance; queries stay 1–15 ms.
 
+Partial readings after exact synonyms (21.10.2026, the master data directive's registry-wide audit): an exact official synonym
+in the selected locality ("נוה אפרים" in יהוד-מונוסון, the address area נווה מונוסון) was pushed out of the visible list by twelve
+official names that merely CONTAIN its words. A partial reading — ALL WORDS, a typed title the name omits ("הרב ד"ר משה אויערבך" →
+"הרב אויערבך משה", only when ≥ 2 other words match), a variant key that drops a typed word — now ranks after the exact official
+names AND the exact synonyms of its scope (tier 2 / 5 + its step; the same reading of a synonym right after that of an official
+name). Measured against the ORIGINAL ranking on the same 8,166 streets × 3 forms: top-1 unchanged for all 24,498 queries, no
+street lost its own top-1 / top-3 place. PLACE NAMES: a synonym the directory files under the locality placeholder (9000 — a
+place in the locality with no street record: "כנרת הקבוצה", "ש עולים", "חפציבה") offers the LOCALITY, labelled "official name of
+a place in this locality (no street record)" (`via: 'place-synonym'`, `matchedName`) — never a street; first when that locality
+is selected or typed, else after the exact street names. Registry-wide audit: `scripts/search-discoverability-audit.js` →
+`data/geo/streets/search-audit.json` (pinned to the directory, synonyms, index and ranking-code hashes; `test/search.test.js`).
+
 Failure is not "no results": `GET /api/geo/search` answers 200 with a `matches` array (zero included, cached privately for an
 hour), 503 `geo-index-unavailable` when the directory / index cannot be loaded, 500 `geo-search-failed` otherwise — errors are
 `no-store`. The page (`srchFetch`) classifies every request — network · auth (the session gate answers with the sign-in page)

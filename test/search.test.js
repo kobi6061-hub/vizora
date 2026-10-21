@@ -53,7 +53,9 @@ t('ALL WORDS never invents an identity: every hit is an official street of the d
   for (const q of ['הרב משה', 'הרב משה פתח תקווה', 'משה אויערבך', 'רב משה']) {
     for (const m of streets(q)) {
       assert.ok(ids.has(m.id) && R.resolveGeoId(m.id), 'an official street: ' + m.id);
-      if (m.tier === 4 || m.tier === 1) assert.ok([m.he, m.matchedName || ''].some((n) => words(q.replace(/ פתח תקווה$/, '')).every((w) => holds(n, w)) || n === q), q + ' → ' + m.he);
+      /* a partial reading (tier 2 / 5 since 21.10.2026) holds every typed content word — a title the name omits is the only word it may lack */
+      const content = words(q.replace(/ פתח תקווה$/, '')).filter((w) => !/^(הרב|רב|ר|דר)$/.test(w));
+      if ([1, 2, 4, 5].includes(m.tier)) assert.ok([m.he, m.matchedName || ''].some((n) => content.every((w) => holds(n, w)) || n === q), q + ' → ' + m.he);
     }
   }
 });
@@ -68,6 +70,36 @@ t('ranking is not damaged: exact names still lead; a variant that DROPS a typed 
   assert.equal(streets("ז'בוטינסקי", { near: 5000 })[0].id, 'st:5000:456');
   assert.equal(streets('בן גוריון')[0].he, 'בן גוריון');
   assert.equal(streets('הרצל', { near: 7900 })[0].id, 'st:7900:213');
+});
+
+t('the directive\'s explicit cases (21.10.2026): a typed title the official name omits, a street with its locality, a street-type word before an honorific', () => {
+  const a = streets('הרב ד"ר משה אויערבך פתח תקווה'); assert.equal(a[0].id, 'st:7900:595', 'every content word of the official name; the title ד"ר is not in it');
+  assert.equal(a[0].tier, 2, 'a partial reading — after the exact names and synonyms of the locality');
+  assert.equal(streets('הרב דר משה אויערבך', { near: 7900 })[0].id, 'st:7900:595');
+  assert.equal(streets('דיזנגוף תל אביב')[0].id, 'st:5000:404'); assert.equal(streets('דיזנגוף', { near: 5000 })[0].id, 'st:5000:404');
+  assert.equal(streets('רחוב הרב קוק תל אביב')[0].id, 'st:5000:1204');
+  assert.ok(!streets('הרב משה').some((m) => m.id === 'st:7900:595' && m.tier < 5), 'a title alone with one other word never reads as every street of that word');
+});
+
+t('an EXACT synonym is never pushed out by names that merely contain its words, and the official partial reading follows the synonym partial reading of no other street', () => {
+  const n = streets('נוה אפרים', { near: 9400 }); assert.equal(n[0].id, 'st:9400:6510', 'the address area whose official synonym is "נוה אפרים"'); assert.equal(n[0].matchedName, 'נוה אפרים'); assert.equal(n[0].tier, 2);
+  assert.ok(n.slice(1, 6).every((m) => m.tier === 2 && words(m.he).includes('אפרים')), 'the streets containing both words follow');
+  const t2 = streets('אל תורי', { near: 3000 }); assert.equal(t2[0].tier, 1, 'the official name of that spelling leads'); assert.equal(t2[1].id, 'st:3000:4138', 'the exact synonym right after it, before the names that only contain it');
+  const pt = streets('הרב משה', { near: 7900 }); const syn = pt.findIndex((m) => m.via === 'synonym'), off = pt.findIndex((m) => m.via === 'official' && m.tier === 2);
+  assert.ok(off > -1 && (syn === -1 || off < syn), 'an official partial reading precedes a synonym partial reading of the same strength');
+});
+
+t('a PLACE the directory files under a locality (synonym of the 9000 placeholder) offers the LOCALITY, labelled — never a street', () => {
+  const all = (q, o) => R.searchGeo(q, 12, o || {}).matches;
+  const k = all('כנרת הקבוצה'); assert.equal(k[0].id, 'loc:57'); assert.equal(k[0].kind, 'locality'); assert.equal(k[0].via, 'place-synonym'); assert.equal(k[0].matchedName, 'כנרת הקבוצה');
+  const m = all('ש עולים מזכרת בתיה'); assert.equal(m[0].id, 'loc:28', 'the place typed with its locality'); assert.equal(m[0].matchedName, 'ש עולים');
+  const near = all('ש עולים', { near: 28 }); assert.equal(near[0].id, 'loc:28', 'the selected locality, by its place name, first');
+  const plain = all('ש עולים'); assert.ok(plain.findIndex((x) => x.kind === 'street') < plain.findIndex((x) => x.id === 'loc:28') || plain.findIndex((x) => x.id === 'loc:28') === -1, 'elsewhere: after the exact street names');
+  for (const q of ['כנרת הקבוצה', 'ש עולים', 'חפציבה', 'עין חרוד אחוד']) for (const x of all(q)) assert.ok(!/:9000$/.test(x.id), 'never the placeholder as a street: ' + x.id);
+  assert.ok(all('חפציבה').some((x) => x.id === 'loc:90' && x.matchedName === 'חפציבה'), 'a locality spelled as its official place name');
+  const geo = page.slice(page.indexOf('function initSearch('), page.indexOf('function initSearch(') + 20000);
+  assert.match(page, /geoPlaceOf:n=>`שם רשמי של מקום ביישוב \(ללא רשומת רחוב\): \$\{n\}`/); assert.match(page, /geoPlaceOf:n=>`official name of a place in this locality \(no street record\): \$\{n\}`/);
+  assert.ok(page.includes('t.geoPlaceOf(g.matchedName)'), 'the page names the place a locality row was found by');
 });
 
 t('search is independent of transactions, street geography and the street report: a street with none of them is found in the top three of its locality (selected or named), and the search API loads none of those layers', () => {
