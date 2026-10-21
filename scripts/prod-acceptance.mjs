@@ -55,6 +55,8 @@ async function apiChecks(H) {
   if (!cookie) return null;
   const home = await req(b, '/', { cookie, accept: 'text/html' });
   rec(n, 1, 'the signed-in session opens the page', home.status === 200 && /text\/html/.test(home.type), `GET / → ${home.status} ${home.type.split(';')[0]} · ${Math.round(home.text.length / 1024)} KB`);
+  /* which build answered: the page's sha256 (compare with `sha256sum index.html` at the deployed commit) — information only */
+  rec(n, 1, 'deployed page identity', null, `index sha256 ${crypto.createHash('sha256').update(home.text || '').digest('hex').slice(0, 16)} · navigation re-anchor fix ${/let jump=0;/.test(home.text || '') ? 'present' : 'absent'}`);
   const mode = await req(b, '/api/login?op=mode');
   rec(n, 13, 'the gate is the shared password (identity off)', mode.json && mode.json.mode === 'perimeter', `GET /api/login?op=mode → ${mode.status} ${mode.json ? JSON.stringify(mode.json) : ''}`);
 
