@@ -1,6 +1,7 @@
 # PROPX · Street search LIVE CHECK (read-only) — Production and the street-report Preview.
 #
-# What a browser's search request actually receives on each deployed site: HTTP status, content type, redirect, Vercel id,
+# What a browser's requests actually receive on each deployed site (propx.live, kobix.online, the Preview): the sign-in mode, the
+# page's layout markers, street search, street reports and the latest transactions — HTTP status, content type, redirect, Vercel id,
 # API error, matches (scripts/search-live-check.js). It signs in exactly as the page does, and only when the founder has added
 # the runner secrets — PROPX_SITE_PASSWORD (+ optional PROPX_PREVIEW_SITE_PASSWORD) and, for the Vercel-protected preview,
 # VERCEL_AUTOMATION_BYPASS_SECRET (the project's own "Protection Bypass for Automation"). No secret or cookie is printed; without
@@ -40,7 +41,7 @@ jobs:
           node-version: '20'
       - name: Search + street report on Production and the Preview
         env:
-          HOSTS: production=https://propx.live,preview=https://kobixrealestate-git-claude-street-report-preview-iboks-projects.vercel.app
+          HOSTS: production=https://propx.live,kobix=https://kobix.online,preview=https://kobixrealestate-git-claude-street-report-preview-iboks-projects.vercel.app
           SITE_PW: ${{ secrets.PROPX_SITE_PASSWORD }}
           PREVIEW_SITE_PW: ${{ secrets.PROPX_PREVIEW_SITE_PASSWORD }}
           VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}

@@ -39,6 +39,16 @@ at('the rail follows the groups; the scroll-spy set is unchanged (16) and ALTARI
   assert.equal((rail.match(/class="ri[^"]*" data-sec=/g) || []).length, 16);
 });
 
+at('a launchpad / rail jump stays on its section while the sections above it load (cold first load) — and lets the reader go', () => {
+  const spy = INDEX.slice(INDEX.indexOf('(function railSpy(){'), INDEX.indexOf('/* ---------- breadcrumb ---------- */'));
+  assert.match(INDEX, /#launchpad \[data-lp\]"\)\.forEach\(a=>a\.addEventListener\("click",e=>\{const r=document\.querySelector\(`\.rail \.ri\[data-sec=/, 'a tile clicks its rail link');
+  assert.match(spy, /new ResizeObserver\(/, 'the target is re-anchored when the page above it grows');
+  assert.match(spy, /performance\.now\(\)-t0<15000/, 'for at most 15 s after the jump');
+  assert.match(spy, /\["wheel","touchstart","keydown","pointerdown"\]\.forEach/, 'the reader\'s own input ends it');
+  assert.match(spy, /if\(!own&&H===h\)stop=true/, 'a scroll the page did not make ends it');
+  assert.match(spy, /my===jump/, 'a newer jump ends the older one');
+});
+
 at('the street report: investment summary · latest transactions · valuation · planning · risks · map · sources — nothing dropped', () => {
   const r = INDEX.slice(INDEX.indexOf('function srHTML(g){'), INDEX.indexOf('function srSummaryText(R){'));
   const ids = [...r.matchAll(/\$\{sec\("([a-z]+)"/g)].map((m) => m[1]);
