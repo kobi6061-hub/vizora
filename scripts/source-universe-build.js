@@ -64,7 +64,8 @@ function laneProof(file, pkgResource) {
     const m = JSON.parse(fs.readFileSync(mp, 'utf8')); if (m.resourceId !== pkgResource) continue;
     const runs = fs.existsSync(path.join(ROOT, dir, id, 'runs.jsonl')) ? fs.readFileSync(path.join(ROOT, dir, id, 'runs.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)) : [];
     const ok = runs.filter((r) => /success|unchanged|changed/i.test(String(r.status || r.state || '')));
-    return { store: `${dir}/${id}/`, records: m.records, sourceRows: m.sourceRows, rejected: m.rejected, contentHash: m.contentHash, readAt: m.readAt, checkedAt: m.checkedAt, sourceUpdatedAt: m.sourceUpdatedAt, runs: runs.length, okRuns: ok.length, trustId: m.trustId || null };
+    return { store: `${dir}/${id}/`, records: m.records, sourceRows: m.sourceRows, rejected: m.rejected, contentHash: m.contentHash, readAt: m.readAt, checkedAt: m.checkedAt, sourceUpdatedAt: m.sourceUpdatedAt, runs: runs.length, okRuns: ok.length, trustId: m.trustId || null,
+      ...(m.superseded != null ? { superseded: m.superseded } : {}), ...(m.profile && m.profile.rowsByYear ? { sourceYears: (() => { const y = Object.keys(m.profile.rowsByYear).map(Number).filter(Number.isFinite).sort((a, b) => a - b); return y.length ? [y[0], y[y.length - 1]] : null; })() } : {}) };
   }
   return null;
 }
@@ -129,7 +130,7 @@ function ckanSource(r) {
     /* a stored read that kept no record (or no successful run) proves nothing — the lane stays pending, never CONNECTED_VERIFIED */
     if (proof && !(proof.records > 0 && proof.okRuns > 0)) { unproven = `its stored read holds ${proof.records} records from ${proof.okRuns} successful run(s) of ${proof.runs}`; proof = null; }
     if (proof) {
-      state = 'CONNECTED_VERIFIED'; why = `read whole on the runner (${proof.runs} run(s), ${proof.okRuns} successful), ${proof.records} records stored at ${proof.store} (content ${String(proof.contentHash).slice(0, 12)}…), read by ${READERS[ref[1]]}`;
+      state = 'CONNECTED_VERIFIED'; why = `read whole on the runner (${proof.runs} run(s), ${proof.okRuns} successful), ${proof.records} records stored at ${proof.store} (content ${String(proof.contentHash).slice(0, 12)}…), read by ${READERS[ref[1]]}` + (proof.sourceYears ? ` — the source holds the years ${proof.sourceYears.join('–')} only (${proof.superseded != null ? proof.superseded.toLocaleString('en') + ' older-year rows superseded; ' : ''}stated on the page, never current)` : '');
       integration = { integrated: true, by: ref[1], thisMission: true, proof, readBy: READERS[ref[1]], trust: trustCheck(TRUST.by.get(proof.trustId)) };
     } else if (NEW_LANES[ref[1]]) {
       /* code written in this mission but no stored successful read yet — never CONNECTED, never EXISTING */
@@ -520,6 +521,31 @@ function improvements() {
         if (!X.available) continue; if (X.busStops.count) withStop++; if (X.lrt.existingNearestM != null) withLrtExisting++; else if (X.lrt.plannedNearestM != null) withLrtPlannedOnly++; if (X.lrt.registry && X.lrt.registry.count) withRegistryLr++; if (X.rail.stops.length) withRail++; } }
     out.transportAccess = { what: 'located official streets with a public-transport reading in the street report (new in this mission)', locatedStreets: streets, withStopWithin300m: withStop, withExistingLightRailWithin1km: withLrtExisting, withOnlyPlannedLightRailWithin1km: withLrtPlannedOnly, withRegistryLightRailStopWithin1km: withRegistryLr, withRailStopWithin1500m: withRail };
   } catch (e) { out.transportAccess = { error: String(e.message).slice(0, 200) }; }
+  /* VATMAL declared complexes + the street surroundings over the same located streets — the street report's own rules (report.relation,
+     lib/surroundings.around), counted per street, never a value */
+  try {
+    const RP = require('../lib/streets/report'), SU = require('../lib/surroundings'), V = (() => { try { return require('../lib/planning/vatmal').load(); } catch { return null; } })();
+    const G = path.join(ROOT, 'data', 'geo', 'street-geo', 'loc'), M = 111320, bufLat = RP.NEAR_M / M, RANK = { INTERSECTS: 0, AREA_WIDE: 1, NEARBY: 2 };
+    const vm = { located: 0, intersects: 0, areaWide: 0, nearbyOnly: 0, complexesReached: new Set() }, su = { located: 0, contaminatedOnStreetParcel: 0, contaminatedWithin300m: 0, educationWithin500m: 0, educationInSourceLatestYear: 0 };
+    let suOn = true;
+    for (const f of fs.readdirSync(G)) { const L = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(G, f))).toString('utf8'));
+      for (const st of Object.values(L.streets || {})) { if (!st.pts || !st.pts.length) continue;
+        const pts = st.pts.map((p) => [p[0], p[1]]), lngs = pts.map((p) => p[0]), lats = pts.map((p) => p[1]);
+        if (V) { vm.located++; const lat0 = (Math.min(...lats) + Math.max(...lats)) / 2, bufLng = RP.NEAR_M / (M * Math.cos(lat0 * Math.PI / 180)), P = RP.projector(lat0);
+          const [x0, y0, x1, y1] = [Math.min(...lngs) - bufLng, Math.min(...lats) - bufLat, Math.max(...lngs) + bufLng, Math.max(...lats) + bufLat];
+          let rel = null;
+          for (const c of V.complexes) { if (c.bbox[2] < x0 || c.bbox[0] > x1 || c.bbox[3] < y0 || c.bbox[1] > y1) continue;
+            const r = RP.relation(c.rings, pts, P); if (r.distanceM == null || r.distanceM > RP.NEAR_M) continue; vm.complexesReached.add(c.tamal);
+            const k = r.inside ? ((c.gisDunam != null ? c.gisDunam : RP.areaDunam(c.rings, P)) >= RP.AREA_WIDE_DUNAM ? 'AREA_WIDE' : 'INTERSECTS') : 'NEARBY';
+            if (rel === null || RANK[k] < RANK[rel]) rel = k; }
+          if (rel === 'INTERSECTS') vm.intersects++; else if (rel === 'AREA_WIDE') vm.areaWide++; else if (rel === 'NEARBY') vm.nearbyOnly++; }
+        if (suOn) { const X = SU.around(st.pts.map((p) => ({ lng: p[0], lat: p[1], house: p[2], block: p[6], parcel: p[7] })));
+          if (!X.available) { if (X.reason === 'surroundings-not-synced') suOn = false; continue; } su.located++;
+          if (X.contaminated && X.contaminated.exact.length) su.contaminatedOnStreetParcel++; if (X.contaminated && X.contaminated.nearby.length) su.contaminatedWithin300m++;
+          if (X.education && X.education.institutions.length) { su.educationWithin500m++; if (X.education.inLatestYear) su.educationInSourceLatestYear++; } } } }
+    if (V) out.vatmal = { what: 'located official streets with a declared VATMAL complex — a located point inside (INTERSECTS; AREA_WIDE ≥ 2,000 dunam) or within 300 m (NEARBY); a planning-track designation, never an approved plan', complexes: V.complexes.length, complexesReachingALocatedStreet: vm.complexesReached.size, locatedStreets: vm.located, intersects: vm.intersects, areaWide: vm.areaWide, nearbyOnly: vm.nearbyOnly };
+    if (suOn) { const C = SU.load(); out.surroundings = { what: 'located official streets with a surroundings reading — contaminated / suspected land (the register\'s words verbatim) EXACT on a parcel of the street or within 300 m; education institutions with a published entrance point within 500 m', locatedStreets: su.located, contaminatedOnStreetParcel: su.contaminatedOnStreetParcel, contaminatedWithin300m: su.contaminatedWithin300m, educationWithin500m: su.educationWithin500m, educationListedInSourceLatestYear: su.educationInSourceLatestYear, sourceLatestSchoolYear: C.latestYear, records: C.counts }; }
+  } catch (e) { out.vatmal = out.vatmal || { error: String(e.message).slice(0, 200) }; }
   const T = rd('data/txevents/latest.json');
   out.transactions = { what: 'the freshest transactions PROPX can lawfully read — re-checked: no new legitimate channel exists (the official channels are refused / CAPTCHA-protected, data.gov.il publishes no deal dataset)', latestKnown: T && T.national ? T.national.latest : null, countedEvents: T && T.national ? T.national.events : null, builtAt: T ? T.builtAt : null, newEventsFromNewSources: 0 };
   return out;

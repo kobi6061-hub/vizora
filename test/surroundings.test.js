@@ -85,7 +85,7 @@ t('AROUND: EXACT on the street\'s own parcel apart from SPATIAL ≤ 300 m; nothi
   const ed = X.education.institutions; assert.deepEqual(ed.map((x) => x.code), [1362, 562]);
   assert.equal(ed[0].name, 'גן שלוה'); assert.equal(ed[0].latestYear, 2025); assert.equal(ed[0].students, 35); assert.equal(ed[0].inLatestYear, true);
   assert.equal(ed[1].latestYear, 2023); assert.equal(ed[1].inLatestYear, false, 'not in the latest school year — shown with its year, never as current');
-  assert.equal(X.education.latestYear, 2025); assert.match(X.education.doesNotMean, /not its catchment/);
+  assert.equal(X.education.latestYear, 2025); assert.deepEqual(X.education.sourceYears, [2011, 2025], 'the source\'s own school-year span is stated'); assert.match(X.education.doesNotMean, /not its catchment/);
   const far = SU.around([{ lat: 31.25, lng: 34.79 }], dir);
   assert.deepEqual(far.contaminated.exact, []); assert.deepEqual(far.contaminated.nearby, []); assert.deepEqual(far.education.institutions, []);
 });
@@ -99,7 +99,8 @@ t('WIRING: the street report carries the surroundings (or the reason) and cites 
   assert.match(html, /xpBtn\("street_surroundings"\)/); assert.match(html, /plan\+trn\+sur/);
   assert.ok(require('../lib/explain/registry').term('street_surroundings'));
   const C = require('../lib/trust/catalog').catalog(); for (const id of ['datagov:moep:contaminated-land', 'datagov:moe:institution-coordinates', 'datagov:moe:institutions']) assert.ok(C.sources.some((s) => s.id === id), id);
-  assert.match(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'), /data\/surroundings\/\*\/rows\.json\.gz/);
+  { const inc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')).functions['api/intel.js'].includeFiles; assert.ok(inc.length <= 256, 'Vercel caps includeFiles at 256 characters');
+    assert.ok(Object.keys(SU.SOURCES).every((id) => ['meta.json', 'rows.json.gz'].every((f) => require('./helpers/vercel-include').matches(inc, `data/surroundings/${id}/${f}`)))); }
   const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/surroundings-sync.yml'), 'utf8');
   assert.match(wf, /git add data\/surroundings\n/); assert.match(wf, /node test\/surroundings\.test\.js/);
 });

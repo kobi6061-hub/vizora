@@ -45,7 +45,8 @@ t('WIRING: the page renders the declared complexes with an ⓘ; the registry, th
   assert.match(html, /xpBtn\("vatmal_declared_complex"\)/); assert.match(html, /vtNot:"A declaration is a planning track — not an approved plan/);
   assert.ok(require('../lib/explain/registry').term('vatmal_declared_complex'));
   assert.ok(require('../lib/trust/catalog').catalog().sources.some((s) => s.id === 'iplan:vatmal'));
-  assert.match(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'), /data\/planning\/vatmal\/complexes\.json\.gz/);
+  { const inc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')).functions['api/intel.js'].includeFiles; assert.ok(inc.length <= 256, 'Vercel caps includeFiles at 256 characters');
+    assert.ok(['meta.json', 'complexes.json.gz'].every((f) => require('./helpers/vercel-include').matches(inc, `data/planning/vatmal/${f}`))); }
   const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/vatmal-sync.yml'), 'utf8');
   assert.match(wf, /git add data\/planning\/vatmal\n/); assert.match(wf, /node test\/vatmal\.test\.js/); assert.match(wf, /scripts\/vatmal-sync\.js/);
 });

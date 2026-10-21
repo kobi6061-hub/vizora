@@ -137,7 +137,7 @@ t('WIRING: the street report carries transport access (or the reason), names the
   const C = require('../lib/trust/catalog').catalog(); for (const id of ['datagov:mot:bus-stops', 'datagov:mot:lrt-stations', 'datagov:mot:rail-stations', 'datagov:mot:metro-stations']) assert.ok(C.sources.some((s) => s.id === id), id);
   const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/transport-sync.yml'), 'utf8');
   assert.ok(wf.indexOf('node test/transport.test.js') < wf.indexOf('node scripts/transport-sync.js')); assert.match(wf, /git add data\/transport\n/); assert.ok(!/git add (?!data\/transport)/.test(wf));
-  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(vc.functions['api/intel.js'].includeFiles.includes('data/transport/*/rows.json.gz'));
+  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(['bus-stops', 'lrt', 'rail', 'metro'].every((id) => ['meta.json', 'rows.json.gz'].every((f) => require('./helpers/vercel-include').matches(vc.functions['api/intel.js'].includeFiles, `data/transport/${id}/${f}`))));
 });
 
 (async () => {

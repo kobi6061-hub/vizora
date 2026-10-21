@@ -111,7 +111,7 @@
       "includeFiles": "data/transactions/watch.json"
     },
     "api/intel.js": {
-      "includeFiles": "{data/land/tenders.json,data/land/meta.json,data/land/sync-runs.jsonl,data/housing/*.json*,data/market/latest.json,data/transactions/*.json*,data/geo/*.json,data/renewal/*.json*,data/cbs-sales/*.json*,data/rental/*.json*,data/radar/*.json,data/txevents/**,data/finance/latest.json,data/reference/*/meta.json,data/reference/*/rows.json.gz,data/transport/*/meta.json,data/transport/*/rows.json.gz,data/surroundings/*/meta.json,data/surroundings/*/rows.json.gz,data/planning/vatmal/meta.json,data/planning/vatmal/complexes.json.gz}"
+      "includeFiles": "{data/land/{tenders,meta,sync-runs}.json*,data/{housing,transactions,renewal,cbs-sales,rental,market,finance,geo,radar}/*.json*,data/txevents/**,data/{reference,transport,surroundings}/*/{meta,rows}.json*,data/planning/vatmal/*.json*}"
     }
   },
   "rewrites": [

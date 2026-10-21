@@ -135,7 +135,7 @@ t('WIRING: the dossier shows a locality its OWN census + register rows (two univ
   const api = fs.readFileSync(path.join(ROOT, 'api/intel.js'), 'utf8'); assert.match(api, /view === 'localityContext'/);
   const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.match(page, /function dsContextHTML\(D\)/); assert.match(page, /\$\{dsContextHTML\(D\)\}/);
   for (const x of ['census_2022_locality', 'registered_residents']) { assert.ok(page.includes(`"${x}"`)); assert.ok(require('../lib/explain/registry').term(x)); }
-  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(vc.functions['api/intel.js'].includeFiles.includes('data/reference/*/rows.json.gz'));
+  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(['census-2022', 'residents'].every((id) => ['meta.json', 'rows.json.gz'].every((f) => require('./helpers/vercel-include').matches(vc.functions['api/intel.js'].includeFiles, `data/reference/${id}/${f}`))));
   const C = require('../lib/trust/catalog').catalog(); for (const id of ['datagov:cbs:census-2022', 'datagov:piba:residents-by-locality']) assert.ok(C.sources.some((s) => s.id === id), id);
 });
 

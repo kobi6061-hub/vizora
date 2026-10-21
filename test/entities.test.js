@@ -17,9 +17,9 @@ const Q = require('../lib/entities/query');
 const TC = require('../lib/trust/catalog');
 
 const ROOT = path.join(__dirname, '..');
-let passed = 0;
+let passed = 0, failed = 0;
 const t = async (name, fn) => {
-  try { await fn(); passed++; console.log('  ✓', name); } catch (e) { console.error('  ✗', name, '\n   ', e.stack.split('\n').slice(0, 3).join('\n    ')); process.exitCode = 1; }
+  try { await fn(); passed++; console.log('  ✓', name); } catch (e) { failed++; console.error('  ✗', name, '\n   ', e.stack.split('\n').slice(0, 3).join('\n    ')); process.exitCode = 1; }
 };
 const TODAY = '2026-10-13';
 
@@ -190,11 +190,11 @@ function fixtureDirs(tenders, lotteries) {
   await t('vercel.json: every includeFiles fits the platform schema (≤ 256 characters) and the intel bundle names its data', () => {
     const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
     for (const [k, f] of Object.entries(v.functions)) if (f.includeFiles) assert.ok(f.includeFiles.length <= 256, `${k}: includeFiles is ${f.includeFiles.length} characters — Vercel rejects the whole deployment`);
-    const inc = v.functions['api/intel.js'].includeFiles;
-    for (const need of ['data/land/tenders.json', 'data/land/meta.json', 'data/housing/', 'data/market/latest.json', 'data/geo/']) assert.ok(inc.includes(need), need);
-    /* the transaction run log + the freshness monitor's answer (P0 freshness audit): named, or covered by the folder's glob */
-    assert.ok(inc.includes('data/transactions/sync-runs.jsonl') || inc.includes('data/transactions/*.json*'), 'data/transactions run log + freshness');
-    assert.ok(!/lots-|raw/.test(inc), 'the lot shards and raw snapshots are not bundled');
+    const inc = v.functions['api/intel.js'].includeFiles, VI = require('./helpers/vercel-include');
+    for (const need of ['data/land/tenders.json', 'data/land/meta.json', 'data/housing/lotteries.json', 'data/market/latest.json', 'data/geo/localities.json']) assert.ok(VI.matches(inc, need), need);
+    /* the transaction run log + the freshness monitor's answer (P0 freshness audit) */
+    assert.ok(VI.matches(inc, 'data/transactions/sync-runs.jsonl') && VI.matches(inc, 'data/transactions/freshness.json'), 'data/transactions run log + freshness');
+    assert.ok(![...VI.files(inc, ROOT)].some((f) => /lots-|\/raw\//.test(f)), 'the lot shards and raw snapshots are not bundled');
   });
 
   console.log('trust: run states, staleness, catalogue');
@@ -264,5 +264,5 @@ function fixtureDirs(tenders, lotteries) {
     }
   });
 
-  console.log(`\nentities: ${passed} passed`);
+  console.log(`\nentities: ${passed} passed${failed ? `, ${failed} FAILED` : ''}`);
 })();

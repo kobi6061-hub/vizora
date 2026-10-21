@@ -94,9 +94,9 @@
   "cataloguesExamined": 8,
   "candidates": 348,
   "endpointsVerified": 290,
-  "integratedThisMission": 13,
+  "integratedThisMission": 14,
   "alreadyIntegrated": 33,
-  "accessibleNotYetIntegrated": 78,
+  "accessibleNotYetIntegrated": 77,
   "redundant": 15,
   "technicallyBlocked": 42,
   "authBlocked": 2,
@@ -106,9 +106,9 @@
   "notAnApi": 24,
   "pending": 0,
   "byState": {
-   "CONNECTED_VERIFIED": 13,
+   "CONNECTED_VERIFIED": 14,
    "EXISTING_VERIFIED": 33,
-   "ACCESSIBLE_NOT_YET_INTEGRATED": 78,
+   "ACCESSIBLE_NOT_YET_INTEGRATED": 77,
    "REDUNDANT_PROVEN": 15,
    "BLOCKED_AUTH": 2,
    "BLOCKED_TECHNICAL": 42,
@@ -10510,10 +10510,10 @@
      "rejected": 0,
      "contentHash": "8861a216d665b84869b129c45f64f6383882eaa9e724bd87fa8d4847e9e2a5b6",
      "readAt": "2026-10-21T14:34:41.712Z",
-     "checkedAt": "2026-10-21T14:39:40.878Z",
+     "checkedAt": "2026-10-21T14:49:02.305Z",
      "sourceUpdatedAt": "2026-10-21T07:01:04.633194Z",
-     "runs": 2,
-     "okRuns": 2,
+     "runs": 3,
+     "okRuns": 3,
      "trustId": "datagov:moep:contaminated-land"
     },
     "readBy": "lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\"",
@@ -10521,8 +10521,8 @@
      "trustId": "datagov:moep:contaminated-land",
      "inProduct": true,
      "state": "UNCHANGED",
-     "lastCheckAt": "2026-10-21T14:39:48.260Z",
-     "lastGoodAt": "2026-10-21T14:39:48.260Z"
+     "lastCheckAt": "2026-10-21T14:49:12.230Z",
+     "lastGoodAt": "2026-10-21T14:49:12.230Z"
     }
    },
    "evidence": {
@@ -10533,7 +10533,7 @@
     "note": "Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (2 run(s), 2 successful), 3798 records stored at data/surroundings/contaminated/ (content 8861a216d665…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
+   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 3798 records stored at data/surroundings/contaminated/ (content 8861a216d665…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
   },
   {
    "id": "datagov:pkg:b072e36c-a53b-49e1-be08-4a608fcf4638",
@@ -14034,10 +14034,10 @@
      "rejected": 0,
      "contentHash": "0c164cb3111a6eeff4acec24665edb56b3713660ed65980f1f5408ab5fa7395c",
      "readAt": "2026-10-21T13:24:43.150Z",
-     "checkedAt": "2026-10-21T14:39:41.929Z",
+     "checkedAt": "2026-10-21T14:49:07.801Z",
      "sourceUpdatedAt": "2024-06-03T05:07:43.081626Z",
-     "runs": 3,
-     "okRuns": 3,
+     "runs": 4,
+     "okRuns": 4,
      "trustId": "datagov:cbs:census-2022"
     },
     "readBy": "lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
@@ -14045,8 +14045,8 @@
      "trustId": "datagov:cbs:census-2022",
      "inProduct": true,
      "state": "UNCHANGED",
-     "lastCheckAt": "2026-10-21T14:39:50.596Z",
-     "lastGoodAt": "2026-10-21T14:39:50.596Z"
+     "lastCheckAt": "2026-10-21T14:49:15.710Z",
+     "lastGoodAt": "2026-10-21T14:49:15.710Z"
     }
    },
    "evidence": {
@@ -14058,7 +14058,7 @@
     "note": "Only resource 9a9e085f (3,379 rows, modified 2024-06-03) is read by the reference lane (lib/reference/index.js); data/reference/ is not yet written in this checkout. Sibling resources 38207cf8 (population & households by locality, 1,222 rows) and 5474c592 (population by age, 87 rows, national) are not read."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 3379 records stored at data/reference/census-2022/ (content 0c164cb3111a…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
+   "stateWhy": "read whole on the runner (4 run(s), 4 successful), 3379 records stored at data/reference/census-2022/ (content 0c164cb3111a…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
    "priorAudits": [
     {
      "ledger": "2026-10-17.json",
@@ -14464,10 +14464,10 @@
      "rejected": 1,
      "contentHash": "3368a6e0762bb5d9a675f5fab70308347793cfefdff7e526a930e77f7fcd1581",
      "readAt": "2026-10-21T13:24:46.908Z",
-     "checkedAt": "2026-10-21T14:39:50.597Z",
+     "checkedAt": "2026-10-21T14:49:15.711Z",
      "sourceUpdatedAt": "2026-10-12T00:30:04.954122Z",
-     "runs": 3,
-     "okRuns": 3,
+     "runs": 4,
+     "okRuns": 4,
      "trustId": "datagov:piba:residents-by-locality"
     },
     "readBy": "lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
@@ -14475,8 +14475,8 @@
      "trustId": "datagov:piba:residents-by-locality",
      "inProduct": true,
      "state": "UNCHANGED",
-     "lastCheckAt": "2026-10-21T14:39:54.430Z",
-     "lastGoodAt": "2026-10-21T14:39:54.430Z"
+     "lastCheckAt": "2026-10-21T14:49:19.819Z",
+     "lastGoodAt": "2026-10-21T14:49:19.819Z"
     }
    },
    "evidence": {
@@ -14488,7 +14488,7 @@
     "note": "Resource 64edd0ee (1,297 rows, modified 2026-10-12) is a source of the new reference lane (lib/reference/index.js + scripts/reference-sync.js + .github/workflows/reference-sync.yml, commit ff70d3e) but data/reference/ does not exist yet in this checkout, so no completed sync is visible — CONNECTED_VERIFIED once the first run commits. Licence not stated by the publisher."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 1296 records stored at data/reference/residents/ (content 3368a6e0762b…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
+   "stateWhy": "read whole on the runner (4 run(s), 4 successful), 1296 records stored at data/reference/residents/ (content 3368a6e0762b…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
    "priorAudits": [
     {
      "ledger": "2026-10-17.json",
@@ -17032,10 +17032,10 @@
      "rejected": 0,
      "contentHash": "0af4cdb9b6c8514febdd8914409701210107de619e34e560c5f691f32c98e5ca",
      "readAt": "2026-10-21T14:34:44.905Z",
-     "checkedAt": "2026-10-21T14:39:48.260Z",
+     "checkedAt": "2026-10-21T14:49:12.230Z",
      "sourceUpdatedAt": "2022-04-06T07:22:14.021133Z",
-     "runs": 2,
-     "okRuns": 2,
+     "runs": 3,
+     "okRuns": 3,
      "trustId": "datagov:moe:institution-coordinates"
     },
     "readBy": "lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\"",
@@ -17043,8 +17043,8 @@
      "trustId": "datagov:moe:institution-coordinates",
      "inProduct": true,
      "state": "UNCHANGED",
-     "lastCheckAt": "2026-10-21T14:40:32.239Z",
-     "lastGoodAt": "2026-10-21T14:40:32.239Z"
+     "lastCheckAt": "2026-10-21T14:49:58.357Z",
+     "lastGoodAt": "2026-10-21T14:49:58.357Z"
     }
    },
    "evidence": {
@@ -17056,7 +17056,7 @@
     "note": "Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (2 run(s), 2 successful), 28312 records stored at data/surroundings/edu-points/ (content 0af4cdb9b6c8…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
+   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 28312 records stored at data/surroundings/edu-points/ (content 0af4cdb9b6c8…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
   },
   {
    "id": "datagov:pkg:mosdot",
@@ -17187,10 +17187,35 @@
     "joinKey": "institution symbol (expected)"
    },
    "integration": {
-    "integrated": false,
-    "by": null,
-    "pendingLane": "lib/surroundings/index.js",
-    "note": "read by a lane added in this mission — awaiting its first successful runner sync (its stored read holds 0 records from 1 successful run(s) of 2)"
+    "integrated": true,
+    "by": "lib/surroundings/index.js",
+    "thisMission": true,
+    "proof": {
+     "store": "data/surroundings/edu-info/",
+     "records": 28486,
+     "sourceRows": 119761,
+     "rejected": 0,
+     "contentHash": "260de32bedd8d3bf1e519fa5e7e29f822c01a86c90f05ffc596ba692f580f5f4",
+     "readAt": "2026-10-21T14:49:58.357Z",
+     "checkedAt": "2026-10-21T14:49:58.357Z",
+     "sourceUpdatedAt": "2026-05-11T12:24:47.128302Z",
+     "runs": 3,
+     "okRuns": 2,
+     "trustId": "datagov:moe:institutions",
+     "superseded": 91275,
+     "sourceYears": [
+      2011,
+      2015
+     ]
+    },
+    "readBy": "lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\"",
+    "trust": {
+     "trustId": "datagov:moe:institutions",
+     "inProduct": true,
+     "state": "SUCCESS",
+     "lastCheckAt": "2026-10-21T14:53:24.376Z",
+     "lastGoodAt": "2026-10-21T14:53:24.376Z"
+    }
    },
    "evidence": {
     "files": [
@@ -17200,8 +17225,8 @@
     ],
     "note": "Datastore XLSX 5548fd63 (10.2 MB), modified 2026-05-11; Other (Open); not probed."
    },
-   "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "verified 21.10.2026: 1 datastore table(s) answered (119761 rows)"
+   "state": "CONNECTED_VERIFIED",
+   "stateWhy": "read whole on the runner (3 run(s), 2 successful), 28486 records stored at data/surroundings/edu-info/ (content 260de32bedd8…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\" — the source holds the years 2011–2015 only (91,275 older-year rows superseded; stated on the page, never current)"
   },
   {
    "id": "datagov:pkg:rama-tnufa",
@@ -42864,7 +42889,7 @@
      },
      {
       "id": "datagov:pkg:mosdot",
-      "state": "ACCESSIBLE_NOT_YET_INTEGRATED"
+      "state": "CONNECTED_VERIFIED"
      }
     ]
    },
@@ -43211,6 +43236,37 @@
    "withOnlyPlannedLightRailWithin1km": 4259,
    "withRegistryLightRailStopWithin1km": 2596,
    "withRailStopWithin1500m": 6635
+  },
+  "vatmal": {
+   "what": "located official streets with a declared VATMAL complex — a located point inside (INTERSECTS; AREA_WIDE ≥ 2,000 dunam) or within 300 m (NEARBY); a planning-track designation, never an approved plan",
+   "complexes": 203,
+   "complexesReachingALocatedStreet": 196,
+   "locatedStreets": 29975,
+   "intersects": 590,
+   "areaWide": 200,
+   "nearbyOnly": 4283
+  },
+  "surroundings": {
+   "what": "located official streets with a surroundings reading — contaminated / suspected land (the register's words verbatim) EXACT on a parcel of the street or within 300 m; education institutions with a published entrance point within 500 m",
+   "locatedStreets": 29975,
+   "contaminatedOnStreetParcel": 375,
+   "contaminatedWithin300m": 8781,
+   "educationWithin500m": 28175,
+   "educationListedInSourceLatestYear": 27602,
+   "sourceLatestSchoolYear": 2015,
+   "records": {
+    "contaminated": 3798,
+    "contaminatedWithPoint": 3798,
+    "eduPoints": 28312,
+    "eduInstitutions": 28486,
+    "eduYears": [
+     2011,
+     2012,
+     2013,
+     2014,
+     2015
+    ]
+   }
   },
   "transactions": {
    "what": "the freshest transactions PROPX can lawfully read — re-checked: no new legitimate channel exists (the official channels are refused / CAPTCHA-protected, data.gov.il publishes no deal dataset)",

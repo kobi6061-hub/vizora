@@ -151,7 +151,7 @@ t('WIRING: the dossier carries the finance block as NATIONAL context on every ge
   assert.match(page, /function dsFinanceHTML\(D\)/); assert.match(page, /\$\{dsFinanceHTML\(D\)\}/);
   for (const x of ['mortgage_rate_by_track', 'new_housing_loans', 'loan_to_value_band', 'housing_credit_stock']) { assert.ok(page.includes(`"${x}"`), 'page ⓘ ' + x); assert.ok(require('../lib/explain/registry').term(x), 'registry ' + x); }
   assert.ok(/dsFin:\{title:"מימון דיור/.test(page) && /dsFin:\{title:"Housing finance/.test(page), 'he + en');
-  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(vc.functions['api/intel.js'].includeFiles.includes('data/finance/latest.json'));
+  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(require('./helpers/vercel-include').matches(vc.functions['api/intel.js'].includeFiles, 'data/finance/latest.json'));
   const C = require('../lib/trust/catalog').catalog(); assert.ok(C.sources.some((s) => s.id === 'boi:housing-finance'));
 });
 
