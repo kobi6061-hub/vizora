@@ -1,1 +1,2 @@
 {"id":"edu-info-20261021T143454Z","source":"datagov:moe:institutions","startedAt":"2026-10-21T14:34:54.898Z","status":"failed","finishedAt":"2026-10-21T14:35:20.523Z","error":"datastore_search: HTTP 403, not JSON"}
+{"id":"edu-info-20261021T144032Z","source":"datagov:moe:institutions","startedAt":"2026-10-21T14:40:32.239Z","status":"success","finishedAt":"2026-10-21T14:43:55.014Z","sourceRows":119761,"records":0,"rejected":119761,"sourceUpdatedAt":"2026-05-11T12:24:47.128302Z","contentHash":"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945","byLevel":{}}
