@@ -279,7 +279,53 @@ async function modeOther() {
   save('other', { probes: out });
 }
 
-const MODES = { ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
+/* ── second pass: the series PROPX would read — BOI housing finance (structure + data since 2024) and the CBS average-price subjects ── */
+async function modeBoi2() {
+  const base = 'https://edge.boi.gov.il/FusionEdgeServer/sdmx/v2/';
+  const out = [];
+  for (const flow of ['BIR_MRTG_99', 'BMB_99', 'REAL_ES_DF', 'BR', 'DEBT_AGG']) {
+    const st = await req(base + `structure/dataflow/BOI.STATISTICS/${flow}/latest?references=all&detail=full&format=sdmx-json`, { timeout: 120000 });
+    const data = await req(base + `data/dataflow/BOI.STATISTICS/${flow}/1.0?startperiod=${flow === 'BR' ? '2026-06' : '2024-01'}&format=csv`, { accept: 'text/csv, */*', timeout: 180000 });
+    const lines = (data.text || '').trim().split('\n');
+    /* the structure: dimension / attribute ids and the code labels of every codelist (Hebrew + English names) */
+    const S = st.json && (st.json.data || st.json);
+    const codelists = S && S.codelists ? S.codelists.map((c) => ({ id: c.id, codes: (c.codes || []).slice(0, 400).map((k) => ({ id: k.id, name: k.name || (k.names && (k.names.en || k.names.he)) || null, he: k.names && k.names.he || null })) })) : null;
+    const dsd = S && S.dataStructures && S.dataStructures[0];
+    out.push({ flow, structure: ev(st, { dimensions: dsd ? (dsd.dataStructureComponents.dimensionList.dimensions || []).map((d) => ({ id: d.id, codelist: d.localRepresentation && d.localRepresentation.enumeration })) : null,
+      attributes: dsd && dsd.dataStructureComponents.attributeList ? (dsd.dataStructureComponents.attributeList.attributes || []).map((a) => a.id) : null, codelists }),
+      data: ev(data, { rows: Math.max(0, lines.length - 1), header: lines[0] || null }), csv: data.status === 200 && data.text && data.text.length < 6e6 ? data.text : null });
+  }
+  save('boi2', { flows: out });
+}
+async function modeCbs2() {
+  const out = [];
+  const pages = ['%D7%A1%D7%93%D7%A8%D7%95%D7%AA-%D7%A2%D7%99%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-API.aspx', '%D7%9E%D7%93%D7%93%D7%99-%D7%9E%D7%97%D7%99%D7%A8%D7%99%D7%9D-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-API.aspx',
+    '%D7%A1%D7%93%D7%A8%D7%95%D7%AA-SDMX-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-API.aspx', '%D7%9E%D7%99%D7%9C%D7%95%D7%A0%D7%99%D7%9D-API.aspx'];
+  for (const pg of pages) {
+    const url = 'https://www.cbs.gov.il/he/cbsNewBrand/Pages/' + pg;
+    const r = await req(url, { accept: 'text/html' });
+    const txt = (r.text || '').replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ');
+    out.push(ev(r, { label: decodeURIComponent(pg), apiUrls: [...new Set((txt.match(/https?:\/\/apis?\.cbs\.gov\.il\/[^\s"'<>)]+/g) || []))].slice(0, 80), text: txt.slice(0, 6000) }));
+  }
+  /* the price-index chapter of the dwelling market: every subject and its codes, and the latest periods of each code */
+  const ch = await req('https://api.cbs.gov.il/index/catalog/chapter?id=aa&format=json&download=false');
+  const subjects = ch.json && ch.json.subject ? ch.json.subject : [];
+  const subj = [];
+  for (const s of subjects) {
+    const r = await req(`https://api.cbs.gov.il/index/catalog/subject?id=${s.subjectId}&format=json&download=false`);
+    const codes = r.json && (r.json.code || r.json.codes || r.json.subject) || null;
+    subj.push(ev(r, { subjectId: s.subjectId, name: s.subjectName, raw: r.json ? JSON.stringify(r.json).slice(0, 4000) : (r.text || '').slice(0, 400) }));
+    const list = Array.isArray(codes) ? codes : [];
+    for (const c of list.slice(0, 40)) {
+      const id = c.codeId || c.code || c.id; if (!id) continue;
+      const d = await req(`https://api.cbs.gov.il/index/data/price?id=${id}&format=json&download=false&last=3`);
+      subj.push(ev(d, { subjectId: s.subjectId, code: id, codeName: c.codeName || c.name || null, data: d.json ? JSON.stringify(d.json).slice(0, 1500) : (d.text || '').slice(0, 300) }));
+    }
+  }
+  save('cbs2', { pages: out, chapter: ev(ch, { subjects }), subjects: subj });
+}
+
+const MODES = { boi2: modeBoi2, cbs2: modeCbs2, ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
 (async () => {
   const mode = (process.argv[2] || '').replace(/^--/, '');
   if (!MODES[mode]) { console.error('mode: ' + Object.keys(MODES).join(' | ')); process.exit(2); }

@@ -11,7 +11,7 @@ name: Source universe — discovery (read-only)
 on:
   push:
     branches: [claude/street-report-preview]
-    paths: ['scripts/source-universe-discover.js', '.github/workflows/source-universe-discover.yml']
+    paths: ['scripts/source-universe-discover.js', '.github/workflows/source-universe-discover.yml', 'lib/trust/discovery/2026-10-21-universe/MODES']
   workflow_dispatch:
 
 permissions:
@@ -22,12 +22,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      modes: ${{ steps.m.outputs.modes }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: m
+        # the modes to run on this push: one per line in the evidence folder's MODES file
+        run: echo "modes=$(grep -v '^#' lib/trust/discovery/2026-10-21-universe/MODES | grep . | jq -R . | jq -cs .)" >> "$GITHUB_OUTPUT"
   discover:
+    needs: plan
     strategy:
       fail-fast: false
       max-parallel: 4
       matrix:
-        mode: [ckan, gov, iplan, cbs, boi, mot, muni, other]
+        mode: ${{ fromJSON(needs.plan.outputs.modes) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
