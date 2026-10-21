@@ -121,6 +121,24 @@ t('the WORKFLOW reads GET-only, tests before it writes and commits only data/ref
   for (const s of Object.values(REF.SOURCES)) { assert.match(s.resourceId, /^[0-9a-f-]{36}$/); assert.equal(s.classification, 'OFFICIAL'); assert.ok(s.trustId.startsWith('datagov:')); }
 });
 
+t('WIRING: the dossier shows a locality its OWN census + register rows (two universes apart), Israel the census national row, a district nothing summed; the API, page, registry and deployed bundle read them', () => {
+  const DQ = require('../lib/dossier/query');
+  const synced = REF.readMeta('census-2022') && REF.readMeta('residents');
+  const L = DQ.dossier({ level: 'locality', code: '7900' }).sections.context;
+  if (synced) {
+    assert.equal(L.census.locality, 7900); assert.equal(L.residents.locality, 7900); assert.match(L.scope.en, /never a street/);
+    assert.notEqual(L.census.population, L.residents.residents, 'census population and registered residents are different universes, both shown');
+    const I = DQ.dossier({ level: 'il' }).sections.context; assert.equal(I.census.level, 'national'); assert.equal(I.residents, null, 'no national sum of the register');
+  }
+  const ix = DQ.index(); const dcode = ix.districts[0].code; const Dd = DQ.dossier({ level: 'district', code: dcode });
+  assert.equal(Dd.sections.context, undefined, 'a district is never summed from its localities');
+  const api = fs.readFileSync(path.join(ROOT, 'api/intel.js'), 'utf8'); assert.match(api, /view === 'localityContext'/);
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.match(page, /function dsContextHTML\(D\)/); assert.match(page, /\$\{dsContextHTML\(D\)\}/);
+  for (const x of ['census_2022_locality', 'registered_residents']) { assert.ok(page.includes(`"${x}"`)); assert.ok(require('../lib/explain/registry').term(x)); }
+  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(vc.functions['api/intel.js'].includeFiles.includes('data/reference/*/rows.json.gz'));
+  const C = require('../lib/trust/catalog').catalog(); for (const id of ['datagov:cbs:census-2022', 'datagov:piba:residents-by-locality']) assert.ok(C.sources.some((s) => s.id === id), id);
+});
+
 (async () => {
   for (const [name, fn] of pending) {
     try { await fn(); passed++; console.log('  ✓ ' + name); } catch (e) { failed++; console.log('  ✗ ' + name + '\n    ' + String(e && e.stack || e).split('\n').slice(0, 3).join('\n    ')); }

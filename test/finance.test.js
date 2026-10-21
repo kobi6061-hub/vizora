@@ -135,6 +135,26 @@ t('the WORKFLOW tests before it writes and commits only data/finance; the CLI re
   for (const m of MEASURES) { const u = F.urlOf(m.flow); assert.ok(u.data.startsWith('https://edge.boi.gov.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/')); assert.match(u.data, /startperiod=2016-01&format=csv$/); }
 });
 
+t('WIRING: the dossier carries the finance block as NATIONAL context on every geography (never a local figure); the API, the page, the registry and the deployed bundle read it', () => {
+  const DQ = require('../lib/dossier/query');
+  const stored = F.read();
+  for (const [level, code] of [['il', null], ['locality', '7900']]) {
+    const d = DQ.dossier({ level, code }); const S = d.sections.finance;
+    if (!stored) { assert.equal(S, undefined); assert.ok(d.missing.some((m) => m.id === 'finance-not-synced')); continue; }
+    assert.equal(S.cls, 'OFFICIAL'); assert.equal(S.source, 'boi:housing-finance'); assert.equal(S.geoScope, level === 'il' ? 'own' : 'national');
+    assert.match(S.scope.en, /national — the whole banking system; context, not a local figure/);
+    assert.ok(S.headline.every((h) => h.missing || (h.period && h.value != null)), 'every headline figure has its month, or its reason');
+    assert.ok(d.freshness.some((f) => f.id === 'finance'));
+  }
+  const api = fs.readFileSync(path.join(ROOT, 'api/intel.js'), 'utf8'); assert.match(api, /view === 'finance'/);
+  const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.match(page, /function dsFinanceHTML\(D\)/); assert.match(page, /\$\{dsFinanceHTML\(D\)\}/);
+  for (const x of ['mortgage_rate_by_track', 'new_housing_loans', 'loan_to_value_band', 'housing_credit_stock']) { assert.ok(page.includes(`"${x}"`), 'page ⓘ ' + x); assert.ok(require('../lib/explain/registry').term(x), 'registry ' + x); }
+  assert.ok(/dsFin:\{title:"מימון דיור/.test(page) && /dsFin:\{title:"Housing finance/.test(page), 'he + en');
+  const vc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')); assert.ok(vc.functions['api/intel.js'].includeFiles.includes('data/finance/latest.json'));
+  const C = require('../lib/trust/catalog').catalog(); assert.ok(C.sources.some((s) => s.id === 'boi:housing-finance'));
+});
+
 (async () => {
   for (const [name, fn] of pending) {
     try { await fn(); passed++; console.log('  ✓ ' + name); } catch (e) { failed++; console.log('  ✗ ' + name + '\n    ' + String(e && e.stack || e).split('\n').slice(0, 3).join('\n    ')); }

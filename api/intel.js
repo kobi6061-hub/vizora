@@ -198,6 +198,8 @@ module.exports = async (req, res) => {
     if (view === 'dossierIndex') return send(res, 200, DOSSIER.index());
     if (view === 'dossierHistory') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = HIST.diff({ level, code: p.city || p.district || 'il', since: p.since, until: p.until }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'dossierSnapshots') { if (!HIST) return send(res, 404, { error: 'dossier history not available' }); return send(res, 200, HIST.snapshots()); }
+    if (view === 'finance') { const FIN = require('../lib/finance'); const L = FIN.read(); return L ? send(res, 200, { summary: FIN.summary(), latest: L }) : send(res, 404, { error: 'finance-not-synced' }); }
+    if (view === 'localityContext') { const REF = require('../lib/reference'); if (!/^\d{1,5}$/.test(String(p.city || ''))) return send(res, 400, { error: 'city must be a CBS locality code' }); return send(res, 200, { city: Number(p.city), ...REF.locality(Number(p.city)), sources: REF.status() }); }
     if (view === 'scan') return send(res, 200, SCAN.scan(p));
     if (view === 'scanGeo') { const level = p.city ? 'locality' : p.district ? 'district' : 'il'; const out = SCAN.forGeo({ level, code: p.city || p.district || 'il' }); return out ? send(res, 200, out) : send(res, 404, { error: 'unknown geography' }); }
     if (view === 'revisions') return send(res, 200, REV.revisions(p));
