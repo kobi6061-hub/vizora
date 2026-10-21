@@ -33,6 +33,12 @@ const QUERIES = [
   { q: 'קקקקקקק', expect: { zero: true } },
 ];
 const REPORTS = ['st:7900:546', 'st:7900:595', 'st:11:100'];
+const TX = [
+  { label: 'latest transactions · Israel (12 months)', path: '/api/intel?view=txLatest&months=12',
+    ok: (j) => !!(j && j.recency && j.recency.latestKnownEvent && j.recency.latestKnownEvent.date), note: (j) => `latest known ${j.recency.latestKnownEvent.date} · ${j.recency.latestKnownEvent.sourceId}` },
+  { label: 'latest transactions · Petah Tikva (90 days)', path: '/api/intel?view=txEvents&code=7900&days=90',
+    ok: (j) => !!(j && Array.isArray(j.events) && j.events.length), note: (j) => `${j.events.length} events · newest ${j.events[0].date}` },
+];
 
 const redact = (s) => String(s || '').replace(/kobix_session=[^;,\s]+/g, 'kobix_session=<redacted>').replace(/x-vercel-protection-bypass=[^&\s]+/g, 'x-vercel-protection-bypass=<redacted>');
 
@@ -81,11 +87,14 @@ function classify(r, isAnswer) {
   const report = { at: new Date().toISOString(), commit: process.env.WAIT_SHA || null, deployment, hosts: [] };
   let verified = 0, failed = 0;
   for (const h of HOSTS) {
-    const isPreview = h.name !== 'production';
+    const isPreview = /^preview/.test(h.name);   // every other host (propx.live, kobix.online) is a Production domain
     const pw = (isPreview && process.env.PREVIEW_SITE_PW) || process.env.SITE_PW || '';
     const headers = { accept: 'application/json' };
     if (isPreview && process.env.VERCEL_BYPASS) headers['x-vercel-protection-bypass'] = process.env.VERCEL_BYPASS;
-    const H = { name: h.name, base: h.base, bypassSent: !!headers['x-vercel-protection-bypass'], login: null, page: null, search: [], reports: [] };
+    const H = { name: h.name, base: h.base, bypassSent: !!headers['x-vercel-protection-bypass'], login: null, page: null, search: [], reports: [], transactions: [] };
+    /* the sign-in mode the deployment reports (public, no secret): perimeter = the shared password; identity = individual accounts */
+    { const r = await req(h.base, '/api/login?op=mode', { headers: { accept: 'application/json' } }); let j = null; try { j = JSON.parse(r.text); } catch { j = null; }
+      H.mode = r.status === 200 && j && j.mode ? j.mode : `HTTP ${r.status}`; console.log(`${h.name.padEnd(10)} sign-in mode: ${H.mode}`); }
     /* sign in as the browser does (only with the runner secret) */
     if (pw) {
       const r = await req(h.base, '/api/login', { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: JSON.stringify({ password: pw }) });
@@ -96,7 +105,12 @@ function classify(r, isAnswer) {
     const authed = !!headers.cookie;
     /* the page itself: does this deployment carry the search fix? */
     { const r = await req(h.base, '/', { headers: { ...headers, accept: 'text/html' } });
-      H.page = { status: r.status, type: r.type, location: r.location, vercelId: r.vercelId, hasSearchFix: r.status === 200 ? /async function srchFetch\(/.test(r.text) : null, ms: r.ms }; }
+      const has = (re) => (r.status === 200 ? re.test(r.text) : null);
+      /* the investor-priority layout (launchpad, the four groups, the street report) — test/hierarchy.test.js pins the same markers */
+      H.page = { status: r.status, type: r.type, location: r.location, vercelId: r.vercelId, hasSearchFix: has(/async function srchFetch\(/), launchpad: has(/id="launchpad"/),
+        groups: has(/id="grp1"[\s\S]*id="grp2"[\s\S]*id="grp3"[\s\S]*id="grp4"/), streetReport: has(/function srHTML\(g\)/), ms: r.ms };
+      console.log(`${h.name.padEnd(10)} page ${r.status} · search fix ${H.page.hasSearchFix} · launchpad ${H.page.launchpad} · groups ${H.page.groups} · street report ${H.page.streetReport}`);
+      if (authed) for (const k of ['hasSearchFix', 'launchpad', 'groups', 'streetReport']) { if (H.page[k]) verified++; else failed++; } }
     for (const Q of QUERIES) {
       const path = '/api/geo/search?limit=12&q=' + encodeURIComponent(Q.q) + (Q.near ? '&near=' + encodeURIComponent(Q.near) : '');
       const r = await req(h.base, path, { headers });
@@ -116,11 +130,21 @@ function classify(r, isAnswer) {
       H.search.push(row);
       console.log(`${h.name.padEnd(10)} ${String(r.status).padEnd(4)} ${cls.padEnd(18)} ${(row.type || '-').slice(0, 30).padEnd(31)} ${row.location ? '→ ' + row.location.slice(0, 60) + ' ' : ''}${row.streets != null ? row.streets + ' streets · ' + (row.top[0] || '—') : row.apiError || ''} · "${Q.q}"${Q.near ? ' near ' + Q.near : ''} · ${r.ms} ms${authed ? (row.expectation ? ' ✓' : ' ✗') : ''}`);
     }
-    if (isPreview) for (const id of REPORTS) {
+    for (const id of REPORTS) {
       const r = await req(h.base, '/api/intel?view=streetReport&part=core&id=' + encodeURIComponent(id), { headers });
       const cls = classify(r, (j) => j && j.id === id && !!j.identity);
       H.reports.push({ id, status: r.status, class: cls, type: r.type || null, location: r.location || null, ms: r.ms, bytes: r.text ? r.text.length : 0 });
       console.log(`${h.name.padEnd(10)} ${String(r.status).padEnd(4)} ${cls.padEnd(18)} street report ${id} · ${r.ms} ms`);
+      if (authed) { if (cls === 'OK') verified++; else failed++; }
+    }
+    /* latest transactions: the union's recency (national) and one locality's events, newest first */
+    for (const T of TX) {
+      const r = await req(h.base, T.path, { headers });
+      const cls = classify(r, T.ok);
+      let note = '';
+      if (cls === 'OK') { const j = JSON.parse(r.text); note = T.note(j); }
+      H.transactions.push({ path: T.path, status: r.status, class: cls, note, ms: r.ms });
+      console.log(`${h.name.padEnd(10)} ${String(r.status).padEnd(4)} ${cls.padEnd(18)} ${T.label} · ${note || '—'} · ${r.ms} ms`);
       if (authed) { if (cls === 'OK') verified++; else failed++; }
     }
     H.authenticated = authed;
