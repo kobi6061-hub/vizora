@@ -36,3 +36,28 @@ The scaffolding (`406f4db`) provides:
 ## Log
 
 - 22:04 UTC: the scaffolding is committed (`406f4db`). Workstreams A–E have started in isolated worktrees.
+- `9ea6df3`: the ALTARIS gate now counts 18 scroll-spy items. The scaffolding's two rail entries had broken it.
+- `4056235`: workstream A is merged.
+  - **New audit.** `lib/trust/freshness-audit.js` and `docs/DATA-FRESHNESS-2026-10-22.md`.
+  - **Fix 1.** The national detector's check record is now read from its run log. Before, `git log` ran in a shallow checkout and answered with the branch head, so unchanged checks went unrecorded.
+  - **Fix 2.** The finance lane's check date now reaches the catalogue.
+  - **Fix 3.** The coverage audit counts the 304 rows folded into register deals as folded. They were reported as missed.
+  - **Fix 4.** The street-geography push places the build on the newest head instead of rebasing binary files.
+  - **Fix 5.** The national file's latest date is never a future-dated row. It showed 2048-05-29.
+  - **Latest defensible deals.**
+    - Register: 17.09.2026 (copy 19.09.2026, STALE).
+    - GovMap layer: 28.09.2026 (load 08.10.2026).
+    - Union: 28.09.2026.
+    - No newer copy exists at either source.
+  - **Integrity.** 0 violations over 380,547 events.
+- `bc22159`: workstream C, the Deal Decision Lab, is merged.
+  - **Code.** `lib/deal/engine.js`, `index.js`, `ui.js`, plus 27 registry terms and 13 rules.
+  - **Tests.** 23 unit gates and a 32-check browser journey.
+  - **Real result.** הרצל, Petah Tikva: 23 comparables (SUPPORTED), median ₪24,690/m², the asking price at the 52nd percentile.
+- `6e7c546`: workstream D, What Changed Here?, is merged.
+  - **Code.** `lib/changes/**`, plus 8 terms and 28 rules.
+  - **Tests.** 15 unit gates and a 68-check browser journey.
+  - **Real results.**
+    - Tel Aviv, 365 days: 6,104 new events, equal to the transactions union.
+    - Central District, 90 days: 22,028 deals by date and 3,585 older deals first observed in the period.
+- Workstream F (QA, security, integration) has started on `6e7c546`.
