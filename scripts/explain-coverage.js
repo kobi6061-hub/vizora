@@ -309,7 +309,7 @@ const CHROME = [
    ['I18N.ldC.committee', 'descriptor'], ['I18N.ldC.place', 'descriptor'], ['I18N.ldC.tender', 'descriptor'], ['I18N.ldCCity', 'descriptor'],
    ['I18N.ldDComm', 'descriptor'], ['I18N.ldDGeo', 'descriptor'], ['I18N.ldDId', 'descriptor'], ['I18N.ldDL.lot', 'descriptor'],
    ['I18N.ldDName', 'descriptor'], ['I18N.ldDP.link', 'descriptor'], ['I18N.ldDP.plan', 'descriptor'], ['I18N.ldDRegion', 'descriptor'],
-   ['I18N.ldDSrc', 'descriptor'], ['I18N.rtC.city', 'descriptor'], ['I18N.rtC.tender', 'descriptor'],
+   ['I18N.ldDSrc', 'descriptor'], ['I18N.ldPipePlansN', 'descriptor'], ['I18N.rtC.city', 'descriptor'], ['I18N.rtC.tender', 'descriptor'],
    ['I18N.ldDIds', 'heading'], ['I18N.ldTblT', 'heading'], ['I18N.ldTblTNone', 'heading'],
   /* housing — lotteries, projects, the drawer */
    ['I18N.hoC.place', 'descriptor'], ['I18N.hoC.project', 'descriptor'], ['I18N.hoDBody', 'descriptor'], ['I18N.hoDLotId', 'descriptor'],
@@ -425,6 +425,10 @@ function analyze({ registry } = {}) {
   const bySection = {};
   for (const r of M) { const s = r.sections[0] || 'other'; const o = bySection[s] || (bySection[s] = { meaningful: 0, covered: 0, excluded: 0, uncovered: 0 }); o.meaningful++; if (r.excluded) o.excluded++; else if (r.covered) o.covered++; else o.uncovered++; }
   const covered = inScope.filter((r) => r.covered).length;
+  /* the page without the attacher: what is explained in place (INLINE + ORIENTATION) — the measured "before" */
+  const baseline = inScope.filter((r) => r.via === 'INLINE' || r.via === 'ORIENTATION').length;
+  /* label sites that print a computed string (a name, a value, an error, a count) — not fixed labels, listed so nothing hides */
+  const computed = sites.filter((s) => !s.ref && !s.lit).map((s) => `${s.fn} · ${s.kind} · ${String(s.raw || '').slice(0, 70)}`);
   const anchorProblems = [];
   for (const [ref, v] of Object.entries(anchors)) { const id = termOf(v); if (!X.term(id)) anchorProblems.push({ ref, problem: 'unknown term ' + id }); if (!labels.has(ref) && !/^(id|sel):/.test(ref)) anchorProblems.push({ ref, problem: 'no such label on the page' }); }
   return {
@@ -434,6 +438,8 @@ function analyze({ registry } = {}) {
     labels: rows.length, chrome: rows.length - M.length, meaningful: M.length, excluded: M.length - inScope.length,
     coverage: { covered, total: inScope.length, pct: inScope.length ? Math.round(covered / inScope.length * 1000) / 10 : 100,
       byVia: { INLINE: inScope.filter((r) => r.via === 'INLINE').length, ANCHOR: inScope.filter((r) => r.via === 'ANCHOR').length, ORIENTATION: inScope.filter((r) => r.via === 'ORIENTATION').length } },
+    baseline: { covered: baseline, total: inScope.length, pct: inScope.length ? Math.round(baseline / inScope.length * 1000) / 10 : 100, note: 'without the attacher: labels explained in place (INLINE) or by a section orientation' },
+    computedLabelSites: { count: computed.length, sites: [...new Set(computed)].sort() },
     bySection, uncovered: inScope.filter((r) => !r.covered).map((r) => ({ ref: r.ref, he: r.he, en: r.en, sections: r.sections, kinds: r.kinds })),
     exclusions: M.filter((r) => r.excluded).map((r) => ({ ref: r.ref, en: r.en, reason: r.excluded })),
     anchorProblems, terms: termCompleteness(X), chromeReasons: CHROME_REASONS, rows,
@@ -444,9 +450,12 @@ module.exports = { analyze, loadPage, extract, classify, CHROME, CHROME_REASONS,
 
 if (require.main === module) {
   const r = analyze();
-  const slim = Object.assign({}, r); delete slim.rows; slim.labelsList = r.rows.map((x) => ({ ref: x.ref, en: x.en, he: x.he, cls: x.cls, chrome: x.chrome, sections: x.sections, kinds: x.kinds, via: x.via, term: x.term, excluded: x.excluded }));
-  fs.writeFileSync(OUT, JSON.stringify(slim, null, 1) + '\n');
-  console.log(`explain coverage: ${r.coverage.covered} / ${r.coverage.total} meaningful labels covered (${r.coverage.pct} %) — INLINE ${r.coverage.byVia.INLINE} · ANCHOR ${r.coverage.byVia.ANCHOR} · ORIENTATION ${r.coverage.byVia.ORIENTATION}`);
+  /* the summary indented, every label one compact line (reviewable in a diff) */
+  const head = Object.assign({}, r); delete head.rows;
+  const lines = r.rows.map((x) => JSON.stringify({ ref: x.ref, en: x.en, he: x.he, cls: x.cls, chrome: x.chrome || undefined, via: x.via || undefined, term: x.term || undefined, sections: x.sections, kinds: x.kinds, excluded: x.excluded || undefined }));
+  const body = JSON.stringify(head, null, 1);
+  fs.writeFileSync(OUT, body.slice(0, -2) + ',\n "labelsList": [\n  ' + lines.join(',\n  ') + '\n ]\n}\n');
+  console.log(`explain coverage: ${r.coverage.covered} / ${r.coverage.total} meaningful labels covered (${r.coverage.pct} %) — INLINE ${r.coverage.byVia.INLINE} · ANCHOR ${r.coverage.byVia.ANCHOR} · ORIENTATION ${r.coverage.byVia.ORIENTATION} · without the attacher ${r.baseline.covered} (${r.baseline.pct} %)`);
   console.log(`  ${r.labels} labels from ${r.sitesWithFixedLabel} label sites (${r.sites} sites) · chrome ${r.chrome} · excluded ${r.excluded}`);
   console.log(`  terms complete: ${r.terms.complete} / ${r.terms.total}` + (r.anchorProblems.length ? ` · ANCHOR PROBLEMS ${r.anchorProblems.length}` : ''));
   for (const [s, o] of Object.entries(r.bySection).sort()) console.log(`  ${s.padEnd(16)} ${o.covered} / ${o.meaningful - o.excluded}` + (o.excluded ? ` (+${o.excluded} excluded)` : ''));
