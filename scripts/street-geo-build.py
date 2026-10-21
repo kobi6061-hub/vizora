@@ -147,8 +147,6 @@ def main():
             sc = None
         if nbname:
             n = NB[code][nbname]; n['rows'] += 1; n['xs'].append(lng); n['ys'].append(lat)
-            if sc is not None:
-                n['streets'][sc] += 1
         if sc is None or sc <= 0:
             st['noStreetCode'] += 1
             continue
@@ -159,6 +157,8 @@ def main():
                 st['streetCodeOtherLocality'] += 1
                 continue
             sc = sc % 10000
+        if nbname:
+            NB[code][nbname]['streets'][sc] += 1
         if (code, sc) in dnames:
             st['streetInDirectory'] += 1
             if sname and dnames[(code, sc)].replace(' ', '') == str(sname).replace(' ', ''):
