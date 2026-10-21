@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="6fc8242c9ef0106304a650e7487a937e92ea3622802c4b727d82e7fd62a38de1">
+<meta name="propx-source-sha256" content="0d97edecf8290936463019012bf5fb263ac1dfea5ce442b5d06eba381efa38e3">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -2534,6 +2534,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     'cbs:average-rent': { aliases: [], label: bi('הלמ״ס — שכר דירה ממוצע (לא קריא למכונה)', 'CBS — average rent (not machine-readable)') },
     'boi:policy-rate': { aliases: ['boi:interest'], label: bi('בנק ישראל — ריבית', 'Bank of Israel — policy rate') },
     'boi:housing-finance': { aliases: ['boi:sdmx:BIR_MRTG_99', 'boi:sdmx:BMB_99'], label: bi('בנק ישראל — הלוואות לדיור ויתרות אשראי לדיור (SDMX)', 'Bank of Israel — housing loans and housing-credit balances (SDMX)') },
+    'datagov:mot:bus-stops': { aliases: ['datagov:mot:lrt-stations', 'datagov:mot:rail-stations', 'datagov:mot:metro-stations'], label: bi('משרד התחבורה — תחנות תחבורה ציבורית ותחנות רכבת קלה (data.gov.il)', 'Ministry of Transport — public-transport stops and light-rail stations (data.gov.il)') },
     'datagov:cbs:census-2022': { aliases: ['census-2022'], label: bi('הלמ״ס — מפקד האוכלוסין והדיור 2022 לפי יישובים ואזורים סטטיסטיים', 'CBS — Population and Housing Census 2022 by locality and statistical area') },
     'datagov:piba:residents-by-locality': { aliases: ['residents'], label: bi('רשות האוכלוסין וההגירה — תושבים רשומים לפי יישוב וגיל', 'Population and Immigration Authority — registered residents by locality and age') },
     'rmi:michrazim': { aliases: [], label: bi('רשות מקרקעי ישראל — אתר המכרזים', 'Israel Land Authority — tender site') },
@@ -3853,6 +3854,18 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       notAs: bi('לא אוכלוסיית המפקד, לא אומדן הלמ״ס, לא נתון רחוב — שני עולמות שלעולם אינם מעורבבים.', 'Not the census population, not the CBS estimate, not a street figure — two universes never mixed.'),
       evidence: bi('data/reference/residents → loc:<קוד>', 'data/reference/residents → loc:<code>'),
       freshness: { observation: bi('צילום המרשם', 'the register snapshot'), publication: bi('עדכון המשאב ב-data.gov.il', 'the data.gov.il resource update'), check: bi('הבדיקה השבועית', 'the weekly check') } }),
+    T({ id: 'transport_access', group: 'streetReport', title: bi('נגישות לתחבורה ציבורית', 'Public-transport access'),
+      short: bi('תחנות התחבורה הציבורית, כניסות תחנות הרכבת הקלה ותחנות רכבת ישראל בטווח קבוע מהרחוב, עם הסטטוס של משרד התחבורה כפי שפורסם — מרחק בקו אוויר.', 'Public-transport stops, light-rail station entrances and Israel Railways station stops within a fixed radius of the street, with the Ministry of Transport\'s status as published — straight-line distance.'),
+      why: bi('נגישות לתחבורה היא הקשר מרכזי למגורים; היא מוצגת כעובדה מרחבית, לא כשווי.', 'Transport access is key residential context; it is shown as a spatial fact, never a value.'),
+      unit: bi('ספירה · מטרים', 'count · metres'), geography: bi('הרחוב — מהנקודות המאותרות שלו', 'The street — from its located points'), period: bi('צילום השכבה האחרון', 'The latest layer snapshot'),
+      source: { ids: ['datagov:mot:bus-stops'] }, cls: 'DERIVED',
+      formula: bi('מרחק = המרחק הגאודזי הקצר ביותר מנקודה מאותרת של הרחוב לתחנה / כניסה; ספירה = תחנות שונות בטווח (300 מ׳ אוטובוס · 1,000 מ׳ רכבת קלה · 1,500 מ׳ רכבת)', 'distance = the shortest geodesic distance from a located street point to a stop / entrance; count = distinct stops in range (300 m bus · 1,000 m light rail · 1,500 m rail)'),
+      inputs: [bi('נקודות הרחוב (קובץ שכבת GovMap)', 'the street\'s points (the GovMap-layer file)'), bi('מרשם התחנות + כניסות הרכבת הקלה (משרד התחבורה)', 'the stop registry + light-rail entrances (Ministry of Transport)')],
+      methodology: bi('הסטטוס ("קיימת" / "מתוכננת") נשמר כלשונו; תחנות רכבת ישראל נמדדות מרשומות מרשם התחנות מסוג "רכבת ישראל" — לשכבת תחנות הרכבת והמטרו אין קואורדינטות נגישות.', 'The status ("existing" / "planned") is kept verbatim; Israel Railways stations are measured from the stop registry\'s stops typed "Israel Railways" — the rail and metro station layers have no accessible coordinates.'),
+      interpretation: bi('קראו מרחק ויחד איתו את הסטטוס; תחנה מתוכננת היא תכנית, לא שירות.', 'Read the distance with its status; a planned station is a plan, not a service.'),
+      notAs: bi('לא מרחק הליכה, לא השפעה על מחיר, ותחנה מתוכננת אינה תחנה פעילה.', 'Not a walking distance, not a price effect, and a planned station is not an operating one.'),
+      evidence: bi('data/transport → street report → transport', 'data/transport → street report → transport'),
+      freshness: { observation: bi('צילום השכבה', 'the layer snapshot'), publication: bi('עדכון המשאב ב-data.gov.il', 'the data.gov.il resource update'), check: bi('הבדיקה השבועית', 'the weekly check') } }),
     T({ id: 'place_name_search', group: 'streets', title: bi('שם רשמי של מקום ביישוב', 'Official name of a place in a locality'),
       short: bi('שם שמדריך הרחובות הרשמי רושם תחת היישוב כולו (קוד 9000) — שכונה, שיכון או אתר בלי רשומת רחוב; החיפוש מציע את היישוב, לעולם לא רחוב.', 'A name the official street directory files under the whole locality (code 9000) — a neighbourhood, housing estate or site without a street record; search offers the locality, never a street.'),
       why: bi('מאפשר למצוא יישוב לפי שם מקום מוכר ("כנרת הקבוצה", "ש עולים") בלי להמציא רחוב.', 'Lets a locality be found by a familiar place name (e.g. Kinneret HaKvutza, a named housing estate) without inventing a street.'),
@@ -4507,6 +4520,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
   /* ---- missing-data reasons: why "—" is shown, and what would make the figure available ---- */
   const MISSING = Object.freeze({
     /* housing finance (lib/finance) + locality reference datasets (lib/reference), 21.10.2026 */
+    transport_not_synced: { label: bi('נגישות לתחבורה ציבורית', 'Public-transport access'), why: bi('שכבות משרד התחבורה טרם נקראו — אין ערך, לא אפס.', 'The Ministry of Transport layers have not been read yet — no value, not zero.'), unlock: bi('הריצה הבאה של transport-sync.yml.', 'The next transport-sync.yml run.'), ids: ['transport-not-synced'] },
     finance_not_synced: { label: bi('מימון דיור', 'Housing finance'), why: bi('נתוני בנק ישראל טרם נקראו בהצלחה — אין כאן ערך, לא אפס.', 'The Bank of Israel figures have not been read yet — there is no value here, not zero.'), unlock: bi('הריצה הבאה של finance-sync.yml.', 'The next finance-sync.yml run.'), ids: ['finance-not-synced'] },
     finance_series_not_published: { label: bi('סדרת מימון', 'Finance series'), why: bi('בנק ישראל אינו מפרסם סדרה בקודים אלה (למשל ריבית מסלול הפריים בתזרים ההלוואות החדשות) — מוצג "לא מפורסם", לעולם לא 0.', 'The Bank of Israel publishes no series under these codes (e.g. the prime track rate in the new-loans flow) — shown "not published", never 0.'), unlock: bi('פרסום הסדרה על ידי בנק ישראל.', 'The Bank of Israel publishing the series.'), ids: ['series-not-published'] },
     reference_not_synced: { label: bi('הקשר ליישוב', 'Locality context'), why: bi('מאגרי המפקד / המרשם טרם נקראו — אין ערך, לא אפס.', 'The census / register datasets have not been read yet — no value, not zero.'), unlock: bi('הריצה הבאה של reference-sync.yml.', 'The next reference-sync.yml run.'), ids: ['reference-not-synced'] },
@@ -10461,7 +10475,7 @@ const SRT={he:{
     seg:"לפי מספר חדרים (₪/מ״ר, אותה אוכלוסייה)",modelH:"מודל PROPX (MODEL)",modelNone:"אין הערכת מודל לרחוב",range:"טווח אימות",tier:"רמת ראיות",asOf:"נכון ל",
     plH:"תכנון ותשתיות סביב הרחוב",rel:{ON_THE_STREET:"על הרחוב",INTERSECTS:"חוצה את הרחוב",NEARBY:"בסמוך",AREA_WIDE:"תכנית אזורית",CITY_CONTEXT:"הקשר עירוני"},
     topic:{RAIL_TRANSIT:"תחבורה מסילתית",ROAD:"דרכים",RENEWAL:"התחדשות עירונית",NATIONAL_INFRASTRUCTURE:"תשתית לאומית",PREFERRED_HOUSING:"דיור מועדף",OTHER:"תכנית"},
-    plCols:["יחס","מרחק","תכנית","שם","נושא","שלב","שינוי יח״ד","שטח (דונם)","עדכון"],transitH:"תחבורה מסילתית — תכניות סטטוטוריות (לא קווים פעילים)",areaWideH:"תכניות אזוריות (כוללות את הרחוב, לא ספציפיות לו)",
+    plCols:["יחס","מרחק","תכנית","שם","נושא","שלב","שינוי יח״ד","שטח (דונם)","עדכון"],trH:"נגישות לתחבורה ציבורית — משרד התחבורה",trBus:"תחנות אוטובוס ותחבורה ציבורית ב-300 מ׳",trNear:"הקרובה",trLrt:"רכבת קלה — תחנות ב-1,000 מ׳",trRail:"רכבת ישראל — תחנות ב-1,500 מ׳",trSt:{EXISTING:"קיימת",PLANNED:"מתוכננת",OTHER:"אחר"},trCols:["תחנה","קו","סטטוס (משרד התחבורה)","סוג","מרחק"],trNone:"אין בטווח",trBasis:"מרחק בקו אוויר מהנקודה המאותרת הקרובה של הרחוב — נגזר; לא מרחק הליכה.",trNot:"קרבה היא הקשר בלבד: אינה שווי ואינה השפעה על מחיר; תחנה מתוכננת אינה תחנה פעילה.",trNotLoc:n=>`רשימות תחנות הרכבת (${n.rail}) והמטרו המתוכנן (${n.metro}) של משרד התחבורה ללא קואורדינטות נגישות — לא מוקמו.`,transitH:"תחבורה מסילתית — תכניות סטטוטוריות (לא קווים פעילים)",areaWideH:"תכניות אזוריות (כוללות את הרחוב, לא ספציפיות לו)",
     plSum:S=>`${S.intersects} חוצות · ${S.nearby} בסמוך · ${S.pending} עדיין בהליך · ${S.transit} מסילתיות`,units:u=>`שינוי יח״ד בתכניות שבטווח: ${u}`,
     plNone:"תכניות סביב הרחוב לא חושבו",muni:(p,s)=>`היתרי בנייה ואתרי בנייה בכתובות הרחוב (עיריית תל אביב-יפו): ${p} היתרים · ${s} אתרים`,renewal:"מתחם התחדשות מוכרז (מספר תכנית זהה)",
     invH:"השקעה — הערכת רחוב",sup:"מה תומך",ag:"מה נגד",chg:"מה יכול להשתנות",dd:"בדיקת נאותות",noScore:"כללים דטרמיניסטיים בלבד — ללא ציון, ללא הסתברות, ללא המלצה.",
@@ -10507,7 +10521,7 @@ const SRT={he:{
     seg:"By rooms (₪/m², the same population)",modelH:"PROPX model (MODEL)",modelNone:"No model estimate for this street",range:"Validation range",tier:"Evidence tier",asOf:"As of",
     plH:"Planning and infrastructure around the street",rel:{ON_THE_STREET:"On the street",INTERSECTS:"Intersects",NEARBY:"Nearby",AREA_WIDE:"Area-wide",CITY_CONTEXT:"City context"},
     topic:{RAIL_TRANSIT:"Rail transit",ROAD:"Roads",RENEWAL:"Urban renewal",NATIONAL_INFRASTRUCTURE:"National infrastructure",PREFERRED_HOUSING:"Preferred housing",OTHER:"Plan"},
-    plCols:["Relation","Distance","Plan","Name","Topic","Stage","Unit change","Area (dunam)","Updated"],transitH:"Rail transit — statutory plans (not operating lines)",areaWideH:"Area-wide plans (include the street, not specific to it)",
+    plCols:["Relation","Distance","Plan","Name","Topic","Stage","Unit change","Area (dunam)","Updated"],trH:"Public-transport access — Ministry of Transport",trBus:"Bus / public-transport stops within 300 m",trNear:"nearest",trLrt:"Light rail — stations within 1,000 m",trRail:"Israel Railways — stations within 1,500 m",trSt:{EXISTING:"existing",PLANNED:"planned",OTHER:"other"},trCols:["Station","Line","Status (Ministry of Transport)","Type","Distance"],trNone:"none in range",trBasis:"Straight-line distance from the street's nearest located point — DERIVED; not a walking distance.",trNot:"Proximity is context only: never a value and never a price effect; a planned station is not an operating one.",trNotLoc:n=>`The Ministry of Transport's rail (${n.rail}) and planned metro (${n.metro}) station lists carry no accessible coordinates — not placed.`,transitH:"Rail transit — statutory plans (not operating lines)",areaWideH:"Area-wide plans (include the street, not specific to it)",
     plSum:S=>`${S.intersects} intersect · ${S.nearby} nearby · ${S.pending} still in process · ${S.transit} rail transit`,units:u=>`Unit change in the plans within the radius: ${u}`,
     plNone:"Plans around the street were not computed",muni:(p,s)=>`Building permits and construction sites at the street's addresses (Tel Aviv-Yafo): ${p} permits · ${s} sites`,renewal:"Declared renewal complex (same plan number)",
     invH:"Investment — street assessment",sup:"What supports",ag:"What argues against",chg:"What could change",dd:"Due diligence",noScore:"Deterministic rules only — no score, no probability, no recommendation.",
@@ -10710,6 +10724,14 @@ function srHTML(g){
       ${wide.length?`<details class="st-sec"><summary>${t.areaWideH} (${wide.length})</summary><div class="st-wrap"><table class="st-tbl">${thead}<tbody>${wide.map(prow).join("")}</tbody></table></div></details>`:""}
       <p class="gv-note">${t.plBasis} ${t.plNotJoin} ${t.plNotMean}</p>`;
   }
+  /* public-transport access (lib/transport): stops / light-rail stations / rail station stops in fixed radii — the Ministry's status verbatim */
+  const TRA=R.transport;let trn="";
+  if(TRA&&TRA.available){const B=TRA.busStops,Lr=TRA.lrt,Rl=TRA.rail;
+    const lrow=x=>`<tr><td class="w"><bdi>${ldE(x.station||dash)}</bdi></td><td>${ldE(x.line||dash)}</td><td><span class="sr-rel ${x.statusClass==="EXISTING"?"INTERSECTS":"NEARBY"}">${ldE(x.status||t.trSt[x.statusClass]||dash)}</span></td><td>${ldE(x.type||dash)}</td><td class="num">${srDist(x.distanceM)}</td></tr>`;
+    trn=`<h4>${t.trH} ${xpBtn("transport_access")}</h4><div class="st-grid">${tile(t.trBus,fmtInt(B.count),B.nearestM!=null?`${t.trNear} ${srDist(B.nearestM)}`:t.trNone,"DERIVED")}${tile(t.trLrt,fmtInt(Lr.stations.length),Lr.existingNearestM!=null?`${t.trSt.EXISTING}: ${srDist(Lr.existingNearestM)}`:Lr.plannedNearestM!=null?`${t.trSt.PLANNED}: ${srDist(Lr.plannedNearestM)}`:t.trNone,"DERIVED")}${tile(t.trRail,fmtInt(Rl.stops.length),Rl.nearestM!=null?`${t.trNear} ${srDist(Rl.nearestM)}`:t.trNone,"DERIVED")}</div>
+      ${Lr.stations.length?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.trCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${Lr.stations.slice(0,12).map(lrow).join("")}</tbody></table></div>`:""}
+      <p class="gv-note">${t.trBasis} ${t.trNot} ${t.trNotLoc(TRA.notLocated)}</p>`;}
+  else if(TRA&&R.part==="full")trn=`<h4>${t.trH}</h4><p class="gv-note">${ldE(TRA.reason||"")} ${xpMiss(TRA.reason||"transport-not-synced")}</p>`;
   /* investment */
   const A=R.assessment;
   const li=it=>`<li><span class="sr-k ${it.kind}">${t.kinds[it.kind]||it.kind}</span> ${ldE(he?it.he:it.en)} ${it.cls?srTag(it.cls):""}</li>`;
@@ -10749,7 +10771,7 @@ function srHTML(g){
     ${sec("ov",t.nav.ov,crumb+latest+kpis+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
     ${sec("tx",t.txH,srTxTableHTML(R),true,"transaction_event_sources")}
     ${sec("px",t.pxH,prices,true,"street_report_fair_comparison")}
-    ${sec("pl",t.plH,plan,true,"street_report_relation")}
+    ${sec("pl",t.plH,plan+trn,true,"street_report_relation")}
     ${sec("inv",t.invH,inv+propForm,true,"street_report_assessment")}
     ${sec("map",t.mapH,R.part==="full"?srMapSVG(R):`<p class="gv-note">${t.loadingFull}</p>`)}
     ${sec("src",t.srcH,src,false)}</div>`;
