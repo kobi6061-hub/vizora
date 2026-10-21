@@ -136,6 +136,7 @@ t('the explanation dialog: role=dialog labelled by its title, the reader\'s orde
 });
 t('source & date: the Trust catalogue is read once and cached; offline or failed → the registry\'s own dates, never a made-up one', () => {
   assert.match(INDEX, /function xpCatLoad\(\)\{if\(xpCatSt!=="idle"\)return;/);
+  assert.match(INDEX, /function xpOpen\(trigger\)\{[^\n]*xpCatLoad\(\);let title=/, 'the catalogue state is settled before the body is built (offline shows the registry\'s dates on the first open)');
   assert.match(INDEX, /inGet\("view=sources"\)/);
   assert.match(INDEX, /location\.protocol==="file:"\|\|!location\.host\)\{xpCatSt="offline";return\}/);
   assert.match(INDEX, /srcOffline:"Live check dates are not available here; the registry describes the figure's dates:"/);

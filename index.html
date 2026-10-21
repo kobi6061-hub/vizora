@@ -11230,7 +11230,7 @@ function xpL2HTML(id){const L=xpL(),x=XP().level2(id,L),t=xpT();if(!x)return"";c
   return `<dl class="xp-dl">${row(t.analyst,ldE(x.short))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.population,ldE(x.population))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.interp,ldE(x.interpretation))}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p>`}
 /* ONE dialog (#xpPop, role=dialog, labelled by its title): focus moves to the title and returns to the trigger on close; Escape
    closes; Tab cycles inside; a phone (< 760 px) gets a bottom sheet over a scrim with a large close button */
-function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let title="",chip="",body="",more="",moreLab=t.full;
+function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();xpCatLoad();let title="",chip="",body="",more="",moreLab=t.full;
   if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;title=ldE(x.title);chip=xpClsChip(x.cls);body=xpTermHTML(trigger.dataset.xp,true);more=xpL2HTML(trigger.dataset.xp)}
   else if(trigger.dataset.xps){const rt=xpRT.get(trigger.dataset.xpk)||{},s=X.signal(trigger.dataset.xps,L,rt);if(!s)return;const kind={watch:{he:"מעקב",en:"watch"},risk:{he:"סיכון",en:"risk"},info:{he:"מידע",en:"info"}}[s.kind];
     const line=[s.trigger?`<b>${ldE(s.trigger)}</b>`:"",`${t.rule}: ${ldE(s.rule)}`,s.value!=null?`${t.value}: <span class="num">${ldE(String(s.value))}</span>`:"",s.threshold?`${t.threshold}: <span class="num">${ldE(s.threshold)}</span>`:"",s.comparison?`${t.comparison}: ${ldE(s.comparison)}`:"",s.period?`${t.period}: ${ldE(s.period)}`:"",s.source?`${t.source}: ${ldE(s.sourceLabel||s.source)} <span class="num">${ldE(s.source)}</span>`:"",s.cls?`${t.cls}: ${xpClsChip(s.cls)}`:"",s.evidence?`${t.evidence}: ${ldE(s.evidence.level)} ${s.evidence.score!=null?s.evidence.score+"/100":""}`:""].filter(Boolean);
@@ -11244,7 +11244,6 @@ function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en
   else if(trigger.dataset.xpent&&X.entityType){const E=X.entityType(trigger.dataset.xpent,L);if(!E)return;
     title=ldE(E.label);body=`<p class="xp-s" id="xpPopS">${ldE(E.what)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(E.notA)}</p>`;more=xpLegendAllHTML(null);moreLab=t.legendAll}
   else return;
-  xpCatLoad();
   let pop=el("xpPop");if(!pop){pop=document.createElement("div");pop.id="xpPop";pop.className="xp-pop";pop.setAttribute("role","dialog");pop.setAttribute("aria-labelledby","xpPopT");pop.tabIndex=-1;pop.hidden=true;
     pop.addEventListener("keydown",xpKey);pop.addEventListener("toggle",()=>xpPlace(),true);document.body.appendChild(pop)}
   let sc=el("xpScrim");if(!sc){sc=document.createElement("div");sc.id="xpScrim";sc.className="xp-scrim";sc.hidden=true;document.body.appendChild(sc)}

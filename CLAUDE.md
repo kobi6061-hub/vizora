@@ -560,6 +560,16 @@
   (`xpBtn` / `xpSig` / `xpMiss`, one popover `#xpPop`) marks the dossier tiles, signals, quality, freshness, missing list,
   the supply block, the pulse radar + revisions, the Trust alerts and the developer drawer; ALTARIS marks the decision card and
   the basis view sections. The registry documents — it never computes; nothing in it is a recommendation or a probability.
+  EXPLAIN EVERYTHING (21.10.2026; `lib/explain/attach.js` + `scripts/explain-coverage.js` + `lib/explain/coverage.json` +
+  `test/explain-coverage.test.js`): every term carries `simple` + `example` ("For example", illustrative numbers — never a real
+  figure; LEGEND / SECTIONS carry `simple`); the one dialog reads simple words → why → how calculated → example → source & date
+  (Trust catalogue `view=sources` read once, else the registry's text — never a made-up date) → limitations + do not read it as →
+  collapsed full methodology; role=dialog, focus in / back, Escape, Tab cycle, phone bottom sheet, ⓘ named "Explain: <title>".
+  `ANCHORS` (registry) maps page labels → terms (`i:` · `TABLE.path` · `lit:en|he`, optional scope; a tie attaches nothing); the
+  attacher adds the ⓘ to every anchored label not explained in place (debounced MutationObserver, re-run on `propx:lang`, skips
+  `#dealLab` / `#changes`). Coverage by explicit rules R1–R8 + a reviewed CHROME list: 960 / 960 meaningful labels (baseline
+  without the attacher 17.9 %), 262 / 262 terms complete; the gate holds ≥ 95 % and no regression — a new page label or term
+  needs a decision / `simple` + `example` and a re-run of the script.
 - PRODUCT CLARITY (STEP 2A, 19.10.2026; `test/clarity.test.js`) — still ONE explanation system: `lib/explain/registry.js` now also
   carries `LEGEND` (the one evidence legend: OFFICIAL · STATIC · OBSERVED · DERIVED · MODEL · SELF-REPORTED · USER DOCUMENT · USER
   ASSUMPTION · USER OVERRIDE · MISSING · CONFLICT + match states VERIFIED · STRONG MATCH · POSSIBLE · AMBIGUOUS · UNRESOLVED · PARCEL
