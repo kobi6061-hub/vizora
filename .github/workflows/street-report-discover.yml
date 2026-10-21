@@ -7,6 +7,10 @@
 name: Street report — planning + transport discovery (read-only)
 
 on:
+  # the preview lane: a workflow that exists only on a non-default branch cannot be dispatched, so a push of this probe runs every mode
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['scripts/street-report-discover.js', '.github/workflows/street-report-discover.yml']
   workflow_dispatch:
     inputs:
       mode:
@@ -19,11 +23,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: street-report-discover-${{ inputs.mode }}
+  group: street-report-discover-${{ github.event_name }}-${{ inputs.mode }}
   cancel-in-progress: false
 
 jobs:
   discover:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: ${{ fromJSON(github.event_name == 'workflow_dispatch' && format('["{0}"]', inputs.mode) || '["xplan","ttl","transport"]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -33,5 +41,5 @@ jobs:
           node-version: '22'
       - name: Discover (read-only)
         env:
-          MODE: ${{ inputs.mode }}
+          MODE: ${{ matrix.mode }}
         run: node scripts/street-report-discover.js "--$MODE"
