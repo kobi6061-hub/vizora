@@ -44,7 +44,7 @@ const FIELDS = ['publisher', 'documentation', 'dataset', 'endpoint', 'requestedA
   'history', 'newest', 'freshness', 'licence', 'access', 'fit', 'integration', 'evidence'];
 
 /* ── repository state: what the code reads (resource ids), the lanes new in this mission, the Trust Center's latest checks ── */
-const NEW_LANES = Object.freeze({ 'lib/reference/index.js': 'data/reference', 'lib/transport/index.js': 'data/transport', 'lib/finance/series.js': 'data/finance' });
+const NEW_LANES = Object.freeze({ 'lib/reference/index.js': 'data/reference', 'lib/transport/index.js': 'data/transport', 'lib/finance/series.js': 'data/finance', 'lib/surroundings/index.js': 'data/surroundings' });
 function codeRefs() {
   const out = new Map();   // resource id / quoted package name → file
   const walk = (d) => { for (const e of fs.readdirSync(path.join(ROOT, d), { withFileTypes: true })) { const p = d + '/' + e.name;
@@ -58,7 +58,7 @@ function codeRefs() {
 }
 function laneProof(file, pkgResource) {
   // a NEW lane's stored sync for this resource: data/<lane>/<id>/meta.json with records > 0 and a SUCCESS / UNCHANGED run
-  const dir = NEW_LANES[file]; if (!dir) return null;
+  const dir = NEW_LANES[file]; if (!dir || !fs.existsSync(path.join(ROOT, dir))) return null;
   for (const id of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)) {
     const mp = path.join(ROOT, dir, id, 'meta.json'); if (!fs.existsSync(mp)) continue;
     const m = JSON.parse(fs.readFileSync(mp, 'utf8')); if (m.resourceId !== pkgResource) continue;
@@ -75,6 +75,7 @@ const READERS = Object.freeze({
   'lib/reference/index.js': 'lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext',
   'lib/transport/index.js': 'lib/streets/report.js (transport) · index.html street report "Public-transport access"',
   'lib/finance/series.js': 'lib/dossier/query.js (sections.finance) · api/intel.js view=finance · index.html dossier "Housing finance"',
+  'lib/surroundings/index.js': 'lib/streets/report.js (surroundings) · index.html street report "Street surroundings"',
 });
 
 /* ── evidence files ── */
@@ -122,6 +123,10 @@ function ckanSource(r) {
       if (!(proof.records > 0 && proof.okRuns > 0)) throw new Error(`${r.name}: a new lane without a successful stored read — never CONNECTED_VERIFIED`);
       state = 'CONNECTED_VERIFIED'; why = `read whole on the runner (${proof.runs} run(s), ${proof.okRuns} successful), ${proof.records} records stored at ${proof.store} (content ${String(proof.contentHash).slice(0, 12)}…), read by ${READERS[ref[1]]}`;
       integration = { integrated: true, by: ref[1], thisMission: true, proof, readBy: READERS[ref[1]], trust: trustCheck(TRUST.by.get(proof.trustId)) };
+    } else if (NEW_LANES[ref[1]]) {
+      /* code written in this mission but no stored successful read yet — never CONNECTED, never EXISTING */
+      integration = { integrated: false, by: null, pendingLane: ref[1], note: 'read by a lane added in this mission — awaiting its first successful runner sync' };
+      why = `a lane added in this mission (${ref[1]}) reads it — no stored successful read yet, so it is not CONNECTED; ` + (r.reason || '');
     } else {
       state = 'EXISTING_VERIFIED'; why = `read by ${ref[1]} before this mission` + (r.reason ? ' — ' + r.reason : '');
       const tr = [...TRUST.by.values()].find((s) => s.url && P.resources.some((x) => String(s.url).includes(x.id) || String(s.url).includes('/dataset/' + r.name)));

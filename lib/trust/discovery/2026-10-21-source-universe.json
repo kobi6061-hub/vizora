@@ -10494,7 +10494,9 @@
    },
    "integration": {
     "integrated": false,
-    "by": null
+    "by": null,
+    "pendingLane": "lib/surroundings/index.js",
+    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
    },
    "evidence": {
     "files": [
@@ -10504,7 +10506,7 @@
     "note": "Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
    },
    "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
+   "stateWhy": "a lane added in this mission (lib/surroundings/index.js) reads it — no stored successful read yet, so it is not CONNECTED; Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
   },
   {
    "id": "datagov:pkg:b072e36c-a53b-49e1-be08-4a608fcf4638",
@@ -16994,7 +16996,9 @@
    },
    "integration": {
     "integrated": false,
-    "by": null
+    "by": null,
+    "pendingLane": "lib/surroundings/index.js",
+    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
    },
    "evidence": {
     "files": [
@@ -17005,7 +17009,7 @@
     "note": "Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
    },
    "state": "UNSUITABLE_DATA",
-   "stateWhy": "Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
+   "stateWhy": "a lane added in this mission (lib/surroundings/index.js) reads it — no stored successful read yet, so it is not CONNECTED; Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
   },
   {
    "id": "datagov:pkg:mosdot",
@@ -17137,7 +17141,9 @@
    },
    "integration": {
     "integrated": false,
-    "by": null
+    "by": null,
+    "pendingLane": "lib/surroundings/index.js",
+    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
    },
    "evidence": {
     "files": [
