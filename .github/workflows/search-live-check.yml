@@ -1,0 +1,50 @@
+# PROPX · Street search LIVE CHECK (read-only) — Production and the street-report Preview.
+#
+# What a browser's search request actually receives on each deployed site: HTTP status, content type, redirect, Vercel id,
+# API error, matches (scripts/search-live-check.js). It signs in exactly as the page does, and only when the founder has added
+# the runner secrets — PROPX_SITE_PASSWORD (+ optional PROPX_PREVIEW_SITE_PASSWORD) and, for the Vercel-protected preview,
+# VERCEL_AUTOMATION_BYPASS_SECRET (the project's own "Protection Bypass for Automation"). No secret or cookie is printed; without
+# them the run reports NOT AUTHENTICATED and fails (exit 2) — it never passes unverified. GET only + the one login POST; nothing
+# is committed. Runs on a push to the preview lane (a workflow that exists only there cannot be dispatched) after waiting for
+# that commit's Vercel deployment; re-run the job after adding the secrets.
+
+name: Search live check (read-only)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths:
+      - 'scripts/search-live-check.js'
+      - '.github/workflows/search-live-check.yml'
+      - 'lib/geo/registry.js'
+      - 'api/geo/search.js'
+      - 'index.html'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  statuses: read
+
+concurrency:
+  group: search-live-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Search + street report on Production and the Preview
+        env:
+          HOSTS: production=https://propx.live,preview=https://kobixrealestate-git-claude-street-report-preview-iboks-projects.vercel.app
+          SITE_PW: ${{ secrets.PROPX_SITE_PASSWORD }}
+          PREVIEW_SITE_PW: ${{ secrets.PROPX_PREVIEW_SITE_PASSWORD }}
+          VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          WAIT_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+          OUT: search-live-check.json
+        run: node scripts/search-live-check.js
