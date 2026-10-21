@@ -23,7 +23,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
 const crypto = require('node:crypto');
-const { plan, UA, GEO_BY_CBS } = require('../lib/cbs-sales/series');
+const { plan, UA, GEO_BY_CBS, MEASURES } = require('../lib/cbs-sales/series');
 const { parseResponse } = require('../lib/cbs-sales/parse');
 const { merge, currentOf } = require('../lib/cbs-sales/ledger');
 const { buildPayload, toJs } = require('../lib/cbs-sales/snapshot');
@@ -117,6 +117,9 @@ async function validate() {
   if (m.missingInSource.length) console.log('  no longer in the source (kept):', m.missingInSource.slice(0, 10).join(', '));
   if (has('dry-run')) {
     for (const r of ok.slice(0, 3)) console.log('  ', r.url, r.parsed.series.map((s) => `${s.id}:${s.freq}/${s.kind}/${s.n}`).join(' '));
+    /* the whole-market measures: how each code resolved (the district is read from the name the API returns) */
+    for (const r of ok.filter((x) => MEASURES[x.measure].market)) { const o = r.parsed.obs.filter((x) => x.freq === 'M').sort((a, b) => (a.period < b.period ? -1 : 1)); const l = o[o.length - 1];
+      console.log(`  MARKET ${r.measure} ${r.cbs} ${r.window.join('-')} → ${l ? `${l.geo} "${l.geoName || ''}" · ${o.length} months · latest ${l.period} = ${l.value}` : 'no monthly observations'}`); }
     return;
   }
   fs.mkdirSync(DIR, { recursive: true });

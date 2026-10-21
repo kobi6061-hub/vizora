@@ -62,8 +62,46 @@ t('every request window ≤ 6 years, from 2016 to the current year (60+ months)'
   const w = S.windows(new Date('2026-10-13'));
   assert.deepStrictEqual(w, [[2016, 2021], [2022, 2026]]);
   const P = S.plan(new Date('2026-10-13'));
-  assert.strictEqual(P.length, (8 + 1 + 1 + 1) * 2);
+  assert.strictEqual(P.length, (8 + 1 + 1 + 1 + 8 + 8 + 7) * 2, 'new sold · subsidized · inventory · months of supply + (21.10.2026) total sold · second-hand sold · subsidized by district');
   assert.ok(P.every((q) => /^https:\/\/apis\.cbs\.gov\.il\/series\/data\/path\?id=44,10,/.test(q.url)));
+});
+
+console.log('whole market (21.10.2026): second-hand and total sold, the district read from the NAME the API returns');
+const LV3 = { total_sold: 6, second_hand_sold: 7, subsidized_by_district: 2 };
+const mk = (measure, cbs, name, monthly) => ({ DataSet: { Series: [3, 2].map((data) => ({ id: 900000 + cbs + data, time: { value: 3, name: 'חודש' }, data: { value: data, name: '' }, unit: { value: 20, name: 'מספר' },
+  path: { level1: { value: 44 }, level2: { value: 10 }, level3: { value: LV3[measure] }, level4: S.MEASURES[measure].level4 == null ? null : { value: S.MEASURES[measure].level4 }, name_id: { value: cbs, name } },
+  update: '2026-10-15', obs: Object.entries(monthly).map(([p, v]) => ({ TimePeriod: p, Value: data === 1 ? v : v * 1.02 })) })).concat([{ id: 910000 + cbs, time: { value: 3 }, data: { value: 1 }, unit: { value: 20, name: 'מספר' },
+  path: { level1: { value: 44 }, level2: { value: 10 }, level3: { value: LV3[measure] }, level4: S.MEASURES[measure].level4 == null ? null : { value: S.MEASURES[measure].level4 }, name_id: { value: cbs, name } }, update: '2026-10-15',
+  obs: Object.entries(monthly).map(([p, v]) => ({ TimePeriod: p, Value: v })) }]) } });
+t('a second-code-set district (7047–7053) takes its key from its NAME — never from its position; no match / two matches / a contradicting name refuse', () => {
+  const r = parseResponse(mk('second_hand_sold', 7049, 'מחוז חיפה', { '2026-07': 610, '2026-08': 640 }), req('second_hand_sold', 7049));
+  assert.ok(r.obs.length === 2 && r.obs.every((o) => o.geo === 'd-haifa' && o.geoName === 'מחוז חיפה' && o.cbs === 7049));
+  assert.strictEqual(parseResponse(mk('second_hand_sold', 7047, 'תל אביב', { '2026-08': 900 }), req('second_hand_sold', 7047)).obs[0].geo, 'd-ta');
+  assert.throws(() => parseResponse(mk('second_hand_sold', 7050, 'אזור לא ידוע', { '2026-08': 1 }), req('second_hand_sold', 7050)), SchemaError);
+  assert.throws(() => parseResponse(mk('second_hand_sold', 7050, 'ירושלים והמרכז', { '2026-08': 1 }), req('second_hand_sold', 7050)), SchemaError, 'two districts in one name');
+  // the total-sold branch keeps the 5070–5076 codes, and the name must AGREE with the expected district
+  assert.strictEqual(parseResponse(mk('total_sold', 5070, 'מחוז ירושלים', { '2026-08': 1200 }), req('total_sold', 5070)).obs[0].geo, 'd-jm');
+  assert.throws(() => parseResponse(mk('total_sold', 5070, 'מחוז הדרום', { '2026-08': 1200 }), req('total_sold', 5070)), /expected d-jm/);
+  // the national code needs no district name
+  assert.strictEqual(parseResponse(mk('second_hand_sold', 5069, 'סך הכל', { '2026-08': 6000 }), req('second_hand_sold', 5069)).obs[0].geo, 'il');
+  // the existing measures are untouched: new_sold still keys districts by code alone
+  assert.ok(!S.MEASURES.new_sold.verifyName && !S.MEASURES.inventory.verifyName);
+  assert.deepStrictEqual(S.GEOS.map((g) => g.cbs), [5069, 5070, 5071, 5072, 5073, 5074, 5075, 5076], 'the board geographies are unchanged');
+});
+t('the payload\'s market block: one geography per district (by name), each universe apart, the second-hand share only over the SAME 12 months', () => {
+  const months12 = months.slice(-12);
+  const obs = [];
+  const add = (measure, cbs, name, v) => obs.push(...parseResponse(mk(measure, cbs, name, Object.fromEntries(months12.map((p) => [p, v]))), req(measure, cbs)).obs);
+  add('total_sold', 5069, 'סך הכל', 8000); add('second_hand_sold', 5069, 'סך הכל', 5000);
+  add('total_sold', 5072, 'מחוז חיפה', 900); add('second_hand_sold', 7049, 'מחוז חיפה', 700); add('subsidized_by_district', 7049, 'מחוז חיפה', 40);
+  const m = L.merge([], obs, { fetchedAt: '2026-10-21T10:00:00Z', snapshot: 'x' });
+  const P = buildPayload(m.append, { at: '2026-10-21T10:00:00Z', status: 'SUCCESS' }, null);
+  assert.deepStrictEqual(Object.keys(P.market).sort(), ['d-haifa', 'il']);
+  assert.strictEqual(P.market['d-haifa'].second_hand_sold.cbs, 7049); assert.strictEqual(P.market['d-haifa'].total_sold.cbs, 5072);
+  assert.strictEqual(P.market['d-haifa'].secondHandShare.pct, +(700 * 12 / (900 * 12) * 100).toFixed(1));
+  assert.strictEqual(P.market.il.secondHandShare.formula, `${5000 * 12} ÷ ${8000 * 12}`);
+  assert.ok(!P.market.il.subsidized_by_district, 'no national subsidized-by-district series was read');
+  assert.ok(Object.values(P.geos).every((g) => !g.monthly.length && !g.metrics.ok), 'new-home sales are never filled from the whole-market series');
 });
 
 console.log('monthly ingestion');
