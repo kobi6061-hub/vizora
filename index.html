@@ -11322,8 +11322,12 @@ he:{chipOut:"סביבת עבודה",chipTitle:"סביבת עבודה פרטית 
   confirm:{signoutAll:"לצאת מכל המכשירים? כל כניסה פעילה בחשבון הזה תסתיים מיד.",remove:"להסיר את החבר מסביבת העבודה? הגישה תיחסם מיד.",leave:"לעזוב את סביבת העבודה?",
     archive:"להעביר את סביבת העבודה לארכיון? אפשר לשחזר.",disable:"להשבית את המשתמש? כל הכניסות שלו יסתיימו מיד.",revokeSessions:"לנתק את כל הכניסות של המשתמש?",cancelInvite:"לבטל את ההזמנה? הקישור יפסיק לעבוד."},
   done:{activated:"החשבון הופעל — אתם מחוברים.",accepted:"ההזמנה התקבלה.",signedin:"נכנסתם.",signedout:"יצאתם מסביבת העבודה.",signoutAll:"כל הכניסות הסתיימו.",
-    created:"הצוות נוצר — אתם הבעלים.",saved:"נשמר.",removed:"הוסר.",invited:"קישור ההזמנה נוצר."},
+    created:"הצוות נוצר — אתם הבעלים.",saved:"נשמר.",removed:"הוסר.",invited:"קישור ההזמנה נוצר.",pwChanged:"הסיסמה הוחלפה — כל הכניסות האחרות הסתיימו.",resetCreated:"קישור האיפוס נוצר."},
   loading:"טוען…",back:"חזרה",
+  profile:"פרופיל",saveName:"שמירת השם",pwT:"החלפת סיסמה",pwCurrent:"הסיסמה הנוכחית",pwNew:"סיסמה חדשה",pwChange:"החלפת הסיסמה",
+  pwNote:"אחרי ההחלפה כל כניסה אחרת בחשבון הזה מסתיימת מיד; הדפדפן הזה נשאר מחובר.",
+  resetLink:"קישור לאיפוס סיסמה",resetOnce:e=>`קישור איפוס הסיסמה עבור ${e} מוצג פעם אחת בלבד. העבירו אותו בעצמכם (PROPX לא שולחת דוא״ל). הוא חד־פעמי, מבטל קישורים קודמים, ובתוקף עד`,
+  confirmReset:"ליצור קישור איפוס סיסמה למשתמש? הסיסמה הנוכחית שלו ממשיכה לעבוד עד שהקישור ינוצל; אז כל הכניסות שלו יסתיימו.",
   pendingT:"החשבון ממתין לאישור מנהל המערכת — אחרי האישור, אותו קישור יפעיל אותו.",invitedBy:"הוזמן על ידי",
   approve:"אישור החשבון",pendingApproval:"ממתין לאישור",createdIn:"נוצר בסביבה",
   err:{denied:"אין הרשאה לפעולה הזו.",pending_approval:"החשבון ממתין לאישור מנהל המערכת.",signin_failed:"הכניסה נכשלה: דוא״ל או סיסמה שגויים, או שהחשבון נעול זמנית אחרי ניסיונות כושלים.",
@@ -11332,6 +11336,8 @@ he:{chipOut:"סביבת עבודה",chipTitle:"סביבת עבודה פרטית 
     invalid_email:"כתובת הדוא״ל אינה תקינה.",invalid_role:"תפקיד לא מוכר.",last_owner:"לכל סביבת עבודה נשאר לפחות בעלים פעיל אחד — מנו בעלים נוסף קודם.",
     sole_owner:"המשתמש הוא הבעלים היחיד של צוות עם חברים נוספים — העבירו בעלות קודם.",personal_org:"לא בסביבת עבודה אישית.",
     archived:"סביבת העבודה בארכיון.",already_member:"כבר חבר בסביבת העבודה.",not_found:"החבר לא נמצא בסביבת העבודה.",too_many_teams:"הגעתם למספר הצוותים המרבי.",
+    current_password_wrong:"הסיסמה הנוכחית שגויה (או שהחשבון נעול זמנית אחרי ניסיונות כושלים).",password_unchanged:"הסיסמה החדשה זהה לנוכחית.",
+    invalid_status:"אפשר ליצור קישור איפוס רק למשתמש פעיל שכבר הפעיל את החשבון.",rate_limited:"יותר מדי ניסיונות — נסו שוב בעוד כמה דקות.",
     self:"לא על החשבון שלכם.",store:"שירות סביבת העבודה אינו זמין כרגע. נתוני PROPX אינם מושפעים.",signed_out:"הכניסה הסתיימה — היכנסו שוב.",
     refused:"הבקשה נדחתה.",network:"אין חיבור לשרת.",generic:"הפעולה לא הושלמה."}},
 en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"Workspace",title:"Private workspace",close:"Close",
@@ -11355,8 +11361,12 @@ en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"
   confirm:{signoutAll:"Sign out everywhere? Every live sign-in of this account ends now.",remove:"Remove this member from the workspace? Access ends now.",leave:"Leave this workspace?",
     archive:"Archive this workspace? It can be restored.",disable:"Disable this user? All their sign-ins end now.",revokeSessions:"End all of this user's sign-ins?",cancelInvite:"Cancel the invitation? The link stops working."},
   done:{activated:"Account activated — you are signed in.",accepted:"Invitation accepted.",signedin:"Signed in.",signedout:"Signed out of the workspace.",signoutAll:"Every sign-in ended.",
-    created:"Team created — you are its owner.",saved:"Saved.",removed:"Removed.",invited:"Invitation link created."},
+    created:"Team created — you are its owner.",saved:"Saved.",removed:"Removed.",invited:"Invitation link created.",pwChanged:"Password changed — every other sign-in ended.",resetCreated:"Reset link created."},
   loading:"Loading…",back:"Back",
+  profile:"Profile",saveName:"Save name",pwT:"Change password",pwCurrent:"Current password",pwNew:"New password",pwChange:"Change the password",
+  pwNote:"After the change every other sign-in of this account ends at once; this browser stays signed in.",
+  resetLink:"Password-reset link",resetOnce:e=>`The password-reset link for ${e} is shown once. Deliver it yourself (PROPX sends no email). It works once, cancels earlier links, and is valid until`,
+  confirmReset:"Create a password-reset link for this user? Their current password keeps working until the link is used; then all their sign-ins end.",
   pendingT:"This account waits for the platform administrator's approval — once approved, the same link activates it.",invitedBy:"invited by",
   approve:"Approve account",pendingApproval:"awaiting approval",createdIn:"created in",
   err:{denied:"You do not have permission for this.",pending_approval:"This account waits for the platform administrator's approval.",signin_failed:"Sign-in failed: wrong email or password, or the account is temporarily locked after failed attempts.",
@@ -11365,11 +11375,13 @@ en:{chipOut:"Workspace",chipTitle:"Private workspace — named sign-in",chipIn:"
     invalid_email:"The email address is not valid.",invalid_role:"Unknown role.",last_owner:"Every workspace keeps at least one active owner — appoint another owner first.",
     sole_owner:"This user is the only owner of a team with other members — hand over ownership first.",personal_org:"Not in a personal workspace.",
     archived:"The workspace is archived.",already_member:"Already a member of this workspace.",not_found:"That member is not in this workspace.",too_many_teams:"You have reached the maximum number of teams.",
+    current_password_wrong:"The current password is wrong (or the account is temporarily locked after failed attempts).",password_unchanged:"The new password is the same as the current one.",
+    invalid_status:"A reset link can be created only for an active user who has activated the account.",rate_limited:"Too many attempts — try again in a few minutes.",
     self:"Not on your own account.",store:"The workspace service is not available right now. PROPX data is not affected.",signed_out:"Your sign-in ended — sign in again.",
     refused:"The request was refused.",network:"No connection to the server.",generic:"The action did not complete."}}};
 const wsT=()=>WS_I18N[state.lang==="en"?"en":"he"];
 const wsE=s=>calcEsc(s==null?"":s);
-const wsState={enabled:false,st:null,open:false,mode:"main",invite:null,inviteInfo:null,inviteErr:null,org:null,members:null,admin:null,msg:null,link:null,busy:false,returnFocus:null};
+const wsState={enabled:false,st:null,open:false,mode:"main",invite:null,inviteInfo:null,inviteErr:null,org:null,members:null,admin:null,msg:null,link:null,resetLink:null,busy:false,returnFocus:null};
 /* an invitation link (/#invite=<token>): the token is taken from the fragment and the fragment removed at once (never left in history) */
 (function(){const h=location.hash||"";if(!/^#invite=/.test(h))return;const m=/^#invite=([A-Za-z0-9_-]{43})$/.exec(h);if(m)wsState.invite=m[1];
   try{history.replaceState(history.state,"",location.pathname+location.search)}catch(e){}})();
@@ -11472,8 +11484,9 @@ function wsOrgHTML(){
 function wsAdminHTML(){
   const t=wsT(),A=wsState.admin,S=wsState.st;if(!A)return"";
   const rows=A.map(u=>`<tr><td><bdi dir="ltr">${wsE(u.email)}</bdi>${u.display_name?`<div class="ho-na">${wsE(u.display_name)}</div>`:""}</td><td>${wsE(t.userStatus[u.status]||u.status)}${u.status==="invited"&&!u.approved?`<div class="ho-na">${t.pendingApproval} · ${t.createdIn} ${wsE(u.origin_org_name||"—")} · ${t.invitedBy} <bdi dir="ltr">${wsE(u.origin_invited_by_email||"—")}</bdi></div>`:""}</td><td class="num">${fmtInt(u.live_sessions)}</td><td class="num">${fmtInt(u.organizations)}</td>
-    <td>${u.id===S.user.id?"":`${u.status==="invited"&&!u.approved?`<button type="button" class="ws-btn pri" data-wsact="approve" data-wsuser="${wsE(u.id)}">${t.approve}</button> `:""}${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>`}</td></tr>`).join("");
-  return `<div class="ho-dsec"><h4>${t.admin}</h4><div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.status}</th><th>${t.liveSessions}</th><th>${t.orgCount}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <td>${u.id===S.user.id?"":`${u.status==="invited"&&!u.approved?`<button type="button" class="ws-btn pri" data-wsact="approve" data-wsuser="${wsE(u.id)}">${t.approve}</button> `:""}${u.status==="disabled"?`<button type="button" class="ws-btn" data-wsact="enable" data-wsuser="${wsE(u.id)}">${t.enable}</button>`:`<button type="button" class="ws-btn warn" data-wsact="disable" data-wsuser="${wsE(u.id)}">${t.disable}</button>`} <button type="button" class="ws-btn" data-wsact="revoke-sessions" data-wsuser="${wsE(u.id)}">${t.revokeSessions}</button>${u.status==="active"?` <button type="button" class="ws-btn" data-wsact="reset-link" data-wsuser="${wsE(u.id)}">${t.resetLink}</button>`:""}`}</td></tr>`).join("");
+  const R=wsState.resetLink,rl=R?`<div class="ws-msg ok" role="status">${t.resetOnce(`<bdi dir="ltr">${wsE(R.email)}</bdi>`)} ${wsWhen(R.expiresAt,true)}<div class="ws-link"><input readonly value="${wsE(R.link)}" aria-label="${t.resetLink}"><button type="button" class="ws-btn" data-wsact="copy">${t.copy}</button></div></div>`:"";
+  return `<div class="ho-dsec"><h4>${t.admin}</h4>${rl}<div class="ws-scroll"><table class="ho-dt ws-tbl"><thead><tr><th>${t.email}</th><th>${t.status}</th><th>${t.liveSessions}</th><th>${t.orgCount}</th><th>${t.actions}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function wsMainHTML(){
   const t=wsT(),S=wsState.st,U=S.user;
@@ -11482,10 +11495,16 @@ function wsMainHTML(){
     <div><div class="k">${t.email}</div><div class="v"><bdi dir="ltr">${wsE(U.email)}</bdi></div></div>
     <div><div class="k">${t.sessionUntil}</div><div class="v">${wsWhen(S.session&&S.session.expiresAt,true)}</div></div></div>
     <div class="ws-row"><button type="button" class="ws-btn" data-wsact="signout">${t.signout}</button><button type="button" class="ws-btn warn" data-wsact="signout-all">${t.signoutAll}</button></div></div>`;
+  const prof=`<div class="ho-dsec"><h4>${t.profile}</h4><form class="ws-row" data-wsform="set-name"><input name="displayName" value="${wsE(U.displayName||"")}" aria-label="${t.name}" placeholder="${t.name}" autocomplete="name" maxlength="120" required><button class="ws-btn" type="submit">${t.saveName}</button></form>
+    <h4 style="margin-top:12px">${t.pwT}</h4><form class="ws-form" data-wsform="change-password"><input type="text" name="username" value="${wsE(U.email)}" autocomplete="username" hidden>
+    <label>${t.pwCurrent}<input type="password" name="current" autocomplete="current-password" required dir="ltr"></label>
+    <label>${t.pwNew} <span class="ho-na">(${t.pwHint})</span><input type="password" name="password" autocomplete="new-password" required minlength="12" dir="ltr"></label>
+    <label>${t.password2}<input type="password" name="password2" autocomplete="new-password" required minlength="12" dir="ltr"></label>
+    <div class="ws-row"><button class="ws-btn" type="submit">${t.pwChange}</button></div></form><p class="ho-note">${t.pwNote}</p></div>`;
   const orgs=`<div class="ho-dsec"><h4>${t.orgs}</h4><div class="ws-orgs">${(S.organizations||[]).map(o=>`<button type="button" class="ws-org${o.id===wsState.org?" on":""}" data-wsorg="${wsE(o.id)}" aria-pressed="${o.id===wsState.org}"><span><b>${wsE(o.name)}</b> <span class="ho-na">· ${o.kind==="personal"?t.personal:t.team}${o.archived?" · "+t.archived:""}</span></span><span class="ws-role ${o.role}">${wsE(wsRole(o.role))}</span></button>`).join("")}</div>
     <p class="ho-note">${t.roleHelp}</p>
     <form class="ws-row" data-wsform="create-team"><input name="name" placeholder="${t.teamName}" aria-label="${t.teamName}" maxlength="120" required><button class="ws-btn" type="submit">${t.createTeam}</button></form></div>`;
-  return acct+orgs+wsOrgHTML()+(U.platformAdmin?wsAdminHTML():"");
+  return acct+prof+orgs+wsOrgHTML()+(U.platformAdmin?wsAdminHTML():"");
 }
 function wsRender(){
   const P=el("wsPanel");if(!P||!wsState.open)return;
@@ -11523,6 +11542,9 @@ function initWorkspace(){
       if(r){wsState.invite=null;wsState.inviteInfo=null;wsState.mode="main";await wsRefreshAll()}}
     else if(kind==="create-team"){const r=await wsDo("create-team",{name:v.name},t.done.created);if(r){wsState.org=r.j.result&&r.j.result.org_id;await wsRefreshAll()}}
     else if(kind==="invite"){const r=await wsDo("invite",{org:wsState.org,email:v.email,role:v.role},t.done.invited);if(r){await wsLoadMembers();wsState.link=r.j.invite;wsRender()}}
+    else if(kind==="set-name"){const r=await wsDo("set-name",{displayName:v.displayName},t.done.saved);if(r)await wsRefreshAll()}
+    else if(kind==="change-password"){if(v.password!==v.password2)return wsSay(t.err.mismatch);
+      const r=await wsDo("change-password",{current:v.current,password:v.password},t.done.pwChanged);if(r)await wsRefreshAll()}
   });
   P.addEventListener("change",async e=>{const s=e.target.closest("[data-wsrole]");if(!s)return;const t=wsT();
     const r=await wsDo("set-role",{org:wsState.org,user:s.dataset.wsrole,role:s.value},t.done.saved);await wsRefreshAll();if(!r)wsRender()});
@@ -11531,8 +11553,9 @@ function initWorkspace(){
     const b=e.target.closest("[data-wsact]");if(!b)return;const t=wsT(),a=b.dataset.wsact,u=b.dataset.wsuser;
     if(a==="main"){wsState.mode="main";wsState.invite=null;wsRender();return wsAfterSignin()}
     if(a==="copy"){const i=P.querySelector(".ws-link input");if(i){i.select();try{await navigator.clipboard.writeText(i.value);b.textContent=t.copied}catch(err){document.execCommand&&document.execCommand("copy");b.textContent=t.copied}}return}
-    if(a==="signout"){const r=await wsDo("signout",{},t.done.signedout);if(r){wsState.admin=null;wsState.members=null;await wsLoad();wsRender()}return}
-    if(a==="signout-all"){if(!confirm(t.confirm.signoutAll))return;const r=await wsDo("signout-all",{},t.done.signoutAll);if(r){wsState.admin=null;await wsLoad();wsRender()}return}
+    if(a==="signout"){const r=await wsDo("signout",{},t.done.signedout);if(r)location.href="/api/logout";return}
+    if(a==="signout-all"){if(!confirm(t.confirm.signoutAll))return;const r=await wsDo("signout-all",{},t.done.signoutAll);if(r)location.href="/api/logout";return}
+    if(a==="reset-link"){if(!confirm(t.confirmReset))return;const r=await wsDo("admin-reset-link",{user:u},t.done.resetCreated);if(r){wsState.resetLink=r.j.reset;wsRender()}return}
     if(a==="accept"){const r=await wsDo("accept",{token:wsState.invite},t.done.accepted);if(r){wsState.org=r.j.result&&r.j.result.orgId;wsState.invite=null;wsState.inviteInfo=null;wsState.mode="main";await wsRefreshAll()}return}
     const conf={"revoke-member":t.confirm.remove,leave:t.confirm.leave,"revoke-invite":t.confirm.cancelInvite,disable:t.confirm.disable,"revoke-sessions":t.confirm.revokeSessions}[a];
     if(a==="archive"&&b.dataset.wsarch==="1"&&!confirm(t.confirm.archive))return;

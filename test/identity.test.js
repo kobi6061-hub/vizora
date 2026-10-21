@@ -126,8 +126,8 @@ const valueOf = (sc) => sc && /^[^=]+=([^;]*)/.exec(sc)[1];
     assert.equal(b64json(init.headers.authorization.split(' ')[1].split('.')[1]).role, 'authenticated');
     await assert.rejects(() => db.rpc('auth_x', {}, { role: 'propx_auth' }), /unknown function/);
     await assert.rejects(() => db.rpc('me', {}, { role: 'service_role' }), /refused role/);
-    assert.equal(FUNCTIONS.size, 21);
-    const src = ['lib/identity/rest.js', 'lib/identity/service.js', 'lib/identity/config.js', 'api/identity.js', 'api/logout.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
+    assert.equal(FUNCTIONS.size, 27);   // + the Enterprise pilot's rate limit, password reset (peek · complete · admin link), change password, display name
+    const src = ['lib/identity/rest.js', 'lib/identity/service.js', 'lib/identity/config.js', 'api/identity.js', 'api/logout.js', 'api/login.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
     assert.ok(!/SUPABASE_SERVICE_ROLE_KEY|service_role'|storeConfig|SUPABASE_URL\b(?!.*same-project)/.test(src.replace(/\/\/.*$/gm, '')), 'the identity code never reads the public store settings or a service key');
   });
 

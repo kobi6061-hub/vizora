@@ -4,7 +4,8 @@
 # (supabase/private/test/supabase-roles-shim.sql, with deliberately permissive platform defaults), the private migration
 # applied by a non-superuser owner, then every read and write the API can make, as each role, with the JWT claims
 # PostgREST would set. No real project, no secret (the container's password below is a throwaway value of this job).
-# Also runs the identity server-side tests (session cookie, token, password, API) against the same database.
+# Also runs the identity server-side tests (session cookie, token, password, API) and the Enterprise pilot's access tests
+# (the site gate in identity mode, /api/login, password change / reset, revocation, rate limit) against the same database.
 # Private persistence is not activated while this workflow is red.
 
 name: Private identity — isolation gate
@@ -16,8 +17,15 @@ on:
       - 'lib/identity/**'
       - 'api/identity.js'
       - 'api/logout.js'
+      - 'api/login.js'
+      - 'middleware.js'
+      - 'login.html'
+      - 'scripts/kobix-dev-server.mjs'
+      - 'scripts/identity-psql-adapter.js'
       - 'test/private-identity.test.js'
       - 'test/identity.test.js'
+      - 'test/pilot-access.test.js'
+      - 'test/helpers/middleware.js'
       - '.github/workflows/private-identity.yml'
   workflow_dispatch:
 
@@ -52,3 +60,7 @@ jobs:
         env:
           PROPX_PG_URL: postgres://postgres:ci-throwaway-container@127.0.0.1:5432/postgres
         run: if [ -f test/identity.test.js ]; then node test/identity.test.js; else echo "no identity server test yet"; fi
+      - name: Enterprise pilot access (site gate in identity mode, sign-in, reset, revocation, rate limit) against the same database
+        env:
+          PROPX_PG_URL: postgres://postgres:ci-throwaway-container@127.0.0.1:5432/postgres
+        run: node test/pilot-access.test.js

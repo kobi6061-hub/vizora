@@ -122,7 +122,9 @@
   limit). Gates match files through `test/helpers/vercel-include.js` (never the pattern's spelling); `test/entities.test.js` holds the 256 cap.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
-  /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
+  /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; since 21.10.2026 the lists and the whole decision live ONLY in
+  `lib/identity/gate.mjs` (Web APIs only), which the middleware and the dev server both import (tests load the middleware through
+  `test/helpers/middleware.js`).
   The evidence POST (`/api/intel` view=dd) is limited to 256 KB at the Edge (declared length), in the function (declared length before
   the platform-parsed body is touched; measured after parsing when chunked) and on the normalized evidence (`userdocs` total); the
   platform's own ceiling is 4.5 MB.
@@ -152,6 +154,17 @@
   creation); ASCII-only addresses; an invited row shows no account state; disabled owners do not count as owners; sign-in failures
   make the same store call for every address; role-wide default privileges start future objects closed; the page signs out with an
   intent POST before the logout link; the test adapter binds every value. NOT ACTIVATED (see `supabase/private/README.md`).
+  ENTERPRISE PILOT ACCESS (21.10.2026, PREVIEW LANE; `lib/identity/gate.mjs` + `api/login.js` + `login.html` + `test/pilot-access.test.js`):
+  `PROPX_IDENTITY=on` now REPLACES the shared password as the way in — modes PERIMETER (switch off: the shared password's cookie, as
+  before) · IDENTITY (every gated page / `api/**` / data file needs the perimeter cookie minted at that user's sign-in + the identity
+  cookie bound to it + a live `ws.auth_session_check`, cached 60 s per Edge isolate, 10-minute stale grace when the store is down, else
+  503) · CLOSED (switch on but a setting missing / wrong → 503, never the shared password). One bilingual sign-in page asks
+  `/api/login?op=mode`; `/api/login` ops signin · invite-info · activate · reset-info · reset (intent header + JSON + same origin; the
+  shared password → `individual_login_required`; 20 / 15 min per client HMAC → 429). The migration (extended in place, still ONE file)
+  adds `private.auth_rate`, `private.password_resets` and `ws.auth_rate_hit` · `auth_reset_peek` · `auth_reset_complete` ·
+  `change_password` · `set_display_name` · `admin_reset_link` (`revoked_reason 'password'`); the workspace drawer adds the profile
+  name, password change (ends every other session) and the platform admin's one-time reset link; sign-out leaves through
+  `/api/logout`. Gates: private-identity 41 · identity 18 · pilot-access 19 (all three in `private-identity.yml`).
 - `lib/gov/freshness.js` + `scripts/tx-freshness.js` + `.github/workflows/tx-freshness.yml` + `data/transactions/freshness*.json*` +
   `scripts/tx-freshness-discover.js` + `.github/workflows/tx-freshness-discover.yml` + `lib/trust/discovery/2026-10-19-transactions.json` +
   `test/tx-freshness.test.js` (+ `test/fixtures/tx-acceptance-2026-10-19.json`, 96 real deals) = P0 TRANSACTION FRESHNESS (19.10.2026). FIVE

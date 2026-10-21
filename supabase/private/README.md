@@ -8,11 +8,49 @@ sessions. It is a different project from the one the public `market` schema (`su
 |---|---|
 | **Migration** | `migrations/20261019120000_identity_foundation.sql` (schemas `ws` + `private`, role `propx_auth`) |
 | **Test harness** | `test/supabase-roles-shim.sql`. TEST ONLY: the Supabase roles on a throwaway PostgreSQL 16, with deliberately permissive defaults. |
-| **Isolation gate** | `test/private-identity.test.js` (37 gates, the HARD BLOCKER) and `test/identity.test.js` (server flows, 18), both run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
+| **Isolation gate** | `test/private-identity.test.js` (41 gates, the HARD BLOCKER), `test/identity.test.js` (server flows, 18) and `test/pilot-access.test.js` (the site gate in identity mode end to end, 19), all run by `.github/workflows/private-identity.yml` on a `postgres:16` service |
 | **Real-project activation** | `.github/workflows/identity-activate.yml` + `scripts/identity-activate.js` (modes preflight · apply · audit · probe, run by hand) and `test/real-project-probe.sql` (the two-organization probe that always rolls back). `test/management-api-mock.js` is a TEST HARNESS stand-in for the Management API so the gate can run the same sequence locally |
-| **Server** | `lib/identity/*`, `api/identity.js`, `api/logout.js` |
+| **Server** | `lib/identity/*` (incl. `gate.mjs`, the ONE access decision the Edge middleware and the dev server share), `middleware.js`, `api/login.js`, `api/identity.js`, `api/logout.js`, `login.html` |
 | **Activation check** | `scripts/identity-verify.js`, also run by `.github/workflows/identity-verify.yml`. Read-only. |
-| **Status** | NOT ACTIVATED. Production runs with `PROPX_IDENTITY` unset, so the feature is off. |
+| **Status** | NOT ACTIVATED. Production runs with `PROPX_IDENTITY` unset, so the site keeps its shared-password gate. |
+
+## Enterprise pilot (21.10.2026): individual access replaces the shared password
+
+`PROPX_IDENTITY=on` no longer adds a workspace ON TOP of the shared password — it **replaces** it as the way in
+(`lib/identity/gate.mjs`, used by `middleware.js` and `scripts/kobix-dev-server.mjs`):
+
+| Mode | When | Who gets in |
+|---|---|---|
+| **PERIMETER** | `PROPX_IDENTITY` is not `on` | the shared password's signed cookie (as before; nothing reaches a store) |
+| **IDENTITY** | `on` + `SESSION_SECRET`, `PROPX_ID_SECRET` (≥ 32, ≠ `SESSION_SECRET`), `PROPX_WS_URL` (https, not the public project), `PROPX_WS_APIKEY`, `PROPX_WS_JWT_SECRET` (≥ 32) | only a browser holding an INDIVIDUAL live session: the perimeter cookie minted at that user's sign-in + the identity cookie bound to it + the store's `ws.auth_session_check` (as `propx_auth`, a 60-s token) |
+| **CLOSED** | `on` but any of the above missing or wrong | nobody: every gated path answers 503 — never a fallback to the shared password |
+
+- **Every path** except the exact public ones (`/api/login`, `/login.html`, `/robots.txt`, `/favicon.ico`) and the one
+  machine path (`/api/jobs/tx-refresh`, which checks its own bearer token) needs the session: every page, every
+  `api/**` endpoint, every data file. `test/pilot-access.test.js` walks all of them.
+- **One sign-in page** (`login.html`, Hebrew / English). It asks `/api/login?op=mode` which form to show: the shared
+  password (PERIMETER) or email + password (IDENTITY). The invitation link (`#invite=`) and the password-reset link
+  (`#reset=`) open there; the fragment is never sent to a server and is removed from the address bar at once. In
+  IDENTITY mode the shared password answers `individual_login_required`.
+- **Sign-in mints both cookies.** `/api/login` creates a perimeter cookie for THIS sign-in only (`SameSite=Lax`, as long
+  as the identity session) and the identity cookie bound to it (`SameSite=Strict`); the browser's previous session is
+  ended (no fixation).
+- **Revocation reaches the gate within a minute.** The Edge caches a live answer for 60 s per isolate. Sign out
+  everywhere, an administrator's revocation, a disabled user, a password change or reset all end access on the next
+  check. If the store does not answer, a session seen live in the last 10 minutes keeps working; any other request
+  gets 503 — never "open".
+- **Arriving from another site.** The `SameSite=Strict` identity cookie is not sent on a cross-site navigation, so a
+  document request carrying only the perimeter cookie is bounced once to the same address (then it is same-site).
+- **Rate limit per client.** 20 sign-ins and 20 link operations per 15 minutes per client address (`private.auth_rate`,
+  keyed by an HMAC of the address — the store never sees an address) → 429 with `Retry-After`. The per-account lock
+  (5 failures → 15 minutes) stays.
+- **Profile.** In the workspace drawer: the display name (`ws.set_display_name`), and a password change that needs the
+  current password (verified like a sign-in) and ends every OTHER session (`ws.change_password`).
+- **Password reset.** The platform administrator creates a one-time link in the users list (`ws.admin_reset_link`, shown
+  once, 72 h, cancels earlier links); its holder sets a new password on the sign-in page (`ws.auth_reset_complete`),
+  which also clears an account lock and ends every session of the user. PROPX sends no email.
+- **Sign-out** in the drawer ends the named session and leaves through `/api/logout` (both cookies cleared).
+
 
 ## What it holds and what it does not
 
@@ -246,10 +284,12 @@ workflow annotations. **The repository is public, so its run logs are too:** the
 8. **Vercel environment.** Production scope, server-side only; never use a `NEXT_PUBLIC_` prefix. Set `PROPX_WS_URL`,
    `PROPX_WS_APIKEY`, `PROPX_WS_JWT_SECRET`, and `PROPX_ID_SECRET` (48+ random characters, different from `SESSION_SECRET`).
 9. **Turn on the switch** only after the owner has reviewed the report: set `PROPX_IDENTITY=on`, redeploy, and open
-   `https://<site>/#invite=<token>`.
+   `https://<site>/login.html#invite=<token>`. From that deployment on, the shared password opens nothing: every pilot
+   user needs an invitation. A misconfigured switch CLOSES the site (503) — rollback is removing the switch (below).
 
 **Kill switch.** Remove `PROPX_IDENTITY`, or set it to anything other than `on`, then redeploy.
 
+- The site returns to the shared-password gate (PERIMETER).
 - The page hides the workspace.
 - `/api/identity` answers `{enabled:false}`.
 - The private project is not contacted.
@@ -267,16 +307,17 @@ with a probe function, table and sequence.
   and so whether the address already had an account before. The inviter holds the link too.
 - **An identity can get stuck.** If the creating workspace revokes the invitation, or is archived, before activation,
   the identity can only be activated after that workspace re-invites it.
-- **An insider can keep an account locked.** The lock is per account, with no per-client component, so anyone behind
-  the site password can keep another account locked by failing its sign-in.
-- **An unused invitation link stays in browser history** for its 72 hours. The page strips it from the address bar. It
-  is single-use, and the site password comes first.
+- **Anyone who knows an address can keep that account locked.** The lock is per account. In IDENTITY mode the sign-in
+  page is public, so 5 failures every 15 minutes (well under the per-client limit) keep it locked. Mitigations: pilot
+  addresses are not published, the answer never says whether an address exists, and the administrator's reset link
+  clears the lock.
+- **An unused invitation or reset link stays in browser history** for its 72 hours. The page strips it from the address
+  bar. It is single-use.
 
 ## Not in this step
 
 - Evidence, files, ALTARIS, Live Thesis and fund settings.
-- Password reset. Planned: the platform administrator re-issues an activation link.
-- Email delivery.
-- SSO.
-- Per-IP rate limits. The perimeter password already stands in front of every attempt.
+- Email delivery (invitation and reset links are delivered by the person who created them).
+- SSO, multi-factor authentication.
+- Self-service "forgot password" (the platform administrator issues the reset link).
 - Account self-deletion. Removal is a revocation or a disabled user, never a delete.

@@ -1,6 +1,8 @@
 // /api/identity — named, invite-only users of the PROPX private workspace (STEP 2A).
 //
-// Behind the site's perimeter gate (middleware.js: the shared-password session is still required for every path).
+// Behind the site's gate (middleware.js → lib/identity/gate.mjs): with PROPX_IDENTITY=on that gate itself requires an individual,
+// live session for every path (the shared password opens nothing) and the sign-in / activation / reset run through
+// /api/login; with the switch off this API answers {enabled:false}.
 // Kill switch: PROPX_IDENTITY=on (lib/identity/config.js); OFF → GET ?op=status answers {enabled:false} and every other
 // operation 503 — no private store is contacted, the page shows nothing.
 //
@@ -10,7 +12,8 @@
 //   POST ?op=signin {email,password} · signout · signout-all · invite-info {token} · activate {token,password,displayName}
 //        accept {token} · invite {org,email,role} · revoke-invite {org,user} · set-role {org,user,role}
 //        revoke-member {org,user} · create-team {name} · archive {org,archived} · admin-user-status {user,status}
-//        admin-revoke-sessions {user}
+//        admin-revoke-sessions {user} · change-password {current,password} · set-name {displayName} · admin-reset-link {user}
+//        reset-info {token} · reset {token,password}
 //
 // Every POST must be same-origin JSON carrying `x-propx-intent: 1` (a custom header a cross-site form or a simple request
 // cannot send — login CSRF and cross-site writes are refused before anything is read). Bodies are capped at 8 KB.
