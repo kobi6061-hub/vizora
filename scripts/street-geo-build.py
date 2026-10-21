@@ -3,7 +3,8 @@
 # same file the national missed-deal detector reads; one public GET on the runner, nothing new is integrated).
 #
 # Each row of the file is one deal with its OWN location: a representative point of the parcel / building polygon the source files it
-# under (polygonId), its settlementId (the official locality code), streetCode (the official street code), house number, and the
+# under (polygonId), its settlementId (the official locality code), streetCode (<locality code> × 10,000 + the official street code —
+# decoded, its locality part checked), house number, and the
 # neighbourhood NAME the source prints. Coordinates are never used to join a record to anything — they place the street's buildings on
 # the map and give distances their basis. Written per locality (data/geo/street-geo/loc/<code>.json.gz):
 #
@@ -151,6 +152,13 @@ def main():
         if sc is None or sc <= 0:
             st['noStreetCode'] += 1
             continue
+        # the layer writes the street code as <locality code> × 10,000 + <official street code>: decoded, and kept only when its
+        # locality part is the row's own locality (a code naming another locality places nothing)
+        if sc >= 10000:
+            if sc // 10000 != code:
+                st['streetCodeOtherLocality'] += 1
+                continue
+            sc = sc % 10000
         if (code, sc) in dnames:
             st['streetInDirectory'] += 1
             if sname and dnames[(code, sc)].replace(' ', '') == str(sname).replace(' ', ''):
