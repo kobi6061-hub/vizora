@@ -1,0 +1,45 @@
+# PROPX · Production acceptance (read-only) — Enterprise pilot, 21.10.2026.
+#
+# Signs in to propx.live and kobix.online with the shared site password (runner secret PROPX_SITE_PASSWORD — passed to the
+# script only, never echoed) and checks the 14 acceptance items with live evidence: API checks with fetch, UI checks in a real
+# Chromium (desktop + phone × Hebrew + English). GET only, plus the sign-in POST, the logout GET and one deliberately wrong
+# password. Writes nothing, uploads no artifact and no screenshot (the repository and its run logs are public); the run log and
+# the job summary hold statuses, counts and dates only. Runs on a push of this file or the script to the preview lane (a workflow
+# that exists only on a non-default branch cannot be dispatched) and by hand once on the default branch.
+
+name: Production acceptance (read-only)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths:
+      - '.github/workflows/production-acceptance.yml'
+      - 'scripts/prod-acceptance.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-acceptance
+  cancel-in-progress: false
+
+jobs:
+  accept:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Chromium for the UI checks (outside the repository)
+        run: |
+          mkdir -p "$RUNNER_TEMP/acc" && cp scripts/prod-acceptance.mjs "$RUNNER_TEMP/acc/run.mjs"
+          cd "$RUNNER_TEMP/acc" && npm init -y >/dev/null && npm i --no-audit --no-fund -s playwright@1.63.0 && npx playwright install --with-deps chromium >/dev/null
+      - name: Acceptance on both Production domains
+        env:
+          HOSTS: propx=https://propx.live,kobix=https://kobix.online
+          SITE_PW: ${{ secrets.PROPX_SITE_PASSWORD }}
+          OUT: ${{ runner.temp }}/acc/acceptance.json
+        run: cd "$RUNNER_TEMP/acc" && node run.mjs
