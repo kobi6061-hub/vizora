@@ -6,7 +6,7 @@
   "layer": "https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/Xplan/MapServer/1",
   "classification": "OFFICIAL"
  },
- "fetchedAt": "2026-10-21T07:09:06.123Z",
+ "fetchedAt": "2026-10-21T07:21:20.726Z",
  "layerCount": 37701,
  "stored": 37701,
  "skipped": {
@@ -823,12 +823,12 @@
  },
  "large": 66,
  "topics": {
-  "OTHER": 35797,
-  "RENEWAL": 879,
-  "RAIL_TRANSIT": 169,
-  "ROAD": 541,
-  "PREFERRED_HOUSING": 185,
-  "NATIONAL_INFRASTRUCTURE": 130
+  "OTHER": 35946,
+  "RENEWAL": 893,
+  "RAIL_TRANSIT": 164,
+  "ROAD": 384,
+  "PREFERRED_HOUSING": 186,
+  "NATIONAL_INFRASTRUCTURE": 128
  },
  "stages": {
   "SUBMITTED": 5297,
@@ -842,9 +842,9 @@
   "PRE_DEPOSIT": 859,
   "OBJECTIONS": 336
  },
- "bytes": 19429832,
+ "bytes": 19431377,
  "generalization": "maxAllowableOffset 0.0001° (~10 m), 5 decimals, WGS84",
- "topicRule": "from the plan's own name and type only (lib: scripts/street-planning-sync.js TOPICS) — a label of the plan's text, never a join",
+ "topicRule": "from the plan's own name and type only (lib/planning/topic.js) — a label of the plan's text, never a join",
  "use": "a boundary states a spatial relation to a street (inside / distance) — never a join of records, never a value",
  "hash": "476a2508230c8cf6a0b7c6b0a0797da85295c8df3a88a44a4e193c971e5e6adb"
 }
