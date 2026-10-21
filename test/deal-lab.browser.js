@@ -135,6 +135,9 @@ async function hook(browser) {
   await page.waitForSelector('#dlRoot .dl-pick');
   await page.evaluate(() => openGeoView({ kind: 'street', id: 'st:5000:813', he: 'אנטיגונוס', city: 'תל אביב - יפו', cityCode: 5000, streetCode: 813, district: 'd-ta' }));
   await page.waitForSelector('[data-srdeal]', { timeout: 40000 });
+  /* "propx:geo": the street opened on the page is the lab's street at once (its data is read when the section nears the screen) */
+  assert.ok(await page.evaluate(() => /st:5000:813/.test(document.getElementById('dlCur').textContent)), 'the lab follows propx:geo');
+  ok('the lab follows the street opened on the page (propx:geo)');
   const f = page.locator('[data-srprop]').first();
   await f.locator('[name="askingPrice"]').fill('3900000'); await f.locator('[name="sqm"]').fill('70'); await f.locator('[name="rooms"]').fill('3');
   await page.click('[data-srdeal]');
