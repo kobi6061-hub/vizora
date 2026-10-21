@@ -33,6 +33,7 @@ jobs:
         run: echo "modes=$(grep -v '^#' lib/trust/discovery/2026-10-21-universe/MODES | grep . | jq -R . | jq -cs .)" >> "$GITHUB_OUTPUT"
   discover:
     needs: plan
+    if: needs.plan.outputs.modes != '[]'
     strategy:
       fail-fast: false
       max-parallel: 4
