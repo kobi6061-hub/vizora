@@ -1,0 +1,50 @@
+{
+ "schema": 1,
+ "id": "contaminated",
+ "trustId": "datagov:moep:contaminated-land",
+ "title": "קרקעות מזוהמות — המאגר הלאומי",
+ "titleEn": "Contaminated land — the national register",
+ "publisher": "המשרד להגנת הסביבה",
+ "publisherEn": "Ministry of Environmental Protection",
+ "resourceId": "cbb2ed28-310d-4389-a1ec-64bb538fc090",
+ "page": "https://data.gov.il/dataset/contaminatedterrains",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=cbb2ed28-310d-4389-a1ec-64bb538fc090",
+ "licence": "Other (Open)",
+ "cadence": "updated several times a week (resource replaced in place)",
+ "period": "register snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-10-21T07:01:04.633194Z",
+ "checkedAt": "2026-10-21T14:34:41.712Z",
+ "readAt": "2026-10-21T14:34:41.712Z",
+ "contentHash": "8861a216d665b84869b129c45f64f6383882eaa9e724bd87fa8d4847e9e2a5b6",
+ "sourceRows": 3798,
+ "records": 3798,
+ "rejected": 0,
+ "byLevel": {
+  "site": 3798
+ },
+ "fields": [
+  "_id",
+  "name",
+  "address",
+  "X",
+  "Y",
+  "gush",
+  "helka",
+  "org_id",
+  "legend",
+  "matzav",
+  "peeilut",
+  "date",
+  "sug",
+  "stat_gas",
+  "stat_zih",
+  "drisha",
+  "d_begin",
+  "d_end",
+  "link"
+ ],
+ "history": [
+  "2026-10-21-8861a216.json.gz"
+ ]
+}
