@@ -1,0 +1,3543 @@
+{
+ "title": "PROPX UX after — 22.10.2026",
+ "commit": "workstream E branch head (see docs/UX-REPORT-2026-10-22.md)",
+ "measuredAt": {
+  "accessibility": "2026-10-21T23:24:16.267Z",
+  "performance": "2026-10-21T23:34:28.088Z"
+ },
+ "method": {
+  "server": "scripts/kobix-dev-server.mjs on localhost:3305 (perimeter sign-in; no compression — brotli / gzip estimates are computed from the served files)",
+  "browser": "Chromium (Playwright 1.63) headless, a cold context per run; Google Fonts requests aborted for determinism",
+  "viewports": {
+   "desktop": "1440 × 900, DPR 1",
+   "phone": "390 × 844, DPR 2, touch"
+  },
+  "languages": "he (default, RTL) and en (LTR, switched with the page's own EN button after load)",
+  "performance": "medians of 6 runs per viewport × language, INTERLEAVED with the other state (before / after alternately, order flipped every run, the same dev server and data) after one unrecorded warm-up — the machine is shared with other workstreams, so separate sequential runs drift by ±20–30 %; DCL / load from Navigation Timing; FCP / LCP / long tasks (> 50 ms) from PerformanceObserver registered before any page script; heap = CDP JSHeapUsedSize after a forced GC; tx table = first row / card of #txTbl / #txCards; street report st:7900:213 (הרצל, פתח תקווה) via openGeoView: core = .sr[data-sr], full = [data-sr-part=full]",
+  "accessibility": "own Playwright checks (no axe): Chromium accessibility tree (CDP getFullAXTree) for unnamed controls / fields / images; DOM scans for ids, tabindex, svgs, labels, touch targets, type sizes; rendered text contrast of every visible text element against its effective background (WCAG AA 4.5:1, 3:1 large); a full Tab walk (focus indicator = outline-style ≠ none or a box-shadow); drawer / search keyboard behaviour; token contrast from the CSS variables in both themes"
+ },
+ "performance": {
+  "desktop-he": {
+   "runs": 6,
+   "ttfbMs": 6.5,
+   "domContentLoadedMs": 457.9,
+   "loadMs": 459.9,
+   "fcpMs": 362,
+   "lcpMs": 362,
+   "lcpElement": "DIV.cmd-hero-t",
+   "txTableRenderedMs": 923.3,
+   "longTasksLoad": {
+    "count": 5.5,
+    "totalMs": 731,
+    "maxMs": 196.5,
+    "blockingMs": 406
+   },
+   "heapUsedAfterLoadMB": 5.6,
+   "runtimeHeapUsedMB": 5.6,
+   "pageHeightPx": 22591,
+   "domNodes": 22723,
+   "layoutCount": 18,
+   "recalcStyleCount": 40,
+   "layoutMs": 389.9,
+   "scriptMs": 153.2,
+   "requestsAtLoad": 19,
+   "requestsSettled": 21,
+   "bytes": {
+    "all": {
+     "count": 21,
+     "transfer": 3270082,
+     "decoded": 3266066
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1337974,
+     "decoded": 1337806
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 11,
+     "transfer": 1005485,
+     "decoded": 1003046
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": null,
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 761.5,
+    "fullRenderedMs": 1041.2,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4.5,
+    "longTotalMs": 635
+   },
+   "errors": []
+  },
+  "desktop-en": {
+   "runs": 6,
+   "ttfbMs": 8.2,
+   "domContentLoadedMs": 340.1,
+   "loadMs": 350.1,
+   "fcpMs": 188,
+   "lcpMs": 188,
+   "lcpElement": "DIV.cmd-hero-t",
+   "txTableRenderedMs": 830.2,
+   "longTasksLoad": {
+    "count": 5,
+    "totalMs": 668.5,
+    "maxMs": 213.5,
+    "blockingMs": 393.5
+   },
+   "heapUsedAfterLoadMB": 5.6,
+   "runtimeHeapUsedMB": 5.6,
+   "pageHeightPx": 22591,
+   "domNodes": 22723,
+   "layoutCount": 18,
+   "recalcStyleCount": 36.5,
+   "layoutMs": 430.6,
+   "scriptMs": 177.2,
+   "requestsAtLoad": 19,
+   "requestsSettled": 21,
+   "bytes": {
+    "all": {
+     "count": 21,
+     "transfer": 3270082,
+     "decoded": 3266066
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1337974,
+     "decoded": 1337806
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 11,
+     "transfer": 1005485,
+     "decoded": 1003046
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": {
+    "ms": 454.9,
+    "longTasks": 1,
+    "longTotalMs": 473.5
+   },
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 688,
+    "fullRenderedMs": 977,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4,
+    "longTotalMs": 528.5
+   },
+   "errors": []
+  },
+  "phone-he": {
+   "runs": 6,
+   "ttfbMs": 7.1,
+   "domContentLoadedMs": 331.4,
+   "loadMs": 333.7,
+   "fcpMs": 164,
+   "lcpMs": 164,
+   "lcpElement": "P.cmd-hint",
+   "txTableRenderedMs": 777.5,
+   "longTasksLoad": {
+    "count": 4,
+    "totalMs": 523,
+    "maxMs": 189,
+    "blockingMs": 323
+   },
+   "heapUsedAfterLoadMB": 4.9,
+   "runtimeHeapUsedMB": 4.9,
+   "pageHeightPx": 125672,
+   "domNodes": 21803,
+   "layoutCount": 19.5,
+   "recalcStyleCount": 45.5,
+   "layoutMs": 345.2,
+   "scriptMs": 158.6,
+   "requestsAtLoad": 15,
+   "requestsSettled": 17,
+   "bytes": {
+    "all": {
+     "count": 17,
+     "transfer": 2738679,
+     "decoded": 2735536
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1337974,
+     "decoded": 1337806
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 7,
+     "transfer": 474082,
+     "decoded": 472516
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": null,
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 797.5,
+    "fullRenderedMs": 1063.9,
+    "requests": 4,
+    "transfer": 496789.5,
+    "decoded": 495915.5,
+    "longTasks": 4.5,
+    "longTotalMs": 604.5
+   },
+   "errors": []
+  },
+  "phone-en": {
+   "runs": 6,
+   "ttfbMs": 6.3,
+   "domContentLoadedMs": 320.7,
+   "loadMs": 323.3,
+   "fcpMs": 146,
+   "lcpMs": 146,
+   "lcpElement": "P.cmd-hint",
+   "txTableRenderedMs": 760.7,
+   "longTasksLoad": {
+    "count": 4,
+    "totalMs": 531,
+    "maxMs": 196.5,
+    "blockingMs": 306
+   },
+   "heapUsedAfterLoadMB": 4.9,
+   "runtimeHeapUsedMB": 4.9,
+   "pageHeightPx": 125672,
+   "domNodes": 21803,
+   "layoutCount": 20.5,
+   "recalcStyleCount": 44,
+   "layoutMs": 321.1,
+   "scriptMs": 163.3,
+   "requestsAtLoad": 15,
+   "requestsSettled": 17,
+   "bytes": {
+    "all": {
+     "count": 17,
+     "transfer": 2738679,
+     "decoded": 2735536
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1337974,
+     "decoded": 1337806
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 7,
+     "transfer": 474082,
+     "decoded": 472516
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": {
+    "ms": 400,
+    "longTasks": 1,
+    "longTotalMs": 400
+   },
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 550.2,
+    "fullRenderedMs": 899.5,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4,
+    "longTotalMs": 472
+   },
+   "errors": []
+  }
+ },
+ "performanceSequentialRun": {
+  "note": "the same measurements in a separate, non-interleaved session of this state (for drift reference only)",
+  "at": "2026-10-21T23:28:45.524Z",
+  "summary": {
+   "desktop-he": {
+    "runs": 5,
+    "ttfbMs": 7.3,
+    "domContentLoadedMs": 324.9,
+    "loadMs": 326.6,
+    "fcpMs": 188,
+    "lcpMs": 188,
+    "lcpElement": "DIV.cmd-hero-t",
+    "txTableRenderedMs": 795.5,
+    "longTasksLoad": {
+     "count": 4,
+     "totalMs": 572,
+     "maxMs": 205,
+     "blockingMs": 356
+    },
+    "heapUsedAfterLoadMB": 5.6,
+    "runtimeHeapUsedMB": 5.6,
+    "pageHeightPx": 22591,
+    "domNodes": 22723,
+    "layoutCount": 19,
+    "recalcStyleCount": 45,
+    "layoutMs": 394.7,
+    "scriptMs": 154.9,
+    "requestsAtLoad": 19,
+    "requestsSettled": 21,
+    "bytes": {
+     "all": {
+      "count": 21,
+      "transfer": 3270082,
+      "decoded": 3266066
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1337974,
+      "decoded": 1337806
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 11,
+      "transfer": 1005485,
+      "decoded": 1003046
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": null,
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 410.3,
+     "fullRenderedMs": 863.5,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 557
+    },
+    "errors": []
+   },
+   "desktop-en": {
+    "runs": 5,
+    "ttfbMs": 8.6,
+    "domContentLoadedMs": 327.5,
+    "loadMs": 338.4,
+    "fcpMs": 168,
+    "lcpMs": 168,
+    "lcpElement": "DIV.cmd-hero-t",
+    "txTableRenderedMs": 763.5,
+    "longTasksLoad": {
+     "count": 5,
+     "totalMs": 594,
+     "maxMs": 188,
+     "blockingMs": 334
+    },
+    "heapUsedAfterLoadMB": 5.6,
+    "runtimeHeapUsedMB": 5.6,
+    "pageHeightPx": 22591,
+    "domNodes": 22723,
+    "layoutCount": 19,
+    "recalcStyleCount": 41,
+    "layoutMs": 391.7,
+    "scriptMs": 157.3,
+    "requestsAtLoad": 19,
+    "requestsSettled": 21,
+    "bytes": {
+     "all": {
+      "count": 21,
+      "transfer": 3270082,
+      "decoded": 3266066
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1337974,
+      "decoded": 1337806
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 11,
+      "transfer": 1005485,
+      "decoded": 1003046
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": {
+     "ms": 450.3,
+     "longTasks": 1,
+     "longTotalMs": 488
+    },
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 417.2,
+     "fullRenderedMs": 903.5,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 548
+    },
+    "errors": []
+   },
+   "phone-he": {
+    "runs": 5,
+    "ttfbMs": 5.3,
+    "domContentLoadedMs": 287.7,
+    "loadMs": 290.4,
+    "fcpMs": 136,
+    "lcpMs": 136,
+    "lcpElement": "P.cmd-hint",
+    "txTableRenderedMs": 739.5,
+    "longTasksLoad": {
+     "count": 3,
+     "totalMs": 434,
+     "maxMs": 185,
+     "blockingMs": 284
+    },
+    "heapUsedAfterLoadMB": 4.9,
+    "runtimeHeapUsedMB": 4.9,
+    "pageHeightPx": 125672,
+    "domNodes": 21803,
+    "layoutCount": 21,
+    "recalcStyleCount": 45,
+    "layoutMs": 303.9,
+    "scriptMs": 146.7,
+    "requestsAtLoad": 15,
+    "requestsSettled": 17,
+    "bytes": {
+     "all": {
+      "count": 17,
+      "transfer": 2738679,
+      "decoded": 2735536
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1337974,
+      "decoded": 1337806
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 7,
+      "transfer": 474082,
+      "decoded": 472516
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": null,
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 398.2,
+     "fullRenderedMs": 783.9,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 496
+    },
+    "errors": []
+   },
+   "phone-en": {
+    "runs": 5,
+    "ttfbMs": 5.5,
+    "domContentLoadedMs": 305.8,
+    "loadMs": 307.7,
+    "fcpMs": 140,
+    "lcpMs": 140,
+    "lcpElement": "P.cmd-hint",
+    "txTableRenderedMs": 745.2,
+    "longTasksLoad": {
+     "count": 3,
+     "totalMs": 463,
+     "maxMs": 176,
+     "blockingMs": 267
+    },
+    "heapUsedAfterLoadMB": 4.9,
+    "runtimeHeapUsedMB": 4.9,
+    "pageHeightPx": 125672,
+    "domNodes": 21803,
+    "layoutCount": 22,
+    "recalcStyleCount": 43,
+    "layoutMs": 300,
+    "scriptMs": 161.3,
+    "requestsAtLoad": 15,
+    "requestsSettled": 17,
+    "bytes": {
+     "all": {
+      "count": 17,
+      "transfer": 2738679,
+      "decoded": 2735536
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1337974,
+      "decoded": 1337806
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 7,
+      "transfer": 474082,
+      "decoded": 472516
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": {
+     "ms": 362,
+     "longTasks": 1,
+     "longTotalMs": 362
+    },
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 573.8,
+     "fullRenderedMs": 825.8,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 451
+    },
+    "errors": []
+   }
+  }
+ },
+ "requestInventory_desktopHe": [
+  {
+   "url": "/",
+   "type": "Document",
+   "status": 200,
+   "transfer": 1337974,
+   "decoded": 1337806,
+   "gzipEst": 405241,
+   "brotliEst": 311906
+  },
+  {
+   "url": "/lib/table/core.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 14501,
+   "decoded": 14344,
+   "gzipEst": 5213,
+   "brotliEst": 4555
+  },
+  {
+   "url": "/lib/explain/registry.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 691360,
+   "decoded": 691202,
+   "gzipEst": 182221,
+   "brotliEst": 139850
+  },
+  {
+   "url": "/lib/geo/boundaries.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 36806,
+   "decoded": 36649,
+   "gzipEst": 7820,
+   "brotliEst": 5247
+  },
+  {
+   "url": "/lib/dd/userdocs.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 27690,
+   "decoded": 27533,
+   "gzipEst": 8835,
+   "brotliEst": 7520
+  },
+  {
+   "url": "/data/market/latest.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 12525,
+   "decoded": 12368,
+   "gzipEst": 2505,
+   "brotliEst": 1818
+  },
+  {
+   "url": "/data/cbs-sales/latest.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 142298,
+   "decoded": 142140,
+   "gzipEst": 14436,
+   "brotliEst": 8747
+  },
+  {
+   "url": "/lib/explain/attach.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 400,
+   "decoded": 245,
+   "gzipEst": 209,
+   "brotliEst": 164
+  },
+  {
+   "url": "/lib/deal/ui.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 521,
+   "decoded": 366,
+   "gzipEst": 283,
+   "brotliEst": 203
+  },
+  {
+   "url": "/lib/changes/ui.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 522,
+   "decoded": 367,
+   "gzipEst": 285,
+   "brotliEst": 203
+  },
+  {
+   "url": "/api/identity?op=status",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 275,
+   "decoded": 17,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=radar&window=7d&page=1&size=40",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 42994,
+   "decoded": 42776,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=pulse",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 47711,
+   "decoded": 47493,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=scan&limit=80",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 401821,
+   "decoded": 401602,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=revisions&window=90d",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 38877,
+   "decoded": 38659,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=dossier",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 84340,
+   "decoded": 84122,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=scanGeo",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 10717,
+   "decoded": 10499,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=supply",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 39782,
+   "decoded": 39564,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=dossierIndex",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 35748,
+   "decoded": 35530,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/gov/transactions?area=il&limit=120&_=1792625414639&months=24",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 3580,
+   "decoded": 3363,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=txLatest&limit=500&months=24",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 299640,
+   "decoded": 299421,
+   "gzipEst": null,
+   "brotliEst": null
+  }
+ ],
+ "accessibility": {
+  "desktop-he": {
+   "root": {
+    "lang": "he",
+    "dir": "rtl"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 0,
+    "placeholderOnlyName": 0,
+    "imagesSvgsExposedWithoutName": 0,
+    "svgNotHiddenWithoutLabel_dom": 0,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 0,
+    "examples": {
+     "controls": [],
+     "formFields": [],
+     "images": []
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": true,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 483,
+    "uniqueStops": 483,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "a.skip-link",
+     "a.skip-link",
+     "#langHe",
+     "#langEn",
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 116,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      116
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 27,
+     "firstLaunchpad": 44,
+     "firstRail": 6,
+     "main": 60
+    },
+    "launchpadReached": [
+     "dossier",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 8,
+      "focusable": 8
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": "spo-0",
+      "optionsHaveRole": 3,
+      "escapeCloses": true
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8773,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(130, 144, 175) on rgb(18, 29, 52) (3.85)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(130, 144, 175) on rgb(11, 19, 34) (4.13)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8773,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(94, 109, 137) on rgb(255, 255, 255) (3.47)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(94, 109, 137) on rgb(243, 245, 249) (3.27)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(169, 184, 213) on rgb(18, 41, 79) (3.70)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 546,
+    "under40px": 498,
+    "under40px_notInlineTextLink": 497,
+    "under24px": 285,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 99x37",
+     "button 105x37",
+     "button#cmdScope 82x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      112
+     ],
+     [
+      "button",
+      62
+     ],
+     [
+      "button.pt-f",
+      36
+     ],
+     [
+      "button.pt-s",
+      35
+     ],
+     [
+      "summary",
+      29
+     ],
+     [
+      "button.xp.xp-why",
+      26
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pu-go",
+      21
+     ],
+     [
+      "a.pu-go",
+      19
+     ],
+     [
+      "select.ho-sel",
+      17
+     ],
+     [
+      "button.ld-link.pu-ri-g",
+      16
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8797,
+    "under10px": 1154,
+    "under11px": 2905,
+    "under12px": 4487,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      112
+     ],
+     [
+      "span.num 10.5px",
+      95
+     ],
+     [
+      "span.vc.raw 9.5px",
+      89
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ]
+    ]
+   }
+  },
+  "desktop-en": {
+   "root": {
+    "lang": "en",
+    "dir": "ltr"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 0,
+    "placeholderOnlyName": 0,
+    "imagesSvgsExposedWithoutName": 0,
+    "svgNotHiddenWithoutLabel_dom": 0,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 0,
+    "examples": {
+     "controls": [],
+     "formFields": [],
+     "images": []
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": true,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 483,
+    "uniqueStops": 483,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]",
+     "a.ri[table]",
+     "a.ri[compare]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 116,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      116
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 23,
+     "firstLaunchpad": 40,
+     "firstRail": 2,
+     "main": 56
+    },
+    "launchpadReached": [
+     "dossier",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 8,
+      "focusable": 8
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": "spo-0",
+      "optionsHaveRole": 3,
+      "escapeCloses": true
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8765,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(130, 144, 175) on rgb(18, 29, 52) (3.85)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(130, 144, 175) on rgb(11, 19, 34) (4.13)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8765,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(94, 109, 137) on rgb(255, 255, 255) (3.47)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(94, 109, 137) on rgb(243, 245, 249) (3.27)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(169, 184, 213) on rgb(18, 41, 79) (3.70)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 546,
+    "under40px": 495,
+    "under40px_notInlineTextLink": 494,
+    "under24px": 281,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 120x37",
+     "button 121x37",
+     "button#cmdScope 84x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      112
+     ],
+     [
+      "button",
+      62
+     ],
+     [
+      "button.pt-f",
+      36
+     ],
+     [
+      "button.pt-s",
+      32
+     ],
+     [
+      "summary",
+      29
+     ],
+     [
+      "button.xp.xp-why",
+      26
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pu-go",
+      21
+     ],
+     [
+      "a.pu-go",
+      19
+     ],
+     [
+      "select.ho-sel",
+      17
+     ],
+     [
+      "button.ld-link.pu-ri-g",
+      16
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8789,
+    "under10px": 1154,
+    "under11px": 2905,
+    "under12px": 4479,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      112
+     ],
+     [
+      "span.num 10.5px",
+      95
+     ],
+     [
+      "span.vc.raw 9.5px",
+      89
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ]
+    ]
+   }
+  },
+  "phone-he": {
+   "root": {
+    "lang": "he",
+    "dir": "rtl"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 0,
+    "placeholderOnlyName": 0,
+    "imagesSvgsExposedWithoutName": 0,
+    "svgNotHiddenWithoutLabel_dom": 0,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 0,
+    "examples": {
+     "controls": [],
+     "formFields": [],
+     "images": []
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": true,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 334,
+    "uniqueStops": 334,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "a.skip-link",
+     "a.skip-link",
+     "#langHe",
+     "#langEn",
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 72,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      72
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 27,
+     "firstLaunchpad": 44,
+     "firstRail": 6,
+     "main": 60
+    },
+    "launchpadReached": [
+     "dossier",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 8,
+      "focusable": 8
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": "spo-0",
+      "optionsHaveRole": 3,
+      "escapeCloses": true
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8678,
+     "fails": 24,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(130, 144, 175) on rgb(18, 29, 52) (3.85)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px"
+       ]
+      },
+      {
+       "pair": "rgb(130, 144, 175) on rgb(11, 19, 34) (4.13)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8678,
+     "fails": 24,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(94, 109, 137) on rgb(255, 255, 255) (3.47)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(169, 184, 213) on rgb(18, 41, 79) (3.70)",
+       "n": 5,
+       "ex": [
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px"
+       ]
+      },
+      {
+       "pair": "rgb(94, 109, 137) on rgb(243, 245, 249) (3.27)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 365,
+    "under40px": 131,
+    "under40px_notInlineTextLink": 130,
+    "under24px": 114,
+    "headerRailCommandBarUnder40": [
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      68
+     ],
+     [
+      "button.xp-how",
+      12
+     ],
+     [
+      "button.xp.xp-why",
+      10
+     ],
+     [
+      "button.pt-s",
+      9
+     ],
+     [
+      "summary",
+      7
+     ],
+     [
+      "button.ci-alink",
+      7
+     ],
+     [
+      "button.xp.tp-xp",
+      5
+     ],
+     [
+      "button.ho-chip",
+      3
+     ],
+     [
+      "button#id",
+      3
+     ],
+     [
+      "button.ent-badge",
+      1
+     ],
+     [
+      "a.ld-link",
+      1
+     ],
+     [
+      "button.ho-chip.on",
+      1
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8702,
+    "under10px": 2,
+    "under11px": 1539,
+    "under12px": 3444,
+    "topUnder11": [
+     [
+      "span.txe-nouse 10.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 10.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 10.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      68
+     ],
+     [
+      "span.num 10.5px",
+      63
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 10.5px",
+      54
+     ],
+     [
+      "span.vc.raw 10.5px",
+      51
+     ],
+     [
+      "div.s 10.5px",
+      43
+     ],
+     [
+      "span.vc.mod 10.5px",
+      42
+     ]
+    ]
+   }
+  },
+  "phone-en": {
+   "root": {
+    "lang": "en",
+    "dir": "ltr"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 0,
+    "placeholderOnlyName": 0,
+    "imagesSvgsExposedWithoutName": 0,
+    "svgNotHiddenWithoutLabel_dom": 0,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 0,
+    "examples": {
+     "controls": [],
+     "formFields": [],
+     "images": []
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": true,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 334,
+    "uniqueStops": 334,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]",
+     "a.ri[table]",
+     "a.ri[compare]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 72,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      72
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 23,
+     "firstLaunchpad": 40,
+     "firstRail": 2,
+     "main": 56
+    },
+    "launchpadReached": [
+     "dossier",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 8,
+      "focusable": 8
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": "spo-0",
+      "optionsHaveRole": 3,
+      "escapeCloses": true
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8670,
+     "fails": 24,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(130, 144, 175) on rgb(18, 29, 52) (3.85)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px"
+       ]
+      },
+      {
+       "pair": "rgb(130, 144, 175) on rgb(11, 19, 34) (4.13)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8670,
+     "fails": 24,
+     "failsExclSortArrowGlyph": 5,
+     "top": [
+      {
+       "pair": "rgb(94, 109, 137) on rgb(255, 255, 255) (3.47)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(169, 184, 213) on rgb(18, 41, 79) (3.70)",
+       "n": 5,
+       "ex": [
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px",
+        "span.k 10.5px"
+       ]
+      },
+      {
+       "pair": "rgb(94, 109, 137) on rgb(243, 245, 249) (3.27)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 365,
+    "under40px": 123,
+    "under40px_notInlineTextLink": 122,
+    "under24px": 114,
+    "headerRailCommandBarUnder40": [
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      68
+     ],
+     [
+      "button.xp-how",
+      12
+     ],
+     [
+      "button.xp.xp-why",
+      10
+     ],
+     [
+      "summary",
+      7
+     ],
+     [
+      "button.ci-alink",
+      7
+     ],
+     [
+      "button.xp.tp-xp",
+      5
+     ],
+     [
+      "button.ho-chip",
+      3
+     ],
+     [
+      "button#id",
+      3
+     ],
+     [
+      "button.ent-badge",
+      1
+     ],
+     [
+      "a.ld-link",
+      1
+     ],
+     [
+      "button.pt-s",
+      1
+     ],
+     [
+      "button.ho-chip.on",
+      1
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8694,
+    "under10px": 2,
+    "under11px": 1539,
+    "under12px": 3436,
+    "topUnder11": [
+     [
+      "span.txe-nouse 10.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 10.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 10.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      68
+     ],
+     [
+      "span.num 10.5px",
+      63
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 10.5px",
+      54
+     ],
+     [
+      "span.vc.raw 10.5px",
+      51
+     ],
+     [
+      "div.s 10.5px",
+      43
+     ],
+     [
+      "span.vc.mod 10.5px",
+      42
+     ]
+    ]
+   }
+  }
+ },
+ "tokenContrast": {
+  "light": {
+   "pairs": [
+    {
+     "fg": "--ink",
+     "bg": "--paper",
+     "fgv": "#101b30",
+     "bgv": "#f3f5f9",
+     "ratio": 15.75,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel",
+     "fgv": "#101b30",
+     "bgv": "#ffffff",
+     "ratio": 17.19,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel-2",
+     "fgv": "#101b30",
+     "bgv": "#eef1f7",
+     "ratio": 15.2,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--tint",
+     "fgv": "#101b30",
+     "bgv": "#f6f8fc",
+     "ratio": 16.17,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--paper",
+     "fgv": "#43536f",
+     "bgv": "#f3f5f9",
+     "ratio": 7.11,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel",
+     "fgv": "#43536f",
+     "bgv": "#ffffff",
+     "ratio": 7.76,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel-2",
+     "fgv": "#43536f",
+     "bgv": "#eef1f7",
+     "ratio": 6.86,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--tint",
+     "fgv": "#43536f",
+     "bgv": "#f6f8fc",
+     "ratio": 7.3,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--paper",
+     "fgv": "#5e6d89",
+     "bgv": "#f3f5f9",
+     "ratio": 4.78,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel",
+     "fgv": "#5e6d89",
+     "bgv": "#ffffff",
+     "ratio": 5.22,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel-2",
+     "fgv": "#5e6d89",
+     "bgv": "#eef1f7",
+     "ratio": 4.61,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--tint",
+     "fgv": "#5e6d89",
+     "bgv": "#f6f8fc",
+     "ratio": 4.91,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--paper",
+     "fgv": "#2563eb",
+     "bgv": "#f3f5f9",
+     "ratio": 4.74,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel",
+     "fgv": "#2563eb",
+     "bgv": "#ffffff",
+     "ratio": 5.17,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel-2",
+     "fgv": "#2563eb",
+     "bgv": "#eef1f7",
+     "ratio": 4.57,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--tint",
+     "fgv": "#2563eb",
+     "bgv": "#f6f8fc",
+     "ratio": 4.86,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--paper",
+     "fgv": "#1d4fc4",
+     "bgv": "#f3f5f9",
+     "ratio": 6.48,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel",
+     "fgv": "#1d4fc4",
+     "bgv": "#ffffff",
+     "ratio": 7.08,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel-2",
+     "fgv": "#1d4fc4",
+     "bgv": "#eef1f7",
+     "ratio": 6.25,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--tint",
+     "fgv": "#1d4fc4",
+     "bgv": "#f6f8fc",
+     "ratio": 6.66,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--paper",
+     "fgv": "#0f7c3f",
+     "bgv": "#f3f5f9",
+     "ratio": 4.84,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel",
+     "fgv": "#0f7c3f",
+     "bgv": "#ffffff",
+     "ratio": 5.28,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel-2",
+     "fgv": "#0f7c3f",
+     "bgv": "#eef1f7",
+     "ratio": 4.67,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--tint",
+     "fgv": "#0f7c3f",
+     "bgv": "#f6f8fc",
+     "ratio": 4.97,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--paper",
+     "fgv": "#c62f33",
+     "bgv": "#f3f5f9",
+     "ratio": 4.99,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel",
+     "fgv": "#c62f33",
+     "bgv": "#ffffff",
+     "ratio": 5.45,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel-2",
+     "fgv": "#c62f33",
+     "bgv": "#eef1f7",
+     "ratio": 4.81,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--tint",
+     "fgv": "#c62f33",
+     "bgv": "#f6f8fc",
+     "ratio": 5.12,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--paper",
+     "fgv": "#a4791c",
+     "bgv": "#f3f5f9",
+     "ratio": 3.61,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel",
+     "fgv": "#a4791c",
+     "bgv": "#ffffff",
+     "ratio": 3.94,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel-2",
+     "fgv": "#a4791c",
+     "bgv": "#eef1f7",
+     "ratio": 3.48,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--tint",
+     "fgv": "#a4791c",
+     "bgv": "#f6f8fc",
+     "ratio": 3.71,
+     "aa": false
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--paper",
+     "fgv": "#117d3a",
+     "bgv": "#f3f5f9",
+     "ratio": 4.79,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel",
+     "fgv": "#117d3a",
+     "bgv": "#ffffff",
+     "ratio": 5.23,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel-2",
+     "fgv": "#117d3a",
+     "bgv": "#eef1f7",
+     "ratio": 4.62,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--tint",
+     "fgv": "#117d3a",
+     "bgv": "#f6f8fc",
+     "ratio": 4.92,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--paper",
+     "fgv": "#8c6508",
+     "bgv": "#f3f5f9",
+     "ratio": 4.83,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel",
+     "fgv": "#8c6508",
+     "bgv": "#ffffff",
+     "ratio": 5.28,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel-2",
+     "fgv": "#8c6508",
+     "bgv": "#eef1f7",
+     "ratio": 4.66,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--tint",
+     "fgv": "#8c6508",
+     "bgv": "#f6f8fc",
+     "ratio": 4.96,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--paper",
+     "fgv": "#b34d17",
+     "bgv": "#f3f5f9",
+     "ratio": 4.82,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel",
+     "fgv": "#b34d17",
+     "bgv": "#ffffff",
+     "ratio": 5.26,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel-2",
+     "fgv": "#b34d17",
+     "bgv": "#eef1f7",
+     "ratio": 4.65,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--tint",
+     "fgv": "#b34d17",
+     "bgv": "#f6f8fc",
+     "ratio": 4.95,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--paper",
+     "fgv": "#12294f",
+     "bgv": "#f3f5f9",
+     "ratio": 13.22,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel",
+     "fgv": "#12294f",
+     "bgv": "#ffffff",
+     "ratio": 14.43,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel-2",
+     "fgv": "#12294f",
+     "bgv": "#eef1f7",
+     "ratio": 12.75,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--tint",
+     "fgv": "#12294f",
+     "bgv": "#f6f8fc",
+     "ratio": 13.57,
+     "aa": true
+    }
+   ],
+   "failsAA": 4,
+   "mainTextFails": []
+  },
+  "dark": {
+   "pairs": [
+    {
+     "fg": "--ink",
+     "bg": "--paper",
+     "fgv": "#eef2fa",
+     "bgv": "#0b1322",
+     "ratio": 16.56,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel",
+     "fgv": "#eef2fa",
+     "bgv": "#121d34",
+     "ratio": 14.96,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel-2",
+     "fgv": "#eef2fa",
+     "bgv": "#1a2745",
+     "ratio": 13.18,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--tint",
+     "fgv": "#eef2fa",
+     "bgv": "#101b31",
+     "ratio": 15.3,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--paper",
+     "fgv": "#b3c0d8",
+     "bgv": "#0b1322",
+     "ratio": 10.13,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel",
+     "fgv": "#b3c0d8",
+     "bgv": "#121d34",
+     "ratio": 9.15,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel-2",
+     "fgv": "#b3c0d8",
+     "bgv": "#1a2745",
+     "ratio": 8.06,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--tint",
+     "fgv": "#b3c0d8",
+     "bgv": "#101b31",
+     "ratio": 9.36,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--paper",
+     "fgv": "#8290af",
+     "bgv": "#0b1322",
+     "ratio": 5.8,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel",
+     "fgv": "#8290af",
+     "bgv": "#121d34",
+     "ratio": 5.24,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel-2",
+     "fgv": "#8290af",
+     "bgv": "#1a2745",
+     "ratio": 4.62,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--tint",
+     "fgv": "#8290af",
+     "bgv": "#101b31",
+     "ratio": 5.36,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--paper",
+     "fgv": "#3b82f6",
+     "bgv": "#0b1322",
+     "ratio": 5.05,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel",
+     "fgv": "#3b82f6",
+     "bgv": "#121d34",
+     "ratio": 4.56,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel-2",
+     "fgv": "#3b82f6",
+     "bgv": "#1a2745",
+     "ratio": 4.02,
+     "aa": false
+    },
+    {
+     "fg": "--accent",
+     "bg": "--tint",
+     "fgv": "#3b82f6",
+     "bgv": "#101b31",
+     "ratio": 4.67,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--paper",
+     "fgv": "#7fabf7",
+     "bgv": "#0b1322",
+     "ratio": 8.02,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel",
+     "fgv": "#7fabf7",
+     "bgv": "#121d34",
+     "ratio": 7.25,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel-2",
+     "fgv": "#7fabf7",
+     "bgv": "#1a2745",
+     "ratio": 6.39,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--tint",
+     "fgv": "#7fabf7",
+     "bgv": "#101b31",
+     "ratio": 7.42,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--paper",
+     "fgv": "#4ade80",
+     "bgv": "#0b1322",
+     "ratio": 10.66,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel",
+     "fgv": "#4ade80",
+     "bgv": "#121d34",
+     "ratio": 9.63,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel-2",
+     "fgv": "#4ade80",
+     "bgv": "#1a2745",
+     "ratio": 8.49,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--tint",
+     "fgv": "#4ade80",
+     "bgv": "#101b31",
+     "ratio": 9.85,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--paper",
+     "fgv": "#f87171",
+     "bgv": "#0b1322",
+     "ratio": 6.72,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel",
+     "fgv": "#f87171",
+     "bgv": "#121d34",
+     "ratio": 6.07,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel-2",
+     "fgv": "#f87171",
+     "bgv": "#1a2745",
+     "ratio": 5.35,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--tint",
+     "fgv": "#f87171",
+     "bgv": "#101b31",
+     "ratio": 6.21,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--paper",
+     "fgv": "#d4af37",
+     "bgv": "#0b1322",
+     "ratio": 8.83,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel",
+     "fgv": "#d4af37",
+     "bgv": "#121d34",
+     "ratio": 7.98,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel-2",
+     "fgv": "#d4af37",
+     "bgv": "#1a2745",
+     "ratio": 7.03,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--tint",
+     "fgv": "#d4af37",
+     "bgv": "#101b31",
+     "ratio": 8.16,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--paper",
+     "fgv": "#4ade80",
+     "bgv": "#0b1322",
+     "ratio": 10.66,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel",
+     "fgv": "#4ade80",
+     "bgv": "#121d34",
+     "ratio": 9.63,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel-2",
+     "fgv": "#4ade80",
+     "bgv": "#1a2745",
+     "ratio": 8.49,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--tint",
+     "fgv": "#4ade80",
+     "bgv": "#101b31",
+     "ratio": 9.85,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--paper",
+     "fgv": "#e2b93b",
+     "bgv": "#0b1322",
+     "ratio": 9.94,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel",
+     "fgv": "#e2b93b",
+     "bgv": "#121d34",
+     "ratio": 8.98,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel-2",
+     "fgv": "#e2b93b",
+     "bgv": "#1a2745",
+     "ratio": 7.91,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--tint",
+     "fgv": "#e2b93b",
+     "bgv": "#101b31",
+     "ratio": 9.19,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--paper",
+     "fgv": "#f09454",
+     "bgv": "#0b1322",
+     "ratio": 8.02,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel",
+     "fgv": "#f09454",
+     "bgv": "#121d34",
+     "ratio": 7.25,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel-2",
+     "fgv": "#f09454",
+     "bgv": "#1a2745",
+     "ratio": 6.39,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--tint",
+     "fgv": "#f09454",
+     "bgv": "#101b31",
+     "ratio": 7.41,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--paper",
+     "fgv": "#8fb1e8",
+     "bgv": "#0b1322",
+     "ratio": 8.51,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel",
+     "fgv": "#8fb1e8",
+     "bgv": "#121d34",
+     "ratio": 7.69,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel-2",
+     "fgv": "#8fb1e8",
+     "bgv": "#1a2745",
+     "ratio": 6.78,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--tint",
+     "fgv": "#8fb1e8",
+     "bgv": "#101b31",
+     "ratio": 7.87,
+     "aa": true
+    }
+   ],
+   "failsAA": 1,
+   "mainTextFails": []
+  }
+ },
+ "rail": {
+  "desktop1440x900": {
+   "items": 21,
+   "belowViewport": 5,
+   "which": [
+    "railAltaris",
+    "guide",
+    "sources",
+    "themeBtnRail",
+    "logout"
+   ],
+   "railScrolls": true,
+   "unreachableByPointer": 0
+  }
+ },
+ "screenshots": "/tmp/claude-0/-home-user-vizora/22cd8799-31cf-5ba9-b976-ea154f840f6e/scratchpad/shots/ux/after/ (not in the repository)",
+ "comparison": {
+  "note": "every value is [before, after]; performance = medians of interleaved runs",
+  "performance": {
+   "domContentLoadedMs": {
+    "desktop-he": [
+     435.7,
+     457.9
+    ],
+    "desktop-en": [
+     323.1,
+     340.1
+    ],
+    "phone-he": [
+     389.2,
+     331.4
+    ],
+    "phone-en": [
+     341.8,
+     320.7
+    ]
+   },
+   "loadMs": {
+    "desktop-he": [
+     441,
+     459.9
+    ],
+    "desktop-en": [
+     325.3,
+     350.1
+    ],
+    "phone-he": [
+     392.1,
+     333.7
+    ],
+    "phone-en": [
+     344,
+     323.3
+    ]
+   },
+   "fcpMs": {
+    "desktop-he": [
+     262,
+     362
+    ],
+    "desktop-en": [
+     178,
+     188
+    ],
+    "phone-he": [
+     176,
+     164
+    ],
+    "phone-en": [
+     176,
+     146
+    ]
+   },
+   "lcpMs": {
+    "desktop-he": [
+     262,
+     362
+    ],
+    "desktop-en": [
+     178,
+     188
+    ],
+    "phone-he": [
+     242,
+     164
+    ],
+    "phone-en": [
+     274,
+     146
+    ]
+   },
+   "txTableRenderedMs": {
+    "desktop-he": [
+     926.2,
+     923.3
+    ],
+    "desktop-en": [
+     805.8,
+     830.2
+    ],
+    "phone-he": [
+     800.2,
+     777.5
+    ],
+    "phone-en": [
+     780.1,
+     760.7
+    ]
+   },
+   "longTasksLoadCount": {
+    "desktop-he": [
+     6,
+     5.5
+    ],
+    "desktop-en": [
+     5.5,
+     5
+    ],
+    "phone-he": [
+     5,
+     4
+    ],
+    "phone-en": [
+     4.5,
+     4
+    ]
+   },
+   "longTasksLoadTotalMs": {
+    "desktop-he": [
+     736.5,
+     731
+    ],
+    "desktop-en": [
+     655,
+     668.5
+    ],
+    "phone-he": [
+     584,
+     523
+    ],
+    "phone-en": [
+     529.5,
+     531
+    ]
+   },
+   "styleLayoutMs": {
+    "desktop-he": [
+     457.9,
+     389.9
+    ],
+    "desktop-en": [
+     427.7,
+     430.6
+    ],
+    "phone-he": [
+     334.9,
+     345.2
+    ],
+    "phone-en": [
+     321.4,
+     321.1
+    ]
+   },
+   "heapAfterLoadMB": {
+    "desktop-he": [
+     5.6,
+     5.6
+    ],
+    "desktop-en": [
+     5.6,
+     5.6
+    ],
+    "phone-he": [
+     4.9,
+     4.9
+    ],
+    "phone-en": [
+     4.9,
+     4.9
+    ]
+   },
+   "domElements": {
+    "desktop-he": [
+     22710,
+     22723
+    ],
+    "desktop-en": [
+     22710,
+     22723
+    ],
+    "phone-he": [
+     21790,
+     21803
+    ],
+    "phone-en": [
+     21790,
+     21803
+    ]
+   },
+   "requestsSettled": {
+    "desktop-he": [
+     21,
+     21
+    ],
+    "desktop-en": [
+     21,
+     21
+    ],
+    "phone-he": [
+     17,
+     17
+    ],
+    "phone-en": [
+     17,
+     17
+    ]
+   },
+   "bytesAllDecoded": {
+    "desktop-he": [
+     3258765,
+     3266066
+    ],
+    "desktop-en": [
+     3258765,
+     3266066
+    ],
+    "phone-he": [
+     2728235,
+     2735536
+    ],
+    "phone-en": [
+     2728235,
+     2735536
+    ]
+   },
+   "bytesHtml": {
+    "desktop-he": [
+     1330505,
+     1337806
+    ],
+    "desktop-en": [
+     1330505,
+     1337806
+    ],
+    "phone-he": [
+     1330505,
+     1337806
+    ],
+    "phone-en": [
+     1330505,
+     1337806
+    ]
+   },
+   "streetReportFirstMs": {
+    "desktop-he": [
+     757.7,
+     761.5
+    ],
+    "desktop-en": [
+     515.8,
+     688
+    ],
+    "phone-he": [
+     760.5,
+     797.5
+    ],
+    "phone-en": [
+     393.4,
+     550.2
+    ]
+   },
+   "streetReportFullMs": {
+    "desktop-he": [
+     1072,
+     1041.2
+    ],
+    "desktop-en": [
+     935.6,
+     977
+    ],
+    "phone-he": [
+     1043.9,
+     1063.9
+    ],
+    "phone-en": [
+     793.7,
+     899.5
+    ]
+   },
+   "langSwitchMs": {
+    "desktop-he": [
+     null,
+     null
+    ],
+    "desktop-en": [
+     514,
+     454.9
+    ],
+    "phone-he": [
+     null,
+     null
+    ],
+    "phone-en": [
+     412.5,
+     400
+    ]
+   }
+  },
+  "accessibility": {
+   "controlsWithoutName": {
+    "desktop-he": [
+     0,
+     0
+    ],
+    "desktop-en": [
+     0,
+     0
+    ],
+    "phone-he": [
+     0,
+     0
+    ],
+    "phone-en": [
+     0,
+     0
+    ]
+   },
+   "formFieldsWithoutName": {
+    "desktop-he": [
+     1,
+     0
+    ],
+    "desktop-en": [
+     1,
+     0
+    ],
+    "phone-he": [
+     1,
+     0
+    ],
+    "phone-en": [
+     1,
+     0
+    ]
+   },
+   "placeholderOnlyName": {
+    "desktop-he": [
+     1,
+     0
+    ],
+    "desktop-en": [
+     1,
+     0
+    ],
+    "phone-he": [
+     1,
+     0
+    ],
+    "phone-en": [
+     1,
+     0
+    ]
+   },
+   "imagesSvgsWithoutName": {
+    "desktop-he": [
+     30,
+     0
+    ],
+    "desktop-en": [
+     30,
+     0
+    ],
+    "phone-he": [
+     31,
+     0
+    ],
+    "phone-en": [
+     31,
+     0
+    ]
+   },
+   "duplicateIds": {
+    "desktop-he": [
+     0,
+     0
+    ],
+    "desktop-en": [
+     0,
+     0
+    ],
+    "phone-he": [
+     0,
+     0
+    ],
+    "phone-en": [
+     0,
+     0
+    ]
+   },
+   "positiveTabindex": {
+    "desktop-he": [
+     0,
+     0
+    ],
+    "desktop-en": [
+     0,
+     0
+    ],
+    "phone-he": [
+     0,
+     0
+    ],
+    "phone-en": [
+     0,
+     0
+    ]
+   },
+   "skipLink": {
+    "desktop-he": [
+     false,
+     true
+    ],
+    "desktop-en": [
+     false,
+     true
+    ],
+    "phone-he": [
+     false,
+     true
+    ],
+    "phone-en": [
+     false,
+     true
+    ]
+   },
+   "tabStops": {
+    "desktop-he": [
+     479,
+     483
+    ],
+    "desktop-en": [
+     479,
+     483
+    ],
+    "phone-he": [
+     330,
+     334
+    ],
+    "phone-en": [
+     330,
+     334
+    ]
+   },
+   "tabStopsWithoutOutlineOrRing": {
+    "desktop-he": [
+     116,
+     116
+    ],
+    "desktop-en": [
+     116,
+     116
+    ],
+    "phone-he": [
+     72,
+     72
+    ],
+    "phone-en": [
+     72,
+     72
+    ]
+   },
+   "searchEscapeCloses": {
+    "desktop-he": [
+     false,
+     true
+    ],
+    "desktop-en": [
+     false,
+     true
+    ],
+    "phone-he": [
+     false,
+     true
+    ],
+    "phone-en": [
+     false,
+     true
+    ]
+   },
+   "searchActiveOptionAnnounced": {
+    "desktop-he": [
+     false,
+     true
+    ],
+    "desktop-en": [
+     false,
+     true
+    ],
+    "phone-he": [
+     false,
+     true
+    ],
+    "phone-en": [
+     false,
+     true
+    ]
+   },
+   "contrastFailsDark": {
+    "desktop-he": [
+     65,
+     41
+    ],
+    "desktop-en": [
+     65,
+     41
+    ],
+    "phone-he": [
+     41,
+     24
+    ],
+    "phone-en": [
+     41,
+     24
+    ]
+   },
+   "contrastFailsLight": {
+    "desktop-he": [
+     4109,
+     41
+    ],
+    "desktop-en": [
+     4101,
+     41
+    ],
+    "phone-he": [
+     3821,
+     24
+    ],
+    "phone-en": [
+     3813,
+     24
+    ]
+   },
+   "contrastFailsExclSortGlyphDark": {
+    "desktop-he": [
+     29,
+     5
+    ],
+    "desktop-en": [
+     29,
+     5
+    ],
+    "phone-he": [
+     22,
+     5
+    ],
+    "phone-en": [
+     22,
+     5
+    ]
+   },
+   "contrastFailsExclSortGlyphLight": {
+    "desktop-he": [
+     4073,
+     5
+    ],
+    "desktop-en": [
+     4065,
+     5
+    ],
+    "phone-he": [
+     3802,
+     5
+    ],
+    "phone-en": [
+     3794,
+     5
+    ]
+   },
+   "controlsUnder40px": {
+    "desktop-he": [
+     497,
+     497
+    ],
+    "desktop-en": [
+     494,
+     494
+    ],
+    "phone-he": [
+     307,
+     130
+    ],
+    "phone-en": [
+     303,
+     122
+    ]
+   },
+   "chromeControlsUnder40px": {
+    "desktop-he": [
+     12,
+     12
+    ],
+    "desktop-en": [
+     12,
+     12
+    ],
+    "phone-he": [
+     12,
+     5
+    ],
+    "phone-en": [
+     12,
+     5
+    ]
+   },
+   "textUnder10px": {
+    "desktop-he": [
+     1154,
+     1154
+    ],
+    "desktop-en": [
+     1154,
+     1154
+    ],
+    "phone-he": [
+     1039,
+     2
+    ],
+    "phone-en": [
+     1039,
+     2
+    ]
+   },
+   "textUnder11px": {
+    "desktop-he": [
+     2911,
+     2905
+    ],
+    "desktop-en": [
+     2911,
+     2905
+    ],
+    "phone-he": [
+     2561,
+     1539
+    ],
+    "phone-en": [
+     2561,
+     1539
+    ]
+   },
+   "horizontalOverflow": {
+    "desktop-he": [
+     false,
+     false
+    ],
+    "desktop-en": [
+     false,
+     false
+    ],
+    "phone-he": [
+     false,
+     false
+    ],
+    "phone-en": [
+     false,
+     false
+    ]
+   }
+  },
+  "railDesktop1440x900_itemsUnreachableByPointer": [
+   7,
+   0
+  ]
+ },
+ "changes": [
+  "Launchpad: + \"What changed here\" (#changes, tile 2) and \"Deal Lab\" (#dealLab, tile 5), live build only (live:begin / live:end); tiles number themselves (CSS counter) so the offline build reads 1–6; 4 × 2 grid with 8 tiles; I18N lp7 / lp7s / lp8 / lp8s he + en; test/hierarchy.test.js pins 8 live targets + their rail items + the 6 offline ones",
+  "Skip links \"Skip to search\" / \"Skip to main content\" (the first two Tab stops) that move focus",
+  "Search combobox: aria-label, aria-autocomplete, option ids + aria-selected + aria-activedescendant; Escape closes the list (the native search clear used to re-open it) and a late answer no longer re-opens a dismissed list",
+  "Names: the transactions period select; decorative header / rail / search / delta-arrow / theme / chevron svgs aria-hidden (30–31 exposed unnamed images → 0)",
+  "Contrast: light --ink-3 #7a89a4 → #5e6d89, dark --ink-3 #7c8bab → #8290af, light --conf-high / --conf-med / --conf-low text-safe, light --down #d13438 → #c62f33; new text tokens --brass-ink / --c2-ink (44 brass and 3 compare-slot-2 TEXT colours; --brass stays #a4791c for ALTARIS and for borders / strokes / charts); dark active rail item on #2563eb; sort arrow opacity .38 → .8; build stamp opacity removed",
+  "Phone (≤ 759px): ≥ 40px touch targets for the header buttons, language, mode, scope, chips, selects, inputs, segmented / period / tab buttons, rank rows, table sort / filter / mobile controls, search options, range inputs, map zoom, compare-chip remove; 8–9.5px labels → 10.5px, transaction-event chips → 11px",
+  "Rail: icons never shrink; desktop rail scrolls (7 items were below a 900px screen, unreachable by pointer) and tightens on screens ≤ 1000px tall; bottom-bar labels on one line",
+  "Tape: an LTR figure aligns under its RTL label (the phone inventory figure was pushed off its cell)",
+  "Search field focus ring alpha .14 → .38",
+  "Performance: the refresh fade forces one layout for all sections instead of one per section and fades only the sections on screen; preconnect to fonts.gstatic.com"
+ ],
+ "testedAndRejected": [
+  "Deferring lib/explain/registry.js (690 KB): it evaluates in ≈ 26 ms, and the first render reads it synchronously (renderOrient, xpBtn, the ⓘ marks), so deferring it would need a second full render (≈ 400 ms long task) — kept synchronous",
+  "content-visibility:auto on main sections: no measurable gain on desktop (layout 348–415 → 400–549 ms, more layouts)",
+  "content-visibility:auto on the phone transaction cards: −40 % load long-task time, but Chromium dropped the text of off-screen cards from the accessibility tree and stripped the names of role=\"button\" board cards — reverted (accessibility over speed)"
+ ],
+ "notChanged": [
+  ".xp ⓘ buttons (Explain workstream CSS / popover): they are every remaining Tab stop without an outline (focus = border colour only; 116 desktop / 72 phone) and the largest group of sub-40px targets on phone (16 × 16 px)",
+  "Type scale (32 distinct sizes 5.5–34 px) and spacing: a global token refactor would touch hundreds of lines across every workstream — only the phone floor was added",
+  "The transaction section is 79 % of the DOM (484 table rows + 484 hidden cards ≈ 17,800 of 22,700 elements); rendering only the visible variant or virtualising the list is the largest remaining win, but renderTx is gated by integrity / republished / sales-metrics tests — left for a dedicated change",
+  "The Google Fonts stylesheet stays render-blocking (a non-blocking load would swap fonts after a full layout of a 22k-element page)",
+  "altaris/altaris.css keeps its own copies of the old tertiary-text tokens"
+ ]
+}
