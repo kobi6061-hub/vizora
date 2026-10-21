@@ -497,6 +497,18 @@
 - `lib/radar/verbs.js` + `test/verbs.test.js` = "What changed?" verbs (17.10.2026): every radar event carries NEW · ADVANCED · CHANGED ·
   REVISED · STALE · RECOVERED · CONFLICT — a constant per event rule, a source-state event by its recorded transition; never a
   judgement. `view=radar&verb=` narrows; `verbs` counts; the Pulse chip + filter; registry term `change_verb`.
+- `lib/changes/` + `test/changes.test.js` = WHAT CHANGED HERE? (21.10.2026, live build only, `#changes` after `#pulse`): the change feed of a
+  street · verified neighbourhood · locality · district · Israel composed ONLY from stored evidence (txevents union, land tenders + radar
+  lifecycle, renewal declarations, Xplan milestones + renewal-plan history, VATMAL, lotteries, rental notices, CBS sales / construction +
+  revisions, Tel Aviv-Yafo permits + DD history, Trust run logs). Every item: eventDate ≠ observedAt (+ basis), newness NEW_EVENT ·
+  NEWLY_OBSERVED_OLDER_EVENT (older, first held in the period in a newer copy — a source's first ingestion is a baseline, never "newly
+  observed") · REVISION · STATE_CHANGE, verb, source + copy date, class, scope EXACT_STREET · NEAR_STREET (distance) · LOCALITY · DISTRICT /
+  NATIONAL · DISTRICT_CONTEXT / NATIONAL_CONTEXT (never the place's own fact), a materiality constant per rule. Period 30 / 90 / 180 / 365
+  days ending at the newest PROPX check in the data (never "today"); per kind coverage (COVERED · SNAPSHOT_ONLY · NOT_APPLICABLE ·
+  NOT_IN_COVERAGE · STALE) + statement CHANGES · NO_CHANGES_IN_PERIOD · NOT_COVERED · SOURCE_STALE; POSSIBLE DUPLICATE never counted.
+  `view=changes&geo=&period=[&kinds=&newness=&scope=&source=&batch=]` (400 bad input · 404 unknown), `view=changesMeta`; registry group
+  `changes` (8 terms with `simple` + `example`, 28 rules, 5 missing reasons, section). The street report and the dossier link to it
+  (`data-chgeo`). See `lib/changes/README.md`.
 - `lib/land/economics.js` + `test/land-economics.test.js` = Land Economics 2.0 (17.10.2026): the dossier's `sections.landEconomics`
   (additive) — ₪/unit quartiles of competitive-bid open-market lots decided in 36 months (the land read model's own
   `landPerUnitOver`, quartiles only over ≥ 5 lots) vs the prior 36 with a lot-mix warning; ₪/m² bids apart (an empty window
