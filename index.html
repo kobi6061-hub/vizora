@@ -11207,7 +11207,7 @@ function xpSrcHTML(id){const X=XP(),L=xpL(),t=xpT(),T0=X.term(id),x=X.level2(id,
   const ids=[...new Set(T0.source.ids.map(s=>X.canonicalSource(s)||s))];
   const rows=ids.map(c=>{const lab=`<b>${ldE(X.sourceLabel(c,L)||c)}</b>`;if(xpCatSt!=="ok")return `<li>${lab}</li>`;
     const s=xpCat.sources.find(z=>z.id===c);
-    if(!s)return `<li>${lab}<div class="xp-src-d">${/^(propx|altaris):/.test(c)?t.srcModule:t.srcNotListed}</div></li>`;
+    if(!s)return `<li>${lab}<div class="xp-src-d">${/^propx:/.test(c)?t.srcModule:t.srcNotListed}</div></li>`;
     const sy=s.sync||{},st=sy.state?` · <span class="xp-st">${stL(sy.state)}</span>`:"";
     const obs=s.latestObservation!=null&&s.latestObservation!==""?`${t.srcObs}: <bdi class="num">${ldE(xpDay(s.latestObservation))}</bdi>${s.latestObservationKind?` <bdi class="xp-src-k">(${ldE(s.latestObservationKind)})</bdi>`:""}`:"";
     const chk=`${t.srcChk}: ${sy.lastCheckAt?`<bdi class="num">${ldE(xpDay(sy.lastCheckAt))}</bdi>`:t.srcNoRun}${st}`;
