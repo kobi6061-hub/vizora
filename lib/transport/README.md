@@ -22,3 +22,19 @@ nearest), light-rail stations within 1,000 m (entrances grouped by station + lin
 Israel Railways station stops within 1,500 m. Distances are straight-line metres (DERIVED), never walking distances. Proximity is context:
 never a value, never a price effect; a planned station is never shown as operating. Missing states: `transport-not-synced`,
 `street-not-located`.
+
+## The layer's date and the stop registry (21.10.2026)
+
+The light-rail layer states a month per row (`YEARMONTH`); every station carries it (`statusAsOf`) and the page prints "status as of
+MM.YYYY". The layer is OLDER than the stop registry for some lines — 21.10.2026: the Tel Aviv Red Line's surface stations (Petah Tikva,
+Bnei Brak, Ramat Gan, Bat Yam, Jaffa) are "מתוכננת" as of 2024-11 although the registry (updated 2026-10-01) lists light-rail stops beside
+24 of them. PROPX never changes the layer's status. Instead, as SEPARATE evidence:
+
+- `lrt.registry` — the registry's light-rail stops (types 4 "רכבת קלה" / 18 "רכבת קלה - רציפים") within 1,000 m of the street (count +
+  nearest); the registry carries no line, no station name and no service status;
+- per station, `registryStopM` = the distance from the station's nearest entrance to the nearest registry light-rail stop when it is
+  ≤ 150 m — the radius EVERY existing station of the layer meets (`registryMatch`, measured at load: 33 / 33 on 21.10.2026); for a station
+  the layer does not mark existing, `registryNote` states both values. An interchange station of a planned line can find the operating
+  line's stop (the registry states no line) — the note says so; nothing is promoted.
+
+Rail station stops = registry types 7 "רכבת ישראל" + 19 "רכבת ישראל - רציפים" (platforms).

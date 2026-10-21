@@ -38,6 +38,9 @@ const ROWS = {
     { _id: 3, StationId: 103, CityCode: 5000, CityName: 'תל אביב - יפו', StationTypeCode: 1, StationTypeName: 'תחנה רגילה', StationOperatorTypeName: 'מפעילי אוטובוסים', Lat: off(900).lat, Long: off(900).lng },
     { _id: 4, StationId: 104, CityCode: 5000, CityName: 'תל אביב - יפו', StationTypeCode: 7, StationTypeName: 'רכבת ישראל', StationOperatorTypeName: 'רכבת', Lat: off(1300, 1).lat, Long: off(1300, 1).lng },
     { _id: 5, StationId: 105, CityCode: 0, CityName: null, StationTypeCode: 1, StationTypeName: 'תחנה רגילה', StationOperatorTypeName: 'מפעילי אוטובוסים', Lat: 40.1, Long: 10.2 },
+    { _id: 6, StationId: 106, CityCode: 5000, CityName: 'תל אביב - יפו', StationTypeCode: 4, StationTypeName: 'רכבת קלה', StationOperatorTypeName: 'רכבת קלה', Lat: off(100, 1).lat, Long: off(100, 1).lng },
+    { _id: 7, StationId: 107, CityCode: 5000, CityName: 'תל אביב - יפו', StationTypeCode: 18, StationTypeName: 'רכבת קלה - רציפים', StationOperatorTypeName: 'רכבת קלה', Lat: itmToWgs84(ALLENBY.X + 520, ALLENBY.Y).lat, Long: itmToWgs84(ALLENBY.X + 520, ALLENBY.Y).lng },
+    { _id: 8, StationId: 108, CityCode: 5000, CityName: 'תל אביב - יפו', StationTypeCode: 19, StationTypeName: 'רכבת ישראל - רציפים', StationOperatorTypeName: 'רכבת', Lat: off(1400, 1).lat, Long: off(1400, 1).lng },
   ],
   lrt: [
     { _id: 1, OID: -1, X: ALLENBY.X, Y: ALLENBY.Y, ENTRC_EXIT: 'יציאה A', ACSBL_ENTR: '<Null>', ENTRC_TYPE: 'מדרגות', NOTES: ' ', LINE: 'אדום', TYPE: 'תחתית', STATUS: 'קיימת', YEARMONTH: 202502, COMP: 'נתע', MTR_AREA: 'מטרופולין תל אביב', STAT_NAME: 'אלנבי', ENTRC_LBL: 'A' },
@@ -57,7 +60,7 @@ async function synced() {
 t('NORMALIZATION: official keys and coordinates only — ITM → WGS84 for the light-rail entrances, a stop outside Israel or an entrance without coordinates rejected, the Ministry\'s STATUS kept verbatim', async () => {
   const dir = await synced();
   const L = REF.table('lrt', dir), B = REF.table('bus-stops', dir), Rl = REF.table('rail', dir), M = REF.table('metro', dir);
-  assert.equal(B.meta.records, 4); assert.equal(B.meta.rejected, 1, 'the stop outside Israel');
+  assert.equal(B.meta.records, 7); assert.equal(B.meta.rejected, 1, 'the stop outside Israel');
   assert.equal(L.meta.records, 3); assert.equal(L.meta.rejected, 1, 'the entrance at (0, 0)');
   const al = [...L.byKey.values()].find((r) => r.station === 'אלנבי' && r.entrance === 'A');
   assert.ok(Math.abs(al.lat - 32.0631) < 0.002 && Math.abs(al.lng - 34.7750) < 0.002, 'Allenby lies in central Tel Aviv: ' + al.lat + ',' + al.lng);
@@ -73,17 +76,35 @@ t('ACCESS: fixed radii (300 m stops · 1,000 m light rail · 1,500 m rail-typed 
   const pts = [{ lat: A.lat, lng: A.lng, house: '1' }, { lat: off(50).lat, lng: off(50).lng, house: '3' }];
   const X = TR.access(pts, dir);
   assert.equal(X.available, true); assert.deepEqual(X.radiusM, { busStops: 300, lrt: 1000, rail: 1500 });
-  assert.equal(X.busStops.count, 2, 'the stops at 120 m and 260 m — not the one at 900 m'); assert.ok(X.busStops.nearestM >= 60 && X.busStops.nearestM <= 80, 'nearest from the closer street point (120 − 50 m): ' + X.busStops.nearestM);
+  assert.equal(X.busStops.count, 3, 'the stops at 120 m and 260 m + the registry light-rail stop at 100 m — not the one at 900 m'); assert.ok(X.busStops.nearestM >= 60 && X.busStops.nearestM <= 80, 'nearest from the closer street point (120 − 50 m): ' + X.busStops.nearestM);
   assert.equal(X.lrt.stations.length, 2, 'two entrances of Allenby red are ONE station; the planned purple station apart');
   const red = X.lrt.stations.find((s) => s.line === 'אדום'), purple = X.lrt.stations.find((s) => s.line === 'סגול');
   assert.equal(red.statusClass, 'EXISTING'); assert.equal(red.distanceM, 0); assert.equal(red.nearestHouse, '1');
   assert.equal(purple.statusClass, 'PLANNED'); assert.equal(purple.status, 'מתוכננת'); assert.ok(purple.distanceM > 400 && purple.distanceM < 520);
   assert.equal(X.lrt.existingNearestM, 0); assert.equal(X.lrt.plannedNearestM, purple.distanceM);
-  assert.equal(X.rail.stops.length, 1, 'the registry stop typed "רכבת ישראל" at 1,300 m'); assert.match(X.rail.basis, /stop registry types "רכבת ישראל"/);
+  assert.deepEqual(X.rail.stops.map((r) => r.type), [7, 19], 'the registry stops typed 7 "רכבת ישראל" (1,300 m) and 19 "רכבת ישראל - רציפים" (1,400 m)'); assert.match(X.rail.basis, /stop registry types 7 "רכבת ישראל" \/ 19/);
   assert.equal(X.notLocated.rail, 2); assert.equal(X.notLocated.metro, 1); assert.match(X.notLocated.reason, /HTTP 403/);
   assert.match(X.doesNotMean, /never a value/); assert.match(X.doesNotMean, /PLANNED station is not an operating one/);
   const far = TR.access([{ lat: 31.25, lng: 34.79 }], dir);
   assert.equal(far.busStops.count, 0); assert.equal(far.busStops.nearestM, null, 'no stop in range → null, never 0'); assert.deepEqual(far.lrt.stations, []);
+});
+
+t('LAYER DATE + STOP REGISTRY: every station carries the layer\'s own month; a registry light-rail stop within 150 m (the radius every EXISTING layer station meets) is reported BESIDE the status — a planned station stays planned', async () => {
+  const dir = await synced();
+  const X = TR.access([{ lat: A.lat, lng: A.lng, house: '1' }], dir);
+  const red = X.lrt.stations.find((s) => s.line === 'אדום'), purple = X.lrt.stations.find((s) => s.line === 'סגול');
+  assert.equal(red.statusAsOf, '2025-02'); assert.equal(purple.statusAsOf, '2024-09'); assert.deepEqual(X.lrt.statusAsOf, ['2024-09', '2025-02']);
+  assert.ok(red.registryStopM >= 60 && red.registryStopM <= 75, 'measured from the station\'s NEAREST entrance (B, 40 m east of A) to the stop 100 m east of A: ' + red.registryStopM); assert.equal(red.registryNote, null, 'an existing station needs no note');
+  assert.ok(purple.registryStopM >= 15 && purple.registryStopM <= 25, 'the type-18 platform 20 m from the planned station: ' + purple.registryStopM);
+  assert.equal(purple.status, 'מתוכננת'); assert.equal(purple.statusClass, 'PLANNED', 'never promoted');
+  assert.match(purple.registryNote, /as of 2024-09/); assert.match(purple.registryNote, /states no line/); assert.match(purple.registryNote, /status is not changed/);
+  assert.equal(X.lrt.registry.count, 2); assert.equal(X.lrt.registry.nearestM, 100); assert.equal(X.lrt.registry.matchRadiusM, TR.REGISTRY_MATCH_M);
+  assert.deepEqual(X.lrt.registry.calibration, { radiusM: 150, existingStations: 1, existingWithRegistryStop: 1 });
+  assert.match(X.lrt.registry.basis, /no line, no station name and no service status/);
+  assert.deepEqual([...TR.LR_TYPES].sort((a, b) => a - b), [4, 18]); assert.deepEqual([...TR.RAIL_TYPES].sort((a, b) => a - b), [7, 19]);
+  // the stored registry: every EXISTING station of the real layer meets the radius (the calibration the page prints)
+  const real = TR.status();
+  if (real.registryMatch && real.registryMatch.existingStations) assert.equal(real.registryMatch.existingWithRegistryStop, real.registryMatch.existingStations, 'stored data: ' + JSON.stringify(real.registryMatch));
 });
 
 t('HONEST STATES: not synced → transport-not-synced; a street with no located point → street-not-located (never zero stops)', () => {
