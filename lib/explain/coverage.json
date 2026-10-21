@@ -11,19 +11,19 @@
   "R7 summaries",
   "R8 definition terms"
  ],
- "sites": 1338,
- "sitesWithFixedLabel": 1310,
- "labels": 1126,
- "chrome": 293,
- "meaningful": 833,
+ "sites": 1349,
+ "sitesWithFixedLabel": 1321,
+ "labels": 1133,
+ "chrome": 295,
+ "meaningful": 838,
  "excluded": 0,
  "coverage": {
-  "covered": 833,
-  "total": 833,
+  "covered": 838,
+  "total": 838,
   "pct": 100,
   "byVia": {
    "INLINE": 99,
-   "ANCHOR": 720,
+   "ANCHOR": 725,
    "ORIENTATION": 14
   }
  },
@@ -47,8 +47,8 @@
    "uncovered": 0
   },
   "dossier": {
-   "meaningful": 25,
-   "covered": 25,
+   "meaningful": 24,
+   "covered": 24,
    "excluded": 0,
    "uncovered": 0
   },
@@ -65,8 +65,8 @@
    "uncovered": 0
   },
   "intel": {
-   "meaningful": 140,
-   "covered": 140,
+   "meaningful": 147,
+   "covered": 147,
    "excluded": 0,
    "uncovered": 0
   },
@@ -107,8 +107,8 @@
    "uncovered": 0
   },
   "pulse": {
-   "meaningful": 7,
-   "covered": 7,
+   "meaningful": 6,
+   "covered": 6,
    "excluded": 0,
    "uncovered": 0
   },
@@ -1554,16 +1554,16 @@
    "ref": "I18N.dsSup.why",
    "en": "Formula and limitations",
    "he": "נוסחה ומגבלות",
-   "cls": "MEANINGFUL",
-   "chrome": null,
+   "cls": "CHROME",
+   "chrome": "prose",
    "sections": [
     "dossier"
    ],
    "kinds": [
     "summary"
    ],
-   "via": "ANCHOR",
-   "term": "supply_universes",
+   "via": null,
+   "term": null,
    "excluded": null
   },
   {
@@ -3549,10 +3549,27 @@
     "intel"
    ],
    "kinds": [
+    "col",
     "helper"
    ],
    "via": "ANCHOR",
    "term": "geographic_concentration",
+   "excluded": null
+  },
+  {
+   "ref": "IN_I18N.c.cons",
+   "en": "Construction evidence",
+   "he": "ראיית בנייה",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "construction_progress_report",
    "excluded": null
   },
   {
@@ -3686,6 +3703,22 @@
    "excluded": null
   },
   {
+   "ref": "IN_I18N.c.land",
+   "en": "Winning sums (competitive)",
+   "he": "סכומי זכייה (תחרותי)",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "land_per_unit",
+   "excluded": null
+  },
+  {
    "ref": "IN_I18N.c.last",
    "en": "Latest activity",
    "he": "פעילות אחרונה",
@@ -3701,6 +3734,54 @@
    ],
    "via": "ANCHOR",
    "term": "developer_observed_activity",
+   "excluded": null
+  },
+  {
+   "ref": "IN_I18N.c.lots",
+   "en": "Lots won",
+   "he": "מגרשים שנזכו",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "developer_observed_activity",
+   "excluded": null
+  },
+  {
+   "ref": "IN_I18N.c.mproj",
+   "en": "Lottery projects",
+   "he": "פרויקטי הגרלה",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "developer_observed_activity",
+   "excluded": null
+  },
+  {
+   "ref": "IN_I18N.c.munits",
+   "en": "Units, first lotteries",
+   "he": "יח״ד בהגרלה ראשונה",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "gov_housing_lottery",
    "excluded": null
   },
   {
@@ -3769,6 +3850,22 @@
    "excluded": null
   },
   {
+   "ref": "IN_I18N.c.punits",
+   "en": "Units",
+   "he": "יח״ד",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "supply_universes",
+   "excluded": null
+  },
+  {
    "ref": "IN_I18N.c.stage",
    "en": "Evidenced stage",
    "he": "שלב מתועד",
@@ -3783,6 +3880,22 @@
    ],
    "via": "ANCHOR",
    "term": "project_stage",
+   "excluded": null
+  },
+  {
+   "ref": "IN_I18N.c.units",
+   "en": "Units in lots",
+   "he": "יח״ד במגרשים",
+   "cls": "MEANINGFUL",
+   "chrome": null,
+   "sections": [
+    "intel"
+   ],
+   "kinds": [
+    "col"
+   ],
+   "via": "ANCHOR",
+   "term": "developer_observed_activity",
    "excluded": null
   },
   {
@@ -5128,6 +5241,7 @@
     "intel"
    ],
    "kinds": [
+    "col",
     "helper"
    ],
    "via": "ANCHOR",
@@ -5194,6 +5308,7 @@
     "intel"
    ],
    "kinds": [
+    "col",
     "helper"
    ],
    "via": "ANCHOR",
@@ -5243,6 +5358,7 @@
     "intel"
    ],
    "kinds": [
+    "col",
     "helper"
    ],
    "via": "ANCHOR",
@@ -12703,16 +12819,16 @@
    "ref": "I18N.puWhy",
    "en": "Why was this flagged?",
    "he": "למה סומן?",
-   "cls": "MEANINGFUL",
-   "chrome": null,
+   "cls": "CHROME",
+   "chrome": "prose",
    "sections": [
     "pulse"
    ],
    "kinds": [
     "summary"
    ],
-   "via": "ANCHOR",
-   "term": "change_verb",
+   "via": null,
+   "term": null,
    "excluded": null
   },
   {

@@ -185,6 +185,17 @@ function extract(page) {
     const fn = R.blockName(m.index), keys = (COLS_TABLE[fn] || '').split(',').filter(Boolean);
     add('col', m[2], m.index, false, keys.length ? keys.map((k) => `[data-ptdom="${k}"],[data-ptkey="${k}"]`).join(',') : fn + ':' + m[1]);
   }
+  /* R3b column factories — `const n=(k,label,o)=>({k,label,…})`, called as n("key",LABEL,…) inside a cols function */
+  for (const m of S.matchAll(/(?:const |,)(\w+)=\(k,label(?:,\w+)?\)=>\(\{k,label/g)) {
+    const name = m[1], fn = R.blockName(m.index), keys = (COLS_TABLE[fn] || '').split(',').filter(Boolean), be = R.blockEnd(m.index);
+    const callRe = new RegExp('(?<![\\w.])' + name + '\\("(\\w+)",', 'g'); callRe.lastIndex = m.index + m[0].length;
+    let c; const region = S.slice(0, be);
+    while ((c = callRe.exec(region))) {
+      const ae = balanced(S, c.index + name.length, '(', ')'); if (ae < 0) continue;
+      const args = splitArgs(S.slice(c.index + name.length + 1, ae - 1)); if (!args[1]) continue;
+      add('col', args[1], c.index, false, keys.length ? keys.map((k) => `[data-ptdom="${k}"],[data-ptkey="${k}"]`).join(',') : fn + ':' + c[1]);
+    }
+  }
   /* R4 KPI cards */
   { const st = S.indexOf('function renderKPIs('), en = S.indexOf('\nfunction ', st + 10);
     for (const m of S.slice(st, en).matchAll(/\{k:"(\w+)",l:([^,]+(?:\([^)]*\))?),/g)) { const objEnd = balanced(S, st + m.index); const body = S.slice(st + m.index, objEnd); add('kpi', m[2], st + m.index, /\b(?:xp|xm):/.test(body), 'kpi:' + m[1]); } }
@@ -330,6 +341,7 @@ const CHROME = [
    ['GX_I18N.sec.raw', 'heading'],
   /* dossier */
    ['I18N.dsFreshT.0', 'descriptor'],
+   ['I18N.dsSup.why', 'prose'],
    ['I18N.dsWhy.more', 'heading'],
   /* capital — the capital model */
    ['i:ciChip', 'furniture'],
@@ -340,6 +352,7 @@ const CHROME = [
    ['TC_I18N.d.method', 'heading'],
   /* pulse — revisions */
    ['I18N.puRevCols.0', 'descriptor'], ['I18N.puRevCols.1', 'descriptor'],
+   ['I18N.puWhy', 'prose'],
   /* guide */
    ['i:gdTitle', 'heading'],
   /* @chrome:end */
