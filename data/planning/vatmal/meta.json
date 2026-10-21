@@ -8,11 +8,11 @@
   "layer": "https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/vatmal_mitchamim_muchrazim/MapServer/0",
   "classification": "OFFICIAL",
   "page": "https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/vatmal_mitchamim_muchrazim/MapServer",
-  "licence": "Planning Administration open data (CC BY, as the Xplan services on data.gov.il)",
+  "licence": "not stated on the service (a public, keyless ArcGIS REST layer of the same host PROPX already reads for Xplan plans) — no licence is claimed",
   "title": "ותמ\"ל — מתחמים מוכרזים",
   "titleEn": "VATMAL — declared preferred-housing complexes"
  },
- "fetchedAt": "2026-10-21T14:39:02.773Z",
+ "fetchedAt": "2026-10-21T15:08:14.067Z",
  "readAt": "2026-10-21T14:39:02.773Z",
  "layerCount": 203,
  "stored": 203,
