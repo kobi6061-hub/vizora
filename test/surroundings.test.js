@@ -96,7 +96,7 @@ t('WIRING: the street report carries the surroundings (or the reason) and cites 
   const rep = fs.readFileSync(path.join(ROOT, 'lib/streets/report.js'), 'utf8');
   assert.match(rep, /require\('\.\.\/surroundings'\)\.around\(g\.points\)/); assert.match(rep, /surroundings: su/); assert.match(rep, /miss\('surroundings'/);
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.match(html, /xpBtn\("street_surroundings"\)/); assert.match(html, /plan\+trn\+sur/);
+  assert.match(html, /xpBtn\("street_surroundings"\)/); assert.match(html, /sec\("risk",t\.riskH,risk\+sur,/);   // since 21.10.2026 the registers sit under "Risks & checks" (test/hierarchy.test.js)
   assert.ok(require('../lib/explain/registry').term('street_surroundings'));
   const C = require('../lib/trust/catalog').catalog(); for (const id of ['datagov:moep:contaminated-land', 'datagov:moe:institution-coordinates', 'datagov:moe:institutions']) assert.ok(C.sources.some((s) => s.id === id), id);
   { const inc = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')).functions['api/intel.js'].includeFiles; assert.ok(inc.length <= 256, 'Vercel caps includeFiles at 256 characters');
