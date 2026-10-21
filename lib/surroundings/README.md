@@ -9,7 +9,7 @@ data.gov.il's keyless CKAN datastore (`lib/reference`'s reader and store — com
 |---|---|---|---|
 | `contaminated` | `cbb2ed28-310d-4389-a1ec-64bb538fc090` | the Ministry of Environmental Protection's contaminated / suspected land register: name, address, block / parcel, ITM point, the register's LEGEND and status words | Other (Open) |
 | `edu-points` | `5c5d6bb0-755d-470d-84b6-d7dd3135ba9c` | the Ministry of Education's institution entrance coordinates (ITM, the source's accuracy grade) — published 04.2022 | Other (Open) |
-| `edu-info` | `5548fd63-5868-4053-ad81-98caddc5e232` | institution characteristics by school year (type, frame, sector, supervision, students, grades) — rows from 2022 on | Other (Open) |
+| `edu-info` | `5548fd63-5868-4053-ad81-98caddc5e232` | institution characteristics by school year (type, frame, sector, supervision, students, grades) — ONE record per institution: its latest school year in the source (an older year superseded and counted; the source's rows per year in `meta.profile`) | Other (Open) |
 
 The register rows carry no unique official key: a record is keyed by its content (`ct:<org_id>:<block>:<parcel>`), identical keys numbered
 in the source's order (`keyOccurrence`, `lib/reference`) — never by the datastore's row number.

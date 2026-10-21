@@ -55,13 +55,20 @@ async function synced() {
 }
 const pts = [{ lat: A.lat, lng: A.lng, house: '12', block: '7094', parcel: '65' }];
 
-t('NORMALIZATION: ITM → WGS84, the register\'s words verbatim, a row without point or parcel rejected, a repeated org / parcel numbered (never dropped), school years before 2022 not kept', async () => {
+t('NORMALIZATION: ITM → WGS84, the register\'s words verbatim, a row without point or parcel rejected, a repeated org / parcel numbered (never dropped), one record per institution — its latest school year in the source (an older year superseded and counted), the source\'s year profile kept', async () => {
   const dir = await synced();
   const C = REF.table('contaminated', dir), E = REF.table('edu-info', dir), P = REF.table('edu-points', dir);
   assert.equal(C.meta.records, 4); assert.equal(C.meta.rejected, 1);
   assert.ok(C.byKey.has('ct:1001:7094:65') && C.byKey.has('ct:1005:7094:65'), 'distinct org ids are distinct keys');
   const a = C.byKey.get('ct:1001:7094:65'); assert.equal(a.legend, 'היתכנות לזיהום קרקע'); assert.equal(a.updated, '2024-04-09'); assert.ok(Math.abs(a.lat - A.lat) < 1e-5);
-  assert.equal(E.meta.records, 2, 'the 2011 row is before the kept school years'); assert.equal(P.meta.records, 3);
+  assert.equal(E.meta.records, 2, 'two institutions'); assert.equal(E.meta.superseded, 1, 'the 2011 row of institution 1362 is superseded by its 2025 row'); assert.equal(P.meta.records, 3);
+  assert.deepEqual(E.meta.profile, { rowsByYear: { 2011: 1, 2023: 1, 2025: 1 } }, 'the source\'s own year range is recorded');
+  assert.equal(E.byKey.get('edu:1362:2025').students, 35); assert.ok(!E.byKey.has('edu:1362:2011'));
+  // a source whose every year is old is still read: each institution's latest year, whatever it is
+  const old = REF.write(SU.SOURCES['edu-info'], await REF.fetchAll(SU.SOURCES['edu-info'], { fetchImpl: ckanStub(ROWS['edu-info'].map((r) => ({ ...r, 'שנה': r['שנה'] - 10 }))) }), { dir: tmp(), now: '2026-10-21T10:00:00Z' });
+  assert.equal(old.meta.records, 2, 'a source ending before any fixed year is kept — its latest year stated, never dropped');
+  // a read that keeps nothing of a non-empty source is refused (nothing written), never an empty register
+  await assert.rejects(async () => REF.write(SU.SOURCES['edu-points'], await REF.fetchAll(SU.SOURCES['edu-points'], { fetchImpl: ckanStub(ROWS['edu-points'].map((r) => ({ ...r, ITM_X: '' }))) }), { dir: tmp(), now: '2026-10-21T10:00:00Z' }), /no record kept of 3 source rows/);
   // key-occurrence numbering for identical content keys
   const dup = SU.SOURCES.contaminated; const r = REF.write(dup, { rows: [ct(1, {}), ct(2, { org_id: 1001 })], total: 2, fields: Object.keys(ct(1, {})), sourceUpdatedAt: null, endpoint: 'x' }, { dir: tmp(), now: '2026-10-21T10:00:00Z' });
   assert.equal(r.meta.records, 2);

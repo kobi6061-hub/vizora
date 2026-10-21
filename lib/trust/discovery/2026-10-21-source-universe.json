@@ -94,27 +94,27 @@
   "cataloguesExamined": 8,
   "candidates": 348,
   "endpointsVerified": 290,
-  "integratedThisMission": 9,
+  "integratedThisMission": 13,
   "alreadyIntegrated": 33,
-  "accessibleNotYetIntegrated": 81,
+  "accessibleNotYetIntegrated": 78,
   "redundant": 15,
   "technicallyBlocked": 42,
   "authBlocked": 2,
   "legallyRestricted": 16,
   "paymentOrApproval": 4,
-  "unsuitable": 122,
+  "unsuitable": 121,
   "notAnApi": 24,
   "pending": 0,
   "byState": {
-   "CONNECTED_VERIFIED": 9,
+   "CONNECTED_VERIFIED": 13,
    "EXISTING_VERIFIED": 33,
-   "ACCESSIBLE_NOT_YET_INTEGRATED": 81,
+   "ACCESSIBLE_NOT_YET_INTEGRATED": 78,
    "REDUNDANT_PROVEN": 15,
    "BLOCKED_AUTH": 2,
    "BLOCKED_TECHNICAL": 42,
    "LICENSE_REVIEW_REQUIRED": 16,
    "PAID_APPROVAL_REQUIRED": 4,
-   "UNSUITABLE_DATA": 122,
+   "UNSUITABLE_DATA": 121,
    "NOT_ACTUALLY_AN_API": 24,
    "PENDING_VERIFICATION": 0
   },
@@ -356,8 +356,15 @@
     ]
    },
    "integration": {
-    "integrated": false,
-    "by": null
+    "integrated": true,
+    "by": "iplan:vatmal",
+    "trust": {
+     "trustId": "iplan:vatmal",
+     "inProduct": true,
+     "state": "SUCCESS",
+     "lastCheckAt": "2026-10-21T14:39:07.436Z",
+     "lastGoodAt": "2026-10-21T14:39:07.436Z"
+    }
    },
    "evidence": {
     "files": [
@@ -373,8 +380,8 @@
     "verdict": "INTEGRATE",
     "auditedAt": "2026-10-17"
    },
-   "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "re-confirmed 21.10.2026: layer 0 answers with 203 declared complexes (iplan.json.gz) — the lane is written, awaiting its first runner sync"
+   "state": "CONNECTED_VERIFIED",
+   "stateWhy": "integrated 21.10.2026 as lib/planning/vatmal (vatmal-sync.yml): 203 / 203 complexes stored complete at data/planning/vatmal/, read by lib/streets/report.js (planning.vatmal)"
   },
   {
    "id": "ledger:cbs:average-rent-shekel",
@@ -10493,10 +10500,30 @@
     "joinKey": "gush + helka; X/Y"
    },
    "integration": {
-    "integrated": false,
-    "by": null,
-    "pendingLane": "lib/surroundings/index.js",
-    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
+    "integrated": true,
+    "by": "lib/surroundings/index.js",
+    "thisMission": true,
+    "proof": {
+     "store": "data/surroundings/contaminated/",
+     "records": 3798,
+     "sourceRows": 3798,
+     "rejected": 0,
+     "contentHash": "8861a216d665b84869b129c45f64f6383882eaa9e724bd87fa8d4847e9e2a5b6",
+     "readAt": "2026-10-21T14:34:41.712Z",
+     "checkedAt": "2026-10-21T14:39:40.878Z",
+     "sourceUpdatedAt": "2026-10-21T07:01:04.633194Z",
+     "runs": 2,
+     "okRuns": 2,
+     "trustId": "datagov:moep:contaminated-land"
+    },
+    "readBy": "lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\"",
+    "trust": {
+     "trustId": "datagov:moep:contaminated-land",
+     "inProduct": true,
+     "state": "UNCHANGED",
+     "lastCheckAt": "2026-10-21T14:39:48.260Z",
+     "lastGoodAt": "2026-10-21T14:39:48.260Z"
+    }
    },
    "evidence": {
     "files": [
@@ -10505,8 +10532,8 @@
     ],
     "note": "Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
    },
-   "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "a lane added in this mission (lib/surroundings/index.js) reads it — no stored successful read yet, so it is not CONNECTED; Datastore CSV cbb2ed28: 3,798 rows, fields name · address · X · Y · gush · helka · org_id · legend · matzav · peeilut · date · sug · stat_gas · stat_zih · drisha · d_begin · d_end · link; resource modified 2026-10-21 (quarterly); licence Other (Open). The probe’s newest \"31/12/2025\" is a text sort of dd/mm/yyyy — not a reliable maximum."
+   "state": "CONNECTED_VERIFIED",
+   "stateWhy": "read whole on the runner (2 run(s), 2 successful), 3798 records stored at data/surroundings/contaminated/ (content 8861a216d665…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
   },
   {
    "id": "datagov:pkg:b072e36c-a53b-49e1-be08-4a608fcf4638",
@@ -14007,19 +14034,19 @@
      "rejected": 0,
      "contentHash": "0c164cb3111a6eeff4acec24665edb56b3713660ed65980f1f5408ab5fa7395c",
      "readAt": "2026-10-21T13:24:43.150Z",
-     "checkedAt": "2026-10-21T13:24:43.150Z",
+     "checkedAt": "2026-10-21T14:39:41.929Z",
      "sourceUpdatedAt": "2024-06-03T05:07:43.081626Z",
-     "runs": 1,
-     "okRuns": 1,
+     "runs": 3,
+     "okRuns": 3,
      "trustId": "datagov:cbs:census-2022"
     },
     "readBy": "lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
     "trust": {
      "trustId": "datagov:cbs:census-2022",
      "inProduct": true,
-     "state": "SUCCESS",
-     "lastCheckAt": "2026-10-21T13:24:46.907Z",
-     "lastGoodAt": "2026-10-21T13:24:46.907Z"
+     "state": "UNCHANGED",
+     "lastCheckAt": "2026-10-21T14:39:50.596Z",
+     "lastGoodAt": "2026-10-21T14:39:50.596Z"
     }
    },
    "evidence": {
@@ -14031,7 +14058,7 @@
     "note": "Only resource 9a9e085f (3,379 rows, modified 2024-06-03) is read by the reference lane (lib/reference/index.js); data/reference/ is not yet written in this checkout. Sibling resources 38207cf8 (population & households by locality, 1,222 rows) and 5474c592 (population by age, 87 rows, national) are not read."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (1 run(s), 1 successful), 3379 records stored at data/reference/census-2022/ (content 0c164cb3111a…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
+   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 3379 records stored at data/reference/census-2022/ (content 0c164cb3111a…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
    "priorAudits": [
     {
      "ledger": "2026-10-17.json",
@@ -14437,19 +14464,19 @@
      "rejected": 1,
      "contentHash": "3368a6e0762bb5d9a675f5fab70308347793cfefdff7e526a930e77f7fcd1581",
      "readAt": "2026-10-21T13:24:46.908Z",
-     "checkedAt": "2026-10-21T13:24:46.908Z",
+     "checkedAt": "2026-10-21T14:39:50.597Z",
      "sourceUpdatedAt": "2026-10-12T00:30:04.954122Z",
-     "runs": 1,
-     "okRuns": 1,
+     "runs": 3,
+     "okRuns": 3,
      "trustId": "datagov:piba:residents-by-locality"
     },
     "readBy": "lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
     "trust": {
      "trustId": "datagov:piba:residents-by-locality",
      "inProduct": true,
-     "state": "SUCCESS",
-     "lastCheckAt": "2026-10-21T13:24:48.626Z",
-     "lastGoodAt": "2026-10-21T13:24:48.626Z"
+     "state": "UNCHANGED",
+     "lastCheckAt": "2026-10-21T14:39:54.430Z",
+     "lastGoodAt": "2026-10-21T14:39:54.430Z"
     }
    },
    "evidence": {
@@ -14461,7 +14488,7 @@
     "note": "Resource 64edd0ee (1,297 rows, modified 2026-10-12) is a source of the new reference lane (lib/reference/index.js + scripts/reference-sync.js + .github/workflows/reference-sync.yml, commit ff70d3e) but data/reference/ does not exist yet in this checkout, so no completed sync is visible — CONNECTED_VERIFIED once the first run commits. Licence not stated by the publisher."
    },
    "state": "CONNECTED_VERIFIED",
-   "stateWhy": "read whole on the runner (1 run(s), 1 successful), 1296 records stored at data/reference/residents/ (content 3368a6e0762b…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
+   "stateWhy": "read whole on the runner (3 run(s), 3 successful), 1296 records stored at data/reference/residents/ (content 3368a6e0762b…), read by lib/dossier/query.js (sections.context) · lib/streets/report.js (locality context) · api/intel.js view=localityContext",
    "priorAudits": [
     {
      "ledger": "2026-10-17.json",
@@ -16995,10 +17022,30 @@
     "joinKey": "institution symbol"
    },
    "integration": {
-    "integrated": false,
-    "by": null,
-    "pendingLane": "lib/surroundings/index.js",
-    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
+    "integrated": true,
+    "by": "lib/surroundings/index.js",
+    "thisMission": true,
+    "proof": {
+     "store": "data/surroundings/edu-points/",
+     "records": 28312,
+     "sourceRows": 28312,
+     "rejected": 0,
+     "contentHash": "0af4cdb9b6c8514febdd8914409701210107de619e34e560c5f691f32c98e5ca",
+     "readAt": "2026-10-21T14:34:44.905Z",
+     "checkedAt": "2026-10-21T14:39:48.260Z",
+     "sourceUpdatedAt": "2022-04-06T07:22:14.021133Z",
+     "runs": 2,
+     "okRuns": 2,
+     "trustId": "datagov:moe:institution-coordinates"
+    },
+    "readBy": "lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\"",
+    "trust": {
+     "trustId": "datagov:moe:institution-coordinates",
+     "inProduct": true,
+     "state": "UNCHANGED",
+     "lastCheckAt": "2026-10-21T14:40:32.239Z",
+     "lastGoodAt": "2026-10-21T14:40:32.239Z"
+    }
    },
    "evidence": {
     "files": [
@@ -17008,8 +17055,8 @@
     ],
     "note": "Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
    },
-   "state": "UNSUITABLE_DATA",
-   "stateWhy": "a lane added in this mission (lib/surroundings/index.js) reads it — no stored successful read yet, so it is not CONNECTED; Datastore CSV 5c5d6bb0, resource 2022-04-06 (> 3 years); superseded by mosdot_edu (2026-10-05)."
+   "state": "CONNECTED_VERIFIED",
+   "stateWhy": "read whole on the runner (2 run(s), 2 successful), 28312 records stored at data/surroundings/edu-points/ (content 0af4cdb9b6c8…), read by lib/streets/report.js (surroundings) · index.html street report \"Street surroundings\""
   },
   {
    "id": "datagov:pkg:mosdot",
@@ -17143,7 +17190,7 @@
     "integrated": false,
     "by": null,
     "pendingLane": "lib/surroundings/index.js",
-    "note": "read by a lane added in this mission — awaiting its first successful runner sync"
+    "note": "read by a lane added in this mission — awaiting its first successful runner sync (its stored read holds 0 records from 1 successful run(s) of 2)"
    },
    "evidence": {
     "files": [
@@ -38158,8 +38205,15 @@
     "joinKey": null
    },
    "integration": {
-    "integrated": false,
-    "by": null
+    "integrated": true,
+    "by": "lib/planning/vatmal.js",
+    "thisMission": true,
+    "proof": {
+     "store": "data/planning/vatmal/",
+     "records": 203,
+     "okRuns": 1
+    },
+    "readBy": "lib/streets/report.js (planning.vatmal) · index.html street report planning section"
    },
    "evidence": {
     "files": [
@@ -38167,8 +38221,8 @@
     ],
     "note": null
    },
-   "state": "ACCESSIBLE_NOT_YET_INTEGRATED",
-   "stateWhy": "answers with 203 declared complexes (polygons); not read yet"
+   "state": "CONNECTED_VERIFIED",
+   "stateWhy": "integrated 21.10.2026: read whole by scripts/vatmal-sync.js (1 successful run(s)), 203 / 203 complexes stored at data/planning/vatmal/ (content f86bd7641076…), read by lib/streets/report.js (planning.vatmal) and the page's planning section"
   },
   {
    "id": "iplan:shimour",
@@ -42428,7 +42482,7 @@
     "sourceStates": [
      {
       "id": "iplan:vatmal",
-      "state": "ACCESSIBLE_NOT_YET_INTEGRATED"
+      "state": "CONNECTED_VERIFIED"
      }
     ]
    },
@@ -42829,7 +42883,7 @@
     "sourceStates": [
      {
       "id": "datagov:pkg:contaminatedterrains",
-      "state": "ACCESSIBLE_NOT_YET_INTEGRATED"
+      "state": "CONNECTED_VERIFIED"
      }
     ]
    },

@@ -125,15 +125,16 @@ function ckanSource(r) {
   const dl = P.resources.map((x) => motDownloads.get(x.id)).find(Boolean) || null;
   let state = r.proposedState, why = r.reason, integration = { integrated: false, by: null };
   if (ref) {
-    const proof = laneProof(ref[1], ref[0]);
+    let proof = laneProof(ref[1], ref[0]), unproven = null;
+    /* a stored read that kept no record (or no successful run) proves nothing — the lane stays pending, never CONNECTED_VERIFIED */
+    if (proof && !(proof.records > 0 && proof.okRuns > 0)) { unproven = `its stored read holds ${proof.records} records from ${proof.okRuns} successful run(s) of ${proof.runs}`; proof = null; }
     if (proof) {
-      if (!(proof.records > 0 && proof.okRuns > 0)) throw new Error(`${r.name}: a new lane without a successful stored read — never CONNECTED_VERIFIED`);
       state = 'CONNECTED_VERIFIED'; why = `read whole on the runner (${proof.runs} run(s), ${proof.okRuns} successful), ${proof.records} records stored at ${proof.store} (content ${String(proof.contentHash).slice(0, 12)}…), read by ${READERS[ref[1]]}`;
       integration = { integrated: true, by: ref[1], thisMission: true, proof, readBy: READERS[ref[1]], trust: trustCheck(TRUST.by.get(proof.trustId)) };
     } else if (NEW_LANES[ref[1]]) {
       /* code written in this mission but no stored successful read yet — never CONNECTED, never EXISTING */
-      integration = { integrated: false, by: null, pendingLane: ref[1], note: 'read by a lane added in this mission — awaiting its first successful runner sync' };
-      why = `a lane added in this mission (${ref[1]}) reads it — no stored successful read yet, so it is not CONNECTED; ` + (r.reason || '');
+      integration = { integrated: false, by: null, pendingLane: ref[1], note: 'read by a lane added in this mission — awaiting its first successful runner sync' + (unproven ? ` (${unproven})` : '') };
+      why = `a lane added in this mission (${ref[1]}) reads it — no stored successful read yet${unproven ? ` (${unproven})` : ''}, so it is not CONNECTED; ` + (r.reason || '');
     } else {
       state = 'EXISTING_VERIFIED'; why = `read by ${ref[1]} before this mission` + (r.reason ? ' — ' + r.reason : '');
       const tr = [...TRUST.by.values()].find((s) => s.url && P.resources.some((x) => String(s.url).includes(x.id) || String(s.url).includes('/dataset/' + r.name)));
