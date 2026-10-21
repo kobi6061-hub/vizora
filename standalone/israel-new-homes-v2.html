@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="d5026728c180d8a8929574d331c0ae22dec3c5e36757664f2224083797d42274">
+<meta name="propx-source-sha256" content="5f8811602611fb8de2353c282a719619d9bb88f883515d98d4122f154c45da1a">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>   <!-- the font files themselves come from gstatic: one DNS + TLS round trip earlier -->
@@ -1324,6 +1324,10 @@ section.blk[tabindex="-1"]:focus{outline:none}
 @media (max-width:560px){.lp:has(>.lp-t:nth-child(7)){grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* rail icons never shrink under a two-line label */
 .ri svg{flex:none}
+/* the desktop rail holds 21 items (≈ 1,230px): on a 900px-tall screen Land, Guide, Sources and the theme / sign-out buttons sat
+   below the fixed rail's bottom edge, out of reach — it scrolls now, and tightens on short screens */
+@media (min-width:980px){.rail{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}}
+@media (min-width:980px) and (max-height:1000px){.ri{padding-block:5px}.rail-div{margin-block:4px}}
 @media (max-width:759px){
   /* touch targets ≥ 40px on phones */
   .lang button{min-width:40px;min-height:40px}
@@ -1336,8 +1340,10 @@ section.blk[tabindex="-1"]:focus{outline:none}
   .txe-st,.txe-nouse,.rct-nouse,.st-tag,.sr-nb,.sr-k,.vc,.ld-tag,.tc-st,.pu-fk,.pu-m3,.pu-ri-l,.dd-cov,.dd-use,.dd-pc,.gx-q,.lyr,
   .cmd-kicker,.pr-ev i,.ci-plate .k{font-size:10.5px}
   .txe-src,.tx-chip,.ds-m{font-size:11px}
-  .ri{font-size:10px}
 }
+/* the bottom rail bar (≤ 979px): one-line labels in the scrolling bar — with the icon no longer shrinking, "What changed here"
+   would wrap to three lines and be cut by the 58px bar */
+@media (max-width:979px){.ri{flex:1 0 auto;min-width:64px;padding-inline:6px;white-space:nowrap;font-size:10px}}
 .cmd-mode-row .mode button{padding:8px 30px}
 .cmd-ops{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
 .command .crumbs{justify-content:center}
