@@ -12,8 +12,10 @@
   "rows": 2500941,
   "noSettlementId": 81093,
   "noStreetCode": 547651,
-  "streetNotInDirectory": 1872197,
-  "placed": 1872197
+  "streetInDirectory": 1871558,
+  "placed": 1871808,
+  "streetNotInDirectory": 250,
+  "streetCodeOtherLocality": 389
  },
  "validation": {
   "matched": 11900,
@@ -25,8 +27,8 @@
   "pass": true
  },
  "directoryNames": {
-  "same": 0,
-  "different": 0
+  "same": 1361105,
+  "different": 510453
  },
  "localities": {
   "21": {
@@ -515,8 +517,8 @@
    "neighbourhoodNames": 0
   },
   "472": {
-   "streets": 21,
-   "points": 36,
+   "streets": 19,
+   "points": 34,
    "neighbourhoodNames": 0
   },
   "473": {
@@ -787,11 +789,6 @@
   "618": {
    "streets": 4,
    "points": 5,
-   "neighbourhoodNames": 0
-  },
-  "622": {
-   "streets": 5,
-   "points": 8,
    "neighbourhoodNames": 0
   },
   "627": {
@@ -1280,8 +1277,8 @@
    "neighbourhoodNames": 0
   },
   "1061": {
-   "streets": 125,
-   "points": 1462,
+   "streets": 123,
+   "points": 1459,
    "neighbourhoodNames": 16
   },
   "1063": {
@@ -1799,11 +1796,6 @@
    "points": 363,
    "neighbourhoodNames": 0
   },
-  "2039": {
-   "streets": 1,
-   "points": 2,
-   "neighbourhoodNames": 0
-  },
   "2043": {
    "streets": 3,
    "points": 4,
@@ -1845,8 +1837,8 @@
    "neighbourhoodNames": 7
   },
   "2530": {
-   "streets": 95,
-   "points": 681,
+   "streets": 93,
+   "points": 679,
    "neighbourhoodNames": 13
   },
   "2550": {
@@ -1915,8 +1907,8 @@
    "neighbourhoodNames": 0
   },
   "3000": {
-   "streets": 1348,
-   "points": 10660,
+   "streets": 1344,
+   "points": 10656,
    "neighbourhoodNames": 106
   },
   "3557": {
@@ -2185,28 +2177,28 @@
    "neighbourhoodNames": 71
   },
   "6100": {
-   "streets": 340,
-   "points": 3747,
+   "streets": 339,
+   "points": 3746,
    "neighbourhoodNames": 20
   },
   "6200": {
-   "streets": 212,
-   "points": 2672,
+   "streets": 211,
+   "points": 2671,
    "neighbourhoodNames": 10
   },
   "6300": {
-   "streets": 137,
-   "points": 2013,
+   "streets": 134,
+   "points": 2010,
    "neighbourhoodNames": 12
   },
   "6400": {
-   "streets": 561,
-   "points": 5068,
+   "streets": 560,
+   "points": 5067,
    "neighbourhoodNames": 18
   },
   "6500": {
-   "streets": 410,
-   "points": 3898,
+   "streets": 409,
+   "points": 3897,
    "neighbourhoodNames": 31
   },
   "6600": {
@@ -2235,8 +2227,8 @@
    "neighbourhoodNames": 40
   },
   "7100": {
-   "streets": 675,
-   "points": 4524,
+   "streets": 658,
+   "points": 4483,
    "neighbourhoodNames": 35
   },
   "7200": {
@@ -2250,8 +2242,8 @@
    "neighbourhoodNames": 0
   },
   "7400": {
-   "streets": 569,
-   "points": 5757,
+   "streets": 565,
+   "points": 5753,
    "neighbourhoodNames": 38
   },
   "7500": {
@@ -2275,8 +2267,8 @@
    "neighbourhoodNames": 28
   },
   "7900": {
-   "streets": 723,
-   "points": 6395,
+   "streets": 722,
+   "points": 6394,
    "neighbourhoodNames": 39
   },
   "8000": {
@@ -2305,8 +2297,8 @@
    "neighbourhoodNames": 25
   },
   "8600": {
-   "streets": 532,
-   "points": 6463,
+   "streets": 531,
+   "points": 6460,
    "neighbourhoodNames": 30
   },
   "8700": {
@@ -2340,8 +2332,8 @@
    "neighbourhoodNames": 12
   },
   "9400": {
-   "streets": 118,
-   "points": 795,
+   "streets": 117,
+   "points": 792,
    "neighbourhoodNames": 6
   },
   "9500": {
@@ -2372,5 +2364,5 @@
   "sha256": "a410a5226a3375a20ffb5ff4c405b1b292454e97bf87ad65afe5b972edb55069",
   "bytes": 709758976
  },
- "builtAt": "2026-10-21T07:07:16.083Z"
+ "builtAt": "2026-10-21T07:10:15.762Z"
 }
