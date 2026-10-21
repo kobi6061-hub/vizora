@@ -91,6 +91,21 @@ s = _re.sub(r"[ \t]*<!-- ws:begin -->.*?<!-- ws:end -->\n?", "", s, flags=_re.S)
 s = _re.sub(r"/\* ws:begin.*?/\* ws:end \*/\n?", "", s, flags=_re.S)
 assert "ws:begin" not in s and "/api/identity" not in s and "propx_id" not in s, "private-workspace code left in the offline build"
 
+# the explanation attacher (lib/explain/attach.js) — runs on the registry above, inlined the same way
+TAG7 = '<script src="/lib/explain/attach.js"></script>'
+assert s.count(TAG7) == 1
+xa = (ROOT / "lib" / "explain" / "attach.js").read_text(encoding="utf-8")
+assert "</script" not in xa.lower(), "explanation attacher must not close the script element"
+s = s.replace(TAG7, "<script>\n" + xa + "</script>", 1)
+
+# features that read the server (Deal Decision Lab, What Changed Here? — their sections, rail entries and modules) are
+# removed whole: the offline file has no API to answer them
+n_live = len(_re.findall(r"live:begin", s))
+assert n_live == len(_re.findall(r"live:end", s)), "unbalanced live:begin / live:end blocks"
+s = _re.sub(r"[ \t]*<!-- live:begin -->.*?<!-- live:end -->\n?", "", s, flags=_re.S)
+s = _re.sub(r"/\* live:begin.*?/\* live:end \*/\n?", "", s, flags=_re.S)
+assert "live:begin" not in s and "/lib/deal/" not in s and "/lib/changes/" not in s, "server-only feature left in the offline build"
+
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1
 s = s.replace(BUILD_META, '<meta name="propx-source-sha256" content="%s">\n%s' % (SRC_SHA, BUILD_META), 1)

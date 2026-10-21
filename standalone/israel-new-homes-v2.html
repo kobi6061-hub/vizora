@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="304babf4edd2c91491bc2b492aed3af9789ad6a4d18df075d1719ab473c18d50">
+<meta name="propx-source-sha256" content="3f3b32c7d907d423cce469387d5dd9c19d103fa5f9eca287a08ac3f198ff861a">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -1884,6 +1884,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     </div>
   </section>
 
+
   <div class="secgrp" id="grp2"><b>2</b><h2 data-i="grp2">עסקאות ושווי</h2><span data-i="grp2s">עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה</span></div>
   <!-- Recent transactions -->
   <section class="blk" id="txSection">
@@ -1931,6 +1932,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="svr" id="svrGrid"></div>
     <div class="svr-formula" id="svrFormula"></div>
   </section>
+
 
   <!-- Map + rankings -->
   <section class="blk" id="map">
@@ -2656,6 +2658,8 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     { id: 'streets', label: bi('רחובות — המרשם הרשמי וראיות השוק', 'Streets — the official directory and market evidence') },
     { id: 'streetModel', label: bi('הערכת PROPX לרחוב — מודל', 'The PROPX street estimate — MODEL') },
     { id: 'streetReport', label: bi('דוח רחוב — מודיעין השקעות', 'Street report — investment intelligence') },
+    { id: 'dealLab', label: bi('מעבדת עסקה — ניתוח רכישה מתוכננת', 'Deal Decision Lab — analysing a contemplated purchase') },
+    { id: 'changes', label: bi('מה השתנה כאן — פיד שינויים לפי גאוגרפיה', 'What changed here — the change feed of a geography') },
   ]);
 
   /* ---- shared limitation sentences ---- */
@@ -4493,6 +4497,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       methodology: bi('מחרוזת זוכים משותפת מפוצלת לצדדים רק כשלכל צד צורת התאגדות; כל צד נפתר בנפרד.', 'A joint winner string is split into parties only when every part carries a legal form; each party resolved on its own.'), formula: bi('משותף ⇔ צד במחרוזת הזוכים נפתר לחברת הקבוצה', 'shared ⇔ a party of the winner string resolves to a group company'), inputs: [bi('מחרוזת הזוכים', 'the winner string')],
       interpretation: bi('החלק של כל צד אינו מצוין במקור.', 'Each party\'s share is not stated by the source.'), notAs: bi('זכייה משותפת ≠ קבוצה ≠ חברת אם.', 'A joint award ≠ a group ≠ a parent — not the same.'), evidence: bi('קריאת הקבוצה — view=group → identity · structure', 'the group read — view=group → identity · structure'),
       freshness: { observation: bi('תאריך הזכייה', 'the award date'), publication: bi('אתר המכרזים', 'the tender site'), check: bi('יומי', 'daily') }, strengthen: bi('הסכם המיזם המשותף', 'the joint-venture agreement'), verifyNext: bi('חלוקת הזכויות', 'the split of rights') }),
+    /* ---- dealLab terms (Deal Decision Lab workstream — insert T({ … }) entries below this line) ---- */
+    /* ---- end dealLab terms ---- */
+
+    /* ---- changes terms (What Changed Here? workstream — insert T({ … }) entries below this line) ---- */
+    /* ---- end changes terms ---- */
   ];
   const TERM_INDEX = new Map(TERMS.map((t) => [t.id, t]));
 
@@ -4610,6 +4619,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     'LIMITED_PIPELINE_NO_FINANCIALS': { term: 'pipeline_vs_financial_position', kind: 'info', rule: bi('צנרת נראית מחוץ לעשירון העליון של הקבוצות, ואין דוחות של הישות המדווחת', 'a visible pipeline outside the groups\' top decile, and no statements of the reporting entity') },
     'PIPELINE_BESIDE_FINANCIAL_POSITION': { term: 'pipeline_vs_financial_position', kind: 'info', rule: bi('יש דוחות; הצנרת מוצגת לצד המצב המדווח — ללא הערכה', 'statements exist; the pipeline is shown beside the reported position — no assessment') },
     'INSUFFICIENT_FINANCIAL_DATA': { term: 'no_financial_statements', kind: 'info', rule: bi("אין דוח כספי בכיסוי — דגלים פיננסיים אינם מחושבים", "no financial statement in coverage — financial flags are not computed") },
+    /* ---- dealLab signal rules ---- */
+    /* ---- end dealLab signal rules ---- */
+
+    /* ---- changes signal rules ---- */
+    /* ---- end changes signal rules ---- */
   });
 
   /* ---- missing-data reasons: why "—" is shown, and what would make the figure available ---- */
@@ -4684,6 +4698,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     stale_observation: { label: bi('התצפית ישנה', 'Stale observation'), why: bi('התצפית האחרונה ישנה מלוח הפרסום הצפוי (למשל דיווחי בנייה 2024, מלאי תכנוני 2022) — מוצגת עם תאריכה.', 'The latest observation is older than the expected publication calendar (e.g. construction reports 2024, planning inventory 2022) — shown with its date.'), unlock: bi('פרסום חדש של המקור.', 'A new release by the source.'), ids: [] },
     no_exact_join: { label: bi('אין צירוף מדויק', 'No exact join'), why: bi('אין מפתח רשמי משותף (מספר תוכנית, MichrazID, קוד יישוב, ProjectID, גוש/חלקה) — PROPX לעולם אינה מצרפת לפי שם או גאומטריה.', 'No shared official key (plan number, MichrazID, locality code, ProjectID, block/parcel) — PROPX never joins by name or geometry.'), unlock: bi('המקור מפרסם את המפתח.', 'The source publishes the key.'), ids: [] },
     not_machine_readable: { label: bi('לא קריא למכונה', 'Not machine-readable'), why: bi('הנתון קיים רק כ-PDF או כדף אינטרנט (למשל טבלת היישובים של הלמ״ס, שכר דירה ממוצע) — נבדק ולא נקרא.', 'The figure exists only as a PDF or a web page (e.g. the CBS localities table, average rent) — audited, not read.'), unlock: bi('קובץ או API רשמי.', 'An official file or API.'), ids: [] },
+    /* ---- dealLab missing reasons ---- */
+    /* ---- end dealLab missing reasons ---- */
+
+    /* ---- changes missing reasons ---- */
+    /* ---- end changes missing reasons ---- */
   });
   const MISSING_BY_RUNTIME = (() => { const m = new Map(); for (const [id, x] of Object.entries(MISSING)) for (const r of x.ids) m.set(r, id); return m; })();
 
@@ -4762,6 +4781,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     intel: { what: bi('יזמים ופרויקטים: הפעילות שנצפתה בערוצים ציבוריים, ובדיקת נאותות.', 'Developers and projects: observed activity in public channels, and due diligence.'), kind: bi('ישויות: יזם (מותג), חברה משפטית, פרויקט, מגרש, היתר', 'Entities: developer (brand), legal company, project, lot, permit'), helps: bi('מי פעיל, איפה, ומה ידוע על הזהות, הביצוע והסיכונים.', 'Who is active, where, and what is known about identity, execution and risks.'), scope: bi('מכרזי רמ״י והגרלות משב״ש בלבד — לא מאגר קרקעות ולא צנרת מלאה.', 'ILA tenders and MoCH lotteries only — not a land bank and not a full pipeline.'), current: bi('לפי הסנכרון של כל מקור.', 'By each source\'s sync.'), read: [bi('מותג ≠ חברה משפטית; כל קישור נושא מצב התאמה.', 'Brand ≠ legal company; every link carries a match state.'), bi('בכל מגירה: דקה אחת · חמש דקות · מעמיק.', 'In every drawer: one minute · five minutes · deep dive.')] },
     land: { what: bi('קרקעות ומכרזים של רשות מקרקעי ישראל.', 'Israel Land Authority land and tenders.'), kind: bi('מכרזים ומגרשים', 'Tenders and lots'), helps: bi('מה מוצע, מה נסגר ומי זכה, ובאיזה מחיר.', 'What is offered, what closed and who won, at what price.'), scope: bi('אתר המכרזים של רמ״י; פרטי מכרז נקראים בתקציב יומי.', 'The ILA tender site; tender details are read on a daily budget.'), current: bi('סנכרון יומי.', 'Synced daily.'), read: [bi('פורסם ≠ פתוח ≠ נסגר ≠ הוחלט ≠ זכייה.', 'Published ≠ open ≠ closed ≠ decided ≠ awarded.'), bi('כל נתון מסומן: רשימה מלאה / פירוט חלקי / תת-קבוצה נגזרת.', 'Every figure is tagged: full list / partial detail / derived subset.')] },
     sources: { what: bi('מקורות הנתונים ומרכז האמון: כל מקור ומצב הבדיקה האחרונה שלו.', 'Data sources and the Trust Center: every source and its latest check.'), kind: bi('מקורות', 'Sources'), helps: bi('לדעת על מה כל מספר נשען ועד כמה הוא עדכני.', 'Know what every number rests on and how current it is.'), scope: bi('מיומני הריצה של הסנכרונים — לא הערכה.', 'From the syncs\' run logs — never an estimate.'), current: bi('בדיקה אחרונה לכל מקור.', 'The latest check of each source.'), read: [bi('הצלחה אחרונה ≠ כישלון אחרון; "ישן" = תוכן המקור עצמו ישן.', 'Latest success ≠ latest failure; "stale" = the source content itself is old.')] },
+    /* ---- dealLab section ---- */
+    /* ---- end dealLab section ---- */
+
+    /* ---- changes section ---- */
+    /* ---- end changes section ---- */
   });
   const legend = (code, L = 'he') => { const x = LEGEND.find((e) => e.code === code); return x ? { code: x.code, group: x.group, label: pick(x.label, L), means: pick(x.means, L), notMeans: pick(x.notMeans, L) } : null; };
   const legendAll = (L = 'he') => ({ classes: LEGEND.filter((x) => x.group === 'class').map((x) => legend(x.code, L)), matches: LEGEND.filter((x) => x.group === 'match').map((x) => legend(x.code, L)) });
@@ -5733,6 +5757,7 @@ he:{
     open:"יח״ד במכרזים פתוחים",pending:"ממתינות להחלטה",awarded:"נזכו",failed:"נכשלו / בוטלו",published:"יח״ד שפורסמו לשיווק · 12 ח׳",awardedMom:"יח״ד שנזכו · 12 ח׳",complexes:"מתחמים",declared:"מוכרזים",proposed:"יח״ד מוצעות",additional:"תוספת",notNet:"תוספת ≠ נטו",rentalTenders:"מכרזי השכרה נוכחיים",tenderTotal:"יח״ד סה״כ במכרז",stated:"להשכרה כפי שנכתב",comparable:"מכרזים",
     unitsFirst:"יח״ד בהגרלות ראשונות",lotteries:"הגרלות",stages:{marketed:"שווקו",permitted:"עם היתר",occupied:"אוכלסו","land-awarded":"קרקע נזכתה"},started:"מבנים שהחלו",completed:"הושלמו",lotsJoined:"מגרשים מצורפים",units:"יח״ד",indT:"מדדים נגזרים — כל מדד עם נוסחה, תקופה ומגבלות",why:"נוסחה ומגבלות",formula:"נוסחה",inputs:"קלט",month:"חודש",months:"חודשים",missT:"מה חסר בצנרת"},
   dsCols:{name:"יזם",lotsHere:"מגרשים כאן",unitsHere:"יח״ד כאן",projHere:"פרויקטי הגרלה כאן",last:"פעילות אחרונה כאן",total:"מגרשים סה״כ"}, dsMeta:{value:"ערך",threshold:"סף",period:"תקופה",source:"מקור",cls:"סיווג"}, dsScope:{district:"הקשר מחוזי — לא נתון היישוב",national:"הקשר ארצי — לא נתון הגאוגרפיה"}, dsFreshT:["מקור","תצפית","פרסום","נבדק ב-PROPX","מצב"],
+  navChg:"מה השתנה כאן", navDeal:"מעבדת עסקה",
   navPulse:"דופק", lyrPulse:"L1 · שוק · מה השתנה", puTitle:"דופק השוק — מה השתנה בשוק הדירות החדשות?", puSub:"אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות",
   puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puVerbAll:"כל סוגי השינוי", puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
   puProv:(n,built,served)=>`${n} אירועים · נבנה ${built}${served==="built-on-read"?" · חושב בקריאה":""}`, puCls:{OFFICIAL:"רשמי",OBSERVED:"נצפה",DERIVED:"נגזר"}, puFactsT:"עובדות — השבוע והחודש", puM3:"מהותי",
@@ -6313,6 +6338,7 @@ en:{
     open:"units in open tenders",pending:"awaiting decision",awarded:"awarded",failed:"failed / cancelled",published:"units published to tender · 12 m",awardedMom:"units awarded · 12 m",complexes:"complexes",declared:"declared",proposed:"proposed units",additional:"additional",notNet:"additional ≠ net",rentalTenders:"current rental-track tenders",tenderTotal:"tender units (total)",stated:"rental units as stated",comparable:"tenders",
     unitsFirst:"units in first lotteries",lotteries:"lotteries",stages:{marketed:"marketed",permitted:"permitted",occupied:"occupied","land-awarded":"land awarded"},started:"buildings started",completed:"completed",lotsJoined:"lots joined",units:"units",indT:"Derived indicators — each with its formula, period and limitations",why:"Formula and limitations",formula:"formula",inputs:"inputs",month:"month",months:"months",missT:"What is missing in the pipeline"},
   dsCols:{name:"Developer",lotsHere:"Lots here",unitsHere:"Units here",projHere:"Lottery projects here",last:"Last activity here",total:"Lots in total"}, dsMeta:{value:"value",threshold:"threshold",period:"period",source:"source",cls:"class"}, dsScope:{district:"district context — not the locality's figure",national:"national context — not this geography's figure"}, dsFreshT:["Source","Observation","Publication","Checked by PROPX","State"],
+  navChg:"What changed here", navDeal:"Deal Lab",
   navPulse:"Pulse", lyrPulse:"L1 · Market · What changed", puTitle:"Market Pulse — what changed in the Israeli new-home market?", puSub:"Deterministic events from official sources: what changed, when PROPX observed it and the source's own date — no interpretation",
   puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puVerbAll:"All change kinds", puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
   puProv:(n,built,served)=>`${n} events · built ${built}${served==="built-on-read"?" · computed on read":""}`, puCls:{OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED",DERIVED:"DERIVED"}, puFactsT:"Facts — this week and month", puM3:"material",
@@ -6953,6 +6979,7 @@ function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
+  try{document.dispatchEvent(new CustomEvent("propx:lang",{detail:{lang:state.lang}}))}catch(e){}   /* feature modules (lib/deal, lib/changes, lib/explain/attach) re-render */
   document.title="PROPX";
   const bs=el("buildStamp");if(bs)bs.textContent="build "+PROPX_BUILD;
   const nv=el("tpNhV");if(nv&&MKT.nh)nv.className="tp-v num "+(MKT.nh.yoy<0?"dn":MKT.nh.yoy>0?"up":"");
@@ -10937,6 +10964,7 @@ function openGeoView(g){
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
   state.geo=g;
+  try{document.dispatchEvent(new CustomEvent("propx:geo",{detail:g}))}catch(e){}   /* the geography the user opened (street / locality) */
   if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){siLoad(g.id);srLoad(g.id)}
   if(g.kind==="locality"){const code=g.code!=null?String(g.code):String(g.id||"").replace(/^loc:/,"");if(/^\d+$/.test(code))dsOpen("locality",code)}
   const d=g.district&&LOC[g.district]?g.district:null;
@@ -14100,4 +14128,11 @@ renderOrient();
 document.querySelectorAll("#launchpad [data-lp]").forEach(a=>a.addEventListener("click",e=>{const r=document.querySelector(`.rail .ri[data-sec="${a.dataset.lp}"]`);if(!r)return;e.preventDefault();r.click();if(location.hash!=="#"+a.dataset.lp)history.replaceState(history.state,"","#"+a.dataset.lp)}));
 initNewHome();
 refresh(true);
+</script>
+<script>
+/* PROPX · Explain Everything — attaches registry explanations to the page's labels (scaffold; the Explain workstream
+   replaces this file). Loaded after the main script; inlined in the offline build. */
+(function () {
+  'use strict';
+}());
 </script>

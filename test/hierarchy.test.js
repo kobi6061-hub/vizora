@@ -24,19 +24,19 @@ at('the launchpad sits under the search and lists the six priorities in order, e
   }
 });
 
-at('the page sections follow the same order, under four group headings — and every section is still there', () => {
+at('the page sections follow the same order, under four group headings — and every section is still there (+ What changed here · Deal Lab)', () => {
   const main = INDEX.slice(INDEX.indexOf('<main class="wrap">'), INDEX.indexOf('</main>'));
   const order = [...main.matchAll(/^ {2}<(?:section class="blk"(?: id="([A-Za-z]+)")?|div class="secgrp" id="(grp\d)")/gm)].map((m) => m[1] || m[2] || 'saleRent');
-  assert.deepEqual(order, ['overview', 'geoView', 'grp1', 'dossier', 'pulse', 'grp2', 'txSection', 'prices', 'saleRent', 'map', 'table', 'rankings', 'compare',
+  assert.deepEqual(order, ['overview', 'geoView', 'grp1', 'dossier', 'pulse', 'changes', 'grp2', 'txSection', 'prices', 'saleRent', 'dealLab', 'map', 'table', 'rankings', 'compare',
     'insightsSec', 'capital', 'calc', 'grp3', 'intel', 'housing', 'land', 'grp4', 'guide', 'sources']);
 });
 
-at('the rail follows the groups; the scroll-spy set is unchanged (16) and ALTARIS stays between Land and Guide', () => {
+at('the rail follows the groups; the scroll-spy set (18 live, the two server features stripped offline) and ALTARIS stays between Land and Guide', () => {
   const rail = INDEX.slice(INDEX.indexOf('<nav class="rail"'), INDEX.indexOf('</nav>', INDEX.indexOf('<nav class="rail"')));
   const items = [...rail.matchAll(/href="([^"]+)"|class="rail-div"/g)].map((m) => m[1] || '|');
-  assert.deepEqual(items, ['#overview', '#dossier', '#pulse', '|', '#txSection', '#prices', '#map', '#table', '#compare', '#insightsSec', '#capital', '#calc', '|',
+  assert.deepEqual(items, ['#overview', '#dossier', '#pulse', '#changes', '|', '#txSection', '#prices', '#dealLab', '#map', '#table', '#compare', '#insightsSec', '#capital', '#calc', '|',
     '#intel', '#housing', '#land', '/altaris', '#guide', '#sources', '/api/logout']);
-  assert.equal((rail.match(/class="ri[^"]*" data-sec=/g) || []).length, 16);
+  assert.equal((rail.match(/class="ri[^"]*" data-sec=/g) || []).length, 18);   /* + What changed here · Deal Lab (live build only) */
 });
 
 at('a launchpad / rail jump stays on its section while the sections above it load (cold first load) — and lets the reader go', () => {

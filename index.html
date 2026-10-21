@@ -1785,9 +1785,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
   <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
   <a href="#dossier" class="ri" data-sec="dossier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span data-i="navDs">תיק</span></a>
   <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
+  <!-- live:begin --><a href="#changes" class="ri" data-sec="changes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg><span data-i="navChg">מה השתנה כאן</span></a><!-- live:end -->
   <span class="rail-div" aria-hidden="true"></span>
   <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">עסקאות</span></a>
   <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
+  <!-- live:begin --><a href="#dealLab" class="ri" data-sec="dealLab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20h16"/><path d="M6 20V10l6-5 6 5v10"/><path d="M10 14h4"/><path d="M12 12v4"/></svg><span data-i="navDeal">מעבדת עסקה</span></a><!-- live:end -->
   <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
@@ -1918,6 +1920,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     </div>
   </section>
 
+  <!-- live:begin --><!-- What Changed Here? — lib/changes (read model + UI) -->
+  <section class="blk" id="changes">
+    <div id="chRoot" aria-live="polite"></div>
+  </section><!-- live:end -->
+
   <div class="secgrp" id="grp2"><b>2</b><h2 data-i="grp2">עסקאות ושווי</h2><span data-i="grp2s">עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה</span></div>
   <!-- Recent transactions -->
   <section class="blk" id="txSection">
@@ -1965,6 +1972,11 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="svr" id="svrGrid"></div>
     <div class="svr-formula" id="svrFormula"></div>
   </section>
+
+  <!-- live:begin --><!-- Deal Decision Lab — lib/deal (engine + read model + UI) -->
+  <section class="blk" id="dealLab">
+    <div id="dlRoot"></div>
+  </section><!-- live:end -->
 
   <!-- Map + rankings -->
   <section class="blk" id="map">
@@ -2995,6 +3007,7 @@ he:{
     open:"יח״ד במכרזים פתוחים",pending:"ממתינות להחלטה",awarded:"נזכו",failed:"נכשלו / בוטלו",published:"יח״ד שפורסמו לשיווק · 12 ח׳",awardedMom:"יח״ד שנזכו · 12 ח׳",complexes:"מתחמים",declared:"מוכרזים",proposed:"יח״ד מוצעות",additional:"תוספת",notNet:"תוספת ≠ נטו",rentalTenders:"מכרזי השכרה נוכחיים",tenderTotal:"יח״ד סה״כ במכרז",stated:"להשכרה כפי שנכתב",comparable:"מכרזים",
     unitsFirst:"יח״ד בהגרלות ראשונות",lotteries:"הגרלות",stages:{marketed:"שווקו",permitted:"עם היתר",occupied:"אוכלסו","land-awarded":"קרקע נזכתה"},started:"מבנים שהחלו",completed:"הושלמו",lotsJoined:"מגרשים מצורפים",units:"יח״ד",indT:"מדדים נגזרים — כל מדד עם נוסחה, תקופה ומגבלות",why:"נוסחה ומגבלות",formula:"נוסחה",inputs:"קלט",month:"חודש",months:"חודשים",missT:"מה חסר בצנרת"},
   dsCols:{name:"יזם",lotsHere:"מגרשים כאן",unitsHere:"יח״ד כאן",projHere:"פרויקטי הגרלה כאן",last:"פעילות אחרונה כאן",total:"מגרשים סה״כ"}, dsMeta:{value:"ערך",threshold:"סף",period:"תקופה",source:"מקור",cls:"סיווג"}, dsScope:{district:"הקשר מחוזי — לא נתון היישוב",national:"הקשר ארצי — לא נתון הגאוגרפיה"}, dsFreshT:["מקור","תצפית","פרסום","נבדק ב-PROPX","מצב"],
+  navChg:"מה השתנה כאן", navDeal:"מעבדת עסקה",
   navPulse:"דופק", lyrPulse:"L1 · שוק · מה השתנה", puTitle:"דופק השוק — מה השתנה בשוק הדירות החדשות?", puSub:"אירועים דטרמיניסטיים ממקורות רשמיים: מה השתנה, מתי PROPX צפתה בזה ומה תאריך המקור — בלי פרשנות",
   puWin:{today:"היום","7d":"7 ימים","30d":"30 יום","90d":"90 יום"}, puVerbAll:"כל סוגי השינוי", puAllG:"כל הקבוצות", puAllC:"כל היישובים", puQ:"חיפוש באירועים", puNone:"אין אירועים בחלון הזה", puMore:"עוד אירועים", puObs:"נצפה ב-PROPX", puSrcD:"תאריך המקור", puOpen:"פתיחה", puLink:"למקור", puLoading:"טוען…", puErr:"לא ניתן לטעון את הרדאר כעת",
   puProv:(n,built,served)=>`${n} אירועים · נבנה ${built}${served==="built-on-read"?" · חושב בקריאה":""}`, puCls:{OFFICIAL:"רשמי",OBSERVED:"נצפה",DERIVED:"נגזר"}, puFactsT:"עובדות — השבוע והחודש", puM3:"מהותי",
@@ -3575,6 +3588,7 @@ en:{
     open:"units in open tenders",pending:"awaiting decision",awarded:"awarded",failed:"failed / cancelled",published:"units published to tender · 12 m",awardedMom:"units awarded · 12 m",complexes:"complexes",declared:"declared",proposed:"proposed units",additional:"additional",notNet:"additional ≠ net",rentalTenders:"current rental-track tenders",tenderTotal:"tender units (total)",stated:"rental units as stated",comparable:"tenders",
     unitsFirst:"units in first lotteries",lotteries:"lotteries",stages:{marketed:"marketed",permitted:"permitted",occupied:"occupied","land-awarded":"land awarded"},started:"buildings started",completed:"completed",lotsJoined:"lots joined",units:"units",indT:"Derived indicators — each with its formula, period and limitations",why:"Formula and limitations",formula:"formula",inputs:"inputs",month:"month",months:"months",missT:"What is missing in the pipeline"},
   dsCols:{name:"Developer",lotsHere:"Lots here",unitsHere:"Units here",projHere:"Lottery projects here",last:"Last activity here",total:"Lots in total"}, dsMeta:{value:"value",threshold:"threshold",period:"period",source:"source",cls:"class"}, dsScope:{district:"district context — not the locality's figure",national:"national context — not this geography's figure"}, dsFreshT:["Source","Observation","Publication","Checked by PROPX","State"],
+  navChg:"What changed here", navDeal:"Deal Lab",
   navPulse:"Pulse", lyrPulse:"L1 · Market · What changed", puTitle:"Market Pulse — what changed in the Israeli new-home market?", puSub:"Deterministic events from official sources: what changed, when PROPX observed it and the source's own date — no interpretation",
   puWin:{today:"Today","7d":"7 days","30d":"30 days","90d":"90 days"}, puVerbAll:"All change kinds", puAllG:"All groups", puAllC:"All localities", puQ:"Search events", puNone:"No events in this window", puMore:"More events", puObs:"observed by PROPX", puSrcD:"source date", puOpen:"Open", puLink:"Source", puLoading:"Loading…", puErr:"The radar could not be loaded",
   puProv:(n,built,served)=>`${n} events · built ${built}${served==="built-on-read"?" · computed on read":""}`, puCls:{OFFICIAL:"OFFICIAL",OBSERVED:"OBSERVED",DERIVED:"DERIVED"}, puFactsT:"Facts — this week and month", puM3:"material",
@@ -4215,6 +4229,7 @@ function setStatics(){
   const t=T();
   document.documentElement.lang=state.lang;
   document.documentElement.dir=state.lang==="he"?"rtl":"ltr";
+  try{document.dispatchEvent(new CustomEvent("propx:lang",{detail:{lang:state.lang}}))}catch(e){}   /* feature modules (lib/deal, lib/changes, lib/explain/attach) re-render */
   document.title="PROPX";
   const bs=el("buildStamp");if(bs)bs.textContent="build "+PROPX_BUILD;
   const nv=el("tpNhV");if(nv&&MKT.nh)nv.className="tp-v num "+(MKT.nh.yoy<0?"dn":MKT.nh.yoy>0?"up":"");
@@ -8199,6 +8214,7 @@ function openGeoView(g){
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
   state.geo=g;
+  try{document.dispatchEvent(new CustomEvent("propx:geo",{detail:g}))}catch(e){}   /* the geography the user opened (street / locality) */
   if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){siLoad(g.id);srLoad(g.id)}
   if(g.kind==="locality"){const code=g.code!=null?String(g.code):String(g.id||"").replace(/^loc:/,"");if(/^\d+$/.test(code))dsOpen("locality",code)}
   const d=g.district&&LOC[g.district]?g.district:null;
@@ -11643,5 +11659,8 @@ document.querySelectorAll("#launchpad [data-lp]").forEach(a=>a.addEventListener(
 initNewHome();
 refresh(true);
 </script>
+<script src="/lib/explain/attach.js"></script>
+<!-- live:begin --><script src="/lib/deal/ui.js"></script>
+<script src="/lib/changes/ui.js"></script><!-- live:end -->
 </body><!-- doc-skeleton -->
 </html><!-- doc-skeleton -->

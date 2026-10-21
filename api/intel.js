@@ -305,6 +305,9 @@ module.exports = async (req, res) => {
         : SVM.apartment(p.id, { sqm: p.sqm, rooms: p.rooms, newness: p.newness, built: p.built, type: p.type });
       return out ? send(res, 200, out) : send(res, 404, { error: 'not an official street' });
     }
+    /* Deal Decision Lab (lib/deal) and What Changed Here? (lib/changes): each module answers its own views — { status, body } */
+    if (/^deal[A-Z]\w*$/.test(view)) { const out = require('../lib/deal').view(view, p); return send(res, out.status, out.body); }
+    if (/^changes\w*$/.test(view)) { const out = require('../lib/changes').view(view, p); return send(res, out.status, out.body); }
     if (view === 'status') return send(res, 200, Q.status());
     if (view === 'developers') return send(res, 200, Q.developers(p));
     if (view === 'projects') return send(res, 200, Q.projects(p));
