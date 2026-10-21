@@ -1,0 +1,4139 @@
+{
+ "schema": 1,
+ "kind": "freshness-audit",
+ "producedBy": "scripts/freshness-audit.js",
+ "engine": "propx-freshness-audit-1",
+ "asOf": "2026-10-21T22:47:07.070Z",
+ "israelDate": "2026-10-22",
+ "note": "per-source freshness from the committed data and run logs (lib/trust/freshness-audit.js) + GitHub Actions run evidence (status · dates · run ids only) + root causes read from the failed runs' job logs — not a list of discovery candidates",
+ "github": {
+  "readAt": "2026-10-21T22:47:07.775Z",
+  "repo": "kobi6061-hub/vizora",
+  "productionBranch": "claude/vizora-project-isolation-6lbq3g",
+  "previewBranch": "claude/street-report-preview",
+  "workflows": {
+   "cbs-sales-discover.yml": {
+    "name": "CBS new-home sales — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39211103296,
+      "at": "2026-10-19T06:38:43Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39211103296,
+      "at": "2026-10-19T06:38:43Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 38463326468,
+      "at": "2026-10-13T20:30:15Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 19
+    },
+    "preview": null
+   },
+   "cbs-sales-sync.yml": {
+    "name": "CBS new-home sales sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39643696842,
+      "at": "2026-10-21T17:25:42Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39643696842,
+      "at": "2026-10-21T17:25:42Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39143071361,
+      "at": "2026-10-18T16:00:56Z",
+      "event": "schedule",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 5,
+     "runsListed": 8
+    },
+    "preview": {
+     "latest": {
+      "id": 39615623575,
+      "at": "2026-10-21T14:17:41Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39615623575,
+      "at": "2026-10-21T14:17:41Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     }
+    }
+   },
+   "construction-sync.yml": {
+    "name": "CBS construction sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39645322083,
+      "at": "2026-10-21T17:36:38Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39645322083,
+      "at": "2026-10-21T17:36:38Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39080649194,
+      "at": "2026-10-17T23:52:08Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 4,
+     "runsListed": 7
+    },
+    "preview": null
+   },
+   "data-sync.yml": {
+    "name": "Daily official data sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39565825297,
+      "at": "2026-10-21T07:58:47Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39565825297,
+      "at": "2026-10-21T07:58:47Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 36894225742,
+      "at": "2026-10-01T16:44:15Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 7,
+     "runsListed": 23
+    },
+    "preview": null
+   },
+   "dd-discover.yml": {
+    "name": "Due diligence — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39130975687,
+      "at": "2026-10-18T13:18:37Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39130975687,
+      "at": "2026-10-18T13:18:37Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 7
+    },
+    "preview": null
+   },
+   "dd-sync.yml": {
+    "name": "Due diligence sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39577035289,
+      "at": "2026-10-21T09:26:58Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39577035289,
+      "at": "2026-10-21T09:26:58Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39401290154,
+      "at": "2026-10-20T09:31:26Z",
+      "event": "schedule",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 3,
+     "runsListed": 6
+    },
+    "preview": null
+   },
+   "dossier-snapshot.yml": {
+    "name": "Dossier history — nightly snapshot",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39570374966,
+      "at": "2026-10-21T08:35:04Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39570374966,
+      "at": "2026-10-21T08:35:04Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 4,
+     "runsListed": 5
+    },
+    "preview": null
+   },
+   "finance-sync.yml": {
+    "name": "Daily housing-finance sync",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39609213231,
+      "at": "2026-10-21T13:34:40Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39609213231,
+      "at": "2026-10-21T13:34:40Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "housing-discover.yml": {
+    "name": "Government housing — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39063541225,
+      "at": "2026-10-17T19:41:26Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39063541225,
+      "at": "2026-10-17T19:41:26Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39062468658,
+      "at": "2026-10-17T19:26:23Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 16
+    },
+    "preview": null
+   },
+   "identity-activate.yml": {
+    "name": "Private identity — real-project activation",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39676017719,
+      "at": "2026-10-21T21:06:16Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "lastSuccess": null,
+     "lastFailure": {
+      "id": 39676017719,
+      "at": "2026-10-21T21:06:16Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 4
+    },
+    "preview": null
+   },
+   "identity-verify.yml": {
+    "name": "Private identity — activation check",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39676022156,
+      "at": "2026-10-21T21:06:18Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "lastSuccess": null,
+     "lastFailure": {
+      "id": 39676022156,
+      "at": "2026-10-21T21:06:18Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 4
+    },
+    "preview": {
+     "latest": {
+      "id": 39644190966,
+      "at": "2026-10-21T17:29:05Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "lastSuccess": null
+    }
+   },
+   "land-discover.yml": {
+    "name": "Land & tenders — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39062658229,
+      "at": "2026-10-17T19:29:08Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39062658229,
+      "at": "2026-10-17T19:29:08Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 37223513727,
+      "at": "2026-10-04T18:12:24Z",
+      "event": "workflow_dispatch",
+      "conclusion": "cancelled"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 19
+    },
+    "preview": null
+   },
+   "land-sync.yml": {
+    "name": "Land & tenders — daily sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39570267266,
+      "at": "2026-10-21T08:34:14Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39570267266,
+      "at": "2026-10-21T08:34:14Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 7,
+     "runsListed": 27
+    },
+    "preview": null
+   },
+   "market-sync.yml": {
+    "name": "Daily market data sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39569782994,
+      "at": "2026-10-21T08:30:27Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39569782994,
+      "at": "2026-10-21T08:30:27Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 36833366375,
+      "at": "2026-10-01T07:57:21Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 7,
+     "runsListed": 33
+    },
+    "preview": null
+   },
+   "private-identity.yml": {
+    "name": "Private identity — isolation gate",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39677149035,
+      "at": "2026-10-21T21:14:29Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39677149035,
+      "at": "2026-10-21T21:14:29Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 5
+    },
+    "preview": {
+     "latest": {
+      "id": 39649856382,
+      "at": "2026-10-21T18:07:20Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39649856382,
+      "at": "2026-10-21T18:07:20Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "prod-smoke.yml": {
+    "name": "Production smoke (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39662858463,
+      "at": "2026-10-21T19:34:42Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39662858463,
+      "at": "2026-10-21T19:34:42Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 61
+    },
+    "preview": null
+   },
+   "production-acceptance.yml": {
+    "name": "Production acceptance (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39677130339,
+      "at": "2026-10-21T21:14:20Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39677130339,
+      "at": "2026-10-21T21:14:20Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 1
+    },
+    "preview": {
+     "latest": {
+      "id": 39677743031,
+      "at": "2026-10-21T21:18:44Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39677743031,
+      "at": "2026-10-21T21:18:44Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "reference-sync.yml": {
+    "name": "Weekly reference-dataset sync",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39620134801,
+      "at": "2026-10-21T14:48:44Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39620134801,
+      "at": "2026-10-21T14:48:44Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "release-readiness.yml": {
+    "name": "Release readiness (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39662850011,
+      "at": "2026-10-21T19:34:38Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39662850011,
+      "at": "2026-10-21T19:34:38Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 1
+    },
+    "preview": {
+     "latest": {
+      "id": 39651402710,
+      "at": "2026-10-21T18:17:39Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39651402710,
+      "at": "2026-10-21T18:17:39Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "renewal-sync.yml": {
+    "name": "Daily urban-renewal sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39572746438,
+      "at": "2026-10-21T08:53:51Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39572746438,
+      "at": "2026-10-21T08:53:51Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 7,
+     "runsListed": 14
+    },
+    "preview": null
+   },
+   "rental-discover.yml": {
+    "name": "Long-term rental — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39063387888,
+      "at": "2026-10-17T19:39:15Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39063387888,
+      "at": "2026-10-17T19:39:15Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 17
+    },
+    "preview": null
+   },
+   "rental-sync.yml": {
+    "name": "Long-term rental sync (Dira Lehaskir)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39585682049,
+      "at": "2026-10-21T10:35:20Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39585682049,
+      "at": "2026-10-21T10:35:20Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 5,
+     "runsListed": 10
+    },
+    "preview": null
+   },
+   "search-live-check.yml": {
+    "name": "Search live check (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39681812301,
+      "at": "2026-10-21T21:49:11Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39681812301,
+      "at": "2026-10-21T21:49:11Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 1
+    },
+    "preview": {
+     "latest": {
+      "id": 39683860821,
+      "at": "2026-10-21T22:05:09Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39683860821,
+      "at": "2026-10-21T22:05:09Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "source-universe-discover.yml": {
+    "name": "Source universe — discovery (read-only)",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39616995017,
+      "at": "2026-10-21T14:27:45Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39616995017,
+      "at": "2026-10-21T14:27:45Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "street-discover.yml": {
+    "name": "Street directory — source discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39234539243,
+      "at": "2026-10-19T10:02:30Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39234539243,
+      "at": "2026-10-19T10:02:30Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39230264755,
+      "at": "2026-10-19T09:27:59Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 0,
+     "runsListed": 7
+    },
+    "preview": null
+   },
+   "street-evidence-sync.yml": {
+    "name": "Street evidence sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39572546743,
+      "at": "2026-10-21T08:52:18Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39572546743,
+      "at": "2026-10-21T08:52:18Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 2,
+     "runsListed": 5
+    },
+    "preview": null
+   },
+   "street-geo-build.yml": {
+    "name": "Street geography — build (GovMap-layer points)",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39560045045,
+      "at": "2026-10-21T07:09:34Z",
+      "event": "push",
+      "conclusion": "failure"
+     },
+     "lastSuccess": {
+      "id": 39560023198,
+      "at": "2026-10-21T07:09:22Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "street-planning-sync.yml": {
+    "name": "Street report — national plan boundaries",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39561354363,
+      "at": "2026-10-21T07:21:03Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39561354363,
+      "at": "2026-10-21T07:21:03Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "street-recent-sync.yml": {
+    "name": "Street recent sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39576009590,
+      "at": "2026-10-21T09:19:07Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39576009590,
+      "at": "2026-10-21T09:19:07Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39395354370,
+      "at": "2026-10-20T08:42:38Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 1,
+     "runsListed": 8
+    },
+    "preview": null
+   },
+   "street-report-discover.yml": {
+    "name": "Street report — planning + transport discovery (read-only)",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39559429388,
+      "at": "2026-10-21T07:04:06Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39559429388,
+      "at": "2026-10-21T07:04:06Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "street-report-preview-smoke.yml": {
+    "name": "Street report — preview smoke (read-only)",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39564904392,
+      "at": "2026-10-21T07:51:06Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39564904392,
+      "at": "2026-10-21T07:51:06Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "street-sync.yml": {
+    "name": "Weekly street-directory sync",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39231164510,
+      "at": "2026-10-19T09:35:06Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39231164510,
+      "at": "2026-10-19T09:35:06Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 1
+    },
+    "preview": null
+   },
+   "supabase-verify.yml": {
+    "name": "Supabase — verify the PROPX project",
+    "state": "active",
+    "production": null,
+    "preview": null
+   },
+   "surroundings-sync.yml": {
+    "name": "Weekly street-surroundings sync",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39622350805,
+      "at": "2026-10-21T15:03:44Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39622350805,
+      "at": "2026-10-21T15:03:44Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "transport-sync.yml": {
+    "name": "Weekly public-transport sync",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39613357071,
+      "at": "2026-10-21T14:02:55Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39613357071,
+      "at": "2026-10-21T14:02:55Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   },
+   "tx-freshness-discover.yml": {
+    "name": "Transactions — freshness discovery (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39418597161,
+      "at": "2026-10-20T11:56:52Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39418597161,
+      "at": "2026-10-20T11:56:52Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 9
+    },
+    "preview": null
+   },
+   "tx-freshness.yml": {
+    "name": "Transactions — daily freshness monitor",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39672794703,
+      "at": "2026-10-21T20:43:41Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39672794703,
+      "at": "2026-10-21T20:43:41Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 4,
+     "runsListed": 5
+    },
+    "preview": null
+   },
+   "tx-refresh.yml": {
+    "name": "Transactions — server-side refresh",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39569876493,
+      "at": "2026-10-21T08:31:09Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39569876493,
+      "at": "2026-10-21T08:31:09Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 7,
+     "runsListed": 23
+    },
+    "preview": null
+   },
+   "tx-sources-discover.yml": {
+    "name": "Transactions — source inventory (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39451852042,
+      "at": "2026-10-20T15:48:48Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39451852042,
+      "at": "2026-10-20T15:48:48Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 4
+    },
+    "preview": null
+   },
+   "txevents-all-check.yml": {
+    "name": "Transactions — ALL and latest-date check (read-only)",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39501374172,
+      "at": "2026-10-20T21:33:50Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39501374172,
+      "at": "2026-10-20T21:33:50Z",
+      "event": "workflow_dispatch",
+      "conclusion": "success"
+     },
+     "lastFailure": null,
+     "scheduledLast7d": 0,
+     "runsListed": 4
+    },
+    "preview": null
+   },
+   "txevents-national.yml": {
+    "name": "Transactions — national missed-deal detector",
+    "state": "active",
+    "production": {
+     "latest": {
+      "id": 39681669082,
+      "at": "2026-10-21T21:48:03Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39681669082,
+      "at": "2026-10-21T21:48:03Z",
+      "event": "schedule",
+      "conclusion": "success"
+     },
+     "lastFailure": {
+      "id": 39439075385,
+      "at": "2026-10-20T14:25:32Z",
+      "event": "workflow_dispatch",
+      "conclusion": "failure"
+     },
+     "scheduledLast7d": 6,
+     "runsListed": 12
+    },
+    "preview": null
+   },
+   "vatmal-sync.yml": {
+    "name": "Weekly VATMAL complexes sync",
+    "state": "active",
+    "production": null,
+    "preview": {
+     "latest": {
+      "id": 39622927457,
+      "at": "2026-10-21T15:07:58Z",
+      "event": "push",
+      "conclusion": "success"
+     },
+     "lastSuccess": {
+      "id": 39622927457,
+      "at": "2026-10-21T15:07:58Z",
+      "event": "push",
+      "conclusion": "success"
+     }
+    }
+   }
+  }
+ },
+ "investigation": [
+  {
+   "workflow": "txevents-national.yml",
+   "runs": [
+    39596014029,
+    39642748425,
+    39681669082
+   ],
+   "at": "2026-10-21",
+   "conclusion": "success (silent gap)",
+   "class": "IN_REPO_FIXED",
+   "cause": "unchanged checks never recorded: the commit step measured the last record with `git log -1 -- data/txevents/national/runs.jsonl` in a depth-1 checkout, which answers with the branch head (any sync's commit) — the last record stayed 20.10.2026 18:55 UTC and the Trust Center read the detector as STALE",
+   "fix": "lib/txevents/runlog.js + `scripts/txevents-national.js --record-decision` read the last record from runs.jsonl itself; the Trust catalogue allows 24 h (12 h recording gap + the observed 4.5–7 h schedule interval)",
+   "test": "test/freshness-audit.test.js"
+  },
+  {
+   "workflow": "street-evidence-sync.yml",
+   "runs": [
+    39572546743
+   ],
+   "at": "2026-10-21",
+   "conclusion": "success (false alarm in its output)",
+   "class": "IN_REPO_FIXED",
+   "cause": "data/txevents/coverage-audit.json reported missed 304 since 20.10.2026 17:56: every one is a GovMap row FOLDED into a register deal filed under an unmapped settlement name (304 register events, all in the read) — the audit counted folded rows as missed",
+   "fix": "scripts/txevents-audit.js counts FOLDED apart (lib/txevents/kit.js surfaceAccount): missed 0 · folded 304 on the stored data",
+   "test": "test/freshness-audit.test.js"
+  },
+  {
+   "workflow": "street-geo-build.yml",
+   "runs": [
+    39560045045
+   ],
+   "at": "2026-10-21T07:09Z",
+   "conclusion": "failure",
+   "class": "IN_REPO_FIXED",
+   "cause": "two push-triggered builds in a row: the second (script 4d7adb2) rebased its commit of the binary data/geo/street-geo files onto the first one's and conflicted (CONFLICT in loc/*.json.gz, meta.json) — the stored build is the previous script's (c41968b): 22,571 source-neighbourhood street keys stay in the layer's raw form; no reader uses that field today",
+   "fix": "the commit step re-places the run's whole build on the newest branch head instead of rebasing binaries; dispatch street-geo-build.yml once to align the data",
+   "test": "test/freshness-audit.test.js"
+  },
+  {
+   "workflow": "street-recent-sync.yml",
+   "runs": [
+    39395354370
+   ],
+   "at": "2026-10-20T08:42Z",
+   "conclusion": "failure",
+   "class": "IN_REPO_FIXED_EARLIER",
+   "cause": "the gate \"the Street Value Model is untouched\" failed: the model input check reported stale after a land sync changed tenders.json — fixed the same day by lib/streets/model-deps.js (only what the model reads); every later run passed"
+  },
+  {
+   "workflow": "txevents-national.yml",
+   "runs": [
+    39437351911,
+    39439075385
+   ],
+   "at": "2026-10-20T14:14Z",
+   "conclusion": "failure",
+   "class": "IN_REPO_FIXED_EARLIER",
+   "cause": "the published file named its columns in camelCase, so the file did not reproduce the API window (same 0 · differs 11,900) — the build refused to write; the column map was added and the next build validated 11,900 / 11,900"
+  },
+  {
+   "workflow": "cbs-sales-sync.yml",
+   "runs": [
+    39143071361
+   ],
+   "at": "2026-10-18T16:00Z",
+   "conclusion": "failure",
+   "class": "EXTERNAL",
+   "cause": "CBS series API answered HTTP 500 to 12 of 22 requests (district 5074 and others); the run recorded PARTIAL, kept the last data and exited 2; the next run (19.10) answered 22/22"
+  },
+  {
+   "workflow": "dd-sync.yml",
+   "runs": [
+    39401290154
+   ],
+   "at": "2026-10-20T09:31Z",
+   "conclusion": "failure",
+   "class": "EXTERNAL",
+   "cause": "data.gov.il datastore_search answered HTTP 404 (HTML) for five Registrar of Companies / Official Receiver resources mid-paging; lanes FAILED, last data kept; the next run (21.10) read every lane"
+  },
+  {
+   "workflow": "construction-sync.yml",
+   "runs": [
+    39080649194
+   ],
+   "at": "2026-10-17T23:52Z",
+   "conclusion": "failure",
+   "class": "IN_REPO_FIXED_EARLIER",
+   "cause": "the first run of the lane (manual) — the geography resolution was corrected before the first successful run 39082195857 (18.10.2026)"
+  },
+  {
+   "workflow": "identity-verify.yml · identity-activate.yml",
+   "runs": [
+    39676022156,
+    39676017719
+   ],
+   "at": "2026-10-21T21:06Z",
+   "conclusion": "failure",
+   "class": "CONFIG",
+   "cause": "the private identity project is not configured: SUPABASE_ACCESS_TOKEN · SUPABASE_URL · PROPX_WS_URL · PROPX_WS_APIKEY · PROPX_WS_JWT_SECRET are not set as repository secrets (by design until the founder activates STEP 2A) — not a data lane"
+  },
+  {
+   "workflow": "tx-refresh.yml · data-sync.yml (transactions part)",
+   "runs": [
+    39569876493,
+    39565825297
+   ],
+   "at": "2026-10-21",
+   "conclusion": "success (source REFUSED)",
+   "class": "EXTERNAL",
+   "cause": "GovMap (the official deals channel) answers HTTP 403 to every runner request; nadlan.gov.il shows a reCAPTCHA screen; nadlan.taxes.gov.il is unreachable from the runner — recorded, never worked around (data/transactions/freshness.json officialChannels)"
+  }
+ ],
+ "integrity": {
+  "ranAt": "2026-10-21T22:48:35.595Z",
+  "rules": [
+   "priced = whole property (portion 1), ≥ ₪100,000, one consideration for one unit, register only",
+   "no GovMap-layer row priced or VERIFIED",
+   "no event after the copy's load day or today",
+   "no event id twice in a locality",
+   "a possible duplicate never in a statistic"
+  ],
+  "register": {
+   "deals": 342471,
+   "priced": 214620,
+   "pricedPartial": 0,
+   "pricedUnder100k": 0,
+   "pricedMultiUnit": 0,
+   "pricedPortionMissing": 0,
+   "partialSales": 112587,
+   "afterCopyLatest": 0
+  },
+  "union": {
+   "localities": 1066,
+   "events": 380547,
+   "byState": {
+    "VERIFIED_DWELLING": 74715,
+    "RECORDED_EVENT": 93540,
+    "PRICED_IN_STATISTICS": 194141,
+    "LIMITED_SHARE_NOT_STATED": 14878,
+    "CONFLICT": 40,
+    "POSSIBLE_DUPLICATE": 3233
+   },
+   "bySource": {
+    "over:deals-register": 348234,
+    "over:govmap-recent": 4503,
+    "over:govmap-national": 27810
+   },
+   "govmapPriced": 0,
+   "govmapVerified": 0,
+   "pricedNotRegister": 0,
+   "pricedBreakingRule": 0,
+   "futureDated": 0,
+   "afterCopyLoad": 0,
+   "duplicateIds": 0,
+   "possibleDuplicateInStatistics": 0,
+   "latestCounted": "2026-09-28"
+  },
+  "violations": 0
+ },
+ "audit": {
+  "schema": 1,
+  "engine": "propx-freshness-audit-1",
+  "asOf": "2026-10-21T22:47:07.070Z",
+  "today": "2026-10-21",
+  "states": [
+   "REFUSED",
+   "FAILING",
+   "CHECK_STALE",
+   "SOURCE_STALE",
+   "EXPECTED_LAG",
+   "CURRENT",
+   "DATED_BUILD",
+   "NO_RUN"
+  ],
+  "meaning": {
+   "REFUSED": "the source refuses PROPX's runner (HTTP 401 / 403 / 429) — recorded, never worked around; the last valid data is kept",
+   "FAILING": "the latest check failed or found an unrecognised shape — the last valid data is kept and dated",
+   "CHECK_STALE": "PROPX's last good check is older than the lane's cadence allows",
+   "SOURCE_STALE": "PROPX checks on schedule, but the source's own content is older than its documented lag (or the source is classified stale)",
+   "EXPECTED_LAG": "a newer period is due under the documented lag, and its window has not closed yet",
+   "CURRENT": "checked on schedule and the source holds the newest period its documented lag allows",
+   "DATED_BUILD": "no scheduled check — a dated build or a hand transcription; its date is shown",
+   "NO_RUN": "no recorded check"
+  },
+  "counts": {
+   "REFUSED": 1,
+   "SOURCE_STALE": 4,
+   "EXPECTED_LAG": 1,
+   "CURRENT": 37,
+   "DATED_BUILD": 4
+  },
+  "entries": [
+   {
+    "id": "govmap:tax-authority-deals",
+    "label": "Tax Authority deals via GovMap (official channel)",
+    "vertical": "transactions",
+    "latestObservation": null,
+    "publication": {
+     "value": null,
+     "kind": "never answered"
+    },
+    "ingestion": {
+     "value": null,
+     "kind": "never served a deal"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T07:59:26.264Z",
+     "origin": "run-log",
+     "runState": "REFUSED",
+     "lastGoodAt": null,
+     "runLog": "2026-10-21T07:59:26.264Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39565825297,
+       "at": "2026-10-21T07:58:47Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36894225742,
+       "at": "2026-10-01T16:44:15Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "data-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 2 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T02:41:00.000Z",
+     "next": "2026-10-22T02:41:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "refuses the runner"
+    },
+    "state": "REFUSED",
+    "stateRule": "the latest check was refused",
+    "evidence": [
+     "data/transactions/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:moch:construction-progress",
+    "label": "MoCH construction progress (by block / parcel)",
+    "vertical": "construction",
+    "latestObservation": {
+     "value": null,
+     "kind": "as the Trust catalogue reads it"
+    },
+    "publication": {
+     "value": "2024-03-01",
+     "kind": "source content last modified"
+    },
+    "ingestion": null,
+    "lastCheck": {
+     "at": "2026-10-21T08:42:57.452Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:42:57.452Z",
+     "runLog": "2026-10-21T08:42:57.452Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39570267266,
+       "at": "2026-10-21T08:34:14Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "land-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "SOURCE_STALE",
+     "basis": "classified STALE in lib/land/sources.js (content as of 2024-03)"
+    },
+    "state": "SOURCE_STALE",
+    "stateRule": "the source content is older than its documented lag",
+    "evidence": [
+     "lib/land/sources.js",
+     "data/land/meta.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:moch:dira-behanacha-lotteries",
+    "label": "MoCH subsidized-housing lotteries",
+    "vertical": "housing",
+    "latestObservation": {
+     "value": "2025-01-27",
+     "kind": "latest lottery date in the source"
+    },
+    "publication": {
+     "value": "2026-08-16T15:30:41.417152Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-01T16:44:34.798Z",
+     "kind": "the last run that stored new content"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T07:59:25.863Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T07:59:25.863Z",
+     "runLog": "2026-10-21T07:59:25.863Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39565825297,
+       "at": "2026-10-21T07:58:47Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36894225742,
+       "at": "2026-10-01T16:44:15Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "data-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 2 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T02:41:00.000Z",
+     "next": "2026-10-22T02:41:00.000Z"
+    },
+    "lag": {
+     "state": "SOURCE_STALE",
+     "basis": "documented (Trust catalogue): the resource lags — its newest lottery 2025-01-27 is 632 days old although the resource was modified 2026-08-16"
+    },
+    "state": "SOURCE_STALE",
+    "stateRule": "the source content is older than its documented lag",
+    "evidence": [
+     "data/housing/meta.json",
+     "data/housing/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:rmi:planning-inventory",
+    "label": "ILA planning inventory (state land, 2022)",
+    "vertical": "planning",
+    "latestObservation": {
+     "value": null,
+     "kind": "as the Trust catalogue reads it"
+    },
+    "publication": {
+     "value": "2022-02-17T10:59:42.023Z",
+     "kind": "source content last modified"
+    },
+    "ingestion": null,
+    "lastCheck": {
+     "at": "2026-10-21T08:42:57.452Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:42:57.452Z",
+     "runLog": "2026-10-21T08:42:57.452Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39570267266,
+       "at": "2026-10-21T08:34:14Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "land-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "SOURCE_STALE",
+     "basis": "classified STALE in lib/land/sources.js (the publisher's inventory dates from 2022)"
+    },
+    "state": "SOURCE_STALE",
+    "stateRule": "the source content is older than its documented lag",
+    "evidence": [
+     "lib/land/sources.js",
+     "data/land/meta.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "over:street-evidence",
+    "label": "Tax Authority register — republished copy (over.org.il), the street evidence sweep",
+    "vertical": "transactions",
+    "latestObservation": {
+     "value": "2026-09-17",
+     "kind": "the copy's latest deal date"
+    },
+    "publication": {
+     "value": "2026-09-19T11:20:54.427407+00:00",
+     "kind": "the republisher's dataset version v5 detected (over.org.il); the copy's own scrape: 2026-09-19 11:07:39.013275+00; the Tax Authority states no publication date"
+    },
+    "ingestion": {
+     "value": "2026-10-19T12:40:56.299Z",
+     "kind": "the COMPLETE sweep (1036/1036 localities)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:52:46.515Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T08:52:46.515Z",
+     "runLog": "2026-10-21T08:52:46.515Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39572546743,
+       "at": "2026-10-21T08:52:18Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "street-evidence-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 3 * * *"
+     ],
+     "staleAfterHours": 60,
+     "previous": "2026-10-21T03:41:00.000Z",
+     "next": "2026-10-22T03:41:00.000Z"
+    },
+    "lag": {
+     "state": "SOURCE_STALE",
+     "basis": "lib/gov/freshness.js copy state STALE (32 days old; CURRENT ≤ 7 · RECENT ≤ 21 · STALE ≤ 45 · VERY STALE > 45)",
+     "copyState": "STALE",
+     "copyAgeDays": 32
+    },
+    "state": "SOURCE_STALE",
+    "stateRule": "the source content is older than its documented lag",
+    "evidence": [
+     "data/streets/evidence/meta.json",
+     "data/streets/evidence/sync-runs.jsonl",
+     "data/transactions/freshness.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "boi:policy-rate",
+    "label": "Bank of Israel policy rate",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "3.25%",
+     "kind": "the rate in force when read"
+    },
+    "publication": {
+     "value": "2026-09-01",
+     "kind": "publishedAt as served by the Bank of Israel API"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "EXPECTED_LAG",
+     "basis": "the snapshot names the next rate decision 2026-10-21; read 2026-10-21T08:30:52.112Z — a decision on or before today is read by the next daily sync (the snapshot keeps the value it read)"
+    },
+    "state": "EXPECTED_LAG",
+    "stateRule": "a newer period is due and its window is open",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "boi:housing-finance",
+    "label": "Bank of Israel housing finance (SDMX)",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-09",
+     "kind": "the latest month of new housing loans"
+    },
+    "publication": {
+     "value": null,
+     "kind": "the service states no publication date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:34:59.019Z",
+     "kind": "the last run that added observations"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T13:34:59.019Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T13:34:59.019Z",
+     "runLog": "2026-10-21T13:34:59.019Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "finance-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 5 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T05:41:00.000Z",
+     "next": "2026-10-22T05:41:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "basis": "the lane's own freshness block: CURRENT",
+     "nextDueFrom": null
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/finance/latest.json",
+     "data/finance/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-22T05:41:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "cbs:construction",
+    "label": "CBS construction — permits · starts · completions · active",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-06 (quarter 2026-Q2)",
+     "kind": "latest published month / quarter"
+    },
+    "publication": {
+     "value": "2026-09-10",
+     "kind": "CBS series update date"
+    },
+    "ingestion": {
+     "value": "2026-10-18T00:18:14.065Z",
+     "kind": "the last run that added / revised observations"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T17:37:44.931Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T17:37:44.931Z",
+     "runLog": "2026-10-21T17:37:44.931Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39645322083,
+       "at": "2026-10-21T17:36:38Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39080649194,
+       "at": "2026-10-17T23:52:08Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "construction-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 12 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T12:41:00.000Z",
+     "next": "2026-10-22T12:41:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "basis": "the lane's own freshness block: CURRENT · next period due from 2026-11-29 · stale after 2027-01-28",
+     "nextDueFrom": "2026-11-29"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/construction/latest.json",
+     "data/construction/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:constructionInputsIndex",
+    "label": "CBS constructionInputsIndex",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-09",
+     "kind": "latest index month"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-09",
+     "basis": "ASSUMPTION — a monthly CBS index appears about the 15th of the following month; expected latest month on 2026-10-21: 2026-09"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:cpi",
+    "label": "CBS cpi",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-09",
+     "kind": "latest index month"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-09",
+     "basis": "ASSUMPTION — a monthly CBS index appears about the 15th of the following month; expected latest month on 2026-10-21: 2026-09"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:dwellingsByDistrict",
+    "label": "CBS dwellingsByDistrict",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-07",
+     "kind": "latest two-month window (first month)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-07",
+     "basis": "ASSUMPTION — a two-month CBS window appears about the 15th of the second month after it ends; expected latest window start on 2026-10-21: 2026-07"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:dwellingsIndex",
+    "label": "CBS dwellingsIndex",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-07",
+     "kind": "latest two-month window (first month)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-07",
+     "basis": "ASSUMPTION — a two-month CBS window appears about the 15th of the second month after it ends; expected latest window start on 2026-10-21: 2026-07"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:new-home-sales",
+    "label": "CBS new-home sales + inventory (+ the whole market since 21.10.2026)",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-08",
+     "kind": "latest published month (inventory 2026-08)"
+    },
+    "publication": {
+     "value": "2026-10-07",
+     "kind": "CBS series update date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T14:18:54.917Z",
+     "kind": "the last run that added / revised observations"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T17:26:10.678Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T17:26:10.678Z",
+     "runLog": "2026-10-21T17:26:10.678Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39643696842,
+       "at": "2026-10-21T17:25:42Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39143071361,
+       "at": "2026-10-18T16:00:56Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "cbs-sales-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 12 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T12:23:00.000Z",
+     "next": "2026-10-22T12:23:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "basis": "the lane's own freshness block: CURRENT · next period due from 2026-11-04 · stale after 2026-12-14",
+     "nextDueFrom": "2026-11-04"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/cbs-sales/latest.json",
+     "data/cbs-sales/runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:newHomesIndex",
+    "label": "CBS newHomesIndex",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-07",
+     "kind": "latest two-month window (first month)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-07",
+     "basis": "ASSUMPTION — a two-month CBS window appears about the 15th of the second month after it ends; expected latest window start on 2026-10-21: 2026-07"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:rentIndex",
+    "label": "CBS rentIndex",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-09",
+     "kind": "latest index month"
+    },
+    "publication": {
+     "value": null,
+     "kind": "not stored — the CBS index API is read for the period, not its release date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:30:52.112Z",
+     "kind": "the snapshot read (market-sync rewrites the indicator each run)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:30:52.112Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:30:52.112Z",
+     "runLog": "2026-10-21T08:30:52.112Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39569782994,
+       "at": "2026-10-21T08:30:27Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 36833366375,
+       "at": "2026-10-01T07:57:21Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "market-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "expected": "2026-09",
+     "basis": "ASSUMPTION — a monthly CBS index appears about the 15th of the following month; expected latest month on 2026-10-21: 2026-09"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/market/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:cbs:census-2022",
+    "label": "reference/census-2022",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2022",
+     "kind": "the census observation (one, 2022)"
+    },
+    "publication": {
+     "value": "2024-06-03T05:07:43.081626Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:24:43.150Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:49:15.710Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:49:15.710Z",
+     "runLog": "2026-10-21T14:49:15.710Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "reference-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 1"
+     ],
+     "staleAfterHours": 960,
+     "previous": "2026-10-19T04:23:00.000Z",
+     "next": "2026-10-26T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/reference/census-2022/meta.json",
+     "data/reference/census-2022/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-26T04:23:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:ica:changes",
+    "label": "dd:filings",
+    "vertical": "corporate",
+    "latestObservation": {
+     "value": "2026-10-21",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-21",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T09:31:46.550Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:ica:companies",
+    "label": "dd:companies",
+    "vertical": "corporate",
+    "latestObservation": {
+     "value": "2026-10-21T01:12:39.049698",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-21T01:12:39.049698",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T09:31:46.550Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:ica:designated-strike-off",
+    "label": "dd:strikeoff",
+    "vertical": "corporate",
+    "latestObservation": {
+     "value": "2026-10-21T01:13:12.561140",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-21T01:13:12.561140",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T09:31:46.550Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:ica:partnerships",
+    "label": "dd:partnerships",
+    "vertical": "corporate",
+    "latestObservation": {
+     "value": "2026-10-21T01:12:08.937002",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-21T01:12:08.937002",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T09:31:46.550Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:labor:active-construction-sites",
+    "label": "dd:sites",
+    "vertical": "construction",
+    "latestObservation": {
+     "value": "2026-10-20T21:15:12.222982",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-20T21:15:12.222982",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:moch:contractors-register",
+    "label": "dd:contractors",
+    "vertical": "construction",
+    "latestObservation": {
+     "value": "2026-08-17T00:01:20.659936",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-08-17T00:01:20.659936",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-18T09:43:44.302Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:moch:urban-renewal-complexes",
+    "label": "MoCH urban-renewal complexes",
+    "vertical": "renewal",
+    "latestObservation": {
+     "value": "2026-06-11",
+     "kind": "latest declaration date"
+    },
+    "publication": {
+     "value": "2026-08-15T22:00:15.928019Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-13T01:15:18.937Z",
+     "kind": "the last run that stored new content"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:54:15.105Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T08:54:15.105Z",
+     "runLog": "2026-10-21T08:54:15.105Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39572746438,
+       "at": "2026-10-21T08:53:51Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "renewal-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "47 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:47:00.000Z",
+     "next": "2026-10-22T03:47:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states no cadence"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/renewal/meta.json",
+     "data/renewal/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:moe:institution-coordinates",
+    "label": "surroundings/edu-points",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2022-04-06T07:22:14.021133Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2022-04-06T07:22:14.021133Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T14:34:44.905Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T15:04:56.546Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T15:04:56.546Z",
+     "runLog": "2026-10-21T15:04:56.546Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "surroundings-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 5 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T05:17:00.000Z",
+     "next": "2026-10-27T05:17:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/surroundings/edu-points/meta.json",
+     "data/surroundings/edu-points/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T05:17:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:moe:institutions",
+    "label": "surroundings/edu-info",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-05-11T12:24:47.128302Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-05-11T12:24:47.128302Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T14:49:58.357Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T15:08:23.680Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T15:08:23.680Z",
+     "runLog": "2026-10-21T15:08:23.680Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "surroundings-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 5 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T05:17:00.000Z",
+     "next": "2026-10-27T05:17:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/surroundings/edu-info/meta.json",
+     "data/surroundings/edu-info/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T05:17:00.000Z"
+     },
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a SCHEMA_CHANGED at 2026-10-21T14:35:20.523Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:moep:contaminated-land",
+    "label": "surroundings/contaminated",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-10-21T15:01:10.227387Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-10-21T15:01:10.227387Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T14:34:41.712Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T15:04:10.515Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T15:04:10.515Z",
+     "runLog": "2026-10-21T15:04:10.515Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "surroundings-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 5 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T05:17:00.000Z",
+     "next": "2026-10-27T05:17:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/surroundings/contaminated/meta.json",
+     "data/surroundings/contaminated/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T05:17:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:moj:official-receiver:liquidation",
+    "label": "dd:insolvency",
+    "vertical": "corporate",
+    "latestObservation": {
+     "value": "2026-10-18T17:13:07.521148",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "2026-10-18T17:13:07.521148",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T09:31:46.550Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:mot:bus-stops",
+    "label": "transport/bus-stops",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-10-01T03:09:46.826309Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-10-01T03:09:46.826309Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:56:23.898Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:03:40.513Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:03:40.513Z",
+     "runLog": "2026-10-21T14:03:40.513Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "transport-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "37 4 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T04:37:00.000Z",
+     "next": "2026-10-27T04:37:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/transport/bus-stops/meta.json",
+     "data/transport/bus-stops/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T04:37:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:mot:lrt-stations",
+    "label": "transport/lrt",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-03-22T11:53:06.984084Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-03-22T11:53:06.984084Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:56:45.150Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:03:41.110Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:03:41.110Z",
+     "runLog": "2026-10-21T14:03:41.110Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "transport-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "37 4 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T04:37:00.000Z",
+     "next": "2026-10-27T04:37:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/transport/lrt/meta.json",
+     "data/transport/lrt/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T04:37:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:mot:metro-stations",
+    "label": "transport/metro",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2024-06-24T20:50:46.729907Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2024-06-24T20:50:46.729907Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:56:46.949Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:03:42.366Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:03:42.366Z",
+     "runLog": "2026-10-21T14:03:42.366Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "transport-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "37 4 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T04:37:00.000Z",
+     "next": "2026-10-27T04:37:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/transport/metro/meta.json",
+     "data/transport/metro/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T04:37:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:mot:rail-stations",
+    "label": "transport/rail",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-07-12T09:06:43.889760Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-07-12T09:06:43.889760Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:56:46.317Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:03:41.696Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:03:41.696Z",
+     "runLog": "2026-10-21T14:03:41.696Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "transport-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "37 4 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T04:37:00.000Z",
+     "next": "2026-10-27T04:37:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/transport/rail/meta.json",
+     "data/transport/rail/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T04:37:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:piba:residents-by-locality",
+    "label": "reference/residents",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-10-12T00:30:04.954122Z",
+     "kind": "the resource's content date (data.gov.il last_modified)"
+    },
+    "publication": {
+     "value": "2026-10-12T00:30:04.954122Z",
+     "kind": "data.gov.il resource last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-21T13:24:46.908Z",
+     "kind": "the last content read (meta.readAt)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T14:49:19.819Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T14:49:19.819Z",
+     "runLog": "2026-10-21T14:49:19.819Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "reference-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 1"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-19T04:23:00.000Z",
+     "next": "2026-10-26T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "the publisher states a cadence, not a calendar — no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/reference/residents/meta.json",
+     "data/reference/residents/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-26T04:23:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "datagov:streets",
+    "label": "the official street directory + synonyms",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-10-19",
+     "kind": "the registry's last modification"
+    },
+    "publication": {
+     "value": "2026-10-19T00:30:18.810557",
+     "kind": "data.gov.il last_modified"
+    },
+    "ingestion": {
+     "value": "2026-10-19T09:35:26.320Z",
+     "kind": "the last run that stored new content"
+    },
+    "lastCheck": {
+     "at": "2026-10-19T09:35:26.320Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-19T09:35:26.320Z",
+     "runLog": "2026-10-19T09:35:26.320Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39231164510,
+       "at": "2026-10-19T09:35:06Z",
+       "event": "workflow_dispatch",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "street-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 1"
+     ],
+     "staleAfterHours": 204,
+     "previous": "2026-10-19T04:23:00.000Z",
+     "next": "2026-10-26T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "republished daily; read weekly"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/geo/streets/meta.json",
+     "data/geo/streets/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "dira-lehaskir:tenders",
+    "label": "Dira Lehaskir rental notices",
+    "vertical": "land",
+    "latestObservation": {
+     "value": "2026-10-14",
+     "kind": "newest notice published"
+    },
+    "publication": {
+     "value": "2026-10-14",
+     "kind": "newest notice modified"
+    },
+    "ingestion": {
+     "value": "2026-10-15T10:18:21.852Z",
+     "kind": "the last run that stored new content"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T10:35:51.590Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T10:35:51.590Z",
+     "runLog": "2026-10-21T10:35:51.590Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39585682049,
+       "at": "2026-10-21T10:35:20Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "rental-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "41 5 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T05:41:00.000Z",
+     "next": "2026-10-22T05:41:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "as the company publishes"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/rental/dira-tenders.json",
+     "data/rental/runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "iplan:vatmal",
+    "label": "VATMAL declared complexes",
+    "vertical": "planning",
+    "latestObservation": {
+     "value": "2025-05-28",
+     "kind": "the latest declaration / update date in the layer"
+    },
+    "publication": {
+     "value": null,
+     "kind": "the layer states no publication date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T14:39:02.773Z",
+     "kind": "the last content read"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T15:08:19.631Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T15:08:19.631Z",
+     "runLog": "2026-10-21T15:08:19.631Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": "vatmal-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "47 5 * * 2"
+     ],
+     "staleAfterHours": 216,
+     "previous": "2026-10-20T05:47:00.000Z",
+     "next": "2026-10-27T05:47:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "as the Committee declares"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/planning/vatmal/meta.json",
+     "data/planning/vatmal/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "NO_PRODUCTION_RUN_YET",
+      "detail": "the workflow has run only outside the production branch so far; its first scheduled production run: 2026-10-27T05:47:00.000Z"
+     }
+    ]
+   },
+   {
+    "id": "iplan:xplan:renewal",
+    "label": "XPlan join of the renewal complexes",
+    "vertical": "renewal",
+    "latestObservation": {
+     "value": "2026-10-21T08:54:15.184Z",
+     "kind": "the last read of the layer (a continuous source)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "the layer states no publication date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:54:59.345Z",
+     "kind": "the last run that stored new content"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:54:59.345Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T08:54:59.345Z",
+     "runLog": "2026-10-21T08:54:59.345Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39572746438,
+       "at": "2026-10-21T08:53:51Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "renewal-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "47 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:47:00.000Z",
+     "next": "2026-10-22T03:47:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "continuous source"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/renewal/planning.json",
+     "data/renewal/planning-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "over:govmap-national",
+    "label": "GovMap deals layer — the whole published file (national missed-deal detector)",
+    "vertical": "transactions",
+    "latestObservation": {
+     "value": "2026-07-13",
+     "kind": "the latest file row the union shows (the file's own max 2048-05-29 includes future-dated rows, INVALID)"
+    },
+    "publication": {
+     "value": "2026-10-08T01:47:52.610708+00:00",
+     "kind": "the republisher's dataset version v4 detected"
+    },
+    "ingestion": {
+     "value": "2026-10-20T18:55:44.262Z",
+     "kind": "the national build"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T21:48:03Z",
+     "origin": "github-run",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T21:48:03Z",
+     "runLog": "2026-10-20T18:55:44.262Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39681669082,
+       "at": "2026-10-21T21:48:03Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39439075385,
+       "at": "2026-10-20T14:25:32Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "txevents-national.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 */3 * * *"
+     ],
+     "staleAfterHours": 24,
+     "previous": "2026-10-21T21:23:00.000Z",
+     "next": "2026-10-22T00:23:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "basis": "lib/gov/freshness.js copy state RECENT (13 days old; CURRENT ≤ 7 · RECENT ≤ 21 · STALE ≤ 45 · VERY STALE > 45)",
+     "copyState": "RECENT",
+     "copyAgeDays": 13
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/txevents/national/meta.json",
+     "data/txevents/national/runs.jsonl"
+    ],
+    "findings": [
+     {
+      "kind": "RUN_LOG_BEHIND",
+      "detail": "the latest successful production run (39681669082, 2026-10-21T21:48:03Z) is newer than the run log's last check (2026-10-20T18:55:44.262Z) by more than half the cadence allowance"
+     },
+     {
+      "kind": "RECOVERED",
+      "detail": "a good check followed a FAILED at 2026-10-20T14:26:24.736Z"
+     }
+    ]
+   },
+   {
+    "id": "over:govmap-recent",
+    "label": "GovMap deals layer — republished copy, recent window (lib/recent)",
+    "vertical": "transactions",
+    "latestObservation": {
+     "value": "2026-09-28",
+     "kind": "the copy's latest deal (shown recent-only deals to 2026-09-28)"
+    },
+    "publication": {
+     "value": "2026-10-08T01:47:52.610708+00:00",
+     "kind": "the republisher's dataset version v4 detected; the copy's load: 2026-10-08T01:50:12.803824+00:00"
+    },
+    "ingestion": {
+     "value": "2026-10-20T08:00:55.599Z",
+     "kind": "the window read (verbatim snapshot)"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:19:33.165Z",
+     "origin": "run-log",
+     "runState": "UNCHANGED",
+     "lastGoodAt": "2026-10-21T09:19:33.165Z",
+     "runLog": "2026-10-21T09:19:33.165Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39576009590,
+       "at": "2026-10-21T09:19:07Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39395354370,
+       "at": "2026-10-20T08:42:38Z",
+       "event": "workflow_dispatch",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "street-recent-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "7 4 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T04:07:00.000Z",
+     "next": "2026-10-22T04:07:00.000Z"
+    },
+    "lag": {
+     "state": "CURRENT",
+     "basis": "lib/gov/freshness.js copy state RECENT (13 days old; CURRENT ≤ 7 · RECENT ≤ 21 · STALE ≤ 45 · VERY STALE > 45)",
+     "copyState": "RECENT",
+     "copyAgeDays": 13
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; newest period its documented lag allows",
+    "evidence": [
+     "data/streets/recent/meta.json",
+     "data/streets/recent/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "propx:street-model",
+    "label": "PROPX street value model (MODEL)",
+    "vertical": "derived",
+    "latestObservation": {
+     "value": "2026-09-17",
+     "kind": "the evidence date it is anchored to"
+    },
+    "publication": {
+     "value": null,
+     "kind": "a PROPX model"
+    },
+    "ingestion": {
+     "value": "2026-10-20T08:53:29.411Z",
+     "kind": "the model build"
+    },
+    "lastCheck": {
+     "at": "2026-10-20T08:53:29.411Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-20T08:53:29.411Z",
+     "runLog": "2026-10-20T08:53:29.411Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": null,
+     "rebuiltBy": "street-evidence-sync.yml (--if-stale)",
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "rebuilt only when its inputs change"
+    },
+    "state": "CURRENT",
+    "stateRule": "derived — as fresh as its sources (see their rows)",
+    "evidence": [
+     "data/streets/model/model.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "propx:transaction-events",
+    "label": "the transaction events union (lib/txevents)",
+    "vertical": "transactions",
+    "latestObservation": {
+     "value": "2026-09-28",
+     "kind": "the newest counted event of any source"
+    },
+    "publication": {
+     "value": null,
+     "kind": "a PROPX derivation — the sources' dates are on their own rows"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:20:04.189Z",
+     "kind": "the union build"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:20:04.189Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:20:04.189Z",
+     "runLog": "2026-10-21T09:20:04.189Z",
+     "github": null
+    },
+    "cadence": {
+     "workflow": null,
+     "rebuiltBy": "street-evidence-sync.yml · street-recent-sync.yml · txevents-national.yml",
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "derived — as fresh as its sources"
+    },
+    "state": "CURRENT",
+    "stateRule": "derived — as fresh as its sources (see their rows)",
+    "evidence": [
+     "data/txevents/completeness.json",
+     "data/txevents/latest.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "propx:tx-freshness",
+    "label": "the transaction freshness monitor (five read-only requests)",
+    "vertical": "transactions",
+    "latestObservation": {
+     "value": "2026-09-17",
+     "kind": "the stored copy's latest deal"
+    },
+    "publication": {
+     "value": "2026-09-19 11:07:39.013275+00",
+     "kind": "the register copy the republisher serves now (its scrape date)"
+    },
+    "ingestion": {
+     "value": null,
+     "kind": "a monitor stores no deal"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T20:44:22.624Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T20:44:22.624Z",
+     "runLog": "2026-10-21T20:44:22.624Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39672794703,
+       "at": "2026-10-21T20:43:41Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "tx-freshness.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 5,17 * * *"
+     ],
+     "staleAfterHours": 30,
+     "previous": "2026-10-21T17:23:00.000Z",
+     "next": "2026-10-22T05:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "a monitor — it REPORTS the copy's state (STALE, 32 days; see over:street-evidence), its own freshness is its check"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/transactions/freshness.json",
+     "data/transactions/freshness-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "rmi:michrazim",
+    "label": "Israel Land Authority tenders",
+    "vertical": "land",
+    "latestObservation": {
+     "value": "2026-10-19",
+     "kind": "latest tender publication (committee decisions to 2026-10-20)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "the list states no publication date; list content last changed (PROPX observed) 2026-10-21T08:34:45.000Z"
+    },
+    "ingestion": {
+     "value": "2026-10-21T08:34:45.000Z",
+     "kind": "list content last changed · detail 10650/10650"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T08:42:57.452Z",
+     "origin": "run-log",
+     "runState": "PARTIAL",
+     "lastGoodAt": "2026-10-21T08:42:57.452Z",
+     "runLog": "2026-10-21T08:42:57.452Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39570267266,
+       "at": "2026-10-21T08:34:14Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": null
+     }
+    },
+    "cadence": {
+     "workflow": "land-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "17 3 * * *"
+     ],
+     "staleAfterHours": 50,
+     "previous": "2026-10-21T03:17:00.000Z",
+     "next": "2026-10-22T03:17:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "daily source; PARTIAL = the daily detail request cap (detail coverage stated)"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/land/meta.json",
+     "data/land/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "tlv:iview2:permits-772",
+    "label": "dd:tlv",
+    "vertical": "planning",
+    "latestObservation": {
+     "value": "21/10/2026 01:03:03",
+     "kind": "the source's own last modification / import"
+    },
+    "publication": {
+     "value": "21/10/2026 01:03:03",
+     "kind": "catalogue last_modified / GIS date_import"
+    },
+    "ingestion": {
+     "value": "2026-10-21T09:27:18.282Z",
+     "kind": "the last run that read new content for the lane"
+    },
+    "lastCheck": {
+     "at": "2026-10-21T09:27:18.282Z",
+     "origin": "run-log",
+     "runState": "SUCCESS",
+     "lastGoodAt": "2026-10-21T09:27:18.282Z",
+     "runLog": "2026-10-21T09:27:18.282Z",
+     "github": {
+      "lastSuccess": {
+       "id": 39577035289,
+       "at": "2026-10-21T09:26:58Z",
+       "event": "schedule",
+       "conclusion": "success"
+      },
+      "lastFailure": {
+       "id": 39401290154,
+       "at": "2026-10-20T09:31:26Z",
+       "event": "schedule",
+       "conclusion": "failure"
+      }
+     }
+    },
+    "cadence": {
+     "workflow": "dd-sync.yml",
+     "rebuiltBy": null,
+     "cron": [
+      "23 4 * * 0-4"
+     ],
+     "staleAfterHours": 100,
+     "previous": "2026-10-21T04:23:00.000Z",
+     "next": "2026-10-22T04:23:00.000Z"
+    },
+    "lag": {
+     "state": null,
+     "basis": "nightly source; no lag rule"
+    },
+    "state": "CURRENT",
+    "stateRule": "checked on schedule; the source documents no lag",
+    "evidence": [
+     "data/dd/latest.json",
+     "data/dd/sync-runs.jsonl"
+    ],
+    "findings": []
+   },
+   {
+    "id": "cbs:average-dwelling-price",
+    "label": "CBS Table 2.2 average dwelling prices (transcribed into index.html PRICE_SRC / PRICE_BASIS)",
+    "vertical": "market",
+    "latestObservation": {
+     "value": "2026-Q2",
+     "kind": "the quarter transcribed (provisional)"
+    },
+    "publication": {
+     "value": "Price Statistics Monthly No. 7/2026",
+     "kind": "the CBS edition read"
+    },
+    "ingestion": {
+     "value": "19.10.2026",
+     "kind": "transcribed by hand"
+    },
+    "lastCheck": {
+     "at": null,
+     "origin": null,
+     "runState": "NO_RUN",
+     "lastGoodAt": null,
+     "runLog": null,
+     "github": null
+    },
+    "cadence": {
+     "workflow": null,
+     "rebuiltBy": null,
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "ASSUMPTION — a quarter's average prices appear with the price-statistics release about 6–7 weeks after the quarter; Q3 2026 is not expected before mid-November 2026 — check by hand"
+    },
+    "state": "DATED_BUILD",
+    "stateRule": "no schedule — a dated build or transcription",
+    "evidence": [
+     "index.html (PRICE_SRC · PRICE_BASIS, read only)",
+     "lib/trust/catalog.js cbs:average-dwelling-price"
+    ],
+    "findings": []
+   },
+   {
+    "id": "datagov:geo-registry",
+    "label": "the locality registry (dated build)",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-08-31",
+     "kind": "registry built"
+    },
+    "publication": {
+     "value": null,
+     "kind": "mirror snapshots"
+    },
+    "ingestion": {
+     "value": "2026-08-31",
+     "kind": "the build"
+    },
+    "lastCheck": {
+     "at": "2026-08-31",
+     "origin": "run-log",
+     "runState": "NO_RUN",
+     "lastGoodAt": null,
+     "runLog": "2026-08-31",
+     "github": null
+    },
+    "cadence": {
+     "workflow": null,
+     "rebuiltBy": null,
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "rebuilt on demand (scripts/build-geo-registry.py)"
+    },
+    "state": "DATED_BUILD",
+    "stateRule": "no schedule — a dated build or transcription",
+    "evidence": [
+     "data/geo/registry-meta.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "propx:plan-boundaries",
+    "label": "every Xplan plan boundary (street report)",
+    "vertical": "planning",
+    "latestObservation": {
+     "value": "2026-10-21T07:21:20.726Z",
+     "kind": "the read of the layer (37701/37701 plans, complete true)"
+    },
+    "publication": {
+     "value": null,
+     "kind": "the layer states no publication date"
+    },
+    "ingestion": {
+     "value": "2026-10-21T07:21:20.726Z",
+     "kind": "the build"
+    },
+    "lastCheck": {
+     "at": null,
+     "origin": null,
+     "runState": null,
+     "lastGoodAt": null,
+     "runLog": null,
+     "github": null
+    },
+    "cadence": {
+     "workflow": "street-planning-sync.yml",
+     "rebuiltBy": null,
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "no schedule: plan statuses change continuously, the stored boundaries / stages are as of the build"
+    },
+    "state": "DATED_BUILD",
+    "stateRule": "no schedule — a dated build or transcription",
+    "evidence": [
+     "data/planning/national/meta.json"
+    ],
+    "findings": []
+   },
+   {
+    "id": "propx:street-geo",
+    "label": "street points from the GovMap-layer file (street report)",
+    "vertical": "geo",
+    "latestObservation": {
+     "value": "2026-10-21T07:10:15.762Z",
+     "kind": "built from the file a410a5226a33"
+    },
+    "publication": {
+     "value": "2026-10-08T01:47:52.610708+00:00",
+     "kind": "the GovMap-layer dataset version the file belongs to"
+    },
+    "ingestion": {
+     "value": "2026-10-21T07:10:15.762Z",
+     "kind": "the build"
+    },
+    "lastCheck": {
+     "at": null,
+     "origin": null,
+     "runState": null,
+     "lastGoodAt": null,
+     "runLog": null,
+     "github": null
+    },
+    "cadence": {
+     "workflow": "street-geo-build.yml",
+     "rebuiltBy": null,
+     "cron": [],
+     "staleAfterHours": null,
+     "previous": null,
+     "next": null
+    },
+    "lag": {
+     "state": null,
+     "basis": "no schedule: rebuilt by hand / on a push of the build script"
+    },
+    "state": "DATED_BUILD",
+    "stateRule": "no schedule — a dated build or transcription",
+    "evidence": [
+     "data/geo/street-geo/meta.json"
+    ],
+    "findings": []
+   }
+  ],
+  "transactions": {
+   "contract": [
+    "transaction date (latestDeal)",
+    "source copy (snapshot / load)",
+    "republisher dataset version detected (publication of the copy)",
+    "PROPX ingestion (sweep / read)",
+    "PROPX check"
+   ],
+   "register": {
+    "source": "over:deals-register (the Tax Authority register as republished by over.org.il — not a government channel)",
+    "latestDeal": "2026-09-17",
+    "copy": "2026-09-19 11:07:39.013275+00",
+    "version": {
+     "n": 5,
+     "detectedAt": "2026-09-19T11:20:54.427407+00:00"
+    },
+    "window": {
+     "from": "2023-09-18",
+     "to": "2026-09-17",
+     "months": 36
+    },
+    "ingestion": {
+     "status": "COMPLETE",
+     "completedAt": "2026-10-19T12:40:56.299Z",
+     "localities": "1036/1036"
+    },
+    "lastCheck": "2026-10-21T20:44:22.622Z",
+    "state": {
+     "state": "STALE",
+     "ageDays": 32
+    },
+    "fill": [
+     {
+      "month": "2026-04",
+      "dwellings": 4541
+     },
+     {
+      "month": "2026-05",
+      "dwellings": 6968
+     },
+     {
+      "month": "2026-06",
+      "dwellings": 6156
+     },
+     {
+      "month": "2026-07",
+      "dwellings": 3101
+     },
+     {
+      "month": "2026-08",
+      "dwellings": 981
+     },
+     {
+      "month": "2026-09",
+      "dwellings": 72
+     }
+    ],
+    "note": "deals reach the register weeks to months after signing: the copy of 19.09.2026 held ≈ 41 % of July and ≈ 13 % of August 2026 (lib/gov/freshness.js BASIS) — a latest deal is not a complete month"
+   },
+   "recent": {
+    "source": "over:govmap-recent (the GovMap deals layer as republished by over.org.il — not a government channel)",
+    "latestDeal": "2026-09-28",
+    "latestShown": "2026-09-28",
+    "copy": "2026-10-08T01:50:12.803824+00:00",
+    "version": 4,
+    "window": {
+     "from": "2026-07-04",
+     "registerLastDeal": "2026-09-17",
+     "lagDays": 75,
+     "to": "2026-10-08",
+     "contextFrom": "2026-06-28"
+    },
+    "ingestion": "2026-10-20T08:00:55.599Z",
+    "reconciledAgainst": "2026-09-19 11:07:39.013275+00",
+    "reconciledAgainstCurrentRegister": true,
+    "shown": {
+     "rows": 4403,
+     "kinds": {
+      "TYPE_NOT_STATED": 866,
+      "DWELLING": 3400,
+      "NON_DWELLING": 137
+     }
+    },
+    "note": "shown apart, never priced: the copy states no ownership share (VERIFIED 0)"
+   },
+   "national": {
+    "version": {
+     "n": 4,
+     "detectedAt": "2026-10-08T01:47:52.610708+00:00"
+    },
+    "builtAt": "2026-10-20T18:55:44.262Z",
+    "fileMaxDate": "2048-05-29",
+    "latestShown": "2026-07-13",
+    "lastCheck": "2026-10-20T17:58:41.846Z",
+    "lastCheckStatus": "UNCHANGED"
+   },
+   "union": {
+    "latestEvent": "2026-09-28",
+    "builtAt": "2026-10-21T09:20:04.189Z",
+    "districts": {
+     "d-center": {
+      "latest": "2026-09-10",
+      "events": 97454
+     },
+     "d-haifa": {
+      "latest": "2026-09-07",
+      "events": 55969
+     },
+     "d-jm": {
+      "latest": "2026-09-07",
+      "events": 32626
+     },
+     "d-north": {
+      "latest": "2026-09-09",
+      "events": 50470
+     },
+     "d-south": {
+      "latest": "2026-09-17",
+      "events": 69528
+     },
+     "d-ta": {
+      "latest": "2026-09-28",
+      "events": 68294
+     },
+     "js-area": {
+      "latest": "2026-09-02",
+      "events": 3117
+     }
+    },
+    "largestLocalities": [
+     {
+      "code": 3000,
+      "name": "ירושלים",
+      "residents": 1117553,
+      "union": "2026-09-01",
+      "register": "2026-08-24",
+      "govmapRecent": "2026-09-01",
+      "govmapNational": "2026-07-02"
+     },
+     {
+      "code": 5000,
+      "name": "תל אביב - יפו",
+      "residents": 601994,
+      "union": "2026-08-30",
+      "register": "2026-07-26",
+      "govmapRecent": "2026-08-30",
+      "govmapNational": "2026-07-02"
+     },
+     {
+      "code": 4000,
+      "name": "חיפה",
+      "residents": 343978,
+      "union": "2026-09-02",
+      "register": "2026-08-23",
+      "govmapRecent": "2026-09-02",
+      "govmapNational": "2026-07-03"
+     },
+     {
+      "code": 8300,
+      "name": "ראשון לציון",
+      "residents": 289818,
+      "union": "2026-09-02",
+      "register": "2026-07-21",
+      "govmapRecent": "2026-09-02",
+      "govmapNational": "2026-07-03"
+     },
+     {
+      "code": 7400,
+      "name": "נתניה",
+      "residents": 289793,
+      "union": "2026-09-02",
+      "register": "2026-08-05",
+      "govmapRecent": "2026-09-02",
+      "govmapNational": "2026-07-01"
+     },
+     {
+      "code": 7900,
+      "name": "פתח תקווה",
+      "residents": 284177,
+      "union": "2026-09-02",
+      "register": "2026-07-18",
+      "govmapRecent": "2026-09-02",
+      "govmapNational": "2026-07-02"
+     },
+     {
+      "code": 70,
+      "name": "אשדוד",
+      "residents": 260992,
+      "union": "2026-09-07",
+      "register": "2026-09-07",
+      "govmapRecent": "2026-08-30",
+      "govmapNational": "2026-07-02"
+     },
+     {
+      "code": 6100,
+      "name": "בני ברק",
+      "residents": 245691,
+      "union": "2026-09-28",
+      "register": "2026-08-02",
+      "govmapRecent": "2026-09-28",
+      "govmapNational": "2026-07-01"
+     },
+     {
+      "code": 9000,
+      "name": "באר שבע",
+      "residents": 233580,
+      "union": "2026-09-03",
+      "register": "2026-07-27",
+      "govmapRecent": "2026-09-03",
+      "govmapNational": "2026-07-03"
+     },
+     {
+      "code": 6600,
+      "name": "חולון",
+      "residents": 211541,
+      "union": "2026-09-02",
+      "register": "2026-07-21",
+      "govmapRecent": "2026-09-02",
+      "govmapNational": "2026-06-30"
+     }
+    ],
+    "basis": "the ten localities with the most registered residents (data/reference/residents, the population register)"
+   },
+   "monitor": {
+    "checkedAt": "2026-10-21T20:44:22.622Z",
+    "state": "STALE",
+    "alerts": [
+     "MATERIAL_LAG",
+     "OFFICIAL_UNREACHABLE",
+     "OFFICIAL_UNREACHABLE",
+     "OFFICIAL_UNREACHABLE"
+    ],
+    "newerCopies": [
+     {
+      "id": "over:govmap-layer",
+      "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+      "latestTransactionDate": "2026-09-28",
+      "readByPropx": true
+     }
+    ],
+    "official": [
+     {
+      "id": "taxes:nadlan-register",
+      "status": null,
+      "answered": false,
+      "refused": false,
+      "antiBot": null
+     },
+     {
+      "id": "nadlan.gov.il",
+      "status": 200,
+      "answered": false,
+      "refused": false,
+      "antiBot": "recaptcha"
+     },
+     {
+      "id": "govmap.gov.il",
+      "status": 403,
+      "answered": false,
+      "refused": true,
+      "antiBot": "the request could not be satisfied"
+     }
+    ]
+   },
+   "actions": [
+    {
+     "kind": "STREET_GEO_OLDER_SCRIPT",
+     "source": "propx:street-geo",
+     "held": "22571 source-neighbourhood street keys in the layer's raw form (locality × 10,000 + code) in 79 locality files",
+     "served": "scripts/street-geo-build.py decodes them (4d7adb2, 21.10.2026)",
+     "workflow": "street-geo-build.yml",
+     "why": "the stored build predates the current build script (the run for 4d7adb2 lost its push to a rebase conflict — GitHub run 39560045045); no reader uses the field today"
+    }
+   ],
+   "integrity": {
+    "recentClasses": {
+     "FUTURE_DATED": 36,
+     "RECENT_NEW": 4403,
+     "IN_REGISTER_OTHER_UNIT": 1953,
+     "IN_REGISTER": 1249,
+     "DUPLICATE_IN_SOURCE": 1919,
+     "POSSIBLE_DUPLICATE_IN_SOURCE": 63,
+     "POSSIBLY_IN_REGISTER": 10,
+     "NO_SETTLEMENT": 37,
+     "AMBIGUOUS_DUPLICATE": 30,
+     "UNMAPPED_SETTLEMENT": 1,
+     "CONTEXT_BEFORE_WINDOW": 2199
+    },
+    "recentPromotion": {
+     "RECENT_OBSERVED_VERIFIED": 0,
+     "RECENT_OBSERVED_LIMITED": 2348,
+     "RECENT_CONTEXT_ONLY": 1098,
+     "RECENT_CONFLICT": 50,
+     "RECENT_UNRESOLVED": 907
+    },
+    "recentConfirmed": 0,
+    "registerCounts": {
+     "localities": 1036,
+     "staleShards": 0,
+     "rows": 342471,
+     "transactions": 342471,
+     "dwelling": 266890,
+     "byState": {
+      "OBSERVED": 117231,
+      "POSSIBLE": 59901,
+      "UNRESOLVED": 2169,
+      "NO_ADDRESS": 87589
+     },
+     "priced": 194141,
+     "notMarket": 4351,
+     "bulk": 9951,
+     "streetsWithObserved": 13015,
+     "streetsWithPossibleOnly": 3822,
+     "duplicatesCollapsed": 72226
+    },
+    "unionUnexplained": 0,
+    "unionPossibleDuplicates": {
+     "recentWindow": 103,
+     "national": 3119
+    },
+    "unionUnresolved": {
+     "geography": 2577,
+     "streetInLocality": 1758,
+     "typeNotStated": 866
+    },
+    "completenessNotSurfaced": 0,
+    "completenessBuiltAt": "2026-10-20T23:14:45.337Z",
+    "coverageAudit": {
+     "builtAt": "2026-10-21T08:56:00.560Z",
+     "missed": 304,
+     "folded": null,
+     "note": "built before the fold accounting (22.10.2026): rows folded into a register event were counted as missed — see scripts/txevents-audit.js"
+    },
+    "nationalUnplaced": 710,
+    "nationalInvalid": 36,
+    "futureDated": 36
+   }
+  }
+ }
+}

@@ -46,11 +46,18 @@ jobs:
           set +e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/geo/street-geo
-          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
-          git commit -q -m "Street geography: parcel / building points per official street (GovMap-layer file, validated)"
+          # the build replaces the whole directory: on every attempt this run's complete build is placed on the NEWEST branch head
+          # (never a rebase of binary .json.gz files onto another build's — run 39560045045 lost its push to such a conflict and left
+          # the previous script's build in place); runs are serialized by the concurrency group, so the latest build wins
+          BUILD="$RUNNER_TEMP/street-geo.build"
+          rm -rf "$BUILD" && cp -a data/geo/street-geo "$BUILD" || { echo 'could not keep the build' >&2; exit 1; }
           for i in 1 2 3 4 5; do
-            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            if git fetch -q --depth=1 origin "$GITHUB_REF_NAME" && git reset -q --hard FETCH_HEAD; then
+              rm -rf data/geo/street-geo && cp -a "$BUILD" data/geo/street-geo
+              git add -A data/geo/street-geo
+              if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+              git commit -q -m "Street geography: parcel / building points per official street (GovMap-layer file, validated)" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            fi
             sleep $((i * 15))
           done
           echo 'Push failed after 5 attempts.' >&2

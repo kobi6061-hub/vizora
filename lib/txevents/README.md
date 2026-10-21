@@ -123,9 +123,10 @@ transaction sources. Some recent transactions may appear before all pricing deta
 | `index.js` | `query()` (scope · period · paging), `resolveScope`, `coverageOf`, `recencyOf`, `statementOf`, `liveEvents`, `wire` |
 | `build.js` + `../../scripts/txevents-build.js` | the offline build → `data/txevents/` (`links.json`, `recent-extra.json`, `parcel-streets.json`, `latest.json`, `completeness.json`) |
 | `../../scripts/txevents-national.js` + `txevents-gpkg.py` + `.github/workflows/txevents-national.yml` | the national missed-deal detector: version check every three hours; on a new GovMap-layer version, one GET of its GeoPackage, validated against the API window, reconciled nationally → `data/txevents/national/` |
-| `../../scripts/txevents-audit.js` | the national stratified coverage audit → `data/txevents/coverage-audit.json` |
+| `../../scripts/txevents-audit.js` | the national stratified coverage audit → `data/txevents/coverage-audit.json` — MISSED = a GovMap row neither an event of the read nor FOLDED into a register event the read shows (`kit.js` `surfaceAccount`; folded rows counted apart since 22.10.2026 — before, the 304 rows folded into register deals under unmapped settlement names read as missed) |
 | `history.js` + `../../scripts/txevents-history.js` + `txevents-history-index.js` | the GovMap layer's history (year + locality partitions), `fold`, `span` |
-| `unplaced.js` · `recover.js` · `kit.js` | the unplaced events; the locality recovery; the shared extract readers |
+| `unplaced.js` · `recover.js` · `kit.js` | the unplaced events; the locality recovery; the shared extract readers + the audit's surfaced / folded / missed accounting |
+| `runlog.js` | when the detector RECORDS a check: an unchanged check at most every 12 hours, the last record read from `runs.jsonl` itself (`txevents-national.js --record-decision`; the commit time asked of git in the depth-1 checkout was the branch head's, which kept every unchanged check unrecorded on 21.10.2026) |
 | `../../scripts/txevents-register-unmapped.js` | the register's deals under unmapped settlement names (runner, one request a second; skipped when neither copy changed) |
 | `../../scripts/txevents-completeness.js` · `txevents-all-check.js` | the full-universe audit (offline) · the live ALL / latest check (runner) |
 | `../../scripts/tx-sources-discover.js` + `.github/workflows/tx-sources-discover.yml` | the source inventory and the regression-case capture (read-only) |
