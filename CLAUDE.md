@@ -110,12 +110,16 @@
   by track, new loans, LTV / PTI bands, balances, arrears — each dimension code verified against its codelist name; dossier "Housing finance") ·
   `lib/transport` (MoT stop registry + light-rail entrances with the layer's own month + rail / metro lists; stop-registry light-rail stops as
   separate evidence beside a planned status, never promoting it; street report) · `lib/surroundings` (MoEP contaminated-land register EXACT on
-  the street's parcels / ≤ 300 m, words verbatim; MoE institution points 2022 + latest school year by code ≤ 500 m; street report) ·
+  the street's parcels / ≤ 300 m, words verbatim; MoE institution points 2022 + each institution's latest year in the characteristics file, which
+  holds school years 2011–2015 ONLY — stated on the page / Trust / catalogue, never current; a read keeping 0 rows of a non-empty source is refused) ·
   `lib/planning/vatmal.js` (203 declared VATMAL complexes; INTERSECTS / NEARBY / AREA_WIDE in the street report's planning section — a
   declaration, never an approved plan) · `lib/cbs-sales` whole market (44,10,6 all sold · 44,10,7 second-hand · 44,10,2,2 subsidized by district;
   the 7047–7053 code set resolved by the NAME the API returns; dossier "All dwellings sold" + second-hand share over a dated 12-month window).
   Search: `scripts/search-discoverability-audit.js` → `data/geo/streets/search-audit.json` (every searchable row in its locality / by name /
   plainly, pinned to the index hashes; `test/search.test.js` gate).
+  DEPLOY CONSTRAINT: Vercel rejects the WHOLE deployment when a `functions[*].includeFiles` string exceeds 256 characters (schema) — 4d6dcc5
+  pushed `api/intel.js` to 338 and every Preview build failed until c1a46c1 (brace groups, 234; `vercel build` 207.8 MB of the 250 MB function
+  limit). Gates match files through `test/helpers/vercel-include.js` (never the pattern's spelling); `test/entities.test.js` holds the 256 cap.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
