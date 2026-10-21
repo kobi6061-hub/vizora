@@ -405,7 +405,9 @@ t('API: view=street 400 for a malformed id, 404 for an id the directory does not
 t('page: the geo search sends the selected locality, labels kind / synonym / historical, and a street opens Street Intelligence (never the board\'s city metrics)', () => {
   const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.match(page, /"\/api\/geo\/search\?limit=12&q="\+encodeURIComponent\(qq\)\+\(near\?"&near="/);
-  assert.match(page, /if\(g\.kind==="street"&&\/\^st:\\d\+:\\d\+\$\/\.test\(String\(g\.id\|\|""\)\)\)\{\s*const body=el\("geoBody"\);body\.innerHTML=siHTML\(g\)/);
+  /* the street report (lib/streets/report.js) leads, and the full Street Intelligence view follows it in the same body — never the
+     board's city metrics */
+  assert.match(page, /if\(g\.kind==="street"&&\/\^st:\\d\+:\\d\+\$\/\.test\(String\(g\.id\|\|""\)\)\)\{\s*(?:\/\*[^*]*\*\/\s*)?const body=el\("geoBody"\);body\.innerHTML=(?:srHTML\(g\)\+`[^`]*\$\{)?siHTML\(g\)/);
   for (const k of ['geoTagArea', 'geoTagSite', 'geoSynOf', 'geoHist', 'geoMore']) assert.ok((page.match(new RegExp(k + ':', 'g')) || []).length >= 2, k + ' in both languages');
   /* the street view is the server's evidence only: openGeoView calls the one loader of GET /api/intel?view=street, the renderer
      generates nothing (no random, no invented figure, no board metric) — the removed synthetic street layer stays absent */

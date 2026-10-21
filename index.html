@@ -651,6 +651,7 @@ tr.txe-dup td{opacity:.7}
 .sr-nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:3;background:var(--panel);padding:6px 0 8px;border-bottom:1px solid var(--hairline)}
 .sr-outs{margin-top:8px;align-items:center}
 .sr-sec>summary{font-size:14px}
+.sr-xp{display:flex;justify-content:flex-end;margin:-4px 0 2px}
 .sr-crumb{display:flex;flex-wrap:wrap;margin-top:6px;border:1px solid var(--hairline);border-radius:11px;overflow:hidden}
 .sr-crumb>span{flex:1 1 140px;padding:8px 12px;border-inline-end:1px solid var(--hairline);font-size:13px;font-weight:700;color:var(--ink)}
 .sr-crumb>span:last-child{border-inline-end:0}
@@ -667,8 +668,8 @@ tr.txe-dup td{opacity:.7}
 .sr-k{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:0 5px;margin-inline-end:4px;background:var(--panel-2);color:var(--ink-2);font-style:normal}
 .sr-k.MODEL{color:var(--brass)} .sr-k.INTERPRETATION{color:var(--c2)} .sr-k.FACT{color:var(--conf-high)}
 .sr-filters{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0}
-.sr-ff input,.sr-ff select{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
-.sr-ff input{width:84px}
+.sr-ff input[type=number],.sr-ff select{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
+.sr-ff input[type=number]{width:84px}
 .sr-ff>span{font-size:11px;font-weight:700;color:var(--ink-3)}
 .sr-chk{font-size:12px;font-weight:600;color:var(--ink-2);display:inline-flex;gap:5px;align-items:center}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
@@ -695,7 +696,7 @@ tr.txe-dup td{opacity:.7}
 .sr-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--ink-2);margin-top:6px}
 .sr-leg i{display:inline-block;width:14px;height:10px;margin-inline-end:5px;vertical-align:-1px;border-radius:2px}
 .sr-leg i.pt{background:var(--down);border-radius:99px;width:10px} .sr-leg i.int{background:var(--accent);opacity:.5} .sr-leg i.near{border:1.5px dashed var(--ink-3)} .sr-leg i.tr{border:2px dashed var(--brass)}
-@media (max-width:640px){.sr-crumb>span{flex-basis:45%}.sr-ff input{width:70px;min-height:38px}.sr-nav{position:static}}
+@media (max-width:640px){.sr-crumb>span{flex-basis:45%}.sr-ff input[type=number]{width:70px;min-height:38px}.sr-nav{position:static}}
 @media print{body.sr-printing *{visibility:hidden} body.sr-printing #geoView,body.sr-printing #geoView *{visibility:visible} body.sr-printing #geoView{position:absolute;inset:0 auto auto 0;width:100%} body.sr-printing .sr-nav,body.sr-printing .sr-outs,body.sr-printing form,body.sr-printing .sr-filters,body.sr-printing #geoCloseBtn{display:none!important}}
 
 .gv-m.lim{border-style:dashed}
@@ -7759,7 +7760,7 @@ const SRT={he:{
     per:{all:"הכל",d30:"30 יום",d90:"90 יום",m6:"6 חודשים",m12:"12 חודשים",m24:"24 חודשים"},
     f:{rooms:"חדרים",area:"מ״ר",price:"מחיר ₪",min:"מ־",max:"עד",kind:"סוג",kinds:{"":"הכל",DWELLING:"מגורים",NON_DWELLING:"לא מגורים",TYPE_NOT_STATED:"סוג לא צוין"},stats:"רק מחירים שבסטטיסטיקה",apply:"החל",reset:"נקה"},
     cols:["תאריך","כתובת","מחיר","₪ למ״ר","חדרים","קומה","מ״ר","סוג נכס","גוש/חלקה/תת","התאמה","מקור","מצב PROPX"],
-    more:"טען עוד",csv:"ייצוא CSV",shown:(a,b)=>`מוצגות ${a} מתוך ${b}`,cover:"כיסוי שדות",hist:"לפני חלון 36 החודשים",histN:n=>`${n} רשומות היסטוריות משכבת GovMap (לפני החלון)`,
+    more:"טען עוד",csv:"ייצוא CSV",shown:(a,b)=>`מוצגות ${a} מתוך ${b}`,cover:"כיסוי שדות",hist:"לפני חלון 36 החודשים",histN:n=>`${n} רשומות היסטוריות משכבת GovMap לפני החלון (בתקופה "הכל")`,
     liveAll:"היסטוריה מלאה חיה (הרשם) — בטבלת העסקאות של העמוד",areaBasis:"רחובות במרחק עד",areaNone:"אין רחובות ממוקמים בסביבה",
     det:{id:"מזהה אירוע",match:"התאמה",reasons:"סיבות",copy:"עותק המקור",first:"נקרא לראשונה",notes:"הערות",also:"גם במקור",conflict:"סתירה",built:"שנת בנייה",newness:"חדש/יד שנייה",portion:"חלק נמכר",basis:"בסיס הכתובת"},
     pxH:"מחירים והשוואה הוגנת",lvl:{STREET:"הרחוב",NEIGHBOURHOOD_VERIFIED:"שכונה מאומתת",NEIGHBOURHOOD_SOURCE_LABEL:"שכונה (תווית מקור)",CITY:"העיר",DISTRICT:"המחוז"},
@@ -7805,7 +7806,7 @@ const SRT={he:{
     per:{all:"All",d30:"30 days",d90:"90 days",m6:"6 months",m12:"12 months",m24:"24 months"},
     f:{rooms:"Rooms",area:"m²",price:"Price ₪",min:"from",max:"to",kind:"Type",kinds:{"":"All",DWELLING:"Dwelling",NON_DWELLING:"Non-dwelling",TYPE_NOT_STATED:"Type not stated"},stats:"Only prices used in statistics",apply:"Apply",reset:"Clear"},
     cols:["Date","Address","Price","₪/m²","Rooms","Floor","m²","Property type","Block/parcel/sub","Match","Source","PROPX state"],
-    more:"Load more",csv:"Export CSV",shown:(a,b)=>`showing ${a} of ${b}`,cover:"Field coverage",hist:"before the 36-month window",histN:n=>`${n} historical rows from the GovMap layer (before the window)`,
+    more:"Load more",csv:"Export CSV",shown:(a,b)=>`showing ${a} of ${b}`,cover:"Field coverage",hist:"before the 36-month window",histN:n=>`${n} historical rows from the GovMap layer before the window (in "All")`,
     liveAll:"Full live history (the register) — in the page's transactions table",areaBasis:"streets within",areaNone:"no located streets nearby",
     det:{id:"Event id",match:"Match",reasons:"Reasons",copy:"Source copy",first:"First read",notes:"Notes",also:"Also in",conflict:"Conflict",built:"Year built",newness:"New / second-hand",portion:"Share sold",basis:"Address basis"},
     pxH:"Prices and fair comparison",lvl:{STREET:"The street",NEIGHBOURHOOD_VERIFIED:"Verified neighbourhood",NEIGHBOURHOOD_SOURCE_LABEL:"Neighbourhood (source label)",CITY:"The city",DISTRICT:"The district"},
@@ -7846,6 +7847,8 @@ const srCls={OFFICIAL:"raw",VERIFIED:"raw",DERIVED:"der",MODEL:"mod",MISSING:"na
    carries its kind label, no class chip */
 const srTag=c=>!c||c==="INTERPRETATION"?"":c==="SOURCE LABEL"?`<span class="vc static">${srT().srcLabel}</span>`:c==="OBSERVED"?`<span class="vc obs" title="${ldE(srT().obsTip)}">${srT().obs}</span>`:srCls[c]?vcTag(srCls[c]):`<span class="vc static">${ldE(c)}</span>`;
 const srSt=s=>s?(siT().states[s]||s):"—";
+/* the Street Value Model's own reason for no estimate, in the page's words (Street Intelligence's table) */
+const srModWhy=M=>{const k=M&&M.reason;return k?(siT().unav&&siT().unav[k])||k:""};
 async function srLoad(id){
   if(srState.id===id&&(srState.core||srState.full))return;
   Object.assign(srState,{id,core:null,full:null,err:null,tx:null,txRows:[],txQ:{...SR_TXQ0},txErr:null,openRow:null,prop:null});
@@ -7884,6 +7887,7 @@ async function srProp(id,fd){
   if(srState.id===id){srState.propLoading=false;renderGeoView()}
 }
 const srPct=v=>v==null?"—":`<bdi dir="ltr">${v>0?"+":""}${v}%</bdi>`;
+const srMoney=v=>v==null?"—":`<bdi dir="ltr">${v<0?"−":""}${fmtNIS(Math.abs(v))}</bdi>`;
 const srDist=m=>m==null?"—":m===0?srT().inside:`${fmtInt(m)} ${state.lang==="en"?"m":"מ׳"}`;
 /* the street's own map: its located parcels / buildings and the plan boundaries around it — vector only, from PROPX's own data */
 function srMapSVG(R){
@@ -7963,7 +7967,7 @@ function srHTML(g){
   const nbS=H.neighbourhood.state;
   const nbName=H.neighbourhood.verified?H.neighbourhood.verified.name:H.neighbourhood.sourceLabel?H.neighbourhood.sourceLabel.name:t.nbState.UNRESOLVED;
   const crumb=`<nav class="sr-crumb" aria-label="hierarchy"><span><small>${t.hier.district}</small>${ldE(he?H.district.he:H.district.en)||dash}</span><span><small>${t.hier.city}</small>${ldE(he?H.city.he:enTitle(H.city.en)||H.city.he)}</span>
-    <span><small>${t.hier.nb}</small>${ldE(nbName)} <span class="sr-nb ${nbS}" title="${ldE(t.nbWhy[nbS])}">${t.nbState[nbS]}${H.neighbourhood.sourceLabel&&nbS!=="VERIFIED"?` · ${H.neighbourhood.sourceLabel.sharePct}%`:""}</span></span>
+    <span><small>${t.hier.nb}</small>${ldE(nbName)} <span class="sr-nb ${nbS}" title="${ldE(t.nbWhy[nbS])}">${t.nbState[nbS]}${H.neighbourhood.sourceLabel&&nbS!=="VERIFIED"?` · ${H.neighbourhood.sourceLabel.sharePct}%`:""}</span>${nbS!=="VERIFIED"&&H.neighbourhood.sourceLabel?xpBtn("street_report_source_label"):""}</span>
     <span><small>${t.hier.street}</small><b>${ldE(I.name)}</b></span><span><small>${t.hier.bld}</small>${R.buildings?fmtInt(R.buildings.length):dash}</span></nav>
     <p class="gv-note">${ldE(t.nbWhy[nbS])}${H.neighbourhood.sourceLabel&&H.neighbourhood.sourceLabel.others&&H.neighbourhood.sourceLabel.others.length?` · ${H.neighbourhood.sourceLabel.others.map(o=>`${ldE(o.name)} ${o.sharePct}%`).join(" · ")}`:""}</p>`;
   const L=O.latest;
@@ -7974,7 +7978,7 @@ function srHTML(g){
   const kpis=`<div class="st-grid">${tile(t.k.sample,st?`${fmtInt(st.priced)} / ${fmtInt(st.observed)}`:dash,st?t.sampleSub(srSt(st.state)):"","OBSERVED")}
     ${tile(t.k.sqm,st&&st.medianPricePerSqm!=null?fmtNIS(st.medianPricePerSqm):dash,"","OBSERVED")}
     ${tile(t.k.vsCity,city&&city.streetVsLevelPct!=null?srPct(city.streetVsLevelPct):dash,city&&city.medianPricePerSqm!=null?fmtNIS(city.medianPricePerSqm):"","DERIVED")}
-    ${tile(t.k.model,M&&M.value!=null?fmtNIS(M.value):dash,M&&M.value!=null?`${M.tier}${M.range?` · ${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}`:""}`:ldE(M&&M.reason||""),M&&M.value!=null?"MODEL":"MISSING")}
+    ${tile(t.k.model,M&&M.value!=null?fmtNIS(M.value):dash,M&&M.value!=null?`${M.tier}${M.range?` · ${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}`:""}`:ldE(srModWhy(M)),M&&M.value!=null?"MODEL":"MISSING")}
     ${tile(t.k.plans,P?fmtInt(P.intersects):R.planning&&R.planning.deferred?"…":dash,P?`${P.nearby} · ${P.pending}`:"","OFFICIAL")}
     ${tile(t.k.transit,P&&P.transitNearestM!=null?srDist(P.transitNearestM):R.planning&&R.planning.deferred?"…":dash,P?`${P.transit}`:"","OFFICIAL")}
     ${tile(t.k.located,R.map&&R.map.available?fmtInt(R.map.located):dash,R.map&&R.map.available?srDist(R.map.extentM):"","OBSERVED")}</div>`;
@@ -7988,7 +7992,7 @@ function srHTML(g){
   const lvls=C.rows.filter(r=>r.bands).map(r=>r.level);
   const segRows=C.segments.rows.map(s=>`<tr><td class="num">${ldE(s.band)}</td>${lvls.map(l=>{const v=s[l];return `<td class="num">${v&&v.medianPricePerSqm!=null?fmtNIS(v.medianPricePerSqm):dash}<span class="txe-src">n=${v?fmtInt(v.priced):0}</span></td>`}).join("")}</tr>`).join("");
   const modelCard=M&&M.value!=null?`<div class="sv-card sv-mod"><div class="sv-h">${t.modelH} ${vcTag("mod")}</div><div class="sv-v num">${fmtNIS(M.value)} / ${he?"מ״ר":"m²"}</div>
-      <div class="sv-s">${t.tier}: ${ldE(M.tier)}${M.range?` · ${t.range}: <bdi dir="ltr">${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}</bdi>`:""} · ${t.asOf} ${siDate(M.asOf)}${M.priceLevelQuarter?` · ${ldE(M.priceLevelQuarter)}`:""}</div></div>`:`<p class="gv-note">${t.modelNone} ${ldE(M&&M.reason||"")}</p>`;
+      <div class="sv-s">${t.tier}: ${ldE(M.tier)}${M.range?` · ${t.range}: <bdi dir="ltr">${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}</bdi>`:""} · ${t.asOf} ${siDate(M.asOf)}${M.priceLevelQuarter?` · ${ldE(M.priceLevelQuarter)}`:""}</div></div>`:`<p class="gv-note">${t.modelNone} — ${ldE(srModWhy(M))}</p>`;
   const prices=`<div class="st-wrap"><table class="st-tbl sr-px"><thead><tr>${t.pxCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${pxRows}</tbody></table></div>
     <p class="gv-note">${t.cmpRule} ${t.cmpNot}</p><h4>${t.seg}</h4>
     <div class="st-wrap"><table class="st-tbl"><thead><tr><th></th>${lvls.map(l=>`<th>${t.lvl[l]||l}</th>`).join("")}</tr></thead><tbody>${segRows}</tbody></table></div>${modelCard}`;
@@ -8033,10 +8037,10 @@ function srHTML(g){
       ${Sx.similar&&Sx.similar.length?`<h4>${t.similar}</h4><p class="gv-note">${t.simRule(fmtInt(PR.inputs.sqm),PR.inputs.rooms!=null?(PR.inputs.rooms<3?"≤2.5":PR.inputs.rooms<4?"3–3.5":PR.inputs.rooms<5?"4–4.5":"5+"):null)}</p><div class="st-wrap"><table class="st-tbl"><thead><tr><th>${t.cols[0]}</th><th>${t.cols[2]}</th><th>${t.cols[3]}</th><th>${t.cols[6]}</th><th>${t.cols[4]}</th><th>${t.det.built}</th><th>${t.cols[1]}</th></tr></thead><tbody>
         ${Sx.similar.map(d=>`<tr><td class="num">${siDate(d.date)}</td><td class="num">${fmtNIS(d.amount)}</td><td class="num">${fmtNIS(d.pricePerSqm)}</td><td class="num">${fmtInt(d.areaSqm)}</td><td class="num">${d.rooms!=null?d.rooms:dash}</td><td class="num">${d.yearBuilt||dash}</td><td class="w"><bdi>${ldE((d.houses||[]).join(", "))}</bdi> · ${ldE(d.parcel)}</td></tr>`).join("")}</tbody></table></div>`:""}
       <h4>${t.scen} ${vcTag("usr")}</h4>${["bull","base","bear"].some(k=>PR.scenarios[k])?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.scenCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
-        ${["bull","base","bear"].filter(k=>PR.scenarios[k]).map(k=>{const s=PR.scenarios[k];return `<tr><td>${t.scenName[k]}</td><td class="num">${srPct(s.annualChangePct)}</td><td class="num">${fmtNIS(s.endValue)}</td><td class="num">${fmtNIS(s.priceGain)}</td><td class="num">${s.rentTotal!=null?fmtNIS(s.rentTotal):dash}</td><td class="num">${s.costs!=null?fmtNIS(s.costs):dash}</td><td class="num">${srPct(s.totalReturnPct)}</td></tr>`}).join("")}</tbody></table></div>`:`<p class="gv-note">${t.scenNone}</p>`}
+        ${["bull","base","bear"].filter(k=>PR.scenarios[k]).map(k=>{const s=PR.scenarios[k];return `<tr><td>${t.scenName[k]}</td><td class="num">${srPct(s.annualChangePct)}</td><td class="num">${fmtNIS(s.endValue)}</td><td class="num">${srMoney(s.priceGain)}</td><td class="num">${s.rentTotal!=null?fmtNIS(s.rentTotal):dash}</td><td class="num">${s.costs!=null?fmtNIS(s.costs):dash}</td><td class="num">${srPct(s.totalReturnPct)}</td></tr>`}).join("")}</tbody></table></div>`:`<p class="gv-note">${t.scenNone}</p>`}
       <p class="gv-note">${t.scenRule} ${t.propNot}</p>`;
   }
-  const propForm=`<h4>${t.propH} ${vcTag("usr")}</h4><form class="sv-apt sr-prop" data-srprop="1">${pf("askingPrice",'min="100000" step="1000" required')}${pf("sqm",'min="20" max="400" step="1" required')}${pf("rooms",'min="1" max="12" step="0.5"')}${pf("built",'min="1900" max="2030" step="1"')}
+  const propForm=`<h4>${t.propH} ${vcTag("usr")} ${xpBtn("street_report_property_assessment")}</h4><form class="sv-apt sr-prop" data-srprop="1">${pf("askingPrice",'min="100000" step="1000" required')}${pf("sqm",'min="20" max="400" step="1" required')}${pf("rooms",'min="1" max="12" step="0.5"')}${pf("built",'min="1900" max="2030" step="1"')}
     <label>${t.prop.newness}<select name="newness">${Object.entries(t.newOpt).map(([k,v])=>`<option value="${k}"${sv.newness===k?" selected":""}>${v}</option>`).join("")}</select></label>
     <label>${t.prop.type}<select name="type">${Object.entries(t.typeOpt).map(([k,v])=>`<option value="${k}"${sv.type===k?" selected":""}>${v}</option>`).join("")}</select></label>
     ${pf("rentMonthly",'min="0" step="50"')}${pf("holdYears",'min="1" max="30" step="1"')}${pf("bull",'min="-20" max="20" step="0.1"')}${pf("base",'min="-20" max="20" step="0.1"')}${pf("bear",'min="-20" max="20" step="0.1"')}${pf("costsPct",'min="0" max="20" step="0.1"')}
@@ -8044,16 +8048,16 @@ function srHTML(g){
   /* sources */
   const src=`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.srcCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${R.sources.map(s=>`<tr><td class="w">${ldE(s.name)} <span class="txe-src"><bdi>${ldE(s.id)}</bdi></span></td><td>${srTag(s.cls)}</td><td class="num">${s.asOf?siDate(s.asOf):"—"}</td></tr>`).join("")}</tbody></table></div>
     <h4>${t.missH}</h4><ul class="sr-miss">${R.missing.map(m=>`<li><b>${ldE(m.section)}</b> — ${ldE(m.reason)}${m.unlock?` · <span class="txe-src">${ldE(m.unlock)}</span>`:""}</li>`).join("")}</ul>`;
-  const sec=(id,h,body,open=true)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${h}</summary>${body}</details>`;
+  const sec=(id,h,body,open=true,xp)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${h}</summary>${xp?`<div class="sr-xp">${xpBtn(xp)}</div>`:""}${body}</details>`;
   const nav=`<div class="sr-nav">${Object.entries(t.nav).map(([k,v])=>`<button type="button" class="chip" data-srgo="${k}">${v}</button>`).join("")}</div>`;
   const outs=`<div class="st-acts sr-outs"><button type="button" class="chip" data-srprint="1">${t.out.print}</button><button type="button" class="chip" data-srjson="1">${t.out.json}</button><button type="button" class="chip" data-srcopy="1">${t.out.copy}</button>
     ${R.timings?`<span class="txe-src">${t.ms(R.timings.totalMs)}${R.part==="core"?" · "+t.loadingFull:""}</span>`:""}</div>`;
   return `<div class="sr" data-sr="${ldE(R.id)}" data-sr-part="${R.part}">${nav}${outs}
-    ${sec("ov",t.nav.ov,crumb+latest+kpis+`<h4>${t.understand}</h4>`+narr)}
-    ${sec("tx",t.txH,srTxTableHTML(R))}
-    ${sec("px",t.pxH,prices)}
-    ${sec("pl",t.plH,plan)}
-    ${sec("inv",t.invH,inv+propForm)}
+    ${sec("ov",t.nav.ov,crumb+latest+kpis+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
+    ${sec("tx",t.txH,srTxTableHTML(R),true,"transaction_event_sources")}
+    ${sec("px",t.pxH,prices,true,"street_report_fair_comparison")}
+    ${sec("pl",t.plH,plan,true,"street_report_relation")}
+    ${sec("inv",t.invH,inv+propForm,true,"street_report_assessment")}
     ${sec("map",t.mapH,R.part==="full"?srMapSVG(R):`<p class="gv-note">${t.loadingFull}</p>`)}
     ${sec("src",t.srcH,src,false)}</div>`;
 }

@@ -340,3 +340,44 @@ Gates: `test/model-deps.test.js`.
   and dwelling adjustments, ₪/m² as the reference flat, `consistent`
 - `GET /api/intel?view=streetApartment&id=&sqm=[&rooms=&newness=existing|new&built=&type=flat|garden|roof]` — the apartment estimate
 - `GET /api/intel?view=streetModelValidation` — the validation + coverage report
+
+## 7 · Street report — investment intelligence (21.10.2026, `propx-street-report-1`)
+
+`lib/streets/report.js` is a **composition layer**: it reads Street Intelligence (`street.js`), the transaction events (`lib/txevents` + the
+stored GovMap-layer history), the Street Value Model (`value-read.js`), the comparison benchmarks (`benchmarks.js`), the street points
+(`data/geo/street-geo/`) and the national plan boundaries (`data/planning/national/`). It creates no fact, ingests nothing at request time,
+and never re-labels, re-thresholds or re-counts what it reads (`test/street-report.test.js` COMPOSITION gate). None of the read models, the
+model or the knowledge graph read the report layer.
+
+| Section | What it shows | Basis |
+|---|---|---|
+| Hierarchy | district → city → neighbourhood → street → buildings | neighbourhood VERIFIED only through a verified street link; else the SOURCE LABEL the GovMap file prints on the street's deals (with its share; ≥ 80 % and ≥ 5 rows = SOURCE_LABEL, else SOURCE_LABEL_MIXED); else UNRESOLVED with the reason — never inferred |
+| Latest transaction | the newest counted event of every source, with the copy's freshness strip | `lib/txevents` recency |
+| Transactions | every event: RELIABLE (txevents STREET / BUILDING placement) · POSSIBLE (every other placement) · SURROUNDING AREA (other official streets with a located parcel ≤ 150 m — opt-in, never this street) | the stored union + the GovMap layer's stored history before the window (`history.rows` street-code prefilter); filters (period · rooms · area · price · type · in-statistics), sort (missing last), paging, row detail, CSV (BOM, formula-guarded) |
+| Prices & comparison | street · verified / source-label neighbourhood · city · district on the SAME population (priced dwelling deals, same window, same states), by rooms band; the model card | `benchmarks.js` (`data/streets/benchmarks.json`, stamped with the evidence copy — another copy → not shown); a difference only where both sides are SUPPORTED with ≥ 10 deals with ₪/m²; a district pools its localities' deals |
+| Planning & infrastructure | plans whose boundary contains a located parcel of the street (INTERSECTS), within 300 m (NEARBY; rail transit 1,000 m), area-wide plans (≥ 2,000 dunam) apart; Tel Aviv permits / sites ON THE STREET (exact address) | distances from the street's own points to the generalized boundary; topic from the plan's own name / type (`lib/planning/topic.js`); a statutory stage is never an operating line, a permit or construction; a plan's units are never the street's |
+| Map | the street's located parcels / buildings and the plan boundaries — inline SVG, no basemap | PROPX's own data only; no licensed imagery integrated |
+| Investment | Level 1: supports · against · could change · due diligence (rules SA-* / DD-*, FACT and INTERPRETATION apart, no score / probability / recommendation); Level 2: the user's asking price vs the model's apartment read, the street's ₪/m² distribution, similar deals; scenarios ONLY from the user's own annual-change assumptions (none → none) | inputs kept in this browser only (`propx:street-property:v1`) |
+| Sources & missing | every source with its class and as-of; every missing part with its reason and what would unlock it | — |
+
+**Data lanes (preview lane, runner-built, bot-written):**
+- `scripts/street-geo-build.py` + `.github/workflows/street-geo-build.yml` → `data/geo/street-geo/` — the GovMap-layer GeoPackage PROPX already
+  downloads (one public GET): one point per parcel / building polygon per official street (`streetCode` = locality × 10,000 + official code,
+  decoded and its locality part checked), the neighbourhood names the source prints. VALIDATED against the layer API's own points for the same
+  deals before anything is written (20.10.2026 file: 11,900 / 11,900 matched, median 0 m). Coordinates never join a record.
+- `scripts/street-planning-sync.js` + `.github/workflows/street-planning-sync.yml` → `data/planning/national/` — every plan of the Xplan
+  online-plans layer (the layer PROPX already reads) with its boundary (~10 m), tiled 0.05°; area-wide plans in `large.json.gz`; complete or
+  nothing (stored + skipped = the layer's own count; 21.10.2026: 37,701 / 37,701).
+- `scripts/street-benchmarks-build.js` → `data/streets/benchmarks.json` (offline, from the stored sweep).
+- `scripts/street-report-discover.js` + `.github/workflows/street-report-discover.yml` — read-only probe (Xplan sizing, national infrastructure /
+  train layers, data.gov.il transport datasets with their licence fields).
+
+**Capability matrix (21.10.2026):** ALREADY AVAILABLE — identity, evidence, freshness, counts, events, model, TLV permits/sites, renewal ×
+XPlan (exact). AVAILABLE BUT NOT EXPOSED (now exposed) — the full event table (was capped at 60 rows), floor, the GovMap history per street,
+the source's neighbourhood name, the GovMap file's coordinates. PARTIALLY AVAILABLE — XPlan (renewal / land subsets → now the whole layer).
+REQUIRES NEW SOURCE — station points (MOT data.gov.il lrt_stat / metro_stat, CC-BY / other-open, shapefiles — not integrated; the statutory
+transit plans are shown instead), asking prices and rents (no licensed source), parcel boundaries (cadastre). NOT DEFENSIBLE — a price
+forecast, a street "score", an operating date for a planned line, a neighbourhood inferred from proximity.
+
+API: `GET /api/intel?view=streetReport&id=[&part=core]` · `view=streetTx&id=…[&format=csv]` · `view=streetProperty&id=…&askingPrice=&sqm=…`.
+Registry group `streetReport` (6 terms). Gates: `test/street-report.test.js` (18, eight live acceptance streets).

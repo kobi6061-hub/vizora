@@ -77,6 +77,19 @@
   side by side + why · latest market evidence · main limitation (from the levels used) · "why the two differ" (≥ 10 %), the apartment
   form, the comparables (`stcomp`) and method / validation. Registry group `streetModel` (7 terms, 4 missing reasons), Trust
   `propx:street-model`. Never APPRAISAL / SHAMAI / OFFICIAL / FAIR VALUE. See `lib/streets/README.md` § 6.
+- `lib/streets/report.js` + `lib/streets/benchmarks.js` + `lib/planning/topic.js` + `scripts/street-{geo-build.py,planning-sync,benchmarks-build,report-discover}.js` +
+  `.github/workflows/street-{geo-build,planning-sync,report-discover}.yml` + `data/geo/street-geo/` + `data/planning/national/` + `data/streets/benchmarks.json` +
+  `test/street-report.test.js` = STREET INVESTMENT INTELLIGENCE (21.10.2026, PREVIEW LANE `claude/street-report-preview` — not on the production
+  branch until the founder approves): a COMPOSITION over Street Intelligence, the transaction events (+ the GovMap layer's stored history per
+  street), the Street Value Model, same-population benchmarks, the street's own points (GovMap-layer file, validated 11,900 / 11,900, median 0 m)
+  and every Xplan plan boundary (37,701, complete) — it creates no fact and none of them read it. Neighbourhood VERIFIED only through a verified
+  link, else the SOURCE LABEL the file prints (share stated) or UNRESOLVED; transactions RELIABLE (STREET / BUILDING) · POSSIBLE · SURROUNDING AREA
+  (opt-in, other streets ≤ 150 m) apart; comparison only on the same population (a difference only SUPPORTED vs SUPPORTED); plans INTERSECTS /
+  NEARBY (300 m; rail transit 1,000 m) / AREA-WIDE (≥ 2,000 dunam) with distances — a spatial relation is context, never a join or a value; a
+  statutory transit plan is never an operating line; assessment rules SA-* / DD-* (no score / probability / recommendation); property
+  scenarios only from the user's own assumptions. `view=streetReport|streetTx|streetProperty`; the street view leads with the report and keeps
+  the full Street Intelligence view below it. Search: a street part adding ≤ 2 words to an official name in the named locality ("הרב אונטרמן משה")
+  is a discovery (tier 6) match. Registry group `streetReport`. See `lib/streets/README.md` § 7.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).

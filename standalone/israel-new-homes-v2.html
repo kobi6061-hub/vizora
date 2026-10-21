@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="2f34a798704742de1fb5031c8b7573838a3d00c2dc1075386a844f2d5b9a1fa6">
+<meta name="propx-source-sha256" content="4b9d9444e164e4f9b10636913efa502828cc93392a9544ca351dc3f2a23c4521">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -641,6 +641,58 @@ tr.txe-dup td{opacity:.7}
 .sv-apt label{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:700;color:var(--ink-3)}
 .sv-apt input,.sv-apt select{width:110px;font:inherit;font-size:13px;padding:5px 7px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
 .sv-aptres{margin-top:8px;max-width:520px} .sv-rng{font-size:14px;font-weight:600;color:var(--ink-2);margin:2px 0 6px} .nw{white-space:nowrap} .sv-refs{color:var(--ink-2);font-size:12.5px} .sv-tn{font-size:11px;color:var(--ink-3)} .sv-na{color:var(--ink-3)!important} .sv-apt select{width:auto} @media (max-width:640px){.sv-apt input,.sv-apt select,.sv-apt button{min-height:40px}} .sv-eff{margin:4px 0 0;padding-inline-start:18px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
+/* STREET REPORT (lib/streets/report.js — view=streetReport / streetTx / streetProperty): the composition above Street Intelligence */
+.sr-nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:3;background:var(--panel);padding:6px 0 8px;border-bottom:1px solid var(--hairline)}
+.sr-outs{margin-top:8px;align-items:center}
+.sr-sec>summary{font-size:14px}
+.sr-xp{display:flex;justify-content:flex-end;margin:-4px 0 2px}
+.sr-crumb{display:flex;flex-wrap:wrap;margin-top:6px;border:1px solid var(--hairline);border-radius:11px;overflow:hidden}
+.sr-crumb>span{flex:1 1 140px;padding:8px 12px;border-inline-end:1px solid var(--hairline);font-size:13px;font-weight:700;color:var(--ink)}
+.sr-crumb>span:last-child{border-inline-end:0}
+.sr-crumb small{display:block;font-size:10px;font-weight:700;color:var(--ink-3);letter-spacing:.04em}
+.sr-nb{display:inline-block;font-size:9.5px;font-weight:800;border:1px solid currentColor;border-radius:99px;padding:0 6px;margin-inline-start:4px}
+.sr-nb.VERIFIED{color:var(--conf-high)} .sr-nb.SOURCE_LABEL,.sr-nb.SOURCE_LABEL_MIXED{color:var(--brass);border-style:dashed} .sr-nb.UNRESOLVED{color:var(--ink-3);border-style:dotted}
+.sr-latest{margin-top:12px;border:1.5px solid var(--accent);border-radius:12px;padding:10px 14px;background:var(--accent-wash)}
+.sr-latest .l{font-size:11px;font-weight:800;color:var(--accent-deep);letter-spacing:.03em}
+.sr-latest .v{font-size:22px;font-weight:800;color:var(--ink)}
+.sr-latest .s{font-size:12.5px;color:var(--ink-2)}
+.sr-narr{display:flex;flex-direction:column;gap:6px}
+.sr-n{margin:0;font-size:13px;line-height:1.6;color:var(--ink)}
+.sr-n.INTERPRETATION{color:var(--ink-2);font-style:italic}
+.sr-k{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:0 5px;margin-inline-end:4px;background:var(--panel-2);color:var(--ink-2);font-style:normal}
+.sr-k.MODEL{color:var(--brass)} .sr-k.INTERPRETATION{color:var(--c2)} .sr-k.FACT{color:var(--conf-high)}
+.sr-filters{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0}
+.sr-ff input[type=number],.sr-ff select{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--hairline);border-radius:8px;background:transparent;color:var(--ink)}
+.sr-ff input[type=number]{width:84px}
+.sr-ff>span{font-size:11px;font-weight:700;color:var(--ink-3)}
+.sr-chk{font-size:12px;font-weight:600;color:var(--ink-2);display:inline-flex;gap:5px;align-items:center}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sr-sort{font:inherit;font-weight:700;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.sr-sort.on{color:var(--accent)}
+.sr-row{cursor:pointer} .sr-row:hover{background:var(--panel-2)} .sr-row.open{background:var(--accent-wash)}
+.sr-det td{background:var(--panel-2);white-space:normal}
+.sr-det dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:4px 0;font-size:12px}
+.sr-det dt{font-weight:700;color:var(--ink-3)} .sr-det dd{margin:0;color:var(--ink)}
+.sr-cat{font-size:10px;font-weight:800;white-space:nowrap} .sr-cat.STREET{color:var(--conf-high)} .sr-cat.POSSIBLE{color:var(--brass)} .sr-cat.AREA{color:var(--ink-3)}
+.sr-rel{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:99px;padding:0 6px;white-space:nowrap}
+.sr-rel.INTERSECTS{color:var(--accent)} .sr-rel.NEARBY{color:var(--ink-2);border-style:dashed} .sr-rel.AREA_WIDE{color:var(--ink-3);border-style:dotted} .sr-rel.ON_THE_STREET{color:var(--conf-high)}
+.sr-pop{white-space:normal!important;min-width:200px;max-width:320px;font-size:11px;color:var(--ink-3)}
+.sr-inv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.sr-inv ul,.sr-miss{margin:4px 0;padding-inline-start:18px;font-size:12.5px;line-height:1.6;color:var(--ink)}
+.sr-prop input{width:120px}
+.sr-map{width:100%;height:auto;max-height:420px;border:1px solid var(--hairline);border-radius:12px;margin-top:8px}
+.sr-map-bg{fill:var(--panel-2)}
+.sr-pl{stroke-width:1.2;fill-opacity:.12} .sr-pl.int{fill:var(--accent);stroke:var(--accent)} .sr-pl.near{fill:none;stroke:var(--ink-3);stroke-dasharray:4 3} .sr-pl.tr{fill:none;stroke:var(--brass);stroke-width:2.2;stroke-dasharray:6 3}
+.sr-pt{fill:var(--down);stroke:var(--panel);stroke-width:1.5}
+.sr-pt-l{font-size:9px;font-weight:700;fill:var(--ink-2)}
+.sr-map-scale line{stroke:var(--ink);stroke-width:2} .sr-map-scale text{font-size:10px;fill:var(--ink-2);text-anchor:middle}
+.sr-map-n path{fill:var(--ink)} .sr-map-n text{font-size:9px;font-weight:800;fill:var(--ink);text-anchor:middle}
+.sr-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--ink-2);margin-top:6px}
+.sr-leg i{display:inline-block;width:14px;height:10px;margin-inline-end:5px;vertical-align:-1px;border-radius:2px}
+.sr-leg i.pt{background:var(--down);border-radius:99px;width:10px} .sr-leg i.int{background:var(--accent);opacity:.5} .sr-leg i.near{border:1.5px dashed var(--ink-3)} .sr-leg i.tr{border:2px dashed var(--brass)}
+@media (max-width:640px){.sr-crumb>span{flex-basis:45%}.sr-ff input[type=number]{width:70px;min-height:38px}.sr-nav{position:static}}
+@media print{body.sr-printing *{visibility:hidden} body.sr-printing #geoView,body.sr-printing #geoView *{visibility:visible} body.sr-printing #geoView{position:absolute;inset:0 auto auto 0;width:100%} body.sr-printing .sr-nav,body.sr-printing .sr-outs,body.sr-printing form,body.sr-printing .sr-filters,body.sr-printing #geoCloseBtn{display:none!important}}
+
 .gv-m.lim{border-style:dashed}
 .gv-m.lim .v{color:var(--brass)}
 .st-ctx.muted .gv-m .v{color:var(--ink-3)}
@@ -695,7 +747,7 @@ tr.txe-dup td{opacity:.7}
 /* value classes — RAW / DERIVED / MODELLED / UNAVAILABLE, read from row metadata */
 .vc{display:inline-flex;align-items:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;line-height:1.3;
   padding:0 6px;border-radius:99px;border:1px solid currentColor;white-space:nowrap;flex:none;vertical-align:middle}
-.vc.raw{color:var(--conf-high)} .vc.static{color:var(--ink-2);border-style:dashed} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
+.vc.raw{color:var(--conf-high)} .vc.obs{color:var(--accent)} .vc.static{color:var(--ink-2);border-style:dashed} .vc.der{color:var(--accent-deep)} .vc.mod{color:var(--brass)} .vc.na{color:var(--ink-3)}
 .kpi.na .val{color:var(--ink-3);font-size:16px;font-weight:700}
 .na-card .na-why{font-size:14px;font-weight:600;color:var(--ink-2);line-height:1.6}
 .na-card .na-next{font-size:12.5px;color:var(--ink-3);line-height:1.6}
@@ -2494,6 +2546,10 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     'datagov:streets': { aliases: ['lib/streets', 'lib/streets/directory', 'datagov:street-registry'], label: bi('רשות האוכלוסין וההגירה — מרשם הרחובות הרשמי ושמות נרדפים (data.gov.il)', 'Population and Immigration Authority — the official street directory and synonyms (data.gov.il)') },
     'over:street-evidence': { aliases: ['lib/streets/evidence', 'lib/streets/street'], label: bi('ראיות שוק ברמת הרחוב — עותק מאגר רשות המסים (over.org.il) מוצלב למרשם הרחובות', 'Street-level market evidence — the Tax Authority register copy (over.org.il) joined to the street directory') },
     'propx:entities': { aliases: ['lib/entities'], label: bi('PROPX — רישום היזמים והפרויקטים (נגזר)', 'PROPX — the developer & project registry (derived)') },
+    'propx:street-report': { aliases: ['lib/streets/report'], label: bi('PROPX — דוח הרחוב (הרכבה של המודלים הקיימים)', 'PROPX — the street report (a composition of the existing read models)') },
+    'propx:street-geo': { aliases: ['data/geo/street-geo', 'scripts/street-geo-build'], label: bi('PROPX — נקודות החלקות / הבניינים של כל רחוב מקובץ שכבת GovMap (מאומת מול ה-API)', 'PROPX — every street\'s parcel / building points from the GovMap-layer file (validated against its API)') },
+    'propx:plan-boundaries': { aliases: ['data/planning/national', 'scripts/street-planning-sync'], label: bi('PROPX — גבולות כל התכניות בשכבת XPlan (קריאה שלמה, באריחים)', 'PROPX — every Xplan plan boundary (complete read, tiled)') },
+    'propx:street-benchmarks': { aliases: ['lib/streets/benchmarks'], label: bi('PROPX — מדדי השוואה לאותה אוכלוסייה (יישוב · מחוז)', 'PROPX — same-population comparison benchmarks (locality · district)') },
     'propx:street-model': { aliases: ['lib/streets/value-model', 'lib/streets/value-read'], label: bi('PROPX — מודל השווי ברמת הרחוב (מודל, לא תצפית)', 'PROPX — the street value model (a MODEL, not an observation)') },
     'over:govmap-recent': { aliases: ['lib/recent/read', 'lib/recent/reconcile', 'scripts/street-recent-sync'], label: bi('עסקאות אחרונות — עותק שכבת העסקאות של GovMap (over.org.il), מוצלב לעותק המרשם', 'Recent transactions — the GovMap deals-layer copy (over.org.il) reconciled against the register copy') },
     'over:govmap-national': { aliases: ['scripts/txevents-national', 'data/txevents/national'], label: bi('גלאי העסקאות החסרות — הקובץ המלא של עותק שכבת העסקאות של GovMap (over.org.il) מול עותק המרשם', 'The missed-deal detector — the GovMap deals-layer copy\'s whole published file (over.org.il) against the register copy') },
@@ -2554,6 +2610,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     { id: 'group', label: bi('מודיעין קבוצת יזם — Sponsor X-Ray', 'Developer group intelligence — Sponsor X-Ray') },
     { id: 'streets', label: bi('רחובות — המרשם הרשמי וראיות השוק', 'Streets — the official directory and market evidence') },
     { id: 'streetModel', label: bi('הערכת PROPX לרחוב — מודל', 'The PROPX street estimate — MODEL') },
+    { id: 'streetReport', label: bi('דוח רחוב — מודיעין השקעות', 'Street report — investment intelligence') },
   ]);
 
   /* ---- shared limitation sentences ---- */
@@ -3315,6 +3372,70 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
       notAs: bi('לא מדד איכות של רחובות ולא נתח שוק.', 'Not a quality measure of streets and not a market share.'),
       evidence: bi('GET /api/intel?view=streetCoverage', 'GET /api/intel?view=streetCoverage'),
       freshness: { observation: bi('—', '—'), publication: bi('עדכון המרשם · scraped_at', 'the registry update · scraped_at'), check: bi('הסנכרונים', 'the syncs') } }),
+    /* ---------------- the street report (lib/streets/report.js) — a composition; it creates no fact ---------------- */
+    T({ id: 'street_report', group: 'streetReport', title: bi('דוח רחוב', 'Street report'),
+      short: bi('דוח אחד על הרחוב: היררכיה, העסקה האחרונה, כל העסקאות, השוואה הוגנת, תכנון ותחבורה סביבו, מפה והערכה — כל חלק עם הבסיס שלו.', 'One report on the street: hierarchy, the latest deal, every transaction, a fair comparison, planning and transit around it, a map and the assessment — each part with its basis.'),
+      why: bi('כדי לחקור רחוב לפני השקעה בלי לערבב עובדה, מודל ופרשנות.', 'To research a street before investing without mixing fact, model and interpretation.'),
+      unit: bi('—', '—'), geography: bi('רחוב רשמי (st:<יישוב>:<רחוב>)', 'An official street (st:<locality>:<street>)'), period: bi('כל חלק עם התקופה שלו', 'each part with its own period'),
+      source: { ids: ['propx:street-report', 'datagov:streets', 'over:street-evidence', 'propx:transaction-events', 'propx:street-model', 'iplan:xplan'] }, cls: 'DERIVED',
+      formula: bi('הרכבה של מודלי הקריאה הקיימים — אין נוסחה חדשה; כל ערך נושא את הסיווג של המקור שלו', 'a composition of the existing read models — no new formula; every value carries the class of its own source'),
+      inputs: [bi('מודיעין רחוב · אירועי העסקאות · מודל השווי · מדדי ההשוואה · גבולות התכניות · נקודות הרחוב', 'Street Intelligence · transaction events · the value model · the benchmarks · plan boundaries · street points')],
+      methodology: bi('חלק חסר נאמר עם הסיבה שלו; נתון של יישוב / מחוז הוא הקשר ולא של הרחוב; שכונה מאומתת רק דרך קישור רחוב מאומת.', 'A missing part is stated with its reason; a locality / district figure is context, never the street\'s; a neighbourhood is verified only through a verified street link.'),
+      interpretation: bi('קרא כל חלק לפי הסיווג שלו (רשמי / נצפה / נגזר / מודל / הנחת משתמש).', 'Read every part by its class (official / observed / derived / model / user assumption).'),
+      notAs: bi('לא שומה, לא תחזית, לא המלצה ולא ציון.', 'Not an appraisal, a forecast, a recommendation or a score.'),
+      evidence: bi('GET /api/intel?view=streetReport&id=', 'GET /api/intel?view=streetReport&id='), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
+    T({ id: 'street_report_relation', group: 'streetReport', title: bi('יחס מרחבי לרחוב', 'Spatial relation to the street'),
+      short: bi('על הרחוב · חוצה · בסמוך · אזורית · הקשר עירוני — מחושב מנקודות החלקות של הרחוב ומגבול התכנית, עם המרחק.', 'On the street · intersects · nearby · area-wide · city context — computed from the street\'s parcel points and the plan boundary, with the distance.'),
+      why: bi('כדי לראות אילו תכניות נוגעות ברחוב ואילו רק קרובות אליו.', 'To see which plans touch the street and which are only near it.'),
+      unit: bi('מטרים', 'metres'), geography: bi('הרחוב והתכניות סביבו (300 מ׳; תחבורה מסילתית 1,000 מ׳)', 'The street and the plans around it (300 m; rail transit 1,000 m)'), period: bi('הקריאה האחרונה של השכבה', 'the layer\'s latest read'),
+      source: { ids: ['iplan:xplan', 'propx:plan-boundaries', 'propx:street-geo'] }, cls: 'DERIVED',
+      formula: bi('חוצה = נקודת חלקה של הרחוב בתוך הגבול; בסמוך = המרחק מהנקודה הקרובה לגבול ≤ 300 מ׳ (1,000 מ׳ לתחבורה מסילתית); אזורית = חוצה ושטח התכנית ≥ 2,000 דונם', 'intersects = a parcel point of the street inside the boundary; nearby = the distance from the nearest point to the boundary ≤ 300 m (1,000 m for rail transit); area-wide = intersects and the plan\'s area ≥ 2,000 dunam'),
+      inputs: [bi('נקודות החלקות של הרחוב (שכבת GovMap) · גבולות התכניות (XPlan, מוכללים ~10 מ׳)', 'the street\'s parcel points (GovMap layer) · the plan boundaries (XPlan, generalized ~10 m)')],
+      methodology: bi('יחס מרחבי הוא הקשר בלבד: הוא לעולם אינו מחבר רשומות, אינו מייחס לרחוב יחידות של תכנית ואינו מעריך דירה. נושא התכנית נקרא רק משם התכנית וסוגה.', 'A spatial relation is context only: it never joins records, never attributes a plan\'s units to the street and never values a dwelling. A plan\'s topic is read only from its own name and type.'),
+      interpretation: bi('תכנית מאושרת או מופקדת היא שלב סטטוטורי — לא היתר, לא בנייה ולא קו פעיל.', 'An approved or deposited plan is a statutory stage — not a permit, construction or an operating line.'),
+      notAs: bi('לא הבטחה לשינוי מחיר ולא מועד ביצוע.', 'Not a promised price change and not a delivery date.'),
+      evidence: bi('דוח הרחוב → תכנון ותשתיות', 'the street report → planning & infrastructure'), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
+    T({ id: 'street_report_source_label', group: 'streetReport', title: bi('שכונה — תווית מקור', 'Neighbourhood — source label'),
+      short: bi('שם השכונה שהמקור מדפיס על עסקאות הרחוב, עם חלקו מהרשומות — תווית של המקור, לא גבול מאומת.', 'The neighbourhood name the source prints on the street\'s deals, with its share of the rows — the source\'s label, not a verified boundary.'),
+      why: bi('כשאין קישור מאומת, השם שהמקור עצמו משתמש בו עוזר להתמצא — בלי להסיק שכונה.', 'Without a verified link, the name the source itself uses helps orientation — without inferring a neighbourhood.'),
+      unit: bi('% מהרשומות', '% of rows'), geography: bi('רחוב', 'Street'), period: bi('כל רשומות הקובץ', 'every row of the file'),
+      source: { ids: ['over:govmap-national', 'propx:street-geo'] }, cls: 'DERIVED',
+      formula: bi('חלק השם = רשומות הרחוב שנושאות אותו ÷ רשומות הרחוב שנושאות שם כלשהו; תווית מקור כשהשם ≥ 80% ו-≥ 5 רשומות', 'the name\'s share = the street\'s rows carrying it ÷ the street\'s rows carrying any name; SOURCE LABEL when the name is ≥ 80 % with ≥ 5 rows'),
+      inputs: [bi('שדה השכונה בקובץ שכבת GovMap', 'the neighbourhood field of the GovMap-layer file')],
+      methodology: bi('השוואה לשכונה בתווית מקור נעשית על רחובות שלמים שהמקור מסמן בשם — ומוצגת כתווית מקור, לעולם לא כשכונה מאומתת.', 'A comparison to a source-label neighbourhood uses the whole streets the source labels with the name — shown as a source label, never as a verified neighbourhood.'),
+      interpretation: bi('תוויות מעורבות = הרחוב נמתח על יותר משכונה אחת לפי המקור.', 'Mixed labels = the source places the street in more than one neighbourhood.'),
+      notAs: bi('לא גבול שכונה ולא קישור מאומת.', 'Not a neighbourhood boundary and not a verified link.'),
+      evidence: bi('דוח הרחוב → היררכיה', 'the street report → hierarchy'), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
+    T({ id: 'street_report_fair_comparison', group: 'streetReport', title: bi('השוואה הוגנת', 'Fair comparison'),
+      short: bi('הרחוב מול שכונה, עיר ומחוז רק על אותה אוכלוסייה: עסקאות מגורים מתומחרות באותו חלון, ובפילוח לפי חדרים.', 'The street against neighbourhood, city and district only on the same population: priced dwelling deals in the same window, and by rooms.'),
+      why: bi('השוואה בין אוכלוסיות שונות מטעה.', 'Comparing different populations misleads.'),
+      unit: bi('₪ · ₪ למ״ר · %', '₪ · ₪ per m² · %'), geography: bi('רחוב · שכונה · יישוב · מחוז', 'Street · neighbourhood · locality · district'), period: bi('אותו חלון של 36 חודשים', 'the same 36-month window'),
+      source: { ids: ['over:street-evidence', 'propx:street-benchmarks'] }, cls: 'DERIVED',
+      formula: bi('הפרש = חציון ₪/מ״ר ברחוב ÷ חציון ברמה − 1, רק כששני הצדדים מספקים (≥ 10 עסקאות עם ₪/מ״ר); מחוז = העסקאות של יישוביו מאוחדות', 'difference = the street\'s median ₪/m² ÷ the level\'s − 1, only when both sides are SUPPORTED (≥ 10 deals with ₪/m²); district = its localities\' deals pooled'),
+      inputs: [bi('עסקאות הדיור המתומחרות של עותק המרשם', 'the register copy\'s priced dwelling deals')],
+      methodology: bi('מצבי מדגם זהים בכל רמה; השטח החציוני ואחוז הדירות החדשות מוצגים לצד כל חציון.', 'The same sample states at every level; the median area and the share of probably-new deals are shown beside each median.'),
+      interpretation: bi('הפרש מתאר את המדגמים — תמהיל גדלים, גילים ובניינים — לא שווי דירה.', 'A difference describes the samples — their mix of sizes, ages and buildings — not a dwelling\'s value.'),
+      notAs: bi('לא שומה ולא פרמיה מוסברת.', 'Not an appraisal and not an explained premium.'),
+      evidence: bi('דוח הרחוב → מחירים והשוואה', 'the street report → prices & comparison'), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
+    T({ id: 'street_report_assessment', group: 'streetReport', title: bi('הערכת רחוב (רמה 1)', 'Street assessment (level 1)'),
+      short: bi('מה תומך, מה נגד, מה יכול להשתנות ומה לבדוק — מכללים דטרמיניסטיים על העובדות של הדוח, עובדה ופרשנות בנפרד.', 'What supports, what argues against, what could change and what to check — deterministic rules over the report\'s facts, fact and interpretation apart.'),
+      why: bi('כדי לראות את התמונה בלי ציון שמסתיר את הבסיס.', 'To see the picture without a score that hides the basis.'),
+      unit: bi('—', '—'), geography: bi('רחוב', 'Street'), period: bi('כמו העובדות', 'as the facts'),
+      source: { ids: ['propx:street-report'] }, cls: 'DERIVED',
+      formula: bi('כללים SA-* ו-DD-* (lib/streets/report.js) — כל פריט עם הכלל, הסיווג והמקור שלו', 'rules SA-* and DD-* (lib/streets/report.js) — every item with its rule, class and source'),
+      inputs: [bi('עובדות הדוח', 'the report\'s facts')], methodology: bi('אין ציון, אין הסתברות ואין המלצה.', 'No score, no probability and no recommendation.'),
+      interpretation: bi('פרשנות מסומנת ככזו.', 'An interpretation is marked as one.'), notAs: bi('לא המלצת השקעה.', 'Not an investment recommendation.'),
+      evidence: bi('דוח הרחוב → השקעה', 'the street report → investment'), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
+    T({ id: 'street_report_property_assessment', group: 'streetReport', title: bi('הערכת נכס (רמה 2)', 'Property assessment (level 2)'),
+      short: bi('המחיר המבוקש שלך מול הערכת המודל, עסקאות הרחוב ועסקאות דומות; תרחישים רק מההנחות שלך.', 'Your asking price against the model estimate, the street\'s deals and similar deals; scenarios only from your assumptions.'),
+      why: bi('כדי לבדוק מחיר מבוקש מול ראיות, בלי תחזית שלא הוזנה.', 'To check an asking price against evidence, without a forecast nobody entered.'),
+      unit: bi('₪ · %', '₪ · %'), geography: bi('נכס ברחוב', 'A property on the street'), period: bi('תקופת ההחזקה שהזנת', 'the holding period you entered'),
+      source: { ids: ['propx:street-report', 'propx:street-model', 'over:street-evidence'] }, cls: 'DERIVED',
+      formula: bi('שווי בסוף = מחיר × (1 + שינוי שנתי שלך)^שנים; תשואה ברוטו = שכירות שלך × 12 ÷ מחיר', 'end value = price × (1 + your annual change)^years; gross yield = your rent × 12 ÷ price'),
+      inputs: [bi('מחיר מבוקש · שטח · ההנחות שלך', 'asking price · area · your assumptions')],
+      methodology: bi('בלי הנחה — אין תרחיש; PROPX אינו ממלא הנחה. ההזנות נשמרות רק בדפדפן הזה.', 'No assumption — no scenario; PROPX never fills one in. The inputs are kept in this browser only.'),
+      interpretation: bi('המודל ועסקאות הרחוב הם נקודות ייחוס לשיקול דעתך.', 'The model and the street\'s deals are reference points for your judgment.'), notAs: bi('לא שומה, לא תחזית ולא המלצה.', 'Not an appraisal, a forecast or a recommendation.'),
+      evidence: bi('GET /api/intel?view=streetProperty', 'GET /api/intel?view=streetProperty'), freshness: { observation: bi('חלון 36 החודשים · הקריאה האחרונה', 'the 36-month window · the latest read'), publication: bi('תאריכי העותקים', 'the copies\' dates'), check: bi('הבנייה האחרונה של PROPX', 'PROPX\'s latest build') } }),
     /* ---------------- the street value model (lib/streets/value-model.js) — MODEL, never the observed market ---------------- */
     T({ id: 'street_value_estimate', group: 'streetModel', title: bi('הערכת PROPX לרחוב', 'PROPX street estimate'),
       short: bi('PROPX מעריכה את שווי השוק ברחוב באמצעות עסקאות השוואה עדכניות מהרחוב ומסביבתו הרלוונטית.', 'PROPX estimates the street’s market value using recent comparable transactions from this street and the most relevant surrounding market evidence.'),
@@ -10196,13 +10317,351 @@ function siHTML(g){
     <div class="st-acts"><button type="button" class="chip" data-stdos="${I.cityCode}">${t.acts.dossier}</button><button type="button" class="chip" data-stlive="1">${t.acts.live}</button></div>
     <p class="gv-src">${t.src(src.scrapedAt?siDate(src.scrapedAt):"—")}</p>`;
 }
+/* ═══════════ STREET INVESTMENT INTELLIGENCE — the street report (lib/streets/report.js; view=streetReport / streetTx / streetProperty) ═══════════
+   A composition over the read models above: hierarchy · the latest transaction · the full transaction table · fair comparison · plans and
+   transit around the street · the street's own map · the assessment. The existing Street Intelligence panels follow in full below it. */
+const SRT={he:{
+    lyr:"דוח רחוב — מודיעין השקעות",loading:"טוען את דוח הרחוב…",loadingFull:"טוען תכנון, מפה וטבלת עסקאות מלאה…",err:"דוח הרחוב אינו זמין כרגע.",
+    nav:{ov:"סקירה",tx:"עסקאות",px:"מחירים והשוואה",pl:"תכנון ותשתיות",inv:"השקעה",map:"מפה",src:"מקורות",ev:"ראיות הרחוב"},
+    hier:{district:"מחוז",city:"עיר",nb:"שכונה",street:"רחוב",bld:"בניינים"},
+    nbState:{VERIFIED:"מאומתת",SOURCE_LABEL:"תווית מקור",SOURCE_LABEL_MIXED:"תוויות מקור מעורבות",UNRESOLVED:"לא מזוהה"},
+    nbWhy:{VERIFIED:"קישור רחוב → שכונה מאומת",SOURCE_LABEL:"השם שהמקור מדפיס על עסקאות הרחוב — לא גבול מאומת",SOURCE_LABEL_MIXED:"המקור מסמן את עסקאות הרחוב ביותר משכונה אחת",UNRESOLVED:"אין קישור מאומת ואין תווית מקור — PROPX אינו מסיק שכונה"},
+    latestH:"העסקה האחרונה ברחוב",latestNone:"אין עסקה ש-PROPX מחזיק לרחוב זה",noStat:"מחיר לא בסטטיסטיקה",inStat:"בסטטיסטיקה",
+    k:{sample:"מדגם נצפה (36 ח׳)",sqm:"חציון ₪/מ״ר ברחוב",vsCity:"מול העיר (₪/מ״ר)",model:"מודל PROPX ₪/מ״ר",plans:"תכניות על הרחוב",transit:"תכנית מסילתית קרובה",located:"חלקות / בניינים ממוקמים"},
+    understand:"להבין את הרחוב",kinds:{FACT:"עובדה",MODEL:"מודל",INTERPRETATION:"פרשנות"},
+    txH:"כל העסקאות ברחוב",cat:{STREET:"התאמה ודאית לרחוב",POSSIBLE:"התאמה אפשרית",AREA:"סביבה קרובה (רחובות אחרים)"},
+    per:{all:"הכל",d30:"30 יום",d90:"90 יום",m6:"6 חודשים",m12:"12 חודשים",m24:"24 חודשים"},
+    f:{rooms:"חדרים",area:"מ״ר",price:"מחיר ₪",min:"מ־",max:"עד",kind:"סוג",kinds:{"":"הכל",DWELLING:"מגורים",NON_DWELLING:"לא מגורים",TYPE_NOT_STATED:"סוג לא צוין"},stats:"רק מחירים שבסטטיסטיקה",apply:"החל",reset:"נקה"},
+    cols:["תאריך","כתובת","מחיר","₪ למ״ר","חדרים","קומה","מ״ר","סוג נכס","גוש/חלקה/תת","התאמה","מקור","מצב PROPX"],
+    more:"טען עוד",csv:"ייצוא CSV",shown:(a,b)=>`מוצגות ${a} מתוך ${b}`,cover:"כיסוי שדות",hist:"לפני חלון 36 החודשים",histN:n=>`${n} רשומות היסטוריות משכבת GovMap לפני החלון (בתקופה "הכל")`,
+    liveAll:"היסטוריה מלאה חיה (הרשם) — בטבלת העסקאות של העמוד",areaBasis:"רחובות במרחק עד",areaNone:"אין רחובות ממוקמים בסביבה",
+    det:{id:"מזהה אירוע",match:"התאמה",reasons:"סיבות",copy:"עותק המקור",first:"נקרא לראשונה",notes:"הערות",also:"גם במקור",conflict:"סתירה",built:"שנת בנייה",newness:"חדש/יד שנייה",portion:"חלק נמכר",basis:"בסיס הכתובת"},
+    pxH:"מחירים והשוואה הוגנת",lvl:{STREET:"הרחוב",NEIGHBOURHOOD_VERIFIED:"שכונה מאומתת",NEIGHBOURHOOD_SOURCE_LABEL:"שכונה (תווית מקור)",CITY:"העיר",DISTRICT:"המחוז"},
+    pxCols:["רמה","אוכלוסייה","עסקאות מתומחרות","מצב","חציון מחיר","חציון ₪/מ״ר","שטח חציוני","% חדשות","הרחוב מול הרמה"],
+    seg:"לפי מספר חדרים (₪/מ״ר, אותה אוכלוסייה)",modelH:"מודל PROPX (MODEL)",modelNone:"אין הערכת מודל לרחוב",range:"טווח אימות",tier:"רמת ראיות",asOf:"נכון ל",
+    plH:"תכנון ותשתיות סביב הרחוב",rel:{ON_THE_STREET:"על הרחוב",INTERSECTS:"חוצה את הרחוב",NEARBY:"בסמוך",AREA_WIDE:"תכנית אזורית",CITY_CONTEXT:"הקשר עירוני"},
+    topic:{RAIL_TRANSIT:"תחבורה מסילתית",ROAD:"דרכים",RENEWAL:"התחדשות עירונית",NATIONAL_INFRASTRUCTURE:"תשתית לאומית",PREFERRED_HOUSING:"דיור מועדף",OTHER:"תכנית"},
+    plCols:["יחס","מרחק","תכנית","שם","נושא","שלב","שינוי יח״ד","שטח (דונם)","עדכון"],transitH:"תחבורה מסילתית — תכניות סטטוטוריות (לא קווים פעילים)",areaWideH:"תכניות אזוריות (כוללות את הרחוב, לא ספציפיות לו)",
+    plSum:S=>`${S.intersects} חוצות · ${S.nearby} בסמוך · ${S.pending} עדיין בהליך · ${S.transit} מסילתיות`,units:u=>`שינוי יח״ד בתכניות שבטווח: ${u}`,
+    plNone:"תכניות סביב הרחוב לא חושבו",muni:(p,s)=>`היתרי בנייה ואתרי בנייה בכתובות הרחוב (עיריית תל אביב-יפו): ${p} היתרים · ${s} אתרים`,renewal:"מתחם התחדשות מוכרז (מספר תכנית זהה)",
+    invH:"השקעה — הערכת רחוב",sup:"מה תומך",ag:"מה נגד",chg:"מה יכול להשתנות",dd:"בדיקת נאותות",noScore:"כללים דטרמיניסטיים בלבד — ללא ציון, ללא הסתברות, ללא המלצה.",
+    propH:"הערכת נכס — הנתונים וההנחות שלך",prop:{askingPrice:"מחיר מבוקש ₪",sqm:"שטח מ״ר",rooms:"חדרים",built:"שנת בנייה",newness:"מצב",type:"סוג",rentMonthly:"שכירות חודשית ₪ (שלך)",holdYears:"שנות החזקה",bull:"אופטימי %/שנה",base:"בסיס %/שנה",bear:"פסימי %/שנה",costsPct:"עלויות רכישה %"},
+    newOpt:{existing:"קיימת",new:"חדשה"},typeOpt:{flat:"דירה בבניין",garden:"דירת גן",roof:"דירת גג"},propGo:"חשב",propSaved:"נשמר בדפדפן זה בלבד",
+    propNeed:"יש להזין מחיר מבוקש ושטח — PROPX אינו ממלא אותם.",askSqm:"מחיר מבוקש למ״ר",vsModel:"מול הערכת המודל",pos:{BELOW_RANGE:"מתחת לטווח האימות",WITHIN_RANGE:"בתוך טווח האימות",ABOVE_RANGE:"מעל טווח האימות"},
+    vsStreet:"מול חציון הרחוב",pctl:p=>`אחוזון ${p} בעסקאות הרחוב (₪/מ״ר)`,similar:"עסקאות דומות ברחוב",scen:"תרחישים (מההנחות שלך בלבד)",scenNone:"לא הוזנו הנחות שינוי שנתי ותקופת החזקה — לא חושבו תרחישים.",
+    scenCols:["תרחיש","שינוי שנתי","שווי בסוף","רווח מחיר","שכירות מצטברת","עלויות","תשואה כוללת"],scenName:{bull:"אופטימי",base:"בסיס",bear:"פסימי"},yield:"תשואה ברוטו",
+    mapH:"מפת הרחוב",mapNone:"אין חלקות ממוקמות לרחוב זה בשכבת GovMap — המפה אינה זמינה.",mapLeg:{pt:"חלקה / בניין ברחוב",int:"תכנית חוצה",near:"תכנית בסמוך",tr:"תכנית מסילתית"},
+    mapNote:"PROPX מצייר רק את הנתונים שלו (נקודות החלקות של שכבת GovMap וגבולות התכניות) — ללא רקע מפה או תצלומי אוויר מורשים.",
+    srcH:"מקורות, תאריכים ומה חסר",srcCols:["מקור","סיווג","נכון ל"],missH:"מה חסר ולמה",
+    out:{print:"הדפסה / PDF",json:"ייצוא הדוח (JSON)",copy:"העתק סיכום",copied:"הסיכום הועתק"},
+    evH:"ראיות הרחוב — מודיעין רחוב (התצוגה המלאה הקיימת)",ms:ms=>`נבנה ב-${ms} מ״ש`,srcLabel:"תווית מקור",obs:"נצפה",obsTip:"עסקאות שנצפו בעותק שפורסם מחדש של מאגר רשות המסים — לא ערוץ ממשלתי",dash:"—",
+    sampleSub:s=>`מתומחרות / נצפו · ${s}`,inside:"בתוך",
+    pop:{STREET:"עסקאות מגורים מתומחרות שנצפו ברחוב",NEIGHBOURHOOD_VERIFIED:r=>`עסקאות מגורים מתומחרות ב-${r.streets} הרחובות המקושרים לשכונה (רחובות שלמים)`,NEIGHBOURHOOD_SOURCE_LABEL:r=>`עסקאות מגורים מתומחרות ב-${r.streets} הרחובות שהמקור מסמן בשם השכונה (≥ 80% מהרשומות) — תווית מקור, לא גבול מאומת`,
+      CITY:"עסקאות מגורים מתומחרות ביישוב (כל מצבי הכתובת)",DISTRICT:r=>`עסקאות מגורים מתומחרות ב-${r.localities||""} יישובי המחוז שנסרקו, מאוחדות (לא ממוצע של חציונים)`},
+    cmpRule:"אותה אוכלוסייה בכל רמה: עסקאות מגורים מתומחרות של עותק המרשם (נכס שלם, ≥ ₪100,000) באותו חלון של 36 חודשים; חציון רק במצב מספק (≥ 10) או מוגבל (5–9); הפרש רחוב ↔ רמה רק כששני הצדדים מספקים עם ≥ 10 עסקאות עם ₪/מ״ר.",
+    cmpNot:"הפרש בין חציונים מתאר את המדגמים שנצפו (תמהיל הגדלים, הגילים והבניינים) — לא את שוויה של דירה מסוימת.",
+    plBasis:"מרחק: מנקודת החלקה / הבניין הקרובה ברחוב (נקודות שכבת GovMap) עד גבול התכנית (מוכלל ~10 מ׳).",plNotJoin:"יחס מרחבי הוא הקשר — הוא לעולם אינו מחבר רשומות, אינו מייחס לרחוב יחידות דיור של תכנית ואינו מעריך דירה.",
+    plNotMean:"תכנית מאושרת או מופקדת היא שלב סטטוטורי — לא היתר, לא בנייה, לא קו פעיל, ולעולם לא שינוי מחיר מובטח.",unitsNote:"סכום שינויי היחידות של התכניות עצמן בטווח — יחידות התכנית שייכות לתכנית, לעולם לא לרחוב; תכניות חופפות בזמן ועשויות לעדכן זו את זו.",
+    mapBasis:"נקודה אחת לכל חלקה / בניין ששכבת GovMap ממקמת בהם את עסקאות הרחוב (הקואורדינטות שלה)",valid:(m,n)=>`אימות: חציון ${m} מ׳ מול ${n} עסקאות`,
+    cov:{floor:"קומה",rooms:"חדרים",areaSqm:"שטח",pricePerSqm:"₪/מ״ר",houseNumber:"מספר בית",yearBuilt:"שנת בנייה"},
+    simRule:(a,b)=>`עסקאות מתומחרות שנצפו ברחוב בטווח ±20% מ-${a} מ״ר${b?` ובאותה קבוצת חדרים (${b})`:""}`,scenRule:"תרחישי אופטימי / בסיס / פסימי הם השינויים השנתיים שהזנת, מורכבים על פני תקופת ההחזקה שלך — PROPX אינו חוזה מחירים; בלי הנחות — אין תרחיש.",
+    propNot:"לא שומה, לא תחזית, לא המלצה: הערכת המודל ועסקאות הרחוב הן נקודות ייחוס לשיקול הדעת שלך."},
+  en:{
+    lyr:"Street report — investment intelligence",loading:"Loading the street report…",loadingFull:"Loading planning, the map and the full transaction table…",err:"The street report is not available right now.",
+    nav:{ov:"Overview",tx:"Transactions",px:"Prices & comparison",pl:"Planning & infrastructure",inv:"Investment",map:"Map",src:"Sources",ev:"Street evidence"},
+    hier:{district:"District",city:"City",nb:"Neighbourhood",street:"Street",bld:"Buildings"},
+    nbState:{VERIFIED:"verified",SOURCE_LABEL:"source label",SOURCE_LABEL_MIXED:"mixed source labels",UNRESOLVED:"unresolved"},
+    nbWhy:{VERIFIED:"a verified street → neighbourhood link",SOURCE_LABEL:"the name the source prints on the street's deals — not a verified boundary",SOURCE_LABEL_MIXED:"the source labels the street's deals with more than one neighbourhood",UNRESOLVED:"no verified link and no source label — PROPX never infers a neighbourhood"},
+    latestH:"Latest transaction on the street",latestNone:"PROPX holds no transaction for this street",noStat:"price not in statistics",inStat:"in statistics",
+    k:{sample:"Observed sample (36 mo)",sqm:"Street median ₪/m²",vsCity:"vs the city (₪/m²)",model:"PROPX model ₪/m²",plans:"Plans on the street",transit:"Nearest rail-transit plan",located:"Located parcels / buildings"},
+    understand:"Understanding this street",kinds:{FACT:"fact",MODEL:"model",INTERPRETATION:"interpretation"},
+    txH:"Every transaction on the street",cat:{STREET:"Reliable street match",POSSIBLE:"Possible match",AREA:"Surrounding area (other streets)"},
+    per:{all:"All",d30:"30 days",d90:"90 days",m6:"6 months",m12:"12 months",m24:"24 months"},
+    f:{rooms:"Rooms",area:"m²",price:"Price ₪",min:"from",max:"to",kind:"Type",kinds:{"":"All",DWELLING:"Dwelling",NON_DWELLING:"Non-dwelling",TYPE_NOT_STATED:"Type not stated"},stats:"Only prices used in statistics",apply:"Apply",reset:"Clear"},
+    cols:["Date","Address","Price","₪/m²","Rooms","Floor","m²","Property type","Block/parcel/sub","Match","Source","PROPX state"],
+    more:"Load more",csv:"Export CSV",shown:(a,b)=>`showing ${a} of ${b}`,cover:"Field coverage",hist:"before the 36-month window",histN:n=>`${n} historical rows from the GovMap layer before the window (in "All")`,
+    liveAll:"Full live history (the register) — in the page's transactions table",areaBasis:"streets within",areaNone:"no located streets nearby",
+    det:{id:"Event id",match:"Match",reasons:"Reasons",copy:"Source copy",first:"First read",notes:"Notes",also:"Also in",conflict:"Conflict",built:"Year built",newness:"New / second-hand",portion:"Share sold",basis:"Address basis"},
+    pxH:"Prices and fair comparison",lvl:{STREET:"The street",NEIGHBOURHOOD_VERIFIED:"Verified neighbourhood",NEIGHBOURHOOD_SOURCE_LABEL:"Neighbourhood (source label)",CITY:"The city",DISTRICT:"The district"},
+    pxCols:["Level","Population","Priced deals","State","Median price","Median ₪/m²","Median area","% new","Street vs level"],
+    seg:"By rooms (₪/m², the same population)",modelH:"PROPX model (MODEL)",modelNone:"No model estimate for this street",range:"Validation range",tier:"Evidence tier",asOf:"As of",
+    plH:"Planning and infrastructure around the street",rel:{ON_THE_STREET:"On the street",INTERSECTS:"Intersects",NEARBY:"Nearby",AREA_WIDE:"Area-wide",CITY_CONTEXT:"City context"},
+    topic:{RAIL_TRANSIT:"Rail transit",ROAD:"Roads",RENEWAL:"Urban renewal",NATIONAL_INFRASTRUCTURE:"National infrastructure",PREFERRED_HOUSING:"Preferred housing",OTHER:"Plan"},
+    plCols:["Relation","Distance","Plan","Name","Topic","Stage","Unit change","Area (dunam)","Updated"],transitH:"Rail transit — statutory plans (not operating lines)",areaWideH:"Area-wide plans (include the street, not specific to it)",
+    plSum:S=>`${S.intersects} intersect · ${S.nearby} nearby · ${S.pending} still in process · ${S.transit} rail transit`,units:u=>`Unit change in the plans within the radius: ${u}`,
+    plNone:"Plans around the street were not computed",muni:(p,s)=>`Building permits and construction sites at the street's addresses (Tel Aviv-Yafo): ${p} permits · ${s} sites`,renewal:"Declared renewal complex (same plan number)",
+    invH:"Investment — street assessment",sup:"What supports",ag:"What argues against",chg:"What could change",dd:"Due diligence",noScore:"Deterministic rules only — no score, no probability, no recommendation.",
+    propH:"Property assessment — your figures and assumptions",prop:{askingPrice:"Asking price ₪",sqm:"Area m²",rooms:"Rooms",built:"Year built",newness:"Condition",type:"Type",rentMonthly:"Monthly rent ₪ (yours)",holdYears:"Holding years",bull:"Bull %/yr",base:"Base %/yr",bear:"Bear %/yr",costsPct:"Purchase costs %"},
+    newOpt:{existing:"existing",new:"new"},typeOpt:{flat:"flat in a building",garden:"garden flat",roof:"roof flat"},propGo:"Calculate",propSaved:"saved in this browser only",
+    propNeed:"Enter an asking price and an area — PROPX never fills them.",askSqm:"Asking price per m²",vsModel:"vs the model estimate",pos:{BELOW_RANGE:"below the validation range",WITHIN_RANGE:"within the validation range",ABOVE_RANGE:"above the validation range"},
+    vsStreet:"vs the street median",pctl:p=>`percentile ${p} of the street's deals (₪/m²)`,similar:"Similar deals on the street",scen:"Scenarios (from your assumptions only)",scenNone:"No annual-change assumptions and holding period entered — no scenario computed.",
+    scenCols:["Scenario","Annual change","End value","Price gain","Rent total","Costs","Total return"],scenName:{bull:"Bull",base:"Base",bear:"Bear"},yield:"Gross yield",
+    mapH:"Street map",mapNone:"No located parcel of this street in the GovMap layer — the map is not available.",mapLeg:{pt:"parcel / building on the street",int:"intersecting plan",near:"nearby plan",tr:"rail-transit plan"},
+    mapNote:"PROPX draws only its own data (the GovMap layer's parcel points and the plan boundaries) — no licensed basemap or aerial imagery.",
+    srcH:"Sources, dates and what is missing",srcCols:["Source","Class","As of"],missH:"What is missing and why",
+    out:{print:"Print / PDF",json:"Export report (JSON)",copy:"Copy summary",copied:"Summary copied"},
+    evH:"Street evidence — Street Intelligence (the full existing view)",ms:ms=>`built in ${ms} ms`,srcLabel:"Source label",obs:"Observed",obsTip:"deals observed in the republished copy of the Tax Authority register — not a government channel",dash:"—",
+    sampleSub:s=>`priced / observed · ${s}`,inside:"inside",
+    pop:{STREET:"OBSERVED priced dwelling deals on this street",NEIGHBOURHOOD_VERIFIED:r=>`OBSERVED priced dwelling deals on the ${r.streets} verified-linked streets (whole streets)`,NEIGHBOURHOOD_SOURCE_LABEL:r=>`OBSERVED priced dwelling deals on the ${r.streets} streets the source labels with the name (≥ 80 % of their rows) — a source label, not a verified boundary`,
+      CITY:"priced dwelling deals in the locality (every address state)",DISTRICT:r=>`priced dwelling deals of the district's ${r.localities||""} swept localities, pooled (never an average of medians)`},
+    cmpRule:"The same population at every level: priced dwelling deals of the register copy (whole property, ≥ ₪100,000) in the same 36-month window; a median only at SUPPORTED (≥ 10) or LIMITED (5–9); a street ↔ level difference only where both are SUPPORTED with ≥ 10 deals with ₪/m².",
+    cmpNot:"A difference between medians describes the observed samples (their mix of sizes, ages and buildings), not the value of a specific dwelling.",
+    plBasis:"Distance: from the nearest located parcel / building point of the street (GovMap-layer points) to the plan boundary (generalized ~10 m).",plNotJoin:"A spatial relation is context — it never joins records, never attributes a plan's housing units to the street, never values a dwelling.",
+    plNotMean:"An approved or deposited plan is a statutory stage — not a permit, not construction, not an operating line, and never a guaranteed price change.",unitsNote:"The sum of the plans' own unit changes within the radius — each plan's units are the plan's, never the street's; plans overlap in time and may revise each other.",
+    mapBasis:"one point per parcel / building polygon the GovMap layer places this street's deals in (its own coordinates)",valid:(m,n)=>`validation: median ${m} m on ${n} deals`,
+    cov:{floor:"floor",rooms:"rooms",areaSqm:"area",pricePerSqm:"₪/m²",houseNumber:"house no.",yearBuilt:"year built"},
+    simRule:(a,b)=>`observed priced deals on this street within ±20 % of ${a} m²${b?` and ${b} rooms`:""}`,scenRule:"Bull / base / bear are the annual price changes YOU entered, compounded over YOUR holding period — PROPX does not forecast prices; none entered → none computed.",
+    propNot:"Not an appraisal, not a forecast, not a recommendation: the model estimate and the street's observed deals are reference points for your own judgment."}};
+const srT=()=>SRT[state.lang==="en"?"en":"he"];
+const SR_TXQ0={cat:"STREET,POSSIBLE",sort:"date",dir:"desc",per:"all",kind:"",roomsMin:"",roomsMax:"",areaMin:"",areaMax:"",priceMin:"",priceMax:"",statsOnly:false};
+const srState={id:null,core:null,full:null,err:null,tx:null,txRows:[],txQ:{...SR_TXQ0},txLoading:false,txErr:null,openRow:null,prop:null,propLoading:false};
+const srCls={OFFICIAL:"raw",VERIFIED:"raw",DERIVED:"der",MODEL:"mod",MISSING:"na","USER ASSUMPTION":"usr"};
+/* the evidence class of a figure: the page's own chips; a SOURCE LABEL is the source's name for a place (never verified); an interpretation
+   carries its kind label, no class chip */
+const srTag=c=>!c||c==="INTERPRETATION"?"":c==="SOURCE LABEL"?`<span class="vc static">${srT().srcLabel}</span>`:c==="OBSERVED"?`<span class="vc obs" title="${ldE(srT().obsTip)}">${srT().obs}</span>`:srCls[c]?vcTag(srCls[c]):`<span class="vc static">${ldE(c)}</span>`;
+const srSt=s=>s?(siT().states[s]||s):"—";
+/* the Street Value Model's own reason for no estimate, in the page's words (Street Intelligence's table) */
+const srModWhy=M=>{const k=M&&M.reason;return k?(siT().unav&&siT().unav[k])||k:""};
+async function srLoad(id){
+  if(srState.id===id&&(srState.core||srState.full))return;
+  Object.assign(srState,{id,core:null,full:null,err:null,tx:null,txRows:[],txQ:{...SR_TXQ0},txErr:null,openRow:null,prop:null});
+  const get=async q=>{const r=await fetch("/api/intel?"+q);if(!r.ok)throw new Error(String(r.status));return r.json()};
+  try{const c=await get("view=streetReport&part=core&id="+encodeURIComponent(id));if(srState.id!==id)return;srState.core=c;renderGeoView()}
+  catch(e){if(srState.id===id){srState.err=e.message;renderGeoView()}}
+  try{const f=await get("view=streetReport&limit=50&id="+encodeURIComponent(id));if(srState.id!==id)return;
+    srState.full=f;srState.tx=f.transactions;srState.txRows=(f.transactions.rows||[]).slice();renderGeoView()}
+  catch(e){if(srState.id===id&&!srState.core){srState.err=e.message;renderGeoView()}}
+}
+function srTxParams(extra={}){
+  const Q=srState.txQ,q=new URLSearchParams({view:"streetTx",id:srState.id,cat:Q.cat,sort:Q.sort,dir:Q.dir});
+  const per={d30:["days",30],d90:["days",90],m6:["months",6],m12:["months",12],m24:["months",24]}[Q.per];if(per)q.set(per[0],per[1]);
+  for(const k of ["kind","roomsMin","roomsMax","areaMin","areaMax","priceMin","priceMax"])if(Q[k]!==""&&Q[k]!=null)q.set(k,Q[k]);
+  if(Q.statsOnly)q.set("statsOnly","1");
+  for(const [k,v] of Object.entries(extra))q.set(k,v);
+  return q;
+}
+async function srTxLoad(reset){
+  const id=srState.id;if(!id||srState.txLoading)return;
+  srState.txLoading=true;srState.txErr=null;if(reset){srState.txRows=[];srState.openRow=null}renderGeoView();
+  try{const r=await fetch("/api/intel?"+srTxParams({offset:reset?0:srState.txRows.length,limit:50}).toString());if(srState.id!==id)return;
+    if(!r.ok)throw new Error(String(r.status));const d=await r.json();srState.tx=d;srState.txRows=(reset?[]:srState.txRows).concat(d.rows||[])}
+  catch(e){if(srState.id===id)srState.txErr=e.message}
+  if(srState.id===id){srState.txLoading=false;renderGeoView()}
+}
+const SR_PROP_KEY="propx:street-property:v1";
+const srPropSaved=id=>{try{const o=JSON.parse(localStorage.getItem(SR_PROP_KEY)||"{}");return o[id]||null}catch(e){return null}};
+async function srProp(id,fd){
+  const q=new URLSearchParams({view:"streetProperty",id});const save={};
+  for(const k of ["askingPrice","sqm","rooms","built","newness","type","rentMonthly","holdYears","bull","base","bear","costsPct"]){const v=fd.get(k);if(v!=null&&v!==""){q.set(k,v);save[k]=v}}
+  try{const o=JSON.parse(localStorage.getItem(SR_PROP_KEY)||"{}");o[id]=save;localStorage.setItem(SR_PROP_KEY,JSON.stringify(o))}catch(e){/* per-viewer convenience only */}
+  srState.propLoading=true;renderGeoView();
+  try{const r=await fetch("/api/intel?"+q.toString());if(srState.id!==id)return;srState.prop=r.ok?await r.json():{available:false,reason:String(r.status)}}
+  catch(e){if(srState.id===id)srState.prop={available:false,reason:"offline"}}
+  if(srState.id===id){srState.propLoading=false;renderGeoView()}
+}
+const srPct=v=>v==null?"—":`<bdi dir="ltr">${v>0?"+":""}${v}%</bdi>`;
+const srMoney=v=>v==null?"—":`<bdi dir="ltr">${v<0?"−":""}${fmtNIS(Math.abs(v))}</bdi>`;
+const srDist=m=>m==null?"—":m===0?srT().inside:`${fmtInt(m)} ${state.lang==="en"?"m":"מ׳"}`;
+/* the street's own map: its located parcels / buildings and the plan boundaries around it — vector only, from PROPX's own data */
+function srMapSVG(R){
+  const t=srT(),M=R.map;
+  if(!M||!M.available)return `<p class="gv-note">${t.mapNone}</p>`;
+  const W=640,H=380,pad=24,[cx,cy]=M.centroid,kx=Math.cos(cy*Math.PI/180);
+  const P=R.planning&&R.planning.available?R.planning:null;
+  const pts=M.points;
+  let [x0,y0,x1,y1]=M.bbox;const buf=0.0022;x0-=buf/kx;x1+=buf/kx;y0-=buf;y1+=buf;
+  const sx=(W-2*pad)/((x1-x0)*kx),sy=(H-2*pad)/(y1-y0),s=Math.min(sx,sy);
+  const ox=pad+((W-2*pad)-(x1-x0)*kx*s)/2,oy=pad+((H-2*pad)-(y1-y0)*s)/2;
+  const X=lng=>ox+(lng-x0)*kx*s,Y=lat=>H-(oy+(lat-y0)*s);
+  const path=rings=>rings.map(r=>"M"+r.map(([a,b])=>`${X(a).toFixed(1)},${Y(b).toFixed(1)}`).join("L")+"Z").join("");
+  const plans=P?[...P.plans.filter(p=>p.rings&&p.relation!=="AREA_WIDE").map(p=>({...p,k:p.relation==="INTERSECTS"?"int":"near"})),...P.transit.filter(p=>p.rings).map(p=>({...p,k:"tr"}))]:[];
+  const polys=plans.map(p=>`<path class="sr-pl ${p.k}" d="${path(p.rings)}"><title>${ldE(`${p.planNumber} · ${p.name||""} · ${t.rel[p.relation]} · ${srDist(p.distanceM).replace(/<[^>]+>/g,"")}`)}</title></path>`).join("");
+  const label=pts.length<=45;
+  const dots=pts.map(([a,b,h,n])=>`<g><circle class="sr-pt" cx="${X(a).toFixed(1)}" cy="${Y(b).toFixed(1)}" r="${Math.min(7,3+Math.sqrt(n||1)/2).toFixed(1)}"><title>${ldE(`${R.identity.name} ${h||""} · ${n||0}`)}</title></circle>${label&&h?`<text class="sr-pt-l" x="${(X(a)+6).toFixed(1)}" y="${(Y(b)-5).toFixed(1)}">${ldE(h)}</text>`:""}</g>`).join("");
+  const metersPerPx=1/(s/(111320));const nice=[50,100,200,500,1000,2000].find(m=>m/metersPerPx>60)||2000;const bar=nice/metersPerPx;
+  return `<svg class="sr-map" viewBox="0 0 ${W} ${H}" role="img" aria-label="${ldE(t.mapH)}">
+    <rect x="0" y="0" width="${W}" height="${H}" class="sr-map-bg"/>${polys}${dots}
+    <g class="sr-map-scale" transform="translate(${pad},${H-14})"><line x1="0" y1="0" x2="${bar.toFixed(1)}" y2="0"/><text x="${(bar/2).toFixed(1)}" y="-5">${nice>=1000?nice/1000+" km":nice+" m"}</text></g>
+    <g class="sr-map-n" transform="translate(${W-pad},${pad+6})"><path d="M0,-12 L5,4 L0,0 L-5,4 Z"/><text y="16">N</text></g></svg>
+    <div class="sr-leg"><span><i class="pt"></i>${t.mapLeg.pt}</span><span><i class="int"></i>${t.mapLeg.int}</span><span><i class="near"></i>${t.mapLeg.near}</span><span><i class="tr"></i>${t.mapLeg.tr}</span></div>
+    <p class="gv-note">${t.mapBasis} · ${fmtInt(M.located)}${M.validation?` · ${t.valid(M.validation.medianM,fmtInt(M.validation.matched))}`:""}</p><p class="gv-note">${t.mapNote}</p>`;
+}
+function srTxTableHTML(R){
+  const t=srT(),x=txeT(),T=srState.tx,Q=srState.txQ,dash="—";
+  if(!T)return `<p class="gv-note">${t.loadingFull}</p>`;
+  const sortTh=(i,key)=>{const on=Q.sort===key;return `<th><button type="button" class="sr-sort${on?" on":""}" data-srsort="${key}">${t.cols[i]}${on?(Q.dir==="asc"?" ▲":" ▼"):""}</button></th>`};
+  const head=`<tr>${sortTh(0,"date")}<th>${t.cols[1]}</th>${sortTh(2,"price")}${sortTh(3,"ppsqm")}${sortTh(4,"rooms")}${sortTh(5,"floor")}${sortTh(6,"area")}<th>${t.cols[7]}</th><th>${t.cols[8]}</th><th>${t.cols[9]}</th><th>${t.cols[10]}</th><th>${t.cols[11]}</th></tr>`;
+  const rows=srState.txRows.map((r,i)=>{
+    const addr=[r.street,r.houseNumber].filter(Boolean).join(" ");
+    const nouse=!r.inStatistics&&r.price!=null;
+    const open=srState.openRow===r.txId;
+    const det=open?`<tr class="sr-det"><td colspan="12"><dl>
+      <dt>${t.det.id}</dt><dd><bdi>${ldE(r.txId)}</bdi></dd><dt>${t.det.match}</dt><dd>${ldE(x.match[r.geo&&r.geo.match]||(r.geo&&r.geo.match)||dash)} · ${t.cat[r.category]||r.category}</dd>
+      ${r.geo&&r.geo.reasons&&r.geo.reasons.length?`<dt>${t.det.reasons}</dt><dd>${r.geo.reasons.map(ldE).join(" · ")}</dd>`:""}
+      <dt>${t.det.copy}</dt><dd>${x.src[r.sourceId]||ldE(r.sourceId)} · ${txeDmy(r.snapshotDate)}${r.history?` · ${t.hist}`:""}</dd>${r.firstReadAt?`<dt>${t.det.first}</dt><dd>${txeDmy(r.firstReadAt)}</dd>`:""}
+      ${(r.notes||[]).length?`<dt>${t.det.notes}</dt><dd>${r.notes.map(k=>x.notes[k]||ldE(k)).join(" · ")}</dd>`:""}
+      ${(r.evidence||[]).length?`<dt>${t.det.also}</dt><dd>${r.evidence.map(v=>`${x.src[v.sourceId]||ldE(v.sourceId)} ${txeDmy(v.date)}${v.amount!=null?" · "+fmtNIS(v.amount):""}`).join(" · ")}</dd>`:""}
+      ${r.conflict?`<dt>${t.det.conflict}</dt><dd>${(r.conflictFields||[]).map(f=>x.notes[f]||ldE(f)).join(", ")}</dd>`:""}
+      <dt>${t.det.built}</dt><dd>${r.yearBuilt||dash}</dd><dt>${t.det.newness}</dt><dd>${ldE(r.newness||dash)}</dd>${r.partialSale&&r.portion?`<dt>${t.det.portion}</dt><dd>${ldE(String(r.portion.text||r.portion.fraction))}</dd>`:""}
+      ${r.addressBasis?`<dt>${t.det.basis}</dt><dd>${ldE(r.addressBasis)}${(r.addressCandidates||[]).length?` · <bdi>${r.addressCandidates.slice(0,6).map(ldE).join(" · ")}</bdi>`:""}</dd>`:""}</dl></td></tr>`:"";
+    return `<tr class="sr-row${open?" open":""}${r.state==="POSSIBLE_DUPLICATE"?" txe-dup":""}" data-srrow="${ldE(r.txId)}" data-cat="${r.category}" tabindex="0">
+      <td class="num">${siDate(r.date)}${r.history?`<span class="txe-src">${t.hist}</span>`:""}</td>
+      <td class="w"><bdi>${ldE(addr)||dash}</bdi>${r.areaStreet?`<span class="txe-src">${ldE(r.areaStreet.name)} · ${srDist(r.areaStreet.distanceM)}</span>`:""}</td>
+      <td class="num">${r.price!=null?fmtNIS(r.price):dash}${nouse?`<span class="txe-nouse">${t.noStat}</span>`:""}</td><td class="num">${r.psmShown?fmtNIS(r.pricePerSqm):dash}</td>
+      <td class="num">${r.rooms!=null?r.rooms:dash}</td><td class="w">${r.floorText?ldE(r.floorText):dash}</td><td class="num">${siNum(r.areaSqm)}</td>
+      <td class="w">${ldE(r.propertyType||dash)}</td><td class="num"><bdi>${r.block?ldE(`${r.block}/${r.parcel}${r.subParcel!=null&&r.subParcel!==""?"/"+r.subParcel:""}`):dash}</bdi></td>
+      <td><span class="sr-cat ${r.category}">${t.cat[r.category]||r.category}</span></td><td>${x.src[r.sourceId]||ldE(r.sourceId)}<span class="txe-src">${txeDmy(r.snapshotDate)}</span></td>
+      <td><span class="txe-st ${r.state}">${x.st[r.state]||r.state}</span></td></tr>${det}`;}).join("");
+  const F=T.facets||{},cc=F.category||{};
+  const cats=["STREET","POSSIBLE","AREA"].map(c=>`<label class="sr-chk"><input type="checkbox" data-srcat="${c}"${Q.cat.split(",").includes(c)?" checked":""}> ${t.cat[c]}${cc[c]!=null?` <span class="num">(${fmtInt(cc[c])})</span>`:""}</label>`).join("");
+  const pers=Object.keys(t.per).map(k=>`<button type="button" class="chip${Q.per===k?" on":""}" data-srper="${k}">${t.per[k]}</button>`).join("");
+  const inp=(k,ph)=>`<input type="number" inputmode="decimal" data-srf="${k}" value="${ldE(Q[k])}" placeholder="${ph}" aria-label="${ph}">`;
+  const cov=T.fieldCoverage||{};
+  const csvHref="/api/intel?"+srTxParams({format:"csv"}).toString();
+  const area=T.area;
+  return `<div class="sr-filters">${cats}</div><div class="sr-filters">${pers}</div>
+    <form class="sr-filters sr-ff" data-srform="1"><span>${t.f.rooms}</span>${inp("roomsMin",t.f.min)}${inp("roomsMax",t.f.max)}<span>${t.f.area}</span>${inp("areaMin",t.f.min)}${inp("areaMax",t.f.max)}
+      <span>${t.f.price}</span>${inp("priceMin",t.f.min)}${inp("priceMax",t.f.max)}<select data-srf="kind" aria-label="${t.f.kind}">${Object.entries(t.f.kinds).map(([k,v])=>`<option value="${k}"${Q.kind===k?" selected":""}>${v}</option>`).join("")}</select>
+      <label class="sr-chk"><input type="checkbox" data-srf="statsOnly"${Q.statsOnly?" checked":""}> ${t.f.stats}</label><button type="submit" class="chip">${t.f.apply}</button><button type="button" class="chip" data-srreset="1">${t.f.reset}</button></form>
+    <p class="gv-note"><b class="num">${t.shown(fmtInt(srState.txRows.length),fmtInt(T.total||0))}</b> · ${t.cover}: ${["floor","rooms","areaSqm","pricePerSqm","houseNumber","yearBuilt"].map(k=>`${t.cov[k]} ${cov[k]!=null?cov[k]+"%":"—"}`).join(" · ")}${T.historyRows?` · ${t.histN(fmtInt(T.historyRows))}`:""}
+      ${area?` · ${area.available?`${t.areaBasis} ${area.radiusM} ${state.lang==="en"?"m":"מ׳"}: ${area.streets.map(s=>ldE(s.name)).join(" · ")||t.areaNone}`:ldE(area.reason||"")}`:""}</p>
+    ${srState.txErr?`<p class="gv-note">${ldE(srState.txErr)}</p>`:""}
+    <div class="st-wrap"><table class="st-tbl sr-tx"><thead>${head}</thead><tbody>${rows||`<tr><td colspan="12" class="gv-note">${dash}</td></tr>`}</tbody></table></div>
+    <div class="st-acts">${T.more?`<button type="button" class="chip" data-srmore="1">${srState.txLoading?t.loadingFull:t.more}</button>`:""}<a class="chip" href="${ldE(csvHref)}" download data-srcsv="1">${t.csv}</a>
+      <button type="button" class="chip" data-stlive="1">${t.liveAll}</button></div>
+    <p class="gv-note">${ldE(state.lang==="en"?T.note||"":T.noteHe||"")}</p>`;
+}
+function srHTML(g){
+  const t=srT(),S=srState;
+  if(S.id!==g.id)return "";
+  const R=S.full||S.core;
+  if(!R)return S.err?`<p class="gv-note">${t.err}</p>`:`<p class="gv-note">${t.loading}</p>`;
+  const he=state.lang!=="en",I=R.identity,H=R.hierarchy,O=R.overview,x=txeT(),dash="—";
+  const nbS=H.neighbourhood.state;
+  const nbName=H.neighbourhood.verified?H.neighbourhood.verified.name:H.neighbourhood.sourceLabel?H.neighbourhood.sourceLabel.name:t.nbState.UNRESOLVED;
+  const crumb=`<nav class="sr-crumb" aria-label="hierarchy"><span><small>${t.hier.district}</small>${ldE(he?H.district.he:H.district.en)||dash}</span><span><small>${t.hier.city}</small>${ldE(he?H.city.he:enTitle(H.city.en)||H.city.he)}</span>
+    <span><small>${t.hier.nb}</small>${ldE(nbName)} <span class="sr-nb ${nbS}" title="${ldE(t.nbWhy[nbS])}">${t.nbState[nbS]}${H.neighbourhood.sourceLabel&&nbS!=="VERIFIED"?` · ${H.neighbourhood.sourceLabel.sharePct}%`:""}</span>${nbS!=="VERIFIED"&&H.neighbourhood.sourceLabel?xpBtn("street_report_source_label"):""}</span>
+    <span><small>${t.hier.street}</small><b>${ldE(I.name)}</b></span><span><small>${t.hier.bld}</small>${R.buildings?fmtInt(R.buildings.length):dash}</span></nav>
+    <p class="gv-note">${ldE(t.nbWhy[nbS])}${H.neighbourhood.sourceLabel&&H.neighbourhood.sourceLabel.others&&H.neighbourhood.sourceLabel.others.length?` · ${H.neighbourhood.sourceLabel.others.map(o=>`${ldE(o.name)} ${o.sharePct}%`).join(" · ")}`:""}</p>`;
+  const L=O.latest;
+  const latest=`<div class="sr-latest"><div class="l">${t.latestH}</div>${L?`<div class="v num">${siDate(L.date)}</div><div class="s">${L.price!=null?fmtNIS(L.price):dash}${L.inStatistics?` · ${t.inStat}`:L.price!=null?` · ${t.noStat}`:""} · ${[L.street,L.houseNumber].filter(Boolean).map(ldE).join(" ")} · ${x.src[L.sourceId]||ldE(L.sourceId)} (${txeDmy(L.snapshotDate)})</div>`:`<div class="s">${t.latestNone}</div>`}
+    ${O.freshness?txFreshHTML(O.freshness,{locality:true}):""}</div>`;
+  const st=O.stats,city=R.comparison.rows.find(r=>r.level==="CITY"),M=O.model,P=R.planning&&R.planning.available?R.planning.summary:null;
+  const tile=(l,v,s,cls)=>`<div class="gv-m"><span class="l">${l} ${cls?srTag(cls):""}</span><span class="v num">${v}</span>${s?`<span class="s">${s}</span>`:""}</div>`;
+  const kpis=`<div class="st-grid">${tile(t.k.sample,st?`${fmtInt(st.priced)} / ${fmtInt(st.observed)}`:dash,st?t.sampleSub(srSt(st.state)):"","OBSERVED")}
+    ${tile(t.k.sqm,st&&st.medianPricePerSqm!=null?fmtNIS(st.medianPricePerSqm):dash,"","OBSERVED")}
+    ${tile(t.k.vsCity,city&&city.streetVsLevelPct!=null?srPct(city.streetVsLevelPct):dash,city&&city.medianPricePerSqm!=null?fmtNIS(city.medianPricePerSqm):"","DERIVED")}
+    ${tile(t.k.model,M&&M.value!=null?fmtNIS(M.value):dash,M&&M.value!=null?`${M.tier}${M.range?` · ${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}`:""}`:ldE(srModWhy(M)),M&&M.value!=null?"MODEL":"MISSING")}
+    ${tile(t.k.plans,P?fmtInt(P.intersects):R.planning&&R.planning.deferred?"…":dash,P?`${P.nearby} · ${P.pending}`:"","OFFICIAL")}
+    ${tile(t.k.transit,P&&P.transitNearestM!=null?srDist(P.transitNearestM):R.planning&&R.planning.deferred?"…":dash,P?`${P.transit}`:"","OFFICIAL")}
+    ${tile(t.k.located,R.map&&R.map.available?fmtInt(R.map.located):dash,R.map&&R.map.available?srDist(R.map.extentM):"","OBSERVED")}</div>`;
+  const narr=`<div class="sr-narr">${O.narrative.map(n=>`<p class="sr-n ${n.kind}"><span class="sr-k">${t.kinds[n.kind]||n.kind}</span> ${ldE(he?n.he:n.en)} ${srTag(n.cls==="SOURCE LABEL"?"SOURCE LABEL":n.cls)}</p>`).join("")}</div>`;
+  /* prices */
+  const C=R.comparison;
+  const pxRows=C.rows.map(r=>r.state===null&&r.reason?`<tr><td class="w">${t.lvl[r.level]||r.level} · ${ldE(r.label||"")}</td><td class="w" colspan="8">${ldE(r.reason)}</td></tr>`
+    :`<tr><td class="w">${t.lvl[r.level]||r.level} · <bdi>${ldE(r.label||"")}</bdi> ${srTag(r.cls)}</td><td class="w sr-pop">${ldE(typeof t.pop[r.level]==="function"?t.pop[r.level](r):t.pop[r.level]||r.population||"")}</td><td class="num">${fmtInt(r.priced||0)}</td><td>${ldE(srSt(r.state))}</td>
+      <td class="num">${r.medianPrice!=null?fmtNIS(r.medianPrice):dash}</td><td class="num">${r.medianPricePerSqm!=null?fmtNIS(r.medianPricePerSqm):dash}${r.sqmLimited?" *":""}</td><td class="num">${r.medianAreaSqm!=null?fmtInt(r.medianAreaSqm):dash}</td>
+      <td class="num">${r.probableNewPct!=null?r.probableNewPct+"%":dash}</td><td class="num">${r.level==="STREET"?dash:srPct(r.streetVsLevelPct)}</td></tr>`).join("");
+  const lvls=C.rows.filter(r=>r.bands).map(r=>r.level);
+  const segRows=C.segments.rows.map(s=>`<tr><td class="num">${ldE(s.band)}</td>${lvls.map(l=>{const v=s[l];return `<td class="num">${v&&v.medianPricePerSqm!=null?fmtNIS(v.medianPricePerSqm):dash}<span class="txe-src">n=${v?fmtInt(v.priced):0}</span></td>`}).join("")}</tr>`).join("");
+  const modelCard=M&&M.value!=null?`<div class="sv-card sv-mod"><div class="sv-h">${t.modelH} ${vcTag("mod")}</div><div class="sv-v num">${fmtNIS(M.value)} / ${he?"מ״ר":"m²"}</div>
+      <div class="sv-s">${t.tier}: ${ldE(M.tier)}${M.range?` · ${t.range}: <bdi dir="ltr">${fmtNIS(M.range.lo)}–${fmtNIS(M.range.hi)}</bdi>`:""} · ${t.asOf} ${siDate(M.asOf)}${M.priceLevelQuarter?` · ${ldE(M.priceLevelQuarter)}`:""}</div></div>`:`<p class="gv-note">${t.modelNone} — ${ldE(srModWhy(M))}</p>`;
+  const prices=`<div class="st-wrap"><table class="st-tbl sr-px"><thead><tr>${t.pxCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${pxRows}</tbody></table></div>
+    <p class="gv-note">${t.cmpRule} ${t.cmpNot}</p><h4>${t.seg}</h4>
+    <div class="st-wrap"><table class="st-tbl"><thead><tr><th></th>${lvls.map(l=>`<th>${t.lvl[l]||l}</th>`).join("")}</tr></thead><tbody>${segRows}</tbody></table></div>${modelCard}`;
+  /* planning */
+  const PL=R.planning;
+  let plan="";
+  if(!PL||PL.deferred)plan=`<p class="gv-note">${t.loadingFull}</p>`;
+  else if(!PL.available)plan=`<p class="gv-note">${t.plNone}: ${ldE(PL.reason||"")}</p>`;
+  else{
+    const prow=p=>`<tr><td><span class="sr-rel ${p.relation}">${t.rel[p.relation]}</span></td><td class="num">${srDist(p.distanceM)}</td>
+      <td class="num">${p.url?`<a href="${ldE(p.url)}" target="_blank" rel="noopener noreferrer"><bdi>${ldE(p.planNumber)}</bdi></a>`:`<bdi>${ldE(p.planNumber)}</bdi>`}</td>
+      <td class="w">${ldE(p.name||dash)}${p.renewal?`<span class="txe-src">${t.renewal}: ${p.renewal.map(c=>ldE(c.name)).join(" · ")}</span>`:""}</td><td>${t.topic[p.topic]||ldE(p.topic)}</td>
+      <td>${ldE(he?p.stageHe||p.stage:p.stage)}<span class="txe-src">${ldE(p.station||"")}${p.event?" · "+ldE(p.event):""}</span></td><td class="num">${p.planUnitDelta!=null?fmtInt(p.planUnitDelta):dash}</td>
+      <td class="num">${p.areaDunam!=null?fmtInt(p.areaDunam):dash}</td><td class="num">${siDate(p.lastUpdate)}</td></tr>`;
+    const thead=`<thead><tr>${t.plCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>`;
+    const main=PL.plans.filter(p=>p.relation!=="AREA_WIDE"),wide=PL.plans.filter(p=>p.relation==="AREA_WIDE").concat(PL.transit.filter(p=>p.relation==="AREA_WIDE"));
+    const tr=PL.transit.filter(p=>p.relation!=="AREA_WIDE");
+    plan=`<p class="gv-note"><b>${t.plSum(PL.summary)}</b> · ${t.units(fmtInt(PL.summary.housingUnitDelta))} ${srTag("OFFICIAL")} · ${t.unitsNote}</p>
+      ${PL.municipal&&PL.municipal.coverage==="TLV_MUNICIPAL"?`<p class="gv-note">${t.muni(fmtInt(PL.municipal.permits),fmtInt(PL.municipal.sites))} · <span class="sr-rel ON_THE_STREET">${t.rel.ON_THE_STREET}</span></p>`:""}
+      <h4>${t.transitH}</h4>${tr.length?`<div class="st-wrap"><table class="st-tbl">${thead}<tbody>${tr.map(prow).join("")}</tbody></table></div>`:`<p class="gv-note">${dash}</p>`}
+      <h4>${t.plH}</h4>${main.length?`<div class="st-wrap"><table class="st-tbl">${thead}<tbody>${main.map(prow).join("")}</tbody></table></div>`:`<p class="gv-note">${dash}</p>`}
+      ${wide.length?`<details class="st-sec"><summary>${t.areaWideH} (${wide.length})</summary><div class="st-wrap"><table class="st-tbl">${thead}<tbody>${wide.map(prow).join("")}</tbody></table></div></details>`:""}
+      <p class="gv-note">${t.plBasis} ${t.plNotJoin} ${t.plNotMean}</p>`;
+  }
+  /* investment */
+  const A=R.assessment;
+  const li=it=>`<li><span class="sr-k ${it.kind}">${t.kinds[it.kind]||it.kind}</span> ${ldE(he?it.he:it.en)} ${it.cls?srTag(it.cls):""}</li>`;
+  const inv=`<div class="sr-inv"><div><h4>${t.sup}</h4><ul>${A.supports.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.ag}</h4><ul>${A.against.map(li).join("")||`<li>${dash}</li>`}</ul></div>
+    <div><h4>${t.chg}</h4><ul>${A.couldChange.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.dd}</h4><ul>${A.dueDiligence.map(d=>`<li>${ldE(he?d.he:d.en)}</li>`).join("")}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
+  const sv=srPropSaved(I.id)||{};
+  const pf=(k,attrs)=>`<label>${t.prop[k]}<input name="${k}" type="number" ${attrs} value="${ldE(sv[k]||"")}"></label>`;
+  const PR=S.prop;
+  let propRes="";
+  if(S.propLoading)propRes=`<p class="gv-note">${t.loading}</p>`;
+  else if(PR&&!PR.available)propRes=`<p class="gv-note">${PR.reason==="inputs-required"?t.propNeed:ldE(PR.reason||"")}</p>`;
+  else if(PR){
+    const Mo=PR.model,Sx=PR.street;
+    propRes=`<div class="st-grid">${tile(t.askSqm,fmtNIS(PR.askPricePerSqm),"","USER ASSUMPTION")}
+      ${Mo&&Mo.value!=null?tile(t.vsModel,srPct(Mo.askVsModelPct),`${fmtNIS(Mo.value)} · ${t.pos[Mo.position]||""}`,"MODEL"):tile(t.vsModel,dash,ldE(Mo&&Mo.reason||""),"MISSING")}
+      ${tile(t.vsStreet,Sx.askVsStreetMedianPct!=null?srPct(Sx.askVsStreetMedianPct):dash,Sx.askPercentile!=null?t.pctl(Sx.askPercentile):ldE(srSt(Sx.state)),"OBSERVED")}
+      ${tile(t.yield,PR.income&&PR.income.grossYieldPct!=null?PR.income.grossYieldPct+"%":dash,PR.income&&PR.income.grossYieldPct!=null?"":ldE(PR.income&&PR.income.reason||""),"DERIVED")}</div>
+      ${Sx.similar&&Sx.similar.length?`<h4>${t.similar}</h4><p class="gv-note">${t.simRule(fmtInt(PR.inputs.sqm),PR.inputs.rooms!=null?(PR.inputs.rooms<3?"≤2.5":PR.inputs.rooms<4?"3–3.5":PR.inputs.rooms<5?"4–4.5":"5+"):null)}</p><div class="st-wrap"><table class="st-tbl"><thead><tr><th>${t.cols[0]}</th><th>${t.cols[2]}</th><th>${t.cols[3]}</th><th>${t.cols[6]}</th><th>${t.cols[4]}</th><th>${t.det.built}</th><th>${t.cols[1]}</th></tr></thead><tbody>
+        ${Sx.similar.map(d=>`<tr><td class="num">${siDate(d.date)}</td><td class="num">${fmtNIS(d.amount)}</td><td class="num">${fmtNIS(d.pricePerSqm)}</td><td class="num">${fmtInt(d.areaSqm)}</td><td class="num">${d.rooms!=null?d.rooms:dash}</td><td class="num">${d.yearBuilt||dash}</td><td class="w"><bdi>${ldE((d.houses||[]).join(", "))}</bdi> · ${ldE(d.parcel)}</td></tr>`).join("")}</tbody></table></div>`:""}
+      <h4>${t.scen} ${vcTag("usr")}</h4>${["bull","base","bear"].some(k=>PR.scenarios[k])?`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.scenCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
+        ${["bull","base","bear"].filter(k=>PR.scenarios[k]).map(k=>{const s=PR.scenarios[k];return `<tr><td>${t.scenName[k]}</td><td class="num">${srPct(s.annualChangePct)}</td><td class="num">${fmtNIS(s.endValue)}</td><td class="num">${srMoney(s.priceGain)}</td><td class="num">${s.rentTotal!=null?fmtNIS(s.rentTotal):dash}</td><td class="num">${s.costs!=null?fmtNIS(s.costs):dash}</td><td class="num">${srPct(s.totalReturnPct)}</td></tr>`}).join("")}</tbody></table></div>`:`<p class="gv-note">${t.scenNone}</p>`}
+      <p class="gv-note">${t.scenRule} ${t.propNot}</p>`;
+  }
+  const propForm=`<h4>${t.propH} ${vcTag("usr")} ${xpBtn("street_report_property_assessment")}</h4><form class="sv-apt sr-prop" data-srprop="1">${pf("askingPrice",'min="100000" step="1000" required')}${pf("sqm",'min="20" max="400" step="1" required')}${pf("rooms",'min="1" max="12" step="0.5"')}${pf("built",'min="1900" max="2030" step="1"')}
+    <label>${t.prop.newness}<select name="newness">${Object.entries(t.newOpt).map(([k,v])=>`<option value="${k}"${sv.newness===k?" selected":""}>${v}</option>`).join("")}</select></label>
+    <label>${t.prop.type}<select name="type">${Object.entries(t.typeOpt).map(([k,v])=>`<option value="${k}"${sv.type===k?" selected":""}>${v}</option>`).join("")}</select></label>
+    ${pf("rentMonthly",'min="0" step="50"')}${pf("holdYears",'min="1" max="30" step="1"')}${pf("bull",'min="-20" max="20" step="0.1"')}${pf("base",'min="-20" max="20" step="0.1"')}${pf("bear",'min="-20" max="20" step="0.1"')}${pf("costsPct",'min="0" max="20" step="0.1"')}
+    <button type="submit" class="chip">${t.propGo}</button></form><p class="gv-note">${t.propSaved}</p>${propRes}`;
+  /* sources */
+  const src=`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.srcCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${R.sources.map(s=>`<tr><td class="w">${ldE(s.name)} <span class="txe-src"><bdi>${ldE(s.id)}</bdi></span></td><td>${srTag(s.cls)}</td><td class="num">${s.asOf?siDate(s.asOf):"—"}</td></tr>`).join("")}</tbody></table></div>
+    <h4>${t.missH}</h4><ul class="sr-miss">${R.missing.map(m=>`<li><b>${ldE(m.section)}</b> — ${ldE(m.reason)}${m.unlock?` · <span class="txe-src">${ldE(m.unlock)}</span>`:""}</li>`).join("")}</ul>`;
+  const sec=(id,h,body,open=true,xp)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${h}</summary>${xp?`<div class="sr-xp">${xpBtn(xp)}</div>`:""}${body}</details>`;
+  const nav=`<div class="sr-nav">${Object.entries(t.nav).map(([k,v])=>`<button type="button" class="chip" data-srgo="${k}">${v}</button>`).join("")}</div>`;
+  const outs=`<div class="st-acts sr-outs"><button type="button" class="chip" data-srprint="1">${t.out.print}</button><button type="button" class="chip" data-srjson="1">${t.out.json}</button><button type="button" class="chip" data-srcopy="1">${t.out.copy}</button>
+    ${R.timings?`<span class="txe-src">${t.ms(R.timings.totalMs)}${R.part==="core"?" · "+t.loadingFull:""}</span>`:""}</div>`;
+  return `<div class="sr" data-sr="${ldE(R.id)}" data-sr-part="${R.part}">${nav}${outs}
+    ${sec("ov",t.nav.ov,crumb+latest+kpis+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
+    ${sec("tx",t.txH,srTxTableHTML(R),true,"transaction_event_sources")}
+    ${sec("px",t.pxH,prices,true,"street_report_fair_comparison")}
+    ${sec("pl",t.plH,plan,true,"street_report_relation")}
+    ${sec("inv",t.invH,inv+propForm,true,"street_report_assessment")}
+    ${sec("map",t.mapH,R.part==="full"?srMapSVG(R):`<p class="gv-note">${t.loadingFull}</p>`)}
+    ${sec("src",t.srcH,src,false)}</div>`;
+}
+function srSummaryText(R){
+  const he=state.lang!=="en",I=R.identity;
+  return [`${I.name} · ${he?I.city:enTitle(I.cityEn)||I.city}`,...R.overview.narrative.map(n=>`[${n.kind}] ${he?n.he:n.en}`),`${R.id} · PROPX ${R.engine} · ${R.generatedAt}`].join("\n");
+}
+function srBind(body,g){
+  const go=k=>{const s=el(k==="ev"?"sr-ev":"sr-"+k);if(s){if(s.tagName==="DETAILS")s.open=true;s.scrollIntoView({behavior:"smooth",block:"start"})}};
+  body.querySelectorAll("[data-srgo]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.srgo)));
+  body.querySelectorAll("[data-srsort]").forEach(b=>b.addEventListener("click",()=>{const Q=srState.txQ,k=b.dataset.srsort;Q.dir=Q.sort===k?(Q.dir==="desc"?"asc":"desc"):"desc";Q.sort=k;srTxLoad(true)}));
+  body.querySelectorAll("[data-srcat]").forEach(c=>c.addEventListener("change",()=>{const on=[...body.querySelectorAll("[data-srcat]")].filter(x=>x.checked).map(x=>x.dataset.srcat);srState.txQ.cat=(on.length?on:["STREET"]).join(",");srTxLoad(true)}));
+  body.querySelectorAll("[data-srper]").forEach(b=>b.addEventListener("click",()=>{srState.txQ.per=b.dataset.srper;srTxLoad(true)}));
+  body.querySelectorAll("[data-srform]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();const Q=srState.txQ;
+    f.querySelectorAll("[data-srf]").forEach(i=>{const k=i.dataset.srf;Q[k]=i.type==="checkbox"?i.checked:i.value});srTxLoad(true)}));
+  body.querySelectorAll("[data-srreset]").forEach(b=>b.addEventListener("click",()=>{srState.txQ={...SR_TXQ0};srTxLoad(true)}));
+  body.querySelectorAll("[data-srmore]").forEach(b=>b.addEventListener("click",()=>srTxLoad(false)));
+  body.querySelectorAll("[data-srrow]").forEach(r=>{const tog=()=>{srState.openRow=srState.openRow===r.dataset.srrow?null:r.dataset.srrow;renderGeoView()};r.addEventListener("click",e=>{if(e.target.closest("a,button"))return;tog()});r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}})});
+  body.querySelectorAll("[data-srprop]").forEach(f=>f.addEventListener("submit",e=>{e.preventDefault();srProp(g.id,new FormData(f))}));
+  body.querySelectorAll("[data-srprint]").forEach(b=>b.addEventListener("click",()=>{body.querySelectorAll("details.sr-sec,details.sr-ev").forEach(d=>d.open=true);document.body.classList.add("sr-printing");setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove("sr-printing"),400)},60)}));
+  body.querySelectorAll("[data-srjson]").forEach(b=>b.addEventListener("click",()=>{const R=srState.full||srState.core;if(!R)return;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(R,null,1)],{type:"application/json"}));a.download=`propx-street-report-${R.id.replace(/[^0-9]+/g,"-").replace(/^-|-$/g,"")}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}));
+  body.querySelectorAll("[data-srcopy]").forEach(b=>b.addEventListener("click",async()=>{const R=srState.full||srState.core;if(!R)return;try{await navigator.clipboard.writeText(srSummaryText(R));b.textContent=srT().out.copied}catch(e){/* clipboard denied */}}));
+}
+
 let _geoNav=false;
 function openGeoView(g){
   if(!g)return;
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
   state.geo=g;
-  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||"")))siLoad(g.id);
+  if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){siLoad(g.id);srLoad(g.id)}
   if(g.kind==="locality"){const code=g.code!=null?String(g.code):String(g.id||"").replace(/^loc:/,"");if(/^\d+$/.test(code))dsOpen("locality",code)}
   const d=g.district&&LOC[g.district]?g.district:null;
   state.geoAnchor=covered||d||"il";
@@ -10226,9 +10685,10 @@ function renderGeoView(){
   const m=metricsOf(anchor);
   const tx=txShown(a),inv=invShown(a),ms=msShown(a);
   el("geoTitle").textContent=g.kind==="street"?`${g.he} · ${state.lang==="en"&&g.cityEn?enTitle(g.cityEn):g.city}`:g.he;
-  {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?siT().lyr:t.geoLyr}
+  {const ly=sec.querySelector(".lyr");if(ly)ly.textContent=g.kind==="street"?srT().lyr:t.geoLyr}
   if(g.kind==="street"&&/^st:\d+:\d+$/.test(String(g.id||""))){
-    const body=el("geoBody");body.innerHTML=siHTML(g);ptDomAll(body);
+    /* the street report first (lib/streets/report.js), then the full Street Intelligence view, unchanged */
+    const body=el("geoBody");body.innerHTML=srHTML(g)+`<details class="st-sec sr-ev" id="sr-ev" open><summary>${srT().evH}</summary>${siHTML(g)}</details>`;ptDomAll(body);srBind(body,g);
     body.querySelectorAll("[data-stdos]").forEach(b=>b.addEventListener("click",()=>{dsOpen("locality",b.dataset.stdos);const d=el("dossier");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}));
     body.querySelectorAll("[data-stlive]").forEach(b=>b.addEventListener("click",()=>inGoSection("txSection")));
     body.querySelectorAll("[data-sicomp]").forEach(b=>b.addEventListener("click",()=>siComps(g.id)));
