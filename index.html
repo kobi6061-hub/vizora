@@ -1747,20 +1747,55 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 .pi-tl{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.5} .pi-tl li{padding:4px 0;border-bottom:1px solid var(--hairline)} .pi-tl .pi-d{font-weight:700;color:var(--ink-2);margin-inline-end:6px}
 .pi-rungs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0} .pi-rung{font-size:11px;border:1px solid var(--hairline);border-radius:99px;padding:2px 9px;color:var(--ink-3)} .pi-rung.ok{color:var(--up);border-color:var(--up);font-weight:700} .pi-rung.partial{color:var(--conf-med);border-color:var(--conf-med)}
 .pi-ctx{font-size:12px;line-height:1.55} .pi-ctx b{color:var(--ink)}
-/* ---- explainability: ⓘ marks and the one popover ---- */
-.xp{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0}
-.xp:hover,.xp:focus-visible{border-color:var(--accent-deep);outline:none}
+/* ---- explainability: ⓘ marks and the one explanation dialog (#xpPop) ---- */
+.xp{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:16px;height:16px;border-radius:50%;border:1px solid var(--hairline);background:var(--panel);color:var(--accent-deep);font:800 10px/1 var(--f-body,inherit);cursor:pointer;vertical-align:middle;margin-inline-start:3px;padding:0;text-transform:none;letter-spacing:0}
+.xp::after{content:"";position:absolute;inset:-5px}   /* a 26 px touch target without moving the layout */
+.xp:hover{border-color:var(--accent-deep)}
+.xp:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-color:var(--accent-deep)}
 .xp.xp-why{width:auto;height:18px;border-radius:99px;padding:0 8px;font-size:10.5px;font-weight:700;white-space:nowrap}
-.xp-pop{position:fixed;z-index:1200;background:var(--paper);border:1px solid var(--hairline);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:12px 14px;font-size:12px;line-height:1.5;max-height:min(70vh,560px);overflow:auto}
+.xp.xp-why::after{inset:-4px}
+.xp-pop{position:fixed;z-index:1200;width:460px;max-width:calc(100vw - 24px);background:var(--panel);color:var(--ink);border:1px solid var(--edge);border-radius:14px;box-shadow:0 18px 44px -14px rgba(8,14,28,.38),0 2px 8px rgba(8,14,28,.10);padding:0;font-size:13px;line-height:1.55;max-height:min(78vh,660px);overflow:auto;overscroll-behavior:contain;text-align:start}
 .xp-pop[hidden]{display:none}
-.xp-h{display:flex;align-items:center;gap:6px;margin-bottom:4px} .xp-h b{font-size:13px;flex:1;min-width:0;overflow-wrap:anywhere} .xp-h .ho-x{margin-inline-start:auto}
-.xp-s{margin:0 0 6px;overflow-wrap:anywhere}
-.xp-why-l{list-style:none;margin:0 0 6px;padding:0} .xp-why-l li{padding:3px 0;border-bottom:1px solid var(--hairline);overflow-wrap:anywhere}
-.xp-more{font-size:11.5px;font-weight:700}
-.xp-l2 dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 10px;margin:8px 0 0}
-.xp-l2 dt{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase;padding-top:2px} .xp-l2 dd{margin:0;overflow-wrap:anywhere}
-.xp-l2 dt.xp-not,.xp-l2 dd.xp-not{color:var(--down)} .xp-l2 ul{margin:0;padding-inline-start:16px}
-@media(max-width:560px){.xp-pop{left:8px!important;right:8px;top:auto!important;bottom:8px}.xp-l2 dl{grid-template-columns:minmax(0,1fr)}}
+.xp-pop:focus{outline:none}
+.xp-h{position:sticky;top:0;z-index:1;display:flex;align-items:flex-start;gap:8px;padding:12px 14px 10px;background:var(--panel);border-bottom:1px solid var(--hairline)}
+.xp-t{flex:1;min-width:0;margin:0;font:800 15px/1.35 var(--f-display,inherit);color:var(--ink);overflow-wrap:anywhere;letter-spacing:0;text-transform:none}
+.xp-t:focus{outline:none} .xp-t:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.xp-h .vc,.xp-h .ho-chip{flex:none;margin-top:3px}
+.xp-x{flex:none;margin-inline-start:auto;width:32px;height:32px;border-radius:9px;border:1px solid var(--hairline);background:var(--panel-2);color:var(--ink-2);font:400 20px/1 var(--f-body,inherit);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.xp-x:hover{color:var(--ink);border-color:var(--edge)} .xp-x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.xp-b{padding:2px 14px 14px}
+.xp-sec{padding:9px 0;border-bottom:1px solid var(--hairline)}
+.xp-k{margin:0 0 3px;font:800 10.5px/1.3 var(--f-body,inherit);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.xp-sec p{margin:0 0 4px;overflow-wrap:anywhere} .xp-sec p:last-child{margin-bottom:0}
+.xp-simple p{font-size:14px;color:var(--ink)}
+.xp-ex p{background:var(--accent-wash);color:var(--ink);border-radius:8px;padding:7px 10px}
+.xp-f{background:var(--panel-2);border-radius:7px;padding:5px 8px;font-size:12px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.xp-in{font-size:12px;color:var(--ink-3)}
+.xp-ul{margin:0;padding-inline-start:18px} .xp-ul li{margin:2px 0;overflow-wrap:anywhere}
+.xp-lim .xp-ul{margin-bottom:8px}
+.xp-not{color:var(--down)} .xp-k.xp-not{color:var(--down)}
+.xp-src{list-style:none;margin:0;padding:0} .xp-src li{padding:3px 0} .xp-src li+li{border-top:1px dashed var(--hairline)}
+.xp-src-d{font-size:12px;color:var(--ink-2)} .xp-src-k{color:var(--ink-3)} .xp-st{font-weight:700}
+.xp-src-n{font-size:12px;color:var(--ink-3);margin-top:4px!important}
+.xp-full{margin-top:10px;border:1px solid var(--hairline);border-radius:10px;padding:0 10px}
+.xp-full>summary{cursor:pointer;padding:9px 0;font-weight:700;font-size:12.5px;color:var(--accent-deep)}
+.xp-full>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.xp-dl,.xp-orient{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 10px;margin:4px 0 8px;font-size:12px}
+.xp-dl dt,.xp-orient dt{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase;padding-top:2px} .xp-dl dd,.xp-orient dd{margin:0;overflow-wrap:anywhere}
+.xp-s{margin:8px 0 6px;overflow-wrap:anywhere}
+.xp-why-l{list-style:none;margin:8px 0 6px;padding:0} .xp-why-l li{padding:3px 0;border-bottom:1px solid var(--hairline);overflow-wrap:anywhere}
+.xp-scrim{display:none}
+.xp-scrim[hidden]{display:none!important}
+@media(max-width:759.98px){
+  .xp-pop{left:0!important;right:0!important;top:auto!important;bottom:0;width:auto!important;max-width:none;max-height:86vh;border-radius:18px 18px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);font-size:14px}
+  .xp-h{padding:16px 16px 12px;align-items:center} .xp-h::before{content:"";position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:var(--hairline)}
+  .xp-t{font-size:16px}
+  .xp-x{width:44px;height:44px;font-size:26px;border-radius:12px}
+  .xp-b{padding:2px 16px 20px}
+  .xp-simple p{font-size:15px}
+  .xp-scrim{display:block;position:fixed;inset:0;z-index:1199;background:rgba(8,14,28,.48)}
+  .xp-dl,.xp-orient{grid-template-columns:minmax(0,1fr)}
+}
 @media(max-width:560px){.pu-ev{grid-template-columns:minmax(0,1fr) auto}.pu-l{flex-direction:row;gap:8px;grid-column:1/-1;align-items:center}.pu-rd-grid,.ds-two,.ax-rd-grid{grid-template-columns:minmax(0,1fr)}}
 /* ws:begin — private workspace (named sign-in · organizations · members); hidden unless /api/identity says enabled; stripped from the offline build */
 .ws-chip{width:auto;padding:0 9px;gap:6px;display:inline-flex;align-items:center;font-size:12px;font-weight:700;max-width:220px}
@@ -11193,42 +11228,98 @@ function initPulse(){
    "why am I seeing this?" = the rule + trigger · value · threshold · comparison · period · source · class · evidence quality.
    Nothing here computes; the registry documents. */
 const XP=()=>window.PropxExplain||null;
-const XP_T={he:{info:"הסבר",howToRead:"איך לקרוא את זה",q1:"מה אני רואה?",qKind:"איזה סוג ישות / גאוגרפיה",qHelps:"במה זה עוזר להבין",qScope:"היקף הנתונים",qCurrent:"עד כמה עדכני",legClass:"סיווג ראיה",legMatch:"מצב התאמה",legClasses:"סיווגי ראיה",legMatches:"מצבי התאמה בין ישויות",possible:"התאמה אפשרית",possTitle:"הקישור בשלב הזה הוא התאמה אפשרית / רב-משמעית — לא אותה ישות ולא היררכיה",trailAria:"המסלול בין הישויות",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",population:"אוכלוסייה / יקום",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן"},
-  en:{info:"Explain",howToRead:"How to read this",q1:"What am I looking at?",qKind:"What kind of entity / geography",qHelps:"What it helps me understand",qScope:"Data scope",qCurrent:"How current",legClass:"evidence class",legMatch:"match state",legClasses:"Evidence classes",legMatches:"Match states between entities",possible:"possible match",possTitle:"This step was reached through a POSSIBLE / AMBIGUOUS link — not the same entity and not a hierarchy",trailAria:"The path between entities",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",population:"Population / universe",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here"}};
+const XP_T={he:{info:"הסבר",howToRead:"איך לקרוא את זה",q1:"מה אני רואה?",qKind:"איזה סוג ישות / גאוגרפיה",qHelps:"במה זה עוזר להבין",qScope:"היקף הנתונים",qCurrent:"עד כמה עדכני",legClass:"סיווג ראיה",legMatch:"מצב התאמה",legClasses:"סיווגי ראיה",legMatches:"מצבי התאמה בין ישויות",possible:"התאמה אפשרית",possTitle:"הקישור בשלב הזה הוא התאמה אפשרית / רב-משמעית — לא אותה ישות ולא היררכיה",trailAria:"המסלול בין הישויות",whyBtn:"למה אני רואה את זה?",strengthen:"מה יחזק את זה",verifyNext:"מה לבדוק הלאה",whyMissing:"למה חסר?",more:"פירוט מוסדי",less:"פחות",close:"סגירה",rule:"הכלל",trigger:"טריגר",value:"ערך",threshold:"סף",comparison:"השוואה",period:"תקופה",source:"מקור",cls:"סיווג",evidence:"איכות ראיות",notAs:"לא לפרש כ",whyMatters:"למה זה חשוב",unit:"יחידה",geo:"גאוגרפיה",population:"אוכלוסייה / יקום",method:"מתודולוגיה",formula:"נוסחה",inputs:"קלט",interp:"פירוש",limits:"מגבלות",evid:"איפה הראיות",fresh:"שלושת התאריכים",obs:"תצפית",pub:"פרסום",chk:"בדיקת PROPX",unlock:"מה יאפשר את הנתון",reg:"מרשם ההסברים",challenge:"אפשר לערער על כל שדה — כל ערך, סף ומקור מופיעים כאן",
+    simple:"במילים פשוטות",calc:"איך זה מחושב",example:"דוגמה",srcDate:"מקור ותאריך",notRead:"לא לקרוא את זה כ…",full:"מתודולוגיה מלאה (לאנליסטים)",legendAll:"כל תוויות הראיה",analyst:"תקציר לאנליסטים",srcLoading:"בודקים במרכז האמון את מועדי הבדיקה האחרונים…",srcObs:"תצפית אחרונה במקור",srcChk:"בדיקת PROPX אחרונה",srcNoRun:"אין בדיקה רשומה",srcModule:"רכיב של PROPX — מחושב בכל קריאה מהמקורות שהוא קורא",srcNotListed:"לא רשום במרכז האמון — אין תאריך בדיקה להציג",srcOffline:"מועדי הבדיקה החיים אינם זמינים כאן; המרשם מתאר את התאריכים של הנתון:",figDate:"התאריך שהנתון מתאר",dialog:"הסבר"},
+  en:{info:"Explain",howToRead:"How to read this",q1:"What am I looking at?",qKind:"What kind of entity / geography",qHelps:"What it helps me understand",qScope:"Data scope",qCurrent:"How current",legClass:"evidence class",legMatch:"match state",legClasses:"Evidence classes",legMatches:"Match states between entities",possible:"possible match",possTitle:"This step was reached through a POSSIBLE / AMBIGUOUS link — not the same entity and not a hierarchy",trailAria:"The path between entities",whyBtn:"Why am I seeing this?",strengthen:"What would strengthen it",verifyNext:"What to verify next",whyMissing:"Why missing?",more:"Institutional detail",less:"Less",close:"Close",rule:"Rule",trigger:"trigger",value:"value",threshold:"threshold",comparison:"comparison",period:"period",source:"source",cls:"class",evidence:"evidence quality",notAs:"Do not interpret as",whyMatters:"Why it matters",unit:"Unit",geo:"Geography",population:"Population / universe",method:"Methodology",formula:"Formula",inputs:"Inputs",interp:"Interpretation",limits:"Limitations",evid:"Where the evidence lives",fresh:"The three dates",obs:"observation",pub:"publication",chk:"PROPX check",unlock:"What would unlock it",reg:"Explanation registry",challenge:"Every field can be challenged — every value, threshold and source is shown here",
+    simple:"In simple words",calc:"How it's calculated",example:"Example",srcDate:"Source & date",notRead:"Do not read it as",full:"Full methodology (for analysts)",legendAll:"Every evidence label",analyst:"Analyst summary",srcLoading:"Checking the Trust Center for the latest check dates…",srcObs:"latest observation at the source",srcChk:"latest PROPX check",srcNoRun:"no recorded check",srcModule:"a PROPX module — computed on every read from the sources it reads",srcNotListed:"not listed in the Trust Center — no check date to show",srcOffline:"Live check dates are not available here; the registry describes the figure's dates:",figDate:"the date the figure describes",dialog:"Explanation"}};
 const xpT=()=>XP_T[state.lang==="en"?"en":"he"];
-const xpRT=new Map();let xpSeq=0,xpTrig=null;
-const xpBtn=id=>XP()&&XP().term(id)?`<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${xpT().info}" title="${xpT().info}">ⓘ</button>`:"";
+const xpL=()=>state.lang==="en"?"en":"he";
+const xpRT=new Map();let xpSeq=0,xpTrig=null,xpRet=null;
+/* every ⓘ is named by what it explains ("Explain: <title>") — a screen reader never hears a bare "ⓘ" */
+const xpBtn=id=>{const X=XP(),x=X&&X.level1(id,xpL());if(!x)return"";const nm=ldE(`${xpT().info}: ${x.title}`);return `<button type="button" class="xp" data-xp="${ldE(id)}" aria-label="${nm}" title="${nm}">ⓘ</button>`};
 const xpSig=(id,rt)=>{if(!XP()||!XP().SIGNAL_RULES[id])return"";if(xpRT.size>1500)xpRT.clear();const k="s"+(++xpSeq);xpRT.set(k,rt||{});return `<button type="button" class="xp xp-why" data-xps="${ldE(id)}" data-xpk="${k}">${xpT().whyBtn}</button>`};
-const xpMiss=id=>XP()&&XP().missing(id)?`<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${xpT().whyMissing}" title="${xpT().whyMissing}">ⓘ</button>`:"";
+const xpMiss=id=>{const X=XP(),m=X&&X.missing(id,xpL());if(!m)return"";const nm=ldE(`${xpT().whyMissing} ${m.label}`);return `<button type="button" class="xp" data-xpm="${ldE(id)}" aria-label="${nm}" title="${nm}">ⓘ</button>`};
 function xpClsChip(c){return `<span class="vc ${c==="OFFICIAL"?"raw":c==="DERIVED"?"der":c==="OBSERVED"?"obs":c==="MODEL"?"mod":c==="MISSING"?"na":"usr"}" data-cls="${ldE(c)}">${ldE(XP().classLabel(c,state.lang==="en"?"en":"he"))}</span>`}
-function xpL2HTML(id){const L=state.lang==="en"?"en":"he",x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
-  return `<div class="xp-l2" hidden><dl>${row(t.whyMatters,ldE(x.why))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.population,ldE(x.population))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.method,ldE(x.methodology))}${row(t.formula,x.formula?`<span class="num">${ldE(x.formula)}</span>`:"")}${row(t.inputs,x.inputs.length?`<ul>${x.inputs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.interp,ldE(x.interpretation))}<dt class="xp-not">${t.notAs}</dt><dd class="xp-not">${ldE(x.notAs)}</dd>${row(t.limits,x.limitations.length?`<ul>${x.limitations.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"")}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p></div>`}
-function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();let html="",more="";
-  const head=(title,chip)=>`<div class="xp-h"><b>${title}</b>${chip||""}<button type="button" class="ho-x" data-xpclose aria-label="${t.close}">×</button></div>`;
-  if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;html=head(ldE(x.title),xpClsChip(x.cls))+`<p class="xp-s">${ldE(x.short)}</p>`;more=xpL2HTML(trigger.dataset.xp)}
+/* SOURCE & DATE — the Trust Center catalogue (view=sources: every source with its latest check) is read once per page and
+   cached; offline or on a failed read the registry's own description of the dates is shown. A date is never made up. */
+let xpCat=null,xpCatSt="idle";
+const xpDay=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(v==null?"":v));return m?`${m[3]}.${m[2]}.${m[1]}`:String(v)};
+function xpCatLoad(){if(xpCatSt!=="idle")return;
+  if(typeof tcState!=="undefined"&&tcState&&tcState.data&&Array.isArray(tcState.data.sources)){xpCat=tcState.data;xpCatSt="ok";return}
+  if(location.protocol==="file:"||!location.host){xpCatSt="offline";return}
+  xpCatSt="loading";
+  inGet("view=sources").then(d=>{xpCat=d&&Array.isArray(d.sources)?d:null;xpCatSt=xpCat?"ok":"error"}).catch(()=>{xpCatSt="error"})
+    .then(()=>{for(const b of document.querySelectorAll("#xpPop [data-xpsrc]"))b.outerHTML=xpSrcHTML(b.dataset.xpsrc)})}
+function xpSrcHTML(id){const X=XP(),L=xpL(),t=xpT(),T0=X.term(id),x=X.level2(id,L);if(!T0||!x)return"";
+  const stL=s=>{const m=typeof TC_I18N!=="undefined"&&TC_I18N[L]&&TC_I18N[L].st;return ldE(m&&m[s]||s)};
+  const ids=[...new Set(T0.source.ids.map(s=>X.canonicalSource(s)||s))];
+  const rows=ids.map(c=>{const lab=`<b>${ldE(X.sourceLabel(c,L)||c)}</b>`;if(xpCatSt!=="ok")return `<li>${lab}</li>`;
+    const s=xpCat.sources.find(z=>z.id===c);
+    if(!s)return `<li>${lab}<div class="xp-src-d">${/^propx:/.test(c)?t.srcModule:t.srcNotListed}</div></li>`;
+    const sy=s.sync||{},st=sy.state?` · <span class="xp-st">${stL(sy.state)}</span>`:"";
+    const obs=s.latestObservation!=null&&s.latestObservation!==""?`${t.srcObs}: <bdi class="num">${ldE(xpDay(s.latestObservation))}</bdi>${s.latestObservationKind?` <bdi class="xp-src-k">(${ldE(s.latestObservationKind)})</bdi>`:""}`:"";
+    const chk=`${t.srcChk}: ${sy.lastCheckAt?`<bdi class="num">${ldE(xpDay(sy.lastCheckAt))}</bdi>`:t.srcNoRun}${st}`;
+    return `<li>${lab}<div class="xp-src-d">${[obs,chk].filter(Boolean).join("<br>")}</div></li>`});
+  const tail=xpCatSt==="ok"?`<p class="xp-src-n">${t.figDate}: ${ldE(x.freshness.observation)}</p>`
+    :xpCatSt==="loading"||xpCatSt==="idle"?`<p class="xp-src-n" role="status">${t.srcLoading}</p>`
+    :`<p class="xp-src-n">${t.srcOffline}</p><ul class="xp-ul"><li>${t.obs}: ${ldE(x.freshness.observation)}</li><li>${t.pub}: ${ldE(x.freshness.publication)}</li><li>${t.chk}: ${ldE(x.freshness.check)}</li></ul>`;
+  return `<div data-xpsrc="${ldE(id)}"><ul class="xp-src">${rows.join("")}</ul>${tail}</div>`}
+/* the term's popover body, in the order a reader needs it: simple words · why · how it is calculated · example · source & date ·
+   limitations + do-not-read-as; the remaining level-2 fields go to "Full methodology (for analysts)" */
+const xpSec=(k,body,cls="")=>body?`<section class="xp-sec${cls}"><h3 class="xp-k">${k}</h3>${body}</section>`:"";
+const xpP=v=>v?`<p>${ldE(v)}</p>`:"";
+const xpUl=xs=>xs&&xs.length?`<ul class="xp-ul">${xs.map(i=>`<li>${ldE(i)}</li>`).join("")}</ul>`:"";
+function xpTermHTML(id,main){const X=XP(),L=xpL(),x=X.level2(id,L),t=xpT();if(!x)return"";
+  const calc=(x.formula?`<p class="xp-f"><bdi>${ldE(x.formula)}</bdi></p>`:"")+xpP(x.methodology)+(x.inputs.length?`<p class="xp-in">${t.inputs}:</p>${xpUl(x.inputs)}`:"");
+  return xpSec(t.simple,`<p${main?' id="xpPopS"':""}>${ldE(x.simple||x.short)}</p>`," xp-simple")+xpSec(t.whyMatters,xpP(x.why))+xpSec(t.calc,calc)
+    +xpSec(t.example,xpP(x.example)," xp-ex")+xpSec(t.srcDate,xpSrcHTML(id))
+    +`<section class="xp-sec xp-lim">${x.limitations.length?`<h3 class="xp-k">${t.limits}</h3>${xpUl(x.limitations)}`:""}<h3 class="xp-k xp-not">${t.notRead}</h3><p class="xp-not">${ldE(x.notAs)}</p></section>`}
+function xpL2HTML(id){const L=xpL(),x=XP().level2(id,L),t=xpT();if(!x)return"";const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
+  return `<dl class="xp-dl">${row(t.analyst,ldE(x.short))}${row(t.unit,ldE(x.unit))}${row(t.geo,ldE(x.geography))}${row(t.population,ldE(x.population))}${row(t.period,ldE(x.period))}${row(t.source,x.sources.map(s=>`${ldE(s.label||s.id)} <span class="num">${ldE(s.id)}</span>`).join("<br>"))}${row(t.cls,`${xpClsChip(x.cls)} ${ldE(x.clsDefinition)}`)}${row(t.interp,ldE(x.interpretation))}${row(t.strengthen,x.strengthen?ldE(x.strengthen):"")}${row(t.verifyNext,x.verifyNext?ldE(x.verifyNext):"")}${row(t.evid,`<bdi class="num">${ldE(x.evidence)}</bdi>`)}${row(t.fresh,`${t.obs}: ${ldE(x.freshness.observation)} · ${t.pub}: ${ldE(x.freshness.publication)} · ${t.chk}: ${ldE(x.freshness.check)}`)}</dl><p class="ho-note">${t.reg} ${ldE(XP().VERSION.id)} · ${t.challenge}</p>`}
+/* ONE dialog (#xpPop, role=dialog, labelled by its title): focus moves to the title and returns to the trigger on close; Escape
+   closes; Tab cycles inside; a phone (< 760 px) gets a bottom sheet over a scrim with a large close button */
+function xpOpen(trigger){const X=XP();if(!X)return;const L=state.lang==="en"?"en":"he",t=xpT();xpCatLoad();let title="",chip="",body="",more="",moreLab=t.full;
+  if(trigger.dataset.xp){const x=X.level1(trigger.dataset.xp,L);if(!x)return;title=ldE(x.title);chip=xpClsChip(x.cls);body=xpTermHTML(trigger.dataset.xp,true);more=xpL2HTML(trigger.dataset.xp)}
   else if(trigger.dataset.xps){const rt=xpRT.get(trigger.dataset.xpk)||{},s=X.signal(trigger.dataset.xps,L,rt);if(!s)return;const kind={watch:{he:"מעקב",en:"watch"},risk:{he:"סיכון",en:"risk"},info:{he:"מידע",en:"info"}}[s.kind];
     const line=[s.trigger?`<b>${ldE(s.trigger)}</b>`:"",`${t.rule}: ${ldE(s.rule)}`,s.value!=null?`${t.value}: <span class="num">${ldE(String(s.value))}</span>`:"",s.threshold?`${t.threshold}: <span class="num">${ldE(s.threshold)}</span>`:"",s.comparison?`${t.comparison}: ${ldE(s.comparison)}`:"",s.period?`${t.period}: ${ldE(s.period)}`:"",s.source?`${t.source}: ${ldE(s.sourceLabel||s.source)} <span class="num">${ldE(s.source)}</span>`:"",s.cls?`${t.cls}: ${xpClsChip(s.cls)}`:"",s.evidence?`${t.evidence}: ${ldE(s.evidence.level)} ${s.evidence.score!=null?s.evidence.score+"/100":""}`:""].filter(Boolean);
-    html=head(`${t.whyBtn} <span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(kind[L])}</span>`)+`<ul class="xp-why-l">${line.map(x=>`<li>${x}</li>`).join("")}</ul><p class="xp-s"><b>${t.notAs}:</b> ${ldE(s.notAs||"")}</p>`;more=s.term?xpL2HTML(s.term.id):""}
-  else if(trigger.dataset.xpm){const m=X.missing(trigger.dataset.xpm,L);if(!m)return;html=head(ldE(m.label),xpClsChip("MISSING"))+`<p class="xp-s">${ldE(m.why)}</p><p class="xp-s"><b>${t.unlock}:</b> ${ldE(m.unlock)}</p>`}
+    title=t.whyBtn;chip=`<span class="ho-chip ${s.kind==="risk"?"bad":s.kind==="watch"?"on":"cont"}">${ldE(kind[L])}</span>`;
+    body=(s.term&&s.term.simple?xpSec(t.simple,`<p id="xpPopS">${ldE(s.term.title)} — ${ldE(s.term.simple)}</p>`," xp-simple"):"")+`<ul class="xp-why-l">${line.map(x=>`<li>${x}</li>`).join("")}</ul>`+xpSec(t.notRead,xpP(s.notAs||"")," xp-not");more=s.term?xpTermHTML(s.term.id,false)+xpL2HTML(s.term.id):""}
+  else if(trigger.dataset.xpm){const m=X.missing(trigger.dataset.xpm,L);if(!m)return;title=ldE(m.label);chip=xpClsChip("MISSING");body=xpSec(t.whyMissing,`<p id="xpPopS">${ldE(m.why)}</p>`," xp-simple")+xpSec(t.unlock,xpP(m.unlock))}
   else if(trigger.dataset.xpsec&&X.section){const S=X.section(trigger.dataset.xpsec,L);if(!S)return;
-    html=head(t.howToRead)+`<dl class="xp-orient"><dt>${t.q1}</dt><dd>${ldE(S.what)}</dd><dt>${t.qKind}</dt><dd>${ldE(S.kind)}</dd><dt>${t.qHelps}</dt><dd>${ldE(S.helps)}</dd><dt>${t.qScope}</dt><dd>${ldE(S.scope)}</dd><dt>${t.qCurrent}</dt><dd>${ldE(S.current)}</dd></dl><ul class="xp-why-l">${S.read.map(r=>`<li>${ldE(r)}</li>`).join("")}</ul>`;more=xpLegendAllHTML(null)}
-  else if(trigger.dataset.xpleg&&X.legend){const g=X.legend(trigger.dataset.xpleg,L);if(!g)return;
-    html=head(`${ldE(g.label)} <span class="ho-chip">${g.group==="match"?t.legMatch:t.legClass}</span>`)+`<p class="xp-s">${ldE(g.means)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(g.notMeans)}</p>`;more=xpLegendAllHTML(g.code)}
+    title=t.howToRead;body=(S.simple?xpSec(t.simple,`<p id="xpPopS">${ldE(S.simple)}</p>`," xp-simple"):"")+`<dl class="xp-orient"><dt>${t.q1}</dt><dd>${ldE(S.what)}</dd><dt>${t.qKind}</dt><dd>${ldE(S.kind)}</dd><dt>${t.qHelps}</dt><dd>${ldE(S.helps)}</dd><dt>${t.qScope}</dt><dd>${ldE(S.scope)}</dd><dt>${t.qCurrent}</dt><dd>${ldE(S.current)}</dd></dl><ul class="xp-why-l">${S.read.map(r=>`<li>${ldE(r)}</li>`).join("")}</ul>`;more=xpLegendAllHTML(null);moreLab=t.legendAll}
+  else if(trigger.dataset.xpleg&&X.legend){const g=X.legend(trigger.dataset.xpleg,L);if(!g)return;title=ldE(g.label);chip=`<span class="ho-chip">${g.group==="match"?t.legMatch:t.legClass}</span>`;moreLab=t.legendAll;
+    body=(g.simple?xpSec(t.simple,`<p id="xpPopS">${ldE(g.simple)}</p>`," xp-simple"):"")+`<p class="xp-s">${ldE(g.means)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(g.notMeans)}</p>`;more=xpLegendAllHTML(g.code)}
   else if(trigger.dataset.xpent&&X.entityType){const E=X.entityType(trigger.dataset.xpent,L);if(!E)return;
-    html=head(ldE(E.label))+`<p class="xp-s">${ldE(E.what)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(E.notA)}</p>`;more=xpLegendAllHTML(null)}
+    title=ldE(E.label);body=`<p class="xp-s" id="xpPopS">${ldE(E.what)}</p><p class="xp-s"><b>${t.notAs}:</b> ${ldE(E.notA)}</p>`;more=xpLegendAllHTML(null);moreLab=t.legendAll}
   else return;
-  let pop=el("xpPop");if(!pop){pop=document.createElement("div");pop.id="xpPop";pop.className="xp-pop";pop.setAttribute("role","dialog");document.body.appendChild(pop)}
-  pop.innerHTML=html+(more?`<button type="button" class="ld-link xp-more" data-xpmore aria-expanded="false">${t.more} ↓</button>`+more:"");pop.hidden=false;xpTrig=trigger;xpPlace();
-  const f=pop.querySelector("[data-xpclose]");if(f)f.focus();
+  let pop=el("xpPop");if(!pop){pop=document.createElement("div");pop.id="xpPop";pop.className="xp-pop";pop.setAttribute("role","dialog");pop.setAttribute("aria-labelledby","xpPopT");pop.tabIndex=-1;pop.hidden=true;
+    pop.addEventListener("keydown",xpKey);pop.addEventListener("toggle",()=>xpPlace(),true);document.body.appendChild(pop)}
+  let sc=el("xpScrim");if(!sc){sc=document.createElement("div");sc.id="xpScrim";sc.className="xp-scrim";sc.hidden=true;document.body.appendChild(sc)}
+  pop.setAttribute("dir",L==="en"?"ltr":"rtl");pop.setAttribute("lang",L);
+  pop.innerHTML=`<div class="xp-h"><h2 class="xp-t" id="xpPopT" tabindex="-1">${title}</h2>${chip}<button type="button" class="xp-x" data-xpclose aria-label="${t.close}">×</button></div><div class="xp-b">${body}${more?`<details class="xp-full"><summary>${moreLab}</summary>${more}</details>`:""}</div>`;
+  if(pop.querySelector("#xpPopS"))pop.setAttribute("aria-describedby","xpPopS");else pop.removeAttribute("aria-describedby");
+  if(!(trigger.closest&&trigger.closest("#xpPop"))||!xpRet)xpRet=trigger;      /* opened from inside the dialog (a class chip): focus still returns to the first trigger */
+  pop.hidden=false;sc.hidden=false;pop.scrollTop=0;xpTrig=trigger;xpPlace();
+  const h=pop.querySelector("#xpPopT");if(h)h.focus({preventScroll:true});
 }
 /* the ONE evidence legend (registry LEGEND): every label PROPX prints, what it means and what it does not mean */
 function xpLegendAllHTML(cur){const X=XP();if(!X||!X.legendAll)return"";const L=state.lang==="en"?"en":"he",t=xpT(),A=X.legendAll(L);
   const rows=xs=>xs.map(g=>`<tr${g.code===cur?' class="on"':""}><td><b>${ldE(g.label)}</b></td><td>${ldE(g.means)}<div class="ho-na">${t.notAs}: ${ldE(g.notMeans)}</div></td></tr>`).join("");
-  return `<div class="xp-l2" hidden><p class="xp-leg-h">${t.legClasses}</p><table class="xp-leg"><tbody>${rows(A.classes)}</tbody></table><p class="xp-leg-h">${t.legMatches}</p><table class="xp-leg"><tbody>${rows(A.matches)}</tbody></table></div>`}
-function xpPlace(){const pop=el("xpPop");if(!pop||pop.hidden||!xpTrig)return;if(window.innerWidth<=560){pop.style.top="";pop.style.left="";return}
-  const r=xpTrig.getBoundingClientRect(),w=Math.min(440,window.innerWidth-24);pop.style.maxWidth=w+"px";const ph=pop.offsetHeight||200;
-  let top=r.bottom+6;if(top+ph>window.innerHeight-8)top=Math.max(8,r.top-ph-6);let left=state.lang==="en"?r.left:r.right-w;left=Math.max(12,Math.min(left,window.innerWidth-w-12));pop.style.top=top+"px";pop.style.left=left+"px"}
-function xpClose(){const pop=el("xpPop");if(!pop||pop.hidden)return;pop.hidden=true;const t=xpTrig;xpTrig=null;if(t&&document.contains(t))t.focus()}
+  return `<p class="xp-leg-h">${t.legClasses}</p><table class="xp-leg"><tbody>${rows(A.classes)}</tbody></table><p class="xp-leg-h">${t.legMatches}</p><table class="xp-leg"><tbody>${rows(A.matches)}</tbody></table>`}
+function xpPlace(){const pop=el("xpPop");if(!pop||pop.hidden||!xpTrig)return;
+  if(window.innerWidth<760){pop.style.top="";pop.style.left="";pop.style.width="";return}      /* phone: the CSS bottom sheet */
+  const T0=xpRet&&document.contains(xpRet)?xpRet:xpTrig,r=T0.getBoundingClientRect(),w=Math.min(460,window.innerWidth-24);pop.style.width=w+"px";const ph=pop.offsetHeight||200;
+  let top=r.bottom+6;if(top+ph>window.innerHeight-8)top=r.top-ph-6;top=Math.max(8,Math.min(top,window.innerHeight-8-ph));
+  let left=state.lang==="en"?r.left:r.right-w;left=Math.max(12,Math.min(left,window.innerWidth-w-12));pop.style.top=top+"px";pop.style.left=left+"px"}
+function xpClose(){const pop=el("xpPop");if(!pop||pop.hidden)return;pop.hidden=true;const sc=el("xpScrim");if(sc)sc.hidden=true;const r=xpRet;xpTrig=null;xpRet=null;if(r&&document.contains(r))r.focus()}
+/* keys inside the dialog never reach the drawer underneath: Escape closes the explanation only, Tab cycles inside it */
+function xpKey(e){if(e.key==="Escape"){e.preventDefault();e.stopPropagation();xpClose();return}
+  if(e.key!=="Tab")return;e.stopPropagation();const p=e.currentTarget,a=document.activeElement;
+  const q=[...p.querySelectorAll("button,summary,[href],input,select,textarea,[tabindex]:not([tabindex='-1'])")].filter(x=>!x.disabled&&x.getClientRects().length);if(!q.length){e.preventDefault();return}
+  const first=q[0],last=q[q.length-1];
+  if(e.shiftKey&&(a===first||!q.includes(a))){e.preventDefault();last.focus()}
+  else if(!e.shiftKey&&(a===last||!p.contains(a))){e.preventDefault();first.focus()}}
+window.addEventListener("resize",()=>xpPlace());
 /* an evidence label (the board's chip, a diligence class, a match state) opens its legend entry — before any row under it acts */
 const XP_LEG_OF={raw:"OFFICIAL",static:"STATIC",der:"DERIVED",obs:"OBSERVED",mod:"MODEL",na:"MISSING",usr:"USER_ASSUMPTION"};
 function xpLegCode(c){if(c.dataset.cls)return c.dataset.cls;if(c.classList.contains("vc")){for(const k in XP_LEG_OF)if(c.classList.contains(k))return XP_LEG_OF[k];return null}
@@ -11237,7 +11328,6 @@ document.addEventListener("click",e=>{const c=e.target.closest(".vc,.dd-pc,.dd-m
   e.preventDefault();e.stopPropagation();if(xpTrig===c){xpClose();return}c.dataset.xpleg=code;xpOpen(c)},true);
 document.addEventListener("click",e=>{const b=e.target.closest("[data-xp],[data-xps],[data-xpm],[data-xpsec],[data-xpleg],[data-xpent]");if(b){e.preventDefault();e.stopPropagation();if(xpTrig===b){xpClose();return}xpOpen(b);return}
   if(e.target.closest("[data-xpclose]")){xpClose();return}
-  const m=e.target.closest("[data-xpmore]");if(m){const l2=m.parentElement.querySelector(".xp-l2");if(l2){l2.hidden=!l2.hidden;m.setAttribute("aria-expanded",String(!l2.hidden));m.textContent=(l2.hidden?xpT().more+" ↓":xpT().less+" ↑");xpPlace()}return}
   if(!e.target.closest("#xpPop"))xpClose()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")xpClose()});
 /* CLARITY (STEP 2A) — every major section says what it is, with "how to read this" (registry SECTIONS); every drawer carries a
