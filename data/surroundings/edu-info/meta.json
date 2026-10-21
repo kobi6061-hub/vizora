@@ -11,16 +11,28 @@
  "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=5548fd63-5868-4053-ad81-98caddc5e232",
  "licence": "Other (Open)",
  "cadence": "yearly (resource updated 2026-05)",
- "period": "school years 2022 →",
+ "period": "each institution's latest school year in the source",
  "classification": "OFFICIAL",
  "sourceUpdatedAt": "2026-05-11T12:24:47.128302Z",
- "checkedAt": "2026-10-21T14:40:32.239Z",
- "readAt": "2026-10-21T14:40:32.239Z",
- "contentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+ "checkedAt": "2026-10-21T14:49:58.357Z",
+ "readAt": "2026-10-21T14:49:58.357Z",
+ "contentHash": "260de32bedd8d3bf1e519fa5e7e29f822c01a86c90f05ffc596ba692f580f5f4",
  "sourceRows": 119761,
- "records": 0,
- "rejected": 119761,
- "byLevel": {},
+ "records": 28486,
+ "rejected": 0,
+ "superseded": 91275,
+ "profile": {
+  "rowsByYear": {
+   "2011": 21474,
+   "2012": 23419,
+   "2013": 23583,
+   "2014": 25046,
+   "2015": 26239
+  }
+ },
+ "byLevel": {
+  "year": 28486
+ },
  "fields": [
   "_id",
   "שנה",
@@ -51,6 +63,7 @@
   "חינוך לבגרות"
  ],
  "history": [
+  "2026-10-21-260de32b.json.gz",
   "2026-10-21-4f53cda1.json.gz"
  ]
 }
