@@ -1,0 +1,2613 @@
+{
+ "engine": "propx-search-audit-1",
+ "builtAt": "2026-10-21T13:42:22.799Z",
+ "visibleRows": 10,
+ "pinned": {
+  "directory": "19dc84f164672df0ed101e5c8bfedeada7e4d77271251a9dd6f08519f67961ee",
+  "synonyms": "730c82dd8a9d9a3b84b233525a81eafe028252d3d81c09ab690f9437c94c8049",
+  "searchIndex": "132551e0ad39fa31b233b25b426cf553e8359f0ee3af869a06e57d59e0ef79b2",
+  "code": "0425b6e84a2aaca0cb002d335c54a4acf2d1128bb54e94fbc15cf3e2b75f166f"
+ },
+ "universe": {
+  "searchableRows": 62265,
+  "current": 62261,
+  "historical": 4,
+  "byKind": {
+   "street": 57164,
+   "area": 5007,
+   "site": 94
+  },
+  "synonyms": 86108,
+  "synonymsWithoutCurrentStreet": 0,
+  "placeNames": 2448,
+  "placeNamesWithoutLocality": 3
+ },
+ "forms": {
+  "near": {
+   "top1": 57827,
+   "top3": 62265,
+   "visible": 62265,
+   "absent": 0
+  },
+  "named": {
+   "top1": 62243,
+   "top3": 62265,
+   "visible": 62265,
+   "absent": 0
+  },
+  "plain": {
+   "top1": 29658,
+   "top3": 40701,
+   "visible": 51771,
+   "absent": 9063
+  },
+  "synonymNear": {
+   "top1": 82798,
+   "top3": 86096,
+   "visible": 86107,
+   "absent": 1
+  },
+  "synonymNamed": {
+   "top1": 85489,
+   "top3": 86098,
+   "visible": 86106,
+   "absent": 2
+  },
+  "place": {
+   "top1": 1555,
+   "visible": 2081,
+   "absent": 327
+  },
+  "placeNamed": {
+   "top1": 2428,
+   "visible": 2443,
+   "absent": 2
+  }
+ },
+ "plainAmbiguous": {
+  "count": 10494,
+  "byRule": {
+   "sameNameLocalities": 10473,
+   "crowdedByEqualAnswers": 21
+  },
+  "localitiesP50": 37,
+  "examples": [
+   {
+    "id": "st:1015:117",
+    "name": "הזית",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 211,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:122",
+    "name": "הפלמ\"ח",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 45,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:134",
+    "name": "שמעון",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 17,
+    "rank": 11
+   },
+   {
+    "id": "st:1015:142",
+    "name": "יסמין",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 58,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:163",
+    "name": "השלום",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 18,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:167",
+    "name": "רקפת",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 56,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:175",
+    "name": "יהודה הלוי",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 41,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:180",
+    "name": "אגוז",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 41,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:193",
+    "name": "צור",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 23,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:252",
+    "name": "קרן היסוד",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 44,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:271",
+    "name": "גלבוע",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 30,
+    "rank": 11
+   },
+   {
+    "id": "st:1015:275",
+    "name": "חרמון",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 41,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:310",
+    "name": "לבונה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 28,
+    "rank": -1
+   },
+   {
+    "id": "st:1015:332",
+    "name": "תרשיש",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 38,
+    "rank": -1
+   },
+   {
+    "id": "st:1020:104",
+    "name": "בן יהודה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 22,
+    "rank": -1
+   }
+  ],
+  "crowdedExamples": [
+   {
+    "id": "st:1063:113",
+    "name": "פקיעין",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1362:117",
+    "name": "קדרון",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:3574:183",
+    "name": "יונתן",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1162:112",
+    "name": "שושנת העמקים",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1204:117",
+    "name": "מצפה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 8,
+    "rank": 11,
+    "tier": 4
+   },
+   {
+    "id": "st:1257:104",
+    "name": "מעין",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:26:158",
+    "name": "חן",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 11,
+    "tier": 4
+   },
+   {
+    "id": "st:47:180",
+    "name": "בר גיורא",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:6300:519",
+    "name": "ח\"ן",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:662:107",
+    "name": "בית\"ר",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1224:3203",
+    "name": "ניצנה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1326:169",
+    "name": "קיסריה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:3730:402",
+    "name": "גבע",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 12,
+    "tier": 4
+   },
+   {
+    "id": "st:4100:189",
+    "name": "גבע",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1288:112",
+    "name": "מסדה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:1304:143",
+    "name": "מצפה",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 8,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:253:131",
+    "name": "ניצן",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 7,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:2620:207",
+    "name": "פקיעין",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 11,
+    "tier": 4
+   },
+   {
+    "id": "st:530:126",
+    "name": "בית לחם",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   },
+   {
+    "id": "st:6300:204",
+    "name": "גבע",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 9,
+    "rank": 11,
+    "tier": 4
+   },
+   {
+    "id": "st:737:101",
+    "name": "מגל",
+    "kind": "street",
+    "status": "current",
+    "sameNameLocalities": 10,
+    "rank": 10,
+    "tier": 4
+   }
+  ],
+  "localitiesMin": 7
+ },
+ "otherAmbiguous": {
+  "total": 361,
+  "byForm": {
+   "place": 361
+  },
+  "list": [
+   {
+    "id": "loc:26",
+    "name": "אכסנית נוער",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:28",
+    "name": "ש זוגות צעירים",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:28",
+    "name": "ש עולים",
+    "form": "place",
+    "rank": 61
+   },
+   {
+    "id": "loc:31",
+    "name": "ש ותיקים",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:31",
+    "name": "ההסתדרות",
+    "form": "place",
+    "rank": 43
+   },
+   {
+    "id": "loc:48",
+    "name": "ש עמידר ב",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:53",
+    "name": "אסבסטונים",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:70",
+    "name": "ש מפונים",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:70",
+    "name": "אבשלום",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:82",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:84",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 56
+   },
+   {
+    "id": "loc:127",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 25
+   },
+   {
+    "id": "loc:147",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 34
+   },
+   {
+    "id": "loc:158",
+    "name": "תחנת רכבת",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:188",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 59
+   },
+   {
+    "id": "loc:191",
+    "name": "ש חדש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:224",
+    "name": "חבצלת",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:224",
+    "name": "רסקו",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:229",
+    "name": "הכלנית סמ",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:235",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:240",
+    "name": "ש ממשלתי",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:242",
+    "name": "א. ק.",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:250",
+    "name": "א . ק .",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:267",
+    "name": "הגלבוע",
+    "form": "place",
+    "rank": 77
+   },
+   {
+    "id": "loc:286",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 37
+   },
+   {
+    "id": "loc:295",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 62
+   },
+   {
+    "id": "loc:311",
+    "name": "רוטשילד",
+    "form": "place",
+    "rank": 23
+   },
+   {
+    "id": "loc:335",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 29
+   },
+   {
+    "id": "loc:351",
+    "name": "נצנים",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:359",
+    "name": "נצנים",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:369",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:403",
+    "name": "רמה",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:502",
+    "name": "גיי\"א",
+    "form": "place",
+    "rank": 35
+   },
+   {
+    "id": "loc:505",
+    "name": "כווכב",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:591",
+    "name": "שקמה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:596",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 46
+   },
+   {
+    "id": "loc:596",
+    "name": "אולפן קיבוץ",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:613",
+    "name": "צפורי",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:696",
+    "name": "מעון",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:696",
+    "name": "חבד",
+    "form": "place",
+    "rank": 23
+   },
+   {
+    "id": "loc:729",
+    "name": "רמבם",
+    "form": "place",
+    "rank": 68
+   },
+   {
+    "id": "loc:738",
+    "name": "צור",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:787",
+    "name": "האלה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:812",
+    "name": "שכון",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:866",
+    "name": "אולפן קיבוץ",
+    "form": "place",
+    "rank": 23
+   },
+   {
+    "id": "loc:874",
+    "name": "בית אבות",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:921",
+    "name": "ש עובדים",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש הרכבת",
+    "form": "place",
+    "rank": 29
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש אגש",
+    "form": "place",
+    "rank": 22
+   },
+   {
+    "id": "loc:1024",
+    "name": "שכון א",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:1031",
+    "name": "שכ א",
+    "form": "place",
+    "rank": 59
+   },
+   {
+    "id": "loc:1031",
+    "name": "המשטרה",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:1056",
+    "name": "ביס חקלאי",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:1057",
+    "name": "מצדה",
+    "form": "place",
+    "rank": 47
+   },
+   {
+    "id": "loc:1057",
+    "name": "מוריה",
+    "form": "place",
+    "rank": 34
+   },
+   {
+    "id": "loc:1063",
+    "name": "שכון",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:1068",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 67
+   },
+   {
+    "id": "loc:1084",
+    "name": "כפר הנוער",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:1102",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:1181",
+    "name": "יצהר",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:1208",
+    "name": "הלה",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:1287",
+    "name": "לבנה",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:1304",
+    "name": "שהם",
+    "form": "place",
+    "rank": 33
+   },
+   {
+    "id": "loc:2034",
+    "name": "ש עולים",
+    "form": "place",
+    "rank": 65
+   },
+   {
+    "id": "loc:2550",
+    "name": "הקוממיות",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:2560",
+    "name": "שכון",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:2600",
+    "name": "ש טרומיים",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:2600",
+    "name": "שכון",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:2610",
+    "name": "שכון ב",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:2630",
+    "name": "ש ד",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:2630",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:2630",
+    "name": "אהרונסון",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:2640",
+    "name": "יהודה הנשיא",
+    "form": "place",
+    "rank": 24
+   },
+   {
+    "id": "loc:2640",
+    "name": "הנוטר",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:2660",
+    "name": "מעון אקדמאים",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:2660",
+    "name": "שכון",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:3712",
+    "name": "עינב",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:5000",
+    "name": "מג",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:5000",
+    "name": "ש מומחים",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:6100",
+    "name": "המלכים",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:6700",
+    "name": "חפץ חיים",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:6800",
+    "name": "רוקח",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:6800",
+    "name": "ששת הימים",
+    "form": "place",
+    "rank": 36
+   },
+   {
+    "id": "loc:6900",
+    "name": "מגדל",
+    "form": "place",
+    "rank": 28
+   },
+   {
+    "id": "loc:7800",
+    "name": "מרכז מסחרי",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:8500",
+    "name": "ש רסקו",
+    "form": "place",
+    "rank": 66
+   },
+   {
+    "id": "loc:9500",
+    "name": "פלג",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:31",
+    "name": "ש רכבת",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:43",
+    "name": "מושבה",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:48",
+    "name": "ש זוגות צעירים",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:72",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 29
+   },
+   {
+    "id": "loc:82",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 55
+   },
+   {
+    "id": "loc:86",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 31
+   },
+   {
+    "id": "loc:102",
+    "name": "כפר הנוער",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:107",
+    "name": "אבא הלל",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:127",
+    "name": "א . ק .",
+    "form": "place",
+    "rank": 25
+   },
+   {
+    "id": "loc:128",
+    "name": "המעגל",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:154",
+    "name": "שבזי",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:175",
+    "name": "שכ בנים",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:205",
+    "name": "חוגלה",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:220",
+    "name": "החיל",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:229",
+    "name": "הורדים",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:240",
+    "name": "ש אגש",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:240",
+    "name": "ש עולים",
+    "form": "place",
+    "rank": 62
+   },
+   {
+    "id": "loc:241",
+    "name": "מושבה",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:241",
+    "name": "המושבה",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:242",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 35
+   },
+   {
+    "id": "loc:242",
+    "name": "א .ק .",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:249",
+    "name": "סירקין",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:250",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:282",
+    "name": "מרכז הקליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:282",
+    "name": "בית אל",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:290",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 38
+   },
+   {
+    "id": "loc:301",
+    "name": "עוזיאל",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:309",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:320",
+    "name": "ורבורג",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:339",
+    "name": "אלי כהן",
+    "form": "place",
+    "rank": 49
+   },
+   {
+    "id": "loc:351",
+    "name": "ניצנים",
+    "form": "place",
+    "rank": 33
+   },
+   {
+    "id": "loc:369",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:382",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:383",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:397",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 43
+   },
+   {
+    "id": "loc:436",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 44
+   },
+   {
+    "id": "loc:443",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 65
+   },
+   {
+    "id": "loc:449",
+    "name": "בני עקיבא",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:465",
+    "name": "פלמח",
+    "form": "place",
+    "rank": 70
+   },
+   {
+    "id": "loc:497",
+    "name": "הגלבוע",
+    "form": "place",
+    "rank": 78
+   },
+   {
+    "id": "loc:502",
+    "name": "גייא",
+    "form": "place",
+    "rank": 35
+   },
+   {
+    "id": "loc:505",
+    "name": "כוכב",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:564",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 45
+   },
+   {
+    "id": "loc:567",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:596",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 32
+   },
+   {
+    "id": "loc:599",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 47
+   },
+   {
+    "id": "loc:628",
+    "name": "גת ג'ת",
+    "form": "place",
+    "rank": 57
+   },
+   {
+    "id": "loc:638",
+    "name": "המרכז",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:692",
+    "name": "שפירא",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:695",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 48
+   },
+   {
+    "id": "loc:696",
+    "name": "ש עולים",
+    "form": "place",
+    "rank": 63
+   },
+   {
+    "id": "loc:696",
+    "name": "ישיבה",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:716",
+    "name": "בנין המשטרה",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:812",
+    "name": "הגליל",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:812",
+    "name": "ש ד",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:824",
+    "name": "כוכב",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:826",
+    "name": "עזה",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:831",
+    "name": "ש קומות",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:866",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 50
+   },
+   {
+    "id": "loc:874",
+    "name": "מעון עולים",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:874",
+    "name": "ש הרכבת",
+    "form": "place",
+    "rank": 28
+   },
+   {
+    "id": "loc:874",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:889",
+    "name": "ש רסקו",
+    "form": "place",
+    "rank": 65
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש מרכז",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש חדש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש רכבת",
+    "form": "place",
+    "rank": 29
+   },
+   {
+    "id": "loc:1031",
+    "name": "ש חסכון",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:1031",
+    "name": "ש קומות",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:1034",
+    "name": "שמעון",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:1063",
+    "name": "ש ממשלתי",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:1102",
+    "name": "שושנת העמקים",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:1102",
+    "name": "שושנת עמקים",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:1105",
+    "name": "נוה עובד",
+    "form": "place",
+    "rank": 24
+   },
+   {
+    "id": "loc:1195",
+    "name": "כפר הנוער",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:1224",
+    "name": "צור יגאל כוכב יאיר",
+    "form": "place",
+    "rank": 68
+   },
+   {
+    "id": "loc:2021",
+    "name": "ביס חקלאי",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:2034",
+    "name": "ש חסכון",
+    "form": "place",
+    "rank": 55
+   },
+   {
+    "id": "loc:2042",
+    "name": "אכסנית נוער",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:2200",
+    "name": "שכון",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:2600",
+    "name": "ש א",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:2610",
+    "name": "שכ ב",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:2660",
+    "name": "יוחנן",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:2660",
+    "name": "שבתאי",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:2800",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 51
+   },
+   {
+    "id": "loc:2800",
+    "name": "סנש חנה",
+    "form": "place",
+    "rank": 48
+   },
+   {
+    "id": "loc:3603",
+    "name": "ביס שדה",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:3644",
+    "name": "שכ הגפן",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:4002",
+    "name": "אל על",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:4010",
+    "name": "אדם",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:6200",
+    "name": "רשי",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:7100",
+    "name": "ש ותיקים",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:7400",
+    "name": "דרך חיפה",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:7500",
+    "name": "רח 100",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:7900",
+    "name": "בורג",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:7900",
+    "name": "שכון ג",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:8400",
+    "name": "ברוריה",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:8500",
+    "name": "מרכז מסחרי",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:8800",
+    "name": "שכ אל בורג",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:9100",
+    "name": "אכסנית נוער",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:9700",
+    "name": "ויתקין",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:16",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:32",
+    "name": "שכ הדרום",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:48",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:57",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 57
+   },
+   {
+    "id": "loc:65",
+    "name": "ש א",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:70",
+    "name": "הברוש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:70",
+    "name": "אפשטין",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:99",
+    "name": "הורדים",
+    "form": "place",
+    "rank": 53
+   },
+   {
+    "id": "loc:104",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 32
+   },
+   {
+    "id": "loc:128",
+    "name": "ש זוגות צעירים",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:144",
+    "name": "ש עובדים",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:154",
+    "name": "המושבה",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:156",
+    "name": "ביס חקלאי",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:170",
+    "name": "קרוונים",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:176",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 58
+   },
+   {
+    "id": "loc:177",
+    "name": "שכון ב",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:182",
+    "name": "המושבה",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:199",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 60
+   },
+   {
+    "id": "loc:224",
+    "name": "ש רסקו",
+    "form": "place",
+    "rank": 63
+   },
+   {
+    "id": "loc:250",
+    "name": "אולפן קיבוץ",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:250",
+    "name": "א. ק.",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:286",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 28
+   },
+   {
+    "id": "loc:296",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 62
+   },
+   {
+    "id": "loc:371",
+    "name": "ביס חקלאי",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:383",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 63
+   },
+   {
+    "id": "loc:389",
+    "name": "ש צריפים",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:393",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 42
+   },
+   {
+    "id": "loc:436",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 64
+   },
+   {
+    "id": "loc:449",
+    "name": "ישיבה",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:466",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:487",
+    "name": "גוש חלב",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:591",
+    "name": "ש רסקו",
+    "form": "place",
+    "rank": 64
+   },
+   {
+    "id": "loc:596",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 66
+   },
+   {
+    "id": "loc:602",
+    "name": "אולפן קיבוץ",
+    "form": "place",
+    "rank": 22
+   },
+   {
+    "id": "loc:607",
+    "name": "הר מירון",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:696",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:707",
+    "name": "קרוונים",
+    "form": "place",
+    "rank": 42
+   },
+   {
+    "id": "loc:722",
+    "name": "רח ד",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:831",
+    "name": "מע ירוחם",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:874",
+    "name": "ש חסכון",
+    "form": "place",
+    "rank": 51
+   },
+   {
+    "id": "loc:874",
+    "name": "מגידו",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:922",
+    "name": "ש חסכון",
+    "form": "place",
+    "rank": 52
+   },
+   {
+    "id": "loc:926",
+    "name": "בית אבות",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש ב",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש עולים",
+    "form": "place",
+    "rank": 64
+   },
+   {
+    "id": "loc:1024",
+    "name": "שכ א",
+    "form": "place",
+    "rank": 58
+   },
+   {
+    "id": "loc:1031",
+    "name": "שכון א",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:1063",
+    "name": "ויצמן",
+    "form": "place",
+    "rank": 58
+   },
+   {
+    "id": "loc:1084",
+    "name": "ביס חקלאי",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:1094",
+    "name": "יבנה",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:1105",
+    "name": "אכסנית הנוער",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:1127",
+    "name": "מעלה הגלבוע",
+    "form": "place",
+    "rank": 77
+   },
+   {
+    "id": "loc:1141",
+    "name": "מודיעין",
+    "form": "place",
+    "rank": 31
+   },
+   {
+    "id": "loc:1175",
+    "name": "עדן",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:2021",
+    "name": "הנשיא",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:2034",
+    "name": "ש דרום",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:2200",
+    "name": "ש עובדים",
+    "form": "place",
+    "rank": 41
+   },
+   {
+    "id": "loc:2300",
+    "name": "המעפילים",
+    "form": "place",
+    "rank": 46
+   },
+   {
+    "id": "loc:2400",
+    "name": "רח י",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:2500",
+    "name": "הפלמח",
+    "form": "place",
+    "rank": 69
+   },
+   {
+    "id": "loc:2530",
+    "name": "חפץ חיים דר",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:2560",
+    "name": "ש טרומים",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:2600",
+    "name": "ש ד",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:2630",
+    "name": "סמ ענבר",
+    "form": "place",
+    "rank": 44
+   },
+   {
+    "id": "loc:2640",
+    "name": "תחנת הרכבת",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:2640",
+    "name": "בנין המשטרה",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:3565",
+    "name": "רמונים",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:3572",
+    "name": "תפוח",
+    "form": "place",
+    "rank": 61
+   },
+   {
+    "id": "loc:3611",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:3726",
+    "name": "אל דוד",
+    "form": "place",
+    "rank": 21
+   },
+   {
+    "id": "loc:3762",
+    "name": "אגוז",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:4004",
+    "name": "חרוב",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:4007",
+    "name": "יהונתן",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:5000",
+    "name": "יהושפט",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:6700",
+    "name": "יוחנן הסנדלר",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:6800",
+    "name": "אור החיים",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:7300",
+    "name": "שפרינצק",
+    "form": "place",
+    "rank": 31
+   },
+   {
+    "id": "loc:7600",
+    "name": "משכנות",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:7900",
+    "name": "שכ ג",
+    "form": "place",
+    "rank": 36
+   },
+   {
+    "id": "loc:8200",
+    "name": "גוש חלב",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:8300",
+    "name": "השוק",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:8300",
+    "name": "זבולון",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:9200",
+    "name": "מולדת",
+    "form": "place",
+    "rank": 16
+   },
+   {
+    "id": "loc:28",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:31",
+    "name": "ש הרכבת",
+    "form": "place",
+    "rank": 27
+   },
+   {
+    "id": "loc:44",
+    "name": "זהר",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:46",
+    "name": "ש חדש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:46",
+    "name": "המושבה",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:55",
+    "name": "נגה",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:62",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 28
+   },
+   {
+    "id": "loc:62",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:65",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:70",
+    "name": "אפשטיין",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:82",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 24
+   },
+   {
+    "id": "loc:89",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 57
+   },
+   {
+    "id": "loc:127",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 33
+   },
+   {
+    "id": "loc:162",
+    "name": "חרות",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:166",
+    "name": "הבאר",
+    "form": "place",
+    "rank": 34
+   },
+   {
+    "id": "loc:176",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 58
+   },
+   {
+    "id": "loc:177",
+    "name": "שכ ב",
+    "form": "place",
+    "rank": 53
+   },
+   {
+    "id": "loc:177",
+    "name": "הרחבה",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:188",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 59
+   },
+   {
+    "id": "loc:190",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:199",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 60
+   },
+   {
+    "id": "loc:229",
+    "name": "סמ הכלנית",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:232",
+    "name": "הטייסים",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:242",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 61
+   },
+   {
+    "id": "loc:250",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 36
+   },
+   {
+    "id": "loc:250",
+    "name": "אולפן קבוץ",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:282",
+    "name": "דולפין",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:284",
+    "name": "הרחבה",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:295",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 61
+   },
+   {
+    "id": "loc:335",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:338",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:416",
+    "name": "בית ראשון",
+    "form": "place",
+    "rank": 63
+   },
+   {
+    "id": "loc:436",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 31
+   },
+   {
+    "id": "loc:481",
+    "name": "רח 101",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:591",
+    "name": "שורק",
+    "form": "place",
+    "rank": 24
+   },
+   {
+    "id": "loc:595",
+    "name": "לוחמי הגטאות",
+    "form": "place",
+    "rank": 20
+   },
+   {
+    "id": "loc:596",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 64
+   },
+   {
+    "id": "loc:602",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 65
+   },
+   {
+    "id": "loc:688",
+    "name": "אשל",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:696",
+    "name": "מעון עולים",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:713",
+    "name": "אולפן",
+    "form": "place",
+    "rank": 49
+   },
+   {
+    "id": "loc:722",
+    "name": "רח ג",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:769",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:812",
+    "name": "אכסנית נוער",
+    "form": "place",
+    "rank": 11
+   },
+   {
+    "id": "loc:831",
+    "name": "ש עמידר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:866",
+    "name": "א.ק.",
+    "form": "place",
+    "rank": 33
+   },
+   {
+    "id": "loc:874",
+    "name": "ש צבא קבע",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:874",
+    "name": "ש רכבת",
+    "form": "place",
+    "rank": 28
+   },
+   {
+    "id": "loc:874",
+    "name": "ש עממי",
+    "form": "place",
+    "rank": 56
+   },
+   {
+    "id": "loc:921",
+    "name": "בית אבות",
+    "form": "place",
+    "rank": 40
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש חסכון",
+    "form": "place",
+    "rank": 53
+   },
+   {
+    "id": "loc:1020",
+    "name": "ש א",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:1031",
+    "name": "צהל",
+    "form": "place",
+    "rank": 54
+   },
+   {
+    "id": "loc:1034",
+    "name": "הנציב",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:1061",
+    "name": "ברקת",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:1068",
+    "name": "בית ראשון במולדת",
+    "form": "place",
+    "rank": 66
+   },
+   {
+    "id": "loc:1084",
+    "name": "כפר נוער",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:1204",
+    "name": "יובלים",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:1220",
+    "name": "אדר",
+    "form": "place",
+    "rank": 22
+   },
+   {
+    "id": "loc:1287",
+    "name": "ליבנה",
+    "form": "place",
+    "rank": 42
+   },
+   {
+    "id": "loc:1290",
+    "name": "ש חדש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:2010",
+    "name": "בן נון",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:2034",
+    "name": "סנש",
+    "form": "place",
+    "rank": 32
+   },
+   {
+    "id": "loc:2038",
+    "name": "ש חדש",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:2200",
+    "name": "סמדר",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:2400",
+    "name": "משטרה",
+    "form": "place",
+    "rank": 18
+   },
+   {
+    "id": "loc:2530",
+    "name": "רמז",
+    "form": "place",
+    "rank": 43
+   },
+   {
+    "id": "loc:2600",
+    "name": "ש רכבת",
+    "form": "place",
+    "rank": 30
+   },
+   {
+    "id": "loc:2610",
+    "name": "רח 17",
+    "form": "place",
+    "rank": 17
+   },
+   {
+    "id": "loc:2630",
+    "name": "שכון",
+    "form": "place",
+    "rank": 15
+   },
+   {
+    "id": "loc:2630",
+    "name": "ש צר",
+    "form": "place",
+    "rank": 25
+   },
+   {
+    "id": "loc:2630",
+    "name": "ש רכבת",
+    "form": "place",
+    "rank": 31
+   },
+   {
+    "id": "loc:2640",
+    "name": "מורדי הגטאות",
+    "form": "place",
+    "rank": 24
+   },
+   {
+    "id": "loc:2660",
+    "name": "מרכז קליטה",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:2800",
+    "name": "בן יהודה",
+    "form": "place",
+    "rank": 37
+   },
+   {
+    "id": "loc:3558",
+    "name": "תמר",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:3573",
+    "name": "חלמיש",
+    "form": "place",
+    "rank": 25
+   },
+   {
+    "id": "loc:3725",
+    "name": "דניאל",
+    "form": "place",
+    "rank": 19
+   },
+   {
+    "id": "loc:3763",
+    "name": "אדם",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:4000",
+    "name": "ש אגש",
+    "form": "place",
+    "rank": 23
+   },
+   {
+    "id": "loc:6200",
+    "name": "ענבר",
+    "form": "place",
+    "rank": 44
+   },
+   {
+    "id": "loc:6300",
+    "name": "שכ ד",
+    "form": "place",
+    "rank": 22
+   },
+   {
+    "id": "loc:6600",
+    "name": "אלשיך",
+    "form": "place",
+    "rank": 10
+   },
+   {
+    "id": "loc:6800",
+    "name": "אמיר",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:7000",
+    "name": "עמק יזרעאל",
+    "form": "place",
+    "rank": 12
+   },
+   {
+    "id": "loc:7000",
+    "name": "ש מזרחי",
+    "form": "place",
+    "rank": 39
+   },
+   {
+    "id": "loc:7200",
+    "name": "הבשן",
+    "form": "place",
+    "rank": 26
+   },
+   {
+    "id": "loc:7700",
+    "name": "אליעזר",
+    "form": "place",
+    "rank": 13
+   },
+   {
+    "id": "loc:8000",
+    "name": "חובבי ציון",
+    "form": "place",
+    "rank": 14
+   },
+   {
+    "id": "loc:8200",
+    "name": "החבצלת",
+    "form": "place",
+    "rank": -1
+   },
+   {
+    "id": "loc:8500",
+    "name": "העצמאות ככר",
+    "form": "place",
+    "rank": 11
+   }
+  ]
+ },
+ "tooShort": {
+  "total": 4,
+  "rule": "a name of one character is never searched (the page and the API need two)",
+  "list": [
+   {
+    "id": "st:9200:6508",
+    "name": "ג",
+    "form": "synonym"
+   },
+   {
+    "id": "loc:2630",
+    "name": "ש",
+    "form": "place"
+   },
+   {
+    "id": "loc:2400",
+    "name": "ש",
+    "form": "place"
+   },
+   {
+    "id": "loc:812",
+    "name": "ש",
+    "form": "place"
+   }
+  ]
+ },
+ "sourceDefects": {
+  "total": 2,
+  "rule": "an official name the directory cut mid-word ending in \"-\": found by the name alone; typed before a locality the hyphen joins the locality name — a source defect, not a search miss",
+  "list": [
+   {
+    "id": "st:3000:6034",
+    "name": "כיכר אברהם יצחק הל-",
+    "form": "synonym-named",
+    "rank": -1
+   },
+   {
+    "id": "loc:8500",
+    "name": "ב חלוצים-",
+    "form": "place-named",
+    "rank": -1
+   }
+  ]
+ },
+ "failures": {
+  "total": 0,
+  "byForm": {},
+  "list": []
+ },
+ "ms": 1151823
+}

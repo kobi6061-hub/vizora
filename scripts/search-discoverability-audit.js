@@ -85,7 +85,7 @@ function merge() {
   const T = (list, col) => ({ top1: list.filter((r) => r[col] === 0).length, top3: list.filter((r) => r[col] >= 0 && r[col] < 3).length, visible: list.filter((r) => r[col] >= 0 && r[col] < VISIBLE).length, absent: list.filter((r) => r[col] < 0).length });
   const cur = rows.filter((r) => r[1] === 0), hist = rows.filter((r) => r[1] === 1);
   const failures = [], ambiguous = { count: 0, byRule: { sameNameLocalities: 0, crowdedByEqualAnswers: 0 }, localitiesP50: null, examples: [], crowdedExamples: [] };
-  const amb = [], ambOther = [], tooShort = [];
+  const amb = [], ambOther = [], tooShort = [], defects = [];
   const cityName = (code) => { const l = R.resolveGeoId('loc:' + code); return l ? l.he : null; };
   for (const r of rows) {
     const s = byId.get(r[0]), info = { id: r[0], name: s.name, kind: s.kind, status: s.status };
@@ -104,6 +104,7 @@ function merge() {
     if (R.normHe(y[1]).length < 2) { tooShort.push({ id: y[0], name: y[1], form: 'synonym' }); continue; }
     const near = Number(y[0].split(':')[1]);
     if (!(y[2] >= 0 && y[2] < VISIBLE)) { const c = crowded(y[1], y[0], near); if (c.crowded) ambOther.push({ id: y[0], name: y[1], form: 'synonym-near', rank: c.rank }); else failures.push({ id: y[0], name: y[1], form: 'synonym-near', rank: y[2] }); }
+    if (!(y[3] >= 0 && y[3] < VISIBLE) && /-$/.test(y[1].trim())) { defects.push({ id: y[0], name: y[1], form: 'synonym-named', rank: y[3] }); continue; }
     if (!(y[3] >= 0 && y[3] < VISIBLE)) { const c = crowded(y[1] + ' ' + cityName(near), y[0]); if (c.crowded) ambOther.push({ id: y[0], name: y[1], form: 'synonym-named', rank: c.rank }); else failures.push({ id: y[0], name: y[1], form: 'synonym-named', rank: y[3] }); }
   }
   /* place names (synonyms of the locality placeholder): the locality is offered */
@@ -117,10 +118,11 @@ function merge() {
       const c = crowded(p[1], id);
       /* the name alone: crowded when the list ahead holds only localities and exact (tier ≤ 5) streets */
       const m = R.searchGeo(p[1], 80).matches, j = m.findIndex((x) => x.id === id);
-      const full = j >= VISIBLE && m.slice(0, j).every((x) => x.kind === 'locality' || (x.tier || 9) <= 5);
+      const ahead = j >= 0 ? m.slice(0, j) : m;   // not among 80 rows: every one of the 80 is ahead of it
+      const full = (j >= VISIBLE || (j < 0 && m.length >= 80)) && ahead.every((x) => x.kind === 'locality' || (x.tier || 9) <= 5);
       if (full || placeSame.get(R.normHe(p[1])) > VISIBLE || c.crowded) ambOther.push({ id, name: p[1], form: 'place', rank: j }); else failures.push({ id, name: p[1], form: 'place', rank: p[2] });
     }
-    if (!(p[3] >= 0 && p[3] < VISIBLE)) failures.push({ id, name: p[1], form: 'place-named', rank: p[3] });
+    if (!(p[3] >= 0 && p[3] < VISIBLE)) { if (/-$/.test(p[1].trim())) defects.push({ id, name: p[1], form: 'place-named', rank: p[3] }); else failures.push({ id, name: p[1], form: 'place-named', rank: p[3] }); }
   }
   const out = {
     engine: 'propx-search-audit-1', builtAt: new Date().toISOString(), visibleRows: VISIBLE,
@@ -131,11 +133,12 @@ function merge() {
     plainAmbiguous: ambiguous,
     otherAmbiguous: { total: ambOther.length, byForm: ambOther.reduce((a, f) => ((a[f.form] = (a[f.form] || 0) + 1), a), {}), list: ambOther },
     tooShort: { total: tooShort.length, rule: 'a name of one character is never searched (the page and the API need two)', list: tooShort },
+    sourceDefects: { total: defects.length, rule: 'an official name the directory cut mid-word ending in "-": found by the name alone; typed before a locality the hyphen joins the locality name — a source defect, not a search miss', list: defects },
     failures: { total: failures.length, byForm: failures.reduce((a, f) => ((a[f.form] = (a[f.form] || 0) + 1), a), {}), list: failures },
     ms: parts.reduce((a, p) => a + p.ms, 0),
   };
   fs.writeFileSync(arg('--out'), JSON.stringify(out, null, 1));
-  console.log(JSON.stringify({ universe: out.universe, forms: out.forms, ambiguous: ambiguous.count, byRule: ambiguous.byRule, otherAmbiguous: out.otherAmbiguous.byForm, tooShort: tooShort.length, failures: out.failures.byForm }, null, 1));
+  console.log(JSON.stringify({ universe: out.universe, forms: out.forms, ambiguous: ambiguous.count, byRule: ambiguous.byRule, otherAmbiguous: out.otherAmbiguous.byForm, tooShort: tooShort.length, sourceDefects: defects.length, failures: out.failures.byForm }, null, 1));
 }
 
 if (process.argv.includes('--merge')) merge(); else shard();

@@ -26,7 +26,9 @@
   ranks 1 exact in the selected locality · 2 synonym there · 3 prefix there · 4 exact elsewhere · 5 synonym elsewhere · 6 discovery;
   `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street; since 21.10.2026 ALL WORDS — a name
   or synonym holding every typed word ranks after the exact names and before a variant that DROPS a typed word ("הרב משה" → "הרב אויערבך משה",
-  not the street "משה"); a failed request is never "No results": `GET /api/geo/search` 503 `geo-index-unavailable` / 500, `no-store`, and the
+  not the street "משה"; since the 21.10.2026 audit a partial reading — all words · a typed title the name omits · a dropped word — ranks after the exact
+  synonyms of its scope, and a synonym of the 9000 placeholder is a PLACE NAME offering its LOCALITY (`via: 'place-synonym'`, never a street);
+  `data/geo/streets/search-audit.json` = every searchable row / synonym / place name through the search, pinned to the code — 0 unexplained failures); a failed request is never "No results": `GET /api/geo/search` 503 `geo-index-unavailable` / 500, `no-store`, and the
   page's `srchFetch` names network · auth · server · timeout · index · invalid with a retry — `test/search.test.js`) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
   register (over.org.il; 36 months ending on the copy's latest deal; one request a second; only when the copy changes) joined to the
   directory through the parcel crosswalk — OBSERVED only when every address of the parcel is on the one street (POSSIBLE = corner /

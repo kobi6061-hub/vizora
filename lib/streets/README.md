@@ -98,8 +98,22 @@ name). Measured against the ORIGINAL ranking on the same 8,166 streets × 3 form
 street lost its own top-1 / top-3 place. PLACE NAMES: a synonym the directory files under the locality placeholder (9000 — a
 place in the locality with no street record: "כנרת הקבוצה", "ש עולים", "חפציבה") offers the LOCALITY, labelled "official name of
 a place in this locality (no street record)" (`via: 'place-synonym'`, `matchedName`) — never a street; first when that locality
-is selected or typed, else after the exact street names. Registry-wide audit: `scripts/search-discoverability-audit.js` →
-`data/geo/streets/search-audit.json` (pinned to the directory, synonyms, index and ranking-code hashes; `test/search.test.js`).
+is selected or typed (before the partial readings), else after the exact street names. A place name holding a digit is never
+re-read as a house number; a type word alone ("שכ", "הנשיא") scopes a locality that files it as a place.
+
+REGISTRY-WIDE AUDIT (21.10.2026, `scripts/search-discoverability-audit.js`, 4 shards ≈ 4.5 min each + merge →
+`data/geo/streets/search-audit.json`, pinned to the directory, synonyms, index and ranking-code hashes — `test/search.test.js` fails
+when the ranking code changes until the audit is re-run): every one of the 62,265 searchable rows (57,164 streets · 5,007 address
+areas · 94 sites) through the page's search — with its locality selected: on the list 62,265 / 62,265 (top-1 57,827, top-3 62,265);
+"<name> <locality>" typed: 62,265 / 62,265 (top-1 62,243); the name alone: 51,771 on the list, the other 10,494 LEGITIMATELY AMBIGUOUS
+(10,473 names held by more than 10 localities + 21 lists full of equally exact answers). Official synonyms (86,108): selected locality
+86,107 on the list + 1 one-letter name (never searched); typed with the locality 86,106 + 2 (1 one-letter, 1 SOURCE DEFECT — a name the
+directory cut mid-word ending in "-"). Place names (2,448 synonyms of the 9000 placeholder; 3 of localities PROPX does not list): the
+locality on the list for "<place> <locality>" 2,443 (+ 1 source defect, 1 one-letter); the place alone 2,081 + 361 crowded by exact
+street names. UNEXPLAINED FAILURES: 0. Before this pass: 2,447 place names found nothing (they were filed under the placeholder and
+never offered), "נוה אפרים" (יהוד-מונוסון) was pushed out by 12 partial matches, "הרב ד"ר משה אויערבך" needed the title dropped.
+Ranking regression against the ORIGINAL ranking (before 21.10.2026), 8,166 streets × 3 forms: top-1 unchanged for all 24,498 queries;
+no street lost its own top-1 / top-3 place.
 
 Failure is not "no results": `GET /api/geo/search` answers 200 with a `matches` array (zero included, cached privately for an
 hour), 503 `geo-index-unavailable` when the directory / index cannot be loaded, 500 `geo-search-failed` otherwise — errors are

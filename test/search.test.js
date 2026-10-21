@@ -102,6 +102,32 @@ t('a PLACE the directory files under a locality (synonym of the 9000 placeholder
   assert.ok(page.includes('t.geoPlaceOf(g.matchedName)'), 'the page names the place a locality row was found by');
 });
 
+t('the REGISTRY-WIDE AUDIT (data/geo/streets/search-audit.json) is pinned to the directory, synonyms, index and ranking code; every searchable row is found with its locality; zero unexplained failures', () => {
+  const crypto = require('node:crypto');
+  const A = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/geo/streets/search-audit.json'), 'utf8'));
+  const D = SD.load(), sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, f))).digest('hex');
+  const code = crypto.createHash('sha256').update(['lib/geo/registry.js', 'lib/geo/aliases.js', 'lib/streets/match.js'].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n')).digest('hex');
+  assert.equal(A.pinned.directory, D.fileHash.directory, 'the audit read this directory'); assert.equal(A.pinned.synonyms, D.fileHash.synonyms);
+  assert.equal(A.pinned.searchIndex, sha('data/geo/streets/search-index.json'));
+  assert.equal(A.pinned.code, code, 'the ranking code changed since the audit — re-run scripts/search-discoverability-audit.js (4 shards + merge)');
+  const U = A.universe;
+  assert.equal(U.searchableRows, D.streets.filter((s) => s.kind !== 'locality').length, 'every searchable row (streets · areas · sites; never the 9000 placeholder)');
+  assert.equal(A.forms.near.visible, U.searchableRows, 'the name with its locality selected: every row on the list');
+  assert.equal(A.forms.named.visible, U.searchableRows, '"<name> <locality>" typed together: every row on the list');
+  assert.equal(A.forms.synonymNear.visible + A.tooShort.list.filter((x) => x.form === 'synonym').length, U.synonyms - U.synonymsWithoutCurrentStreet);
+  assert.equal(A.failures.total, 0, 'zero unexplained failures: ' + JSON.stringify(A.failures.list.slice(0, 5)));
+  assert.ok(A.plainAmbiguous.count === A.plainAmbiguous.byRule.sameNameLocalities + A.plainAmbiguous.byRule.crowdedByEqualAnswers, 'a plain-name miss is ambiguous only by a documented rule');
+  assert.ok(A.sourceDefects.list.every((x) => /-$/.test(x.name.trim())), 'a source defect is a name the directory cut ending in "-"');
+  assert.ok(A.tooShort.list.every((x) => R.normHe(x.name).length < 2));
+  /* a live sample through the code as it stands: every 250th row, near + named */
+  const rows = D.streets.filter((s) => s.kind !== 'locality').sort((a, b) => (a.id < b.id ? -1 : 1)).filter((_, i) => i % 250 === 0);
+  for (const s of rows) {
+    assert.ok(R.searchGeo(s.name, 12, { near: s.cityCode }).matches.findIndex((x) => x.id === s.id) < 10 && R.searchGeo(s.name, 12, { near: s.cityCode }).matches.some((x) => x.id === s.id), 'near: ' + s.id);
+    const city = R.resolveGeoId(s.id).city;
+    assert.ok(R.searchGeo(s.name + ' ' + city, 12).matches.slice(0, 10).some((x) => x.id === s.id), 'named: ' + s.id + ' ' + s.name + ' ' + city);
+  }
+});
+
 t('search is independent of transactions, street geography and the street report: a street with none of them is found in the top three of its locality (selected or named), and the search API loads none of those layers', () => {
   const D = SD.load();
   const geoMeta = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/geo/street-geo/meta.json'), 'utf8'));
