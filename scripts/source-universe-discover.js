@@ -297,6 +297,42 @@ async function modeBoi2() {
   }
   save('boi2', { flows: out });
 }
+/* ── third pass: the Ministry of Transport station layers PROPX would read (data.gov.il): every ZIP shapefile parsed (entries, .prj,
+   shape type, fields, sample, distinct status values) and every datastore table read whole (≤ 2,000 rows) or sampled ── */
+async function modeMot2() {
+  const SHP = require('../lib/transport/shp');
+  const base = 'https://data.gov.il/api/3/action/';
+  const out = [];
+  for (const pkg of ['rail_stat', 'lrt_stat', 'metro_stat', 'bus_stops', 'metro_line', 'lrt_line']) {
+    const ps = await req(base + 'package_show?id=' + pkg);
+    const P = ps.json && ps.json.success ? ps.json.result : null;
+    const rec = { pkg, status: ps.status, title: P && P.title, modified: P && P.metadata_modified, license: P && P.license_title, resources: [] };
+    for (const r of (P && P.resources) || []) {
+      const R = { id: r.id, name: r.name, format: r.format, url: r.url, modified: r.last_modified || r.metadata_modified, datastore: !!r.datastore_active, size: r.size };
+      if (/zip/i.test(r.format || '') || /\.zip$/i.test(r.url || '')) {
+        try {
+          const t0 = Date.now(); const res = await fetch(r.url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(180000) }); calls++;
+          const buf = Buffer.from(await res.arrayBuffer()); await sleep(SPACING);
+          R.download = { status: res.status, bytes: buf.length, ms: Date.now() - t0, type: res.headers.get('content-type') };
+          if (res.status === 200) {
+            const L = SHP.readZippedLayer(buf);
+            const stat = {}; for (const f of L.features) for (const k of Object.keys(f.attributes)) if (/STAT|TYPE|LINE|YEAR/i.test(k)) { stat[k] = stat[k] || {}; const v = String(f.attributes[k]); stat[k][v] = (stat[k][v] || 0) + 1; }
+            R.layer = { name: L.name, entries: L.entries, prj: (L.prj || '').slice(0, 400), projection: SHP.projectionOf(L.prj), shapeType: L.shapeType, bbox: L.bbox, features: L.features.length, fields: L.fields.map((f) => f.name + ':' + f.type), codePage: L.codePage,
+              sample: L.features.slice(0, 6).map((f) => ({ a: f.attributes, g: f.geometry.type === 'Point' ? [f.geometry.x, f.geometry.y] : { type: f.geometry.type, n: (f.geometry.points || []).length, first: (f.geometry.points || [])[0] } })), distinct: stat };
+          }
+        } catch (e) { R.error = String(e.message).slice(0, 300); }
+      } else if (R.datastore) {
+        const rows = []; let total = null;
+        for (let off = 0; off < 2000; off += 1000) { const d = await req(base + `datastore_search?resource_id=${r.id}&limit=1000&offset=${off}`); if (!d.json || !d.json.success) { R.error = 'datastore HTTP ' + d.status; break; } total = d.json.result.total; rows.push(...d.json.result.records); if (rows.length >= total) break; }
+        const stat = {}; for (const row of rows) for (const k of Object.keys(row)) if (/STAT|TYPE|Type|LINE|YEAR|Metropolin/i.test(k)) { stat[k] = stat[k] || {}; const v = String(row[k]); if (Object.keys(stat[k]).length < 60 || stat[k][v]) stat[k][v] = (stat[k][v] || 0) + 1; }
+        R.table = { total, read: rows.length, fields: rows[0] ? Object.keys(rows[0]) : [], sample: rows.slice(0, 5), distinct: stat };
+      }
+      rec.resources.push(R);
+    }
+    out.push(rec);
+  }
+  save('mot2', { packages: out });
+}
 async function modeCbs2() {
   const out = [];
   const pages = ['%D7%A1%D7%93%D7%A8%D7%95%D7%AA-%D7%A2%D7%99%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-API.aspx', '%D7%9E%D7%93%D7%93%D7%99-%D7%9E%D7%97%D7%99%D7%A8%D7%99%D7%9D-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-API.aspx',
@@ -325,7 +361,7 @@ async function modeCbs2() {
   save('cbs2', { pages: out, chapter: ev(ch, { subjects }), subjects: subj });
 }
 
-const MODES = { boi2: modeBoi2, cbs2: modeCbs2, ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
+const MODES = { mot2: modeMot2, boi2: modeBoi2, cbs2: modeCbs2, ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
 (async () => {
   const mode = (process.argv[2] || '').replace(/^--/, '');
   if (!MODES[mode]) { console.error('mode: ' + Object.keys(MODES).join(' | ')); process.exit(2); }
