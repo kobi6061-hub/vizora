@@ -1,0 +1,47 @@
+{
+ "schema": 1,
+ "id": "lrt",
+ "trustId": "datagov:mot:lrt-stations",
+ "title": "תחנות רכבת קלה",
+ "titleEn": "Light-rail stations (station entrances)",
+ "publisher": "משרד התחבורה והבטיחות בדרכים",
+ "publisherEn": "Ministry of Transport and Road Safety",
+ "resourceId": "b2ca8ac5-d7ea-41a5-8119-a30e98cf71e0",
+ "page": "https://data.gov.il/dataset/lrt_stat",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=b2ca8ac5-d7ea-41a5-8119-a30e98cf71e0",
+ "licence": "Creative Commons Attribution",
+ "cadence": "as the Ministry updates (YEARMONTH per row)",
+ "period": "layer snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-03-22T11:53:06.984084Z",
+ "checkedAt": "2026-10-21T13:56:45.150Z",
+ "readAt": "2026-10-21T13:56:45.150Z",
+ "contentHash": "00ff52d52ab5aa284d8e7a4effc1673942b01f8c44efe7883043376a6cdaa496",
+ "sourceRows": 332,
+ "records": 332,
+ "rejected": 0,
+ "byLevel": {
+  "entrance": 332
+ },
+ "fields": [
+  "_id",
+  "OID",
+  "X",
+  "Y",
+  "ENTRC_EXIT",
+  "ACSBL_ENTR",
+  "ENTRC_TYPE",
+  "NOTES",
+  "LINE",
+  "TYPE",
+  "STATUS",
+  "YEARMONTH",
+  "COMP",
+  "MTR_AREA",
+  "STAT_NAME",
+  "ENTRC_LBL"
+ ],
+ "history": [
+  "2026-10-21-00ff52d5.json.gz"
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "schema": 1,
+ "id": "rail",
+ "trustId": "datagov:mot:rail-stations",
+ "title": "רכבת כבדה — תחנות נוסעים",
+ "titleEn": "Heavy rail — passenger stations (names and status; no coordinates)",
+ "publisher": "משרד התחבורה והבטיחות בדרכים",
+ "publisherEn": "Ministry of Transport and Road Safety",
+ "resourceId": "b6685ecf-2f87-4602-823e-af9790fd6aba",
+ "page": "https://data.gov.il/dataset/rail_stat",
+ "endpoint": "https://data.gov.il/api/3/action/datastore_search?resource_id=b6685ecf-2f87-4602-823e-af9790fd6aba",
+ "licence": "Creative Commons Attribution",
+ "cadence": "as the Ministry updates (YEARMONTH per row)",
+ "period": "layer snapshot",
+ "classification": "OFFICIAL",
+ "sourceUpdatedAt": "2026-07-12T09:06:43.889760Z",
+ "checkedAt": "2026-10-21T13:56:46.317Z",
+ "readAt": "2026-10-21T13:56:46.317Z",
+ "contentHash": "504df6d48adc0e9f6f662486405bb834abfd28c5a05afac19c1f3edd21015daf",
+ "sourceRows": 78,
+ "records": 78,
+ "rejected": 0,
+ "byLevel": {
+  "station": 78
+ },
+ "fields": [
+  "_id",
+  "OID",
+  "ASSET_NO",
+  "ASSET_NAME",
+  "MAAGAN_ID",
+  "SOURCE",
+  "YEARMONTH",
+  "STATUS"
+ ],
+ "history": [
+  "2026-10-21-504df6d4.json.gz"
+ ]
+}
