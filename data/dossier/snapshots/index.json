@@ -51,9 +51,9 @@
   "quality.level",
   "radar.tracked"
  ],
- "count": 3,
+ "count": 4,
  "first": "2026-10-18",
- "latest": "2026-10-20",
+ "latest": "2026-10-21",
  "dates": [
   {
    "date": "2026-10-18",
@@ -105,6 +105,23 @@
    },
    "bytes": 332802,
    "sha256": "d4665408c49bf1048720fae3c536e624d4fac0ad0405c255afb6fb78aa6c6e4a"
+  },
+  {
+   "date": "2026-10-21",
+   "at": "2026-10-21T08:35:29.061Z",
+   "geographies": 449,
+   "byLevel": {
+    "il": 1,
+    "district": 7,
+    "locality": 441
+   },
+   "states": {
+    "SIGNALS": 163,
+    "NO_SIGNAL": 161,
+    "INSUFFICIENT_DATA": 125
+   },
+   "bytes": 332964,
+   "sha256": "0f7913076758345a1b65f1617ba6ef6c455bb1766fe38fa46d87459b54059a49"
   }
  ]
 }
