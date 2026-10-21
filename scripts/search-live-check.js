@@ -109,7 +109,7 @@ function classify(r, isAnswer) {
         row.expectation = e.zero ? (j.matches.length === 0) : e.first ? ids[0] === e.first : e.has ? ids.includes(e.has) : st.length >= (e.min || 1);
       } else {
         let j = null; try { j = JSON.parse(r.text); } catch { j = null; }
-        row.apiError = j && j.error ? j.error : null; row.error = r.error || null;
+        row.apiError = j && j.error ? (typeof j.error === 'string' ? j.error : String(j.error.code || j.error.message || 'error').slice(0, 60)) : null; row.error = r.error || null;
         row.expectation = false;
       }
       if (authed) { if (row.expectation) verified++; else failed++; }
