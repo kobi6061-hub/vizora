@@ -95,6 +95,27 @@
   scenarios only from the user's own assumptions. `view=streetReport|streetTx|streetProperty`; the street view leads with the report and keeps
   the full Street Intelligence view below it. Search: a street part adding ≤ 2 words to an official name in the named locality ("הרב אונטרמן משה")
   is a discovery (tier 6) match. Registry group `streetReport`. See `lib/streets/README.md` § 7.
+- MASTER DATA DIRECTIVE (21.10.2026, PREVIEW LANE `claude/street-report-preview`): `scripts/source-universe-discover.js` (+ `source-universe-discover.yml`,
+  modes in `lib/trust/discovery/2026-10-21-universe/MODES`; GET only, 1 request / second, nothing bypassed) → runner evidence in
+  `lib/trust/discovery/2026-10-21-universe/*.json.gz` (the WHOLE data.gov.il catalogue 1,203 packages + `ckan-triage.json.gz`, gov.il / GovMap /
+  Tax Authority, CBS, BOI SDMX, Planning Administration ArcGIS 48 services / 400 layers, MoT, municipal portals, other hosts, `verify`) →
+  `scripts/source-universe-build.js` (+ `scripts/source-field-matrix.js`) → `lib/trust/discovery/2026-10-21-source-universe.json` +
+  `findings-2026-10-21.md`: every source with the directive's 20 fields and ONE of 11 states (CONNECTED_VERIFIED only from a stored successful
+  read + a named reader; a lane written but not synced stays ACCESSIBLE), the source-to-field matrix (8 classes) and measured improvements;
+  `test/source-universe.test.js`. Findings: the data.gov.il FILE hosts refuse the runner (403, 41 / 41 — ZIP parcels, renewal boundaries, MoT
+  lines); Jerusalem / Haifa portals are ODbL (licence review); no transaction dataset exists on data.gov.il. New lanes (each: whole read,
+  schema guard, store + history + runs, Trust entry, registry term, tests, workflow with a preview push trigger):
+  `lib/reference` (census 2022 + weekly residents → dossier / street-report locality context; the shared CKAN reader — paced 1 request / second,
+  a throttle waited out twice, `keyOccurrence` for registers without a unique key) · `lib/finance` (BOI SDMX BIR_MRTG_99 + BMB_99: mortgage rates
+  by track, new loans, LTV / PTI bands, balances, arrears — each dimension code verified against its codelist name; dossier "Housing finance") ·
+  `lib/transport` (MoT stop registry + light-rail entrances with the layer's own month + rail / metro lists; stop-registry light-rail stops as
+  separate evidence beside a planned status, never promoting it; street report) · `lib/surroundings` (MoEP contaminated-land register EXACT on
+  the street's parcels / ≤ 300 m, words verbatim; MoE institution points 2022 + latest school year by code ≤ 500 m; street report) ·
+  `lib/planning/vatmal.js` (203 declared VATMAL complexes; INTERSECTS / NEARBY / AREA_WIDE in the street report's planning section — a
+  declaration, never an approved plan) · `lib/cbs-sales` whole market (44,10,6 all sold · 44,10,7 second-hand · 44,10,2,2 subsidized by district;
+  the 7047–7053 code set resolved by the NAME the API returns; dossier "All dwellings sold" + second-hand share over a dated 12-month window).
+  Search: `scripts/search-discoverability-audit.js` → `data/geo/streets/search-audit.json` (every searchable row in its locality / by name /
+  plainly, pinned to the index hashes; `test/search.test.js` gate).
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; the dev server uses the same lists (the test keeps them equal).
