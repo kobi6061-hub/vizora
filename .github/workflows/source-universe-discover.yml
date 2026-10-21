@@ -1,0 +1,55 @@
+# PROPX · Source universe discovery (read-only evidence) — the master data directive of 21.10.2026.
+#
+# Runs scripts/source-universe-discover.js on GitHub runners (Israeli government hosts answer here, not from the Claude sandbox):
+# data.gov.il's whole CKAN catalogue + datastore probes, gov.il / GovMap / Tax Authority pages, the iplan ArcGIS directory, CBS, Bank of
+# Israel SDMX, the MoT GTFS file, municipal portals and other public-sector roots. GET only, one request a second, no credentials, no
+# challenge circumvention. Each mode commits ONLY its evidence file (lib/trust/discovery/2026-10-21-universe/<mode>.json.gz) to the
+# preview lane — never data the product reads.
+
+name: Source universe — discovery (read-only)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['scripts/source-universe-discover.js', '.github/workflows/source-universe-discover.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: source-universe-discover-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        mode: [ckan, gov, iplan, cbs, boi, mot, muni, other]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover (${{ matrix.mode }})
+        env:
+          OUT_DIR: lib/trust/discovery/2026-10-21-universe
+        run: node scripts/source-universe-discover.js "--${{ matrix.mode }}"
+      - name: Commit the evidence file
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "lib/trust/discovery/2026-10-21-universe/${{ matrix.mode }}.json.gz"
+          if git diff --cached --quiet; then echo 'No evidence written.'; exit 0; fi
+          git commit -q -m "Source universe discovery: ${{ matrix.mode }} evidence (read-only)"
+          for i in 1 2 3 4 5 6; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 6 attempts.' >&2
+          exit 1
