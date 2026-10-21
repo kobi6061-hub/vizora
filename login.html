@@ -162,6 +162,8 @@ button[disabled]{opacity:.6;cursor:wait}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   try{lang=localStorage.getItem('propx:login-lang')==='en'?'en':'he'}catch(e){}
   var hash=location.hash||'',inv=/^#invite=([A-Za-z0-9_-]{43})$/.exec(hash),rst=/^#reset=([A-Za-z0-9_-]{43})$/.exec(hash);
+  /* a one-time link's token is taken from the fragment and the fragment removed from the address bar at once (never left in history) */
+  if(inv||rst){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
   var panel=null,invInfo=null,rstInfo=null;
   function t(){return T[lang]}
   function paint(){
@@ -199,7 +201,7 @@ button[disabled]{opacity:.6;cursor:wait}
     e.preventDefault();clearErr();var go=$('go');busy(go,true,'enter');
     fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:$('pw').value})})
       .then(function(r){
-        if(r.ok){location.replace('/'+(inv?location.hash:''));return}
+        if(r.ok){location.replace('/'+(inv?hash:''));return}
         throw r.status;
       })
       .catch(function(st){busy(go,false,'enter');if(st===503)say('config');else{say('wrong');$('pw').value=''}$('pw').focus()});

@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="d3b2f2bb19c9ce3395c24ea6776d722668ade431589b046917010c4bd0547d4a">
+<meta name="propx-source-sha256" content="de11faccd8e672344ae9df46a220134a3318949d3f704d3093b017a6866c7053">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700&family=Montserrat:wght@300;500&display=swap">
@@ -680,6 +680,7 @@ tr.txe-dup td{opacity:.7}
 .sr-rel{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:99px;padding:0 6px;white-space:nowrap}
 .sr-rel.INTERSECTS{color:var(--accent)} .sr-rel.NEARBY{color:var(--ink-2);border-style:dashed} .sr-rel.AREA_WIDE{color:var(--ink-3);border-style:dotted} .sr-rel.ON_THE_STREET{color:var(--conf-high)}
 .sr-pop{white-space:normal!important;min-width:200px;max-width:320px;font-size:11px;color:var(--ink-3)}
+.sr-sum{font-weight:500;color:var(--ink-3);font-size:.86em;margin-inline-start:6px}
 .sr-inv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .sr-inv ul,.sr-miss{margin:4px 0;padding-inline-start:18px;font-size:12.5px;line-height:1.6;color:var(--ink)}
 .sr-prop input{width:120px}
@@ -1287,6 +1288,24 @@ details.ci-more>.in{padding:2px 13px 12px}
 .cmd-search-row .search input{height:48px;border-radius:13px;font-size:15px}
 .cmd-search-row .search>svg{top:16px}
 .cmd-mode-row{display:flex;justify-content:center}
+/* investor launchpad (21.10.2026): the six priorities under the search, in the order an investor / analyst works — links to the
+   existing sections only (nothing computed here) */
+.cmd-hint{text-align:center;font-size:12px;color:var(--ink-3);margin-top:-4px}
+.lp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;max-width:1040px;margin:0 auto;width:100%}
+.lp-t{display:flex;flex-direction:column;gap:2px;padding:9px 11px;border:1px solid var(--hairline);border-radius:11px;background:var(--panel);
+  color:var(--ink);text-decoration:none;min-height:58px;transition:border-color .15s,background .15s}
+.lp-t:hover,.lp-t:focus-visible{border-color:var(--ink-3);background:var(--tint)}
+.lp-t b{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.lp-t b i{font-style:normal;font-size:10.5px;font-weight:700;color:var(--ink-3);border:1px solid var(--hairline);border-radius:6px;padding:0 5px}
+.lp-t span{font-size:11.5px;color:var(--ink-3);line-height:1.35}
+@media (max-width:980px){.lp{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.lp{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-t{min-height:52px;padding:8px 9px}}
+/* section groups on the page, in the same order as the launchpad and the rail */
+.secgrp{display:flex;align-items:baseline;gap:10px;margin:30px 0 -6px;padding-top:12px;border-top:2px solid var(--hairline)}
+.secgrp b{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--ink-3)}
+.secgrp h2{font-size:15px;font-weight:800;margin:0}
+.secgrp span{font-size:12px;color:var(--ink-3)}
+@media (max-width:560px){.secgrp{flex-wrap:wrap;gap:4px 10px}}
 .cmd-mode-row .mode button{padding:8px 30px}
 .cmd-ops{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
 .command .crumbs{justify-content:center}
@@ -1730,19 +1749,20 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 
 <nav class="rail" aria-label="ניווט ראשי" data-ia="aNav" id="rail">
   <a href="#overview" class="ri on" data-sec="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-i="navOverview">סקירה</span></a>
-  <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
   <a href="#dossier" class="ri" data-sec="dossier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span data-i="navDs">תיק</span></a>
-  <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
+  <a href="#pulse" class="ri" data-sec="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><span data-i="navPulse">דופק</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
+  <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">עסקאות</span></a>
   <a href="#prices" class="ri" data-sec="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg><span data-i="navPrices">מחירים</span></a>
+  <a href="#map" class="ri" data-sec="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i="navMap">מפה</span></a>
   <a href="#table" class="ri" data-sec="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l5-4v17"/><path d="M14 21V10l5 3v8"/></svg><span data-i="navNbhd">שכונות</span></a>
   <a href="#compare" class="ri" data-sec="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20V9"/><path d="M12 20V4"/><path d="M18 20v-7"/></svg><span data-i="navCompare">השוואה</span></a>
   <a href="#insightsSec" class="ri" data-sec="insightsSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.7.6-1.1 1.3-1.3 2.2h-4.6c-.2-.9-.6-1.6-1.3-2.2A6 6 0 0 1 12 3z"/></svg><span data-i="navIns">תובנות</span></a>
-  <span class="rail-div" aria-hidden="true"></span>
   <a href="#capital" class="ri" data-sec="capital" id="railCap" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/><path d="M12 12H3.5"/></svg><span data-i="navCap">הון</span></a>
   <a href="#calc" class="ri" data-sec="calc" id="railCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h3.5"/></svg><span data-i="navCalc">עסקה</span></a>
-  <a href="#txSection" class="ri" data-sec="txSection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-2.3-1.5L14.4 21l-2.4-1.5L9.6 21l-2.3-1.5L5 21z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg><span data-i="navSales">מכירות</span></a>
-  <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
+  <span class="rail-div" aria-hidden="true"></span>
   <a href="#intel" class="ri" data-sec="intel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.4 2.8-5.4 5.5-5.4s4.9 2 5.5 5.4"/><path d="M16 4.5h5M16 8.5h5M17.5 12.5h3.5"/></svg><span data-i="navIntel">יזמים</span></a>
+  <a href="#housing" class="ri" data-sec="housing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-i="navHousing">דיור</span></a>
   <a href="#land" class="ri" data-sec="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 12l9-7 9 7"/></svg><span data-i="navLand">קרקעות</span></a>
   <a href="/altaris" class="ri" id="railAltaris" title="ALTARIS — מנוע חיתום והקצאת הון" aria-label="ALTARIS — מנוע חיתום והקצאת הון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h6"/><path d="M9 12c3.2 0 4-6 8-6h4"/><path d="M9 12h12"/><path d="M9 12c3.2 0 4 6 8 6h4"/></svg><span>ALTARIS</span></a>
   <a href="#guide" class="ri" data-sec="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
@@ -1771,6 +1791,15 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
         <div class="search-pop" id="searchPop" role="listbox"></div>
       </div>
     </div>
+    <p class="cmd-hint" data-i="lpHint">חיפוש רחוב פותח את דוח ההשקעה של הרחוב — עסקאות, שווי, תכנון וסיכונים</p>
+    <nav class="lp" aria-label="יעדים" data-ia="lpAria" id="launchpad">
+      <a class="lp-t" href="#dossier" data-lp="dossier"><b><i>1</i><span data-i="lp1">מודיעין השקעות</span></b><span data-i="lp1s">תיק שוק ודופק: מה השתנה ולמה</span></a>
+      <a class="lp-t" href="#txSection" data-lp="txSection"><b><i>2</i><span data-i="lp2">עסקאות אחרונות</span></b><span data-i="lp2s">כל המקורות, החדשה ביותר ראשונה</span></a>
+      <a class="lp-t" href="#prices" data-lp="prices"><b><i>3</i><span data-i="lp3">שווי ומחירים</span></b><span data-i="lp3s">מחיר רשמי לצד הערכת המודל</span></a>
+      <a class="lp-t" href="#land" data-lp="land"><b><i>4</i><span data-i="lp4">תכנון והזדמנויות</span></b><span data-i="lp4s">מכרזי קרקע, התחדשות עירונית, דיור</span></a>
+      <a class="lp-t" href="#pulse" data-lp="pulse"><b><i>5</i><span data-i="lp5">סיכונים</span></b><span data-i="lp5s">אותות סיכון ושינויים — כלל, ערך וסף</span></a>
+      <a class="lp-t" href="#sources" data-lp="sources"><b><i>6</i><span data-i="lp6">ראיות ומקורות</span></b><span data-i="lp6s">כל מקור, תאריך ומצב בדיקה</span></a>
+    </nav>
     <div class="cmd-mode-row">
       <div class="mode" role="group" aria-label="מצב שוק" data-ia="aMode" id="modeToggle">
         <button data-mode="sale" aria-pressed="true" data-i="sale">מכירה</button>
@@ -1813,6 +1842,31 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="kpi-scroll"><div class="kpis" id="kpis"></div></div>
   </section>
 
+  <!-- national geography view — registry areas outside the curated market set -->
+  <section class="blk" id="geoView" hidden>
+    <div class="blk-head">
+      <div><span class="lyr" data-i="geoLyr">מרשם ארצי</span>
+      <h2 id="geoTitle"></h2></div>
+      <button class="chip" id="geoCloseBtn" data-i="geoClose">סגור</button>
+    </div>
+    <div class="card" style="padding:16px 18px" id="geoBody"></div>
+  </section>
+
+  <div class="secgrp" id="grp1"><b>1</b><h2 data-i="grp1">מודיעין השקעות</h2><span data-i="grp1s">תיק שוק לכל גאוגרפיה · דופק השוק: מה השתנה, הזדמנויות לבדיקה ואותות סיכון</span></div>
+  <!-- Market Dossier — one geography (lib/dossier over the existing read models) -->
+  <section class="blk" id="dossier">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyrDs">L1 · שוק · תיק גאוגרפי</span>
+      <h2 data-i="dsTitle">תיק שוק — ישראל · מחוז · יישוב</h2>
+      <p class="ho-sub" data-i="dsSub">כל הנתונים שיש ל-PROPX על גאוגרפיה אחת, כל נתון עם מקורו, סיווגו ותאריכיו — ויקומים של יחידות שאינם מחוברים</p></div>
+      <span class="tx-note" id="dsProv"></span>
+    </div>
+    <div class="card ho-card">
+      <div class="ho-bar" id="dsBar"></div>
+      <div class="ds-body" id="dsBody"></div>
+    </div>
+  </section>
+
   <!-- Market Pulse — what changed (lib/radar: deterministic events over the committed histories) -->
   <section class="blk" id="pulse">
     <div class="blk-head">
@@ -1830,18 +1884,52 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     </div>
   </section>
 
-  <!-- Market Dossier — one geography (lib/dossier over the existing read models) -->
-  <section class="blk" id="dossier">
+  <div class="secgrp" id="grp2"><b>2</b><h2 data-i="grp2">עסקאות ושווי</h2><span data-i="grp2s">עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה</span></div>
+  <!-- Recent transactions -->
+  <section class="blk" id="txSection">
     <div class="blk-head">
-      <div><span class="lyr" data-i="lyrDs">L1 · שוק · תיק גאוגרפי</span>
-      <h2 data-i="dsTitle">תיק שוק — ישראל · מחוז · יישוב</h2>
-      <p class="ho-sub" data-i="dsSub">כל הנתונים שיש ל-PROPX על גאוגרפיה אחת, כל נתון עם מקורו, סיווגו ותאריכיו — ויקומים של יחידות שאינם מחוברים</p></div>
-      <span class="tx-note" id="dsProv"></span>
+      <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
+      <h2 data-i="txTitle">עסקאות אחרונות שדווחו באזור</h2></div>
+      <span class="tx-note" id="txProv"></span>
     </div>
-    <div class="card ho-card">
-      <div class="ho-bar" id="dsBar"></div>
-      <div class="ds-body" id="dsBody"></div>
+    <div class="card tbl-card">
+      <div class="tx-bar" id="txBar"></div>
+      <div class="tx-sum" id="txSum" hidden></div>
+      <div class="tx-scope" id="txScope" hidden></div>
+      <div class="tx-warn" id="txWarn" hidden></div>
+      <div class="tx-fresh" id="txFresh"></div>
+      <div class="pt-host" id="txTblPt"></div>
+      <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
+      <div class="tbl-cards" id="txCards"></div>
+      <div class="tx-more" id="txMoreBox" hidden></div>
+      <p class="tx-empty" id="txEmpty" hidden></p>
     </div>
+  </section>
+
+  <!-- Profile + price history (history is UNAVAILABLE until official series are stored) -->
+  <section class="blk" id="prices">
+    <div class="grid-main">
+      <div class="card chart-card na-card" id="trendNA">
+        <div class="chart-tools">
+          <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
+          <span class="vc na" data-i="vcNA">חסר</span>
+        </div>
+        <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
+        <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
+      </div>
+      <div class="card profile" id="profileCard"></div>
+    </div>
+  </section>
+
+  <!-- Sale vs Rent -->
+  <section class="blk">
+    <div class="blk-head">
+      <div><span class="lyr" data-i="lyr3">L3 · נכס</span>
+      <h2 data-i="svrTitle">מכירה מול שכירות</h2></div>
+      <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
+    </div>
+    <div class="svr" id="svrGrid"></div>
+    <div class="svr-formula" id="svrFormula"></div>
   </section>
 
   <!-- Map + rankings -->
@@ -1874,42 +1962,6 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- national geography view — registry areas outside the curated market set -->
-  <section class="blk" id="geoView" hidden>
-    <div class="blk-head">
-      <div><span class="lyr" data-i="geoLyr">מרשם ארצי</span>
-      <h2 id="geoTitle"></h2></div>
-      <button class="chip" id="geoCloseBtn" data-i="geoClose">סגור</button>
-    </div>
-    <div class="card" style="padding:16px 18px" id="geoBody"></div>
-  </section>
-
-  <!-- Profile + price history (history is UNAVAILABLE until official series are stored) -->
-  <section class="blk" id="prices">
-    <div class="grid-main">
-      <div class="card chart-card na-card" id="trendNA">
-        <div class="chart-tools">
-          <h2 style="font-size:15.5px" data-i="trendTitle">מגמת מחירים</h2>
-          <span class="vc na" data-i="vcNA">חסר</span>
-        </div>
-        <p class="na-why" data-i="trendNAWhy">היסטוריית מחירים מקומית רשמית טרם נאספה, ולכן לא מוצג כאן גרף מגמה.</p>
-        <p class="na-next" data-i="trendNANext">השינוי השנתי העדכני מופיע בכרטיסי הסקירה, עם המקור והתקופה שלו. גרף יוצג רק מסדרות רשמיות שנאספו בפועל.</p>
-      </div>
-      <div class="card profile" id="profileCard"></div>
-    </div>
-  </section>
-
-  <!-- Sale vs Rent -->
-  <section class="blk">
-    <div class="blk-head">
-      <div><span class="lyr" data-i="lyr3">L3 · נכס</span>
-      <h2 data-i="svrTitle">מכירה מול שכירות</h2></div>
-      <span class="note" data-i="svrNote">תשואה ברוטו = שכירות שנתית ÷ מחיר רכישה × 100 · אומדן</span>
-    </div>
-    <div class="svr" id="svrGrid"></div>
-    <div class="svr-formula" id="svrFormula"></div>
   </section>
 
   <!-- Neighborhood / area table -->
@@ -2024,24 +2076,33 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="card nh-card" id="nhTools"></div>
   </section>
 
-  <!-- Recent transactions -->
-  <section class="blk" id="txSection">
+  <div class="secgrp" id="grp3"><b>3</b><h2 data-i="grp3">תכנון, קרקע והיצע</h2><span data-i="grp3s">יזמים ופרויקטים · התחדשות עירונית · דיור ממשלתי · קרקעות ומכרזים</span></div>
+  <!-- Developers & Projects — OBSERVED PROPX ACTIVITY (api/intel.js): a deterministic registry over the ILA tender
+       records and the MoCH lottery records. Names are never merged by similarity; projects are never joined across sources. -->
+  <section class="blk" id="intel">
     <div class="blk-head">
-      <div><span class="lyr" data-i="lyr3b">L3 · נכס</span>
-      <h2 data-i="txTitle">עסקאות אחרונות שדווחו באזור</h2></div>
-      <span class="tx-note" id="txProv"></span>
+      <div><span class="lyr" data-i="lyrIn">L2 · ישויות · יזמים ופרויקטים</span>
+      <h2 data-i="inTitle">יזמים ופרויקטים</h2>
+      <p class="ho-sub" data-i="inSub">פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות</p></div>
+      <span class="tx-note ho-prov" id="inProv"></span>
     </div>
-    <div class="card tbl-card">
-      <div class="tx-bar" id="txBar"></div>
-      <div class="tx-sum" id="txSum" hidden></div>
-      <div class="tx-scope" id="txScope" hidden></div>
-      <div class="tx-warn" id="txWarn" hidden></div>
-      <div class="tx-fresh" id="txFresh"></div>
-      <div class="pt-host" id="txTblPt"></div>
-      <div class="tbl-scroll"><table class="tbl" id="txTbl"></table></div>
-      <div class="tbl-cards" id="txCards"></div>
-      <div class="tx-more" id="txMoreBox" hidden></div>
-      <p class="tx-empty" id="txEmpty" hidden></p>
+    <div class="card ho-card">
+      <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
+      <div class="in-res" id="inRes" hidden aria-live="polite"></div>
+      <div class="dd-watchlist" id="inWatch" hidden></div>
+      <div class="ho-bar" id="inBar"></div>
+      <div class="ho-cov" id="inCov" hidden></div>
+      <div class="ho-kpis" id="inKpis"></div>
+      <div class="ho-tblhead" id="inTblHead"></div>
+      <div class="pt-host" id="inTblPt"></div>
+      <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
+      <div class="tbl-cards" id="inCards"></div>
+      <div class="ho-pager" id="inPager"></div>
+      <p class="tbl-foot" id="inFoot"></p>
+    </div>
+    <div class="ho-drawer" id="inDrawer" hidden>
+      <div class="ho-drawer-bg" data-inclose></div>
+      <aside class="ho-panel" id="inPanel" role="dialog" aria-modal="true" aria-labelledby="inDTitle" tabindex="-1"></aside>
     </div>
   </section>
 
@@ -2073,35 +2134,6 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
     <div class="ho-drawer" id="hoDrawer" hidden>
       <div class="ho-drawer-bg" data-hoclose></div>
       <aside class="ho-panel" id="hoPanel" role="dialog" aria-modal="true" aria-labelledby="hoDTitle" tabindex="-1"></aside>
-    </div>
-  </section>
-
-  <!-- Developers & Projects — OBSERVED PROPX ACTIVITY (api/intel.js): a deterministic registry over the ILA tender
-       records and the MoCH lottery records. Names are never merged by similarity; projects are never joined across sources. -->
-  <section class="blk" id="intel">
-    <div class="blk-head">
-      <div><span class="lyr" data-i="lyrIn">L2 · ישויות · יזמים ופרויקטים</span>
-      <h2 data-i="inTitle">יזמים ופרויקטים</h2>
-      <p class="ho-sub" data-i="inSub">פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות</p></div>
-      <span class="tx-note ho-prov" id="inProv"></span>
-    </div>
-    <div class="card ho-card">
-      <div class="in-search"><input id="inQ" type="search" autocomplete="off" placeholder="חיפוש: יזם · פרויקט · מכרז 158/2026 · תכנית · גוש/חלקה · עיר · רחוב ומספר" aria-label="חיפוש ישויות"></div>
-      <div class="in-res" id="inRes" hidden aria-live="polite"></div>
-      <div class="dd-watchlist" id="inWatch" hidden></div>
-      <div class="ho-bar" id="inBar"></div>
-      <div class="ho-cov" id="inCov" hidden></div>
-      <div class="ho-kpis" id="inKpis"></div>
-      <div class="ho-tblhead" id="inTblHead"></div>
-      <div class="pt-host" id="inTblPt"></div>
-      <div class="tbl-scroll"><table class="tbl ho-tbl" id="inTbl"></table></div>
-      <div class="tbl-cards" id="inCards"></div>
-      <div class="ho-pager" id="inPager"></div>
-      <p class="tbl-foot" id="inFoot"></p>
-    </div>
-    <div class="ho-drawer" id="inDrawer" hidden>
-      <div class="ho-drawer-bg" data-inclose></div>
-      <aside class="ho-panel" id="inPanel" role="dialog" aria-modal="true" aria-labelledby="inDTitle" tabindex="-1"></aside>
     </div>
   </section>
 
@@ -2143,6 +2175,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 
 
 
+  <div class="secgrp" id="grp4"><b>4</b><h2 data-i="grp4">ראיות ומקורות</h2><span data-i="grp4s">מדריך · כל מקור, תאריך ומצב בדיקה</span></div>
   <!-- Sources -->
   <!-- buyer's guide — general educational content, not advice -->
   <section class="blk" id="guide">
@@ -5605,7 +5638,9 @@ he:{
   footLeft:"© 2026 PROPX · מידע הוא הנכס הראשון · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
-  navPrices:"מחירים", navIns:"תובנות", navSales:"מכירות", navSrc:"מקורות",
+  navPrices:"מחירים", navIns:"תובנות", navSales:"עסקאות", navSrc:"מקורות",
+  lpHint:"חיפוש רחוב פותח את דוח ההשקעה של הרחוב — עסקאות, שווי, תכנון וסיכונים", lpAria:"יעדים", lp1:"מודיעין השקעות", lp1s:"תיק שוק ודופק: מה השתנה ולמה", lp2:"עסקאות אחרונות", lp2s:"כל המקורות, החדשה ביותר ראשונה", lp3:"שווי ומחירים", lp3s:"מחיר רשמי לצד הערכת המודל", lp4:"תכנון והזדמנויות", lp4s:"מכרזי קרקע, התחדשות עירונית, דיור", lp5:"סיכונים", lp5s:"אותות סיכון ושינויים — כלל, ערך וסף", lp6:"ראיות ומקורות", lp6s:"כל מקור, תאריך ומצב בדיקה",
+  grp1:"מודיעין השקעות", grp1s:"תיק שוק לכל גאוגרפיה · דופק השוק: מה השתנה, הזדמנויות לבדיקה ואותות סיכון", grp2:"עסקאות ושווי", grp2s:"עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה", grp3:"תכנון, קרקע והיצע", grp3s:"יזמים ופרויקטים · התחדשות עירונית · דיור ממשלתי · קרקעות ומכרזים", grp4:"ראיות ומקורות", grp4s:"מדריך · כל מקור, תאריך ומצב בדיקה",
   navLand:"קרקעות", navIntel:"יזמים", lyrIn:"L2 · ישויות · יזמים ופרויקטים", inTitle:"יזמים ופרויקטים", inSub:"פעילות שנצפתה במקורות הרשמיים — זכיות במכרזי רמ״י, פרויקטי הגרלה של משרד הבינוי, ראיות בנייה · חיפוש אחד לכל ישות", tcTitle:"מרכז נתונים ואמון", tcSub:"כל מקור ש-PROPX קורא או בדק: מפרסם, סיווג, בדיקה אחרונה ותוצאתה, תצפית אחרונה, כיסוי ומגבלות — מתוך יומני הסנכרון עצמם", lyrLd:"L1 · שוק · קרקעות ומכרזים", ldTitle:"קרקעות ומכרזים", ldSub:"מכרזי קרקע למגורים של רשות מקרקעי ישראל · תכנון · זוכים · עלויות — לא הגרלות דיור מסובסד ולא עסקאות דירות",
   ldSrcName:"רשות מקרקעי ישראל · אתר המכרזים", ldProv:src=>`מקור: ${src} · רשומות מכרז רשמיות; ספירות וסכומים נגזרים`,
   ldPer:{"6m":"6 חודשים","12m":"12 חודשים","24m":"24 חודשים","5y":"5 שנים",all:"כל המכרזים במקור",custom:"טווח מותאם"}, ldPerL:"תקופה",
@@ -6183,7 +6218,9 @@ en:{
   footLeft:"© 2026 PROPX · Information is the first asset · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
-  navPrices:"Prices", navIns:"Insights", navSales:"Sales", navSrc:"Sources",
+  navPrices:"Prices", navIns:"Insights", navSales:"Deals", navSrc:"Sources",
+  lpHint:"Searching a street opens its investment report — transactions, valuation, planning and risks", lpAria:"Destinations", lp1:"Investment intelligence", lp1s:"Market dossier and pulse: what changed and why", lp2:"Latest transactions", lp2s:"Every source, newest first", lp3:"Valuation & prices", lp3s:"Official price beside the model estimate", lp4:"Planning & opportunities", lp4s:"Land tenders, urban renewal, housing", lp5:"Risks", lp5s:"Risk signals and changes — rule, value and threshold", lp6:"Evidence & sources", lp6s:"Every source, date and check state",
+  grp1:"Investment intelligence", grp1s:"Market dossier for every geography · Market pulse: what changed, items worth investigating and risk signals", grp2:"Transactions & valuation", grp2s:"Latest transactions · prices and model · map and areas · comparison · deal calculator", grp3:"Planning, land & supply", grp3s:"Developers and projects · urban renewal · government housing · land tenders", grp4:"Evidence & sources", grp4s:"Guide · every source, date and check state",
   navLand:"Land", navIntel:"Developers", lyrIn:"L2 · Entities · Developers & projects", inTitle:"Developers & Projects", inSub:"Activity observed in the official sources — ILA tender wins, MoCH lottery projects, construction evidence · one search for every entity", tcTitle:"Data & Trust Center", tcSub:"Every source PROPX reads or audited: publisher, class, the latest check and its outcome, latest observation, coverage and limits — from the sync logs themselves", lyrLd:"L1 · Market · Land & tenders", ldTitle:"Land & Tender Intelligence", ldSub:"Israel Land Authority residential land tenders · planning · winners · costs — not subsidized-housing lotteries, not apartment sales",
   ldSrcName:"Israel Land Authority · tender site", ldProv:src=>`Source: ${src} · official tender records; counts and sums derived`,
   ldPer:{"6m":"6 months","12m":"12 months","24m":"24 months","5y":"5 years",all:"All tenders in source",custom:"Custom range"}, ldPerL:"Period",
@@ -10521,7 +10558,7 @@ function siHTML(g){
    transit around the street · the street's own map · the assessment. The existing Street Intelligence panels follow in full below it. */
 const SRT={he:{
     lyr:"דוח רחוב — מודיעין השקעות",loading:"טוען את דוח הרחוב…",loadingFull:"טוען תכנון, מפה וטבלת עסקאות מלאה…",err:"דוח הרחוב אינו זמין כרגע.",
-    nav:{ov:"סקירה",tx:"עסקאות",px:"מחירים והשוואה",pl:"תכנון ותשתיות",inv:"השקעה",map:"מפה",src:"מקורות",ev:"ראיות הרחוב"},
+    nav:{ov:"סיכום השקעה",tx:"עסקאות אחרונות",px:"שווי והשוואה",pl:"תכנון והזדמנויות",risk:"סיכונים ובדיקות",map:"מפה",src:"מקורות",ev:"ראיות הרחוב"},riskH:"סיכונים, סביבה ומה לבדוק",assessH:"הערכת הרחוב — מה תומך ומה נגד",
     hier:{district:"מחוז",city:"עיר",nb:"שכונה",street:"רחוב",bld:"בניינים"},
     nbState:{VERIFIED:"מאומתת",SOURCE_LABEL:"תווית מקור",SOURCE_LABEL_MIXED:"תוויות מקור מעורבות",UNRESOLVED:"לא מזוהה"},
     nbWhy:{VERIFIED:"קישור רחוב → שכונה מאומת",SOURCE_LABEL:"השם שהמקור מדפיס על עסקאות הרחוב — לא גבול מאומת",SOURCE_LABEL_MIXED:"המקור מסמן את עסקאות הרחוב ביותר משכונה אחת",UNRESOLVED:"אין קישור מאומת ואין תווית מקור — PROPX אינו מסיק שכונה"},
@@ -10543,7 +10580,7 @@ const SRT={he:{
     plCols:["יחס","מרחק","תכנית","שם","נושא","שלב","שינוי יח״ד","שטח (דונם)","עדכון"],vtH:"מתחמי ותמ״ל מוכרזים (מינהל התכנון)",vtCols:["יחס","מרחק","מספר תמ״ל","מתחם · יישוב (כלשון השכבה)","יח״ד בהכרזה","תאריך הכרזה","שטח (דונם)"],vtNone:"אין מתחם מוכרז על הרחוב או ב-300 מ׳",vtNot:"הכרזה היא מסלול תכנוני — לא תכנית מאושרת, לא היתר ולא בנייה; היחידות הן של ההכרזה, לא של הרחוב.",suH:"סביבת הרחוב — מרשמים רשמיים",suOnParcel:"על חלקה של הרחוב",suCtExact:"קרקעות מזוהמות / חשודות — על חלקות הרחוב",suCtExactS:n=>`מאגר המשרד להגנת הסביבה · ${n} חלקות של הרחוב נבדקו`,suCtNear:"קרקעות מזוהמות / חשודות ב-300 מ׳",suEdu:"מוסדות חינוך ב-500 מ׳",suEduYear:(y,n)=>`${n} מופיעים בשנה האחרונה במקור (${y||"—"})`,suCtCols:["אתר","יחס","מקרא המאגר","מצב (כלשון המאגר)","גוש/חלקה","עדכון"],suEduCols:["מוסד","סוג","מגזר · פיקוח","תלמידים","מרחק","שנה אחרונה"],suNot:"המילים של המאגר כלשונן: \"היתכנות\" אינה זיהום, אתר במאגר אינו ממצא בריאותי, ואתר סמוך אינו אומר דבר על קרקע הרחוב; מוסד סמוך אינו אזור רישום ואינו ציון איכות. לעולם לא שווי ולא השפעה על מחיר.",suEduNote:(d,y,r)=>`נקודות הכניסה של מוסדות החינוך פורסמו ב-${d} — מוסד שנפתח אחר כך אינו מופיע. קובץ המאפיינים של משרד החינוך מכיל את שנות הלימודים ${r?r.join("–"):"—"} בלבד: הסוג, המגזר, הפיקוח ומספר התלמידים הם מהשנה האחרונה של כל מוסד בקובץ (לכל המאוחר ${y||"—"}), לפי סמל המוסד בלבד — אינם נתונים עדכניים.`,trH:"נגישות לתחבורה ציבורית — משרד התחבורה",trBus:"תחנות אוטובוס ותחבורה ציבורית ב-300 מ׳",trNear:"הקרובה",trLrt:"רכבת קלה — תחנות ב-1,000 מ׳",trRail:"רכבת ישראל — תחנות ב-1,500 מ׳",trSt:{EXISTING:"קיימת",PLANNED:"מתוכננת",OTHER:"אחר"},trCols:["תחנה","קו","סטטוס (שכבת התחנות של משרד התחבורה)","סוג","מרחק","מאגר התחנות הארצי"],trAsOf:m=>`נכון ל-${m.slice(5,7)}.${m.slice(0,4)}`,trReg:"רכבת קלה — עצירות במאגר התחנות הארצי ב-1,000 מ׳",trRegAt:m=>`עצירת רכבת קלה ${m}`,trRegNo:"אין עצירה ב-150 מ׳",trRegNote:(c,d)=>`מאגר התחנות הארצי של משרד התחבורה (עדכון ${d}) הוא ראיה נפרדת: הוא מציין עצירות רכבת קלה ללא קו, ללא שם תחנה וללא סטטוס שירות. תחנה בשכבה "נמצאת במאגר" כשעצירה רשומה במרחק עד 150 מ׳ מאחת מכניסותיה — הרדיוס שבו נמצאת עצירה לכל ${c.existingWithRegistryStop} מתוך ${c.existingStations} התחנות הקיימות בשכבה. כשהשכבה מסמנת תחנה כמתוכננת והמאגר מציין עצירה לידה — שני הערכים מוצגים והסטטוס אינו משתנה.`,trNone:"אין בטווח",trBasis:"מרחק בקו אוויר מהנקודה המאותרת הקרובה של הרחוב — נגזר; לא מרחק הליכה.",trNot:"קרבה היא הקשר בלבד: אינה שווי ואינה השפעה על מחיר; תחנה מתוכננת אינה תחנה פעילה.",trNotLoc:n=>`רשימות תחנות הרכבת (${n.rail}) והמטרו המתוכנן (${n.metro}) של משרד התחבורה ללא קואורדינטות נגישות — לא מוקמו.`,transitH:"תחבורה מסילתית — תכניות סטטוטוריות (לא קווים פעילים)",areaWideH:"תכניות אזוריות (כוללות את הרחוב, לא ספציפיות לו)",
     plSum:S=>`${S.intersects} חוצות · ${S.nearby} בסמוך · ${S.pending} עדיין בהליך · ${S.transit} מסילתיות`,units:u=>`שינוי יח״ד בתכניות שבטווח: ${u}`,
     plNone:"תכניות סביב הרחוב לא חושבו",muni:(p,s)=>`היתרי בנייה ואתרי בנייה בכתובות הרחוב (עיריית תל אביב-יפו): ${p} היתרים · ${s} אתרים`,renewal:"מתחם התחדשות מוכרז (מספר תכנית זהה)",
-    invH:"השקעה — הערכת רחוב",sup:"מה תומך",ag:"מה נגד",chg:"מה יכול להשתנות",dd:"בדיקת נאותות",noScore:"כללים דטרמיניסטיים בלבד — ללא ציון, ללא הסתברות, ללא המלצה.",
+    sup:"מה תומך",ag:"מה נגד",chg:"מה יכול להשתנות",dd:"בדיקת נאותות",noScore:"כללים דטרמיניסטיים בלבד — ללא ציון, ללא הסתברות, ללא המלצה.",
     propH:"הערכת נכס — הנתונים וההנחות שלך",prop:{askingPrice:"מחיר מבוקש ₪",sqm:"שטח מ״ר",rooms:"חדרים",built:"שנת בנייה",newness:"מצב",type:"סוג",rentMonthly:"שכירות חודשית ₪ (שלך)",holdYears:"שנות החזקה",bull:"אופטימי %/שנה",base:"בסיס %/שנה",bear:"פסימי %/שנה",costsPct:"עלויות רכישה %"},
     newOpt:{existing:"קיימת",new:"חדשה"},typeOpt:{flat:"דירה בבניין",garden:"דירת גן",roof:"דירת גג"},propGo:"חשב",propSaved:"נשמר בדפדפן זה בלבד",
     propNeed:"יש להזין מחיר מבוקש ושטח — PROPX אינו ממלא אותם.",askSqm:"מחיר מבוקש למ״ר",vsModel:"מול הערכת המודל",pos:{BELOW_RANGE:"מתחת לטווח האימות",WITHIN_RANGE:"בתוך טווח האימות",ABOVE_RANGE:"מעל טווח האימות"},
@@ -10567,7 +10604,7 @@ const SRT={he:{
     propNot:"לא שומה, לא תחזית, לא המלצה: הערכת המודל ועסקאות הרחוב הן נקודות ייחוס לשיקול הדעת שלך."},
   en:{
     lyr:"Street report — investment intelligence",loading:"Loading the street report…",loadingFull:"Loading planning, the map and the full transaction table…",err:"The street report is not available right now.",
-    nav:{ov:"Overview",tx:"Transactions",px:"Prices & comparison",pl:"Planning & infrastructure",inv:"Investment",map:"Map",src:"Sources",ev:"Street evidence"},
+    nav:{ov:"Investment summary",tx:"Latest transactions",px:"Valuation",pl:"Planning & opportunities",risk:"Risks & checks",map:"Map",src:"Sources",ev:"Street evidence"},riskH:"Risks, surroundings and what to verify",assessH:"Street assessment — what supports and what argues against",
     hier:{district:"District",city:"City",nb:"Neighbourhood",street:"Street",bld:"Buildings"},
     nbState:{VERIFIED:"verified",SOURCE_LABEL:"source label",SOURCE_LABEL_MIXED:"mixed source labels",UNRESOLVED:"unresolved"},
     nbWhy:{VERIFIED:"a verified street → neighbourhood link",SOURCE_LABEL:"the name the source prints on the street's deals — not a verified boundary",SOURCE_LABEL_MIXED:"the source labels the street's deals with more than one neighbourhood",UNRESOLVED:"no verified link and no source label — PROPX never infers a neighbourhood"},
@@ -10589,7 +10626,7 @@ const SRT={he:{
     plCols:["Relation","Distance","Plan","Name","Topic","Stage","Unit change","Area (dunam)","Updated"],vtH:"Declared VATMAL complexes (Planning Administration)",vtCols:["Relation","Distance","Tamal no.","Complex · locality (as printed)","Declared units","Declared on","Area (dunam)"],vtNone:"No declared complex on the street or within 300 m",vtNot:"A declaration is a planning track — not an approved plan, not a permit and not construction; the units are the declaration's, not the street's.",suH:"Street surroundings — official registers",suOnParcel:"on a parcel of the street",suCtExact:"Contaminated / suspected land — on the street's parcels",suCtExactS:n=>`Ministry of Environmental Protection register · ${n} parcels of the street checked`,suCtNear:"Contaminated / suspected land within 300 m",suEdu:"Education institutions within 500 m",suEduYear:(y,n)=>`${n} listed in the source's latest year (${y||"—"})`,suCtCols:["Site","Relation","Register legend","Status (register's words)","Block/parcel","Updated"],suEduCols:["Institution","Type","Sector · supervision","Students","Distance","Latest year"],suNot:"The register's own words, verbatim: \"potential\" is not contamination, a listed site is not a health finding, and a nearby site says nothing about this street's soil; a nearby institution is not a registration zone and not a quality grade. Never a value, never a price effect.",suEduNote:(d,y,r)=>`The institutions' entrance points were published on ${d} — an institution opened later is not shown. The Ministry of Education's characteristics file holds school years ${r?r.join("–"):"—"} only: type, sector, supervision and students come from each institution's latest year in that file (${y||"—"} at the latest), by the institution code only — they are not current figures.`,trH:"Public-transport access — Ministry of Transport",trBus:"Bus / public-transport stops within 300 m",trNear:"nearest",trLrt:"Light rail — stations within 1,000 m",trRail:"Israel Railways — stations within 1,500 m",trSt:{EXISTING:"existing",PLANNED:"planned",OTHER:"other"},trCols:["Station","Line","Status (Ministry of Transport station layer)","Type","Distance","National stop registry"],trAsOf:m=>`as of ${m.slice(5,7)}.${m.slice(0,4)}`,trReg:"Light rail — stops in the national stop registry within 1,000 m",trRegAt:m=>`light-rail stop ${m}`,trRegNo:"no stop within 150 m",trRegNote:(c,d)=>`The Ministry of Transport's national stop registry (updated ${d}) is separate evidence: it lists light-rail stops with no line, no station name and no service status. A layer station is "in the registry" when a listed stop lies within 150 m of one of its entrances — the radius every one of the layer's ${c.existingStations} existing stations meets (${c.existingWithRegistryStop} / ${c.existingStations}). Where the layer marks a station planned and the registry lists a stop beside it, both values are shown and the status is not changed.`,trNone:"none in range",trBasis:"Straight-line distance from the street's nearest located point — DERIVED; not a walking distance.",trNot:"Proximity is context only: never a value and never a price effect; a planned station is not an operating one.",trNotLoc:n=>`The Ministry of Transport's rail (${n.rail}) and planned metro (${n.metro}) station lists carry no accessible coordinates — not placed.`,transitH:"Rail transit — statutory plans (not operating lines)",areaWideH:"Area-wide plans (include the street, not specific to it)",
     plSum:S=>`${S.intersects} intersect · ${S.nearby} nearby · ${S.pending} still in process · ${S.transit} rail transit`,units:u=>`Unit change in the plans within the radius: ${u}`,
     plNone:"Plans around the street were not computed",muni:(p,s)=>`Building permits and construction sites at the street's addresses (Tel Aviv-Yafo): ${p} permits · ${s} sites`,renewal:"Declared renewal complex (same plan number)",
-    invH:"Investment — street assessment",sup:"What supports",ag:"What argues against",chg:"What could change",dd:"Due diligence",noScore:"Deterministic rules only — no score, no probability, no recommendation.",
+    sup:"What supports",ag:"What argues against",chg:"What could change",dd:"Due diligence",noScore:"Deterministic rules only — no score, no probability, no recommendation.",
     propH:"Property assessment — your figures and assumptions",prop:{askingPrice:"Asking price ₪",sqm:"Area m²",rooms:"Rooms",built:"Year built",newness:"Condition",type:"Type",rentMonthly:"Monthly rent ₪ (yours)",holdYears:"Holding years",bull:"Bull %/yr",base:"Base %/yr",bear:"Bear %/yr",costsPct:"Purchase costs %"},
     newOpt:{existing:"existing",new:"new"},typeOpt:{flat:"flat in a building",garden:"garden flat",roof:"roof flat"},propGo:"Calculate",propSaved:"saved in this browser only",
     propNeed:"Enter an asking price and an area — PROPX never fills them.",askSqm:"Asking price per m²",vsModel:"vs the model estimate",pos:{BELOW_RANGE:"below the validation range",WITHIN_RANGE:"within the validation range",ABOVE_RANGE:"above the validation range"},
@@ -10813,8 +10850,8 @@ function srHTML(g){
   /* investment */
   const A=R.assessment;
   const li=it=>`<li><span class="sr-k ${it.kind}">${t.kinds[it.kind]||it.kind}</span> ${ldE(he?it.he:it.en)} ${it.cls?srTag(it.cls):""}</li>`;
-  const inv=`<div class="sr-inv"><div><h4>${t.sup}</h4><ul>${A.supports.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.ag}</h4><ul>${A.against.map(li).join("")||`<li>${dash}</li>`}</ul></div>
-    <div><h4>${t.chg}</h4><ul>${A.couldChange.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.dd}</h4><ul>${A.dueDiligence.map(d=>`<li>${ldE(he?d.he:d.en)}</li>`).join("")}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
+  const inv=`<h4>${t.assessH} ${xpBtn("street_report_assessment")}</h4><div class="sr-inv"><div><h4>${t.sup}</h4><ul>${A.supports.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.ag}</h4><ul>${A.against.map(li).join("")||`<li>${dash}</li>`}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
+  const risk=`<div class="sr-inv"><div><h4>${t.chg}</h4><ul>${A.couldChange.map(li).join("")||`<li>${dash}</li>`}</ul></div><div><h4>${t.dd}</h4><ul>${A.dueDiligence.map(d=>`<li>${ldE(he?d.he:d.en)}</li>`).join("")}</ul></div></div><p class="gv-note">${t.noScore}</p>`;
   const sv=srPropSaved(I.id)||{};
   const pf=(k,attrs)=>`<label>${t.prop[k]}<input name="${k}" type="number" ${attrs} value="${ldE(sv[k]||"")}"></label>`;
   const PR=S.prop;
@@ -10841,16 +10878,16 @@ function srHTML(g){
   /* sources */
   const src=`<div class="st-wrap"><table class="st-tbl"><thead><tr>${t.srcCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${R.sources.map(s=>`<tr><td class="w">${ldE(s.name)} <span class="txe-src"><bdi>${ldE(s.id)}</bdi></span></td><td>${srTag(s.cls)}</td><td class="num">${s.asOf?siDate(s.asOf):"—"}</td></tr>`).join("")}</tbody></table></div>
     <h4>${t.missH}</h4><ul class="sr-miss">${R.missing.map(m=>`<li><b>${ldE(m.section)}</b> — ${ldE(m.reason)}${m.unlock?` · <span class="txe-src">${ldE(m.unlock)}</span>`:""}</li>`).join("")}</ul>`;
-  const sec=(id,h,body,open=true,xp)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${h}</summary>${xp?`<div class="sr-xp">${xpBtn(xp)}</div>`:""}${body}</details>`;
+  const sec=(id,h,body,open=true,xp)=>`<details class="st-sec sr-sec" id="sr-${id}"${open?" open":""}><summary>${t.nav[id]&&t.nav[id]!==h?`${t.nav[id]} <small class="sr-sum">${h}</small>`:h}</summary>${xp?`<div class="sr-xp">${xpBtn(xp)}</div>`:""}${body}</details>`;
   const nav=`<div class="sr-nav">${Object.entries(t.nav).map(([k,v])=>`<button type="button" class="chip" data-srgo="${k}">${v}</button>`).join("")}</div>`;
   const outs=`<div class="st-acts sr-outs"><button type="button" class="chip" data-srprint="1">${t.out.print}</button><button type="button" class="chip" data-srjson="1">${t.out.json}</button><button type="button" class="chip" data-srcopy="1">${t.out.copy}</button>
     ${R.timings?`<span class="txe-src">${t.ms(R.timings.totalMs)}${R.part==="core"?" · "+t.loadingFull:""}</span>`:""}</div>`;
   return `<div class="sr" data-sr="${ldE(R.id)}" data-sr-part="${R.part}">${nav}${outs}
-    ${sec("ov",t.nav.ov,crumb+latest+kpis+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
+    ${sec("ov",t.nav.ov,crumb+latest+kpis+inv+`<h4>${t.understand}</h4>`+narr,true,"street_report")}
     ${sec("tx",t.txH,srTxTableHTML(R),true,"transaction_event_sources")}
-    ${sec("px",t.pxH,prices,true,"street_report_fair_comparison")}
-    ${sec("pl",t.plH,plan+trn+sur,true,"street_report_relation")}
-    ${sec("inv",t.invH,inv+propForm,true,"street_report_assessment")}
+    ${sec("px",t.pxH,prices+propForm,true,"street_report_fair_comparison")}
+    ${sec("pl",t.plH,plan+trn,true,"street_report_relation")}
+    ${sec("risk",t.riskH,risk+sur,true,"street_report_assessment")}
     ${sec("map",t.mapH,R.part==="full"?srMapSVG(R):`<p class="gv-note">${t.loadingFull}</p>`)}
     ${sec("src",t.srcH,src,false)}</div>`;
 }
@@ -14041,6 +14078,7 @@ initTrust();
 initPulse();
 initDossier();
 renderOrient();
+document.querySelectorAll("#launchpad [data-lp]").forEach(a=>a.addEventListener("click",e=>{const r=document.querySelector(`.rail .ri[data-sec="${a.dataset.lp}"]`);if(!r)return;e.preventDefault();r.click();if(location.hash!=="#"+a.dataset.lp)history.replaceState(history.state,"","#"+a.dataset.lp)}));
 initNewHome();
 refresh(true);
 </script>

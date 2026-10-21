@@ -254,7 +254,8 @@ const valueOf = (r, name) => { const c = cookiesOf(r).find((x) => x.startsWith(n
 
   await at('SURFACES: the login page offers individual sign-in, invitation activation and password reset in identity mode (and the shared password otherwise); the page and the offline build carry no identity setting', async () => {
     const page = fs.readFileSync(path.join(ROOT, 'login.html'), 'utf8');
-    for (const re of [/\/api\/login\?op=mode/, /op:'signin'/, /op:'activate'/, /op:'invite-info'/, /op:'reset'/, /op:'reset-info'/, /'x-propx-intent':'1'/, /#invite=/, /#reset=/, /individual_login_required/, /rate_limited/]) assert.match(page, re, String(re));
+    for (const re of [/\/api\/login\?op=mode/, /op:'signin'/, /op:'activate'/, /op:'invite-info'/, /op:'reset'/, /op:'reset-info'/, /'x-propx-intent':'1'/, /#invite=/, /#reset=/, /individual_login_required/, /rate_limited/,
+      /if\(inv\|\|rst\)\{try\{history\.replaceState\(null,'',location\.pathname\+location\.search\)\}catch\(e\)\{\}\}/]) assert.match(page, re, String(re));   // the one-time token leaves the address bar at once
     const idx = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     // the workspace drawer (ws:begin … ws:end, stripped from the offline build): profile name, password change, the admin's
     // one-time reset link, and a sign-out that ends the named session and then leaves through /api/logout

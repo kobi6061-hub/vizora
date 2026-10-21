@@ -287,6 +287,13 @@
   coded rows (one deal printed twice, 984 localities) are collapsed by the live read with the sweep's own fingerprint and counted. The
   street view leads with the newest event of every source (`siLatestHTML`) above the register copy's own freshness line. Trust Center: the full universe + the unplaced list. Registry terms `transaction_history_all` · `unplaced_transaction_event` · `locality_recovery_state` ·
   `transaction_completeness_universe` · `latest_date_parity`. Prices / statistics / the Street Value Model untouched.
+- `test/hierarchy.test.js` = INFORMATION HIERARCHY (Enterprise pilot, 21.10.2026, presentation only): the page follows investor priority —
+  search → the launchpad under it (`#launchpad`: investment intelligence · latest transactions · valuation · planning & opportunities ·
+  risks · evidence & sources, each to an existing section through its rail link) → four group headings (`.secgrp` #grp1–4: intelligence =
+  dossier · pulse; transactions & valuation = txSection · prices · map · table · rankings · compare · insights · capital · calc; planning,
+  land & supply = intel · housing · land; evidence = guide · sources); the rail in the same order (16 scroll-spy items, ALTARIS between
+  Land and Guide); the street report ov (crumb · latest · tiles · supports / against) · tx · px (+ the user's price test) · pl (+ transport) ·
+  risk (could change · due diligence · surroundings registers) · map · src. No dataset, figure or disclosure moved out.
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled

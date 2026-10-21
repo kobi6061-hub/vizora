@@ -542,8 +542,12 @@ t('the PROPX session gate covers /altaris and its assets (middleware unchanged)'
   const raw = /matcher:\s*\['([^']+)'\]/.exec(mw)[1];
   const re = new RegExp('^' + JSON.parse('"' + raw + '"') + '$');
   for (const pth of ['/altaris', '/altaris/', '/altaris/index.html', '/altaris/app.js', '/altaris/engine.js']) assert.ok(re.test(pth), pth + ' is not gated');
-  /* since 19.10.2026 the matcher sends every path to the middleware and /login.html passes by EXACT comparison in code */
-  assert.match(mw, /PUBLIC_PATHS = new Set\(\['\/api\/login', '\/login\.html', '\/robots\.txt', '\/favicon\.ico'\]\)/);
+  /* since 19.10.2026 the matcher sends every path to the middleware and /login.html passes by EXACT comparison in code — since
+     21.10.2026 in the one gate module the middleware imports (lib/identity/gate.mjs) */
+  assert.match(mw, /from '\.\/lib\/identity\/gate\.mjs'/);
+  const gate = SRC('lib/identity/gate.mjs');
+  assert.ok(!/altaris/i.test(gate), 'the gate mentions ALTARIS');
+  assert.match(gate, /PUBLIC_PATHS = new Set\(\['\/api\/login', '\/login\.html', '\/robots\.txt', '\/favicon\.ico'\]\)/);
 });
 t('the local dev server mirrors the rewrite', () => {
   assert.match(SRC('scripts/kobix-dev-server.mjs'), /p === '\/altaris' \|\| p === '\/altaris\/' \? '\/altaris\/index\.html'/);
