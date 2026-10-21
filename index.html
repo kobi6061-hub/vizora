@@ -254,6 +254,9 @@ section.blk{scroll-margin-top:72px}
 .sp-item .num{color:var(--ink-2);font-size:12.5px;font-weight:600}
 .sp-item:hover,.sp-item.active{background:var(--accent-wash)}
 .sp-empty{padding:14px 10px;color:var(--ink-3);font-size:13px}
+.sp-err{margin:6px 8px;padding:9px 10px;border:1px solid var(--down);background:var(--down-wash);border-radius:8px;font-size:12.5px;line-height:1.5;color:var(--ink)}
+.sp-err b{display:block;font-size:12.5px}.sp-err small{display:block;color:var(--ink-2);margin-top:2px}
+.sp-err .sp-retry,.sp-err a{margin-top:6px;margin-inline-end:8px;display:inline-block;font:inherit;font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--hairline);background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none}
 
 /* sale / rent toggle */
 .mode{display:flex;background:var(--panel-2);border:1px solid var(--hairline);
@@ -2788,6 +2791,10 @@ he:{
   mapListT:"אזורים במפה", rankNA:"ללא דירוג: הערכים במפה אינם נתונים רשמיים, ולכן האזורים מסודרים לפי הא״ב.",
   rankOffWhy:"דירוגי אזורים מוסתרים זמנית. הערכים בלוח הם נתונים סטטיים, נגזרים או אומדני מודל — לא נתונים רשמיים עם מקור שמור — ולכן אינם משמשים לדירוג מקום ראשון, שני ושלישי. הדירוגים יחזרו כשכל ערך מדורג יהיה רשמי.",
   geoGroup:"מרשם ארצי — כל יישוב ורחוב בישראל", geoSearching:"מחפש במרשם הארצי…", geoTagSt:"רחוב", geoTagLoc:"יישוב",
+  srchErr:{geo:"החיפוש במרשם הארצי (יישובים ורחובות) נכשל",intel:"החיפוש ביזמים, פרויקטים ומכרזים נכשל",
+    network:"אין חיבור לשרת.",auth:"פג תוקף ההתחברות — יש להתחבר מחדש.",server:s=>`שגיאת שרת (${s}).`,timeout:"השרת לא ענה בזמן.",
+    index:"מרשם הרחובות אינו זמין כרגע בשרת.",invalid:"התקבלה תשובה לא תקינה מהשרת.",offline:"המרשם הארצי אינו זמין בעותק הלא מקוון — רק באתר.",
+    notEmpty:"זו אינה תוצאה ריקה: החיפוש לא בוצע.",retry:"נסה שוב",signIn:"התחברות מחדש"},
   geoTagArea:"אזור כתובת", geoTagSite:"אתר", geoSynOf:n=>`שם נרדף רשמי: ${n}`, geoHist:"היסטורי — לא במרשם הנוכחי", geoHere:"ביישוב הנבחר", geoNamed:"ביישוב שבחיפוש", geoHouse:n=>`מספר בית ${n} אינו חלק מזהות הרחוב — הרחוב מוצג; המספר לא שימש לבחירה`,
   geoMore:n=>`עוד ${fmtInt(n)} התאמות — הוסיפו שם יישוב (למשל „הרצל פתח תקווה")`,
   geoLyr:"מרשם ארצי", geoClose:"סגור",
@@ -3360,6 +3367,10 @@ en:{
   mapListT:"Areas on the map", rankNA:"Not ranked: the values on the map are not official data, so areas are listed alphabetically.",
   rankOffWhy:"Area rankings are hidden for now. The board's values are static, derived or modelled — not official data with a stored source — so they are not used to rank first, second and third. Rankings return once every ranked value is official.",
   geoGroup:"National registry — every locality & street in Israel", geoSearching:"Searching the national registry…", geoTagSt:"street", geoTagLoc:"locality",
+  srchErr:{geo:"The national registry search (localities and streets) failed",intel:"The developer, project and tender search failed",
+    network:"No connection to the server.",auth:"Your session has ended — please sign in again.",server:s=>`Server error (${s}).`,timeout:"The server did not answer in time.",
+    index:"The street registry is not available on the server right now.",invalid:"The server sent an invalid answer.",offline:"The national registry is not available in the offline copy — only on the site.",
+    notEmpty:"This is not an empty result: the search did not run.",retry:"Retry",signIn:"Sign in again"},
   geoTagArea:"address area", geoTagSite:"site", geoSynOf:n=>`official synonym: ${n}`, geoHist:"historical — no longer in the registry", geoHere:"in the selected locality", geoNamed:"in the locality you typed", geoHouse:n=>`House number ${n} is not part of a street's identity — the street is shown; the number picked nothing`,
   geoMore:n=>`${fmtInt(n)} more matches — add a locality name in Hebrew (e.g. “הרצל פתח תקווה”)`,
   geoLyr:"National registry", geoClose:"Close",
@@ -7224,7 +7235,7 @@ function geoPinSVG(sf){
   return`<g pointer-events="none"><circle cx="${x}" cy="${y}" r="${(6*sf).toFixed(1)}" fill="var(--brass)" opacity=".22"/>
     <circle cx="${x}" cy="${y}" r="${(2.3*sf).toFixed(1)}" fill="var(--brass)" stroke="#fff" stroke-width="${(.8*sf).toFixed(1)}"/></g>`;
 }
-let geoLast={q:"",near:"",list:[],more:0,house:""},geoTimer=null,geoBusy="",geoSeq=0,geoShown=[];
+let geoLast={q:"",near:"",list:[],more:0,house:"",err:null},geoTimer=null,geoBusy="",geoSeq=0,geoShown=[];
 /* the selected locality for street ranking: the registry locality / street in view, else the board's city (or the city of
    the board's neighbourhood); never a district or the country */
 function geoNear(){
@@ -7234,6 +7245,23 @@ function geoNear(){
   const city=l.type==="city"?l:chainOf(l).find(x=>x.type==="city");
   return city?city.he:"";
 }
+/* one search request → {data} (a real answer, zero matches included) or {err:{kind,status,code}}: network · auth (the session
+   ended — the gate answers with the sign-in page) · server · timeout · index (the registry is not loaded on the server) · invalid
+   (not the JSON this API returns). A failed request is NEVER an empty result: the dropdown says what failed and offers a retry. */
+async function srchFetch(url,isAnswer){
+  let r;
+  try{r=await fetch(url,{credentials:"same-origin",headers:{Accept:"application/json"}})}catch(e){return{err:{kind:"network"}}}
+  const ct=(r.headers.get("content-type")||"").toLowerCase();
+  let path="";try{path=new URL(r.url||url,location.href).pathname}catch(e){}
+  if(path==="/login.html"||r.status===401||r.status===403||(r.redirected&&ct.includes("text/html")))return{err:{kind:"auth",status:r.status}};
+  if(!r.ok){let code="";try{const j=await r.json();code=(j&&j.error)||""}catch(e){}
+    return{err:{kind:code==="geo-index-unavailable"?"index":r.status===504?"timeout":"server",status:r.status,code}}}
+  let d=null;
+  if(ct.includes("json"))try{d=await r.json()}catch(e){d=null}
+  if(!d||!isAnswer(d))return{err:{kind:"invalid",status:r.status}};
+  return{data:d};
+}
+const srchOffline=()=>location.protocol==="file:"||!location.host;
 function geoSug(q){
   const qq=q.trim(),near=geoNear();
   if(qq.length<2)return[];
@@ -7241,20 +7269,22 @@ function geoSug(q){
     clearTimeout(geoTimer);geoBusy=qq;
     const seq=++geoSeq;
     geoTimer=setTimeout(async()=>{
-      let list=[],more=0,house="";
-      try{
-        const r=await fetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""));
-        if(r.ok){const d=await r.json();
+      let list=[],more=0,house="",err=null;
+      if(srchOffline())err={kind:"offline"};   /* the offline copy carries no national registry */
+      else{
+        const R=await srchFetch("/api/geo/search?limit=12&q="+encodeURIComponent(qq)+(near?"&near="+encodeURIComponent(near):""),d=>Array.isArray(d.matches));
+        if(R.err)err=R.err;
+        else{const d=R.data;
           /* official registry streets are never filtered or replaced; a registry
              locality the board already lists as a city appears once, as that city */
-          const all=(d.matches||[]).filter(g=>g.kind==="street"||!coveredIdByName(g.he));
+          const all=d.matches.filter(g=>g.kind==="street"||!coveredIdByName(g.he));
           list=all.slice(0,10);
           /* "more" counts every street not shown: the server's remainder + the streets this list cut */
           more=((d.meta&&d.meta.moreStreets)||0)+all.slice(10).filter(g=>g.kind==="street").length;
           house=(d.meta&&d.meta.houseNumber)||"";}
-      }catch(e){/* offline/standalone: the national layer is unavailable */}
+      }
       if(seq!==geoSeq)return;   /* a newer query was sent: this answer is stale */
-      geoLast={q:qq,near,list,more,house};if(geoBusy===qq)geoBusy="";
+      geoLast={q:qq,near,list,more,house,err};if(geoBusy===qq)geoBusy="";
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },170);
@@ -8161,7 +8191,12 @@ function initSearch(){
     const dists=ql?LOCATIONS.filter(l=>l.type==="district"&&match(l)).slice(0,3):[];
     const geos=geoSug(q),ints=intelSug(q);geoShown=geos;
     results=[...cities,...nbhds,...dists];
-    if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=`<div class="sp-empty">${geoBusy&&geoBusy===q.trim()?t.geoSearching:t.searchEmpty}</div>`}
+    /* a request that failed is never "no results": its own line says what failed, with a retry (and sign-in when the session ended) */
+    const qt=q.trim(),E=t.srchErr,gErr=geoLast.err&&geoLast.q===qt?geoLast.err:null,iErr=intelLast.err&&intelLast.q===qt?intelLast.err:null;
+    const errBox=(x,src)=>`<div class="sp-err" role="alert" data-srcherr="${src}" data-kind="${x.kind}">${x.kind==="offline"?"":`<b>${src==="geo"?E.geo:E.intel}</b>`}${x.kind==="server"?E.server(x.status):E[x.kind]||E.invalid}${x.kind==="offline"?"":`<small>${E.notEmpty}</small><button type="button" class="sp-retry" data-retry="${src}">${E.retry}</button>${x.kind==="auth"?`<a href="/login.html">${E.signIn}</a>`:""}`}</div>`;
+    const busy=(geoBusy&&geoBusy===qt)||(intelBusy&&intelBusy===qt);
+    if(results.length===0&&geos.length===0&&ints.length===0){pop.innerHTML=gErr||iErr?(gErr?errBox(gErr,"geo"):"")+(iErr?errBox(iErr,"intel"):"")+(busy?`<div class="sp-empty">${t.geoSearching}</div>`:"")
+      :`<div class="sp-empty">${busy?t.geoSearching:t.searchEmpty}</div>`}
     else{
       let html="";
       if(cities.length)html+=`<div class="sp-group">${t.cities}</div>`+cities.map(c=>item(c)).join("");
@@ -8176,6 +8211,8 @@ function initSearch(){
       if(ints.length)html+=`<div class="sp-group">${IT().tab.developers} · ${IT().tab.projects} · ${IT().ty.tender}</div>`+ints.map((h,i)=>
         `<button class="sp-item" data-inti="${i}" role="option"><span><bdi>${inE(h.label)}</bdi>${inHitSub(h)?` <small>· ${inE(inHitSub(h))}</small>`:""}</span>
           <span class="sp-tag">${inE(IT().ty[h.type]||h.type)}</span></button>`).join("");
+      if(gErr)html+=errBox(gErr,"geo");
+      if(iErr)html+=errBox(iErr,"intel");
       pop.innerHTML=html;
     }
     pop.classList.add("open");input.setAttribute("aria-expanded","true");
@@ -8187,6 +8224,10 @@ function initSearch(){
     }));
     pop.querySelectorAll("[data-inti]").forEach(b=>b.addEventListener("mousedown",e=>{
       e.preventDefault();intelPick(intelLast.list[+b.dataset.inti],input);input.value="";close();
+    }));
+    /* retry: forget the failed answer and send the same query again */
+    pop.querySelectorAll("[data-retry]").forEach(b=>b.addEventListener("mousedown",e=>{
+      e.preventDefault();if(b.dataset.retry==="geo")geoLast={...geoLast,q:"",err:null};else intelLast={...intelLast,q:"",err:null};render(input.value);
     }));
   };
   const item=l=>{
@@ -10683,18 +10724,21 @@ function renewalDrawerHTML(d,close){
     ${sec(R.d.prov,"",`<div class="ho-dl">${kv(R.d.upd,inDate(P.sourceUpdatedAt))}${kv(R.d.src,inDate(P.fetchedAt))}</div><p class="ho-note">${inE(d.source?d.source.authority+" — "+d.source.dataset+" / "+d.source.resource:"")} · <a href="${inE(d.source?d.source.page:"")}" target="_blank" rel="noopener noreferrer">data.gov.il ↗</a></p>`)}`;
 }
 /* the command bar: entities beside the places — a hit routes, never merges */
-let intelLast={q:"",list:[]},intelTimer=null;
+let intelLast={q:"",list:[],err:null},intelTimer=null,intelBusy="";
 function intelSug(q){
   const qq=q.trim();
   if(qq.length<2)return[];
   if(intelLast.q!==qq){
     clearTimeout(intelTimer);
+    if(inOffline()){intelLast={q:qq,list:[],err:null};return[]}   /* offline/standalone: no entity layer (the registry line says why) */
+    intelBusy=qq;
     intelTimer=setTimeout(async()=>{
-      let list=[];
-      try{const d=await inGet("view=search&q="+encodeURIComponent(qq));
-        {const all=(d.results||[]).filter(h=>["tender","plan","parcel","developer","project","company","contractor","permit","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}}
-      catch(e){/* offline/standalone: no entity layer */}
-      intelLast={q:qq,list};
+      let list=[],err=null;
+      const R=await srchFetch("/api/intel?view=search&q="+encodeURIComponent(qq),d=>Array.isArray(d.results));
+      if(R.err)err=R.err;
+      else{const all=R.data.results.filter(h=>["tender","plan","parcel","developer","project","company","contractor","permit","renewal","district","country"].includes(h.type));const geo=all.filter(h=>h.type==="district"||h.type==="country");list=geo.concat(all.filter(h=>!geo.includes(h))).slice(0,6)}
+      if(intelBusy===qq)intelBusy="";
+      intelLast={q:qq,list,err};
       const inp=el("searchInput");
       if(inp&&inp.value.trim()===qq)inp.dispatchEvent(new Event("input"));
     },190);

@@ -79,6 +79,22 @@ name is not split; a query that is itself an official street name keeps that str
 it. Historical rows rank after current ones of the same tier and are labelled. `meta.moreStreets` drives the page's "add a
 locality" hint.
 
+ALL WORDS (21.10.2026, the founder's "הרב משה"): the honorific-stripped key "משה" made every street named "משה" outrank the 25
+official names holding BOTH typed words ("הרב אויערבך משה", "הרב משה צבי נריה" …). Now, inside tiers 1–2 and 4–5, a name or
+synonym that holds every typed word (≥ 2 words, any order, ה optional, final letters folded, read through a word index) ranks
+after the exact names and the variant keys that keep every typed word, and before a variant key — exact or prefix — that DROPS
+a typed word; a last word still being typed ("הרב מש") is discovery (tier 6). Read from the official directory only: it never
+creates an identity. Measured on 8,166 sampled official streets × 3 query forms (name · name + selected locality · "name
+locality"): top-1 unchanged for all 24,498 queries, no street lost its own top-1 / top-3 place; positions 2–3 changed where a
+name holding every word replaced a dropped-word variant ("יעקב הכהן" → "כהן יעקב", "דוד לוי" → "חיים דוד הלוי"). The word
+index costs ≈ 0.3 s once per warm instance; queries stay 1–15 ms.
+
+Failure is not "no results": `GET /api/geo/search` answers 200 with a `matches` array (zero included, cached privately for an
+hour), 503 `geo-index-unavailable` when the directory / index cannot be loaded, 500 `geo-search-failed` otherwise — errors are
+`no-store`. The page (`srchFetch`) classifies every request — network · auth (the session gate answers with the sign-in page)
+· server · timeout · index · invalid — and the dropdown prints what failed, "this is not an empty result", a retry and (auth)
+a sign-in link; "No results" only after both searches (registry + entities) answered. `test/search.test.js`.
+
 Measured (19.10.2026, after the four reviews, every one of the 62,265 searchable rows): name + selected locality — top-7
 62,265 (100 %), top-1 62,257; "street locality" typed together — top-7 62,265 (100 %); the name alone — top-7 49,014 (a name
 shared by many localities needs its locality: the "add a locality" hint). Synonyms (every second one, 43,054): + selected

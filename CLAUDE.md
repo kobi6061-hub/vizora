@@ -24,7 +24,10 @@
   offered as a street), 6000–6999 ADDRESS AREA, 7000–8999 SITE; nothing deleted — a retired code stays `historical`; legacy `stp:` ids map
   through `legacy-ids.json`) + a prebuilt search index (`search-index.json`, checked by the directory files' sha256; `lib/geo/registry.js`
   ranks 1 exact in the selected locality · 2 synonym there · 3 prefix there · 4 exact elsewhere · 5 synonym elsewhere · 6 discovery;
-  `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
+  `near` = the locality in view; a house number in the query is read and ignored, never used to pick a street; since 21.10.2026 ALL WORDS — a name
+  or synonym holding every typed word ranks after the exact names and before a variant that DROPS a typed word ("הרב משה" → "הרב אויערבך משה",
+  not the street "משה"); a failed request is never "No results": `GET /api/geo/search` 503 `geo-index-unavailable` / 500, `no-store`, and the
+  page's `srchFetch` names network · auth · server · timeout · index · invalid with a retry — `test/search.test.js`) — and, as a SEPARATE layer, STREET MARKET EVIDENCE: a provably complete sweep of the republished deals
   register (over.org.il; 36 months ending on the copy's latest deal; one request a second; only when the copy changes) joined to the
   directory through the parcel crosswalk — OBSERVED only when every address of the parcel is on the one street (POSSIBLE = corner /
   truncated / unresolved / a dropped street-type word, listed apart, never aggregated); dwelling universe (mostly-land natures

@@ -6,7 +6,7 @@
 
 'use strict';
 
-const { searchGeo } = require('../../lib/geo/registry');
+const { searchGeo, loadGeo } = require('../../lib/geo/registry');
 const { coverage } = require('../../lib/geo/neighborhoods');
 
 module.exports = async (req, res) => {
@@ -18,16 +18,24 @@ module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://x');
   const q = url.searchParams.get('q') || '';
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'private, max-age=3600');  // registry is slow-moving
+  /* an error is never cached (a retry must reach the function again); only a real answer is */
+  const fail = (status, error, e) => {
+    res.statusCode = status;
+    res.setHeader('Cache-Control', 'no-store');
+    res.end(JSON.stringify({ error, code: (e && e.code) || null }));
+  };
+  const t0 = Date.now();
+  /* the official directory + its prebuilt index: when they cannot be loaded, say so (503) — the page then reports that the
+     registry is unavailable, never "no results" */
+  try { loadGeo(); } catch (e) { return fail(503, 'geo-index-unavailable', e); }
   try {
-    const t0 = Date.now();
     const near = (url.searchParams.get('near') || '').slice(0, 80) || null;
     const out = searchGeo(q.slice(0, 120), Math.min(20, Math.max(1, Number(url.searchParams.get('limit')) || 12)), { near });
     out.meta.tookMs = Date.now() - t0;
     out.meta.neighborhoodLayer = coverage();
+    res.setHeader('Cache-Control', 'private, max-age=3600');  // registry is slow-moving
     res.end(JSON.stringify(out));
   } catch (e) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: 'geo-search-failed', reason: e.message }));
+    fail(500, 'geo-search-failed', e);
   }
 };
