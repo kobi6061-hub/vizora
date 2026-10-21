@@ -16,6 +16,8 @@
 //   --mot      Ministry of Transport GTFS file (HEAD: size, last-modified) + the national public-transport stops in it are NOT downloaded
 //   --muni     municipal open-data portals (CKAN on datacity / city hosts) and ArcGIS roots of the largest municipalities
 //   --other    other public-sector GIS / API roots (Survey of Israel, environment, meteorology, geology, water, education, health …)
+//   --verify   settle the catalogue's PENDING entries: file resources by two ranged GETs (magic bytes + ZIP central directory — never the
+//              whole file), unprobed datastore resources counted, municipal packages' metadata + first rows, iplan / Ashdod layer fields, GTFS list
 
 'use strict';
 
@@ -361,7 +363,75 @@ async function modeCbs2() {
   save('cbs2', { pages: out, chapter: ev(ch, { subjects }), subjects: subj });
 }
 
-const MODES = { mot2: modeMot2, boi2: modeBoi2, cbs2: modeCbs2, ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
+/* ── fourth pass (verify): settle the catalogue's PENDING entries — every file resource read by its first bytes and its ZIP central directory
+   (two ranged GETs, never the whole file), every unprobed datastore resource counted, the municipal packages' metadata + first rows, the
+   Planning Administration entity / VATMAL fields, Ashdod's parcel service, the GTFS archive's file list ── */
+async function ranged(url, range) {
+  const t0 = Date.now(); calls++;
+  try {
+    const r = await fetch(url, { headers: { 'User-Agent': UA, Range: range }, redirect: 'follow', signal: AbortSignal.timeout(TIMEOUT) });
+    const buf = Buffer.from(await r.arrayBuffer()); await sleep(SPACING);
+    return { url, status: r.status, type: r.headers.get('content-type'), contentRange: r.headers.get('content-range'), length: r.headers.get('content-length'), bytes: buf.length, ms: Date.now() - t0, buf, finalHost: (() => { try { return new URL(r.url).host; } catch { return null; } })() };
+  } catch (e) { await sleep(SPACING); return { url, status: 0, error: String((e.cause && e.cause.code) || e.message).slice(0, 120), ms: Date.now() - t0 }; }
+}
+function zipEntries(buf) {
+  for (let i = buf.length - 22; i >= 0; i--) if (buf.readUInt32LE(i) === 0x06054b50) {
+    const n = buf.readUInt16LE(i + 10), cdSize = buf.readUInt32LE(i + 12), cdOff = i - cdSize; if (cdOff < 0) return { total: n, note: 'central directory larger than the read window' };
+    const out = []; for (let k = 0, p = cdOff; k < n && p + 46 <= buf.length; k++) { if (buf.readUInt32LE(p) !== 0x02014b50) break; const usize = buf.readUInt32LE(p + 24), nl = buf.readUInt16LE(p + 28), xl = buf.readUInt16LE(p + 30), cl = buf.readUInt16LE(p + 32); out.push({ name: buf.slice(p + 46, p + 46 + nl).toString('utf8'), size: usize }); p += 46 + nl + xl + cl; }
+    return { total: n, entries: out.slice(0, 80) };
+  }
+  return { note: 'no end-of-central-directory record in the read window' };
+}
+async function fileEvidence(url) {
+  const head = await ranged(url, 'bytes=0-3');
+  const R = { url, first: { status: head.status, type: head.type, contentRange: head.contentRange, bytes: head.bytes, error: head.error, host: head.finalHost, magic: head.buf ? head.buf.slice(0, 4).toString('hex') : null } };
+  if ((head.status === 206 || head.status === 200) && head.buf && head.buf.slice(0, 2).toString('latin1') === 'PK') {
+    const tail = await ranged(url, 'bytes=-262144');
+    R.tail = { status: tail.status, contentRange: tail.contentRange, bytes: tail.bytes, error: tail.error };
+    if (tail.buf && (tail.status === 206 || tail.status === 200)) R.zip = zipEntries(tail.buf);
+  }
+  return R;
+}
+async function ckanVerify(api, names) {
+  const out = [];
+  for (const name of names) {
+    const ps = await req(api + 'package_show?id=' + encodeURIComponent(name));
+    const P = ps.json && ps.json.success ? ps.json.result : null;
+    const rec = { pkg: name, status: ps.status, error: ps.error, title: P && P.title, license: P && (P.license_title || P.license_id), modified: P && P.metadata_modified, org: P && P.organization && P.organization.title, resources: [] };
+    for (const r of ((P && P.resources) || []).slice(0, 8)) {
+      const R = { id: r.id, name: r.name, format: r.format, url: r.url, datastore: !!r.datastore_active, modified: r.last_modified || r.metadata_modified, size: r.size || null };
+      if (R.datastore) {
+        const d = await req(api + 'datastore_search?' + new URLSearchParams({ resource_id: r.id, limit: '2' }));
+        const res = d.json && d.json.success ? d.json.result : null;
+        R.table = { status: d.status, total: res ? res.total : null, fields: res ? res.fields.filter((f) => f.id !== '_id').map((f) => f.id + ':' + f.type) : null, sample: res ? trim(res.records, 900) : null, error: d.error };
+      } else if (r.url && /^https?:/.test(r.url) && !/\.(html?|aspx?)($|\?)/i.test(r.url)) R.file = await fileEvidence(r.url);
+      rec.resources.push(R);
+    }
+    out.push(rec);
+  }
+  return out;
+}
+async function modeVerify() {
+  const T = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(OUT_DIR, 'ckan-triage.json.gz'))).toString('utf8'));
+  const names = T.relevant.filter((r) => r.proposedState === 'PENDING_VERIFICATION' || (r.value !== 'LOW' && !r.integrated && !(r.probe && r.probe.total != null))).map((r) => r.name);
+  const datagov = await ckanVerify('https://data.gov.il/api/3/action/', names);
+  const jerusalem = await ckanVerify('https://jerusalem.datacity.org.il/api/3/action/', ['light-rail-stations', 'light-rail-future-stations', 'light-rail-line', 'light-rail-future-lines', 'urban-renewal-38', 'urban-renewal-areas', 'urban-renewal-evacuation-construction', 'plots', 'blocks-key', 'city-buildings']);
+  const haifa = await ckanVerify('https://opendata.haifa.muni.il/api/3/action/', ['yeudei_karka', 'blg_shimur', 'shimurpreservationareas', 'sekreishimurcompleted', 'sikreishimurinexecution', 'gvul_tichnun', 'buildingsites', 'neighborhood', 'stat_construction']);
+  const IP = 'https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/';
+  const arc = [];
+  for (const [label, u] of [['iplan entities layer 3 (polygons)', IP + 'entities/MapServer/3?f=json'], ['iplan entities layer 1 (points)', IP + 'entities/MapServer/1?f=json'],
+    ['iplan vatmal layer 0', IP + 'vatmal_mitchamim_muchrazim/MapServer/0?f=json'], ['iplan vatmal sample', IP + 'vatmal_mitchamim_muchrazim/MapServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=3&f=json'],
+    ['iplan Shimour layer 2', IP + 'Shimour/MapServer/2?f=json'], ['iplan land use layer 1', IP + 'xplan_background/MapServer/1?f=json'],
+    ['Ashdod parcels service', 'https://gis.ashdod.muni.il/arcgis/rest/services/' + encodeURIComponent('גושים_וחלקות') + '/MapServer?f=json']]) {
+    const r = await req(u); const j = r.json || {};
+    arc.push(ev(r, { label, name: j.name || null, geometryType: j.geometryType || null, fields: Array.isArray(j.fields) ? j.fields.map((f) => f.name + ':' + (f.alias || '') + ':' + f.type) : null, layers: Array.isArray(j.layers) ? j.layers.map((l) => l.id + ':' + l.name) : null,
+      maxRecordCount: j.maxRecordCount ?? null, copyright: j.copyrightText || null, features: Array.isArray(j.features) ? trim(j.features.map((f) => f.attributes), 1500) : null, error: r.error || (j.error ? trim(j.error, 200) : undefined) }));
+  }
+  const gtfs = await fileEvidence('https://gtfs.mot.gov.il/gtfsfiles/israel-public-transportation.zip');
+  save('verify', { datagov, jerusalem, haifa, arcgis: arc, gtfs });
+}
+
+const MODES = { verify: modeVerify, mot2: modeMot2, boi2: modeBoi2, cbs2: modeCbs2, ckan: modeCkan, gov: modeGov, iplan: modeIplan, cbs: modeCbs, boi: modeBoi, mot: modeMot, muni: modeMuni, other: modeOther };
 (async () => {
   const mode = (process.argv[2] || '').replace(/^--/, '');
   if (!MODES[mode]) { console.error('mode: ' + Object.keys(MODES).join(' | ')); process.exit(2); }
