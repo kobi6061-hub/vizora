@@ -1,0 +1,69 @@
+# PROPX · daily sync of housing finance from the Bank of Israel's SDMX service (lib/finance): new housing loans (amount, number,
+# payment-to-income, interest by track, loan-to-value / payment-to-income bands, investment-dwelling and reduced-price loans,
+# refinancing) and the stock of housing credit (balance, number, arrears ≥ 90 days, by track) — the whole banking system, monthly.
+#
+# scripts/finance-sync.js reads each flow's structure (the codelist names verify every code PROPX filters on) and its data since 2016
+# (CSV), one request a second, GET only, keyless; merges into the append-only ledger and commits data/finance/ only. A measure that
+# cannot be read keeps its stored data and the run says why (PARTIAL / SCHEMA_CHANGED / REFUSED / FAILED).
+# The preview lane runs it on a push that changes the lane's code (scheduled runs fire on the default branch only).
+
+name: Daily housing-finance sync
+
+on:
+  schedule:
+    - cron: '41 5 * * 0-4'   # Sunday–Thursday 05:41 UTC
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['lib/finance/**', 'scripts/finance-sync.js', '.github/workflows/finance-sync.yml']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and report only — write and commit nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finance-sync-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Offline test suite (must pass before any data is written)
+        run: node test/finance.test.js
+      - name: Read the Bank of Israel housing-finance flows
+        id: sync
+        run: |
+          set +e
+          if [ "$DRY_RUN" = "true" ]; then node scripts/finance-sync.js --dry-run; else node scripts/finance-sync.js --summary-file "$RUNNER_TEMP/summary.txt"; fi
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/finance
+          if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
+          git commit -q -F "$RUNNER_TEMP/summary.txt"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 10))
+          done
+          echo 'Push failed after 5 attempts.' >&2
+          exit 1
+      - name: Fail the run if the source failed
+        if: steps.sync.outputs.code == '1'
+        run: |
+          echo "finance-sync exited with ${{ steps.sync.outputs.code }} — see the step above." >&2
+          exit 1
