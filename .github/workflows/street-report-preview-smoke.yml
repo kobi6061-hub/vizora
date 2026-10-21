@@ -1,0 +1,39 @@
+# PROPX · street report PREVIEW smoke (read-only, no credentials): the preview deployment of the preview lane answers, its session gate
+# holds for the new street-report routes exactly as for the existing ones, and the login page is served. Runs on a push of this file to the
+# preview lane (a workflow that exists only on a non-default branch cannot be dispatched).
+
+name: Street report — preview smoke (read-only)
+
+on:
+  push:
+    branches: [claude/street-report-preview]
+    paths: ['.github/workflows/street-report-preview-smoke.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe the preview origin
+        env:
+          HOST: https://kobixrealestate-git-claude-street-report-preview-iboks-projects.vercel.app
+        run: |
+          set +e
+          probe() {
+            local path="$1" out code loc vid
+            out=$(curl -sS -m 20 -o /dev/null -D - "$HOST$path")
+            code=$(printf '%s' "$out" | awk 'NR==1{print $2}')
+            loc=$(printf '%s' "$out" | tr -d '\r' | awk 'tolower($1)=="location:"{print $2}')
+            vid=$(printf '%s' "$out" | tr -d '\r' | awk 'tolower($1)=="x-vercel-id:"{print $2}')
+            echo "  $path → ${code:-no answer} ${loc:+→ $loc} ${vid:+· vercel $vid}"
+          }
+          echo "Preview smoke on $HOST"
+          probe /login.html
+          probe /
+          probe "/api/intel?view=status"
+          probe "/api/intel?view=streetReport&part=core&id=st:7900:546"
+          probe "/api/intel?view=streetTx&id=st:7900:546&format=csv"
+          probe "/api/intel?view=streetProperty&id=st:7900:546&askingPrice=2000000&sqm=90"
