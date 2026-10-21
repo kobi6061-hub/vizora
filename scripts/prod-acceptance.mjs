@@ -178,9 +178,15 @@ async function uiChecks(H, chromium) {
       rec(n, 9, `${tag}: launchpad + groups`, L.lp.join(',') === 'dossier,txSection,prices,land,pulse,sources' && L.grp.join(',') === 'grp1,grp2,grp3,grp4',
         `launchpad ${L.lp.length} tiles · groups ${L.grp.join(' ')} · rail ${L.rail} items`);
       rec(n, 10, `${tag}: no horizontal overflow on the home`, !L.overflow, `scrollWidth ${L.overflow ? '>' : '≤'} viewport ${w}px`);
+      /* where the jump lands, and where the section still is once the sections above it have loaded (a cold first load can
+         grow the page by thousands of pixels after the jump — 21.10.2026: 4,404px) */
+      const at = () => page.evaluate(() => ({ top: Math.round(document.getElementById('txSection').getBoundingClientRect().top), H: document.documentElement.scrollHeight }));
+      const H0 = (await at()).H;
       await page.click('#launchpad [data-lp="txSection"]'); await page.waitForTimeout(1500);
-      const txTop = await page.evaluate(() => Math.round(document.getElementById('txSection').getBoundingClientRect().top));
-      rec(n, 9, `${tag}: launchpad → latest transactions`, txTop >= 0 && txTop < h / 2, `section top at ${txTop}px`);
+      const j1 = await at(); await page.waitForTimeout(8500); const j2 = await at();
+      const inView = (t) => t >= 0 && t < h / 2;
+      rec(n, 9, `${tag}: launchpad → latest transactions`, inView(j1.top) && inView(j2.top),
+        `section top at ${j1.top}px after 1.5 s · ${j2.top}px after 10 s · page height ${H0} → ${j1.H} → ${j2.H}px`);
       /* 4 · the transactions section on the page */
       await page.waitForFunction(() => document.querySelectorAll('#txTbl tbody tr, #txCards > *').length > 0, null, { timeout: 90000 }).catch(() => null);
       const TX = await page.evaluate(() => ({ rows: document.querySelectorAll('#txTbl tbody tr').length, cards: document.querySelectorAll('#txCards > *').length, fresh: ((document.getElementById('txFresh') || {}).innerText || '').replace(/\s+/g, ' ').trim() }));
