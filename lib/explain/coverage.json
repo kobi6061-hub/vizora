@@ -11,10 +11,10 @@
   "R7 summaries",
   "R8 definition terms"
  ],
- "sites": 1518,
- "sitesWithFixedLabel": 1489,
- "labels": 1274,
- "chrome": 314,
+ "sites": 1519,
+ "sitesWithFixedLabel": 1490,
+ "labels": 1275,
+ "chrome": 315,
  "meaningful": 960,
  "excluded": 0,
  "coverage": {
@@ -1147,6 +1147,7 @@
   {"ref":"i:navCompare","en":"Compare","he":"השוואה","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
   {"ref":"i:navDeal","en":"Deal Lab","he":"מעבדת עסקה","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
   {"ref":"i:navDs","en":"Dossier","he":"תיק","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
+  {"ref":"i:navEdit","en":"Customize","he":"התאמה","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
   {"ref":"i:navGuide","en":"Guide","he":"מדריך","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
   {"ref":"i:navHousing","en":"Housing","he":"דיור","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},
   {"ref":"i:navIns","en":"Insights","he":"תובנות","cls":"CHROME","chrome":"nav","sections":["rail"],"kinds":["markup"]},

@@ -98,6 +98,13 @@ xa = (ROOT / "lib" / "explain" / "attach.js").read_text(encoding="utf-8")
 assert "</script" not in xa.lower(), "explanation attacher must not close the script element"
 s = s.replace(TAG7, "<script>\n" + xa + "</script>", 1)
 
+# the reader's navigation order (lib/nav/order.js) — applied before the main script, inlined the same way
+TAG8 = '<script src="/lib/nav/order.js"></script>'
+assert s.count(TAG8) == 1
+nv = (ROOT / "lib" / "nav" / "order.js").read_text(encoding="utf-8")
+assert "</script" not in nv.lower(), "navigation order module must not close the script element"
+s = s.replace(TAG8, "<script>\n" + nv + "</script>", 1)
+
 # features that read the server (Deal Decision Lab, What Changed Here? — their sections, rail entries and modules) are
 # removed whole: the offline file has no API to answer them
 n_live = len(_re.findall(r"live:begin", s))

@@ -1878,6 +1878,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
   <a href="#guide" class="ri" data-sec="guide"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg><span data-i="navGuide">מדריך</span></a>
   <a href="#sources" class="ri" data-sec="sources"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5V18c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span data-i="navSrc">מקורות</span></a>
   <div class="rail-sp"></div>
+  <button type="button" class="ri rt nv-btn" id="navEditBtn" aria-haspopup="dialog" aria-expanded="false" aria-label="התאמת הניווט" data-ia="aNavEdit"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 20V4"/><path d="M4 8l4-4 4 4"/><path d="M16 4v16"/><path d="M12 16l4 4 4-4"/></svg><span data-i="navEdit">התאמה</span></button>
   <button class="ri rt" id="themeBtnRail" aria-label="מצב תצוגה" data-ia="aTheme"></button>
   <a class="ri rt" href="/api/logout" aria-label="יציאה" data-ia="logout"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg><span data-i="logout">יציאה</span></a>
 </nav>
@@ -2374,6 +2375,7 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
   </div>
 </footer>
 
+<script src="/lib/nav/order.js"></script>
 <script src="/lib/table/core.js"></script>
 <script src="/lib/explain/registry.js"></script>
 <script src="/lib/geo/boundaries.js"></script>
@@ -2988,7 +2990,7 @@ he:{
   footLeft:"© 2026 PROPX · מידע הוא הנכס הראשון · דירות חדשות מקבלן בלבד · אומדנים מכוילים לפרסומים רשמיים (אמצע 2026) · אינו מידע רשמי",
   footRight:"אב-טיפוס · המערכת מוכנה לחיבור מקורות נתונים אמיתיים",
   navGuide:"מדריך",
-  navPrices:"מחירים", navIns:"תובנות", navSales:"עסקאות", navSrc:"מקורות",
+  navPrices:"מחירים", navIns:"תובנות", navSales:"עסקאות", navSrc:"מקורות", navEdit:"התאמה",
   lpHint:"חיפוש רחוב פותח את דוח ההשקעה של הרחוב — עסקאות, שווי, תכנון וסיכונים", lpAria:"יעדים", lp1:"מודיעין השקעות", lp1s:"תיק שוק ודופק: מה השתנה ולמה", lp2:"עסקאות אחרונות", lp2s:"כל המקורות, החדשה ביותר ראשונה", lp3:"שווי ומחירים", lp3s:"מחיר רשמי לצד הערכת המודל", lp4:"תכנון והזדמנויות", lp4s:"מכרזי קרקע, התחדשות עירונית, דיור", lp5:"סיכונים", lp5s:"אותות סיכון ושינויים — כלל, ערך וסף", lp6:"ראיות ומקורות", lp6s:"כל מקור, תאריך ומצב בדיקה",
   lp7:"מה השתנה כאן", lp7s:"פיד השינויים של הגאוגרפיה שפתחת", lp8:"מעבדת עסקה", lp8s:"ניתוח רכישה מתוכננת לפני ההחלטה", skipSearch:"דלג לחיפוש", skipMain:"דלג לתוכן הראשי", aSearch:"חיפוש עיר, שכונה, רחוב, יזם, פרויקט או מכרז",
   grp1:"מודיעין השקעות", grp1s:"תיק שוק לכל גאוגרפיה · דופק השוק: מה השתנה, הזדמנויות לבדיקה ואותות סיכון", grp2:"עסקאות ושווי", grp2s:"עסקאות אחרונות · מחירים ומודל · מפה ושכונות · השוואה · מחשבון עסקה", grp3:"תכנון, קרקע והיצע", grp3s:"יזמים ופרויקטים · התחדשות עירונית · דיור ממשלתי · קרקעות ומכרזים", grp4:"ראיות ומקורות", grp4s:"מדריך · כל מקור, תאריך ומצב בדיקה",
@@ -3164,7 +3166,7 @@ he:{
   txMatHist:"תקופה היסטורית", txMatHistS:d=>`עסקאות לפני ${d}`,
   txMatTip:"תקופה היסטורית אינה בהכרח סגורה — עסקה שדווחה באיחור עדיין יכולה להופיע. גבול הימים ניתן לשינוי, ויכויל לפי העיכוב שיימדד בפועל.",
   logout:"יציאה", themeDark:"כהה", themeLight:"בהיר",
-  aNav:"ניווט ראשי", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
+  aNav:"ניווט ראשי", aNavEdit:"התאמת הניווט", aTheme:"מצב תצוגה", aTape:"נתוני שוק ארציים", aMode:"מצב שוק",
   aCrumbs:"מיקום", aLang:"שפה", aMap:"מפת ישראל", aMetric:"מדד מפה", aRemove:"הסר",
   pageCtx:"סקירת שוק הנדל״ן בישראל | פנימי",
   tapeRet:MKT.checked?"מדדים רשמיים נבדקו":"נתונים נשלפו", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"ריבית בנק ישראל ומדד הדירות החדשות · שאר המבזקים סטטיים":"מקור עדכני: אוג׳ 2026",
@@ -3570,7 +3572,7 @@ en:{
   footLeft:"© 2026 PROPX · Information is the first asset · new developer homes only · estimates calibrated to official publications (mid-2026) · not official data",
   footRight:"Prototype · architected for real data-source integration",
   navGuide:"Guide",
-  navPrices:"Prices", navIns:"Insights", navSales:"Deals", navSrc:"Sources",
+  navPrices:"Prices", navIns:"Insights", navSales:"Deals", navSrc:"Sources", navEdit:"Customize",
   lpHint:"Searching a street opens its investment report — transactions, valuation, planning and risks", lpAria:"Destinations", lp1:"Investment intelligence", lp1s:"Market dossier and pulse: what changed and why", lp2:"Latest transactions", lp2s:"Every source, newest first", lp3:"Valuation & prices", lp3s:"Official price beside the model estimate", lp4:"Planning & opportunities", lp4s:"Land tenders, urban renewal, housing", lp5:"Risks", lp5s:"Risk signals and changes — rule, value and threshold", lp6:"Evidence & sources", lp6s:"Every source, date and check state",
   lp7:"What changed here", lp7s:"The change feed of the geography you opened", lp8:"Deal Lab", lp8s:"Analyse a contemplated purchase before deciding", skipSearch:"Skip to search", skipMain:"Skip to main content", aSearch:"Search a city, neighbourhood, street, developer, project or tender",
   grp1:"Investment intelligence", grp1s:"Market dossier for every geography · Market pulse: what changed, items worth investigating and risk signals", grp2:"Transactions & valuation", grp2s:"Latest transactions · prices and model · map and areas · comparison · deal calculator", grp3:"Planning, land & supply", grp3s:"Developers and projects · urban renewal · government housing · land tenders", grp4:"Evidence & sources", grp4s:"Guide · every source, date and check state",
@@ -3753,7 +3755,7 @@ en:{
   txMatHist:"Historical period", txMatHistS:d=>`deals before ${d}`,
   txMatTip:"A historical period is not guaranteed complete — a late-reported deal can still appear. The day boundary is configurable and will be calibrated from the reporting lag PROPX measures.",
   logout:"Log out", themeDark:"Dark", themeLight:"Light",
-  aNav:"Main navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
+  aNav:"Main navigation", aNavEdit:"Customize navigation", aTheme:"Display mode", aTape:"National market data", aMode:"Market mode",
   aCrumbs:"Location", aLang:"Language", aMap:"Map of Israel", aMetric:"Map metric", aRemove:"Remove",
   pageCtx:"Israeli Market Overview | Internal",
   tapeRet:MKT.checked?"Official indicators checked":"Data retrieved", tapeRetV:MKT.checkedDay||"30.08.2026", tapeSrc:MKT.checked?"BoI rate and new-homes index · other tiles are static":"Freshest: Aug 2026",
@@ -4367,7 +4369,14 @@ function setTheme(mode){
   const links=[...document.querySelectorAll(".rail .ri[data-sec]")];
   if(!links.length)return;
   const map={};links.forEach(a=>map[a.dataset.sec]=a);
+  /* at the bottom of the page the LAST section on the page is marked — the reader's own order (lib/nav/order.js) may differ from the
+     rail's, and a short last section never reaches the observer's band, so the observer follows the same rule there */
+  const lastLink=()=>{let best=null,bs=null;links.forEach(a=>{const s=document.getElementById(a.dataset.sec);if(!s||s.hidden)return;
+    if(!bs||(bs.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING)){bs=s;best=a}});return best};
+  const atBottom=()=>window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-6;
+  const markLast=()=>{const last=lastLink();if(last){links.forEach(x=>x.classList.remove("on"));last.classList.add("on")}};
   const io=new IntersectionObserver(entries=>{
+    if(atBottom()){markLast();return}
     entries.forEach(en=>{
       if(en.isIntersecting){
         links.forEach(a=>a.classList.remove("on"));
@@ -4412,11 +4421,7 @@ function setTheme(mode){
     };
     requestAnimationFrame(tick);
   }));
-  window.addEventListener("scroll",()=>{
-    if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-6){
-      links.forEach(x=>x.classList.remove("on"));links[links.length-1].classList.add("on");
-    }
-  },{passive:true});
+  window.addEventListener("scroll",()=>{if(atBottom())markLast()},{passive:true});
 })();
 
 /* ---------- breadcrumb ---------- */

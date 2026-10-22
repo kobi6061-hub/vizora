@@ -44,6 +44,52 @@ at('the rail follows the groups; the scroll-spy set (18 live, the two server fea
   assert.equal((rail.match(/class="ri[^"]*" data-sec=/g) || []).length, 18);   /* + What changed here · Deal Lab (live build only) */
 });
 
+/* the reader's own order (lib/nav/order.js, 22.10.2026): the default above is what every reader gets until they customize; a custom
+   order moves the rail items AND their page blocks together — Overview, ALTARIS and the utility buttons stay, nothing is dropped */
+const NAV = require('../lib/nav/order.js');
+function navModel(html) {
+  const rail = html.slice(html.indexOf('<nav class="rail"'), html.indexOf('</nav>', html.indexOf('<nav class="rail"')));
+  const seq = [...rail.matchAll(/<a href="([^"]+)" class="ri(?![^"]*\brt\b)[^"]*"(?: data-sec="([A-Za-z]+)")?/g)]
+    .map((m) => ({ key: m[2] || (m[1] === '/altaris' ? 'altaris' : m[1]), fixed: !m[2] || NAV.FIXED.includes(m[2]) }));
+  const main = html.slice(html.indexOf('<main class="wrap">'), html.indexOf('</main>'));
+  const children = [...main.matchAll(/^ {2}(?:<!-- live:begin -->(?:<!--[^]*?-->)?\n {2})?<(?:section class="blk"(?: id="([A-Za-z]+)")?|div class="secgrp" id="(grp\d)")/gm)]
+    .map((m) => ({ id: m[1] || m[2] || 'saleRent', heading: !!m[2] }));
+  const movable = seq.filter((x) => !x.fixed).map((x) => x.key);
+  return { seq, children, movable, plan: NAV.mainPlan(children.map((c) => ({ id: c.id === 'saleRent' ? null : c.id, heading: c.heading })), movable) };
+}
+
+at('the DEFAULT order (no stored preference) is exactly the rail and the page above — in the live and the offline build', () => {
+  for (const html of [INDEX, fs.readFileSync(path.join(ROOT, 'standalone', 'israel-new-homes-v2.html'), 'utf8')]) {
+    const M = navModel(html);
+    assert.deepEqual(NAV.normalize(null, M.movable), M.movable);
+    assert.deepEqual(NAV.layout(M.seq, M.movable), M.seq.map((x) => x.key));
+    assert.deepEqual(NAV.mainSequence(M.plan, M.movable, M.movable), M.children.map((_, i) => i));
+  }
+});
+
+at('a CUSTOMIZED order: the rail and the page sections follow it — Overview first, ALTARIS in its slot, Sale vs rent with Prices, rankings with Neighbourhoods, every section kept, headings set apart', () => {
+  const M = navModel(INDEX);
+  const custom = ['land', 'sources', 'dealLab', 'txSection', ...M.movable.filter((k) => !['land', 'sources', 'dealLab', 'txSection'].includes(k)).reverse()];
+  const rail = NAV.layout(M.seq, custom);
+  assert.equal(rail[0], 'overview');
+  assert.equal(rail.indexOf('altaris'), M.seq.findIndex((x) => x.key === 'altaris'), 'ALTARIS keeps its slot');
+  assert.deepEqual(rail.filter((k) => k !== 'overview' && k !== 'altaris'), custom);
+  const page = NAV.mainSequence(M.plan, custom, M.movable).map((i) => M.children[i].id);
+  assert.deepEqual([...page].sort(), M.children.map((c) => c.id).sort(), 'every section and heading still on the page');
+  assert.deepEqual(page.slice(0, 2), ['overview', 'geoView']);
+  const sections = page.filter((id) => custom.includes(id));
+  assert.deepEqual(sections, custom, 'the page sections in the rail\'s order');
+  assert.equal(page[page.indexOf('prices') + 1], 'saleRent');
+  assert.equal(page[page.indexOf('table') + 1], 'rankings');
+  assert.deepEqual(page.slice(-4), ['grp1', 'grp2', 'grp3', 'grp4']);
+  /* the launchpad and every other jump still go through the rail link of their section, whatever its position */
+  const lp = INDEX.slice(INDEX.indexOf('id="launchpad"'), INDEX.indexOf('</nav>', INDEX.indexOf('id="launchpad"')));
+  for (const t of [...lp.matchAll(/data-lp="([A-Za-z]+)"/g)].map((m) => m[1])) assert.ok(rail.includes(t), t);
+  /* while customized, the default grouping (group headings, rail dividers) is hidden — it describes the default order */
+  const css = fs.readFileSync(path.join(ROOT, 'lib', 'nav', 'order.js'), 'utf8');
+  assert.match(css, /\.nv-custom main>\.secgrp,\.nv-custom \.rail>\.rail-div\{display:none\}/);
+});
+
 at('a launchpad / rail jump stays on its section while the sections above it load (cold first load) — and lets the reader go', () => {
   const spy = INDEX.slice(INDEX.indexOf('(function railSpy(){'), INDEX.indexOf('/* ---------- breadcrumb ---------- */'));
   assert.match(INDEX, /#launchpad \[data-lp\]"\)\.forEach\(a=>a\.addEventListener\("click",e=>\{const r=document\.querySelector\(`\.rail \.ri\[data-sec=/, 'a tile clicks its rail link');

@@ -306,6 +306,19 @@
   land & supply = intel · housing · land; evidence = guide · sources); the rail in the same order (16 scroll-spy items, ALTARIS between
   Land and Guide); the street report ov (crumb · latest · tiles · supports / against) · tx · px (+ the user's price test) · pl (+ transport) ·
   risk (could change · due diligence · surroundings registers) · map · src. No dataset, figure or disclosure moved out.
+- `lib/nav/order.js` + `test/nav-order.test.js` (+ `test/nav-order.browser.js`, a Playwright journey run by hand) = CUSTOMIZABLE NAVIGATION
+  (22.10.2026, PREVIEW LANE, presentation only): the reader's own order of the rail AND of the page sections it leads to. The default
+  (index.html as shipped, pinned above) is never rewritten; a custom order lives in the browser only (`propx:nav:v1`, schema `propx-nav-v1`,
+  removed when the order is the default) and is applied by MOVING the existing elements (every section, anchor, lazy loader, rail link
+  and launchpad tile stays the same element). FIXED: Overview (+ the geography view) on top, ALTARIS in its rail slot (a separate
+  application, no section), the utility buttons (customize · theme · sign-out) last; a movable item's page block = its section + the
+  sections without a rail item after it (Sale vs rent → Prices, rankings → Neighbourhoods); the group headings and rail dividers describe
+  the DEFAULT grouping and are hidden while customized (`html.nv-custom`); Reset puts every element back. The module loads before the
+  main script (inlined offline) so a stored order applies before anything renders. Editor = the rail's "התאמה / Customize" button →
+  dialog (desktop panel beside the rail, phone bottom sheet): pointer drag (mouse anywhere on a row, touch on the handle) with a ghost and
+  a drop indicator at the real landing place, Up / Down buttons, the handle's Up / Down / Home / End keys, a polite live region, focus
+  kept inside and returned, Escape, Done, Reset to default; he / en from `<html lang>`. The scroll-spy marks the LAST SECTION ON THE PAGE
+  at the bottom (observer and scroll handler alike). Hierarchy gates: the default and a customized order (`test/hierarchy.test.js`).
 - `test/integrity.test.js` = P0 data-integrity gates over `index.html` and the standalone build (no
   synthetic street layer, generated history, invented medians or sample-size confidence; OFFICIAL only
   with stored provenance; no ranking over non-official values outside the capital section's labelled
