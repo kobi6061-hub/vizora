@@ -26,9 +26,9 @@
    "en": "recent months are revised in later releases (observed: Tel Aviv-Yafo Mar–May 2026 — 1,137 in release 216/2026, 1,210 in release 317/2026). PROPX keeps every version."
   }
  },
- "syncedAt": "2026-10-21T14:18:05.476Z",
- "checkedAt": "2026-10-21T14:18:05.476Z",
- "status": "SUCCESS",
+ "syncedAt": "2026-10-22T17:23:36.747Z",
+ "checkedAt": "2026-10-22T17:23:36.747Z",
+ "status": "UNCHANGED",
  "sourceUpdate": "2026-10-07",
  "freshness": {
   "state": "CURRENT",
