@@ -68,24 +68,54 @@ t('a street with recent deals (הרצל, פתח תקווה): every item carries 
   assert.ok(tx.filter((it) => it.source.id === 'over:govmap-recent').every((it) => it.values.recentLayer === true && it.values.priceUsed === false), 'a recent-layer deal is separate evidence: its price is never used');
 });
 
-t('NEW vs NEWLY OBSERVED on real data: a register deal is the baseline (never newly observed); a GovMap-file deal the register copy does not hold is newly observed when older than the period', () => {
+t('NEW vs NEWLY OBSERVED on real data: every source\'s FIRST ingestion is the baseline — the register sweep, the GovMap recent layer\'s first read and the GovMap file\'s first build are never "newly observed"', () => {
   for (const period of ['30', '90', '180', '365']) {
     const b = feed({ geo: STREET, period }), P = b.period;
     for (const it of allItems({ geo: STREET, period })) {
       const obs = day(it.observedAt);
       if (it.newness === 'NEW_EVENT') assert.ok(it.eventDate > P.from && it.eventDate <= P.to, it.id + ' NEW_EVENT inside the period');
-      if (it.newness === 'NEWLY_OBSERVED_OLDER_EVENT') { assert.ok(it.eventDate <= P.from && obs > P.from && obs <= P.to && !it.baseline, it.id + ' newly observed'); assert.notEqual(it.source.id, 'over:deals-register', 'the register copy is the baseline'); }
+      if (it.newness === 'NEWLY_OBSERVED_OLDER_EVENT') { assert.ok(it.eventDate <= P.from && obs > P.from && obs <= P.to && !it.baseline, it.id + ' newly observed'); assert.notEqual(it.kind, 'TRANSACTION', 'every deal held now was held since its source\'s first read'); }
       if (it.newness === 'REVISION' || it.newness === 'STATE_CHANGE') assert.ok(obs > P.from && obs <= P.to, it.id + ' observed inside the period');
+      if (it.kind === 'TRANSACTION') { assert.equal(it.baseline, true, it.id + ' baseline'); assert.equal(it.observedBasis, 'BASELINE_READ', it.id); }
     }
   }
-  /* the GovMap-file deal of 28.10.2025 at הרצל 74: older than a 90-day period and first read 20.10.2026 → NEWLY OBSERVED; inside 365 days → NEW */
+  /* the GovMap-file deal of 28.10.2025 at הרצל 74: first held in the file's FIRST build (20.10.2026) — the baseline: outside a 90-day period
+     (older, and never "newly observed"); inside 365 days it is a NEW_EVENT by its own date */
   const find = (period) => allItems({ geo: STREET, period, kinds: 'TRANSACTION' }).find((it) => it.source.id === 'over:govmap-national' && it.eventDate === '2025-10-28');
-  const a = find('90'), b = find('365');
-  assert.ok(a && b, 'the 2025-10-28 GovMap-file deal on the street');
-  assert.equal(a.newness, 'NEWLY_OBSERVED_OLDER_EVENT'); assert.equal(b.newness, 'NEW_EVENT');
-  assert.equal(day(a.observedAt), '2026-10-20'); assert.equal(a.observedBasis, 'FIRST_READ_OF_A_NEWER_COPY');
-  /* a register deal older than the period never appears (its first read is the baseline) */
+  assert.equal(find('90'), undefined, 'an older baseline deal is not a change of a 90-day period');
+  const b = find('365');
+  assert.ok(b, 'the 2025-10-28 GovMap-file deal on the street'); assert.equal(b.newness, 'NEW_EVENT'); assert.equal(day(b.observedAt), '2026-10-20'); assert.equal(b.observedBasis, 'BASELINE_READ');
   assert.ok(!allItems({ geo: STREET, period: '30' }).some((it) => it.source.id === 'over:deals-register'), 'no register deal in 30 days: the copy ends 2026-09-17 and is the baseline');
+});
+
+t('REGRESSION (QA 22.10.2026) — Haifa / Israel, 30 days: the GovMap rows held since each source\'s first read are the baseline, not 2,131 / 29,079 "newly observed" deals', () => {
+  const C = require('../lib/changes/collect');
+  const h = feed({ geo: 'loc:4000', period: '30' });
+  assert.equal(h.kinds.TRANSACTION.counts.NEWLY_OBSERVED_OLDER_EVENT, 0, 'Haifa: was 2,131 deals dated 2023-09-18…2026-09-02, all from one first read');
+  assert.equal(h.kinds.TRANSACTION.counts.total, 0);
+  assert.equal(h.kinds.TRANSACTION.statement.code, 'NOT_COVERED', 'the copies reach 2026-09-28: 7 of 30 days — not "no deals"'); assert.equal(h.kinds.TRANSACTION.statement.coveredDays, 7);
+  const il = feed({ geo: 'il', period: '30' });
+  const L = require('../lib/txevents').stores().latest.national;
+  const exact = Object.entries(L.perDay).reduce((a, [d, v]) => a + (d > il.period.from && d <= il.period.to ? v : 0), 0);
+  assert.equal(il.kinds.TRANSACTION.counts.NEWLY_OBSERVED_OLDER_EVENT, 0, 'Israel: was 29,079 of 29,080 transaction changes');
+  assert.equal(il.kinds.TRANSACTION.counts.NEW_EVENT, exact, 'the deals dated inside the period — the events index\'s exact per-day tally');
+  assert.equal(il.kinds.TRANSACTION.counts.total, exact);
+  assert.ok(!allItems({ geo: 'il', period: '30', kinds: 'TRANSACTION' }).some((it) => it.rule === 'chg-tx-batch'), 'no batch of baseline rows');
+  /* the coverage says where each source\'s history starts and that its first read is the baseline */
+  for (const id of ['over:govmap-recent', 'over:govmap-national']) {
+    const part = h.kinds.TRANSACTION.coverage.parts.find((x) => x.id === id);
+    assert.ok(part && part.history && /^history starts 2026-10-20/.test(part.history.note.en) && /rows from the first read are the baseline/.test(part.history.note.en), id + ' coverage note');
+    assert.match(part.history.note.he, /קו הבסיס/);
+  }
+  /* the rule itself: a recent-layer row first read in a LATER copy is newly observed; the national file keeps no per-row first read */
+  const reads = C.txReads();
+  assert.equal(reads.recent.firstRead.at, '2026-10-20T07:58:19.990Z'); assert.equal(reads.national.firstBuild.at, '2026-10-20T14:35:50.691Z');
+  const R = (firstReadAt) => C.govmapBaseline({ sourceId: 'over:govmap-recent', firstReadAt }, reads);
+  assert.equal(R('2026-10-20T08:00:55.599Z'), true, 'the first read');
+  assert.equal(R('2026-11-04T08:00:00.000Z'), false, 'a later copy\'s read');
+  assert.equal(R(null), true, 'no first read recorded — never claimed newly observed');
+  assert.equal(C.govmapBaseline({ sourceId: 'over:govmap-national' }, reads), true);
+  assert.equal(CH.newnessOf({ mode: 'DATED', eventDate: '2025-03-01', observedAt: '2026-11-04T08:00:00Z', baseline: !R('2026-11-04T08:00:00Z') ? false : true }, '2026-10-21', '2026-11-20'), 'NEWLY_OBSERVED_OLDER_EVENT');
 });
 
 t('NEW vs NEWLY OBSERVED — the rule on a constructed fixture (period (2026-09-21, 2026-10-21])', () => {
@@ -152,20 +182,30 @@ t('a district: transactions are the events index\'s exact per-day count, the lis
   assert.equal(b.kinds.TRANSACTION.counts.NEW_EVENT, exact);
   assert.equal(b.kinds.TRANSACTION.listing.exact, exact); assert.equal(b.kinds.TRANSACTION.listing.truncated, b.kinds.TRANSACTION.listing.listed < exact);
   const batches = allItems({ geo: 'd-center', period: '90', newness: 'NEWLY_OBSERVED_OLDER_EVENT', kinds: 'TRANSACTION' });
-  assert.ok(batches.length > 0 && batches.every((it) => it.rule === 'chg-tx-batch' && it.n > 0 && it.scope === 'LOCALITY' && it.eventDateRange.to <= b.period.from), 'batches of older deals, one per locality and source');
+  assert.ok(batches.every((it) => it.rule === 'chg-tx-batch' && it.n > 0 && it.scope === 'LOCALITY' && it.eventDateRange.to <= b.period.from), 'a batch = older deals first held in a later read, one per locality, source and read');
   assert.equal(batches.reduce((a, it) => a + it.n, 0), b.kinds.TRANSACTION.counts.NEWLY_OBSERVED_OLDER_EVENT);
+  assert.equal(b.kinds.TRANSACTION.counts.NEWLY_OBSERVED_OLDER_EVENT, 0, 'every GovMap row held now comes from its source\'s first read — the baseline');
+  /* a batch from a constructed later read: only the rows dated before the period count, and only when read inside it */
+  const B = [{ code: 4000, name: { he: 'חיפה', en: 'Haifa' }, sourceId: 'over:govmap-recent', dates: ['2025-01-02', '2025-05-06', '2026-11-01'], observedAt: '2026-11-04T08:00:00Z', copyDate: '2026-11-01' }];
+  const bi = require('../lib/changes/collect').batchItems(B, '2026-10-21', '2026-11-20');
+  assert.equal(bi.length, 1); assert.equal(bi[0].n, 2); assert.deepEqual(bi[0].eventDateRange, { from: '2025-01-02', to: '2025-05-06' });
+  assert.equal(require('../lib/changes/collect').batchItems(B, '2026-11-05', '2026-11-20').length, 0, 'read before the period');
   const items = allItems({ geo: 'd-center', period: '90' });
   assert.ok(items.every((it) => ['LOCALITY', 'DISTRICT', 'NATIONAL_CONTEXT'].includes(it.scope)), 'a district reads localities, its own series and national context');
 });
 
-t('batch=1 folds a locality\'s older newly observed deals into one row per copy read — the counts do not move', () => {
-  const plain = feed({ geo: 'loc:5000', period: '30' }), batched = feed({ geo: 'loc:5000', period: '30', batch: '1' });
+t('batch=1 folds a locality\'s older newly observed deals into one row per copy read — the counts do not move (real data + a constructed later read)', () => {
+  const plain = feed({ geo: 'loc:5000', period: '365' }), batched = feed({ geo: 'loc:5000', period: '365', batch: '1' });
   assert.deepEqual(batched.kinds.TRANSACTION.counts, plain.kinds.TRANSACTION.counts);
-  const rows = allItems({ geo: 'loc:5000', period: '30', batch: '1', kinds: 'TRANSACTION', newness: 'NEWLY_OBSERVED_OLDER_EVENT' });
-  const singles = allItems({ geo: 'loc:5000', period: '30', kinds: 'TRANSACTION', newness: 'NEWLY_OBSERVED_OLDER_EVENT' });
-  assert.ok(rows.length >= 1 && rows.length <= 4 && singles.length > rows.length, `${singles.length} deals → ${rows.length} rows`);
-  assert.equal(rows.reduce((a, it) => a + it.n, 0), singles.length);
-  for (const r of rows) { assert.equal(r.link.type, 'expand'); const kids = allItems({ geo: 'loc:5000', period: '30', ...r.values.expand }); assert.equal(kids.length, r.n, 'the batch expands to its deals'); }
+  assert.equal(batched.total, plain.total, 'nothing to fold: no deal was first held in a later read');
+  const it = (id, src, d, obs) => ({ id, kind: 'TRANSACTION', newness: 'NEWLY_OBSERVED_OLDER_EVENT', rule: 'chg-tx-govmap-recent', n: 1, eventDate: d, observedAt: obs, scope: 'LOCALITY', m: 2, source: { id: src, label: { he: 'א', en: 'a' } }, values: {} });
+  const xs = [it('a', 'over:govmap-recent', '2025-02-01', '2026-11-04T08:00:00Z'), it('b', 'over:govmap-recent', '2024-07-01', '2026-11-04T09:00:00Z'), it('c', 'over:govmap-recent', '2025-09-01', '2026-11-11T08:00:00Z'),
+    { ...it('d', 'over:deals-register', '2026-10-30', '2026-10-30T08:00:00Z'), newness: 'NEW_EVENT' }];
+  const out = CH.batchOlder(xs, { id: 'loc:5000' });
+  const rows = out.filter((x) => x.rule === 'chg-tx-batch');
+  assert.equal(rows.length, 2, 'one row per source copy read (day)'); assert.equal(rows.reduce((a, x) => a + x.n, 0), 3);
+  const r4 = rows.find((x) => x.n === 2); assert.deepEqual(r4.eventDateRange, { from: '2024-07-01', to: '2025-02-01' }); assert.equal(r4.link.type, 'expand'); assert.equal(r4.values.expand.source, 'over:govmap-recent');
+  assert.ok(out.some((x) => x.id === 'd'), 'a NEW_EVENT is never folded');
 });
 
 t('statements are never interchangeable — the rule (fixture): CHANGES · NO_CHANGES_IN_PERIOD · NOT_COVERED (scope, coverage, half the period) · SOURCE_STALE', () => {
@@ -240,6 +280,29 @@ t('the page: the section is live-only, the street report and the dossier link to
   for (const k of ['NEW_EVENT', 'NEWLY_OBSERVED_OLDER_EVENT', 'REVISION', 'STATE_CHANGE']) assert.ok(ui.includes(k), k);
   const sa = path.join(ROOT, 'standalone', 'israel-new-homes-v2.html');
   if (fs.existsSync(sa)) { const s = fs.readFileSync(sa, 'utf8'); assert.ok(!/id="chRoot"/.test(s) && !/lib\/changes\/ui\.js/.test(s), 'the offline build carries no change feed'); }
+});
+
+t('the page module (QA 22.10.2026): words before the vocabulary is read, focus kept across re-renders, no read until the section is on screen, the 500 body generic', () => {
+  const ui = fs.readFileSync(path.join(ROOT, 'lib/changes/ui.js'), 'utf8');
+  /* the chips' words before the first read = the rules' own labels (never the raw kind / newness code) */
+  const L0 = JSON.parse(ui.match(/var LABEL0 = (\{.*\});/)[1]);
+  assert.deepEqual(L0.kinds, JSON.parse(JSON.stringify(RU.KIND_LABEL))); assert.deepEqual(L0.newness, JSON.parse(JSON.stringify(RU.NEWNESS_LABEL)));
+  assert.match(ui, /esc\(K && K\[k\] \? pick\(K\[k\]\.label\) : vocab\('kinds', k\)\)/, 'a kind chip never prints its code');
+  /* focus: the focused control is found again by its data attribute; the filters come before the geography bar, so Tab goes on from a chip to the picker */
+  assert.match(ui, /var a = document\.activeElement, key = focusKey\(a\)/); assert.match(ui, /f\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(ui, /'<div class="card ch-card">' \+ chips\(\) \+ picker\(\) \+ body/);
+  /* the first read: the section itself on screen for a moment (threshold > 0), the rail / launchpad, a link — a geography the page opens off screen is remembered, not read */
+  assert.match(ui, /threshold: \[0\.01\]/); assert.ok(!/rootMargin: '600px/.test(ui), 'no read because the section is near');
+  assert.match(ui, /if \(opts\.follow && !opts\.scroll && !onScreen\(\)\) \{[^}]*ST\.pending = true/);
+  assert.match(ui, /a\.ri\[data-sec="changes"\],\[data-lp="changes"\]/);
+  /* never a raw geography id as a name; codes only in data attributes */
+  assert.match(ui, /var name = G \? pick\(G\.name\) : geoFallback\(\);/);
+  assert.match(ui, /data-promo="/); assert.ok(!/title="' \+ esc\(v\.promotionState\)/.test(ui) && !/title="' \+ esc\(it\.verb/.test(ui), 'no code in a tooltip');
+  /* hardening: an internal failure answers a generic body; the detail goes to the server log */
+  const ce = console.error, logged = []; console.error = (...a) => logged.push(a);
+  let r; try { r = CH.view('changes', { get geo() { throw new Error('secret detail /home/x'); } }); } finally { console.error = ce; }
+  assert.equal(r.status, 500); assert.deepEqual(r.body, { error: 'changes-failed' });
+  assert.ok(logged.length === 1 && /secret detail/.test(String(logged[0][1] && logged[0][1].message)), 'the detail went to the server log');
 });
 
 (async () => {
