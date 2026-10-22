@@ -20,6 +20,18 @@ const { chromium } = require(PW);
 
 const VIEWS = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844, isMobile: true, hasTouch: true } };
 let passed = 0;
+/* internal codes that must never reach a reader: SNAKE_CASE states, source ids, rule ids, the read models' reason codes */
+const REASON_CODES = ['area-not-entered', 'area-out-of-range', 'type-not-modelled', 'type-sample-thin', 'no-street-estimate', 'model-not-built', 'street-not-in-model-build', 'locality-not-swept',
+  'sweep-pending', 'stale-shard', 'not-in-register-copy', 'evidence-not-loaded', 'finance-not-synced', 'series-not-published', 'narrower-levels-reached-min', 'no-verified-neighbourhood',
+  'no-loan', 'no-debt', 'no-equity', 'target-not-reachable', 'above-search-range', 'not-computable', 'rate-below-zero', 'no-shock-entered', 'down-payment-above-price', 'out-of-bounds', 'not-finite', 'invalid-shock'];
+function codesIn(text) {
+  const out = [];
+  for (const m of String(text).matchAll(/\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\b/g)) out.push(m[0]);
+  for (const m of String(text).matchAll(/\b(?:over|propx|boi|datagov|iplan|tlv|cbs|rmi):[a-z][\w:.-]*/g)) out.push(m[0]);
+  for (const m of String(text).matchAll(/\b(?:DL|SA|DD)-[A-Z][A-Z0-9-]*/g)) out.push(m[0]);
+  for (const c of REASON_CODES) if (new RegExp('(^|[^\\w-])' + c + '($|[^\\w-])').test(text)) out.push(c);
+  return [...new Set(out)];
+}
 const ok = (name) => { passed++; console.log('  ✓ ' + name); };
 
 async function journey(browser, lang, vp) {
@@ -76,6 +88,27 @@ async function journey(browser, lang, vp) {
   assert.match(res.risk, lang === 'en' ? /Land-registry extract/ : /נסח טאבו/, 'the street report\'s due-diligence items');
   ok(`${tag}: price check 24,690 ₪/m² · payment ₪8,170.74 · tax ₪4,244 · ${res.comps} comparable rows · flags + due diligence`);
 
+  /* QA: no internal code as visible text anywhere in the lab (class chips are deliberate labels and may stay) */
+  const shown = await page.evaluate(() => { document.querySelectorAll('#dlRoot details').forEach((d) => { d.open = true; }); return document.getElementById('dlRoot').innerText; });
+  const leak = codesIn(shown);
+  assert.deepEqual(leak, [], 'internal codes shown as text: ' + leak.join(', '));
+  ok(`${tag}: no internal code in the visible text (${(shown.length / 1000).toFixed(0)}k characters scanned)`);
+
+  /* QA: an absurd amount is refused and named beside the field; every result says why it is "—" */
+  if (vp === 'desktop') {
+    await set('price', '1e308');
+    await page.waitForFunction(() => { const e = document.getElementById('dl-e-price'); return e && !e.hidden; }, null, { timeout: 5000 });
+    const q = await page.evaluate(() => ({ err: document.getElementById('dl-e-price').textContent, inv: document.getElementById('dl-f-price').getAttribute('aria-invalid'),
+      bare: [...document.querySelectorAll('#dl-ret .dl-na, #dl-fin .dl-na, #dl-price .dl-na')].filter((n) => !n.querySelector('small') || !n.querySelector('small').textContent.trim()).length,
+      reasons: [...document.querySelectorAll('#dl-ret .dl-na small')].map((n) => n.textContent.trim()) }));
+    assert.match(q.err, /1,000,000,000/); assert.equal(q.inv, 'true'); assert.equal(q.bare, 0, 'a "—" without its reason');
+    assert.ok(q.reasons.length >= 6 && q.reasons.every((x) => /1,000,000,000/.test(x)), 'each result names the refused price: ' + q.reasons[0]);
+    assert.deepEqual(codesIn(await page.evaluate(() => document.getElementById('dlRoot').innerText)), []);
+    await set('price', 2100000);
+    await page.waitForFunction(() => document.getElementById('dl-e-price').hidden);
+    ok(`${tag}: price 1e308 refused beside the field ("${q.err.trim()}"), ${q.reasons.length} results name it`);
+  }
+
   /* sort the comparables by ₪/m² with the keyboard */
   await page.focus('[data-dlsort="pricePerSqm"]'); await page.keyboard.press('Enter');
   const sorted = await page.evaluate(() => document.querySelector('[data-dlsort="pricePerSqm"]').closest('th').getAttribute('aria-sort'));
@@ -105,6 +138,9 @@ async function journey(browser, lang, vp) {
   assert.match(memo, lang === 'en' ? /not an appraisal and not investment advice/i : /לא שומה ולא ייעוץ השקעות/);
   assert.match(memo, /st:7900:213/); assert.match(memo, /8,170\.74/); assert.match(memo, lang === 'en' ? /USER ASSUMPTION/ : /הנחת משתמש/); assert.match(memo, /19\.09\.2026/);
   assert.ok(!/<button|<input/.test(memo), 'the memo carries no controls');
+  assert.ok(!/\sdata-[a-z-]+=/.test(memo), 'the memo carries no data attributes (no codes anywhere in it)');
+  const memoLeak = codesIn(memo.replace(/<style[\s\S]*?<\/style>/, '').replace(/<[^>]+>/g, ' '));
+  assert.deepEqual([...new Set(memoLeak)], [], 'codes in the memo');
   await page.emulateMedia({ media: 'print' });
   await page.evaluate(() => { window.print = () => {}; });
   await page.click('[data-dlact="print"]');

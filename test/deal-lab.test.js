@@ -189,6 +189,38 @@ t('the deal rules: each fires on its threshold with value · threshold · source
   assert.equal(E.percentile([10, 20, 30, 40], 25), 50); assert.equal(E.percentile([], 25), null);
 });
 
+t('QA regression · an absurd amount is refused and NAMED (₪1,000,000,000 price · ₪10,000,000 a month · ₪100,000,000 a year), never overflowed into a silent "—"', () => {
+  const L = E.LIMITS; assert.deepEqual([L.amount, L.monthly, L.yearly], [1e9, 1e7, 1e8]);
+  const at = (mut) => { const d = DEAL(); mut(d); return E.analyze(d); };
+  const r = at((d) => { d.price = 1e308; });
+  assert.deepEqual(r.invalid, ['price']); assert.deepEqual(r.invalidWhy.price, { rule: 'above-max', max: 1e9 });
+  for (const k of ['pricePerSqm', 'loan', 'monthlyPayment', 'equity', 'grossYieldPct', 'netYieldPct', 'cashOnCashPct', 'cashFlowMonthly']) { assert.equal(r.values[k], null, k); assert.ok((r.missing[k] || []).includes('price'), k + ' names the price'); }
+  assert.equal(at((d) => { d.price = 1e9; }).invalid.length, 0, 'the bound itself is allowed'); assert.deepEqual(at((d) => { d.price = 1e9 + 1; }).invalid, ['price']);
+  assert.deepEqual(at((d) => { d.price = 0; }).invalidWhy.price, { rule: 'not-positive' });
+  assert.equal(at((d) => { d.rent.monthly = 1e308; }).invalidWhy.rentMonthly.max, 1e7); assert.equal(at((d) => { d.rent.maintenance = 2e7; }).invalidWhy.maintenance.rule, 'above-max');
+  assert.equal(at((d) => { d.rent.insurance = 2e8; }).invalidWhy.insurance.max, 1e8); assert.equal(at((d) => { d.costs.tax = 1e308; }).invalidWhy.tax.max, 1e9);
+  assert.equal(at((d) => { d.financing = { mode: 'down', downPayment: 2500000, ratePct: 4.5, years: 25 }; }).invalidWhy.downPayment.rule, 'above-price');
+  assert.equal(at((d) => { d.targetCocPct = 1e308; }).invalidWhy.targetCocPct.rule, 'range'); assert.equal(at((d) => { d.costs.legal = -5; }).invalidWhy.legal.rule, 'negative');
+  /* fuzz: every input × absurd values × every financing mode — every result is a finite number, or null WITH its reason (never a plain "—") */
+  const paths = [['price'], ['sqm'], ['costs', 'tax'], ['costs', 'other'], ['financing', 'downPayment'], ['financing', 'ltvPct'], ['financing', 'ratePct'], ['financing', 'years'], ['rent', 'monthly'],
+    ['rent', 'vacancyPct'], ['rent', 'maintenance'], ['rent', 'managementPct'], ['rent', 'insurance'], ['rent', 'otherOpex'], ['targetCocPct']];
+  let runs = 0;
+  for (const mode of ['ltv', 'down', 'cash']) for (const p of paths) for (const v of [1e308, -1e308, 1e-308, 'abc', Infinity, NaN, '', 1e9 + 1, 0]) {
+    const d = DEAL(); d.financing.mode = mode; if (mode === 'down') d.financing.downPayment = 700000;
+    let o = d; for (let i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = v;
+    const x = E.analyze(d); runs++;
+    for (const [k, y] of Object.entries(x.values)) { assert.ok(y == null || Number.isFinite(y), `${p.join('.')}=${v} → ${k} not finite`); if (y == null) assert.ok((x.missing[k] || []).length || x.notApplicable[k], `${p.join('.')}=${v} (${mode}) → ${k} is "—" without a reason`); }
+    for (const g of ['rent', 'rate', 'price']) for (const c of E.sensitivity(d)[g]) if (c.values) for (const y of Object.values(c.values)) assert.ok(y == null || Number.isFinite(y));
+  }
+  assert.ok(runs >= 400);
+  /* a sensitivity step past a bound is not computed, with its reason; a scenario shock past its range is refused and named */
+  const hi = DEAL(); hi.price = 1e9; hi.financing = { mode: 'down', downPayment: 5e8, ratePct: 4.5, years: 25 };
+  assert.deepEqual(E.sensitivity(hi).price.map((c) => c.reason || 'ok'), ['ok', 'ok', 'ok', 'out-of-bounds', 'out-of-bounds']);
+  const sc = E.scenarios(DEAL(), { downside: { rentPct: 1e308 }, upside: { ratePp: 500 } });
+  assert.equal(sc.downside.reason, 'invalid-shock'); assert.deepEqual(sc.downside.invalid, ['rentPct']); assert.deepEqual(sc.downside.invalidWhy.rentPct, { rule: 'range', min: -100, max: 1000 });
+  assert.deepEqual(sc.upside.invalid, ['ratePp']);
+});
+
 console.log('deal-lab: the read model (real data)');
 const STREETS = ['st:7900:213', 'st:3000:612', 'st:5000:813'];
 const SNAP = (() => { const S = EV.store(); return require('../lib/gov/freshness').isoDay(require('../lib/gov/freshness').ts(S.meta.source.scrapedAt)); })();
@@ -344,6 +376,22 @@ t('the page module: he / en parity, the storage key wrapped, the disclaimer, ALT
   assert.match(ui, /href="\/altaris"/); assert.match(ui, /window\.print\(\)/); assert.match(ui, /@media print/); assert.match(ui, /text\/html;charset=utf-8/);
   assert.match(ui, /addEventListener\('propx:lang'/); assert.match(ui, /addEventListener\('propx:geo'/); assert.match(ui, /\/api\/geo\/search/);
   assert.ok(!/score|probability|recommend/i.test(ui.replace(/not a score[^']*|לא ציון[^']*|not a recommendation[^']*|no-score/gi, '')), 'no score / probability / recommendation wording');
+  /* QA regression: no internal code is ever printed — every state / reason / source / tier the read models and the engine return has a
+     human label in both languages, and the module never interpolates a raw code into visible text */
+  const TX = require('../lib/txevents');
+  for (const st of TX.STATES) { assert.ok(STR.he.evState[st] && STR.en.evState[st], 'a label for the event state ' + st); assert.ok(!/[A-Z]{2,}_[A-Z]/.test(STR.en.evState[st] + STR.he.evState[st]), st); }
+  const REASONS = ['area-not-entered', 'area-out-of-range', 'rooms-out-of-range', 'built-out-of-range', 'type-not-modelled', 'type-sample-thin', 'no-street-estimate', 'model-not-built', 'street-not-in-model-build',
+    'not-an-official-street', 'not-estimated', 'locality-not-swept', 'sweep-pending', 'stale-shard', 'not-in-register-copy', 'evidence-not-loaded', 'finance-not-synced', 'series-not-published',
+    'narrower-levels-reached-min', 'no-verified-neighbourhood', 'no-loan', 'no-debt', 'no-equity', 'target-not-reachable', 'above-search-range', 'not-computable', 'rate-below-zero', 'no-shock-entered',
+    'down-payment-above-price', 'out-of-bounds', 'not-finite', 'invalid-shock', 'UNAVAILABLE'];
+  for (const L2 of ['he', 'en']) for (const k of REASONS) assert.ok(STR[L2].na[k] || STR[L2].reason[k] || STR[L2].notUsed[k], `${L2}: a label for the reason ${k}`);
+  for (const L2 of ['he', 'en']) { for (const k of ['not-positive', 'negative', 'above-max', 'above-price', 'range']) assert.equal(typeof STR[L2].bad[k], 'function', k);
+    for (const k of ['STRONG', 'STANDARD', 'LIMITED', 'UNAVAILABLE']) assert.ok(STR[L2].tierLbl[k], k);
+    for (const k of ['over:deals-register', 'over:street-evidence', 'over:govmap-recent', 'over:govmap-national', 'propx:deal-lab', 'propx:street-model', 'propx:tx-freshness', 'boi:housing-finance']) assert.ok(STR[L2].src[k], k); }
+  assert.ok(!/[A-Z]{2,}_[A-Z]/.test(Object.values(STR.he.tierLbl).join(' ')), 'Hebrew tiers in Hebrew');
+  /* a code may sit in a data attribute (="${…}"), never in text */
+  for (const bad of [/(?<!=")\$\{esc\(e\.state\)\}/, /(?<!=")\$\{esc\(f\.source\)\}/, /esc\(Mo\.reason/, /esc\(Mo\.tier\)/, /esc\(Mo\.apartmentReason/, /dmy\(R\.latestKnownEvent\.date\), R\.latestKnownEvent\.sourceId\)/, /fState\[[^\]]+\] \|\| [A-Za-z.]+\.state\b/, /\|\| l\.reason\)/, /T\.na\[k\] \|\| k\)/, /S\.sdata\.engine/, /'propx:deallab:v1'\]\)/])
+    assert.ok(!bad.test(ui), 'a raw code printed: ' + bad);
   const page = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const sr = page.slice(page.indexOf('function srHTML(g){'), page.indexOf('function srSummaryText(R){'));
   assert.match(sr, /el\("dealLab"\)\?`<p><button type="button" class="chip" data-srdeal="\$\{ldE\(I\.id\)\}"/); assert.match(sr, /Analyse this deal in the Deal Lab/);
