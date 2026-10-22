@@ -1,12 +1,12 @@
 {
- "at": "2026-10-16T08:07:39.226Z",
- "hash": "d6c767f8d23c651ff77d3a0c3ce3d95bc400851a",
+ "at": "2026-10-22T08:33:37.270Z",
+ "hash": "c4efb1be1d8e2ccba2a7da1d8ba0365f32c037ad",
  "payload": {
   "boiRate": {
    "value": 3.25,
    "unit": "%",
-   "nextDecision": "2026-10-21",
-   "publishedAt": "2026-09-01",
+   "nextDecision": "2026-11-23",
+   "publishedAt": "2026-10-21",
    "source": {
     "authority": "בנק ישראל",
     "authorityEn": "Bank of Israel",
