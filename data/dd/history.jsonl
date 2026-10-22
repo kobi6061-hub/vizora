@@ -3047,3 +3047,231 @@
 {"at":"2026-10-21T09:27:18.282Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:61-1-2022-0614","parcels":["parcel:6212/617"],"old":"גמר בניה","new":"עבודות עפר וביסוס","sourceDate":"2026-10-20"}
 {"at":"2026-10-21T09:27:18.282Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:61-1-2023-0326","parcels":["parcel:6627/556"],"old":"גמר שלד","new":"גמר בניה","sourceDate":"2026-10-20"}
 {"at":"2026-10-21T09:27:18.282Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:62-1-2023-0365","parcels":[],"old":"עבודות עפר וביסוס","new":"גמר בניה","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:510468424","name":"אחים אהרוני קבלני בנין בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:511059677","name":"מפלסי הצפון  בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:511286312","name":"שמר שרותי שאיבת בטון בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:511286312","name":"שמר שרותי שאיבת בטון בע~מ","old":2023,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:511460198","name":"שזיף השקעות בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:511697492","name":"א.א. גמיש חברה לבנין (1992) בע~מ","old":2024,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:511709883","name":"א.ש.ד. אוטומציה בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:512480062","name":"מ.א. דיין נכסים והשקעות בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:513878306","name":"איירלדום בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:514362573","name":"שבח שירותים קבלניים לתאורת רחוב בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515014710","name":"אנפה (אור, נועם, אגם, אופק) בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515045490","name":"וילינה בנייה בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:515155414","name":"אבי פרץ שיפוצים בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515155414","name":"אבי פרץ שיפוצים בע~מ","old":2023,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515272995","name":"סיגמנט בניה בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515299824","name":"א.ע שילה חברה לבנייה ופיתוח בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:515393981","name":"עמרו שאהין הנדסת חשמל בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:515492221","name":"ע.ס. אריאל סחר בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:515942704","name":"קדמא מחיר למשתכן  בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:516451523","name":"פחימה מיזוג  בע~מ","old":2025,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:516523123","name":"ח.א פריגי ניהול וביצוע  בע~מ","old":null,"new":2024,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"company-breach-flag-changed","key":"co:516867884","name":"קעדאן תכנון וביצוע  בע~מ","old":"מפרה","new":null,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"companies","event":"annual-report-year-advanced","key":"co:516867884","name":"קעדאן תכנון וביצוע  בע~מ","old":null,"new":2026,"sourceDate":"2026-10-22T01:13:14.205000"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-updated","key":"co:514183862","kind":"עדכון שעבוד","chargeId":94,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511460198","kind":"דו~ח שנתי-הסרת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:517061214","kind":"הקצאת מניות","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513201129","kind":"סילוק שעבוד","chargeId":9,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515918001","kind":"רישום שעבוד","chargeId":91,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511286312","kind":"דו~ח שנתי-עדכון תחום עיסוק","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513280487","kind":"רישום שעבוד","chargeId":115,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:516867884","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515608750","kind":"רישום שעבוד","chargeId":37,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515901007","kind":"רישום שעבוד","chargeId":54,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:515014710","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511307514","kind":"סילוק שעבוד","chargeId":55,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514309418","kind":"רישום שעבוד","chargeId":17,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:513711879","kind":"עדכון דירקטורים-עדכון מנהלים","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:520021171","kind":"סילוק שעבוד","chargeId":460,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:515393981","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516523123","kind":"דו~ח שנתי-עדכון תחום עיסוק","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514495662","kind":"רישום שעבוד","chargeId":27,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511059677","kind":"דו~ח שנתי-הסרת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516867884","kind":"דו~ח שנתי-שינוי בהוראות בתקנון","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:516690690","kind":"עדכון כתובת ו/או מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:516670999","kind":"העברת מניות","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":403,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510449507","kind":"רישום שעבוד","chargeId":93,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513055749","kind":"רישום שעבוד","chargeId":34,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:512403247","kind":"סילוק שעבוד","chargeId":123,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:512480062","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511982910","kind":"סילוק שעבוד","chargeId":296,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:517229829","kind":"רישום שעבוד","chargeId":11,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513560938","kind":"רישום שעבוד","chargeId":73,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:514362573","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:514959816","kind":"עדכון בעלי תפקידים","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516523123","kind":"דו~ח שנתי-שינוי בהוראות בתקנון","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:514545748","kind":"סילוק שעבוד","chargeId":15,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514920941","kind":"רישום שעבוד","chargeId":25,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":405,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:511709883","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:516806155","kind":"העברת מניות","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:514156488","kind":"סילוק שעבוד","chargeId":76,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:514760602","kind":"סילוק שעבוד","chargeId":12,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513420372","kind":"סילוק שעבוד","chargeId":34,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:515045490","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:511472045","kind":"רישום שעבוד","chargeId":121,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:515155414","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:520021171","kind":"סילוק שעבוד","chargeId":458,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513260471","kind":"סילוק שעבוד","chargeId":23,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513795286","kind":"רישום שעבוד","chargeId":30,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:516439999","kind":"רישום שעבוד","chargeId":8,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516523123","kind":"דו~ח שנתי-עדכון מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:513878306","kind":"דו~ח שנתי-הסרת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513055749","kind":"רישום שעבוד","chargeId":33,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516867884","kind":"דו~ח שנתי-הוספת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:515942704","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":406,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:510468424","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514563857","kind":"רישום שעבוד","chargeId":14,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:513711879","kind":"עדכון בעלי תפקידים","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513708248","kind":"סילוק שעבוד","chargeId":121,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:515155414","kind":"דו~ח שנתי-שינוי בהוראות בתקנון","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513055749","kind":"רישום שעבוד","chargeId":35,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:511286312","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513189720","kind":"סילוק שעבוד","chargeId":73,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:516806155","kind":"עדכון דירקטורים-הוספת דירקטור","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513795286","kind":"רישום שעבוד","chargeId":32,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515280287","kind":"רישום שעבוד","chargeId":60,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513795286","kind":"רישום שעבוד","chargeId":31,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511557753","kind":"סילוק שעבוד","chargeId":21,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515997419","kind":"רישום שעבוד","chargeId":81,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:512279902","kind":"רישום שעבוד","chargeId":186,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:513811687","kind":"רישום שעבוד","chargeId":18,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514736578","kind":"רישום שעבוד","chargeId":2,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:513420372","kind":"סילוק שעבוד","chargeId":37,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:515272995","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515901007","kind":"רישום שעבוד","chargeId":55,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:515155414","kind":"דו~ח שנתי-עדכון כתובת","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515427870","kind":"רישום שעבוד","chargeId":5,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:515946515","kind":"העברת מניות","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510597842","kind":"רישום שעבוד","chargeId":169,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:520021171","kind":"סילוק שעבוד","chargeId":457,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:512323122","kind":"עדכון בעלי תפקידים","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:514355098","kind":"סילוק שעבוד","chargeId":53,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:517095352","kind":"העברת מניות","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:513878306","kind":"דו~ח שנתי-הוספת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:516451523","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:515155414","kind":"דו~ח שנתי-עדכון תחום עיסוק","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:516052024","kind":"רישום שעבוד","chargeId":15,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:520021171","kind":"סילוק שעבוד","chargeId":459,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:515053155","kind":"סילוק שעבוד","chargeId":19,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511307514","kind":"סילוק שעבוד","chargeId":57,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:516806155","kind":"עדכון דירקטורים-הסרת דירקטור","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:510500242","kind":"דו~ח שנתי-עדכון מנהלים","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:516091626","kind":"רישום שעבוד","chargeId":6,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-updated","key":"co:514857762","kind":"עדכון שעבוד","chargeId":33,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511712127","kind":"סילוק שעבוד","chargeId":97,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:515155414","kind":"דו~ח שנתי-עדכון מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:510950488","kind":"סילוק שעבוד","chargeId":214,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515608750","kind":"רישום שעבוד","chargeId":36,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511059677","kind":"דו~ח שנתי-עדכון כתובת","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"breach-update","key":"co:515492221","kind":"עדכון הפרה","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510597842","kind":"רישום שעבוד","chargeId":170,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514495662","kind":"רישום שעבוד","chargeId":26,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:510500242","kind":"דו~ח שנתי-הסרת בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511286312","kind":"דו~ח שנתי-עדכון מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516867884","kind":"דו~ח שנתי-עדכון מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:513878306","kind":"דו~ח שנתי-הוספת דירקטור","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:513878306","kind":"דו~ח שנתי-הגדלת הון","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514287903","kind":"רישום שעבוד","chargeId":176,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:517060190","kind":"רישום שעבוד","chargeId":2,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":407,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516867884","kind":"דו~ח שנתי-עדכון בעל תפקיד","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511286312","kind":"דו~ח שנתי-שינוי בהוראות בתקנון","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:511126138","kind":"הגדלה של הון רשום","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:516523123","kind":"דו~ח שנתי-עדכון כתובת","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-update","key":"co:511059677","kind":"דו~ח שנתי-עדכון מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514545748","kind":"רישום שעבוד","chargeId":16,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:510597842","kind":"סילוק שעבוד","chargeId":167,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514307677","kind":"רישום שעבוד","chargeId":110,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510924327","kind":"רישום שעבוד","chargeId":180,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":404,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:514327980","kind":"רישום שעבוד","chargeId":100,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:511697492","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:514573286","kind":"עדכון דירקטורים-הוספת דירקטור","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"annual-report-filed","key":"co:515299824","kind":"דו~ח שנתי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:513713065","kind":"עדכון כתובת ו/או מען דיגיטלי","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:510605520","kind":"רישום שעבוד","chargeId":402,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-removed","key":"co:511307514","kind":"סילוק שעבוד","chargeId":66,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"charge-registered","key":"co:515280287","kind":"רישום שעבוד","chargeId":61,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"filings","event":"filing-observed","key":"co:514573286","kind":"עדכון דירקטורים-הסרת דירקטור","chargeId":null,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438813","name":"רח' בורוכוב 32- רעננה","city":"רעננה","executorId":41085,"executorName":"ג.מ בוני הכוכב בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438809","name":"בי\"ס שתילים","city":"ירושלים","executorId":17498,"executorName":"מרי חברה קבלנית לעבודות בניה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438807","name":"ברודי 12 - ת\"א","city":"תל אביב - יפו","executorId":15610,"executorName":"בינום הנדסה ופיתוח בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438804","name":"מבנה תעסוקה אזור תעשיה 17 ד","city":"ברקת","executorId":19599,"executorName":"אחים אבו ג'בל בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438800","name":"החלפת מעלית בית חולים אנגלי נצרת","city":"נצרת","executorId":36072,"executorName":"פור ס.א.ל חאיק בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438794","name":"דגן 4","city":"סביון","executorId":38672,"executorName":"ש.ל.א בניה ופיקוח בעמ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438792","name":"מרגולין 31","city":"ראשון לציון","executorId":null,"executorName":"יוסף אשורוב חברה לבנייה והשקעות בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438788","name":"הארכת רציפים צומת חולון","city":"חולון","executorId":19738,"executorName":"שטרן ורסנו הנדסה בעמ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438785","name":"כביש טבעת 7-9-10-18 עין קניה","city":"עין קנייא","executorId":30382,"executorName":"דרך בטוחה בכבישים בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438782","name":"מרדכי 14 רמת גן","city":"רמת גן","executorId":33483,"executorName":"רועי תמיר אינל","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438779","name":"טשרניחובסקי 22-24","city":"בת ים","executorId":24370,"executorName":"שאזלי שוכרי","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438774","name":"חזנוביץ 5 ירושלים","city":"ירושלים","executorId":30187,"executorName":"שלי שמעון","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438772","name":"רכסים","city":"רכסים","executorId":18139,"executorName":"אשל הירדן יזום ובנין בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438770","name":"שיפוץ וחידוש מרכז ג'בור טוקאן עאבלין","city":"אעבלין","executorId":36366,"executorName":"כ.ח הנדסה אזרחית בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438768","name":"עיר שמש 63 תל אביב","city":"תל אביב - יפו","executorId":26226,"executorName":"ס.ל. חרוב לעבודות בניין וגמר","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438763","name":"החרצית 16-18 אשדוד","city":"אשדוד","executorId":15008,"executorName":"ירדנה נבנה ארצנו בעמ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438759","name":"נחלת בנימין 63  ת''א","city":"תל אביב - יפו","executorId":41883,"executorName":"יסודות מוצקים בע''מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438755","name":"תיכון רעננה","city":"רעננה","executorId":23017,"executorName":"וליד גרייב בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438753","name":"שבזי שלום 6 פתח תקווה","city":"פתח תקווה","executorId":43069,"executorName":"מעוז בניה והנדסה בע\"מ בע\"","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438750","name":"מרדכי 14: רמת גן","city":"רמת גן","executorId":null,"executorName":null,"parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438747","name":"פרוייקט אלפסי 13 קידוחי קלונסאות רחביה ירושלים","city":"ירושלים","executorId":null,"executorName":"ברוך זקן -קבלן הריסה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438746","name":"מגרש 202-חחצב 83 ראשון לציון","city":"ראשון לציון","executorId":10345,"executorName":"ש.י.א רפאל פרויקטים","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438743","name":"אדני ארץ פרויקט 7 בע\"מ - נווה שמיר רמת בית שמש ה 2","city":"בית שמש","executorId":39697,"executorName":"אדם נווה מדבר בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438737","name":"דרך מנחם בגין 121 רמת גן","city":"רמת גן","executorId":36046,"executorName":"טל בן שבת בניה ועבודות גמר בעמ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438736","name":"מכון ויצמן למדע - מעונות מץ וולפסון","city":"רחובות","executorId":16852,"executorName":"זעטוט הנדסה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438733","name":"מגדלי מיטל","city":"רחובות","executorId":null,"executorName":"שגיב עופר","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438729","name":"אדם מינצקביץ מבנה מסוכן בתל אביב יפו","city":"תל אביב - יפו","executorId":27733,"executorName":"גיא חורש הנדסת בנין בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-first-seen","key":"site:labor:438727","name":"פיתוח חניונים - מתחם הסאריה - בית שאן","city":"בית שאן","executorId":42294,"executorName":"טל אד סוללים קבלנות בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-executor-changed","key":"site:labor:438639","executorId":37527,"oldExecutorId":null,"old":null,"new":37527,"parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:438639","executorId":37527,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:438516","executorId":null,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:435995","executorId":null,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:435206","executorId":15610,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:434929","executorId":36456,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:433520","executorId":23772,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:421975","executorId":32566,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:416754","executorId":25521,"parcel":null,"old":{"sanctions":0,"warrants":1},"new":{"sanctions":0,"warrants":2},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:413591","executorId":null,"parcel":null,"old":{"sanctions":0,"warrants":1},"new":{"sanctions":0,"warrants":2},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:404631","executorId":18945,"parcel":null,"old":{"sanctions":0,"warrants":1},"new":{"sanctions":0,"warrants":2},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:390140","executorId":23309,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:388846","executorId":40729,"parcel":null,"old":{"sanctions":0,"warrants":1},"new":{"sanctions":0,"warrants":2},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:375113","executorId":25022,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:374811","executorId":17668,"parcel":null,"old":{"sanctions":0,"warrants":2},"new":{"sanctions":0,"warrants":3},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:359117","executorId":3643,"parcel":"parcel:6500/4002","old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-enforcement-changed","key":"site:labor:343284","executorId":23484,"parcel":null,"old":{"sanctions":0,"warrants":0},"new":{"sanctions":0,"warrants":1},"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:433892","name":"פרויקט אל גדיד צור באהר ירושלים","city":"ירושלים","executorId":10850,"executorName":"גלנור בינוי ופיתוח בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:433513","name":"בית פרטי אבנר קריב- הסוכנות היהודית 4- עפולה","city":"עפולה","executorId":14966,"executorName":"חאג עודה עותמאן","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:428411","name":"מושב נחם","city":"נחם","executorId":19227,"executorName":"סודאי אלפרד","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:410851","name":"משפ' פרץ- מגדל בראשית תל אביב","city":"תל אביב - יפו","executorId":29272,"executorName":"ויקוס הנדסה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:409633","name":"אלפסי 13 רחביה- ירושלים","city":"ירושלים","executorId":33792,"executorName":"א.ו. אלרום בניה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:396291","name":"משה בלנדר 8- מגרש 77- עפולה","city":"עפולה","executorId":14966,"executorName":"חאג עודה עותמאן","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:356771","name":"רח' פינסקר 40 ת\"א","city":"תל אביב - יפו","executorId":null,"executorName":"א נ אלתן ביצוע בעמ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:356378","name":"שיפוץ מבנה היכל התרבות- כביש ראשי- קיבוץ גן שמואל","city":"גן שמואל","executorId":30040,"executorName":"מחאמיד מוחמד-א.מ. הנדסה","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:353653","name":"בניין מסחרי מגדל- גוש 16873/1- יפיע","city":"יפיע","executorId":10531,"executorName":"לאן חברה לבניה ופתוח בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:346478","name":"תובל 7","city":"ירושלים","executorId":29529,"executorName":"אברהם זילברברג","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:338620","name":"פרוייקט חרל\"פ 18-20 רחביה ירושלים","city":"ירושלים","executorId":25357,"executorName":"מיראג' הנדסה אזרחית בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:333811","name":"יותם 42- חיפה","city":"חיפה","executorId":13945,"executorName":"רוברט ביליה נכסים ובנין בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:331913","name":"\"גרופית בטבע\" גוש 7936 חלקה 34/ אבן יהודה","city":"אבן יהודה","executorId":18782,"executorName":"גרופית ממשק חברה לייזום ופתוח נדל\"ן בע\"מ","parcel":"parcel:7936/34","sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:329295","name":"גונן 10-16","city":"תל אביב - יפו","executorId":29896,"executorName":"גל אריאל בניה והשקעות בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:307190","name":"פרוייקט די סנטר רב תנחומא רמה ד' 3 בית שמש","city":"בית שמש","executorId":29867,"executorName":"עץ השקד הנדסה בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"sites","event":"site-no-longer-listed","key":"site:labor:295665","name":"מזרחי אברהם 11 פתח תקווה תמייא 38","city":"פתח תקווה","executorId":27062,"executorName":"לירז את ליאב אחזקות מבנים בע\"מ","parcel":null,"sourceDate":null}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"permit-stage-changed","key":"permit:tlv:20191350","old":"בבניה","new":"בתהליך היתר","sourceDate":"2026-10-22"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"permit-request-observed","key":"permit:tlv:20260934","stage":"בתהליך היתר","units":0,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"permit-request-observed","key":"permit:tlv:20260935","stage":"בתהליך היתר","units":0,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"permit-request-observed","key":"permit:tlv:20260936","stage":"בתהליך היתר","units":0,"sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"construction-start-dated","key":"permit:tlv:20240471","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"permit-stage-changed","key":"permit:tlv:20230506","old":"קיים היתר","new":"בבניה","sourceDate":"2026-10-22"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"construction-start-dated","key":"permit:tlv:20230506","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"construction-start-dated","key":"permit:tlv:20260359","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:62-1-2023-0365","parcels":[],"old":"גמר בניה","new":"גמר יסודות","sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-observed","key":"site:tlv:62-1-2024-0481","parcel":"6217 / 566","parcels":["parcel:6217/566"],"state":"תחילת עבודות","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:64-1-2024-0403","parcels":["parcel:6985/89"],"old":"גמר יסודות","new":"גמר שלד","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:61-1-2021-0028","parcels":["parcel:6213/73"],"old":"גמר בניה","new":"גמר יסודות","sourceDate":"2026-10-21"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:64-1-2023-0095","parcels":["parcel:7340/27"],"old":"עבודות עפר וביסוס","new":"פתיחת תיק","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:61-1-2021-0451","parcels":["parcel:6212/1042"],"old":"פתיחת תיק","new":"עבודות עפר וביסוס","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-observed","key":"site:tlv:62-1-2024-0755","parcel":"7091 / 136","parcels":["parcel:7091/136"],"state":"תחילת עבודות","sourceDate":"2026-10-20"}
+{"at":"2026-10-22T09:30:36.207Z","lane":"tlv","event":"site-state-changed","key":"site:tlv:61-1-2025-0262","parcels":["parcel:6798/31"],"old":"עבודות עפר וביסוס","new":"גמר יסודות","sourceDate":"2026-10-20"}

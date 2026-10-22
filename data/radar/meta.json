@@ -1,19 +1,19 @@
 {
  "schema": 1,
- "builtAt": "2026-10-21T18:07:40.048Z",
- "since": "2026-06-23T18:07:40.048Z",
+ "builtAt": "2026-10-22T09:36:20.752Z",
+ "since": "2026-06-24T09:36:20.752Z",
  "days": 120,
- "events": 406,
+ "events": 707,
  "counts": {
-  "sources": 15,
-  "planning": 44,
-  "land": 259,
-  "developers": 49,
+  "planning": 54,
+  "land": 262,
+  "developers": 344,
+  "sources": 8,
   "macro": 8,
   "rental": 22,
   "sales": 9
  },
  "rules": 27,
- "ms": 2302,
+ "ms": 1670,
  "generator": "scripts/radar-build.js"
 }

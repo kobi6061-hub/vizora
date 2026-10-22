@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-21T09:20:04.189Z",
+ "builtAt": "2026-10-22T09:22:54.527Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -19,7 +19,7 @@
     "snapshotDate": "2026-09-19",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-09-17",
-    "checkedAt": "2026-10-21T08:52:46.515Z",
+    "checkedAt": "2026-10-22T08:55:25.209Z",
     "state": "STALE",
     "stateReason": null
    },
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-21T09:19:33.165Z",
+    "checkedAt": "2026-10-22T09:22:13.149Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
@@ -50,7 +50,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-07-03",
-    "checkedAt": "2026-10-20T17:58:41.846Z",
+    "checkedAt": "2026-10-22T04:59:01.285Z",
     "version": 4,
     "builtAt": "2026-10-20T18:55:44.262Z",
     "state": "RECENT"
@@ -68,7 +68,7 @@
   "js-area": "2026-09-02"
  },
  "newEvents": {
-  "last24h": 24992,
+  "last24h": 0,
   "last7d": 29395,
   "basis": "deals PROPX read for the first time in the period (the recent layer's first read per deal + the national detector's build)"
  },
