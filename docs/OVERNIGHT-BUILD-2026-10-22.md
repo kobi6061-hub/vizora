@@ -61,3 +61,22 @@ The scaffolding (`406f4db`) provides:
     - Tel Aviv, 365 days: 6,104 new events, equal to the transactions union.
     - Central District, 90 days: 22,028 deals by date and 3,585 older deals first observed in the period.
 - Workstream F (QA, security, integration) has started on `6e7c546`.
+- `313ad33`: the private-boundary gate skips `.claude/`. The gate was walking the local agent worktrees inside the repository; nothing there is deployed.
+- `b88a243`: workstream E, UX, is merged. The before and after numbers are in `docs/UX-REPORT-2026-10-22.md`.
+
+  | Check | Before | After |
+  |---|---|---|
+  | Text below contrast, light theme | 4,109 | 41 |
+  | Icons without a name | 30 | 0 |
+  | Phone text under 10 px | 1,039 | 2 |
+  | Rail items unreachable on desktop | 7 | 0 |
+
+  The launchpad has 8 live tiles. Performance is unchanged within noise.
+- The street-geography rebuild ran on the preview lane (run 39690354059) and its push landed (`9f40e5c`). That verifies workstream A's fix 4 live.
+- `b627476`: workstream B, Explain Everything, is merged.
+  - **Coverage.** 960 of 960 meaningful page labels (100 %). It was 172 (17.9 %) before the attacher.
+  - **Terms.** 297 of 297 are complete, each with a plain sentence and an example in Hebrew and English.
+  - **Integration fixes.** The Deal Lab and What Changed Here terms' examples are labelled "For example", their sections carry a plain sentence, and the skip links count as navigation chrome.
+- Full suite on `b627476`: 70 of 70 files pass.
+- `scripts/prod-acceptance.mjs` now also checks the new features when the deployed page carries them: items 15 (Deal Lab) and 16 (What Changed Here), the 8-tile launchpad, and the ⓘ dialog by keyboard.
+- A local run against the integrated build passed 111 checks and failed 1. The failure was the check's own sum over the Deal Lab's unused levels, which carry only their universe; the check is fixed. The data reconciles: 114 = 23 + 91.
