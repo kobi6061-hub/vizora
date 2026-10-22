@@ -104,3 +104,46 @@ The scaffolding (`406f4db`) provides:
   - **Loading.** The feed loads only when the section is on screen.
   - **Errors.** A 500 answers with a generic message.
 - `ba69bc9`: the Deal Lab hand-off jumps through the rail link. Before, the phone landed about 9,000 px short.
+- `798fd10` is the final candidate (`ba69bc9` plus this journal).
+
+  | Check | Result |
+  |---|---|
+  | Full suite | 71/71 files |
+  | Deal Lab journey | 38/38 |
+  | What Changed Here journey | 68/68 |
+  | Independent QA browser checks | 144/144 |
+  | Extended acceptance, local | 113/113 |
+
+  Performance, medians of 5 runs, Production `2d48c24` against the candidate:
+
+  | Measure | Desktop | Phone |
+  |---|---|---|
+  | First paint | 360 → 364 ms | 360 → 344 ms |
+  | Load event | 499 → 709 ms | 518 → 703 ms |
+  | Requests | 18 → 23 | 14 → 19 |
+
+  The Preview `kobixrealestate-nordmzz5b` (7241134871) deployed.
+
+## Production release (22.10.2026, 01:19 UTC)
+
+The founder's directive allows a Production release of an additive, reversible change when every gate passes, including authenticated live testing. The release went ahead on that basis.
+
+- **Merge.** `05edfd2` is a `--no-ff` merge of `798fd10` into Production `2d48c24`. Production had no commits missing from the preview lane, so the merged tree is identical to `798fd10`.
+- **Full suite on the merge.** 71/71 files.
+- **Push and deploy.** Pushed at 01:19 UTC. The Vercel Production deployment 7241293246 (`kobixrealestate-11d7to4ji`) succeeded.
+- **Live gates on propx.live and kobix.online:**
+
+  | Run | Check | Result |
+  |---|---|---|
+  | 39705144925 | Production acceptance | **226/226 passed**, 0 failed. Items 15 (Deal Lab) and 16 (What Changed Here) pass on both domains, and so do the 8-tile launchpad and the ⓘ dialog by keyboard. 15/15 paths are held with no cookie, a forged cookie and an expired cookie. |
+  | 39705147354 | Search live check | **42/42** signed-in checks |
+  | 39705186244 | Private-identity isolation gate (throwaway PostgreSQL, no secrets) | **Passed** |
+
+- **Page identity.** The deployed `index.html` sha256 is `eb7426f0b883cc4a` on both domains, identical to the merge.
+- **Unchanged.** `PROPX_IDENTITY` stays off and the sign-in mode is `perimeter`. The private database was not touched.
+- **Rollback, if needed.** `git revert -m 1 05edfd2` on the Production branch, or promote `kobixrealestate-blktqcnzr` (`2d48c24`) in Vercel.
+- **Measured after the release.**
+  - On the main page, ⓘ coverage is 960/960.
+  - Inside the Deal Lab, 14 of 15 result cards carry an ⓘ. The 15th is the asking price, which is the user's own input labelled USER ASSUMPTION.
+  - Inside the Deal Lab, 53 table column headings and 8 sub-headings carry no ⓘ of their own. The same concepts are explained on the cards above them. This is the first follow-up.
+- **Morning report.** `docs/MORNING-REPORT-2026-10-22.md`, in Hebrew.
