@@ -338,13 +338,12 @@ t('C1 · hostile parameters → 400 / 404, never 500; no stack trace or file pat
   for (const m of ['POST', 'PUT', 'DELETE', 'PATCH']) for (const q of ['view=dealLab&id=st:5000:813', 'view=changes&geo=il', 'view=dealContext', 'view=changesMeta']) assert.equal((await call(q, m)).code, 405, m + ' ' + q);
 });
 
-t('C2 · the offline build carries neither feature (no section, no module, no API read); the session gate keeps the views behind it', () => {
+t('C2 · the offline build carries neither feature (no section, no module, no API read)', () => {
   const off = fs.readFileSync(path.join(ROOT, 'standalone/israel-new-homes-v2.html'), 'utf8');
   for (const s of ['id="dealLab"', 'id="changes"', 'id="dlRoot"', 'id="chRoot"', 'src="/lib/deal', 'src="/lib/changes', 'PropxDealEngine', 'PropxChanges', 'view=dealContext', 'view=changesMeta', "getJSON('view=deal"]) assert.ok(!off.includes(s), 'offline build carries ' + s);
   /* the two street-report / dossier links that name the sections are rendered only when the section exists (el(...) guard) */
   for (const m of off.matchAll(/href="#changes"/g)) assert.match(off.slice(Math.max(0, m.index - 220), m.index), /el\("chRoot"\)/);
-  const gate = fs.readFileSync(path.join(ROOT, 'lib/identity/gate.mjs'), 'utf8');
-  assert.ok(!/['"]\/api\/intel['"]/.test(gate.slice(gate.indexOf('PUBLIC_PATHS'), gate.indexOf('PUBLIC_PATHS') + 400)), '/api/intel is not a public path');
+  /* the session gate itself is test/security-gate.test.js's (this file never reads the private identity layer — test/private-boundary.test.js) */
 });
 
 (async () => {
