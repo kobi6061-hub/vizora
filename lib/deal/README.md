@@ -30,7 +30,12 @@ assumptions. It creates no fact, values no dwelling, and never recommends.
   No shock → no scenario. The page's "fill an example stress" fills visible, editable values on request — still the user's assumptions.
 * **Missing / invalid** — a blank field is *not entered* (0 is a value). A result needing it is `null`, and `missing[key]` names the
   inputs; `notApplicable[key]` says why a result does not apply (`no-loan`, `no-equity`, `target-not-reachable` …); `invalid` lists
-  refused values (a down payment above the price, an LTV above 100 %, a vacancy of 100 % …).
+  refused values and `invalidWhy[key]` the rule (`not-positive` · `negative` · `above-max` · `above-price` · `range`, with the bound).
+  Bounds (`LIMITS`): a ₪ amount paid once (price, down payment, each purchase cost) ≤ ₪1,000,000,000 · a ₪ amount a month (rent, maintenance,
+  other) ≤ ₪10,000,000 · insurance ≤ ₪100,000,000 a year · area ≤ 100,000 m² · rate 0–30 % · LTV 0–100 % · term over half a month to 40 years ·
+  target −100 % to 1,000 % · a scenario shock: rent / costs −100 % to +1,000 %, vacancy / rate ±100 pp (else the scenario is `invalid-shock`).
+  A sensitivity step that crosses a bound is `out-of-bounds`; a value that is not finite is never returned (`not-finite`). The page names the
+  refusal under the field and in every result that needs it — never an overflow, never a bare "—".
 * **Rules** (`flags`) — deterministic, each with value · threshold · source · class · term: `DL-ASK-ABOVE-P75` / `DL-ASK-BELOW-P25`
   (only at a SUPPORTED level, named), `DL-COMPS-THIN`, `DL-NEGATIVE-CASHFLOW`, `DL-DSCR-BELOW-1` / `DL-DSCR-BELOW-1-2`,
   `DL-LTV-ABOVE-LIMIT`, `DL-EVIDENCE-STALE`, `DL-MODEL-UNAVAILABLE` / `DL-MODEL-LIMITED`, `DL-ASK-ABOVE-MODEL-RANGE`,
@@ -82,6 +87,9 @@ prefill only what the caller holds. Every field carries its class chip; every me
 the inputs it needs or its reason (`xpMiss`). The memo: a print view (`@media print`, `body.dl-printing`) and an `.html` download with
 every input and its class, every output, the comparables, the sources and dates, and "not an appraisal, not investment advice".
 Saved deals: `localStorage['propx:deallab:v1']` (this browser only; every access in try / catch). Language: the page's `propx:lang`.
+No internal code is ever visible text: every event state (`LIMITED_SHARE_NOT_STATED` …), reason (`type-not-modelled` …), source id and model
+tier has a Hebrew and an English label in `STR` (codes may sit in `data-*` attributes on the page; the memo strips every `data-*` attribute).
+The class chips (OFFICIAL · OBSERVED · DERIVED · MODEL · USER ASSUMPTION · MISSING) are deliberate labels.
 
 ## Tests
 
