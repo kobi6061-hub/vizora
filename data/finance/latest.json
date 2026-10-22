@@ -31,11 +31,11 @@
    }
   }
  },
- "checkedAt": "2026-10-21T13:34:59.019Z",
+ "checkedAt": "2026-10-22T10:36:14.608Z",
  "readAt": "2026-10-21T13:34:59.019Z",
  "freshness": {
   "latestPeriod": "2026-09",
-  "daysSincePeriodEnd": 20,
+  "daysSincePeriodEnd": 21,
   "state": "CURRENT",
   "basis": "CURRENT ≤ 75 days after the month · EXPECTED_REPORTING_LAG ≤ 120 · STALE beyond — the 21.10.2026 discovery read held August 2026 for every new-loan series and September 2026 for the total amount (run 39605350990) — about 3–7 weeks after the month"
  },
