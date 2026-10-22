@@ -80,10 +80,12 @@ jobs:
           set +e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          # an unchanged check is recorded at most every 12 hours; a build, a new version or a failure always
-          LAST=$(git log -1 --format=%ct -- data/txevents/national/runs.jsonl 2>/dev/null || echo 0)
+          # an unchanged check is recorded at most every 12 hours; a build, a new version or a failure always. The last record is read
+          # from runs.jsonl itself (lib/txevents/runlog.js): `git log -- <path>` in this shallow checkout answers with the branch head,
+          # which kept every unchanged check unrecorded on 21.10.2026 (runs 39596014029 · 39642748425 · 39681669082)
           STATUS=$(tail -n 1 data/txevents/national/runs.jsonl | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).status)}catch{console.log("?")}})')
-          if [ "$STATUS" = "UNCHANGED" ] && [ $(( $(date +%s) - ${LAST:-0} )) -lt 43200 ]; then echo 'Unchanged — recorded in the run history only.'; exit 0; fi
+          DECISION=$(node scripts/txevents-national.js --record-decision || echo record)
+          if [ "$DECISION" = "skip" ]; then echo 'Unchanged — recorded in the run history only.'; exit 0; fi
           git add data/txevents
           if git diff --cached --quiet; then echo 'No changes to commit.'; exit 0; fi
           git commit -q -m "National missed-deal detector: $STATUS"

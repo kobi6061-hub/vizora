@@ -1,0 +1,3123 @@
+{
+ "title": "PROPX UX baseline — 22.10.2026",
+ "commit": "406f4db (preview lane scaffold)",
+ "measuredAt": {
+  "accessibility": "2026-10-21T22:28:11.859Z",
+  "performance": "2026-10-21T23:34:23.442Z"
+ },
+ "method": {
+  "server": "scripts/kobix-dev-server.mjs on localhost:3305 (perimeter sign-in; no compression — brotli / gzip estimates are computed from the served files)",
+  "browser": "Chromium (Playwright 1.63) headless, a cold context per run; Google Fonts requests aborted for determinism",
+  "viewports": {
+   "desktop": "1440 × 900, DPR 1",
+   "phone": "390 × 844, DPR 2, touch"
+  },
+  "languages": "he (default, RTL) and en (LTR, switched with the page's own EN button after load)",
+  "performance": "medians of 6 runs per viewport × language, INTERLEAVED with the other state (before / after alternately, order flipped every run, the same dev server and data) after one unrecorded warm-up — the machine is shared with other workstreams, so separate sequential runs drift by ±20–30 %; DCL / load from Navigation Timing; FCP / LCP / long tasks (> 50 ms) from PerformanceObserver registered before any page script; heap = CDP JSHeapUsedSize after a forced GC; tx table = first row / card of #txTbl / #txCards; street report st:7900:213 (הרצל, פתח תקווה) via openGeoView: core = .sr[data-sr], full = [data-sr-part=full]",
+  "accessibility": "own Playwright checks (no axe): Chromium accessibility tree (CDP getFullAXTree) for unnamed controls / fields / images; DOM scans for ids, tabindex, svgs, labels, touch targets, type sizes; rendered text contrast of every visible text element against its effective background (WCAG AA 4.5:1, 3:1 large); a full Tab walk (focus indicator = outline-style ≠ none or a box-shadow); drawer / search keyboard behaviour; token contrast from the CSS variables in both themes"
+ },
+ "performance": {
+  "desktop-he": {
+   "runs": 6,
+   "ttfbMs": 7.1,
+   "domContentLoadedMs": 435.7,
+   "loadMs": 441,
+   "fcpMs": 262,
+   "lcpMs": 262,
+   "lcpElement": "DIV.cmd-hero-t",
+   "txTableRenderedMs": 926.2,
+   "longTasksLoad": {
+    "count": 6,
+    "totalMs": 736.5,
+    "maxMs": 223,
+    "blockingMs": 426
+   },
+   "heapUsedAfterLoadMB": 5.6,
+   "runtimeHeapUsedMB": 5.6,
+   "pageHeightPx": 22538,
+   "domNodes": 22710,
+   "layoutCount": 36.5,
+   "recalcStyleCount": 57,
+   "layoutMs": 457.9,
+   "scriptMs": 166.1,
+   "requestsAtLoad": 19,
+   "requestsSettled": 21,
+   "bytes": {
+    "all": {
+     "count": 21,
+     "transfer": 3262781,
+     "decoded": 3258765
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1330673,
+     "decoded": 1330505
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 11,
+     "transfer": 1005485,
+     "decoded": 1003046
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": null,
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 757.7,
+    "fullRenderedMs": 1072,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4,
+    "longTotalMs": 584
+   },
+   "errors": []
+  },
+  "desktop-en": {
+   "runs": 6,
+   "ttfbMs": 6.2,
+   "domContentLoadedMs": 323.1,
+   "loadMs": 325.3,
+   "fcpMs": 178,
+   "lcpMs": 178,
+   "lcpElement": "DIV.cmd-hero-t",
+   "txTableRenderedMs": 805.8,
+   "longTasksLoad": {
+    "count": 5.5,
+    "totalMs": 655,
+    "maxMs": 201.5,
+    "blockingMs": 363
+   },
+   "heapUsedAfterLoadMB": 5.6,
+   "runtimeHeapUsedMB": 5.6,
+   "pageHeightPx": 22538,
+   "domNodes": 22710,
+   "layoutCount": 37.5,
+   "recalcStyleCount": 60,
+   "layoutMs": 427.7,
+   "scriptMs": 166.8,
+   "requestsAtLoad": 19,
+   "requestsSettled": 21,
+   "bytes": {
+    "all": {
+     "count": 21,
+     "transfer": 3262781,
+     "decoded": 3258765
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1330673,
+     "decoded": 1330505
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 11,
+     "transfer": 1005485,
+     "decoded": 1003046
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": {
+    "ms": 514,
+    "longTasks": 2,
+    "longTotalMs": 539
+   },
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 515.8,
+    "fullRenderedMs": 935.6,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4,
+    "longTotalMs": 531.5
+   },
+   "errors": []
+  },
+  "phone-he": {
+   "runs": 6,
+   "ttfbMs": 9.4,
+   "domContentLoadedMs": 389.2,
+   "loadMs": 392.1,
+   "fcpMs": 176,
+   "lcpMs": 242,
+   "lcpElement": "SPAN#kpiNote.note",
+   "txTableRenderedMs": 800.2,
+   "longTasksLoad": {
+    "count": 5,
+    "totalMs": 584,
+    "maxMs": 182,
+    "blockingMs": 335
+   },
+   "heapUsedAfterLoadMB": 4.9,
+   "runtimeHeapUsedMB": 4.9,
+   "pageHeightPx": 124014,
+   "domNodes": 21790,
+   "layoutCount": 40.5,
+   "recalcStyleCount": 64.5,
+   "layoutMs": 334.9,
+   "scriptMs": 167.2,
+   "requestsAtLoad": 15,
+   "requestsSettled": 17,
+   "bytes": {
+    "all": {
+     "count": 17,
+     "transfer": 2731378,
+     "decoded": 2728235
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1330673,
+     "decoded": 1330505
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 7,
+     "transfer": 474082,
+     "decoded": 472516
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": null,
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 760.5,
+    "fullRenderedMs": 1043.9,
+    "requests": 4,
+    "transfer": 496790,
+    "decoded": 495916,
+    "longTasks": 3.5,
+    "longTotalMs": 481
+   },
+   "errors": []
+  },
+  "phone-en": {
+   "runs": 6,
+   "ttfbMs": 6.7,
+   "domContentLoadedMs": 341.8,
+   "loadMs": 344,
+   "fcpMs": 176,
+   "lcpMs": 274,
+   "lcpElement": "SPAN#kpiNote.note",
+   "txTableRenderedMs": 780.1,
+   "longTasksLoad": {
+    "count": 4.5,
+    "totalMs": 529.5,
+    "maxMs": 178.5,
+    "blockingMs": 304.5
+   },
+   "heapUsedAfterLoadMB": 4.9,
+   "runtimeHeapUsedMB": 4.9,
+   "pageHeightPx": 124014,
+   "domNodes": 21790,
+   "layoutCount": 39.5,
+   "recalcStyleCount": 68,
+   "layoutMs": 321.4,
+   "scriptMs": 163.1,
+   "requestsAtLoad": 15,
+   "requestsSettled": 17,
+   "bytes": {
+    "all": {
+     "count": 17,
+     "transfer": 2731378,
+     "decoded": 2728235
+    },
+    "document": {
+     "count": 1,
+     "transfer": 1330673,
+     "decoded": 1330505
+    },
+    "scripts": {
+     "count": 9,
+     "transfer": 926623,
+     "decoded": 925214
+    },
+    "data": {
+     "count": 7,
+     "transfer": 474082,
+     "decoded": 472516
+    },
+    "other": {
+     "count": 0,
+     "transfer": 0,
+     "decoded": 0
+    }
+   },
+   "langSwitchToEn": {
+    "ms": 412.5,
+    "longTasks": 1.5,
+    "longTotalMs": 437.5
+   },
+   "streetReport": {
+    "id": "st:7900:213",
+    "coreRenderedMs": 393.4,
+    "fullRenderedMs": 793.7,
+    "requests": 4,
+    "transfer": 496789,
+    "decoded": 495915,
+    "longTasks": 4,
+    "longTotalMs": 480.5
+   },
+   "errors": []
+  }
+ },
+ "performanceSequentialRun": {
+  "note": "the same measurements in a separate, non-interleaved session of this state (for drift reference only)",
+  "at": "2026-10-21T22:21:54.009Z",
+  "summary": {
+   "desktop-he": {
+    "runs": 5,
+    "ttfbMs": 6.7,
+    "domContentLoadedMs": 409.7,
+    "loadMs": 412.2,
+    "fcpMs": 216,
+    "lcpMs": 216,
+    "lcpElement": "DIV.cmd-hero-t",
+    "txTableRenderedMs": 847.9,
+    "longTasksLoad": {
+     "count": 6,
+     "totalMs": 704,
+     "maxMs": 189,
+     "blockingMs": 361
+    },
+    "heapUsedAfterLoadMB": 5.6,
+    "runtimeHeapUsedMB": 5.6,
+    "pageHeightPx": 22538,
+    "domNodes": 22710,
+    "layoutCount": 40,
+    "recalcStyleCount": 63,
+    "layoutMs": 390.5,
+    "scriptMs": 214.6,
+    "requestsAtLoad": 19,
+    "requestsSettled": 21,
+    "bytes": {
+     "all": {
+      "count": 21,
+      "transfer": 3262781,
+      "decoded": 3258765
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1330673,
+      "decoded": 1330505
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 11,
+      "transfer": 1005485,
+      "decoded": 1003046
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": null,
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 868.2,
+     "fullRenderedMs": 1240.2,
+     "requests": 4,
+     "transfer": 496790,
+     "decoded": 495916,
+     "longTasks": 5,
+     "longTotalMs": 691
+    },
+    "errors": []
+   },
+   "desktop-en": {
+    "runs": 5,
+    "ttfbMs": 6.3,
+    "domContentLoadedMs": 382,
+    "loadMs": 395.4,
+    "fcpMs": 216,
+    "lcpMs": 216,
+    "lcpElement": "DIV.cmd-hero-t",
+    "txTableRenderedMs": 818.3,
+    "longTasksLoad": {
+     "count": 6,
+     "totalMs": 934,
+     "maxMs": 439,
+     "blockingMs": 677
+    },
+    "heapUsedAfterLoadMB": 5.6,
+    "runtimeHeapUsedMB": 5.6,
+    "pageHeightPx": 22538,
+    "domNodes": 22710,
+    "layoutCount": 38,
+    "recalcStyleCount": 64,
+    "layoutMs": 667,
+    "scriptMs": 198.7,
+    "requestsAtLoad": 19,
+    "requestsSettled": 21,
+    "bytes": {
+     "all": {
+      "count": 21,
+      "transfer": 3262781,
+      "decoded": 3258765
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1330673,
+      "decoded": 1330505
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 11,
+      "transfer": 1005485,
+      "decoded": 1003046
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": {
+     "ms": 571.6,
+     "longTasks": 1,
+     "longTotalMs": 603
+    },
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 676.5,
+     "fullRenderedMs": 1173.4,
+     "requests": 4,
+     "transfer": 496790,
+     "decoded": 495916,
+     "longTasks": 5,
+     "longTotalMs": 570
+    },
+    "errors": []
+   },
+   "phone-he": {
+    "runs": 5,
+    "ttfbMs": 7.3,
+    "domContentLoadedMs": 378.9,
+    "loadMs": 384.2,
+    "fcpMs": 204,
+    "lcpMs": 228,
+    "lcpElement": "SPAN#kpiNote.note",
+    "txTableRenderedMs": 807.1,
+    "longTasksLoad": {
+     "count": 5,
+     "totalMs": 589,
+     "maxMs": 178,
+     "blockingMs": 339
+    },
+    "heapUsedAfterLoadMB": 4.9,
+    "runtimeHeapUsedMB": 4.9,
+    "pageHeightPx": 124014,
+    "domNodes": 21790,
+    "layoutCount": 41,
+    "recalcStyleCount": 68,
+    "layoutMs": 328.7,
+    "scriptMs": 166.7,
+    "requestsAtLoad": 15,
+    "requestsSettled": 17,
+    "bytes": {
+     "all": {
+      "count": 17,
+      "transfer": 2731378,
+      "decoded": 2728235
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1330673,
+      "decoded": 1330505
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 7,
+      "transfer": 474082,
+      "decoded": 472516
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": null,
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 643.3,
+     "fullRenderedMs": 1132.4,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 530
+    },
+    "errors": []
+   },
+   "phone-en": {
+    "runs": 5,
+    "ttfbMs": 8.4,
+    "domContentLoadedMs": 341.4,
+    "loadMs": 345,
+    "fcpMs": 172,
+    "lcpMs": 172,
+    "lcpElement": "SPAN#kpiNote.note",
+    "txTableRenderedMs": 798.4,
+    "longTasksLoad": {
+     "count": 4,
+     "totalMs": 525,
+     "maxMs": 195,
+     "blockingMs": 325
+    },
+    "heapUsedAfterLoadMB": 4.9,
+    "runtimeHeapUsedMB": 4.9,
+    "pageHeightPx": 124014,
+    "domNodes": 21790,
+    "layoutCount": 40,
+    "recalcStyleCount": 62,
+    "layoutMs": 334,
+    "scriptMs": 172.1,
+    "requestsAtLoad": 15,
+    "requestsSettled": 17,
+    "bytes": {
+     "all": {
+      "count": 17,
+      "transfer": 2731378,
+      "decoded": 2728235
+     },
+     "document": {
+      "count": 1,
+      "transfer": 1330673,
+      "decoded": 1330505
+     },
+     "scripts": {
+      "count": 9,
+      "transfer": 926623,
+      "decoded": 925214
+     },
+     "data": {
+      "count": 7,
+      "transfer": 474082,
+      "decoded": 472516
+     },
+     "other": {
+      "count": 0,
+      "transfer": 0,
+      "decoded": 0
+     }
+    },
+    "langSwitchToEn": {
+     "ms": 434.5,
+     "longTasks": 1,
+     "longTotalMs": 435
+    },
+    "streetReport": {
+     "id": "st:7900:213",
+     "coreRenderedMs": 671.3,
+     "fullRenderedMs": 984.5,
+     "requests": 4,
+     "transfer": 496789,
+     "decoded": 495915,
+     "longTasks": 4,
+     "longTotalMs": 535
+    },
+    "errors": []
+   }
+  }
+ },
+ "requestInventory_desktopHe": [
+  {
+   "url": "/",
+   "type": "Document",
+   "status": 200,
+   "transfer": 1330673,
+   "decoded": 1330505,
+   "gzipEst": 402973,
+   "brotliEst": 309996
+  },
+  {
+   "url": "/lib/table/core.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 14501,
+   "decoded": 14344,
+   "gzipEst": 5213,
+   "brotliEst": 4555
+  },
+  {
+   "url": "/lib/explain/registry.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 691360,
+   "decoded": 691202,
+   "gzipEst": 182221,
+   "brotliEst": 139850
+  },
+  {
+   "url": "/lib/geo/boundaries.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 36806,
+   "decoded": 36649,
+   "gzipEst": 7820,
+   "brotliEst": 5247
+  },
+  {
+   "url": "/lib/dd/userdocs.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 27690,
+   "decoded": 27533,
+   "gzipEst": 8835,
+   "brotliEst": 7520
+  },
+  {
+   "url": "/data/market/latest.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 12525,
+   "decoded": 12368,
+   "gzipEst": 2505,
+   "brotliEst": 1818
+  },
+  {
+   "url": "/data/cbs-sales/latest.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 142298,
+   "decoded": 142140,
+   "gzipEst": 14436,
+   "brotliEst": 8747
+  },
+  {
+   "url": "/lib/explain/attach.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 400,
+   "decoded": 245,
+   "gzipEst": 209,
+   "brotliEst": 164
+  },
+  {
+   "url": "/lib/deal/ui.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 521,
+   "decoded": 366,
+   "gzipEst": 283,
+   "brotliEst": 203
+  },
+  {
+   "url": "/lib/changes/ui.js",
+   "type": "Script",
+   "status": 200,
+   "transfer": 522,
+   "decoded": 367,
+   "gzipEst": 285,
+   "brotliEst": 203
+  },
+  {
+   "url": "/api/identity?op=status",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 275,
+   "decoded": 17,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=dossier",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 84340,
+   "decoded": 84122,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=scanGeo",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 10717,
+   "decoded": 10499,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=supply",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 39782,
+   "decoded": 39564,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=dossierIndex",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 35748,
+   "decoded": 35530,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=radar&window=7d&page=1&size=40",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 42994,
+   "decoded": 42776,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=pulse",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 47711,
+   "decoded": 47493,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=scan&limit=80",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 401821,
+   "decoded": 401602,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=revisions&window=90d",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 38877,
+   "decoded": 38659,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/gov/transactions?area=il&limit=120&_=1792625409768&months=24",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 3580,
+   "decoded": 3363,
+   "gzipEst": null,
+   "brotliEst": null
+  },
+  {
+   "url": "/api/intel?view=txLatest&limit=500&months=24",
+   "type": "Fetch",
+   "status": 200,
+   "transfer": 299640,
+   "decoded": 299421,
+   "gzipEst": null,
+   "brotliEst": null
+  }
+ ],
+ "accessibility": {
+  "desktop-he": {
+   "root": {
+    "lang": "he",
+    "dir": "rtl"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 1,
+    "placeholderOnlyName": 1,
+    "imagesSvgsExposedWithoutName": 30,
+    "svgNotHiddenWithoutLabel_dom": 30,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 2,
+    "examples": {
+     "controls": [],
+     "formFields": [
+      "combobox :: div.card.tbl-card > div#txBar.tx-bar > select#txMonths.tx-sel :: <select class=\"tx-sel\" id=\"txMonths\"><option value=\"d30\">30 ימים</option><option value=\"d90\">90 ימים</option><option value=\"m6\">6 חודשים</option><option value=\""
+     ],
+     "images": [
+      "image :: div.cmd-search-row > div.search > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"7\"></ci",
+      "image :: div.top-end > button#themeBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"",
+      "image :: div.top-end > a#logoutBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M15 3h4a1 1 0 0 1 1 1v",
+      "image :: nav#rail.rail > a.ri.on > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=",
+      "image :: nav#rail.rail > a.ri > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 4h11l5 5v11H4z\"></path><path d=\"M"
+     ]
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": false,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 479,
+    "uniqueStops": 479,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#langHe",
+     "#langEn",
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 116,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      116
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 25,
+     "firstLaunchpad": 42,
+     "firstRail": 4,
+     "main": 56
+    },
+    "launchpadReached": [
+     "dossier",
+     "txSection",
+     "prices",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 6,
+      "focusable": 6
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": null,
+      "optionsHaveRole": 3,
+      "escapeCloses": false
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8773,
+     "fails": 65,
+     "failsExclSortArrowGlyph": 29,
+     "top": [
+      {
+       "pair": "rgb(124, 139, 171) on rgb(26, 39, 69) (4.32)",
+       "n": 22,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (1.80)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(11, 19, 34) (1.80)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      },
+      {
+       "pair": "rgb(255, 255, 255) on rgb(59, 130, 246) (3.68)",
+       "n": 1,
+       "ex": [
+        "span 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (3.35)",
+       "n": 1,
+       "ex": [
+        "span#buildStamp 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8773,
+     "fails": 4109,
+     "failsExclSortArrowGlyph": 4073,
+     "top": [
+      {
+       "pair": "rgb(122, 137, 164) on rgb(243, 245, 249) (3.24)",
+       "n": 2443,
+       "ex": [
+        "span.lyr 9px",
+        "span#kpiNote 12px",
+        "p.orient 12px",
+        "span.lbl 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(255, 255, 255) (3.53)",
+       "n": 739,
+       "ex": [
+        "button#langEn 11.5px",
+        "span 9.5px",
+        "span 9.5px",
+        "span 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(243, 245, 249) (3.61)",
+       "n": 630,
+       "ex": [
+        "span.vc.mod 9.5px",
+        "b 12.5px",
+        "span.txe-nouse 9.5px",
+        "span.txe-st.RECORDED_EVENT 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(255, 255, 255) (3.94)",
+       "n": 96,
+       "ex": [
+        "span 9.5px",
+        "span 9.5px",
+        "span.vc.mod 9.5px",
+        "div.ds-ft 10px"
+       ]
+      },
+      {
+       "pair": "rgb(21, 156, 72) on rgb(255, 255, 255) (3.57)",
+       "n": 86,
+       "ex": [
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(238, 241, 247) (3.12)",
+       "n": 29,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 542,
+    "under40px": 498,
+    "under40px_notInlineTextLink": 497,
+    "under24px": 285,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 99x37",
+     "button 105x37",
+     "button#cmdScope 82x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      112
+     ],
+     [
+      "button",
+      62
+     ],
+     [
+      "button.pt-f",
+      36
+     ],
+     [
+      "button.pt-s",
+      35
+     ],
+     [
+      "summary",
+      29
+     ],
+     [
+      "button.xp.xp-why",
+      26
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pu-go",
+      21
+     ],
+     [
+      "a.pu-go",
+      19
+     ],
+     [
+      "select.ho-sel",
+      17
+     ],
+     [
+      "button.ld-link.pu-ri-g",
+      16
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8797,
+    "under10px": 1154,
+    "under11px": 2911,
+    "under12px": 4489,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      112
+     ],
+     [
+      "span.num 10.5px",
+      95
+     ],
+     [
+      "span.vc.raw 9.5px",
+      89
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ]
+    ]
+   }
+  },
+  "desktop-en": {
+   "root": {
+    "lang": "en",
+    "dir": "ltr"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 1,
+    "placeholderOnlyName": 1,
+    "imagesSvgsExposedWithoutName": 30,
+    "svgNotHiddenWithoutLabel_dom": 30,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 2,
+    "examples": {
+     "controls": [],
+     "formFields": [
+      "combobox :: div.card.tbl-card > div#txBar.tx-bar > select#txMonths.tx-sel :: <select class=\"tx-sel\" id=\"txMonths\"><option value=\"d30\">Last 30 days</option><option value=\"d90\">Last 90 days</option><option value=\"m6\">6 months</option><opti"
+     ],
+     "images": [
+      "image :: div.cmd-search-row > div.search > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"7\"></ci",
+      "image :: div.top-end > button#themeBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"",
+      "image :: div.top-end > a#logoutBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M15 3h4a1 1 0 0 1 1 1v",
+      "image :: nav#rail.rail > a.ri.on > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=",
+      "image :: nav#rail.rail > a.ri > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 4h11l5 5v11H4z\"></path><path d=\"M"
+     ]
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": false,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 479,
+    "uniqueStops": 479,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]",
+     "a.ri[table]",
+     "a.ri[compare]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 116,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      116
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 23,
+     "firstLaunchpad": 40,
+     "firstRail": 2,
+     "main": 54
+    },
+    "launchpadReached": [
+     "dossier",
+     "txSection",
+     "prices",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 6,
+      "focusable": 6
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": null,
+      "optionsHaveRole": 3,
+      "escapeCloses": false
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8765,
+     "fails": 65,
+     "failsExclSortArrowGlyph": 29,
+     "top": [
+      {
+       "pair": "rgb(124, 139, 171) on rgb(26, 39, 69) (4.32)",
+       "n": 22,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (1.80)",
+       "n": 21,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(11, 19, 34) (1.80)",
+       "n": 15,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      },
+      {
+       "pair": "rgb(255, 255, 255) on rgb(59, 130, 246) (3.68)",
+       "n": 1,
+       "ex": [
+        "span 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (3.35)",
+       "n": 1,
+       "ex": [
+        "span#buildStamp 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8765,
+     "fails": 4101,
+     "failsExclSortArrowGlyph": 4065,
+     "top": [
+      {
+       "pair": "rgb(122, 137, 164) on rgb(243, 245, 249) (3.24)",
+       "n": 2443,
+       "ex": [
+        "span.lyr 9px",
+        "span#kpiNote 12px",
+        "p.orient 12px",
+        "span.lbl 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(255, 255, 255) (3.53)",
+       "n": 731,
+       "ex": [
+        "button#langHe 11.5px",
+        "span 9.5px",
+        "span 9.5px",
+        "span 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(243, 245, 249) (3.61)",
+       "n": 630,
+       "ex": [
+        "span.vc.mod 9.5px",
+        "b 12.5px",
+        "span.txe-nouse 9.5px",
+        "span.txe-st.RECORDED_EVENT 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(255, 255, 255) (3.94)",
+       "n": 96,
+       "ex": [
+        "span 9.5px",
+        "span 9.5px",
+        "span.vc.mod 9.5px",
+        "div.ds-ft 10px"
+       ]
+      },
+      {
+       "pair": "rgb(21, 156, 72) on rgb(255, 255, 255) (3.57)",
+       "n": 86,
+       "ex": [
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(238, 241, 247) (3.12)",
+       "n": 29,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 542,
+    "under40px": 495,
+    "under40px_notInlineTextLink": 494,
+    "under24px": 281,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 120x37",
+     "button 121x37",
+     "button#cmdScope 84x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      112
+     ],
+     [
+      "button",
+      62
+     ],
+     [
+      "button.pt-f",
+      36
+     ],
+     [
+      "button.pt-s",
+      32
+     ],
+     [
+      "summary",
+      29
+     ],
+     [
+      "button.xp.xp-why",
+      26
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pu-go",
+      21
+     ],
+     [
+      "a.pu-go",
+      19
+     ],
+     [
+      "select.ho-sel",
+      17
+     ],
+     [
+      "button.ld-link.pu-ri-g",
+      16
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8789,
+    "under10px": 1154,
+    "under11px": 2911,
+    "under12px": 4481,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      112
+     ],
+     [
+      "span.num 10.5px",
+      95
+     ],
+     [
+      "span.vc.raw 9.5px",
+      89
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ]
+    ]
+   }
+  },
+  "phone-he": {
+   "root": {
+    "lang": "he",
+    "dir": "rtl"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 1,
+    "placeholderOnlyName": 1,
+    "imagesSvgsExposedWithoutName": 31,
+    "svgNotHiddenWithoutLabel_dom": 31,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 2,
+    "examples": {
+     "controls": [],
+     "formFields": [
+      "combobox :: div.card.tbl-card > div#txBar.tx-bar > select#txMonths.tx-sel :: <select class=\"tx-sel\" id=\"txMonths\"><option value=\"d30\">30 ימים</option><option value=\"d90\">90 ימים</option><option value=\"m6\">6 חודשים</option><option value=\""
+     ],
+     "images": [
+      "image :: div.cmd-search-row > div.search > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"7\"></ci",
+      "image :: div.top-end > button#themeBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"",
+      "image :: div.top-end > a#logoutBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M15 3h4a1 1 0 0 1 1 1v",
+      "image :: nav#rail.rail > a.ri.on > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=",
+      "image :: nav#rail.rail > a.ri > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 4h11l5 5v11H4z\"></path><path d=\"M"
+     ]
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": false,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 330,
+    "uniqueStops": 330,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#langHe",
+     "#langEn",
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 72,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      72
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 25,
+     "firstLaunchpad": 42,
+     "firstRail": 4,
+     "main": 56
+    },
+    "launchpadReached": [
+     "dossier",
+     "txSection",
+     "prices",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 6,
+      "focusable": 6
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": null,
+      "optionsHaveRole": 3,
+      "escapeCloses": false
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8678,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 22,
+     "top": [
+      {
+       "pair": "rgb(124, 139, 171) on rgb(26, 39, 69) (4.32)",
+       "n": 15,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (1.80)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(11, 19, 34) (1.80)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(255, 255, 255) on rgb(59, 130, 246) (3.68)",
+       "n": 1,
+       "ex": [
+        "span 9px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (3.35)",
+       "n": 1,
+       "ex": [
+        "span#buildStamp 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8678,
+     "fails": 3821,
+     "failsExclSortArrowGlyph": 3802,
+     "top": [
+      {
+       "pair": "rgb(122, 137, 164) on rgb(243, 245, 249) (3.24)",
+       "n": 2428,
+       "ex": [
+        "span.lyr 9px",
+        "span#kpiNote 12px",
+        "p.orient 12px",
+        "span.lbl 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(243, 245, 249) (3.61)",
+       "n": 630,
+       "ex": [
+        "span.vc.mod 9.5px",
+        "b 12.5px",
+        "span.txe-nouse 9.5px",
+        "span.txe-st.RECORDED_EVENT 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(255, 255, 255) (3.53)",
+       "n": 566,
+       "ex": [
+        "button#langEn 11.5px",
+        "span 9px",
+        "span 9px",
+        "span 9px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(255, 255, 255) (3.94)",
+       "n": 58,
+       "ex": [
+        "span 9px",
+        "span 9px",
+        "span.vc.mod 9.5px",
+        "div.ds-ft 10px"
+       ]
+      },
+      {
+       "pair": "rgb(21, 156, 72) on rgb(255, 255, 255) (3.57)",
+       "n": 48,
+       "ex": [
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(238, 241, 247) (3.12)",
+       "n": 22,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 361,
+    "under40px": 308,
+    "under40px_notInlineTextLink": 307,
+    "under24px": 152,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 99x37",
+     "button 105x37",
+     "button#cmdScope 82x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      68
+     ],
+     [
+      "button",
+      48
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pt-f",
+      19
+     ],
+     [
+      "select.ho-sel",
+      16
+     ],
+     [
+      "button.pt-s",
+      15
+     ],
+     [
+      "button.xp-how",
+      12
+     ],
+     [
+      "summary",
+      12
+     ],
+     [
+      "button#id",
+      11
+     ],
+     [
+      "button.xp.xp-why",
+      10
+     ],
+     [
+      "input",
+      7
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8702,
+    "under10px": 1039,
+    "under11px": 2561,
+    "under12px": 3446,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      68
+     ],
+     [
+      "span.num 10.5px",
+      63
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ],
+     [
+      "span.vc.raw 9.5px",
+      51
+     ]
+    ]
+   }
+  },
+  "phone-en": {
+   "root": {
+    "lang": "en",
+    "dir": "ltr"
+   },
+   "accessibleNames": {
+    "controlsWithoutName": 0,
+    "formFieldsWithoutName": 1,
+    "placeholderOnlyName": 1,
+    "imagesSvgsExposedWithoutName": 31,
+    "svgNotHiddenWithoutLabel_dom": 31,
+    "imgWithoutAlt": 0,
+    "fieldsWithoutLabel_dom": 2,
+    "examples": {
+     "controls": [],
+     "formFields": [
+      "combobox :: div.card.tbl-card > div#txBar.tx-bar > select#txMonths.tx-sel :: <select class=\"tx-sel\" id=\"txMonths\"><option value=\"d30\">Last 30 days</option><option value=\"d90\">Last 90 days</option><option value=\"m6\">6 months</option><opti"
+     ],
+     "images": [
+      "image :: div.cmd-search-row > div.search > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"7\"></ci",
+      "image :: div.top-end > button#themeBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"",
+      "image :: div.top-end > a#logoutBtn.tool-btn > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M15 3h4a1 1 0 0 1 1 1v",
+      "image :: nav#rail.rail > a.ri.on > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=",
+      "image :: nav#rail.rail > a.ri > svg :: <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 4h11l5 5v11H4z\"></path><path d=\"M"
+     ]
+    }
+   },
+   "duplicateIds": [],
+   "positiveTabindex": [],
+   "skipLink": false,
+   "mainLandmark": true,
+   "keyboard": {
+    "tabStops": 330,
+    "uniqueStops": 330,
+    "wrapsAround_noTrap": true,
+    "firstStops": [
+     "#themeBtn",
+     "#logoutBtn",
+     "a.ri[overview]",
+     "a.ri[dossier]",
+     "a.ri[pulse]",
+     "a.ri[changes]",
+     "a.ri[txSection]",
+     "a.ri[prices]",
+     "a.ri[dealLab]",
+     "a.ri[map]",
+     "a.ri[table]",
+     "a.ri[compare]"
+    ],
+    "stopsWithoutVisibleFocusIndicator": 72,
+    "withoutIndicatorBy": [
+     [
+      "button.xp",
+      72
+     ]
+    ],
+    "tabPressesTo": {
+     "search": 23,
+     "firstLaunchpad": 40,
+     "firstRail": 2,
+     "main": 54
+    },
+    "launchpadReached": [
+     "dossier",
+     "txSection",
+     "prices",
+     "land",
+     "pulse",
+     "sources"
+    ],
+    "railReached": [
+     "overview",
+     "dossier",
+     "pulse",
+     "changes",
+     "txSection",
+     "prices",
+     "dealLab",
+     "map",
+     "table",
+     "compare",
+     "insightsSec",
+     "intel",
+     "housing",
+     "land",
+     "guide",
+     "sources"
+    ],
+    "focusableTargets": {
+     "rail": {
+      "total": 21,
+      "focusable": 21
+     },
+     "launchpad": {
+      "total": 6,
+      "focusable": 6
+     },
+     "search": {
+      "total": 1,
+      "focusable": 1
+     },
+     "rankTabs": {
+      "total": 0,
+      "focusable": 0
+     },
+     "intelTabs": {
+      "total": 6,
+      "focusable": 6
+     },
+     "modeToggle": {
+      "total": 2,
+      "focusable": 2
+     },
+     "lang": {
+      "total": 2,
+      "focusable": 2
+     }
+    },
+    "drawersAndSearch": {
+     "rowFocusable": true,
+     "focusInside": true,
+     "tabStaysInside": true,
+     "escapeCloses": true,
+     "focusReturned": true,
+     "land": {
+      "focusInside": true,
+      "escapeCloses": true
+     },
+     "search": {
+      "expanded": "true",
+      "activeDescendant": null,
+      "optionsHaveRole": 3,
+      "escapeCloses": false
+     }
+    }
+   },
+   "renderedTextContrast_AA": {
+    "dark": {
+     "checked": 8670,
+     "fails": 41,
+     "failsExclSortArrowGlyph": 22,
+     "top": [
+      {
+       "pair": "rgb(124, 139, 171) on rgb(26, 39, 69) (4.32)",
+       "n": 15,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (1.80)",
+       "n": 14,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(143, 163, 198) on rgb(14, 26, 51) (3.41)",
+       "n": 5,
+       "ex": [
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px",
+        "span.k 8px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(11, 19, 34) (1.80)",
+       "n": 5,
+       "ex": [
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px",
+        "span.pt-a 10px"
+       ]
+      },
+      {
+       "pair": "rgb(255, 255, 255) on rgb(59, 130, 246) (3.68)",
+       "n": 1,
+       "ex": [
+        "span 9px"
+       ]
+      },
+      {
+       "pair": "rgb(124, 139, 171) on rgb(18, 29, 52) (3.35)",
+       "n": 1,
+       "ex": [
+        "span#buildStamp 10px"
+       ]
+      }
+     ]
+    },
+    "light": {
+     "checked": 8670,
+     "fails": 3813,
+     "failsExclSortArrowGlyph": 3794,
+     "top": [
+      {
+       "pair": "rgb(122, 137, 164) on rgb(243, 245, 249) (3.24)",
+       "n": 2428,
+       "ex": [
+        "span.lyr 9px",
+        "span#kpiNote 12px",
+        "p.orient 12px",
+        "span.lbl 11.5px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(243, 245, 249) (3.61)",
+       "n": 630,
+       "ex": [
+        "span.vc.mod 9.5px",
+        "b 12.5px",
+        "span.txe-nouse 9.5px",
+        "span.txe-st.RECORDED_EVENT 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(255, 255, 255) (3.53)",
+       "n": 558,
+       "ex": [
+        "button#langHe 11.5px",
+        "span 9px",
+        "span 9px",
+        "span 9px"
+       ]
+      },
+      {
+       "pair": "rgb(164, 121, 28) on rgb(255, 255, 255) (3.94)",
+       "n": 58,
+       "ex": [
+        "span 9px",
+        "span 9px",
+        "span.vc.mod 9.5px",
+        "div.ds-ft 10px"
+       ]
+      },
+      {
+       "pair": "rgb(21, 156, 72) on rgb(255, 255, 255) (3.57)",
+       "n": 48,
+       "ex": [
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px",
+        "span.vc.raw 9.5px"
+       ]
+      },
+      {
+       "pair": "rgb(122, 137, 164) on rgb(238, 241, 247) (3.12)",
+       "n": 22,
+       "ex": [
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px",
+        "button 11.5px"
+       ]
+      }
+     ]
+    }
+   },
+   "horizontalOverflow": {
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflow": false
+   },
+   "touchTargets": {
+    "controls": 361,
+    "under40px": 304,
+    "under40px_notInlineTextLink": 303,
+    "under24px": 152,
+    "headerRailCommandBarUnder40": [
+     "button#langHe 35x26",
+     "button#langEn 35x26",
+     "button#themeBtn 32x32",
+     "a#logoutBtn 32x32",
+     "button 120x37",
+     "button 121x37",
+     "button#cmdScope 84x31",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16",
+     "button.xp.tp-xp 16x16"
+    ],
+    "topGroupsUnder40": [
+     [
+      "button.xp",
+      68
+     ],
+     [
+      "button",
+      48
+     ],
+     [
+      "input#id",
+      26
+     ],
+     [
+      "input.ci-in.sm",
+      22
+     ],
+     [
+      "button.pt-f",
+      19
+     ],
+     [
+      "select.ho-sel",
+      16
+     ],
+     [
+      "button.pt-s",
+      13
+     ],
+     [
+      "button.xp-how",
+      12
+     ],
+     [
+      "button#id",
+      11
+     ],
+     [
+      "summary",
+      10
+     ],
+     [
+      "button.xp.xp-why",
+      10
+     ],
+     [
+      "input",
+      7
+     ]
+    ]
+   },
+   "typeSizes": {
+    "textElements": 8694,
+    "under10px": 1039,
+    "under11px": 2561,
+    "under12px": 3438,
+    "topUnder11": [
+     [
+      "span.txe-src 10.5px",
+      532
+     ],
+     [
+      "span.tx-chip 10.5px",
+      484
+     ],
+     [
+      "span.txe-nouse 9.5px",
+      298
+     ],
+     [
+      "span.txe-st.LIMITED_SHARE_NOT_STATED 9.5px",
+      259
+     ],
+     [
+      "span.txe-st.PRICED_IN_STATISTICS 9.5px",
+      177
+     ],
+     [
+      "button.xp 10px",
+      68
+     ],
+     [
+      "span.num 10.5px",
+      63
+     ],
+     [
+      "div.k 10.5px",
+      58
+     ],
+     [
+      "span.vc.na 9.5px",
+      54
+     ],
+     [
+      "span.vc.raw 9.5px",
+      51
+     ]
+    ]
+   }
+  }
+ },
+ "tokenContrast": {
+  "light": {
+   "pairs": [
+    {
+     "fg": "--ink",
+     "bg": "--paper",
+     "fgv": "#101b30",
+     "bgv": "#f3f5f9",
+     "ratio": 15.75,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel",
+     "fgv": "#101b30",
+     "bgv": "#ffffff",
+     "ratio": 17.19,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel-2",
+     "fgv": "#101b30",
+     "bgv": "#eef1f7",
+     "ratio": 15.2,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--tint",
+     "fgv": "#101b30",
+     "bgv": "#f6f8fc",
+     "ratio": 16.17,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--paper",
+     "fgv": "#43536f",
+     "bgv": "#f3f5f9",
+     "ratio": 7.11,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel",
+     "fgv": "#43536f",
+     "bgv": "#ffffff",
+     "ratio": 7.76,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel-2",
+     "fgv": "#43536f",
+     "bgv": "#eef1f7",
+     "ratio": 6.86,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--tint",
+     "fgv": "#43536f",
+     "bgv": "#f6f8fc",
+     "ratio": 7.3,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--paper",
+     "fgv": "#7a89a4",
+     "bgv": "#f3f5f9",
+     "ratio": 3.24,
+     "aa": false
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel",
+     "fgv": "#7a89a4",
+     "bgv": "#ffffff",
+     "ratio": 3.53,
+     "aa": false
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel-2",
+     "fgv": "#7a89a4",
+     "bgv": "#eef1f7",
+     "ratio": 3.12,
+     "aa": false
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--tint",
+     "fgv": "#7a89a4",
+     "bgv": "#f6f8fc",
+     "ratio": 3.32,
+     "aa": false
+    },
+    {
+     "fg": "--accent",
+     "bg": "--paper",
+     "fgv": "#2563eb",
+     "bgv": "#f3f5f9",
+     "ratio": 4.74,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel",
+     "fgv": "#2563eb",
+     "bgv": "#ffffff",
+     "ratio": 5.17,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel-2",
+     "fgv": "#2563eb",
+     "bgv": "#eef1f7",
+     "ratio": 4.57,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--tint",
+     "fgv": "#2563eb",
+     "bgv": "#f6f8fc",
+     "ratio": 4.86,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--paper",
+     "fgv": "#1d4fc4",
+     "bgv": "#f3f5f9",
+     "ratio": 6.48,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel",
+     "fgv": "#1d4fc4",
+     "bgv": "#ffffff",
+     "ratio": 7.08,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel-2",
+     "fgv": "#1d4fc4",
+     "bgv": "#eef1f7",
+     "ratio": 6.25,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--tint",
+     "fgv": "#1d4fc4",
+     "bgv": "#f6f8fc",
+     "ratio": 6.66,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--paper",
+     "fgv": "#0f7c3f",
+     "bgv": "#f3f5f9",
+     "ratio": 4.84,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel",
+     "fgv": "#0f7c3f",
+     "bgv": "#ffffff",
+     "ratio": 5.28,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel-2",
+     "fgv": "#0f7c3f",
+     "bgv": "#eef1f7",
+     "ratio": 4.67,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--tint",
+     "fgv": "#0f7c3f",
+     "bgv": "#f6f8fc",
+     "ratio": 4.97,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--paper",
+     "fgv": "#d13438",
+     "bgv": "#f3f5f9",
+     "ratio": 4.52,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel",
+     "fgv": "#d13438",
+     "bgv": "#ffffff",
+     "ratio": 4.93,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel-2",
+     "fgv": "#d13438",
+     "bgv": "#eef1f7",
+     "ratio": 4.36,
+     "aa": false
+    },
+    {
+     "fg": "--down",
+     "bg": "--tint",
+     "fgv": "#d13438",
+     "bgv": "#f6f8fc",
+     "ratio": 4.64,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--paper",
+     "fgv": "#a4791c",
+     "bgv": "#f3f5f9",
+     "ratio": 3.61,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel",
+     "fgv": "#a4791c",
+     "bgv": "#ffffff",
+     "ratio": 3.94,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel-2",
+     "fgv": "#a4791c",
+     "bgv": "#eef1f7",
+     "ratio": 3.48,
+     "aa": false
+    },
+    {
+     "fg": "--brass",
+     "bg": "--tint",
+     "fgv": "#a4791c",
+     "bgv": "#f6f8fc",
+     "ratio": 3.71,
+     "aa": false
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--paper",
+     "fgv": "#159c48",
+     "bgv": "#f3f5f9",
+     "ratio": 3.27,
+     "aa": false
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel",
+     "fgv": "#159c48",
+     "bgv": "#ffffff",
+     "ratio": 3.57,
+     "aa": false
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel-2",
+     "fgv": "#159c48",
+     "bgv": "#eef1f7",
+     "ratio": 3.16,
+     "aa": false
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--tint",
+     "fgv": "#159c48",
+     "bgv": "#f6f8fc",
+     "ratio": 3.36,
+     "aa": false
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--paper",
+     "fgv": "#b07f0a",
+     "bgv": "#f3f5f9",
+     "ratio": 3.27,
+     "aa": false
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel",
+     "fgv": "#b07f0a",
+     "bgv": "#ffffff",
+     "ratio": 3.57,
+     "aa": false
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel-2",
+     "fgv": "#b07f0a",
+     "bgv": "#eef1f7",
+     "ratio": 3.15,
+     "aa": false
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--tint",
+     "fgv": "#b07f0a",
+     "bgv": "#f6f8fc",
+     "ratio": 3.36,
+     "aa": false
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--paper",
+     "fgv": "#c25419",
+     "bgv": "#f3f5f9",
+     "ratio": 4.2,
+     "aa": false
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel",
+     "fgv": "#c25419",
+     "bgv": "#ffffff",
+     "ratio": 4.59,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel-2",
+     "fgv": "#c25419",
+     "bgv": "#eef1f7",
+     "ratio": 4.06,
+     "aa": false
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--tint",
+     "fgv": "#c25419",
+     "bgv": "#f6f8fc",
+     "ratio": 4.32,
+     "aa": false
+    },
+    {
+     "fg": "--navy",
+     "bg": "--paper",
+     "fgv": "#12294f",
+     "bgv": "#f3f5f9",
+     "ratio": 13.22,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel",
+     "fgv": "#12294f",
+     "bgv": "#ffffff",
+     "ratio": 14.43,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel-2",
+     "fgv": "#12294f",
+     "bgv": "#eef1f7",
+     "ratio": 12.75,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--tint",
+     "fgv": "#12294f",
+     "bgv": "#f6f8fc",
+     "ratio": 13.57,
+     "aa": true
+    }
+   ],
+   "failsAA": 20,
+   "mainTextFails": [
+    "--ink-3 #7a89a4 on --paper #f3f5f9: 3.24",
+    "--ink-3 #7a89a4 on --panel #ffffff: 3.53",
+    "--ink-3 #7a89a4 on --panel-2 #eef1f7: 3.12",
+    "--ink-3 #7a89a4 on --tint #f6f8fc: 3.32"
+   ]
+  },
+  "dark": {
+   "pairs": [
+    {
+     "fg": "--ink",
+     "bg": "--paper",
+     "fgv": "#eef2fa",
+     "bgv": "#0b1322",
+     "ratio": 16.56,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel",
+     "fgv": "#eef2fa",
+     "bgv": "#121d34",
+     "ratio": 14.96,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--panel-2",
+     "fgv": "#eef2fa",
+     "bgv": "#1a2745",
+     "ratio": 13.18,
+     "aa": true
+    },
+    {
+     "fg": "--ink",
+     "bg": "--tint",
+     "fgv": "#eef2fa",
+     "bgv": "#101b31",
+     "ratio": 15.3,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--paper",
+     "fgv": "#b3c0d8",
+     "bgv": "#0b1322",
+     "ratio": 10.13,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel",
+     "fgv": "#b3c0d8",
+     "bgv": "#121d34",
+     "ratio": 9.15,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--panel-2",
+     "fgv": "#b3c0d8",
+     "bgv": "#1a2745",
+     "ratio": 8.06,
+     "aa": true
+    },
+    {
+     "fg": "--ink-2",
+     "bg": "--tint",
+     "fgv": "#b3c0d8",
+     "bgv": "#101b31",
+     "ratio": 9.36,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--paper",
+     "fgv": "#7c8bab",
+     "bgv": "#0b1322",
+     "ratio": 5.43,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel",
+     "fgv": "#7c8bab",
+     "bgv": "#121d34",
+     "ratio": 4.91,
+     "aa": true
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--panel-2",
+     "fgv": "#7c8bab",
+     "bgv": "#1a2745",
+     "ratio": 4.32,
+     "aa": false
+    },
+    {
+     "fg": "--ink-3",
+     "bg": "--tint",
+     "fgv": "#7c8bab",
+     "bgv": "#101b31",
+     "ratio": 5.02,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--paper",
+     "fgv": "#3b82f6",
+     "bgv": "#0b1322",
+     "ratio": 5.05,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel",
+     "fgv": "#3b82f6",
+     "bgv": "#121d34",
+     "ratio": 4.56,
+     "aa": true
+    },
+    {
+     "fg": "--accent",
+     "bg": "--panel-2",
+     "fgv": "#3b82f6",
+     "bgv": "#1a2745",
+     "ratio": 4.02,
+     "aa": false
+    },
+    {
+     "fg": "--accent",
+     "bg": "--tint",
+     "fgv": "#3b82f6",
+     "bgv": "#101b31",
+     "ratio": 4.67,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--paper",
+     "fgv": "#7fabf7",
+     "bgv": "#0b1322",
+     "ratio": 8.02,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel",
+     "fgv": "#7fabf7",
+     "bgv": "#121d34",
+     "ratio": 7.25,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--panel-2",
+     "fgv": "#7fabf7",
+     "bgv": "#1a2745",
+     "ratio": 6.39,
+     "aa": true
+    },
+    {
+     "fg": "--accent-deep",
+     "bg": "--tint",
+     "fgv": "#7fabf7",
+     "bgv": "#101b31",
+     "ratio": 7.42,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--paper",
+     "fgv": "#4ade80",
+     "bgv": "#0b1322",
+     "ratio": 10.66,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel",
+     "fgv": "#4ade80",
+     "bgv": "#121d34",
+     "ratio": 9.63,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--panel-2",
+     "fgv": "#4ade80",
+     "bgv": "#1a2745",
+     "ratio": 8.49,
+     "aa": true
+    },
+    {
+     "fg": "--up",
+     "bg": "--tint",
+     "fgv": "#4ade80",
+     "bgv": "#101b31",
+     "ratio": 9.85,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--paper",
+     "fgv": "#f87171",
+     "bgv": "#0b1322",
+     "ratio": 6.72,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel",
+     "fgv": "#f87171",
+     "bgv": "#121d34",
+     "ratio": 6.07,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--panel-2",
+     "fgv": "#f87171",
+     "bgv": "#1a2745",
+     "ratio": 5.35,
+     "aa": true
+    },
+    {
+     "fg": "--down",
+     "bg": "--tint",
+     "fgv": "#f87171",
+     "bgv": "#101b31",
+     "ratio": 6.21,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--paper",
+     "fgv": "#d4af37",
+     "bgv": "#0b1322",
+     "ratio": 8.83,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel",
+     "fgv": "#d4af37",
+     "bgv": "#121d34",
+     "ratio": 7.98,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--panel-2",
+     "fgv": "#d4af37",
+     "bgv": "#1a2745",
+     "ratio": 7.03,
+     "aa": true
+    },
+    {
+     "fg": "--brass",
+     "bg": "--tint",
+     "fgv": "#d4af37",
+     "bgv": "#101b31",
+     "ratio": 8.16,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--paper",
+     "fgv": "#4ade80",
+     "bgv": "#0b1322",
+     "ratio": 10.66,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel",
+     "fgv": "#4ade80",
+     "bgv": "#121d34",
+     "ratio": 9.63,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--panel-2",
+     "fgv": "#4ade80",
+     "bgv": "#1a2745",
+     "ratio": 8.49,
+     "aa": true
+    },
+    {
+     "fg": "--conf-high",
+     "bg": "--tint",
+     "fgv": "#4ade80",
+     "bgv": "#101b31",
+     "ratio": 9.85,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--paper",
+     "fgv": "#e2b93b",
+     "bgv": "#0b1322",
+     "ratio": 9.94,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel",
+     "fgv": "#e2b93b",
+     "bgv": "#121d34",
+     "ratio": 8.98,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--panel-2",
+     "fgv": "#e2b93b",
+     "bgv": "#1a2745",
+     "ratio": 7.91,
+     "aa": true
+    },
+    {
+     "fg": "--conf-med",
+     "bg": "--tint",
+     "fgv": "#e2b93b",
+     "bgv": "#101b31",
+     "ratio": 9.19,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--paper",
+     "fgv": "#f09454",
+     "bgv": "#0b1322",
+     "ratio": 8.02,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel",
+     "fgv": "#f09454",
+     "bgv": "#121d34",
+     "ratio": 7.25,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--panel-2",
+     "fgv": "#f09454",
+     "bgv": "#1a2745",
+     "ratio": 6.39,
+     "aa": true
+    },
+    {
+     "fg": "--conf-low",
+     "bg": "--tint",
+     "fgv": "#f09454",
+     "bgv": "#101b31",
+     "ratio": 7.41,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--paper",
+     "fgv": "#8fb1e8",
+     "bgv": "#0b1322",
+     "ratio": 8.51,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel",
+     "fgv": "#8fb1e8",
+     "bgv": "#121d34",
+     "ratio": 7.69,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--panel-2",
+     "fgv": "#8fb1e8",
+     "bgv": "#1a2745",
+     "ratio": 6.78,
+     "aa": true
+    },
+    {
+     "fg": "--navy",
+     "bg": "--tint",
+     "fgv": "#8fb1e8",
+     "bgv": "#101b31",
+     "ratio": 7.87,
+     "aa": true
+    }
+   ],
+   "failsAA": 2,
+   "mainTextFails": [
+    "--ink-3 #7c8bab on --panel-2 #1a2745: 4.32"
+   ]
+  }
+ },
+ "rail": {
+  "desktop1440x900": {
+   "items": 21,
+   "belowViewport": 7,
+   "which": [
+    "housing",
+    "land",
+    "railAltaris",
+    "guide",
+    "sources",
+    "themeBtnRail",
+    "logout"
+   ],
+   "railScrolls": false,
+   "unreachableByPointer": 7
+  }
+ },
+ "screenshots": "/tmp/claude-0/-home-user-vizora/22cd8799-31cf-5ba9-b976-ea154f840f6e/scratchpad/shots/ux/before/ (not in the repository)"
+}
