@@ -80,3 +80,27 @@ The scaffolding (`406f4db`) provides:
 - Full suite on `b627476`: 70 of 70 files pass.
 - `scripts/prod-acceptance.mjs` now also checks the new features when the deployed page carries them: items 15 (Deal Lab) and 16 (What Changed Here), the 8-tile launchpad, and the ⓘ dialog by keyboard.
 - A local run against the integrated build passed 111 checks and failed 1. The failure was the check's own sum over the Deal Lab's unused levels, which carry only their universe; the check is fixed. The data reconciles: 114 = 23 + 91.
+- The Preview of `6122815` deployed (`kobixrealestate-4vxl61x80`). The extended acceptance, run against Production (old build), passed (run 39697159538), which shows the checks tolerate a build without the new features.
+- `d6c998e`: workstream F, QA and security, is merged.
+
+  | Area | Result |
+  |---|---|
+  | Formulas | 264,600 comparisons against independent references, 0 mismatches |
+  | Data truth | Deal Lab: 12 apartments on 8 streets, 0 defects. Change feed: 39 / 39 transaction counts reconcile |
+  | Security | 1,174 hostile requests, 0 server errors, 0 leaks |
+  | Function size | +0.30 MB (208.13 of 250 MB) |
+  | Fixes made | Annuity at a tiny rate; the duplicate count per period; `loc:0` now answers 404 |
+
+  Open findings:
+  - **Major.** The change feed counted a source's first ingestion as "newly observed".
+  - **Minor.** Focus was lost on re-render, raw codes appeared, the feed loaded lazily too soon, and raw error text reached the user.
+- Integrator decision: a source's first ingestion is a baseline, never "newly observed". The change feed's own rule says so.
+- `48db2a9`: the street report's plan stages read as words in English.
+- `61ee4f6`: the Deal Lab fixes. Every state, reason and source has a human label; money inputs are bounded and a refusal is named.
+- `d389ac9`: the What Changed Here fixes.
+  - **Baseline.** Haifa, 30 days: 2,131 → 0 newly observed. Israel: 29,079 → 0.
+  - **Focus.** Kept on re-render.
+  - **Labels.** Every code has a human label.
+  - **Loading.** The feed loads only when the section is on screen.
+  - **Errors.** A 500 answers with a generic message.
+- `ba69bc9`: the Deal Lab hand-off jumps through the rail link. Before, the phone landed about 9,000 px short.
