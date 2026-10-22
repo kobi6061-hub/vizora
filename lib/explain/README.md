@@ -66,3 +66,45 @@ one place every string is born (`bi`) — a Hebrew prefix hyphen (ב-12) is neve
 formatted value (the dossier and developer-intelligence signals carry `valueLabel`; never a raw fraction), labels every source
 segment, and carries the dossier's evidence quality on dossier signals; the page's evidence pointer is a `<bdi>`; the runtime
 map is pruned; ALTARIS's popover follows the module language (he RTL / en LTR). Gates in `test/explain.test.js`.
+
+## Explain Everything (21.10.2026) — plain words, one dialog, every label
+
+**Plain-language layer.** Every term carries `simple` (one or two everyday sentences, no jargon) and `example` (always opens
+"For example" / "לדוגמה", illustrative round numbers — never a real current figure; a live value is shown only from the data
+at render time). `LEGEND` and `SECTIONS` entries carry `simple`. `level1()` returns `simple`; `level2()` adds `simple` + `example`.
+
+**The dialog** (`xpOpen` in `index.html`, one `#xpPop`): title + class chip → *In simple words* → *Why it matters* → *How it's
+calculated* (formula · method · inputs) → *Example* → *Source & date* → *Limitations* + *Do not read it as* → a collapsed
+*Full methodology (for analysts)* (the level-2 fields). Source & date reads the Trust catalogue once (`view=sources`, cached;
+the Trust Center's own copy when loaded): latest observation at the source + latest PROPX check + its state; a PROPX module
+says so; offline / failed → the registry's own freshness text — never a made-up date. `role="dialog"` labelled by its title,
+focus moves in and returns to the ⓘ, Escape closes only the explanation (a drawer under it stays open), Tab cycles inside,
+under 760 px a bottom sheet with a 44 px close button and a scrim, `dir` / `lang` follow the page, light + dark. Every ⓘ is
+a `<button>` named "Explain: <title>" / "הסבר: <title>".
+
+**Every label.** `ANCHORS` (registry, between `@anchors:begin` / `@anchors:end`) maps each page label to a term:
+`i:<data-i key>`, `TABLE.path` (a string-table entry the renderers print — `I18N.medPrice`, `SRT.cols.3`), or
+`lit:<en>|<he>`; an optional scope (a CSS selector the label must sit inside) separates the same words with different
+meanings. `lib/explain/attach.js` (loaded after the main script, inlined offline) adds the ⓘ to every anchored label not
+already explained in place: markup by `data-i`, text labels by their words in the current language inside a label
+container (th · h2–h5 · summary · dt · .l / .k / .lbl · freshness facts · DD rows · recency cells); the closest scope wins
+and a tie between different terms attaches nothing. Debounced `MutationObserver` (drawers, tables, the street report),
+idempotent, re-run on `propx:lang`; it skips `#xpPop`, the rail, the workspace, `#dealLab` and `#changes` (their own modules).
+
+**Measured coverage.** `node scripts/explain-coverage.js` extracts every label site from `index.html` by explicit rules
+(R1 markup `data-i` · R2 table heads · R3 column configs + factories · R4 KPI cards · R5 label helpers — a top-level helper
+for every call · R6 headings · R7 summaries · R8 `<dt>`), resolves each to its string-table entry, classifies it MEANINGFUL
+or CHROME by an explicit reviewed list (`@chrome:begin` … — reasons nav · action · furniture · heading · descriptor · prose
+· workspace · legend · field) and writes `lib/explain/coverage.json`: coverage in total and by section, INLINE / ANCHOR /
+ORIENTATION, the baseline without the attacher, every label with its term, term completeness. 21.10.2026: 960 / 960
+meaningful labels (1,268 measured; baseline without the attacher 172, 17.9 %); 262 / 262 terms complete. Not in the
+universe (stated): form-input labels, button texts, sentences and notes, status messages, lib/deal/ui.js, lib/changes/ui.js
+and ALTARIS.
+
+**Gates** (`test/explain-coverage.test.js`): coverage ≥ 95 % and no label that was covered is uncovered; the committed
+`coverage.json` is not stale; every term complete (`simple` ≤ 360 chars, a labelled example, no real figures from a
+deny-list, no recommendation wording, Hebrew sign isolation); every anchor targets a term, a label the page shows and is not
+CHROME; every text anchor resolves in both languages (computed labels by a ≥ 3-character prefix); the same words with
+different terms carry different scopes; the dialog's order, focus, Escape, Tab, bottom sheet and naming; the attacher's
+contract. **When a module adds a page label or a term**: give the term `simple` + `example`, decide the label (anchor or
+CHROME), and run `node scripts/explain-coverage.js`.

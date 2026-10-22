@@ -5,7 +5,9 @@
 // district — high-volume, low-volume, streets with official synonyms, streets with few known addresses, streets reached through parcel
 // recovery; new construction and older housing by the register's build year. Measured: the latest event per source and of the union,
 // events the GovMap layer holds that the register copy does not (source-only), duplicate rate, unresolved identity, events recovered
-// through the parcel — and MISSED: GovMap rows of the locality / street that the union does not surface (must be 0).
+// through the parcel — and MISSED: GovMap rows of the locality / street that the union does not surface (must be 0). A GovMap row FOLDED
+// into a register event the same read shows (the register's deals under unmapped settlement names, placed by parcel — lib/txevents/history.js
+// fold) is that deal's source evidence: counted as `folded`, never as missed (lib/txevents/kit.js surfaceAccount, 22.10.2026).
 // Population group (e.g. Arab localities) is NOT stratified: PROPX holds no official population-group field for a locality.
 
 'use strict';
@@ -16,6 +18,7 @@ const crypto = require('node:crypto');
 const TX = require('../lib/txevents');
 const EV = require('../lib/streets/evidence');
 const RECENT = require('../lib/recent/read');
+const KIT = require('../lib/txevents/kit');
 
 const ROOT = path.join(__dirname, '..');
 const today = process.argv.includes('--today') ? process.argv[process.argv.indexOf('--today') + 1] : new Date().toISOString().slice(0, 10);
@@ -33,19 +36,25 @@ const codeSet = new Set(fs.readdirSync(EV.DIR).filter((x) => /^\d+\.json$/.test(
 for (const byCode of [L.layer && L.layer.byCode, nat && nat.byCode]) for (const k of Object.keys(byCode || {})) codeSet.add(Number(k));
 const codes = [...codeSet].filter((c) => Number.isFinite(c) && c > 0).sort((a, b) => a - b);
 const locs = [];
+/* a row's event id by the union's own rule (lib/txevents/index.js gmEvent: the deal id, else the object id) */
 const gmRowsOf = (code) => {
   const ids = [];
-  if (L.layer) for (const i of L.layer.byCode[String(code)] || []) { const r = L.layer.rows[i]; ids.push({ id: `gm:${r[1]}`, streetCode: r[15], cityCode: r[11] }); }
-  if (nat) for (const i of nat.byCode[String(code)] || []) { const r = nat.rows[i]; ids.push({ id: `gm:${r[1] || 'o' + r[0]}`, streetCode: r[15], cityCode: r[11] }); }
+  if (L.layer) for (const i of L.layer.byCode[String(code)] || []) { const r = L.layer.rows[i]; ids.push({ id: KIT.gmIdOf({ dealId: r[1], oid: r[0] }), streetCode: r[15], cityCode: r[11] }); }
+  if (nat) for (const i of nat.byCode[String(code)] || []) { const r = nat.rows[i]; ids.push({ id: KIT.gmIdOf({ dealId: r[1], oid: r[0] }), streetCode: r[15], cityCode: r[11] }); }
   return ids;
 };
+/* MISSED = a GovMap row that is neither an event of the read nor FOLDED into a register event the read shows (lib/txevents/kit.js
+   surfaceAccount) — a folded row is that register deal's source evidence, never a lost deal */
+const foldsByCode = new Map();
+const foldsOf = (code) => { if (!foldsByCode.has(code)) foldsByCode.set(code, KIT.foldsOf(TX.layerEventsOf(code, S).evidence)); return foldsByCode.get(code); };
 for (const code of codes) {
   const q = TX.query({ code, all: true, unlimited: true, today });
   const ev = q.events, counted = ev.filter((e) => e.state !== 'POSSIBLE_DUPLICATE');
   const reg = counted.filter((e) => e.source === 'register'), gm = counted.filter((e) => e.source === 'govmap');
   const ids = new Set(ev.map((e) => e.id));
   const gmRows = gmRowsOf(code);
-  const missed = gmRows.filter((r) => !ids.has(r.id)).length;
+  const account = KIT.surfaceAccount(gmRows.map((r) => r.id), ids, foldsOf(code));
+  const missed = account.missed, folded = account.folded;
   const acc = natAcc.byCode[String(code)] || {};
   const rows = Object.values(acc).reduce((a, b) => a + b, 0);
   const dup = (acc.IN_REGISTER || 0) + (acc.IN_REGISTER_OTHER_UNIT || 0) + (acc.DUPLICATE_IN_SOURCE || 0);
@@ -53,12 +62,13 @@ for (const code of codes) {
   locs.push({ code, name: loc ? loc.he : null, district: loc ? loc.district || 'unknown' : 'unknown', registerEvents: reg.length, govmapOnly: gm.length,
     possibleDuplicates: ev.length - counted.length, conflicts: ev.filter((e) => e.conflict).length,
     latest: { union: max(counted.map((e) => e.date)), register: max(reg.map((e) => e.date)), govmap: max(gm.map((e) => e.date)) },
-    govmapRows: rows, duplicateRate: rows ? Math.round((dup / rows) * 1000) / 10 : null, missed,
+    govmapRows: rows, duplicateRate: rows ? Math.round((dup / rows) * 1000) / 10 : null, missed, folded, ...(missed ? { missedIds: account.missedIds } : {}),
     probableNew: reg.filter((e) => e.newness === 'probable_new').length, olderHousing: reg.filter((e) => e.yearBuilt && e.yearBuilt <= 1980).length });
 }
 const sizeOf = (n) => (n >= 5000 ? 'large' : n >= 1000 ? 'medium' : 'small');
 const agg = (xs) => ({ localities: xs.length, registerEvents: xs.reduce((a, x) => a + x.registerEvents, 0), govmapOnly: xs.reduce((a, x) => a + x.govmapOnly, 0),
   possibleDuplicates: xs.reduce((a, x) => a + x.possibleDuplicates, 0), conflicts: xs.reduce((a, x) => a + x.conflicts, 0), missed: xs.reduce((a, x) => a + x.missed, 0),
+  folded: xs.reduce((a, x) => a + (x.folded || 0), 0),
   latestUnion: max(xs.map((x) => x.latest.union)), latestRegister: max(xs.map((x) => x.latest.register)), latestGovmap: max(xs.map((x) => x.latest.govmap)),
   unionNewerThanRegister: xs.filter((x) => x.latest.union && x.latest.register && x.latest.union > x.latest.register).length,
   duplicateRate: (() => { const r = xs.reduce((a, x) => a + x.govmapRows, 0); const d = xs.reduce((a, x) => a + (x.duplicateRate != null ? x.duplicateRate * x.govmapRows / 100 : 0), 0); return r ? Math.round((d / r) * 1000) / 10 : null; })(),
@@ -87,11 +97,12 @@ for (const district of Object.keys(byDistrict)) {
       const ids = new Set(q.events.map((e) => e.id));
       const gmOnStreet = gmRowsOf(c.code).filter((r) => r.streetCode === c.sc);
       return { id: c.id, registerDeals: c.n, events: counted.length, govmapOnly: counted.filter((e) => e.source === 'govmap').length, viaParcel: counted.filter((e) => /VIA_PARCEL/.test(e.geo.match)).length,
-        latestUnion: max(counted.map((e) => e.date)), latestRegister: max(counted.filter((e) => e.source === 'register').map((e) => e.date)), missed: gmOnStreet.filter((r) => !ids.has(r.id)).length };
+        latestUnion: max(counted.map((e) => e.date)), latestRegister: max(counted.filter((e) => e.source === 'register').map((e) => e.date)),
+        ...(({ missed, folded }) => ({ missed, folded }))(KIT.surfaceAccount(gmOnStreet.map((r) => r.id), ids, foldsOf(c.code))) };
     });
   }
   streetStrata[district] = Object.fromEntries(Object.entries(out).map(([k, xs]) => [k, { streets: xs.length, events: xs.reduce((a, x) => a + x.events, 0), govmapOnly: xs.reduce((a, x) => a + x.govmapOnly, 0),
-    viaParcel: xs.reduce((a, x) => a + x.viaParcel, 0), missed: xs.reduce((a, x) => a + x.missed, 0), unionNewerThanRegister: xs.filter((x) => x.latestUnion && x.latestRegister && x.latestUnion > x.latestRegister).length, sample: xs }]));
+    viaParcel: xs.reduce((a, x) => a + x.viaParcel, 0), missed: xs.reduce((a, x) => a + x.missed, 0), folded: xs.reduce((a, x) => a + (x.folded || 0), 0), unionNewerThanRegister: xs.filter((x) => x.latestUnion && x.latestRegister && x.latestUnion > x.latestRegister).length, sample: xs }]));
 }
 
 /* parcel-only matches nationally (events placed on a street through the GovMap layer's parcel address) */
@@ -104,9 +115,9 @@ const out = {
   sizeBands: { large: '≥ 5,000 register events in the window', medium: '1,000 – 4,999', small: '< 1,000' },
   streets: streetStrata, parcelOnly,
   notStratified: [{ stratum: 'Arab localities (population group)', why: 'PROPX holds no official population-group field for a locality (the CBS locality file\'s field is not ingested) — never guessed from a name' }],
-  majorCities: Object.fromEntries([5000, 3000, 4000, 7900, 8300, 9000, 7400, 70, 6100, 8600, 6600, 7100].map((c) => { const x = locs.find((l) => l.code === c); return [c, x ? { name: x.name, ...x.latest, govmapOnly: x.govmapOnly, missed: x.missed } : null]; })),
+  majorCities: Object.fromEntries([5000, 3000, 4000, 7900, 8300, 9000, 7400, 70, 6100, 8600, 6600, 7100].map((c) => { const x = locs.find((l) => l.code === c); return [c, x ? { name: x.name, ...x.latest, govmapOnly: x.govmapOnly, missed: x.missed, folded: x.folded } : null]; })),
   localities: locs,
 };
 fs.writeFileSync(path.join(ROOT, 'data', 'txevents', 'coverage-audit.json'), JSON.stringify(out) + '\n');
-console.log(JSON.stringify({ national: out.national, byDistrict: Object.fromEntries(Object.entries(out.byDistrict).map(([k, v]) => [k, { localities: v.localities, latestUnion: v.latestUnion, latestRegister: v.latestRegister, govmapOnly: v.govmapOnly, missed: v.missed, unionNewer: v.unionNewerThanRegister }])),
+console.log(JSON.stringify({ national: out.national, byDistrict: Object.fromEntries(Object.entries(out.byDistrict).map(([k, v]) => [k, { localities: v.localities, latestUnion: v.latestUnion, latestRegister: v.latestRegister, govmapOnly: v.govmapOnly, missed: v.missed, folded: v.folded, unionNewer: v.unionNewerThanRegister }])),
   bySize: Object.fromEntries(Object.entries(out.bySize).map(([k, v]) => [k, { localities: v.localities, govmapOnly: v.govmapOnly, missed: v.missed, dupRate: v.duplicateRate }])) }, null, 1));

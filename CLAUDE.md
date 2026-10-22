@@ -120,6 +120,17 @@
   DEPLOY CONSTRAINT: Vercel rejects the WHOLE deployment when a `functions[*].includeFiles` string exceeds 256 characters (schema) — 4d6dcc5
   pushed `api/intel.js` to 338 and every Preview build failed until c1a46c1 (brace groups, 234; `vercel build` 207.8 MB of the 250 MB function
   limit). Gates match files through `test/helpers/vercel-include.js` (never the pattern's spelling); `test/entities.test.js` holds the 256 cap.
+- `lib/deal/` (`engine.js` · `index.js` · `ui.js`) + `test/deal-lab.test.js` (+ `test/deal-lab.browser.js`, a Playwright journey run by hand) =
+  DEAL DECISION LAB (21.10.2026, `#dealLab`, live build only): one contemplated purchase on one official street. Pure UMD engine over the user's
+  assumptions only (annuity incl. 0 %, amortisation, purchase costs as ₪ amounts — the tax only from the page's cited STATIC `NH_TAX` on
+  request —, NOI, cash flow, yields, cash-on-cash, DSCR, break-even rent / price, sensitivity, scenarios from explicit shocks; blank ≠ 0, a
+  result missing an input is null with the inputs named) + deterministic `DL-*` flags (LTV limits stated as a rule naming BoI Directive 329,
+  not a synced source). `view=dealContext|dealLab|dealComps|dealStreet` (strict params → 400, unknown street → 404, memo per data stamp):
+  comparables from the register sweep by level STREET (OBSERVED) → BLOCKS touching it → verified NEIGHBOURHOOD → LOCALITY, a wider level
+  only below the minimum, each deal in one level, every exclusion counted (universe = included + Σ excluded), per-level stats on the street
+  evidence's thresholds (P25–P75 / percentile only SUPPORTED); the model's apartment estimate; BoI rates beside (never instead of) the
+  user's rate; the street report's assessment + due diligence. Memo (print + .html, "not an appraisal, not investment advice"); saved deals
+  in `propx:deallab:v1`. Registry group `dealLab` (terms with `simple` + `example`), source `propx:deal-lab`. See `lib/deal/README.md`.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; since 21.10.2026 the lists and the whole decision live ONLY in
@@ -497,6 +508,20 @@
 - `lib/radar/verbs.js` + `test/verbs.test.js` = "What changed?" verbs (17.10.2026): every radar event carries NEW · ADVANCED · CHANGED ·
   REVISED · STALE · RECOVERED · CONFLICT — a constant per event rule, a source-state event by its recorded transition; never a
   judgement. `view=radar&verb=` narrows; `verbs` counts; the Pulse chip + filter; registry term `change_verb`.
+- `lib/changes/` + `test/changes.test.js` = WHAT CHANGED HERE? (21.10.2026, live build only, `#changes` after `#pulse`): the change feed of a
+  street · verified neighbourhood · locality · district · Israel composed ONLY from stored evidence (txevents union, land tenders + radar
+  lifecycle, renewal declarations, Xplan milestones + renewal-plan history, VATMAL, lotteries, rental notices, CBS sales / construction +
+  revisions, Tel Aviv-Yafo permits + DD history, Trust run logs). Every item: eventDate ≠ observedAt (+ basis), newness NEW_EVENT ·
+  NEWLY_OBSERVED_OLDER_EVENT (older, first held in the period in a newer copy — a source's first ingestion is a baseline, never "newly
+  observed": the register sweep, the GovMap recent layer's first read, the GovMap file's first build; QA 22.10.2026: Haifa / Israel 30 days
+  0 newly observed, were 2,131 / 29,079) · REVISION · STATE_CHANGE, verb, source + copy date, class, scope EXACT_STREET · NEAR_STREET (distance) · LOCALITY · DISTRICT /
+  NATIONAL · DISTRICT_CONTEXT / NATIONAL_CONTEXT (never the place's own fact), a materiality constant per rule. Period 30 / 90 / 180 / 365
+  days ending at the newest PROPX check in the data (never "today"); per kind coverage (COVERED · SNAPSHOT_ONLY · NOT_APPLICABLE ·
+  NOT_IN_COVERAGE · STALE) + statement CHANGES · NO_CHANGES_IN_PERIOD · NOT_COVERED · SOURCE_STALE; POSSIBLE DUPLICATE never counted.
+  `view=changes&geo=&period=[&kinds=&newness=&scope=&source=&batch=]` (400 bad input · 404 unknown), `view=changesMeta`; registry group
+  `changes` (8 terms with `simple` + `example`, 28 rules, 5 missing reasons, section). The street report and the dossier link to it
+  (`data-chgeo`); the first read waits until the section is on screen (or a link / the rail asks), focus survives re-renders, codes stay in
+  data attributes, a 500 answers `{error:'changes-failed'}`. See `lib/changes/README.md`.
 - `lib/land/economics.js` + `test/land-economics.test.js` = Land Economics 2.0 (17.10.2026): the dossier's `sections.landEconomics`
   (additive) — ₪/unit quartiles of competitive-bid open-market lots decided in 36 months (the land read model's own
   `landPerUnitOver`, quartiles only over ≥ 5 lots) vs the prior 36 with a lot-mix warning; ₪/m² bids apart (an empty window
@@ -560,6 +585,16 @@
   (`xpBtn` / `xpSig` / `xpMiss`, one popover `#xpPop`) marks the dossier tiles, signals, quality, freshness, missing list,
   the supply block, the pulse radar + revisions, the Trust alerts and the developer drawer; ALTARIS marks the decision card and
   the basis view sections. The registry documents — it never computes; nothing in it is a recommendation or a probability.
+  EXPLAIN EVERYTHING (21.10.2026; `lib/explain/attach.js` + `scripts/explain-coverage.js` + `lib/explain/coverage.json` +
+  `test/explain-coverage.test.js`): every term carries `simple` + `example` ("For example", illustrative numbers — never a real
+  figure; LEGEND / SECTIONS carry `simple`); the one dialog reads simple words → why → how calculated → example → source & date
+  (Trust catalogue `view=sources` read once, else the registry's text — never a made-up date) → limitations + do not read it as →
+  collapsed full methodology; role=dialog, focus in / back, Escape, Tab cycle, phone bottom sheet, ⓘ named "Explain: <title>".
+  `ANCHORS` (registry) maps page labels → terms (`i:` · `TABLE.path` · `lit:en|he`, optional scope; a tie attaches nothing); the
+  attacher adds the ⓘ to every anchored label not explained in place (debounced MutationObserver, re-run on `propx:lang`, skips
+  `#dealLab` / `#changes`). Coverage by explicit rules R1–R8 + a reviewed CHROME list: 960 / 960 meaningful labels (baseline
+  without the attacher 17.9 %), 262 / 262 terms complete; the gate holds ≥ 95 % and no regression — a new page label or term
+  needs a decision / `simple` + `example` and a re-run of the script.
 - PRODUCT CLARITY (STEP 2A, 19.10.2026; `test/clarity.test.js`) — still ONE explanation system: `lib/explain/registry.js` now also
   carries `LEGEND` (the one evidence legend: OFFICIAL · STATIC · OBSERVED · DERIVED · MODEL · SELF-REPORTED · USER DOCUMENT · USER
   ASSUMPTION · USER OVERRIDE · MISSING · CONFLICT + match states VERIFIED · STRONG MATCH · POSSIBLE · AMBIGUOUS · UNRESOLVED · PARCEL

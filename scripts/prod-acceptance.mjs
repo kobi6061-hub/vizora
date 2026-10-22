@@ -129,8 +129,35 @@ async function apiChecks(H) {
   const ks = K.json && K.json.completeness && K.json.completeness.sources;
   rec(n, 12, 'transaction completeness monitor', K.status === 200 && !!ks, ks ? `${ks.monitored} sources monitored · ${ks.healthy} healthy · ${ks.stale} stale · ${ks.notRead} not read` : `HTTP ${K.status}`);
 
+  /* 15 · Deal Decision Lab + 16 · What changed here (overnight build 22.10.2026) — checked when the deployed page carries them */
+  const live = /id="dealLab"/.test(home.text || '') && /id="changes"/.test(home.text || '');
+  if (!live) rec(n, 15, 'Deal Decision Lab / What changed here', null, 'not in this deployment (the page carries neither section)');
+  else {
+    const DL = await req(b, `/api/intel?view=dealLab&id=${STREET}&sqm=85&rooms=3.5&ask=2100000`, { cookie });
+    const lv = DL.json && DL.json.comps && Array.isArray(DL.json.comps.levels) ? DL.json.comps.levels : [];
+    const used = lv.filter((l) => l.used), inc = used.reduce((a, l) => a + (l.included || 0), 0);
+    const sums = used.length > 0 && used.every((l) => l.universe === (l.included || 0) + Object.values(l.excluded || {}).reduce((a, v) => a + v, 0));   /* a level not used carries its universe only */
+    rec(n, 15, 'Deal Lab comparables for הרצל, פתח תקווה (85 m², 3.5 rooms)', DL.status === 200 && inc > 0 && sums,
+      DL.json ? `HTTP 200 · ${used.map((l) => `${l.level} ${l.included} of ${l.universe} (${l.cls})`).join(' · ')} · every exclusion counted ${sums}` : `HTTP ${DL.status}`);
+    const M = DL.json && DL.json.model, F = DL.json && DL.json.finance;
+    rec(n, 15, 'Deal Lab model estimate + official rate context', !!(M && M.cls === 'MODEL' && F && F.available !== undefined),
+      M ? `model ${M.available ? M.tier : 'unavailable — ' + (M.reason || '')} · official rate ${F && F.available ? 'available (' + (F.cls || '') + ')' : 'not available'}` : '—');
+    const bad = await req(b, '/api/intel?view=dealLab&id=x&sqm=-1', { cookie });
+    rec(n, 15, 'Deal Lab refuses a malformed request', bad.status === 400, `bad id / size → ${bad.status}`);
+    const CH = await req(b, `/api/intel?view=changes&geo=${STREET}&period=365`, { cookie });
+    const items = CH.json && Array.isArray(CH.json.items) ? CH.json.items : [];
+    const dated = items.every((it) => it.eventDate || it.observedAt) && items.every((it) => it.source && it.cls && it.scope);
+    rec(n, 16, 'What changed here — the street, 365 days', CH.status === 200 && items.length > 0 && dated,
+      CH.json ? `HTTP 200 · ${CH.json.total} changes · period to ${CH.json.period && CH.json.period.to} · every item dated, sourced, classed and scoped ${dated}` : `HTTP ${CH.status}`);
+    const CD = await req(b, '/api/intel?view=changes&geo=d-center&period=90', { cookie });
+    rec(n, 16, 'What changed here — a district, 90 days', !!(CD.status === 200 && CD.json && CD.json.counts), CD.json ? `HTTP 200 · ${CD.json.total} changes listed` : `HTTP ${CD.status}`);
+    const CB = await req(b, '/api/intel?view=changes&geo=../etc&period=7', { cookie });
+    rec(n, 16, 'What changed here refuses a malformed request', CB.status === 400 || CB.status === 404, `bad geography / period → ${CB.status}`);
+  }
+
   /* 13 · API protection (no cookie, forged cookie, expired-looking cookie) */
   const paths = ['/', '/api/intel?view=status', '/api/intel?view=streetReport&part=core&id=' + STREET, '/api/geo/search?q=x', '/api/gov/transactions?settlement=5000',
+    '/api/intel?view=dealLab&id=' + STREET, '/api/intel?view=changes&geo=' + STREET,
     '/api/land?view=summary', '/api/housing?view=status', '/api/identity?op=status', '/altaris', '/data/market/latest.json', '/data/txevents/latest.json', '/api/login-x', '/login.html.bak'];
   for (const [label, ck] of [['no cookie', ''], ['forged cookie', 'kobix_session=' + (Date.now() + 864e5) + '.' + crypto.randomBytes(32).toString('hex')], ['expired cookie', 'kobix_session=' + (Date.now() - 864e5) + '.' + crypto.randomBytes(32).toString('hex')]]) {
     let held = 0; const leaks = [];
@@ -177,8 +204,24 @@ async function uiChecks(H, chromium) {
       const L = await page.evaluate(() => ({ lp: [...document.querySelectorAll('#launchpad [data-lp]')].map((a) => a.dataset.lp),
         grp: [...document.querySelectorAll('main > .secgrp')].map((g) => g.id), rail: document.querySelectorAll('.rail .ri[data-sec]').length,
         overflow: document.documentElement.scrollWidth > innerWidth + 1, lpText: (document.querySelector('#launchpad') || {}).innerText || '' }));
-      rec(n, 9, `${tag}: launchpad + groups`, L.lp.join(',') === 'dossier,txSection,prices,land,pulse,sources' && L.grp.join(',') === 'grp1,grp2,grp3,grp4',
-        `launchpad ${L.lp.length} tiles · groups ${L.grp.join(' ')} · rail ${L.rail} items`);
+      /* 6 tiles before the overnight build; 8 once What changed here + the Deal Lab are deployed */
+      const LP = L.lp.includes('dealLab') ? 'dossier,changes,txSection,prices,dealLab,land,pulse,sources' : 'dossier,txSection,prices,land,pulse,sources';
+      rec(n, 9, `${tag}: launchpad + groups`, L.lp.join(',') === LP && L.grp.join(',') === 'grp1,grp2,grp3,grp4',
+        `launchpad ${L.lp.length} tiles (${L.lp.join(' ')}) · groups ${L.grp.join(' ')} · rail ${L.rail} items`);
+      /* 15 · 16 · the two features render in this layout (when deployed); B · the explanation dialog opens and closes by keyboard */
+      if (L.lp.includes('dealLab')) {
+        const F = await page.waitForFunction(() => !!document.querySelector('#dlRoot .dl-pick') && !!(window.PropxChanges && window.PropxChanges.state && window.PropxChanges.state()), null, { timeout: 60000 }).then(() => true).catch(() => false);
+        const FX = await page.evaluate(() => ({ dl: (document.getElementById('dlRoot') || {}).innerText || '', ch: (document.getElementById('chRoot') || {}).innerText || '' }));
+        rec(n, 15, `${tag}: Deal Lab renders`, F && FX.dl.length > 200, `${FX.dl.length} characters · street picker ${F ? 'ready' : 'missing'}`);
+        rec(n, 16, `${tag}: What changed here renders`, F && FX.ch.length > 100, `${FX.ch.length} characters`);
+        const opened = await page.evaluate(() => { const b = document.querySelector('#overview .xp, #launchpad ~ * .xp, .xp'); if (!b) return null; b.focus(); return b.getAttribute('aria-label') || ''; });
+        if (opened !== null) { await page.keyboard.press('Enter'); await page.waitForTimeout(500); }
+        const dlg = await page.evaluate(() => { const d = document.getElementById('xpPop'); return d && !d.hidden && getComputedStyle(d).display !== 'none' ? { role: d.getAttribute('role'), text: (d.innerText || '').length } : null; });
+        await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+        const closed = await page.evaluate(() => { const d = document.getElementById('xpPop'); return !d || d.hidden || getComputedStyle(d).display === 'none'; });
+        rec(n, 12, `${tag}: an ⓘ explanation opens by keyboard and closes with Escape`, !!(dlg && dlg.role === 'dialog' && dlg.text > 80 && closed),
+          dlg ? `"${String(opened).slice(0, 50)}" · role=${dlg.role} · ${dlg.text} characters · closed ${closed}` : 'no dialog opened');
+      }
       rec(n, 10, `${tag}: no horizontal overflow on the home`, !L.overflow, `scrollWidth ${L.overflow ? '>' : '≤'} viewport ${w}px`);
       /* where the jump lands, and where the section still is once the sections above it have loaded (a cold first load can
          grow the page by thousands of pixels after the jump — 21.10.2026: 4,404px) */

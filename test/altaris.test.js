@@ -519,8 +519,9 @@ t('index.html gains exactly one ALTARIS rail link — after Land, before Guide, 
   assert.match(line, /^\s*<a href="\/altaris" class="ri" id="railAltaris"[^>]*>/);
   assert.ok(!/data-sec=|data-i=|onclick|<script/.test(line), 'the link must not join the scroll-spy, the i18n map or carry script');
   assert.match(L[i - 1], /href="#land" class="ri" data-sec="land"/); assert.match(L[i + 1], /href="#guide" class="ri" data-sec="guide"/);
-  /* 16 PROPX items since Market Pulse (#pulse) and the Market Dossier (#dossier) joined the Developers & Projects set (#intel) — ALTARIS is never one of them */
-  assert.equal((idx.match(/class="ri[^"]*" data-sec=/g) || []).length, 16, 'the scroll-spy set of 16 PROPX items changed');
+  /* 16 PROPX items since Market Pulse (#pulse) and the Market Dossier (#dossier) joined the Developers & Projects set (#intel),
+     18 since What changed here (#changes) and the Deal Lab (#dealLab) joined (live build only) — ALTARIS is never one of them */
+  assert.equal((idx.match(/class="ri[^"]*" data-sec=/g) || []).length, 18, 'the scroll-spy set of 18 PROPX items changed');
 });
 t('the offline build hides the link (an offline file has no /altaris route)', () => {
   const py = SRC('scripts/build-standalone.py'), sa = SRC('standalone/israel-new-homes-v2.html');
