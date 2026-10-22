@@ -13,13 +13,18 @@ let n = 0;
 const at = (name, fn) => { fn(); n++; console.log('  ✓ ' + name); };
 const before = (a, b, src = INDEX) => { const i = src.indexOf(a), j = src.indexOf(b); assert.ok(i >= 0, a); assert.ok(j >= 0, b); assert.ok(i < j, `${a} before ${b}`); };
 
-at('the launchpad sits under the search and lists the six priorities in order, each to an existing section', () => {
+at('the launchpad sits under the search and lists the priorities in order (+ What changed here · Deal Lab, live build only), each to an existing section and rail item', () => {
   before('id="searchInput"', 'id="launchpad"');
   const lp = INDEX.slice(INDEX.indexOf('id="launchpad"'), INDEX.indexOf('</nav>', INDEX.indexOf('id="launchpad"')));
   const targets = [...lp.matchAll(/data-lp="([A-Za-z]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(targets, ['dossier', 'txSection', 'prices', 'land', 'pulse', 'sources']);
-  for (const t of targets) assert.match(INDEX, new RegExp(`<section class="blk" id="${t}"`), t);
-  for (const k of ['lpHint', 'lp1', 'lp2', 'lp3', 'lp4', 'lp5', 'lp6', 'grp1', 'grp2', 'grp3', 'grp4']) {
+  assert.deepEqual(targets, ['dossier', 'changes', 'txSection', 'prices', 'dealLab', 'land', 'pulse', 'sources']);
+  for (const t of targets) {
+    assert.match(INDEX, new RegExp(`<section class="blk" id="${t}"`), t);
+    assert.match(INDEX, new RegExp(`class="ri[^"]*" data-sec="${t}"`), `${t}: the tile clicks its rail item`);
+  }
+  /* the two server features sit between live:begin / live:end (the offline build strips them, like their sections and rail items) */
+  for (const t of ['changes', 'dealLab']) assert.match(lp, new RegExp(`<!-- live:begin --><a class="lp-t" href="#${t}" data-lp="${t}">[^]*?<!-- live:end -->`), `${t} tile is live-only`);
+  for (const k of ['lpHint', 'lp1', 'lp2', 'lp3', 'lp4', 'lp5', 'lp6', 'lp7', 'lp7s', 'lp8', 'lp8s', 'grp1', 'grp2', 'grp3', 'grp4']) {
     assert.equal((INDEX.match(new RegExp(`\\b${k}:"[^"]+"`, 'g')) || []).length, 2, `${k} in Hebrew and English`);
   }
 });
@@ -62,9 +67,11 @@ at('the street report: investment summary · latest transactions · valuation ·
     'nav:{ov:"Investment summary",tx:"Latest transactions",px:"Valuation",pl:"Planning & opportunities",risk:"Risks & checks"']) assert.ok(INDEX.includes(lang), lang);
 });
 
-at('the offline build carries the same order (rebuilt from index.html)', () => {
+at('the offline build carries the same order (rebuilt from index.html) — the launchpad without the two server features', () => {
   const sa = fs.readFileSync(path.join(ROOT, 'standalone', 'israel-new-homes-v2.html'), 'utf8');
   before('id="launchpad"', 'id="grp1"', sa); before('id="grp1"', 'id="grp2"', sa); before('id="grp2"', 'id="grp3"', sa); before('id="grp3"', 'id="grp4"', sa);
+  const lp = sa.slice(sa.indexOf('id="launchpad"'), sa.indexOf('</nav>', sa.indexOf('id="launchpad"')));
+  assert.deepEqual([...lp.matchAll(/data-lp="([A-Za-z]+)"/g)].map((m) => m[1]), ['dossier', 'txSection', 'prices', 'land', 'pulse', 'sources']);
 });
 
 console.log(`hierarchy: ${n} passed`);

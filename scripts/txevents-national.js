@@ -12,6 +12,9 @@
 //   node scripts/txevents-national.js --download --out <file>    the latest GovMap-layer file (GeoPackage), sha256 + size
 //   node scripts/txevents-national.js --build --extract <dir>    reconcile the extract (scripts/txevents-gpkg.py) → data/txevents/national/
 //          [--file-sha <sha256> --file-url <url> --file-bytes <n>]
+//   node scripts/txevents-national.js --record-decision          "record" | "skip": an unchanged check is committed at most every 12 hours,
+//                                                                read from runs.jsonl itself (lib/txevents/runlog.js — never `git log`
+//                                                                in the shallow checkout, which answers with the branch head)
 //
 // Outputs (data/txevents/national/, bot-written):
 //   meta.json            version · file · validation against the stored API window · classes per period · diff vs the last build
@@ -345,7 +348,20 @@ function build() {
   console.log(JSON.stringify({ ok: true, totals, shown: meta.shown, parcelRecovery: meta.parcelRecovery, validation: { pass: validation.pass, same: validation.same, differs: validation.differs, missing: validation.missing, fileOnly: validation.fileOnlyInApiWindow }, diff }));
 }
 
+/* ── --record-decision: should the commit step record this run's line? (lib/txevents/runlog.js) — prints "record" or "skip" ── */
+function recordDecision() {
+  let text = '';
+  try { text = fs.readFileSync(path.join(OUT, 'runs.jsonl'), 'utf8'); } catch { /* no log: record */ }
+  const d = require('../lib/txevents/runlog').recordDecision(text, { now: Date.now() });
+  console.error(`record decision: ${d.record ? 'record' : 'skip'} (${d.reason})`);
+  console.log(d.record ? 'record' : 'skip');
+}
+
 (async () => {
+  if (args.includes('--record-decision')) {
+    try { recordDecision(); } catch (e) { console.error('record decision failed — recording: ' + e.message); console.log('record'); }
+    return;
+  }
   try {
     if (args.includes('--check')) await check();
     else if (args.includes('--download')) await download(opt('--url') || process.env.FILE_URL, opt('--out'));

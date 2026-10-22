@@ -120,6 +120,17 @@
   DEPLOY CONSTRAINT: Vercel rejects the WHOLE deployment when a `functions[*].includeFiles` string exceeds 256 characters (schema) — 4d6dcc5
   pushed `api/intel.js` to 338 and every Preview build failed until c1a46c1 (brace groups, 234; `vercel build` 207.8 MB of the 250 MB function
   limit). Gates match files through `test/helpers/vercel-include.js` (never the pattern's spelling); `test/entities.test.js` holds the 256 cap.
+- `lib/deal/` (`engine.js` · `index.js` · `ui.js`) + `test/deal-lab.test.js` (+ `test/deal-lab.browser.js`, a Playwright journey run by hand) =
+  DEAL DECISION LAB (21.10.2026, `#dealLab`, live build only): one contemplated purchase on one official street. Pure UMD engine over the user's
+  assumptions only (annuity incl. 0 %, amortisation, purchase costs as ₪ amounts — the tax only from the page's cited STATIC `NH_TAX` on
+  request —, NOI, cash flow, yields, cash-on-cash, DSCR, break-even rent / price, sensitivity, scenarios from explicit shocks; blank ≠ 0, a
+  result missing an input is null with the inputs named) + deterministic `DL-*` flags (LTV limits stated as a rule naming BoI Directive 329,
+  not a synced source). `view=dealContext|dealLab|dealComps|dealStreet` (strict params → 400, unknown street → 404, memo per data stamp):
+  comparables from the register sweep by level STREET (OBSERVED) → BLOCKS touching it → verified NEIGHBOURHOOD → LOCALITY, a wider level
+  only below the minimum, each deal in one level, every exclusion counted (universe = included + Σ excluded), per-level stats on the street
+  evidence's thresholds (P25–P75 / percentile only SUPPORTED); the model's apartment estimate; BoI rates beside (never instead of) the
+  user's rate; the street report's assessment + due diligence. Memo (print + .html, "not an appraisal, not investment advice"); saved deals
+  in `propx:deallab:v1`. Registry group `dealLab` (terms with `simple` + `example`), source `propx:deal-lab`. See `lib/deal/README.md`.
 - `middleware.js` + `scripts/kobix-dev-server.mjs` + `test/security-gate.test.js` (19.10.2026) = the session gate: the matcher sends
   every path to the middleware and the exclusions are EXACT paths in code (`PUBLIC_PATHS` /api/login · /login.html · /robots.txt ·
   /favicon.ico; `MACHINE_PATHS` /api/jobs/tx-refresh) — never a prefix; since 21.10.2026 the lists and the whole decision live ONLY in
@@ -572,6 +583,16 @@
   (`xpBtn` / `xpSig` / `xpMiss`, one popover `#xpPop`) marks the dossier tiles, signals, quality, freshness, missing list,
   the supply block, the pulse radar + revisions, the Trust alerts and the developer drawer; ALTARIS marks the decision card and
   the basis view sections. The registry documents — it never computes; nothing in it is a recommendation or a probability.
+  EXPLAIN EVERYTHING (21.10.2026; `lib/explain/attach.js` + `scripts/explain-coverage.js` + `lib/explain/coverage.json` +
+  `test/explain-coverage.test.js`): every term carries `simple` + `example` ("For example", illustrative numbers — never a real
+  figure; LEGEND / SECTIONS carry `simple`); the one dialog reads simple words → why → how calculated → example → source & date
+  (Trust catalogue `view=sources` read once, else the registry's text — never a made-up date) → limitations + do not read it as →
+  collapsed full methodology; role=dialog, focus in / back, Escape, Tab cycle, phone bottom sheet, ⓘ named "Explain: <title>".
+  `ANCHORS` (registry) maps page labels → terms (`i:` · `TABLE.path` · `lit:en|he`, optional scope; a tie attaches nothing); the
+  attacher adds the ⓘ to every anchored label not explained in place (debounced MutationObserver, re-run on `propx:lang`, skips
+  `#dealLab` / `#changes`). Coverage by explicit rules R1–R8 + a reviewed CHROME list: 960 / 960 meaningful labels (baseline
+  without the attacher 17.9 %), 262 / 262 terms complete; the gate holds ≥ 95 % and no regression — a new page label or term
+  needs a decision / `simple` + `example` and a re-run of the script.
 - PRODUCT CLARITY (STEP 2A, 19.10.2026; `test/clarity.test.js`) — still ONE explanation system: `lib/explain/registry.js` now also
   carries `LEGEND` (the one evidence legend: OFFICIAL · STATIC · OBSERVED · DERIVED · MODEL · SELF-REPORTED · USER DOCUMENT · USER
   ASSUMPTION · USER OVERRIDE · MISSING · CONFLICT + match states VERIFIED · STRONG MATCH · POSSIBLE · AMBIGUOUS · UNRESOLVED · PARCEL

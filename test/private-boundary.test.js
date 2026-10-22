@@ -13,7 +13,7 @@ let n = 0; const at = (name, fn) => { fn(); n++; console.log('  ✓ ' + name); }
 
 function walk(dir, out = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.git', 'vizora-app', 'data', 'standalone'].includes(e.name)) continue;
+    if (['node_modules', '.git', '.claude', 'vizora-app', 'data', 'standalone'].includes(e.name)) continue;   /* .claude: local agent worktrees, never deployed */
     const f = path.join(dir, e.name);
     if (e.isDirectory()) walk(f, out); else if (/\.(c?js|mjs)$/.test(e.name)) out.push(f);
   }
