@@ -10,7 +10,7 @@ try{if((localStorage.getItem("kobix:theme")||"dark")==="dark")document.documentE
      providers (lib/gov) can replace rows without touching the interface.
      ========================================================================= -->
 <title>PROPX</title>
-<meta name="propx-source-sha256" content="102f0fd13cee089b5d37a98bfef83b6fd96b251fda12ac4fa7dfa2119946fed1">
+<meta name="propx-source-sha256" content="eb7426f0b883cc4acf39000b64791fa186344e80f34d77f10c013c9ad7ecfbcf">
 <meta name="propx-build" content="2026-10-13.intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>   <!-- the font files themselves come from gstatic: one DNS + TLS round trip earlier -->
@@ -13510,6 +13510,8 @@ function srTxTableHTML(R){
       <button type="button" class="chip" data-stlive="1">${t.liveAll}</button></div>
     <p class="gv-note">${ldE(state.lang==="en"?T.note||"":T.noteHe||"")}</p>`;
 }
+/* the Planning Administration's stage codes, in English (the Hebrew reading prints the layer's own stage words) — never a raw code */
+const SR_STAGE_EN={PREPARATION:"Preparation",SUBMITTED:"In planning review",PRE_DEPOSIT:"Meeting deposit conditions",DEPOSITED:"Deposited",OBJECTIONS:"Objections decision",APPROVAL_PROCESS:"In approval",APPROVED:"Approved",EFFECTIVE:"In force (approval published)",REJECTED:"Rejected",OTHER:"Other",UNKNOWN:"Unrecognized"};
 function srHTML(g){
   const t=srT(),S=srState;
   if(S.id!==g.id)return "";
@@ -13557,7 +13559,7 @@ function srHTML(g){
     const prow=p=>`<tr><td><span class="sr-rel ${p.relation}">${t.rel[p.relation]}</span></td><td class="num">${srDist(p.distanceM)}</td>
       <td class="num">${p.url?`<a href="${ldE(p.url)}" target="_blank" rel="noopener noreferrer"><bdi>${ldE(p.planNumber)}</bdi></a>`:`<bdi>${ldE(p.planNumber)}</bdi>`}</td>
       <td class="w">${ldE(p.name||dash)}${p.renewal?`<span class="txe-src">${t.renewal}: ${p.renewal.map(c=>ldE(c.name)).join(" · ")}</span>`:""}</td><td>${t.topic[p.topic]||ldE(p.topic)}</td>
-      <td>${ldE(he?p.stageHe||p.stage:p.stage)}<span class="txe-src">${ldE(p.station||"")}${p.event?" · "+ldE(p.event):""}</span></td><td class="num">${p.planUnitDelta!=null?fmtInt(p.planUnitDelta):dash}</td>
+      <td>${ldE(he?p.stageHe||p.stage:SR_STAGE_EN[p.stage]||p.stage)}<span class="txe-src">${ldE(p.station||"")}${p.event?" · "+ldE(p.event):""}</span></td><td class="num">${p.planUnitDelta!=null?fmtInt(p.planUnitDelta):dash}</td>
       <td class="num">${p.areaDunam!=null?fmtInt(p.areaDunam):dash}</td><td class="num">${siDate(p.lastUpdate)}</td></tr>`;
     const thead=`<thead><tr>${t.plCols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>`;
     const main=PL.plans.filter(p=>p.relation!=="AREA_WIDE"),wide=PL.plans.filter(p=>p.relation==="AREA_WIDE").concat(PL.transit.filter(p=>p.relation==="AREA_WIDE"));
