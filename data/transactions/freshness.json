@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "checkedAt": "2026-10-22T20:38:32.021Z",
- "today": "2026-10-22",
+ "checkedAt": "2026-10-23T10:16:39.863Z",
+ "today": "2026-10-23",
  "contract": [
   "transaction_date",
   "source_snapshot_date",
@@ -90,23 +90,23 @@
     "coverage": "NOT_COVERED"
    },
    "60": {
-    "n": 218,
-    "coveredDays": 25,
+    "n": 190,
+    "coveredDays": 24,
     "coverage": "PARTLY_COVERED"
    },
    "90": {
-    "n": 1714,
-    "coveredDays": 55,
+    "n": 1711,
+    "coveredDays": 54,
     "coverage": "PARTLY_COVERED"
    },
    "180": {
-    "n": 18840,
-    "coveredDays": 145,
+    "n": 18534,
+    "coveredDays": 144,
     "coverage": "PARTLY_COVERED"
    },
    "365": {
-    "n": 63261,
-    "coveredDays": 330,
+    "n": 62898,
+    "coveredDays": 329,
     "coverage": "PARTLY_COVERED"
    }
   },
@@ -147,7 +147,7 @@
  },
  "freshness": {
   "state": "STALE",
-  "ageDays": 33,
+  "ageDays": 34,
   "stateReason": null,
   "thresholds": {
    "CURRENT": 7,
@@ -175,8 +175,8 @@
   }
  },
  "lagDays": {
-  "snapshotAge": 33,
-  "latestTransaction": 35
+  "snapshotAge": 34,
+  "latestTransaction": 36
  },
  "newerCopies": [
   {
@@ -195,10 +195,10 @@
   {
    "kind": "MATERIAL_LAG",
    "reason": "copy-age",
-   "message": "the transaction copy PROPX reads is STALE (33 days old)",
+   "message": "the transaction copy PROPX reads is STALE (34 days old)",
    "values": {
     "state": "STALE",
-    "ageDays": 33
+    "ageDays": 34
    }
   },
   {
