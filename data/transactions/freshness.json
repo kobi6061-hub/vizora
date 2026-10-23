@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "checkedAt": "2026-10-23T10:16:39.863Z",
+ "checkedAt": "2026-10-23T20:32:49.339Z",
  "today": "2026-10-23",
  "contract": [
   "transaction_date",
@@ -24,13 +24,13 @@
  "govmapLayer": {
   "answered": true,
   "status": 200,
-  "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+  "snapshotAt": "2026-10-23T15:50:35.765561+00:00",
   "latestTransactionDate": "2026-09-28",
-  "deals": 2500941,
+  "deals": 2488599,
   "datasetId": "4174aac2-c8b2-443e-9425-3773ce47c8da",
-  "version": 4,
+  "version": 5,
   "upstream": "https://www.govmap.gov.il/?lay=16",
-  "readByPropx": true
+  "readByPropx": false
  },
  "officialChannels": [
   {
@@ -182,13 +182,12 @@
   {
    "id": "over:govmap-layer",
    "name": "GovMap deals layer (lay=16) — republished copy (over.org.il)",
-   "snapshotAt": "2026-10-08T01:50:12.803824+00:00",
+   "snapshotAt": "2026-10-23T15:50:35.765561+00:00",
    "latestTransactionDate": "2026-09-28",
    "daysNewerLatestDeal": 11,
-   "daysNewerSnapshot": 19,
-   "readByPropx": true,
-   "readAs": "recent-layer",
-   "why": "read as a separate recent layer: its deals the register copy does not hold yet are listed apart (lib/recent)"
+   "daysNewerSnapshot": 34,
+   "readByPropx": false,
+   "why": "not read yet: the recent layer (lib/recent) holds an older copy of this layer or was reconciled against another register copy — the daily recent sync reads it"
   }
  ],
  "alerts": [
@@ -199,6 +198,21 @@
    "values": {
     "state": "STALE",
     "ageDays": 34
+   }
+  },
+  {
+   "kind": "MATERIAL_LAG",
+   "reason": "newer-copy",
+   "message": "GovMap deals layer (lay=16) — republished copy (over.org.il): latest deal 2026-09-28, 11 days after PROPX's (2026-09-17)",
+   "values": {
+    "id": "over:govmap-layer",
+    "name": "GovMap deals layer (lay=16) — republished copy (over.org.il)",
+    "snapshotAt": "2026-10-23T15:50:35.765561+00:00",
+    "latestTransactionDate": "2026-09-28",
+    "daysNewerLatestDeal": 11,
+    "daysNewerSnapshot": 34,
+    "readByPropx": false,
+    "why": "not read yet: the recent layer (lib/recent) holds an older copy of this layer or was reconciled against another register copy — the daily recent sync reads it"
    }
   },
   {
