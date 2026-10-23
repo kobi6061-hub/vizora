@@ -11,10 +11,10 @@
   "R7 summaries",
   "R8 definition terms"
  ],
- "sites": 1519,
- "sitesWithFixedLabel": 1490,
- "labels": 1275,
- "chrome": 315,
+ "sites": 1521,
+ "sitesWithFixedLabel": 1492,
+ "labels": 1277,
+ "chrome": 317,
  "meaningful": 960,
  "excluded": 0,
  "coverage": {
@@ -199,8 +199,8 @@
  "exclusions": [],
  "anchorProblems": [],
  "terms": {
-  "total": 297,
-  "complete": 297,
+  "total": 300,
+  "complete": 300,
   "incomplete": []
  },
  "chromeReasons": {
@@ -1101,6 +1101,8 @@
   {"ref":"i:mapNote","en":"Click a region to update the whole board","he":"לחיצה על אזור מעדכנת את כל הלוח","cls":"CHROME","chrome":"prose","sections":["map"],"kinds":["markup"]},
   {"ref":"i:mapTitle","en":"Israel new-home price map","he":"מפת מחירי הדירות החדשות בישראל","cls":"MEANINGFUL","via":"ORIENTATION","sections":["map"],"kinds":["markup"]},
   {"ref":"i:lyr1","en":"L1 · Market","he":"L1 · שוק","cls":"CHROME","chrome":"furniture","sections":["overview"],"kinds":["markup"]},
+  {"ref":"i:resetIL","en":"Israel — National Overview","he":"ישראל — חזרה למבט ארצי","cls":"CHROME","chrome":"action","sections":["overview"],"kinds":["markup"]},
+  {"ref":"i:resetILNote","en":"Clears the selected geography and every module's geographic filters · language, theme, navigation order and saved work are kept","he":"מנקה את הגאוגרפיה שנבחרה ואת המסננים הגאוגרפיים בכל המודולים · שפה, ערכת נושא, סדר הניווט ועבודה שמורה נשמרים","cls":"CHROME","chrome":"prose","sections":["overview"],"kinds":["markup"]},
   {"ref":"I18N.avgRent","en":"Average monthly rent","he":"שכירות חודשית ממוצעת","cls":"MEANINGFUL","via":"ANCHOR","term":"board_average_rent","sections":["overview","prices"],"kinds":["helper","kpi"]},
   {"ref":"I18N.grossYield","en":"Est. gross yield","he":"תשואה ברוטו","cls":"MEANINGFUL","via":"INLINE","sections":["overview"],"kinds":["kpi"]},
   {"ref":"I18N.listings","en":"Unsold new inventory","he":"מלאי לא מכור","cls":"MEANINGFUL","via":"ANCHOR","term":"unsold_inventory","sections":["overview"],"kinds":["kpi"]},

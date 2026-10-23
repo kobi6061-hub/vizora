@@ -111,7 +111,7 @@ n_live = len(_re.findall(r"live:begin", s))
 assert n_live == len(_re.findall(r"live:end", s)), "unbalanced live:begin / live:end blocks"
 s = _re.sub(r"[ \t]*<!-- live:begin -->.*?<!-- live:end -->\n?", "", s, flags=_re.S)
 s = _re.sub(r"/\* live:begin.*?/\* live:end \*/\n?", "", s, flags=_re.S)
-assert "live:begin" not in s and "/lib/deal/" not in s and "/lib/changes/" not in s, "server-only feature left in the offline build"
+assert "live:begin" not in s and "/lib/deal/" not in s and "/lib/changes/" not in s and 'src="/lib/geo/atlas-ui.js"' not in s, "server-only feature left in the offline build"
 
 BUILD_META = '<meta name="propx-build"'
 assert s.count(BUILD_META) == 1

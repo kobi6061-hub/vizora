@@ -72,6 +72,11 @@
 //                     against the stored build)
 //   view=streetApartment  id=… sqm= [rooms= newness=existing|new built= type=flat|garden|roof|cottage|house] → the apartment estimate (MODEL)
 //   view=streetModelValidation  the out-of-sample validation report of the street value model
+//   view=scope        GEOGRAPHIC SCOPE (lib/geo/scope-read.js): id=il | d-… | js-area | napa:<code> | loc:<code> | nb:<id> | sa:<locality>:<area> |
+//                     st:<locality>:<street> → the official chain (breadcrumbs, one level up), the children, LATEST KNOWN vs LATEST PRICED
+//                     RESIDENTIAL transaction, counts, census 2022 demographics, the module × level matrix (EXACT · AGGREGATED · CONTEXT ·
+//                     NOT_AVAILABLE · NOT_APPLICABLE); Israel adds the district comparison, major cities, verified neighbourhoods, coverage per level
+//                     (400 bad id · 404 unknown)
 
 'use strict';
 
@@ -269,6 +274,7 @@ module.exports = async (req, res) => {
     if (view === 'txCompleteness') return send(res, 200, txCompleteness());
     if (view === 'txUnplaced') return send(res, 200, txUnplaced(p));
     if (view === 'txLatest') return send(res, 200, txLatest(p));
+    if (view === 'scope') { const out = require('../lib/geo/scope-read').read(p.id); return out.ok ? send(res, 200, out.body) : send(res, out.status, { error: out.error, detail: out.detail }); }
     if (view === 'street' || view === 'streetCoverage') {
       if (!STREETS) return send(res, 404, { error: 'street intelligence not available' });
       if (view === 'streetCoverage') { STREET_COVERAGE = STREET_COVERAGE || STREETS.coverage(); return send(res, 200, STREET_COVERAGE); }

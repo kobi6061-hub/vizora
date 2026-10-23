@@ -88,12 +88,15 @@ t('NEW vs NEWLY OBSERVED on real data: every source\'s FIRST ingestion is the ba
   assert.ok(!allItems({ geo: STREET, period: '30' }).some((it) => it.source.id === 'over:deals-register'), 'no register deal in 30 days: the copy ends 2026-09-17 and is the baseline');
 });
 
+/* the days of a period the copies cover — the period ends at the newest PROPX check in the data, so it moves with every sync (was a
+   literal 7 while the anchor was 21.10.2026; the 22.10.2026 syncs made it 6) */
+const coveredTo = (period, through) => Math.max(0, Math.round((Date.parse(through) - Date.parse(period.from)) / 864e5));
 t('REGRESSION (QA 22.10.2026) — Haifa / Israel, 30 days: the GovMap rows held since each source\'s first read are the baseline, not 2,131 / 29,079 "newly observed" deals', () => {
   const C = require('../lib/changes/collect');
   const h = feed({ geo: 'loc:4000', period: '30' });
   assert.equal(h.kinds.TRANSACTION.counts.NEWLY_OBSERVED_OLDER_EVENT, 0, 'Haifa: was 2,131 deals dated 2023-09-18…2026-09-02, all from one first read');
   assert.equal(h.kinds.TRANSACTION.counts.total, 0);
-  assert.equal(h.kinds.TRANSACTION.statement.code, 'NOT_COVERED', 'the copies reach 2026-09-28: 7 of 30 days — not "no deals"'); assert.equal(h.kinds.TRANSACTION.statement.coveredDays, 7);
+  assert.equal(h.kinds.TRANSACTION.statement.code, 'NOT_COVERED', 'the copies reach 2026-09-28: a week of the 30 days — not "no deals"'); assert.equal(h.kinds.TRANSACTION.statement.coveredDays, coveredTo(h.period, '2026-09-28'));
   const il = feed({ geo: 'il', period: '30' });
   const L = require('../lib/txevents').stores().latest.national;
   const exact = Object.entries(L.perDay).reduce((a, [d, v]) => a + (d > il.period.from && d <= il.period.to ? v : 0), 0);
@@ -232,7 +235,7 @@ t('statements on real data: housing lotteries are SOURCE_STALE (the dataset\'s n
   assert.equal(s.kinds.TRANSACTION.statement.code, 'CHANGES');
   /* תירוש (10): swept, no GovMap-layer row — 30 days: the copies reach 2026-09-28 → 7 of 30 days → NOT_COVERED, never "no deals" */
   const tz = feed({ geo: 'loc:10', period: '30' });
-  assert.equal(tz.kinds.TRANSACTION.counts.total, 0); assert.equal(tz.kinds.TRANSACTION.statement.code, 'NOT_COVERED'); assert.equal(tz.kinds.TRANSACTION.statement.coveredDays, 7);
+  assert.equal(tz.kinds.TRANSACTION.counts.total, 0); assert.equal(tz.kinds.TRANSACTION.statement.code, 'NOT_COVERED'); assert.equal(tz.kinds.TRANSACTION.statement.coveredDays, coveredTo(tz.period, '2026-09-28'));
   for (const k of RU.KINDS) assert.ok(['CHANGES', 'NO_CHANGES_IN_PERIOD', 'NOT_COVERED', 'SOURCE_STALE'].includes(tz.kinds[k].statement.code), k);
   for (const k of RU.KINDS) assert.ok(RU.COVERAGE.includes(tz.kinds[k].coverage.state), k + ' coverage state');
 });

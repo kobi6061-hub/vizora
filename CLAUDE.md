@@ -306,6 +306,30 @@
   land & supply = intel · housing · land; evidence = guide · sources); the rail in the same order (16 scroll-spy items, ALTARIS between
   Land and Guide); the street report ov (crumb · latest · tiles · supports / against) · tx · px (+ the user's price test) · pl (+ transport) ·
   risk (could change · due diligence · surroundings registers) · map · src. No dataset, figure or disclosure moved out.
+- `lib/geo/scope.js` + `lib/geo/scope-read.js` + `lib/geo/atlas-ui.js` + `test/geo-scope.test.js` (+ `test/geo-scope.browser.js`, a Playwright
+  journey run by hand) = ISRAEL NATIONAL OVERVIEW & GEOGRAPHIC DRILL-DOWN (22.10.2026, PREVIEW LANE): ONE hierarchy — Israel → district (7,
+  incl. js-area) → subdistrict `napa:<code>` (the official street directory's region_code / region_name, "נפת …") → `loc:<code>` →
+  verified neighbourhood `nb:<id>` | CBS statistical area `sa:<loc>:<area>` (census-2022 rows, no address key) → `st:<loc>:<street>`;
+  building / parcel = evidence inside the street report, property = the Deal Lab — never navigable levels; no subdistrict /
+  neighbourhood / statistical-area boundary is held or drawn. A MODULE × LEVEL MATRIX (EXACT · AGGREGATED · CONTEXT · NOT_AVAILABLE ·
+  NOT_APPLICABLE, a basis in he / en, a CONTEXT cell names a WIDER level) documents what each module says at each level — it never
+  computes. `GET /api/intel?view=scope&id=` (400 bad id · 404 unknown · no-store): chain + one level up, children, LATEST KNOWN
+  TRANSACTION (newest counted event, any state; price only when PRICED_IN_STATISTICS) kept apart from LATEST PRICED RESIDENTIAL
+  TRANSACTION (newest dwelling priced in statistics), counts (a subdistrict = the sum of its localities, each once; no per-day tally below
+  the district → `last12: null`), census 2022 (a district / subdistrict = a stated SUM over the localities the census lists, n of N),
+  the national read (district comparison with CBS sales / starts T12, major cities by census population, verified neighbourhoods,
+  coverage per level). The atlas (`#atlas`, live build; the offline build keeps the reset button) at the top of the Overview: breadcrumbs,
+  one level up, the district map (the page's own `distPath` / `proj`; locality POINTS only), children tables (`atdist` · `atnapa` · `atloc`
+  · `atcity` through the one table standard), a street search inside the locality, the matrix; it MOVES the page through its own doors
+  (`selectLocation` under `_geoNav`, `openGeoView(g,{noScroll})`, `dsOpen`, `PropxChanges.setGeo`, the land / housing / developers
+  locality filters, `puState.city|district`, `txQueryFor` → `state.scopeArea` for a district without a board card — Judea and Samaria)
+  and FOLLOWS search / the board / the crumbs; every section whose geography is not the selected one gets a `.scn` CONTEXT banner
+  ("Selected: X · Shown here: Y — why"). "RESET TO ISRAEL" (`#resetIL`, `resetToIsrael()`; the scope chip `#cmdScope` is the same
+  reset — it now leaves ANY selection, an opened street at the national anchor included) clears `state.geo` / `state.scopeArea` /
+  the board / the dossier / the feed / the transactions / every section's GEOGRAPHIC filter; keeps language, theme, `propx:nav:v1`,
+  sale / rent, the property filters and every browser key; no reload. Registry group `geography` (`latest_known_transaction` ·
+  `latest_priced_residential_transaction` · `geographic_scope_mode`, selection-only — no formula). Gates 24 + journey 11 (he / en ×
+  desktop / phone, the eight listed tests; a mobile layout viewport that widens = a failure).
 - `lib/nav/order.js` + `test/nav-order.test.js` (+ `test/nav-order.browser.js`, a Playwright journey run by hand) = CUSTOMIZABLE NAVIGATION
   (22.10.2026, PREVIEW LANE, presentation only): the reader's own order of the rail AND of the page sections it leads to. The default
   (index.html as shipped, pinned above) is never rewritten; a custom order lives in the browser only (`propx:nav:v1`, schema `propx-nav-v1`,

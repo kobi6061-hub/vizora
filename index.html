@@ -1825,6 +1825,21 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 .ws-tbl td,.ws-tbl th{vertical-align:middle}
 .ws-tbl td select{font-size:12px;padding:3px 6px}
 /* ws:end */
+/* RESET TO ISRAEL + scope banners (lib/geo/atlas-ui.js fills #atlas in the live build) */
+.ilr-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:0 0 12px}
+.ilr{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:7px 15px;border-radius:99px;border:1px solid var(--accent);background:var(--accent-wash);color:var(--accent-deep);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+.ilr:hover{background:var(--accent);color:#fff}
+.ilr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ilr.at{border-color:var(--edge);background:var(--panel);color:var(--ink-2)}
+.ilr.at:hover{background:var(--panel-2);color:var(--ink)}
+.ilr-flag{font-size:16px;line-height:1}
+.ilr-note{font-size:11.5px;color:var(--ink-3);flex:1 1 260px;min-width:0}
+.ilr-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.scn{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin:-4px 0 12px;padding:8px 12px;border:1px dashed var(--brass);border-radius:var(--r-s);background:var(--wash-brass);font-size:12.5px;color:var(--ink-2)}
+.scn b{color:var(--ink)}
+.scn .scn-k{font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--brass-ink);border:1px solid var(--brass);border-radius:99px;padding:0 7px;white-space:nowrap}
+.scn button{font:inherit;font-size:12px;border:0;background:none;color:var(--accent-deep);text-decoration:underline;cursor:pointer;padding:0}
+@media (max-width:640px){.ilr{width:100%;justify-content:center}.ilr-note{flex-basis:100%}}
 </style>
 </head><!-- doc-skeleton -->
 <body><!-- doc-skeleton -->
@@ -1947,6 +1962,14 @@ table.gx-wide{min-width:1080px}table.gx-wide th{white-space:nowrap}table.gx-wide
 
   <!-- KPI strip -->
   <section class="blk" id="overview">
+    <!-- RESET TO ISRAEL (22.10.2026): one action back to the national view — every section's geography and geographic filters;
+         language, theme, navigation order and saved work are kept, no reload (resetToIsrael) -->
+    <div class="ilr-bar" id="ilrBar">
+      <button type="button" class="ilr" id="resetIL" aria-describedby="ilrNote"><span class="ilr-flag" aria-hidden="true">🇮🇱</span><span data-i="resetIL">ישראל — חזרה למבט ארצי</span></button>
+      <span class="ilr-note" id="ilrNote" data-i="resetILNote">מנקה את הגאוגרפיה שנבחרה ואת המסננים הגאוגרפיים בכל המודולים · שפה, ערכת נושא, סדר הניווט ועבודה שמורה נשמרים</span>
+      <span class="ilr-live" id="ilrLive" aria-live="polite"></span>
+    </div>
+    <!-- live:begin --><div class="atl-host" id="atlas"></div><!-- live:end -->
     <div class="blk-head">
       <div><span class="lyr" data-i="lyr1">L1 · שוק</span>
       <h2 id="kpiTitle"></h2></div>
@@ -2781,6 +2804,7 @@ he:{
   h1:"שוק הנדל״ן בישראל", h1sub:"כל מה שחשוב בתחום <b>הנדל״ן החדש</b> בישראל",
   searchPh:"חפש עיר, שכונה או רחוב...", sale:"מכירה", rent:"השכרה",
   navOverview:"סקירה",navMap:"מפה",navCities:"ערים",navNbhd:"שכונות",navCompare:"השוואה",
+  resetIL:"ישראל — חזרה למבט ארצי", resetILNote:"מנקה את הגאוגרפיה שנבחרה ואת המסננים הגאוגרפיים בכל המודולים · שפה, ערכת נושא, סדר הניווט ועבודה שמורה נשמרים", resetILDone:"חזרתם למבט הארצי — ישראל", resetILAt:"אתם במבט הארצי — לחיצה מנקה גם מסננים גאוגרפיים שנותרו במודולים",
   kpiTitleNat:"תמונת שוק ארצית", kpiTitleFor:"תמונת שוק · ", kpiNoteSale:"דירות חדשות מקבלן · תמונת מצב אמצע 2026 · בכל כרטיס: סיווג ותקופה", kpiNoteRent:"שכ״ד: ממוצעי למ״ס (ארצי רבעון א׳ 2026, ערים 2025) + פרמיית דירה חדשה 8% — מודל",
   avgPrice:"מחיר ממוצע", medPrice:"מחיר חציוני", psm:"מחיר למ״ר", tx:"מכירות דירות חדשות", y3:"שינוי ב-3 שנים",
   avgRent:"שכירות חודשית ממוצעת", medRent:"שכירות חציונית", rpsm:"שכירות למ״ר", grossYield:"תשואה ברוטו", listings:"מלאי לא מכור",
@@ -3363,6 +3387,7 @@ en:{
   h1:"Israel\u2019s Real-Estate Market", h1sub:"Everything that matters in Israel\u2019s <b>new-home</b> market",
   searchPh:"Search a city, neighborhood or street...", sale:"For sale", rent:"For rent",
   navOverview:"Overview",navMap:"Map",navCities:"Cities",navNbhd:"Areas",navCompare:"Compare",
+  resetIL:"Israel — National Overview", resetILNote:"Clears the selected geography and every module's geographic filters · language, theme, navigation order and saved work are kept", resetILDone:"Back to the national view — Israel", resetILAt:"You are at the national view — a click also clears any geographic filter left in a module",
   kpiTitleNat:"National market snapshot", kpiTitleFor:"Market snapshot · ", kpiNoteSale:"New homes from developers · mid-2026 snapshot · class and period on every card", kpiNoteRent:"Rent: CBS averages (national Q1 2026, cities 2025) + 8% new-build premium — modelled",
   avgPrice:"Average price", medPrice:"Median price", psm:"Price per m²", tx:"New-home sales", y3:"3-year change",
   avgRent:"Average monthly rent", medRent:"Median rent", rpsm:"Rent per m²", grossYield:"Est. gross yield", listings:"Unsold new inventory",
@@ -5180,7 +5205,9 @@ const PT_DOM={
   stcomp:"text,date,currency,number,number,currency,number,text,text,currency,number,number,number",
   stposs:"date,text,text,currency",
   stperm:"date,text,text,number,text",
-  stsite:"date,text,text,text"};
+  stsite:"date,text,text,text",
+  /* the atlas (lib/geo/atlas-ui.js): districts · subdistricts · localities · major cities */
+  atdist:"text,number,number,number,number,date,date,number,number",atnapa:"text,number,number,number,date",atloc:"text,number,number,date",atcity:"text,text,number,number,date"};
 /* a sortable day key for the periods the dossier prints (ISO day, "YYYY-MM" month, "YYYY-Qn" quarter) — the cell keeps its displayed text */
 const ptDayKey=v=>{if(!v)return "";const s=String(v);let m=s.match(/^(\d{4})-Q([1-4])$/);if(m)return `${m[1]}-${("0"+m[2]*3).slice(-2)}-31`;m=s.match(/^(\d{4})-(\d{2})$/);if(m)return `${m[1]}-${m[2]}-31`;return s.slice(0,10)};
 function ptDomAll(root,o={}){
@@ -5473,6 +5500,8 @@ function txQueryFor(){
     return g.kind==="street"?{city:g.city,street:g.he,house:g.house||undefined,sid:/^st:\d+:\d+$/.test(String(g.id||""))?g.id:undefined,label:`${g.he}${g.house?" "+g.house:""} · ${g.city}`}
                             :{city:g.he,label:g.he};
   }
+  /* the atlas's area (a district without a board card — Judea and Samaria — or a subdistrict's district, shown as its context) */
+  if(state.scopeArea&&state.locId==="il")return{city:null,district:state.scopeArea.he,did:state.scopeArea.id,country:false,area:state.scopeArea.id,label:state.scopeArea.he,en:state.scopeArea.en};
   const l=LOC[state.locId];if(!l)return null;
   const c=l.type==="city"?l:cityOf(l);
   if(c)return{city:c.he,label:l.type==="city"?c.he:`${l.he} · ${c.he}`};
@@ -6880,11 +6909,12 @@ function ciBasisTip(b){
 
 /* =============================== UI =============================== */
 function renderCmd(){
-  const t=T(),l=LOC[state.locId],isIL=state.locId==="il";
+  const t=T(),l=LOC[state.locId],isIL=atIsrael();renderResetIL();
   const scope=el("cmdScope");if(!scope)return;
-  scope.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>${heName(l)}</span>${isIL?"":'<i class="x" aria-hidden="true">✕</i>'}`;
+  const shown=state.geo?(state.lang==="en"&&state.geo.kind==="street"&&state.geo.cityEn?`${state.geo.he} · ${enTitle(state.geo.cityEn)}`:state.geo.kind==="street"?`${state.geo.he} · ${state.geo.city}`:state.geo.he):state.scopeArea?(state.lang==="en"?state.scopeArea.en:state.scopeArea.he):heName(l);
+  scope.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>${calcEsc(shown)}</span>${isIL?"":'<i class="x" aria-hidden="true">✕</i>'}`;
   scope.classList.toggle("home",isIL);
-  scope.setAttribute("aria-label",isIL?t.cmdScopeIL:t.cmdScopeBack(heName(l)));
+  scope.setAttribute("aria-label",isIL?t.cmdScopeIL:t.cmdScopeBack(shown));
   el("cmdFresh").textContent=t.cmdFresh;
   el("cmdSub").innerHTML=t.h1sub;
   const sig=el("capSignal");
@@ -6897,7 +6927,10 @@ function renderCmd(){
   }catch(e){sig.hidden=true}
 }
 function initCmd(){
-  el("cmdScope").addEventListener("click",()=>{if(state.locId!=="il")selectLocation("il")});
+  /* the scope chip goes back to Israel from ANY selection — an opened street / locality anchored at Israel included (was: only when the
+     board's place was not Israel, so an opened street at the national anchor could not be left from here) */
+  el("cmdScope").addEventListener("click",()=>{if(!atIsrael())resetToIsrael({from:"chip"})});
+  el("resetIL").addEventListener("click",()=>resetToIsrael({from:"button"}));
   /* the sticky mobile mode bar duplicates the command toggle — show it only after scrolling past */
   if("IntersectionObserver" in window){
     const io=new IntersectionObserver(es=>{
@@ -8294,7 +8327,7 @@ function srBind(body,g){
 }
 
 let _geoNav=false;
-function openGeoView(g){
+function openGeoView(g,o){
   if(!g)return;
   const covered=coveredIdByName(g.kind==="locality"?g.he:g.city);
   if(g.kind==="locality"&&covered){selectLocation(covered);return}
@@ -8308,7 +8341,7 @@ function openGeoView(g){
   try{if(state.locId!==state.geoAnchor)selectLocation(state.geoAnchor);else refresh(false)}
   finally{_geoNav=false}
   el("geoView").hidden=false;
-  setTimeout(()=>el("geoView").scrollIntoView({behavior:"smooth",block:"start"}),160);
+  if(!(o&&o.noScroll))setTimeout(()=>el("geoView").scrollIntoView({behavior:"smooth",block:"start"}),160);   /* the atlas drills down in place */
 }
 function closeGeo(){state.geo=null;el("geoView").hidden=true;renderMap(true)}
 function renderGeoView(){
@@ -9630,7 +9663,7 @@ function inBarHTML(){
     const fSel=`<select class="ho-sel" data-inflag aria-label="${inE(L.flagL)}">${opt("",L.allFlags,s.flag||"")}${Object.keys(L.flags).map(k=>opt(k,L.flags[k],s.flag)).join("")}</select>`;
     return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${stSel}${dSel}${mSel}${pSel}${fSel}<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(R.ph)}" aria-label="${inE(R.ph)}"><input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`}
   const filt=s.tab!=="entries"?`<input class="ho-in" type="search" data-inq value="${inE(s.q)}" placeholder="${inE(t.filterPh[s.tab])}" aria-label="${inE(t.filterPh[s.tab])}">`:"";
-  const city=`<input class="ho-in in-city" type="search" data-incity value="${inE(s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`;
+  const city=`<input class="ho-in in-city" type="search" data-incity value="${inE(/^\d+$/.test(s.city||"")&&window.PROPX_GEO_NAMES&&window.PROPX_GEO_NAMES[s.city]?window.PROPX_GEO_NAMES[s.city][state.lang==="en"?"en":"he"]:s.city)}" placeholder="${inE(t.cityPh)}" aria-label="${inE(t.cityPh)}">`;
   return `<span class="ho-per" role="group" aria-label="${inE(t.tabsL)}">${tabs}</span>${per}${kind}${filt}${city}`;
 }
 function inCovHTML(C){
@@ -11117,6 +11150,33 @@ function selectLocation(id){
   const y=el("overview").getBoundingClientRect().top+window.scrollY-110;
   if(window.scrollY>y)window.scrollTo({top:y,behavior:"smooth"});
 }
+/* RESET TO ISRAEL (22.10.2026) — ONE action back to the national view: the selected geography (the board's place, an opened street /
+   locality, the atlas scope and its transactions area), every section's GEOGRAPHIC filters (land · housing · developers & renewal by
+   locality / neighbourhood / region; pulse by locality / district) and the geography of the dossier, What Changed Here and the
+   transactions. Kept: language, theme, the navigation order, sale / rent, the property filters (rooms · type · area · stage), saved deals,
+   watchlists and theses. No reload. */
+const atIsrael=()=>state.locId==="il"&&!state.geo&&!state.scopeArea&&(!state.scope||state.scope==="il");
+function resetToIsrael(opt){
+  opt=opt||{};
+  const t=T();
+  state.scope="il";state.scopeArea=null;
+  if(state.geo){state.geo=null;el("geoView").hidden=true}
+  /* the sections' geographic filters — each section reloads only when it already started (a later first read starts clean) */
+  try{const f=ldState.f;if(f.city||f.region){f.city=null;f.region=null;ldState.page=1;if(ldState.started)ldLoad();else ldPersist()}}catch(e){/* land absent */}
+  try{const f=hoState.f;if(f.city||f.neighborhood||f.project){f.city=null;f.neighborhood=null;f.project=null;hoState.page=1;hoState.geoAll=false;if(hoState.started)hoLoad();else hoPersist()}}catch(e){/* housing absent */}
+  try{if(inState.city){inState.city="";inState.page=1;if(inState.started)inLoad();else inPersist()}}catch(e){/* intel absent */}
+  try{if(puState.city||puState.district){puState.city="";puState.district="";puState.page=1;puState.acc=[];if(puState.started)puLoad()}}catch(e){/* pulse absent */}
+  if(state.locId!=="il")selectLocation("il");else{refresh(false)}
+  if(typeof dsOpen==="function")dsOpen("il",null);
+  /* live:begin */ try{if(window.PropxChanges)window.PropxChanges.setGeo("il",{follow:true})}catch(e){} /* live:end */
+  try{document.dispatchEvent(new CustomEvent("propx:scope",{detail:{id:"il",level:"country",from:opt.from||"reset"}}))}catch(e){}
+  const live=el("ilrLive");if(live){live.textContent="";setTimeout(()=>{live.textContent=t.resetILDone},40)}
+  if(opt.scroll!==false){const o=el("overview");if(o){const y=o.getBoundingClientRect().top+window.scrollY-110;if(Math.abs(window.scrollY-y)>40)window.scrollTo({top:y,behavior:"smooth"})}}
+}
+function renderResetIL(){
+  const b=el("resetIL");if(!b)return;const t=T(),at=atIsrael();
+  b.classList.toggle("at",at);b.title=at?t.resetILAt:"";
+}
 function setMode(mode){
   if(state.mode===mode)return;
   state.mode=mode;
@@ -11152,12 +11212,12 @@ initMapZoom();
    MARKET PULSE — lib/radar over the committed histories (GET /api/intel?view=radar|pulse).
    An event is a change between two PROPX reads, a new published period, an official
    revision or a source-state change — never a first ingestion or a parser upgrade. */
-const puState={started:false,status:"idle",win:"7d",group:"",city:"",q:"",verb:"",page:1,data:null,acc:[],pulse:null,scan:null,scanLevel:"",rev:null,req:0};
+const puState={started:false,status:"idle",win:"7d",group:"",city:"",district:"",q:"",verb:"",page:1,data:null,acc:[],pulse:null,scan:null,scanLevel:"",rev:null,req:0};
 const puDay=iso=>iso?String(iso).slice(0,10).split("-").reverse().join("."):"—";
 function puLoad(){
   puState.started=true;const id=++puState.req;puState.status="loading";renderPulse();
   const qs=new URLSearchParams({view:"radar",window:puState.win,page:String(puState.page),size:"40"});
-  if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);if(puState.q)qs.set("q",puState.q);if(puState.verb)qs.set("verb",puState.verb);
+  if(puState.group)qs.set("group",puState.group);if(puState.city)qs.set("city",puState.city);else if(puState.district)qs.set("district",puState.district);if(puState.q)qs.set("q",puState.q);if(puState.verb)qs.set("verb",puState.verb);
   const jobs=[inGet(qs.toString()).then(d=>{if(id!==puState.req)return;puState.data=d;puState.acc=puState.page>1?puState.acc.concat(d.rows):d.rows})];
   if(!puState.pulse)jobs.push(inGet("view=pulse").then(d=>{if(id!==puState.req)return;puState.pulse=d}).catch(()=>{}));
   /* the Opportunity / Risk scan and the revision ledger — read once; independent of the feed's filters */
@@ -11809,6 +11869,8 @@ refresh(true);
 </script>
 <script src="/lib/explain/attach.js"></script>
 <!-- live:begin --><script src="/lib/deal/ui.js"></script>
-<script src="/lib/changes/ui.js"></script><!-- live:end -->
+<script src="/lib/changes/ui.js"></script>
+<script src="/lib/geo/scope.js"></script>
+<script src="/lib/geo/atlas-ui.js"></script><!-- live:end -->
 </body><!-- doc-skeleton -->
 </html><!-- doc-skeleton -->

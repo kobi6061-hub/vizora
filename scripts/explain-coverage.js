@@ -280,7 +280,7 @@ const CHROME_REASONS = {
 const CHROME = [
   /* markup */
   [/^i:(nav\w+|lp\d(s)?|lpHint|grp\d(s)?|skipMain|skipSearch)$/, 'nav'], [/^i:(slogan|pageCtx|cmdKicker|h1|footRight|lyr\w*|geoLyr|calcLyr)$/, 'furniture'],
-  [/^i:(sale|rent|logout|geoClose)$/, 'action'], [/^i:(\w+Note|\w+Sub|trendNA\w+|basisNote|srcAText|srcADemo|ciDisc|ciTeaserNote|ciPortNote|gdNote|gd\d[ab])$/, 'prose'],
+  [/^i:(sale|rent|logout|geoClose|resetIL)$/, 'action'], [/^i:(\w+Note|\w+Sub|trendNA\w+|basisNote|srcAText|srcADemo|ciDisc|ciTeaserNote|ciPortNote|gdNote|gd\d[ab])$/, 'prose'],
   /* workspace (identity) and explanation chrome */
   [/^WS_I18N\./, 'workspace'], [/^XP_T\./, 'furniture'],
   /* every other CHROME decision, one label at a time (generated from the reviewed decisions; regenerate, never hand-patch) */

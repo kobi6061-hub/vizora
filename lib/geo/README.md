@@ -9,6 +9,32 @@ because a deal was reported on it.
 ISRAEL → locality → neighborhood (where resolvable) → street → address
 ```
 
+## Geographic scope — the atlas (22.10.2026)
+
+`lib/geo/scope.js` (UMD, the page and the server) is the ONE definition of the navigable hierarchy and of what every intelligence
+module can say at every level:
+
+```
+Israel → district (7, incl. Judea and Samaria) → subdistrict (נפה, 25 — the official street directory's region_code / region_name)
+       → locality (1,316) → verified neighbourhood (53, names only) | CBS statistical area (2,193 census-2022 rows, no address key)
+       → street (57,162 current) → [building / address / parcel — evidence inside the street report] → [property — the Deal Lab]
+```
+
+Ids are the official keys the read models already use (`il` · `d-…` / `js-area` · `napa:<code>` · `loc:<code>` · `nb:<id>` ·
+`sa:<locality>:<area>` · `st:<locality>:<street>`). No level without a source is constructed: no subdistrict / neighbourhood /
+statistical-area BOUNDARY is held, a street belongs to its locality (never to a neighbourhood). The module × level matrix states one
+mode per module per level — EXACT · AGGREGATED (its own child records, each once, coverage stated) · CONTEXT (the nearest wider
+geography, labelled) · NOT_AVAILABLE · NOT_APPLICABLE — it documents, it never computes.
+
+`lib/geo/scope-read.js` → `GET /api/intel?view=scope&id=…`: the chain (breadcrumbs, one level up), the children, LATEST KNOWN
+TRANSACTION (the newest counted event of any state) kept apart from LATEST PRICED RESIDENTIAL TRANSACTION (the newest dwelling
+priced in statistics — a price is shown only then), counts, census 2022 demographics, the matrix; Israel adds the district comparison
+(CBS sales / starts, trailing 12 months as published), the major cities by census population, the verified neighbourhoods and the
+coverage per level. `lib/geo/atlas-ui.js` (live build only) renders it at the top of the Overview, moves every section through the
+page's own doors, follows the page when the geography changes elsewhere, and puts a CONTEXT banner on every section whose geography
+is not the selected one. "Reset to Israel" (`resetToIsrael` in index.html) clears the geography and every section's geographic
+filters; language, theme, navigation order and saved work are kept. Gates: `test/geo-scope.test.js`; journey: `test/geo-scope.browser.js`.
+
 ## Streets — the official directory (19.10.2026)
 
 Streets now come from the Population and Immigration Authority's official street registry + its synonyms registry

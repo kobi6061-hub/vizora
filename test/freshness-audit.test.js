@@ -218,11 +218,15 @@ t('TRANSACTIONS: the register copy, the GovMap copy and the union are dated apar
   assert.equal(T.integrity.unionUnexplained, JSON.parse(read('data/txevents/completeness.json')).notSurfaced.unexplained);
 });
 t('GITHUB EVIDENCE: a successful production run newer than the run log dates the check — and the gap is a finding, never hidden', () => {
-  const gh = { workflows: { 'txevents-national.yml': { production: { latest: { id: 39681669082, at: '2026-10-21T21:48:03Z', event: 'schedule', conclusion: 'success' }, lastSuccess: { id: 39681669082, at: '2026-10-21T21:48:03Z', event: 'schedule', conclusion: 'success' }, lastFailure: null } } } };
-  const e = FA.audit({ now: NOW, github: gh }).entries.find((x) => x.id === 'over:govmap-national');
-  assert.equal(e.lastCheck.origin, 'github-run'); assert.equal(e.lastCheck.at, '2026-10-21T21:48:03Z');
+  /* the run is placed after the STORED run log (the data moves with every sync — the 22.10.2026 run log is newer than the frozen
+     21.10.2026 run this gate used to name) and the clock just after the run, so the premise "a run newer than the run log" holds */
+  const runLog = FA.audit({ now: NOW }).entries.find((x) => x.id === 'over:govmap-national').lastCheck.runLog;
+  const at = new Date(Math.max(Date.parse('2026-10-21T21:48:03Z'), runLog ? Date.parse(runLog) + 2 * 3600e3 : 0)).toISOString().replace(/\.\d+Z$/, 'Z'), now2 = Date.parse(at) + 45 * 60e3;
+  const gh = { workflows: { 'txevents-national.yml': { production: { latest: { id: 39681669082, at, event: 'schedule', conclusion: 'success' }, lastSuccess: { id: 39681669082, at, event: 'schedule', conclusion: 'success' }, lastFailure: null } } } };
+  const e = FA.audit({ now: now2, github: gh }).entries.find((x) => x.id === 'over:govmap-national');
+  assert.equal(e.lastCheck.origin, 'github-run'); assert.equal(e.lastCheck.at, at);
   assert.notEqual(e.state, 'CHECK_STALE');
-  if (e.lastCheck.runLog && Date.parse('2026-10-21T21:48:03Z') - Date.parse(e.lastCheck.runLog) > 12 * 3600e3) assert.ok(e.findings.some((f) => f.kind === 'RUN_LOG_BEHIND'));
+  if (e.lastCheck.runLog && Date.parse(at) - Date.parse(e.lastCheck.runLog) > 12 * 3600e3) assert.ok(e.findings.some((f) => f.kind === 'RUN_LOG_BEHIND'));
   const green = { production: { latest: { id: 2, at: '2026-10-21T21:00:00Z', event: 'schedule', conclusion: 'success' }, lastSuccess: { id: 2, at: '2026-10-21T21:00:00Z', event: 'schedule', conclusion: 'success' }, lastFailure: null } };
   const g = FA.audit({ now: NOW, github: { workflows: { 'data-sync.yml': green } } }).entries.find((x) => x.id === 'govmap:tax-authority-deals');
   assert.equal(g.state, 'REFUSED'); assert.equal(g.lastCheck.origin, 'run-log', 'a green run never stands for a check of a source that refuses');
