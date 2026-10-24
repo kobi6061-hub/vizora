@@ -94147,3 +94147,4 @@
 {"id":"rmi:20260069","field":"sourceUpdatedAt","from":"2026-10-07T08:34:51.987Z","to":"2026-10-19T06:51:58.837Z","observedAt":"2026-10-23T08:32:46.438Z","syncRunId":"land-20261023T083229Z"}
 {"id":"rmi:20260167","field":"docs","from":2,"to":4,"observedAt":"2026-10-23T08:32:46.438Z","syncRunId":"land-20261023T083229Z"}
 {"id":"rmi:20260167","field":"docsUpdatedAt","from":"2026-10-07T21:00:00.000Z","to":"2026-10-21T08:01:03.300Z","observedAt":"2026-10-23T08:32:46.438Z","syncRunId":"land-20261023T083229Z"}
+{"id":"rmi:20210156","field":"lotsDigest","from":"7f77b0467091","to":"1eb2ba7658ea","observedAt":"2026-10-24T08:08:02.350Z","syncRunId":"land-20261024T080741Z"}

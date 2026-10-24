@@ -10,7 +10,7 @@
  "endpoint": "https://apps.land.gov.il/MichrazimSite/api/SearchApi/Search",
  "snapshotHash": "267d2c6bb2bd51b407883768b4ec823a527be8d01f64e52bb8e2107e17d3d6f5",
  "snapshotFetchedAt": "2026-10-23T08:32:46.438Z",
- "checkedAt": "2026-10-23T08:32:46.438Z",
+ "checkedAt": "2026-10-24T08:08:02.350Z",
  "normalizerVersion": 5,
  "rows": 10651,
  "records": 10651,
@@ -305,8 +305,8 @@
  "detail": {
   "withDetail": 10651,
   "withGeometry": 24,
-  "oldestDetailFetchedAt": "2026-10-14T08:55:22.785Z",
-  "newestDetailFetchedAt": "2026-10-23T08:42:46.163Z",
+  "oldestDetailFetchedAt": "2026-10-15T08:32:16.235Z",
+  "newestDetailFetchedAt": "2026-10-24T08:17:53.648Z",
   "activeWithDetail": 443,
   "active": 443,
   "detailUnavailable": 0,
@@ -317,7 +317,7 @@
    "requests": 1190,
    "failStreak": 12
   },
-  "lastRunFetched": 1182
+  "lastRunFetched": 1178
  },
  "byLifecycle": {
   "published": 151,
@@ -383,6 +383,6 @@
    "sourceUpdatedAt": "2026-08-01T00:05:17.455Z"
   }
  },
- "historyEvents": 94149,
- "lastRun": "land-20261023T083229Z"
+ "historyEvents": 94150,
+ "lastRun": "land-20261024T080741Z"
 }
