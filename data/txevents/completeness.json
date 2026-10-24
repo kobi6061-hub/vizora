@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "builtAt": "2026-10-23T09:18:44.851Z",
+ "builtAt": "2026-10-24T08:25:24.110Z",
  "engine": "propx-txevents-1",
  "sources": {
   "monitored": 3,
@@ -19,7 +19,7 @@
     "snapshotDate": "2026-09-19",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-09-17",
-    "checkedAt": "2026-10-23T08:50:33.243Z",
+    "checkedAt": "2026-10-24T08:24:37.077Z",
     "state": "STALE",
     "stateReason": null
    },
@@ -34,7 +34,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2026-07-04",
     "coveredThrough": "2026-09-28",
-    "checkedAt": "2026-10-23T09:18:11.044Z",
+    "checkedAt": "2026-10-23T11:47:56.245Z",
     "state": "RECENT",
     "stateReason": null,
     "version": 4
@@ -50,7 +50,7 @@
     "snapshotDate": "2026-10-08",
     "coveredFrom": "2023-09-18",
     "coveredThrough": "2026-07-03",
-    "checkedAt": "2026-10-22T17:17:16.103Z",
+    "checkedAt": "2026-10-23T11:47:56.245Z",
     "version": 4,
     "builtAt": "2026-10-20T18:55:44.262Z",
     "state": "RECENT"
